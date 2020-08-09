@@ -18,6 +18,9 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <permission
+        android:name="io.legado.READ_WRITE"
+        android:protectionLevel="normal" />
 
     <application
         android:name=".App"
@@ -29,12 +32,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
-        <provider
-            android:name=".api.ReaderProvider"
-            android:authorities="io.legado.app.api.ReaderProvider"
-            android:enabled="true"
-            android:exported="true"
-            tools:ignore="ExportedContentProvider" />
         <!-- 主入口 -->
         <activity android:name=".ui.welcome.WelcomeActivity">
             <intent-filter>
@@ -343,7 +340,14 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-
+        <!--对外API,外部访问需声明io.legado.READ_WRITE权限-->
+        <provider
+            android:name=".api.ReaderProvider"
+            android:authorities="${applicationId}.ReaderProvider"
+            android:readPermission="io.legado.READ_WRITE"
+            android:writePermission="io.legado.READ_WRITE"
+            android:enabled="true"
+            android:exported="true" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
