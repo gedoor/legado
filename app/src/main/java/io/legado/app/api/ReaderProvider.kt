@@ -14,7 +14,6 @@ import android.database.DataSetObserver
 import android.net.Uri
 import android.os.Bundle
 import com.google.gson.Gson
-import io.legado.app.App
 import io.legado.app.web.controller.BookshelfController
 import io.legado.app.web.controller.SourceController
 import io.legado.app.web.utils.ReturnData
@@ -28,58 +27,58 @@ class ReaderProvider : ContentProvider() {
         saveSource, saveSources, saveBook, deleteSources, getSource, getSources, getBookshelf, getChapterList, getBookContent
     }
 
-    companion object {
-        const val POST_BODY_KEY = "json"
-        private val authority = "${App.INSTANCE.packageName}.ReaderProvider"
-        private val sMatcher = UriMatcher(UriMatcher.NO_MATCH)
+    private val postBodyKey = "json"
+    private val authority by lazy {
+        "${context?.applicationInfo?.packageName}.ReaderProvider"
+    }
+    private val sMatcher = UriMatcher(UriMatcher.NO_MATCH)
 
-        init {
-            sMatcher.addURI(
-                authority,
-                "source/insert",
-                RequestCode.saveSource.ordinal
-            )
-            sMatcher.addURI(
-                authority,
-                "sources/insert",
-                RequestCode.saveSources.ordinal
-            )
-            sMatcher.addURI(
-                authority,
-                "book/insert",
-                RequestCode.saveBook.ordinal
-            )
-            sMatcher.addURI(
-                authority,
-                "sources/delete",
-                RequestCode.deleteSources.ordinal
-            )
-            sMatcher.addURI(
-                authority,
-                "source/query",
-                RequestCode.getSource.ordinal
-            )
-            sMatcher.addURI(
-                authority,
-                "sources/query",
-                RequestCode.getSources.ordinal
-            )
-            sMatcher.addURI(
-                authority,
-                "books/query",
-                RequestCode.getBookshelf.ordinal
-            )
-            sMatcher.addURI(
-                authority,
-                "book/chapter/query",
-                RequestCode.getChapterList.ordinal
-            )
-            sMatcher.addURI(
-                authority,
-                "book/content/query",
-                RequestCode.getBookContent.ordinal
-            )
-        }
+    init {
+        sMatcher.addURI(
+            authority,
+            "source/insert",
+            RequestCode.saveSource.ordinal
+        )
+        sMatcher.addURI(
+            authority,
+            "sources/insert",
+            RequestCode.saveSources.ordinal
+        )
+        sMatcher.addURI(
+            authority,
+            "book/insert",
+            RequestCode.saveBook.ordinal
+        )
+        sMatcher.addURI(
+            authority,
+            "sources/delete",
+            RequestCode.deleteSources.ordinal
+        )
+        sMatcher.addURI(
+            authority,
+            "source/query",
+            RequestCode.getSource.ordinal
+        )
+        sMatcher.addURI(
+            authority,
+            "sources/query",
+            RequestCode.getSources.ordinal
+        )
+        sMatcher.addURI(
+            authority,
+            "books/query",
+            RequestCode.getBookshelf.ordinal
+        )
+        sMatcher.addURI(
+            authority,
+            "book/chapter/query",
+            RequestCode.getChapterList.ordinal
+        )
+        sMatcher.addURI(
+            authority,
+            "book/content/query",
+            RequestCode.getBookContent.ordinal
+        )
     }
 
     override fun delete(
@@ -105,13 +104,13 @@ class ReaderProvider : ContentProvider() {
         if (sMatcher.match(uri) < 0) return null
         when (RequestCode.values()[sMatcher.match(uri)]) {
             RequestCode.saveSource -> values?.let {
-                SourceController.saveSource(values.getAsString(POST_BODY_KEY))
+                SourceController.saveSource(values.getAsString(postBodyKey))
             }
             RequestCode.saveBook -> values?.let {
-                BookshelfController.saveBook(values.getAsString(POST_BODY_KEY))
+                BookshelfController.saveBook(values.getAsString(postBodyKey))
             }
             RequestCode.saveSources -> values?.let {
-                SourceController.saveSources(values.getAsString(POST_BODY_KEY))
+                SourceController.saveSources(values.getAsString(postBodyKey))
             }
             else -> throw IllegalStateException(
                 "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
