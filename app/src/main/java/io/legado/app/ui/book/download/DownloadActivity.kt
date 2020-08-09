@@ -30,6 +30,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArraySet
 
 
 class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_download),
@@ -172,7 +174,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     }
 
     override fun observeLiveBus() {
-        observeEvent<HashMap<String, LinkedHashSet<BookChapter>>>(EventBus.UP_DOWNLOAD) {
+        observeEvent<ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>>(EventBus.UP_DOWNLOAD) {
             if (it.isEmpty()) {
                 menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_play_24dp)
                 menu?.applyTint(this)

@@ -275,7 +275,6 @@ class DownloadService : BaseService() {
         startForeground(AppConst.notificationIdDownload, notification)
     }
 
-
     class DownloadCount {
         @Volatile
         var downloadFinishedCount = 0 // 下载完成的条目数量
