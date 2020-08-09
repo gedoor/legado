@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -56,6 +57,10 @@ class ReadMenu : FrameLayout {
             fabNightTheme.setImageResource(R.drawable.ic_brightness)
         }
         initAnimation()
+        val brightnessBackground = GradientDrawable()
+        brightnessBackground.cornerRadius = 5F.dp
+        brightnessBackground.setColor(ColorUtils.adjustAlpha(App.INSTANCE.bottomBackground, 0.5f))
+        ll_brightness.background = brightnessBackground
         ll_bottom_bg.setBackgroundColor(context.bottomBackground)
         vw_bg.onClick { }
         vwNavigationBar.onClick { }
