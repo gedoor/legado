@@ -28,6 +28,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.okButton
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
@@ -205,6 +206,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         override fun convert(holder: ItemViewHolder, item: TxtTocRule, payloads: MutableList<Any>) {
             holder.itemView.apply {
                 if (payloads.isEmpty()) {
+                    setBackgroundColor(context.backgroundColor)
                     rb_regex_name.text = item.name
                     rb_regex_name.isChecked = item.name == selectedName
                     swt_enabled.isChecked = item.enable
