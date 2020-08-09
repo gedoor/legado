@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.Theme
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
@@ -60,6 +61,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(bottomBackground)
         tool_bar.setTitle(R.string.change_cover_source)
         viewModel.initData(arguments)
         initMenu()
