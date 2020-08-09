@@ -28,12 +28,11 @@ class ReaderProvider : ContentProvider() {
     }
 
     private val postBodyKey = "json"
-    private val authority by lazy {
-        "${context?.applicationInfo?.packageName}.ReaderProvider"
-    }
     private val sMatcher = UriMatcher(UriMatcher.NO_MATCH)
 
-    init {
+    override fun onCreate(): Boolean {
+        val authority = "${context?.applicationInfo?.packageName}.ReaderProvider"
+        print(authority)
         sMatcher.addURI(
             authority,
             "source/insert",
@@ -79,6 +78,7 @@ class ReaderProvider : ContentProvider() {
             "book/content/query",
             RequestCode.getBookContent.ordinal
         )
+        return false
     }
 
     override fun delete(
@@ -117,10 +117,6 @@ class ReaderProvider : ContentProvider() {
             )
         }
         return null
-    }
-
-    override fun onCreate(): Boolean {
-        return false
     }
 
     override fun query(
