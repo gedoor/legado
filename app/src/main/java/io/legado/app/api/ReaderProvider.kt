@@ -32,7 +32,6 @@ class ReaderProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
         val authority = "${context?.applicationInfo?.packageName}.ReaderProvider"
-        print(authority)
         sMatcher.addURI(
             authority,
             "source/insert",
