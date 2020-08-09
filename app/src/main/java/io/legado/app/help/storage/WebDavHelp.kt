@@ -70,7 +70,7 @@ object WebDavHelp {
         return names
     }
 
-    suspend fun showRestoreDialog(context: Context, restoreSuccess: () -> Unit): Boolean {
+    suspend fun showRestoreDialog(context: Context): Boolean {
         val names = withContext(IO) { getWebDavFileNames() }
         return if (names.isNotEmpty()) {
             withContext(Main) {
@@ -79,7 +79,7 @@ object WebDavHelp {
                     items = names
                 ) { _, index ->
                     if (index in 0 until names.size) {
-                        restoreWebDav(names[index], restoreSuccess)
+                        restoreWebDav(names[index])
                     }
                 }
             }
@@ -89,7 +89,7 @@ object WebDavHelp {
         }
     }
 
-    private fun restoreWebDav(name: String, success: () -> Unit) {
+    private fun restoreWebDav(name: String) {
         Coroutine.async {
             rootWebDavUrl.let {
                 if (name == SyncBookProgress.fileName) {
@@ -103,8 +103,6 @@ object WebDavHelp {
                     Restore.restoreConfig()
                 }
             }
-        }.onSuccess {
-            success.invoke()
         }.onError {
             App.INSTANCE.toast("WebDavError:${it.localizedMessage}")
         }

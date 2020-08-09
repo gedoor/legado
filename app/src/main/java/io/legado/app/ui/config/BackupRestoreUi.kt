@@ -77,9 +77,8 @@ object BackupRestoreUi {
 
     fun restore(fragment: Fragment) {
         Coroutine.async(context = Main) {
-            if (!WebDavHelp.showRestoreDialog(fragment.requireContext()) {
-                    fragment.toast(R.string.restore_success)
-                }) {
+            val restoreFromWebDav = WebDavHelp.showRestoreDialog(fragment.requireContext())
+            if (!restoreFromWebDav) {
                 val backupPath = fragment.getPrefString(PreferKey.backupPath)
                 if (backupPath?.isNotEmpty() == true) {
                     if (backupPath.isContentPath()) {
@@ -113,8 +112,6 @@ object BackupRestoreUi {
                     AppConfig.backupPath = path
                     Restore.restoreDatabase(path)
                     Restore.restoreConfig(path)
-                }.onSuccess {
-                    fragment.toast(R.string.restore_success)
                 }
             }
             .request()
