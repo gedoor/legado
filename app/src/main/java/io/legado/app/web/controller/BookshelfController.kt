@@ -11,7 +11,7 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.web.utils.ReturnData
 import kotlinx.coroutines.runBlocking
 
-class BookshelfController {
+object BookshelfController {
 
     val bookshelf: ReturnData
         get() {
