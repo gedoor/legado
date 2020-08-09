@@ -306,7 +306,8 @@ class BookInfoActivity :
 
     private fun startReadActivity(book: Book) {
         when (book.type) {
-            BookType.audio -> startActivity<AudioPlayActivity>(
+            BookType.audio -> startActivityForResult<AudioPlayActivity>(
+                requestCodeRead,
                 Pair("bookUrl", book.bookUrl),
                 Pair("inBookshelf", viewModel.inBookshelf)
             )
