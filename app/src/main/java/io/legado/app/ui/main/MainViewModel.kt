@@ -21,12 +21,18 @@ import kotlinx.coroutines.delay
 import java.util.concurrent.Executors
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
-    var upTocPool = Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
+    private var upTocPool =
+        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     val updateList = hashSetOf<String>()
 
     override fun onCleared() {
         super.onCleared()
         upTocPool.close()
+    }
+
+    fun upPool() {
+        upTocPool.close()
+        upTocPool = Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     }
 
     fun upChapterList() {

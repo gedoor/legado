@@ -157,6 +157,9 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                 view_pager_main.setCurrentItem(3, false)
             }
         }
+        observeEvent<String>(PreferKey.threadCount) {
+            viewModel.upPool()
+        }
     }
 
     private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :

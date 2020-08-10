@@ -95,9 +95,10 @@ class OtherConfigFragment : BasePreferenceFragment(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.threadCount -> upPreferenceSummary(
-                key, AppConfig.threadCount.toString()
-            )
+            PreferKey.threadCount -> {
+                upPreferenceSummary(key, AppConfig.threadCount.toString())
+                postEvent(PreferKey.threadCount, "")
+            }
             PreferKey.webPort -> {
                 upPreferenceSummary(key, webPort.toString())
                 if (WebService.isRun) {
