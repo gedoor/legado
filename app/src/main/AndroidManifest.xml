@@ -343,7 +343,7 @@
         <!--对外API,外部访问需声明io.legado.READ_WRITE权限-->
         <provider
             android:name=".api.ReaderProvider"
-            android:authorities="${applicationId}.ReaderProvider"
+            android:authorities="${applicationId}.readerProvider"
             android:readPermission="io.legado.READ_WRITE"
             android:writePermission="io.legado.READ_WRITE"
             android:enabled="true"

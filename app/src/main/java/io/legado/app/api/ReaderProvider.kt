@@ -30,7 +30,7 @@ class ReaderProvider : ContentProvider() {
     private val postBodyKey = "json"
     private val sMatcher by lazy {
         val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
-        val authority = "${context?.applicationInfo?.packageName}.ReaderProvider"
+        val authority = "${context?.applicationInfo?.packageName}.readerProvider"
         uriMatcher.addURI(authority, "source/insert", RequestCode.saveSource.ordinal)
         uriMatcher.addURI(authority, "sources/insert", RequestCode.saveSources.ordinal)
         uriMatcher.addURI(authority, "book/insert", RequestCode.saveBook.ordinal)
