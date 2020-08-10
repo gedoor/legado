@@ -18,9 +18,6 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <permission
-        android:name="io.legado.READ_WRITE"
-        android:protectionLevel="normal" />
 
     <application
         android:name=".App"
@@ -344,10 +341,9 @@
         <provider
             android:name=".api.ReaderProvider"
             android:authorities="${applicationId}.readerProvider"
-            android:readPermission="io.legado.READ_WRITE"
-            android:writePermission="io.legado.READ_WRITE"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            tools:ignore="ExportedContentProvider" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
