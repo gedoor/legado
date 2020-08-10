@@ -188,38 +188,40 @@ class DownloadService : BaseService() {
                         bookChapter,
                         scope = this,
                         context = searchPool
-                    ).onError {
-                        synchronized(this) {
-                            downloadingList.remove(bookChapter.url)
-                        }
-                        Download.addLog(it.localizedMessage)
-                    }.onSuccess(IO) { content ->
-                        BookHelp.saveContent(book, bookChapter, content)
-                        synchronized(this@DownloadService) {
-                            downloadCount[book.bookUrl]?.increaseSuccess()
-                            downloadCount[book.bookUrl]?.increaseFinished()
-                            downloadCount[book.bookUrl]?.let {
-                                updateNotification(
-                                    it,
-                                    downloadMap[book.bookUrl]?.size,
-                                    bookChapter.title
-                                )
+                    ).timeout(3000L)
+                        .onError {
+                            synchronized(this) {
+                                downloadingList.remove(bookChapter.url)
                             }
-                            val chapterMap =
-                                finalMap[book.bookUrl]
-                                    ?: CopyOnWriteArraySet<BookChapter>().apply {
-                                        finalMap[book.bookUrl] = this
-                                    }
-                            chapterMap.add(bookChapter)
-                            if (chapterMap.size == downloadMap[book.bookUrl]?.size) {
-                                downloadMap.remove(book.bookUrl)
-                                finalMap.remove(book.bookUrl)
-                                downloadCount.remove(book.bookUrl)
-                            }
+                            Download.addLog(it.localizedMessage)
                         }
-                    }.onFinally(IO) {
-                        postDownloading(true)
-                    }
+                        .onSuccess(IO) { content ->
+                            BookHelp.saveContent(book, bookChapter, content)
+                            synchronized(this@DownloadService) {
+                                downloadCount[book.bookUrl]?.increaseSuccess()
+                                downloadCount[book.bookUrl]?.increaseFinished()
+                                downloadCount[book.bookUrl]?.let {
+                                    updateNotification(
+                                        it,
+                                        downloadMap[book.bookUrl]?.size,
+                                        bookChapter.title
+                                    )
+                                }
+                                val chapterMap =
+                                    finalMap[book.bookUrl]
+                                        ?: CopyOnWriteArraySet<BookChapter>().apply {
+                                            finalMap[book.bookUrl] = this
+                                        }
+                                chapterMap.add(bookChapter)
+                                if (chapterMap.size == downloadMap[book.bookUrl]?.size) {
+                                    downloadMap.remove(book.bookUrl)
+                                    finalMap.remove(book.bookUrl)
+                                    downloadCount.remove(book.bookUrl)
+                                }
+                            }
+                        }.onFinally(IO) {
+                            postDownloading(true)
+                        }
                 } else {
                     //无需下载的，设置为增加成功
                     downloadCount[book.bookUrl]?.increaseSuccess()
