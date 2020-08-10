@@ -50,6 +50,7 @@ class CheckSource(val source: BookSource) {
     ): Coroutine<*> {
         val webBook = WebBook(source)
         return webBook.searchBook(keyword, scope = scope, context = context)
+            .timeout(3000L)
             .onError(Dispatchers.IO) {
                 source.addGroup("失效")
                 App.db.bookSourceDao().update(source)
