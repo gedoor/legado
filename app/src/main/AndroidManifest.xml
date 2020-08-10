@@ -337,7 +337,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <!--对外API,外部访问需声明io.legado.READ_WRITE权限-->
         <provider
             android:name=".api.ReaderProvider"
             android:authorities="${applicationId}.readerProvider"
