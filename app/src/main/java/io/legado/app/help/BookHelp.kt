@@ -6,6 +6,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
@@ -37,11 +38,26 @@ object BookHelp {
 
     fun clearCache() {
         FileUtils.deleteFile(
-            FileUtils.getPath(
-                downloadDir,
-                subDirs = *arrayOf(cacheFolderName)
-            )
+            FileUtils.getPath(downloadDir, subDirs = *arrayOf(cacheFolderName))
         )
+    }
+
+    /**
+     * 清楚已删除书的缓存
+     */
+    fun clearRemovedCache() {
+        Coroutine.async {
+            val bookFolderNames = arrayListOf<String>()
+            App.db.bookDao().all.forEach {
+                bookFolderNames.add(bookFolderName(it))
+            }
+            val file = FileUtils.getDirFile(downloadDir, cacheFolderName)
+            file.listFiles()?.forEach { bookFile ->
+                if (!bookFolderNames.contains(bookFile.name)) {
+                    FileUtils.deleteFile(bookFile.absolutePath)
+                }
+            }
+        }
     }
 
     @Synchronized
