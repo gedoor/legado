@@ -279,6 +279,7 @@
         <!-- 导入书源 -->
         <activity
             android:name=".ui.association.ImportBookSourceActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:theme="@style/AppTheme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -294,6 +295,7 @@
         <!-- 导入订阅源 -->
         <activity
             android:name=".ui.association.ImportRssSourceActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:theme="@style/AppTheme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -309,6 +311,7 @@
         <!-- 导入替换规则 -->
         <activity
             android:name=".ui.association.ImportReplaceRuleActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:theme="@style/AppTheme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
