@@ -22,6 +22,7 @@ class FileAssociationActivity : VMBaseActivity<FileAssociationViewModel>(
             val newIntent = viewModel.dispatchIndent(data)
             if (newIntent != null) {
                 this.startActivityForResult(newIntent, 100)
+                finish()
             } else {
                 gotoMainActivity()
             }
