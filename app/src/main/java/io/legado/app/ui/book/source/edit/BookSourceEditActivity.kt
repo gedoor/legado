@@ -26,16 +26,14 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.login.SourceLogin
+import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.shareWithQr
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
-import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.share
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import kotlin.math.abs
 
 class BookSourceEditActivity :
@@ -44,6 +42,7 @@ class BookSourceEditActivity :
     override val viewModel: BookSourceEditViewModel
         get() = getViewModel(BookSourceEditViewModel::class.java)
 
+    private val qrRequestCode = 101
     private val adapter = BookSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
@@ -88,6 +87,7 @@ class BookSourceEditActivity :
                 }
             }
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
+            R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_share_str -> GSON.toJson(getSource())?.let { share(it) }
             R.id.menu_share_qr -> GSON.toJson(getSource())?.let { sourceStr ->
                 shareWithQr(getString(R.string.share_book_source), sourceStr)
@@ -390,6 +390,19 @@ class BookSourceEditActivity :
 
     private fun closePopupWindow() {
         mSoftKeyboardTool?.dismiss()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            qrRequestCode -> if (resultCode == RESULT_OK) {
+                data?.getStringExtra("result")?.let {
+                    viewModel.importSource(it) { source ->
+                        upRecyclerView(source)
+                    }
+                }
+            }
+        }
     }
 
     private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {

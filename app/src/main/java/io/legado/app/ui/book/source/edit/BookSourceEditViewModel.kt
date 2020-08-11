@@ -8,6 +8,8 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.storage.OldRule
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
 import kotlinx.coroutines.Dispatchers
 
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
@@ -69,6 +71,17 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             } else {
                 toast("格式不对")
             }
+        }
+    }
+
+    fun importSource(text: String, finally: (source: BookSource) -> Unit) {
+        execute {
+            val text1 = text.trim()
+            GSON.fromJsonObject<BookSource>(text1)?.let {
+                finally.invoke(it)
+            }
+        }.onError {
+            toast(it.localizedMessage ?: "Error")
         }
     }
 }
