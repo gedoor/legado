@@ -4,7 +4,6 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.http.HttpHelper
@@ -58,7 +57,7 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
         }.onError {
             errorLiveData.postValue(it.localizedMessage ?: "ERROR")
         }.onSuccess {
-            errorLiveData.postValue(context.getString(R.string.success))
+            successLiveData.postValue(allRules)
         }
     }
 }
