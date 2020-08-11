@@ -31,7 +31,7 @@ object ImageProvider {
         indexCache[src] = bitmap
     }
 
-    fun getImage(book: Book, chapterIndex: Int, src: String): Bitmap? {
+    fun getImage(book: Book, chapterIndex: Int, src: String, onUi: Boolean = false): Bitmap? {
         getCache(chapterIndex, src)?.let {
             return it
         }
@@ -48,7 +48,7 @@ object ImageProvider {
                     out.flush()
                     out.close()
                 }
-            } else {
+            } else if (!onUi) {
                 HttpHelper.getBytes(src, src)?.let {
                     FileUtils.createFileIfNotExist(vFile.absolutePath).writeBytes(it)
                 }
@@ -68,7 +68,7 @@ object ImageProvider {
     }
 
     fun clearAllCache() {
-        cache.forEach {indexCache->
+        cache.forEach { indexCache ->
             indexCache.value.forEach {
                 it.value.recycle()
             }
@@ -77,7 +77,7 @@ object ImageProvider {
     }
 
     fun clearOut(chapterIndex: Int) {
-        cache.forEach {indexCache->
+        cache.forEach { indexCache ->
             if (indexCache.key !in chapterIndex - 1..chapterIndex + 1) {
                 indexCache.value.forEach {
                     it.value.recycle()
