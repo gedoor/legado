@@ -13,6 +13,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.activity_translucence.*
 import org.jetbrains.anko.toast
 
 class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
@@ -24,10 +25,13 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
         get() = getViewModel(ImportReplaceRuleViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        rotate_loading.show()
         viewModel.errorLiveData.observe(this, Observer {
+            rotate_loading.hide()
             errorDialog(it)
         })
         viewModel.successLiveData.observe(this, Observer {
+            rotate_loading.hide()
             successDialog(it)
         })
         initData()
@@ -58,7 +62,9 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
                     }
                 }
                 else -> {
+                    rotate_loading.hide()
                     toast("格式不对")
+                    finish()
                 }
             }
         }
