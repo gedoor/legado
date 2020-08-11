@@ -26,6 +26,7 @@ class FileAssociationActivity : VMBaseActivity<FileAssociationViewModel>(
         viewModel.errorLiveData.observe(this, Observer {
             rotate_loading.hide()
             toast(it)
+            finish()
         })
         viewModel.successLiveData.observe(this, Observer {
             rotate_loading.hide()
