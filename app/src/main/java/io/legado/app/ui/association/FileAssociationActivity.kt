@@ -1,15 +1,19 @@
-package io.legado.app.ui.config
+package io.legado.app.ui.association
 
 import android.content.Intent
 import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.Theme
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getViewModel
 
 
-class FileAssociationActivity :
-    VMBaseActivity<FileAssociationViewModel>(R.layout.activity_file_association) {
+class FileAssociationActivity : VMBaseActivity<FileAssociationViewModel>(
+    R.layout.activity_translucence,
+    theme = Theme.Transparent
+) {
+
     override val viewModel: FileAssociationViewModel
         get() = getViewModel(FileAssociationViewModel::class.java)
 

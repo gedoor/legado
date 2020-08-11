@@ -199,47 +199,15 @@
         <!-- 书源管理 -->
         <activity
             android:name=".ui.book.source.manage.BookSourceActivity"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="booksource"
-                    android:scheme="yuedu" />
-            </intent-filter>
-        </activity>
+            android:launchMode="singleTop" />
         <!-- 订阅源管理 -->
         <activity
             android:name=".ui.rss.source.manage.RssSourceActivity"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="rsssource"
-                    android:scheme="yuedu" />
-            </intent-filter>
-        </activity>
+            android:launchMode="singleTop" />
         <!-- 替换规则界面 -->
         <activity
             android:name=".ui.replacerule.ReplaceRuleActivity"
             android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="replace"
-                    android:scheme="yuedu" />
-            </intent-filter>
         </activity>
         <!-- 书籍管理 -->
         <activity
@@ -308,8 +276,55 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <!-- 导入书源 -->
         <activity
-            android:name=".ui.config.FileAssociationActivity"
+            android:name=".ui.association.ImportBookSourceActivity"
+            android:theme="@style/AppTheme.Transparent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="booksource"
+                    android:scheme="yuedu" />
+            </intent-filter>
+        </activity>
+        <!-- 导入订阅源 -->
+        <activity
+            android:name=".ui.association.ImportRssSourceActivity"
+            android:theme="@style/AppTheme.Transparent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="rsssource"
+                    android:scheme="yuedu" />
+            </intent-filter>
+        </activity>
+        <!-- 导入替换规则 -->
+        <activity
+            android:name=".ui.association.ImportReplaceRuleActivity"
+            android:theme="@style/AppTheme.Transparent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="replace"
+                    android:scheme="yuedu" />
+            </intent-filter>
+        </activity>
+        <!-- 打开文件 -->
+        <activity
+            android:name=".ui.association.FileAssociationActivity"
+            android:theme="@style/AppTheme.Transparent"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.data.entities.BookSource
-import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import org.jetbrains.anko.toast
@@ -102,17 +101,8 @@ object ImportOldData {
     }
 
     fun importOldReplaceRule(json: String): Int {
-        val replaceRules = mutableListOf<ReplaceRule>()
-        val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
-        for (item in items) {
-            val jsonItem = Restore.jsonPath.parse(item)
-            OldReplace.jsonToReplaceRule(jsonItem.jsonString())?.let {
-                if (it.isValid()){
-                    replaceRules.add(it)
-                }
-            }
-        }
-        App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
-        return replaceRules.size
+        val rules = OldReplace.jsonToReplaceRules(json)
+        App.db.replaceRuleDao().insert(*rules.toTypedArray())
+        return rules.size
     }
 }

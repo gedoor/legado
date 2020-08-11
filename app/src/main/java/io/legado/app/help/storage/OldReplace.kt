@@ -5,7 +5,21 @@ import io.legado.app.utils.*
 
 object OldReplace {
 
-    fun jsonToReplaceRule(json: String): ReplaceRule? {
+    fun jsonToReplaceRules(json: String): List<ReplaceRule> {
+        val replaceRules = mutableListOf<ReplaceRule>()
+        val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
+        for (item in items) {
+            val jsonItem = Restore.jsonPath.parse(item)
+            jsonToReplaceRule(jsonItem.jsonString())?.let {
+                if (it.isValid()) {
+                    replaceRules.add(it)
+                }
+            }
+        }
+        return replaceRules
+    }
+
+    private fun jsonToReplaceRule(json: String): ReplaceRule? {
         var replaceRule: ReplaceRule? = null
         runCatching {
             replaceRule = GSON.fromJsonObject<ReplaceRule>(json.trim())

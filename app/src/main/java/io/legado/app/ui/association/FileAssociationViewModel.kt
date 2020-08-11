@@ -1,4 +1,4 @@
-package io.legado.app.ui.config
+package io.legado.app.ui.association
 
 import android.app.Application
 import android.content.Intent
