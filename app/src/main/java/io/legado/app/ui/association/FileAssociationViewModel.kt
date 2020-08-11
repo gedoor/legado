@@ -24,6 +24,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
             val url: String
             //如果是普通的url，需要根据返回的内容判断是什么
             if (uri.scheme == "file" || uri.scheme == "content") {
+                var scheme = ""
                 val content = if (uri.scheme == "file") {
                     val file = File(uri.path.toString())
                     if (file.exists()) {
@@ -34,7 +35,6 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                 } else {
                     DocumentFile.fromSingleUri(context, uri)?.readText(context)
                 }
-                var scheme = ""
                 if (content != null) {
                     if (content.isJsonObject() || content.isJsonArray()) {
                         //暂时根据文件内容判断属于什么
@@ -84,7 +84,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
             return@execute
         }.onError {
             it.printStackTrace()
-            toast(it.localizedMessage)
+            errorLiveData.postValue(it.localizedMessage)
         }
     }
 }

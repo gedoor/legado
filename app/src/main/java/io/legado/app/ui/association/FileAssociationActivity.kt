@@ -8,6 +8,8 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getViewModel
+import kotlinx.android.synthetic.main.activity_translucence.*
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 
@@ -20,11 +22,13 @@ class FileAssociationActivity : VMBaseActivity<FileAssociationViewModel>(
         get() = getViewModel(FileAssociationViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        rotate_loading.show()
         viewModel.errorLiveData.observe(this, Observer {
+            rotate_loading.hide()
             toast(it)
-            gotoMainActivity()
         })
         viewModel.successLiveData.observe(this, Observer {
+            rotate_loading.hide()
             startActivity(it)
             finish()
         })
@@ -35,13 +39,12 @@ class FileAssociationActivity : VMBaseActivity<FileAssociationViewModel>(
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        finish()
         //返回后直接跳转到主页面
         gotoMainActivity()
     }
 
     private fun gotoMainActivity() {
-        val mIntent = Intent()
-        mIntent.setClass(this, MainActivity::class.java)
-        startActivity(mIntent)
+        startActivity<MainActivity>()
     }
 }
