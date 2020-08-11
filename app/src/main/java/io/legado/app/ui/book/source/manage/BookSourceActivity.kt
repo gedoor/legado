@@ -19,6 +19,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
@@ -38,6 +39,7 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
+import org.jetbrains.anko.toast
 import java.io.File
 import java.text.Collator
 
@@ -353,7 +355,14 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
             importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    startActivity<ImportBookSourceActivity>("filePath" to uri.toString())
+                    try {
+                        uri.readText(this)?.let {
+                            val dataKey = IntentDataHelp.putData(it)
+                            startActivity<ImportBookSourceActivity>("dataKey" to dataKey)
+                        }
+                    } catch (e: Exception) {
+                        toast("readTextError:${e.localizedMessage}")
+                    }
                 }
             }
             exportRequestCode -> {

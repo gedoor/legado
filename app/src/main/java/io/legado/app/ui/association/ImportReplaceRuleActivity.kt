@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
@@ -33,6 +34,12 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
     }
 
     private fun initData() {
+        intent.getStringExtra("dataKey")?.let {
+            IntentDataHelp.getData<String>(it)?.let { source ->
+                viewModel.import(source)
+                return
+            }
+        }
         intent.getStringExtra("source")?.let {
             viewModel.import(it)
             return

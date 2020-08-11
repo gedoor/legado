@@ -20,6 +20,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.BookHelp
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.*
@@ -37,6 +38,7 @@ import kotlinx.android.synthetic.main.activity_replace_rule.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import java.io.File
 
 
@@ -251,7 +253,14 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         when (requestCode) {
             importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    startActivity<ImportReplaceRuleActivity>("filePath" to uri.toString())
+                    try {
+                        uri.readText(this)?.let {
+                            val dataKey = IntentDataHelp.putData(it)
+                            startActivity<ImportReplaceRuleActivity>("dataKey" to dataKey)
+                        }
+                    } catch (e: Exception) {
+                        toast("readTextError:${e.localizedMessage}")
+                    }
                 }
             }
             exportRequestCode -> if (resultCode == RESULT_OK) {
