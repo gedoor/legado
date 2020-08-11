@@ -253,6 +253,7 @@ class BookSourceEditActivity :
             add(EditEntity("coverUrl", er?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("bookUrl", er?.bookUrl, R.string.r_book_url))
         }
+        tab_layout.selectTab(tab_layout.getTabAt(0))
         setEditEntities(0)
     }
 
