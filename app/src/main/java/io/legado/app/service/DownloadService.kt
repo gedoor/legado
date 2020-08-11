@@ -193,7 +193,8 @@ class DownloadService : BaseService() {
                             synchronized(this) {
                                 downloadingList.remove(bookChapter.url)
                             }
-                            Download.addLog(it.localizedMessage)
+                            Download.addLog("getContentError${it.localizedMessage}")
+                            updateNotification("getContentError${it.localizedMessage}")
                         }
                         .onSuccess(IO) { content ->
                             BookHelp.saveContent(book, bookChapter, content)
@@ -231,6 +232,7 @@ class DownloadService : BaseService() {
             }
         }.onError {
             Download.addLog("ERROR:${it.localizedMessage}")
+            updateNotification("ERROR:${it.localizedMessage}")
         }
         tasks.add(task)
     }
@@ -271,9 +273,8 @@ class DownloadService : BaseService() {
      * 更新通知
      */
     private fun updateNotification(content: String) {
-        val builder = notificationBuilder
-        builder.setContentText(content)
-        val notification = builder.build()
+        notificationBuilder.setContentText(content)
+        val notification = notificationBuilder.build()
         startForeground(AppConst.notificationIdDownload, notification)
     }
 
