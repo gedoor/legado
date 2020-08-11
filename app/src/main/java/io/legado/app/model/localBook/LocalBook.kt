@@ -31,7 +31,7 @@ object LocalBook {
         }
     }
 
-    fun importFile(path: String) {
+    fun importFile(path: String): Book {
         val fileName = if (path.isContentPath()) {
             val doc = DocumentFile.fromSingleUri(App.INSTANCE, Uri.parse(path))
             doc?.name ?: ""
@@ -67,6 +67,7 @@ object LocalBook {
             )
         )
         App.db.bookDao().insert(book)
+        return book
     }
 
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
