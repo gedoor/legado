@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
+import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.http.HttpHelper
@@ -20,7 +21,9 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<ArrayList<BookSource>>()
 
-    private val allSources = arrayListOf<BookSource>()
+    val allSources = arrayListOf<BookSource>()
+    val sourceCheckState = arrayListOf<Boolean>()
+    val selectStatus = arrayListOf<Boolean>()
 
     fun importSourceFromFilePath(path: String) {
         execute {
@@ -83,7 +86,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
             it.printStackTrace()
             errorLiveData.postValue(it.localizedMessage ?: "")
         }.onSuccess {
-            successLiveData.postValue(allSources)
+            comparisonSource()
         }
     }
 
@@ -99,6 +102,17 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                     allSources.add(source)
                 }
             }
+        }
+    }
+
+    private fun comparisonSource() {
+        execute {
+            allSources.forEach {
+                val has = App.db.bookSourceDao().getBookSource(it.bookSourceUrl) != null
+                sourceCheckState.add(has)
+                selectStatus.add(!has)
+            }
+            successLiveData.postValue(allSources)
         }
     }
 

@@ -25,7 +25,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <TextView
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:padding="12dp"
+            android:text="@string/cancel"
+            android:visibility="gone"
+            tools:ignore="RtlHardcoded" />
+
+        <io.legado.app.ui.widget.text.AccentTextView
             android:id="@+id/tv_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

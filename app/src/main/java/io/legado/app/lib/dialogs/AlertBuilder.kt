@@ -86,6 +86,12 @@ interface AlertBuilder<out D : DialogInterface> {
         onClick: (dialog: DialogInterface, which: Int, isChecked: Boolean) -> Unit
     )
 
+    fun singleChoiceItems(
+        items: Array<String>,
+        checkedItem: Int = 0,
+        onClick: ((dialog: DialogInterface, which: Int) -> Unit)? = null
+    )
+
     fun build(): D
     fun show(): D
 }

@@ -124,6 +124,16 @@ internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<Ale
         }
     }
 
+    override fun singleChoiceItems(
+        items: Array<String>,
+        checkedItem: Int,
+        onClick: ((dialog: DialogInterface, which: Int) -> Unit)?
+    ) {
+        builder.setSingleChoiceItems(items, checkedItem) { dialog, which ->
+            onClick?.invoke(dialog, which)
+        }
+    }
+
     override fun build(): AlertDialog = builder.create()
 
     override fun show(): AlertDialog = builder.show()
