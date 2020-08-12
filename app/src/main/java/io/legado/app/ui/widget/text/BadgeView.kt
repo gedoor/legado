@@ -148,7 +148,11 @@ class BadgeView @JvmOverloads constructor(
     }
 
     fun setHighlight(highlight: Boolean) {
-        setBackground(context.getCompatColor(if (highlight) R.color.highlight else R.color.darker_gray))
+        if (highlight) {
+            setBackground(context.accentColor)
+        } else {
+            setBackground(context.getCompatColor(R.color.darker_gray))
+        }
     }
 
     fun setBadgeMargin(dipMargin: Int) {
