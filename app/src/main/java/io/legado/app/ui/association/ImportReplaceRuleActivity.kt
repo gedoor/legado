@@ -32,7 +32,11 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
         })
         viewModel.successLiveData.observe(this, Observer {
             rotate_loading.hide()
-            successDialog(it)
+            if (it.size > 0) {
+                successDialog(it)
+            } else {
+                errorDialog("格式不对")
+            }
         })
         initData()
     }

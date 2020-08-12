@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
+import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.http.HttpHelper
@@ -15,9 +16,12 @@ import java.io.File
 class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
 
     val errorLiveData = MutableLiveData<String>()
-    val successLiveData = MutableLiveData<ArrayList<RssSource>>()
+    val successLiveData = MutableLiveData<Boolean>()
 
-    private val allSources = arrayListOf<RssSource>()
+    val allSources = arrayListOf<RssSource>()
+    val sourceCheckState = arrayListOf<Boolean>()
+    val selectStatus = arrayListOf<Boolean>()
+
 
     fun importSourceFromFilePath(path: String) {
         execute {
@@ -39,7 +43,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                 }
             }
         }.onSuccess {
-            successLiveData.postValue(allSources)
+            comparisonSource()
         }
     }
 
@@ -77,7 +81,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
         }.onError {
             errorLiveData.postValue("ImportError:${it.localizedMessage}")
         }.onSuccess {
-            successLiveData.postValue(allSources)
+            comparisonSource()
         }
     }
 
@@ -90,6 +94,17 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                     allSources.add(source)
                 }
             }
+        }
+    }
+
+    private fun comparisonSource() {
+        execute {
+            allSources.forEach {
+                val has = App.db.rssSourceDao().getByKey(it.sourceUrl) != null
+                sourceCheckState.add(has)
+                selectStatus.add(!has)
+            }
+            successLiveData.postValue(true)
         }
     }
 

@@ -15,7 +15,7 @@
 
     <TextView
         android:id="@+id/tv_source_state"
-        android:layout_width="60dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

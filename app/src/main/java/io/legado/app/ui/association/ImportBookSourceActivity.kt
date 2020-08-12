@@ -206,16 +206,18 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
                 } else {
                     "新书源"
                 }
+
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder) {
+            holder.itemView.apply {
                 cb_source_name.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         selectStatus[holder.layoutPosition] = isChecked
                     }
                 }
             }
-        }
-
-        override fun registerListener(holder: ItemViewHolder) {
-
         }
 
     }
