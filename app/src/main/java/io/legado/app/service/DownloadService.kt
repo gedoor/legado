@@ -188,7 +188,7 @@ class DownloadService : BaseService() {
                         bookChapter,
                         scope = this,
                         context = searchPool
-                    ).timeout(3000L)
+                    ).timeout(60000L)
                         .onError {
                             synchronized(this) {
                                 downloadingList.remove(bookChapter.url)
