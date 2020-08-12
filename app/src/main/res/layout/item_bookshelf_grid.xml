@@ -53,7 +53,6 @@
         android:visibility="invisible"
         app:layout_constraintTop_toTopOf="@+id/bg_cover"
         app:layout_constraintRight_toRightOf="@+id/bg_cover"
-        app:loading_color="@color/colorAccent"
         app:loading_width="2dp"
         tools:ignore="RtlHardcoded" />
 
