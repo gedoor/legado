@@ -51,6 +51,7 @@ object PreferKey {
     const val transparentStatusBar = "transparentStatusBar"
     const val defaultCover = "defaultCover"
     const val replaceEnableDefault = "replaceEnableDefault"
+    const val showBrightnessView = "showBrightnessView"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

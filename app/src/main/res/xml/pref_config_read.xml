@@ -84,6 +84,12 @@
         android:key="selectText"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/show_brightness_view"
+        android:key="showBrightnessView"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.ui.widget.prefs.Preference
         android:key="customPageKey"
         android:title="@string/custom_page_key"

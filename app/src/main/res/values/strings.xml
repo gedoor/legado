@@ -742,5 +742,6 @@
     <string name="accent_text_diff">强调色不能和文字颜色相似</string>
     <string name="wrong_format">格式不对</string>
     <string name="error">错误</string>
+    <string name="show_brightness_view">显示亮度调节控件</string>
 
 </resources>

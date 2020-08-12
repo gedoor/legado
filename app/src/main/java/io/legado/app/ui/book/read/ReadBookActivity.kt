@@ -819,6 +819,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         observeEvent<Boolean>(PreferKey.textSelectAble) {
             page_view.curPage.upSelectAble(it)
         }
+        observeEvent<String>(PreferKey.showBrightnessView) {
+            read_menu.upBrightnessState()
+        }
     }
 
     private fun upScreenTimeOut() {

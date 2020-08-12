@@ -115,6 +115,9 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.textBottomJustify -> {
                     postEvent(EventBus.UP_CONFIG, true)
                 }
+                PreferKey.showBrightnessView -> {
+                    postEvent(PreferKey.showBrightnessView, "")
+                }
             }
         }
 
