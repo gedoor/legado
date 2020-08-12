@@ -739,4 +739,6 @@
     <string name="night_bottom_bar_too_light">夜间底栏不能太亮</string>
     <string name="accent_background_diff">强调色不能和背景颜色相似</string>
     <string name="accent_text_diff">强调色不能和文字颜色相似</string>
+    <string name="wrong_format">格式不对</string>
+    <string name="error">错误</string>
 </resources>

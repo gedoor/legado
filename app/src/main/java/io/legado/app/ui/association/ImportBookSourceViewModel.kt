@@ -6,14 +6,13 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
@@ -42,12 +41,11 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
             if (content != null) {
                 importSource(content)
             } else {
-                withContext(Dispatchers.Main) {
-                    errorLiveData.postValue("打开文件出错")
-                }
+                errorLiveData.postValue(context.getString(R.string.error_read_file))
             }
         }.onError {
-            errorLiveData.postValue(it.localizedMessage ?: "打开文件出错")
+            it.printStackTrace()
+            errorLiveData.postValue(context.getString(R.string.error_read_file))
         }
     }
 
@@ -80,7 +78,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                 text1.isAbsUrl() -> {
                     importSourceUrl(text1)
                 }
-                else -> throw Exception("格式不对")
+                else -> throw Exception(context.getString(R.string.wrong_format))
             }
         }.onError {
             it.printStackTrace()
@@ -93,7 +91,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun importSourceUrl(url: String) {
         HttpHelper.simpleGet(url, "UTF-8").let { body ->
             if (body == null) {
-                throw Exception("访问网站失败")
+                throw Exception(context.getString(R.string.error_get_data))
             }
             val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
             for (item in items) {

@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.http.HttpHelper
@@ -36,10 +37,11 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
             if (content != null) {
                 import(content)
             } else {
-                errorLiveData.postValue("打开文件出错")
+                errorLiveData.postValue(context.getString(R.string.error_read_file))
             }
         }.onError {
-            errorLiveData.postValue(it.localizedMessage ?: "打开文件出错")
+            it.printStackTrace()
+            errorLiveData.postValue(context.getString(R.string.error_read_file))
         }
     }
 

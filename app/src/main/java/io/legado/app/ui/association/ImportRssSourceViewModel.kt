@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.http.HttpHelper
@@ -76,7 +77,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                 text1.isAbsUrl() -> {
                     importSourceUrl(text1)
                 }
-                else -> throw Exception("格式不对")
+                else -> throw Exception(context.getString(R.string.wrong_format))
             }
         }.onError {
             errorLiveData.postValue("ImportError:${it.localizedMessage}")

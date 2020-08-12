@@ -78,7 +78,7 @@ class ImportRssSourceActivity : VMBaseActivity<ImportRssSourceViewModel>(
                 }
                 else -> {
                     rotate_loading.hide()
-                    toast("格式不对")
+                    toast(R.string.wrong_format)
                     finish()
                 }
             }
@@ -86,7 +86,7 @@ class ImportRssSourceActivity : VMBaseActivity<ImportRssSourceViewModel>(
     }
 
     private fun errorDialog(msg: String) {
-        alert("导入出错", msg) {
+        alert(getString(R.string.error), msg) {
             okButton { }
         }.show().applyTint().setOnDismissListener {
             finish()
