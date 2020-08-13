@@ -742,4 +742,5 @@
     <string name="wrong_format">格式不对</string>
     <string name="error">错误</string>
     <string name="show_brightness_view">显示亮度调节控件</string>
+    <string name="language">语言</string>
 </resources>

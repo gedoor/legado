@@ -29,6 +29,10 @@ abstract class BaseActivity(
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtils.setConfiguration(newBase))
+    }
+
     override fun onCreateView(
         parent: View?,
         name: String,

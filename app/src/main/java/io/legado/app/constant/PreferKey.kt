@@ -2,6 +2,7 @@ package io.legado.app.constant
 
 object PreferKey {
     const val versionCode = "versionCode"
+    const val language = "language"
     const val themeMode = "themeMode"
     const val hideStatusBar = "hideStatusBar"
     const val clickTurnPage = "clickTurnPage"

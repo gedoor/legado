@@ -117,6 +117,9 @@ class OtherConfigFragment : BasePreferenceFragment(),
             )
             PreferKey.replaceEnableDefault -> AppConfig.replaceEnableDefault =
                 App.INSTANCE.getPrefBoolean(PreferKey.replaceEnableDefault, true)
+            PreferKey.language -> {
+                postEvent(EventBus.RECREATE, "")
+            }
         }
     }
 
