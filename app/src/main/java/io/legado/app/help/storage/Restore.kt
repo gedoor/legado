@@ -188,7 +188,7 @@ object Restore {
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }
-            LanguageUtils.setConfiguration(App.INSTANCE)
+            LanguageUtils.setConfigurationOld(App.INSTANCE)
             App.INSTANCE.applyDayNight()
             postEvent(EventBus.SHOW_RSS, "")
             postEvent(EventBus.RECREATE, "")

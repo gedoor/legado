@@ -14,26 +14,41 @@ object LanguageUtils {
      * 设置语言
      */
     fun setConfiguration(context: Context): Context {
-        val resources: Resources = context.resources
-        val targetLocale: Locale = when (context.getPrefString(PreferKey.language)) {
-            "zh" -> Locale.CHINESE
-            "tw" -> Locale.TRADITIONAL_CHINESE
-            "en" -> Locale.ENGLISH
-            else -> getSystemLocale()
-        }
-        val configuration: Configuration = resources.configuration
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val resources: Resources = context.resources
+            val targetLocale: Locale = when (context.getPrefString(PreferKey.language)) {
+                "zh" -> Locale.CHINESE
+                "tw" -> Locale.TRADITIONAL_CHINESE
+                "en" -> Locale.ENGLISH
+                else -> getSystemLocale()
+            }
+            val configuration: Configuration = resources.configuration
             configuration.setLocale(targetLocale)
             context.createConfigurationContext(configuration)
         } else {
-            @Suppress("DEPRECATION")
-            configuration.locale = targetLocale
-            @Suppress("DEPRECATION")
-            resources.updateConfiguration(configuration, resources.displayMetrics)
             context
         }
     }
 
+    /**
+     * 设置语言
+     */
+    fun setConfigurationOld(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            val resources: Resources = context.resources
+            val targetLocale: Locale = when (context.getPrefString(PreferKey.language)) {
+                "zh" -> Locale.CHINESE
+                "tw" -> Locale.TRADITIONAL_CHINESE
+                "en" -> Locale.ENGLISH
+                else -> getSystemLocale()
+            }
+            val configuration: Configuration = resources.configuration
+            @Suppress("DEPRECATION")
+            configuration.locale = targetLocale
+            @Suppress("DEPRECATION")
+            resources.updateConfiguration(configuration, resources.displayMetrics)
+        }
+    }
 
     /**
      * 当前系统语言
