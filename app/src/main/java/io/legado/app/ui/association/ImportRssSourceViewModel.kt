@@ -17,7 +17,7 @@ import java.io.File
 class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
 
     val errorLiveData = MutableLiveData<String>()
-    val successLiveData = MutableLiveData<Boolean>()
+    val successLiveData = MutableLiveData<Int>()
 
     val allSources = arrayListOf<RssSource>()
     val sourceCheckState = arrayListOf<Boolean>()
@@ -105,7 +105,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                 sourceCheckState.add(has)
                 selectStatus.add(!has)
             }
-            successLiveData.postValue(true)
+            successLiveData.postValue(allSources.size)
         }
     }
 

@@ -47,7 +47,11 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
         })
         viewModel.successLiveData.observe(this, Observer {
             rotate_loading.hide()
-            successDialog()
+            if (it > 0) {
+                successDialog()
+            } else {
+                errorDialog(getString(R.string.wrong_format))
+            }
         })
         initData()
     }
