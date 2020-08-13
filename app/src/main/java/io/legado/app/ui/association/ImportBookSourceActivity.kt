@@ -129,7 +129,7 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
         }
 
         override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-            tool_bar.title = "导入书源"
+            tool_bar.setTitle(R.string.import_book_source)
             initMenu()
             arguments?.let {
                 adapter = SourcesAdapter(requireContext())

@@ -129,7 +129,7 @@ class ImportRssSourceActivity : VMBaseActivity<ImportRssSourceViewModel>(
         }
 
         override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-            tool_bar.title = "导入书源"
+            tool_bar.title = getString(R.string.import_rss_source)
             initMenu()
             arguments?.let {
                 adapter = SourcesAdapter(requireContext())

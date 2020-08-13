@@ -743,4 +743,5 @@
     <string name="error">错误</string>
     <string name="show_brightness_view">显示亮度调节控件</string>
     <string name="language">语言</string>
+    <string name="import_rss_source">导入订阅源</string>
 </resources>
