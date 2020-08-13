@@ -43,6 +43,7 @@ class App : MultiDexApplication() {
         super.onCreate()
         INSTANCE = this
         CrashHandler().init(this)
+        LanguageUtils.setConfiguration(this)
         db = AppDatabase.createDatabase(INSTANCE)
         packageManager.getPackageInfo(packageName, 0)?.let {
             versionCode = it.versionCode
