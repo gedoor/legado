@@ -108,7 +108,7 @@ class App : MultiDexApplication() {
             }
             else -> {
                 val primary =
-                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_indigo_800))
+                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))
                 val accent =
                     getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
                 var background =
