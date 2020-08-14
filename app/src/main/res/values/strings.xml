@@ -92,7 +92,7 @@
         \u3000\u3000 This is an open source reading software newly developed by Kotlin, welcome to join us. Follow the WeChat Official Account [开源阅读]！
     </string>
     <string name="app_share_description">
-        Legado (YueDu 3.0) download link：\n https://play.google.com/store/apps/details?id=io.legado.play
+        Legado (YueDu 3.0) download link：\n https://play.google.com/store/apps/details?id=io.legado.play.release
     </string>
     <string name="version_name">Version %s</string>
     <string name="pt_auto_refresh">Auto-refresh</string>

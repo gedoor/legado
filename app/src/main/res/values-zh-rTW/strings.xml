@@ -91,7 +91,7 @@
         \u3000\u3000這是一款使用Kotlin全新開發的開源的閱讀軟體，歡迎您的加入。關注公眾號[legado-top]！
     </string>
     <string name="app_share_description">
-        閱讀3.0下載網址：\nhttps://play.google.com/store/apps/details?id=io.legado.play
+        閱讀3.0下載網址：\nhttps://play.google.com/store/apps/details?id=io.legado.play.release
     </string>
     <string name="version_name">Version %s</string>
     <string name="pt_auto_refresh">自動重新整理</string>
