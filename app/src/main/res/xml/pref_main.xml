@@ -78,14 +78,14 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="donate"
-            android:summary="您的支持是我更新的动力"
+            android:summary="@string/donate_summary"
             android:title="@string/donate"
             android:icon="@drawable/ic_cfg_jz"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="about"
-            android:summary="公众号[开源阅读软件]"
+            android:summary="@string/about_summary"
             android:title="@string/about"
             android:icon="@drawable/ic_cfg_about"
             app:iconSpaceReserved="false" />

@@ -744,4 +744,6 @@
     <string name="show_brightness_view">显示亮度调节控件</string>
     <string name="language">语言</string>
     <string name="import_rss_source">导入订阅源</string>
+    <string name="donate_summary">您的支持是我更新的动力</string>
+    <string name="about_summary">公众号[开源阅读软件]</string>
 </resources>
