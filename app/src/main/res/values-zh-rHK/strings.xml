@@ -91,7 +91,7 @@
         \u3000\u3000這是一款使用 Kotlin 全新開發的開源的閲讀應用程式，歡迎你的加入。關注公眾號[legado-top]！
     </string>
     <string name="app_share_description">
-        閲讀3.0下載地址：\nhttps://play.google.com/store/apps/details?id=io.legado.app
+        閲讀3.0下載地址：\nhttps://play.google.com/store/apps/details?id=io.legado.play
     </string>
     <string name="version_name">Version %s</string>
     <string name="pt_auto_refresh">自動刷新</string>
