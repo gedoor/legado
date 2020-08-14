@@ -60,12 +60,14 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
  */
 fun String.toStringArray(): Array<String> {
     var codePointIndex = 0
-    return Array(codePointCount(0, length)) {
-        substring(
-            codePointIndex,
-            offsetByCodePoints(codePointIndex, 1)
-                .apply { codePointIndex = this }
-        )
+    return try {
+        Array(codePointCount(0, length)) {
+            val start = codePointIndex
+            codePointIndex = offsetByCodePoints(start, 1)
+            substring(start, codePointIndex)
+        }
+    } catch (e: Exception) {
+        split("").toTypedArray()
     }
 }
 
