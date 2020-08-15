@@ -12,7 +12,10 @@ import io.legado.app.lib.theme.accentColor
 class ATESwitch(context: Context, attrs: AttributeSet) : SwitchCompat(context, attrs) {
 
     init {
-        ATH.setTint(this, context.accentColor)
+        if (!isInEditMode) {
+            ATH.setTint(this, context.accentColor)
+        }
+
     }
 
 }
