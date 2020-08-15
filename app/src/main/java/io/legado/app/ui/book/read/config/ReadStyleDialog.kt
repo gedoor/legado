@@ -74,12 +74,13 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun initView() {
-        val isLight = ColorUtils.isColorLight(requireContext().bottomBackground)
+        val bg = requireContext().bottomBackground
+        val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
         tv_page_anim.setTextColor(textColor)
         tv_bg_ts.setTextColor(textColor)
         tv_share_layout.setTextColor(textColor)
-        root_view.setBackgroundColor(requireContext().bottomBackground)
+        root_view.setBackgroundColor(bg)
         dsb_text_size.valueFormat = {
             (it + 5).toString()
         }

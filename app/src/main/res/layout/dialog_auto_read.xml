@@ -26,6 +26,7 @@
             android:padding="8dp">
 
             <TextView
+                android:id="@+id/tv_read_speed_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -33,6 +34,11 @@
                 android:text="@string/auto_page_speed"
                 android:textColor="@color/primaryText"
                 android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_read_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -68,6 +74,7 @@
             android:paddingBottom="7dp">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_catalog"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -77,6 +84,7 @@
                 tools:ignore="NestedWeights" />
 
             <TextView
+                android:id="@+id/tv_catalog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -104,6 +112,7 @@
             android:paddingBottom="7dp">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_main_menu"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -113,6 +122,7 @@
                 tools:ignore="NestedWeights" />
 
             <TextView
+                android:id="@+id/tv_main_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -140,6 +150,7 @@
             android:paddingBottom="7dp">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_auto_page_stop"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -149,6 +160,7 @@
                 tools:ignore="NestedWeights" />
 
             <TextView
+                android:id="@+id/tv_auto_page_stop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -176,6 +188,7 @@
             android:paddingBottom="7dp">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_setting"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -185,6 +198,7 @@
                 tools:ignore="NestedWeights" />
 
             <TextView
+                android:id="@+id/tv_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
