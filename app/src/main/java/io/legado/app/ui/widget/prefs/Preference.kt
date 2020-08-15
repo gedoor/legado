@@ -30,7 +30,7 @@ class Preference(context: Context, attrs: AttributeSet) :
     init {
         layoutResource = R.layout.view_preference
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.Preference)
-        isBottomBackground = typedArray.getBoolean(R.styleable.Preference_bottomBackground, false)
+        isBottomBackground = typedArray.getBoolean(R.styleable.Preference_isBottomBackground, false)
         typedArray.recycle()
     }
 
@@ -58,10 +58,10 @@ class Preference(context: Context, attrs: AttributeSet) :
                 tvSummary.isGone = summary.isNullOrEmpty()
             }
             if (isBottomBackground && !tvTitle.isInEditMode) {
-                val bgColor = context.bottomBackground
-                val pTextColor = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
+                val isLight = ColorUtils.isColorLight(context.bottomBackground)
+                val pTextColor = context.getPrimaryTextColor(isLight)
                 tvTitle.setTextColor(pTextColor)
-                val sTextColor = context.getSecondaryTextColor(ColorUtils.isColorLight(bgColor))
+                val sTextColor = context.getSecondaryTextColor(isLight)
                 tvSummary?.setTextColor(sTextColor)
             }
             val iconView = it.findViewById(R.id.preference_icon)

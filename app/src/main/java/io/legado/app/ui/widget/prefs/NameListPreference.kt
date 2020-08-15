@@ -19,7 +19,7 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
         layoutResource = R.layout.view_preference
         widgetLayoutResource = R.layout.item_fillet_text
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.Preference)
-        isBottomBackground = typedArray.getBoolean(R.styleable.Preference_bottomBackground, false)
+        isBottomBackground = typedArray.getBoolean(R.styleable.Preference_isBottomBackground, false)
         typedArray.recycle()
     }
 

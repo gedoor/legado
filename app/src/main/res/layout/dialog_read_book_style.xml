@@ -30,6 +30,7 @@
             android:text="@string/title"
             android:gravity="center"
             android:textSize="14sp"
+            app:isBottomBackground="true"
             app:radius="3dp" />
 
         <Space
@@ -47,6 +48,7 @@
             android:paddingBottom="4dp"
             android:gravity="center"
             android:textSize="14sp"
+            app:isBottomBackground="true"
             app:radius="3dp" />
 
         <Space
@@ -65,6 +67,7 @@
             android:text="@string/text_font"
             android:gravity="center"
             android:textSize="14sp"
+            app:isBottomBackground="true"
             app:radius="3dp" />
 
         <Space
@@ -83,6 +86,7 @@
             android:text="@string/text_indent"
             android:gravity="center"
             android:textSize="14sp"
+            app:isBottomBackground="true"
             app:radius="3dp" />
 
         <Space
@@ -100,6 +104,7 @@
             android:paddingBottom="4dp"
             android:gravity="center"
             android:textSize="14sp"
+            app:isBottomBackground="true"
             app:radius="3dp" />
 
         <Space
@@ -118,6 +123,7 @@
             android:text="@string/padding"
             android:gravity="center"
             android:textSize="14sp"
+            app:isBottomBackground="true"
             app:radius="3dp" />
 
         <Space
@@ -136,6 +142,7 @@
             android:text="@string/information"
             android:gravity="center"
             android:textSize="14sp"
+            app:isBottomBackground="true"
             app:radius="3dp" />
 
         <Space
@@ -152,6 +159,7 @@
         android:layout_marginTop="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        app:isBottomBackground="true"
         app:max="45"
         app:title="@string/text_size" />
 
@@ -161,6 +169,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        app:isBottomBackground="true"
         app:max="100"
         app:title="@string/text_letter_spacing" />
 
@@ -170,6 +179,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        app:isBottomBackground="true"
         app:max="20"
         app:title="@string/line_size" />
 
@@ -179,6 +189,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        app:isBottomBackground="true"
         app:max="20"
         app:title="@string/paragraph_size" />
 

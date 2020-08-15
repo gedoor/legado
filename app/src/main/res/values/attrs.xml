@@ -2,6 +2,7 @@
 <resources>
 
     <attr name="radius" format="dimension" />
+    <attr name="isBottomBackground" format="boolean" />
 
     <declare-styleable name="TitleBar">
         <attr name="title" />
@@ -70,6 +71,7 @@
     <declare-styleable name="DetailSeekBar">
         <attr name="title" format="string" />
         <attr name="max" format="integer" />
+        <attr name="isBottomBackground" />
     </declare-styleable>
 
     <declare-styleable name="SmoothCheckBox">
@@ -161,6 +163,7 @@
 
     <declare-styleable name="StrokeTextView">
         <attr name="radius" />
+        <attr name="isBottomBackground" />
     </declare-styleable>
 
     <declare-styleable name="BadgeView">
@@ -193,6 +196,6 @@
     </declare-styleable>
 
     <declare-styleable name="Preference">
-        <attr name="bottomBackground" format="boolean" />
+        <attr name="isBottomBackground" />
     </declare-styleable>
 </resources>
