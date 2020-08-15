@@ -323,7 +323,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_color="@color/primaryText"
             app:civ_border_width="1dp"
             app:text="@string/text" />
 
@@ -337,7 +337,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_color="@color/primaryText"
             app:civ_border_width="1dp"
             app:text="@string/text" />
 
@@ -351,7 +351,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_color="@color/primaryText"
             app:civ_border_width="1dp"
             app:text="@string/text" />
 
@@ -365,7 +365,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_color="@color/primaryText"
             app:civ_border_width="1dp"
             app:text="@string/text" />
 
@@ -379,7 +379,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/tv_text_default"
+            app:civ_border_color="@color/primaryText"
             app:civ_border_width="1dp"
             app:text="@string/text" />
 

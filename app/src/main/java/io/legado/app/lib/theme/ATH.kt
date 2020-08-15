@@ -197,11 +197,14 @@ object ATH {
 
     //**************************************************************Directly*************************************************************//
 
-    fun applyBottomNavigationColor(bottomBar: BottomNavigationView?) {
-        bottomBar?.apply {
-            setBackgroundColor(ThemeStore.bottomBackground(context))
+    fun applyBottomNavigationColor(bottomBar: BottomNavigationView) {
+        bottomBar.apply {
+            val bgColor = context.bottomBackground
+            setBackgroundColor(bgColor)
+            val textIsDark = ColorUtils.isColorLight(bgColor)
+            val textColor = context.getSecondaryTextColor(textIsDark)
             val colorStateList = Selector.colorBuild()
-                .setDefaultColor(context.getCompatColor(R.color.btn_bg_press_tp))
+                .setDefaultColor(textColor)
                 .setSelectedColor(ThemeStore.accentColor(bottom_navigation_view.context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList

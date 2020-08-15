@@ -25,7 +25,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 if (callback.durChapterIndex() == item.index) {
                     tv_chapter_name.setTextColor(context.accentColor)
                 } else {
-                    tv_chapter_name.setTextColor(context.getCompatColor(R.color.tv_text_default))
+                    tv_chapter_name.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
                 tv_chapter_name.text = item.title
                 if (!item.tag.isNullOrEmpty()) {

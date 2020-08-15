@@ -92,7 +92,7 @@
                     android:includeFontPadding="false"
                     android:singleLine="true"
                     android:text="@string/book_name"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/primaryText"
                     android:textSize="18sp"
                     tools:ignore="RtlHardcoded" />
 
@@ -361,7 +361,7 @@
                         android:paddingLeft="8dp"
                         android:paddingBottom="8dp"
                         android:text="@string/book_intro"
-                        android:textColor="@color/tv_text_secondary"
+                        android:textColor="@color/secondaryText"
                         android:textSize="14sp"
                         android:visibility="visible"
                         tools:ignore="RtlHardcoded,RtlSymmetry" />
@@ -389,7 +389,7 @@
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:text="@string/remove_from_bookshelf"
-                    android:textColor="@color/tv_text_default"
+                    android:textColor="@color/primaryText"
                     android:textSize="15sp" />
 
                 <io.legado.app.ui.widget.text.AccentBgTextView

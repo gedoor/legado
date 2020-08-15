@@ -27,7 +27,7 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:text="@string/app_name"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
         android:textSize="15sp"
         android:textStyle="bold"
         android:paddingLeft="12dp"

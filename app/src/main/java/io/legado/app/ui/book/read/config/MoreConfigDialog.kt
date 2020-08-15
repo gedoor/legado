@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.config
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -67,6 +68,7 @@ class MoreConfigDialog : DialogFragment() {
     class ReadPreferenceFragment : BasePreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+        @SuppressLint("RestrictedApi")
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_read)
         }

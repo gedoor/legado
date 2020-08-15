@@ -33,8 +33,8 @@ class AccentBgTextView(context: Context, attrs: AttributeSet?) :
         background = if (isInEditMode) {
             Selector.shapeBuild()
                 .setCornerRadius(radius)
-                .setDefaultBgColor(context.getCompatColor(R.color.colorAccent))
-                .setPressedBgColor(ColorUtils.darkenColor(context.getCompatColor(R.color.colorAccent)))
+                .setDefaultBgColor(context.getCompatColor(R.color.accent))
+                .setPressedBgColor(ColorUtils.darkenColor(context.getCompatColor(R.color.accent)))
                 .create()
         } else {
             Selector.shapeBuild()

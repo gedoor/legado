@@ -29,7 +29,7 @@
         android:padding="6dp"
         android:tooltipText="@string/edit"
         android:src="@drawable/ic_edit"
-        android:tint="@color/tv_text_default"
+        android:tint="@color/primaryText"
         tools:ignore="UnusedAttribute" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -41,7 +41,7 @@
         android:tooltipText="@string/more_menu"
         android:padding="6dp"
         android:src="@drawable/ic_clear_all"
-        android:tint="@color/tv_text_default"
+        android:tint="@color/primaryText"
         tools:ignore="UnusedAttribute" />
 
 </LinearLayout>

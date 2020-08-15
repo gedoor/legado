@@ -25,6 +25,7 @@ abstract class PageDelegate(protected val pageView: PageView) :
     )
     protected val context: Context = pageView.context
     private val defaultAnimationSpeed = 300
+    private val longPressTimeout = 1000
 
     //起始点
     protected var startX: Float = 0f
@@ -194,7 +195,20 @@ abstract class PageDelegate(protected val pageView: PageView) :
      */
     @CallSuper
     open fun onTouch(event: MotionEvent) {
-        if (isStarted) return
+        abort()
+        //获取点击位置
+        val x = event.x
+        val y = event.y
+        setTouchPoint(x, y, false)
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                setStartPoint(x, y, false)
+
+            }
+            MotionEvent.ACTION_MOVE -> {
+
+            }
+        }
         if (!detector.onTouchEvent(event)) {
             //GestureDetector.onFling小幅移动不会触发,所以要自己判断
             when (event.action) {

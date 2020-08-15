@@ -9,7 +9,8 @@ import androidx.annotation.MenuRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
-import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.*
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_select_action_bar.view.*
@@ -23,6 +24,12 @@ class SelectActionBar(context: Context, attrs: AttributeSet?) : FrameLayout(cont
         setBackgroundColor(context.bottomBackground)
         elevation = 10.dp.toFloat()
         View.inflate(context, R.layout.view_select_action_bar, this)
+        val textIsDark = ColorUtils.isColorLight(context.bottomBackground)
+        val primaryTextColor = context.getPrimaryTextColor(textIsDark)
+        val secondaryTextColor = context.getSecondaryTextColor(textIsDark)
+        cb_selected_all.setTextColor(primaryTextColor)
+        TintHelper.setTint(cb_selected_all, context.accentColor, !textIsDark)
+        iv_menu_more.setColorFilter(secondaryTextColor)
         cb_selected_all.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
                 callBack?.selectAll(isChecked)

@@ -1,16 +1,14 @@
 package io.legado.app.ui.book.read.config
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.view.get
-import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
@@ -31,7 +29,7 @@ import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
+class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
 
     val callBack get() = activity as? ReadBookActivity
 
@@ -53,6 +51,16 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         }
     }
 
+    override fun onAttach(context: Context) {
+        val bg = requireContext().bottomBackground
+        val contextThemeWrapper = if (ColorUtils.isColorLight(bg)) {
+            ContextThemeWrapper(requireContext(), R.style.AppTheme_Light)
+        } else {
+            ContextThemeWrapper(requireContext(), R.style.AppTheme_Dark)
+        }
+        super.onAttach(contextThemeWrapper)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -61,8 +69,7 @@ class ReadStyleDialog : DialogFragment(), FontSelectDialog.CallBack {
         return inflater.inflate(R.layout.dialog_read_book_style, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initView()
         initData()
         initViewEvent()

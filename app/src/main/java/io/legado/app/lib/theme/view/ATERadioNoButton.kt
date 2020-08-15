@@ -21,7 +21,7 @@ class ATERadioNoButton(context: Context, attrs: AttributeSet) :
             .setStrokeWidth(2.dp)
             .setCheckedBgColor(ThemeStore.accentColor(context))
             .setCheckedStrokeColor(ThemeStore.accentColor(context))
-            .setDefaultStrokeColor(context.getCompatColor(R.color.tv_text_default))
+            .setDefaultStrokeColor(context.getCompatColor(R.color.primaryText))
             .create()
     }
 }

@@ -32,7 +32,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:textColor="@color/tv_text_secondary"
+            android:textColor="@color/secondaryText"
             android:textSize="13sp"
             android:focusable="true"
             tools:text="/" />

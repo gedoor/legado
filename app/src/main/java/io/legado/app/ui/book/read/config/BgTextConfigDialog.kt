@@ -91,7 +91,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         adapter.addHeaderView(headerView)
         headerView.tv_name.text = getString(R.string.select_image)
         headerView.iv_bg.setImageResource(R.drawable.ic_image)
-        headerView.iv_bg.setColorFilter(getCompatColor(R.color.tv_text_default))
+        headerView.iv_bg.setColorFilter(getCompatColor(R.color.primaryText))
         headerView.onClick { selectImage() }
         requireContext().assets.list("bg/")?.let {
             adapter.setItems(it.toList())

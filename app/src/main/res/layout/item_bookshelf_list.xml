@@ -63,7 +63,7 @@
         android:paddingLeft="2dp"
         android:singleLine="true"
         android:text="@string/book_name"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_author"
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"

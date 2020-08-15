@@ -92,12 +92,8 @@ class App : MultiDexApplication() {
                     background = getCompatColor(R.color.md_grey_900)
                     putPrefInt(PreferKey.cNBackground, background)
                 }
-                var bBackground =
+                val bBackground =
                     getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
-                if (ColorUtils.isColorLight(bBackground)) {
-                    bBackground = getCompatColor(R.color.md_grey_850)
-                    putPrefInt(PreferKey.cNBBackground, bBackground)
-                }
                 ThemeStore.editTheme(this)
                     .coloredNavigationBar(true)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))
@@ -117,12 +113,8 @@ class App : MultiDexApplication() {
                     background = getCompatColor(R.color.md_grey_100)
                     putPrefInt(PreferKey.cBackground, background)
                 }
-                var bBackground =
+                val bBackground =
                     getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
-                if (!ColorUtils.isColorLight(bBackground)) {
-                    bBackground = getCompatColor(R.color.md_grey_200)
-                    putPrefInt(PreferKey.cBBackground, bBackground)
-                }
                 ThemeStore.editTheme(this)
                     .coloredNavigationBar(true)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))

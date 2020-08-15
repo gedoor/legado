@@ -15,8 +15,10 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_chapter_list.*
@@ -40,6 +42,12 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.chapterCallBack = this
+        val bbg = bottomBackground
+        val btc = requireContext().getPrimaryTextColor(ColorUtils.isColorLight(bbg))
+        ll_chapter_base_info.setBackgroundColor(bbg)
+        tv_current_chapter_info.setTextColor(btc)
+        iv_chapter_top.setColorFilter(btc)
+        iv_chapter_bottom.setColorFilter(btc)
         initRecyclerView()
         initView()
         initBook()
@@ -54,7 +62,6 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initView() {
-        ll_chapter_base_info.setBackgroundColor(bottomBackground)
         iv_chapter_top.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
         iv_chapter_bottom.onClick {
             if (adapter.itemCount > 0) {

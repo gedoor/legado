@@ -19,7 +19,7 @@
         android:paddingLeft="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/accent"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     <View

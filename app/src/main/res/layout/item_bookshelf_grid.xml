@@ -68,7 +68,7 @@
         android:lines="2"
         android:ellipsize="end"
         android:text="@string/book_name"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
         android:textSize="12sp"
         app:layout_constraintLeft_toLeftOf="@+id/bg_cover"
         app:layout_constraintRight_toRightOf="@+id/bg_cover"

@@ -38,7 +38,7 @@
         android:layout_height="36dp"
         android:padding="6dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="@color/tv_text_default"
+        android:tint="@color/primaryText"
         android:src="@drawable/ic_play_24dp"
         android:contentDescription="@string/start"
         app:layout_constraintTop_toTopOf="parent"

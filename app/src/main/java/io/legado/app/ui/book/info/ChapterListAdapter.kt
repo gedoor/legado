@@ -19,7 +19,7 @@ class ChapterListAdapter(context: Context, var callBack: CallBack) :
             if (item.index == callBack.durChapterIndex()) {
                 tv_chapter_name.setTextColor(context.accentColor)
             } else {
-                tv_chapter_name.textColorResource = R.color.tv_text_secondary
+                tv_chapter_name.textColorResource = R.color.secondaryText
             }
 
         }

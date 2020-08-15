@@ -47,7 +47,7 @@
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
         app:civ_border_width="2dp"
-        app:civ_border_color="@color/colorAccent"
+        app:civ_border_color="@color/accent"
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -13,7 +13,7 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:text="@string/app_name"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tv_pub_date"

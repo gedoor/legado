@@ -12,7 +12,7 @@
         android:id="@+id/vw_title_line"
         android:layout_width="6dp"
         android:layout_height="0dp"
-        android:background="@color/colorAccent"
+        android:background="@color/accent"
         app:layout_constraintTop_toTopOf="@+id/tv_title"
         app:layout_constraintBottom_toBottomOf="@+id/tv_title"
         app:layout_constraintLeft_toLeftOf="@id/iv_book" />

@@ -31,7 +31,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:text="@string/auto_page_speed"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/primaryText"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -73,7 +73,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/chapter_list"
                 android:src="@drawable/ic_toc"
-                app:tint="@color/tv_text_default"
+                app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
 
             <TextView
@@ -83,7 +83,7 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/chapter_list"
                 android:maxLines="1"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/primaryText"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -109,7 +109,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/main_menu"
                 android:src="@drawable/ic_menu"
-                app:tint="@color/tv_text_default"
+                app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
 
             <TextView
@@ -119,7 +119,7 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/main_menu"
                 android:maxLines="1"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/primaryText"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -145,7 +145,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/stop"
                 android:src="@drawable/ic_auto_page_stop"
-                app:tint="@color/tv_text_default"
+                app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
 
             <TextView
@@ -155,7 +155,7 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/stop"
                 android:maxLines="1"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/primaryText"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -181,7 +181,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/aloud_config"
                 android:src="@drawable/ic_settings"
-                app:tint="@color/tv_text_default"
+                app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
 
             <TextView
@@ -191,7 +191,7 @@
                 android:layout_marginTop="3dp"
                 android:text="@string/setting"
                 android:maxLines="1"
-                android:textColor="@color/tv_text_default"
+                android:textColor="@color/primaryText"
                 android:textSize="12sp" />
         </LinearLayout>
 

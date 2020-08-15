@@ -18,7 +18,7 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)
     }
-    val defaultTextColor = context.getCompatColor(R.color.tv_text_default)
+    val defaultTextColor = context.getCompatColor(R.color.primaryText)
     val tintColor = UIUtils.getMenuColor(context, theme)
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->
@@ -36,7 +36,7 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
 fun Menu.applyOpenTint(context: Context) {
     //展开菜单显示图标
     if (this.javaClass.simpleName.equals("MenuBuilder", ignoreCase = true)) {
-        val defaultTextColor = context.getCompatColor(R.color.tv_text_default)
+        val defaultTextColor = context.getCompatColor(R.color.primaryText)
         try {
             var method: Method =
                 this.javaClass.getDeclaredMethod("setOptionalIconsVisible", java.lang.Boolean.TYPE)

@@ -58,5 +58,5 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:text="@string/ok"
-        android:textColor="@color/tv_text_default" />
+        android:textColor="@color/primaryText" />
 </LinearLayout>

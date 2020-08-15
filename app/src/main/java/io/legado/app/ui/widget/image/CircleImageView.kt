@@ -117,7 +117,7 @@ class CircleImageView(context: Context, attrs: AttributeSet) :
 
     private var text: String? = null
 
-    private var textColor = context.getCompatColor(R.color.tv_text_default)
+    private var textColor = context.getCompatColor(R.color.primaryText)
 
     init {
         super.setScaleType(SCALE_TYPE)
@@ -140,7 +140,7 @@ class CircleImageView(context: Context, attrs: AttributeSet) :
         if (a.hasValue(R.styleable.CircleImageView_textColor)) {
             textColor = a.getColor(
                 R.styleable.CircleImageView_textColor,
-                context.getCompatColor(R.color.tv_text_default)
+                context.getCompatColor(R.color.primaryText)
             )
         }
         a.recycle()

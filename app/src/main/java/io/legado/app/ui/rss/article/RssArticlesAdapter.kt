@@ -63,7 +63,7 @@ class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack
             if (item.read) {
                 tv_title.textColorResource = R.color.tv_text_summary
             } else {
-                tv_title.textColorResource = R.color.tv_text_default
+                tv_title.textColorResource = R.color.primaryText
             }
         }
     }

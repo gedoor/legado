@@ -25,7 +25,7 @@
         android:gravity="center"
         android:singleLine="true"
         android:text="@string/book_source"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
         android:textSize="16sp"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
 

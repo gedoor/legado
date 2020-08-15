@@ -21,7 +21,7 @@
         android:contentDescription="@string/reduce"
         android:src="@drawable/ic_remove"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:tint="@color/tv_text_default" />
+        android:tint="@color/primaryText" />
 
     <io.legado.app.lib.theme.view.ATESeekBar
         android:id="@+id/seek_bar"
@@ -38,7 +38,7 @@
         android:contentDescription="@string/plus"
         android:src="@drawable/ic_add"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:tint="@color/tv_text_default" />
+        android:tint="@color/primaryText" />
 
     <TextView
         android:id="@+id/tv_seek_value"

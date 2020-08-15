@@ -24,7 +24,7 @@
         android:padding="3dp"
         android:textSize="15sp"
         android:text="@string/book_name"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
         android:singleLine="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/tv_group_s"

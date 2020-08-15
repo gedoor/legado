@@ -31,7 +31,7 @@ object UIUtils {
         theme: Theme = Theme.Auto,
         requiresOverflow: Boolean = false
     ): Int {
-        val defaultTextColor = context.getCompatColor(R.color.tv_text_default)
+        val defaultTextColor = context.getCompatColor(R.color.primaryText)
         if (requiresOverflow)
             return defaultTextColor
         val primaryTextColor = context.primaryTextColor

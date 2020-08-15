@@ -48,16 +48,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
             }
         }
-        findPreference<ColorPreference>(PreferKey.cBBackground)?.let {
-            it.onSaveColor = { color ->
-                if (!ColorUtils.isColorLight(color)) {
-                    toast(R.string.day_bottom_bar_too_dark)
-                    true
-                } else {
-                    false
-                }
-            }
-        }
         findPreference<ColorPreference>(PreferKey.cNBackground)?.let {
             it.onSaveColor = { color ->
                 if (ColorUtils.isColorLight(color)) {
@@ -68,21 +58,11 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
             }
         }
-        findPreference<ColorPreference>(PreferKey.cNBBackground)?.let {
-            it.onSaveColor = { color ->
-                if (ColorUtils.isColorLight(color)) {
-                    toast(R.string.night_bottom_bar_too_light)
-                    true
-                } else {
-                    false
-                }
-            }
-        }
         findPreference<ColorPreference>(PreferKey.cAccent)?.let {
             it.onSaveColor = { color ->
                 val background =
                     getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
-                val textColor = getCompatColor(R.color.tv_text_default)
+                val textColor = getCompatColor(R.color.primaryText)
                 when {
                     ColorUtils.getColorDifference(color, background) <= 60 -> {
                         toast(R.string.accent_background_diff)
@@ -100,7 +80,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             it.onSaveColor = { color ->
                 val background =
                     getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
-                val textColor = getCompatColor(R.color.tv_text_default)
+                val textColor = getCompatColor(R.color.primaryText)
                 when {
                     ColorUtils.getColorDifference(color, background) <= 60 -> {
                         toast(R.string.accent_background_diff)
