@@ -36,12 +36,12 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun export(doc: DocumentFile, book: Book) {
-        DocumentUtils.createFileIfNotExist(doc, "${book.name}.txt")
+        DocumentUtils.createFileIfNotExist(doc, "${book.name} 作者:${book.author}.txt")
             ?.writeText(context, getAllContents(book))
     }
 
     private fun export(file: File, book: Book) {
-        FileUtils.createFileIfNotExist(file, "${book.name}.txt")
+        FileUtils.createFileIfNotExist(file, "${book.name} 作者:${book.author}.txt")
             .writeText(getAllContents(book))
     }
 
