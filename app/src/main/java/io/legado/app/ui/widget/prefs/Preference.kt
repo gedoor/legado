@@ -13,6 +13,10 @@ import androidx.core.view.isVisible
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.lib.theme.getSecondaryTextColor
+import io.legado.app.utils.ColorUtils
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 import kotlin.math.roundToInt
@@ -21,10 +25,13 @@ class Preference(context: Context, attrs: AttributeSet) :
     androidx.preference.Preference(context, attrs) {
 
     var onLongClick: (() -> Unit)? = null
+    private val isBottomBackground: Boolean
 
     init {
-        // isPersistent = true
         layoutResource = R.layout.view_preference
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.Preference)
+        isBottomBackground = typedArray.getBoolean(R.styleable.Preference_bottomBackground, false)
+        typedArray.recycle()
     }
 
     companion object {
@@ -35,30 +42,33 @@ class Preference(context: Context, attrs: AttributeSet) :
             icon: Drawable?,
             title: CharSequence?,
             summary: CharSequence?,
-            weightLayoutRes: Int?,
-            viewId: Int?,
+            weightLayoutRes: Int? = null,
+            viewId: Int? = null,
             weightWidth: Int = 0,
-            weightHeight: Int = 0
+            weightHeight: Int = 0,
+            isBottomBackground: Boolean = false
         ): T? {
             if (it == null) return null
-            val view = it.findViewById(R.id.preference_title)
-            if (view is TextView) {
-                view.text = title
-                view.isVisible = title != null && title.isNotEmpty()
-
-                val tvSummary = it.findViewById(R.id.preference_desc)
-                if (tvSummary is TextView) {
-                    tvSummary.text = summary
-                    tvSummary.isGone = summary.isNullOrEmpty()
-                }
-
-                val iconView = it.findViewById(R.id.preference_icon)
-                if (iconView is ImageView) {
-                    iconView.isVisible = icon != null && icon.isVisible
-                    iconView.setImageDrawable(icon)
-                    iconView.setColorFilter(context.accentColor)
-                }
-
+            val tvTitle = it.findViewById(R.id.preference_title) as TextView
+            tvTitle.text = title
+            tvTitle.isVisible = title != null && title.isNotEmpty()
+            val tvSummary = it.findViewById(R.id.preference_desc) as? TextView
+            tvSummary?.let {
+                tvSummary.text = summary
+                tvSummary.isGone = summary.isNullOrEmpty()
+            }
+            if (isBottomBackground && !tvTitle.isInEditMode) {
+                val bgColor = context.bottomBackground
+                val pTextColor = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
+                tvTitle.setTextColor(pTextColor)
+                val sTextColor = context.getSecondaryTextColor(ColorUtils.isColorLight(bgColor))
+                tvSummary?.setTextColor(sTextColor)
+            }
+            val iconView = it.findViewById(R.id.preference_icon)
+            if (iconView is ImageView) {
+                iconView.isVisible = icon != null && icon.isVisible
+                iconView.setImageDrawable(icon)
+                iconView.setColorFilter(context.accentColor)
             }
 
             if (weightLayoutRes != null && weightLayoutRes != 0 && viewId != null && viewId != 0) {
@@ -98,7 +108,14 @@ class Preference(context: Context, attrs: AttributeSet) :
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
-        bindView<View>(context, holder, icon, title, summary, null, null)
+        bindView<View>(
+            context,
+            holder,
+            icon,
+            title,
+            summary,
+            isBottomBackground = isBottomBackground
+        )
         super.onBindViewHolder(holder)
         holder?.itemView?.onLongClick {
             onLongClick?.invoke()
