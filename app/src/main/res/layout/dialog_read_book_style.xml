@@ -228,7 +228,8 @@
             android:button="@null"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@string/page_anim_cover" />
+            android:text="@string/page_anim_cover"
+            app:isBottomBackground="true" />
 
         <io.legado.app.lib.theme.view.ATERadioNoButton
             android:id="@+id/rb_anim1"
@@ -240,7 +241,8 @@
             android:button="@null"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@string/page_anim_slide" />
+            android:text="@string/page_anim_slide"
+            app:isBottomBackground="true" />
 
         <io.legado.app.lib.theme.view.ATERadioNoButton
             android:id="@+id/rb_simulation_anim"
@@ -252,7 +254,8 @@
             android:button="@null"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@string/page_anim_simulation" />
+            android:text="@string/page_anim_simulation"
+            app:isBottomBackground="true" />
 
         <io.legado.app.lib.theme.view.ATERadioNoButton
             android:id="@+id/rb_scroll_anim"
@@ -264,7 +267,8 @@
             android:button="@null"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@string/page_anim_scroll" />
+            android:text="@string/page_anim_scroll"
+            app:isBottomBackground="true" />
 
         <io.legado.app.lib.theme.view.ATERadioNoButton
             android:id="@+id/rb_no_anim"
@@ -276,7 +280,8 @@
             android:button="@null"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@string/page_anim_none" />
+            android:text="@string/page_anim_none"
+            app:isBottomBackground="true" />
 
     </RadioGroup>
 

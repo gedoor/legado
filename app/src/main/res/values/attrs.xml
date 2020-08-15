@@ -195,6 +195,10 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="ATERadioNoButton">
+        <attr name="isBottomBackground" />
+    </declare-styleable>
+
     <declare-styleable name="Preference">
         <attr name="isBottomBackground" />
     </declare-styleable>

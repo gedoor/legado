@@ -1,11 +1,13 @@
 package io.legado.app.ui.book.read.config
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.get
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -17,6 +19,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.Help
 import io.legado.app.ui.book.read.ReadBookActivity
@@ -51,16 +54,6 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         }
     }
 
-    override fun onAttach(context: Context) {
-        val bg = requireContext().bottomBackground
-        val contextThemeWrapper = if (ColorUtils.isColorLight(bg)) {
-            ContextThemeWrapper(requireContext(), R.style.AppTheme_Light)
-        } else {
-            ContextThemeWrapper(requireContext(), R.style.AppTheme_Dark)
-        }
-        super.onAttach(contextThemeWrapper)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -81,6 +74,11 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun initView() {
+        val isLight = ColorUtils.isColorLight(requireContext().bottomBackground)
+        val textColor = requireContext().getPrimaryTextColor(isLight)
+        tv_page_anim.setTextColor(textColor)
+        tv_bg_ts.setTextColor(textColor)
+        tv_share_layout.setTextColor(textColor)
         root_view.setBackgroundColor(requireContext().bottomBackground)
         dsb_text_size.valueFormat = {
             (it + 5).toString()
