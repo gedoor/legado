@@ -52,7 +52,7 @@ object HttpHelper {
     fun getBytes(url: String, referrer: String): ByteArray? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             val headers =
-                mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent), Pair("Referrer", referrer))
+                mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent), Pair("Referer", referrer))
             return getByteRetrofit(baseUrl)
                 .create(HttpGetApi::class.java)
                 .getMapByte(url, mapOf(), headers)
