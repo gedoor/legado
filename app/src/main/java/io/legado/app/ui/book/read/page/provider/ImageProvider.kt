@@ -49,7 +49,7 @@ object ImageProvider {
                     out.close()
                 }
             } else if (!onUi) {
-                HttpHelper.getBytes(src, src)?.let {
+                HttpHelper.getBytes(src, baseUrl)?.let {
                     FileUtils.createFileIfNotExist(vFile.absolutePath).writeBytes(it)
                 }
             }
