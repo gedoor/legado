@@ -26,6 +26,7 @@ object LanguageUtils {
             configuration.setLocale(targetLocale)
             context.createConfigurationContext(configuration)
         } else {
+            setConfigurationOld(context)
             context
         }
     }
