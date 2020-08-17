@@ -1,0 +1,39 @@
+#更新fork
+name: update fork
+
+on: 
+  release:
+    types: [published]
+  push:
+    tags:
+    - 'v*'
+  schedule:
+    - cron: '50 3 * * *' #设置定时任务
+  watch:
+    types: [started]
+#修改[用户名]，设置token并命名为GITHUB_TOKEN，具体方法百度
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install git
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install git
+    - name: Download Repository
+      run: |
+        git clone https://github.com/[用户名]/legado.git /opt/legado
+    - name: Update fork
+      run: |
+        cd /opt/legado
+        git remote -v
+        git remote rm origin
+        git remote add origin https://[用户名]:${{ secrets.GITHUB_TOKEN }}@github.com/[用户名]/legado.git
+        git remote add upstream https://github.com/gedoor/legado.git
+        git remote -v
+        git fetch upstream
+        git checkout master
+        git merge upstream/master
+        git push origin master
