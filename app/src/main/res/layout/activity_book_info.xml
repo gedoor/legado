@@ -132,7 +132,8 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:paddingTop="3dp"
-                        android:paddingBottom="3dp">
+                        android:paddingBottom="3dp"
+                        tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:layout_width="18sp"
@@ -186,10 +187,10 @@
                             android:includeFontPadding="false"
                             android:paddingRight="6dp"
                             android:singleLine="true"
-                            android:text="@string/origin_format"
                             android:textColor="@color/tv_text_summary"
                             android:textSize="13sp"
-                            tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
+                            tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                            tools:text="@string/origin_format" />
 
                         <io.legado.app.ui.widget.text.AccentBgTextView
                             android:id="@+id/tv_change_source"
@@ -198,8 +199,8 @@
                             android:layout_marginStart="8dp"
                             android:paddingLeft="5dp"
                             android:paddingRight="5dp"
-                            android:text="@string/change_origin"
                             android:textSize="13sp"
+                            android:text="@string/change_origin"
                             app:radius="2dp" />
 
                     </LinearLayout>
@@ -210,16 +211,17 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:paddingTop="3dp"
-                        android:paddingBottom="3dp">
+                        android:paddingBottom="3dp"
+                        tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:id="@+id/ic_book_last"
                             android:layout_width="18sp"
                             android:layout_height="18sp"
-                            android:contentDescription="@string/read_dur_progress"
                             android:paddingRight="2dp"
                             android:src="@drawable/ic_book_last"
                             app:tint="@color/tv_text_summary"
+                            android:contentDescription="@string/read_dur_progress"
                             tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                         <TextView
@@ -231,10 +233,10 @@
                             android:includeFontPadding="false"
                             android:paddingRight="6dp"
                             android:singleLine="true"
-                            android:text="@string/read_dur_progress"
                             android:textColor="@color/tv_text_summary"
                             android:textSize="13sp"
-                            tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
+                            tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                            tools:text="@string/read_dur_progress" />
 
                     </LinearLayout>
 
@@ -249,10 +251,10 @@
                         <ImageView
                             android:layout_width="18sp"
                             android:layout_height="18sp"
-                            android:contentDescription="@string/read_dur_progress"
                             android:paddingRight="2dp"
                             android:src="@drawable/ic_groups"
                             app:tint="@color/tv_text_summary"
+                            android:contentDescription="@string/read_dur_progress"
                             tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                         <TextView
@@ -264,10 +266,10 @@
                             android:includeFontPadding="false"
                             android:paddingRight="6dp"
                             android:singleLine="true"
-                            android:text="@string/group_s"
                             android:textColor="@color/tv_text_summary"
                             android:textSize="13sp"
-                            tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
+                            tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                            tools:text="@string/group_s" />
 
                         <io.legado.app.ui.widget.text.AccentBgTextView
                             android:id="@+id/tv_change_group"
@@ -308,10 +310,10 @@
                             android:includeFontPadding="false"
                             android:paddingRight="6dp"
                             android:singleLine="true"
-                            android:text="@string/toc_s"
                             android:textColor="@color/tv_text_summary"
                             android:textSize="13sp"
-                            tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
+                            tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                            tools:text="@string/toc_s" />
 
                         <io.legado.app.ui.widget.text.AccentBgTextView
                             android:id="@+id/tv_toc_view"

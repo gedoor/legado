@@ -27,7 +27,8 @@
         android:layout_height="match_parent"
         android:background="#50000000"
         android:orientation="horizontal"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        tools:ignore="DisableBaselineAlignment">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -112,7 +113,8 @@
                     android:layout_gravity="center"
                     android:orientation="horizontal"
                     android:paddingTop="3dp"
-                    android:paddingBottom="3dp">
+                    android:paddingBottom="3dp"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:layout_width="18sp"
@@ -209,10 +211,10 @@
                                 android:includeFontPadding="false"
                                 android:paddingRight="6dp"
                                 android:singleLine="true"
-                                android:text="@string/origin_format"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                tools:text="@string/origin_format" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
                                 android:id="@+id/tv_change_source"
@@ -233,7 +235,8 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:paddingTop="3dp"
-                            android:paddingBottom="3dp">
+                            android:paddingBottom="3dp"
+                            tools:ignore="UseCompoundDrawables">
 
                             <ImageView
                                 android:id="@+id/ic_book_last"
@@ -254,10 +257,10 @@
                                 android:includeFontPadding="false"
                                 android:paddingRight="6dp"
                                 android:singleLine="true"
-                                android:text="@string/read_dur_progress"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                tools:text="@string/read_dur_progress" />
 
                         </LinearLayout>
 
@@ -287,10 +290,10 @@
                                 android:includeFontPadding="false"
                                 android:paddingRight="6dp"
                                 android:singleLine="true"
-                                android:text="@string/group_s"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                tools:text="@string/group_s" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
                                 android:id="@+id/tv_change_group"
@@ -331,10 +334,10 @@
                                 android:includeFontPadding="false"
                                 android:paddingRight="6dp"
                                 android:singleLine="true"
-                                android:text="@string/toc_s"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                tools:text="@string/toc_s" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
                                 android:id="@+id/tv_toc_view"

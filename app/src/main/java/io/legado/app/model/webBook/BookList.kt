@@ -10,6 +10,7 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.StringUtils.wordCountFormat
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
@@ -152,7 +153,7 @@ object BookList {
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}")
                 if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取字数")
-                searchBook.wordCount = analyzeRule.getString(wordCount)
+                searchBook.wordCount = wordCountFormat(analyzeRule.getString(wordCount))
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.wordCount}")
                 if (!scope.isActive) throw CancellationException()
                 Debug.log(bookSource.bookSourceUrl, "┌获取最新章节")
@@ -212,7 +213,7 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}", log)
             if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取字数", log)
-            searchBook.wordCount = analyzeRule.getString(ruleWordCount)
+            searchBook.wordCount = wordCountFormat(analyzeRule.getString(ruleWordCount))
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.wordCount}", log)
             if (!scope.isActive) throw CancellationException()
             Debug.log(bookSource.bookSourceUrl, "┌获取最新章节", log)

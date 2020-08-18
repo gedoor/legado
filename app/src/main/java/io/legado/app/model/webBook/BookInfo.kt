@@ -9,6 +9,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.StringUtils.wordCountFormat
 import io.legado.app.utils.htmlFormat
 
 object BookInfo {
@@ -51,7 +52,7 @@ object BookInfo {
             }
         Debug.log(bookSource.bookSourceUrl, "└${book.kind}")
         Debug.log(bookSource.bookSourceUrl, "┌获取字数")
-        analyzeRule.getString(infoRule.wordCount).let {
+        wordCountFormat(analyzeRule.getString(infoRule.wordCount)).let {
             if (it.isNotEmpty()) book.wordCount = it
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.wordCount}")
