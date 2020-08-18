@@ -214,7 +214,7 @@ object StringUtils {
 
     fun stringToInt(str: String?): Int {
         if (str != null) {
-            val num = fullToHalf(str).replace("\\s".toRegex(), "")
+            val num = fullToHalf(str).replace("\\s+".toRegex(), "")
             return try {
                 Integer.parseInt(num)
             } catch (e: Exception) {
@@ -226,15 +226,33 @@ object StringUtils {
     }
 
     fun isContainNumber(company: String): Boolean {
-        val p = Pattern.compile("[0-9]")
+        val p = Pattern.compile("[0-9]+")
         val m = p.matcher(company)
         return m.find()
     }
 
     fun isNumeric(str: String): Boolean {
-        val pattern = Pattern.compile("[0-9]*")
+        val pattern = Pattern.compile("[0-9]+")
         val isNum = pattern.matcher(str)
         return isNum.matches()
+    }
+
+    fun wordCountFormat(wc: String?): String {
+        if (wc == null) return ""
+        var wordsS = ""
+        if (isNumeric(wc)) {
+            val words: Int = wc.toInt()
+            if (words > 0) {
+                wordsS = words.toString() + "字"
+                if (words > 10000) {
+                    val df = DecimalFormat("#.#")
+                    wordsS = df.format(words * 1.0f / 10000f.toDouble()) + "万字"
+                }
+            }
+        } else {
+            wordsS = wc
+        }
+        return wordsS
     }
 
     // 移除字符串首尾空字符的高效方法(利用ASCII值判断,包括全角空格)
