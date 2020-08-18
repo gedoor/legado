@@ -163,6 +163,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 ReadBook.book!!,
                 textPage.chapterIndex,
                 textChar.charData,
+                textChar.charData,
                 true
             )?.let {
                 canvas.drawBitmap(it, null, rectF, null)
