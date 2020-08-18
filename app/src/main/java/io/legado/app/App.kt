@@ -63,7 +63,8 @@ class App : MultiDexApplication() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         when (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES, Configuration.UI_MODE_NIGHT_NO -> applyDayNight()
+            Configuration.UI_MODE_NIGHT_YES,
+            Configuration.UI_MODE_NIGHT_NO -> applyDayNight()
         }
     }
 
