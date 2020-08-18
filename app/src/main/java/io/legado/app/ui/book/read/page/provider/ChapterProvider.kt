@@ -122,7 +122,7 @@ object ChapterProvider {
         imageStyle: String?
     ): Float {
         var durY = y
-        ImageProvider.getImage(book, chapter.index, src)?.let {
+        ImageProvider.getImage(book, chapter.index, src, chapter.url)?.let {
             if (durY > visibleHeight) {
                 textPages.last().height = durY
                 textPages.add(TextPage())
