@@ -31,7 +31,7 @@ object ImageProvider {
         indexCache[src] = bitmap
     }
 
-    fun getImage(book: Book, chapterIndex: Int, src: String, baseUrl: String, onUi: Boolean = false): Bitmap? {
+    fun getImage(book: Book, chapterIndex: Int, src: String, referrer: String?, onUi: Boolean = false): Bitmap? {
         getCache(chapterIndex, src)?.let {
             return it
         }
@@ -48,8 +48,8 @@ object ImageProvider {
                     out.flush()
                     out.close()
                 }
-            } else if (!onUi) {
-                HttpHelper.getBytes(src, baseUrl)?.let {
+            } else if (!onUi && referrer != null) {
+                HttpHelper.getBytes(src, referrer)?.let {
                     FileUtils.createFileIfNotExist(vFile.absolutePath).writeBytes(it)
                 }
             }

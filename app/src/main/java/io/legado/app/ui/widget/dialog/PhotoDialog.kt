@@ -56,7 +56,7 @@ class PhotoDialog : BaseDialogFragment() {
             val src = it.getString("src")
             ReadBook.book?.let { book ->
                 src?.let {
-                    ImageProvider.getImage(book, chapterIndex, src, src)?.let { bitmap ->
+                    ImageProvider.getImage(book, chapterIndex, src, null)?.let { bitmap ->
                         photo_view.setImageBitmap(bitmap)
                     }
                 }
