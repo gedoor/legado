@@ -12,6 +12,7 @@ on:
   watch:
     types: [started]
 #修改[用户名]，设置token并命名为GITHUB_TOKEN，具体方法百度
+#设置secrets，并命名为EMAIL，内容为邮箱地址，设置方法百度，不介意邮箱泄露，可以直接将${{ secrets.EMAIL }}替换为邮箱
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,6 +24,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get -y install git
+    - name: Set env
+      run: |
+        git config --global user.email "${{ secrets.EMAIL }}"
+        git config --global user.name "[用户名]"
     - name: Download Repository
       run: |
         git clone https://github.com/[用户名]/legado.git /opt/legado
