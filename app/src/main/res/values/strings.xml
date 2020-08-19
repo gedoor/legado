@@ -321,7 +321,7 @@
     <string name="book_info_edit">Edit book infomation</string>
     <string name="ps_default_read">Use Bookshelf as start page</string>
     <string name="pt_default_read">Auto jump to Recent list</string>
-    <string name="use_to">Replacement object. Book name or source name is available</string>
+    <string name="use_to">Replacement object. Book name or source url is available</string>
     <string name="menu_action_group">Groups</string>
     <string name="download_path">Cache path</string>
     <string name="cleanCache">Clear cache</string>

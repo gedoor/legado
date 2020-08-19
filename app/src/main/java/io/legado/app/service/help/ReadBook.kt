@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
@@ -35,6 +36,7 @@ object ReadBook {
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
+    var bookSource: BookSource? = null
     var webBook: WebBook? = null
     var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
@@ -54,14 +56,16 @@ object ReadBook {
     }
 
     fun upWebBook(book: Book) {
-        webBook = if (book.origin == BookType.local) {
-            null
+        if (book.origin == BookType.local) {
+            bookSource = null
+            webBook = null
         } else {
-            val bookSource = App.db.bookSourceDao().getBookSource(book.origin)
-            if (bookSource != null) {
-                WebBook(bookSource)
-            } else {
-                null
+            App.db.bookSourceDao().getBookSource(book.origin)?.let {
+                bookSource = it
+                webBook = WebBook(it)
+            } ?: let {
+                bookSource = null
+                webBook = null
             }
         }
     }

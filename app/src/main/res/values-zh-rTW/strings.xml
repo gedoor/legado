@@ -320,7 +320,7 @@
     <string name="book_info_edit">書籍訊息編輯</string>
     <string name="ps_default_read">預設打開書架</string>
     <string name="pt_default_read">自動跳轉最近閱讀</string>
-    <string name="use_to">取代範圍，選填書名或者源名</string>
+    <string name="use_to">取代範圍，選填書名或者書源url</string>
     <string name="menu_action_group">分組</string>
     <string name="download_path">內容快取路徑</string>
     <string name="cleanCache">清理快取</string>
