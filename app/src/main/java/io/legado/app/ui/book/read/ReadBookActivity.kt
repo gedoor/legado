@@ -470,7 +470,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onMenuItemSelected(itemId: Int): Boolean {
         when (itemId) {
             R.id.menu_replace -> {
-                ReplaceEditDialog.show(supportFragmentManager, pattern = selectedText)
+                val scopes = arrayListOf<String>()
+                ReadBook.book?.name?.let {
+                    scopes.add(it)
+                }
+                ReadBook.bookSource?.bookSourceUrl?.let {
+                    scopes.add(it)
+                }
+                ReplaceEditDialog.show(
+                    supportFragmentManager,
+                    pattern = selectedText,
+                    scope = scopes.joinToString { ";" }
+                )
                 return true
             }
         }
