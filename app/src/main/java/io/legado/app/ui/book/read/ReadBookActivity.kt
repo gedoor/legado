@@ -632,7 +632,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 替换
      */
     override fun openReplaceRule() {
-        startActivityForResult<ReplaceRuleActivity>(requestCodeReplace)
+        startActivityForResult<ReplaceRuleActivity>(
+            requestCodeReplace,
+            Pair("bookName", ReadBook.book?.name),
+            Pair("bookSource", ReadBook.bookSource?.bookSourceUrl)
+        )
     }
 
     /**
