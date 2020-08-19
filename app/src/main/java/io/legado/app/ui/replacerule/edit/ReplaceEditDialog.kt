@@ -35,15 +35,17 @@ class ReplaceEditDialog : BaseDialogFragment(),
             fragmentManager: FragmentManager,
             id: Long = -1,
             pattern: String? = null,
-            isRegex: Boolean = false
+            isRegex: Boolean = false,
+            scope: String? = null
         ) {
             val dialog = ReplaceEditDialog()
             val bundle = Bundle()
             bundle.putLong("id", id)
             bundle.putString("pattern", pattern)
             bundle.putBoolean("isRegex", isRegex)
+            bundle.putString("scope", scope)
             dialog.arguments = bundle
-            dialog.show(fragmentManager, "editReplace")
+            dialog.show(fragmentManager, this::class.simpleName)
         }
     }
 
