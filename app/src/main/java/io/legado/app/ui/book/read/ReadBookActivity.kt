@@ -480,7 +480,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 ReplaceEditDialog.show(
                     supportFragmentManager,
                     pattern = selectedText,
-                    scope = scopes.joinToString { ";" }
+                    scope = scopes.joinToString(";")
                 )
                 return true
             }
