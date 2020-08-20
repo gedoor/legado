@@ -49,13 +49,11 @@ object HttpHelper {
         return null
     }
 
-    fun getBytes(url: String, referer: String): ByteArray? {
+    fun getBytes(url: String, queryMap: Map<String, String>, headers: Map<String, String>): ByteArray? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
-            val headers =
-                mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent), Pair("Referer", referer))
             return getByteRetrofit(baseUrl)
                 .create(HttpGetApi::class.java)
-                .getMapByte(url, mapOf(), headers)
+                .getMapByte(url, queryMap, headers)
                 .execute()
                 .body()
         }

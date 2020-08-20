@@ -321,6 +321,33 @@ class AnalyzeUrl(
         return Res(NetworkUtils.getUrl(res), res.body())
     }
 
+    @Throws(Exception::class)
+    fun getImageBytes(
+        tag: String
+    ): ByteArray? {
+        //资源为本站的资源，保留cookie
+        val cookie = CookieStore.getCookie(tag)
+        NetworkUtils.getBaseUrl(url)?.let {
+            val regex: Any
+            if(it.lastIndexOf(".") != it.indexOf(".")) {
+                regex = it.substring(it.indexOf(".")+1).toRegex()
+            } else {
+                regex = it.substring(it.lastIndexOf("/")+1).toRegex()
+            }
+            if(regex.containsMatchIn(tag)) {
+                if (cookie.isNotEmpty()) {
+                    headerMap["Cookie"] = cookie
+                }
+            }
+        }
+        //图片盗链的不保留当前的cookie，可由js生成图片源站的cookie
+        if(fieldMap.isEmpty()) {
+            return HttpHelper.getBytes(url, mapOf(), headerMap)
+        } else {
+            return HttpHelper.getBytes(url, fieldMap, headerMap)
+        }
+    }
+
     data class UrlOption(
         val method: String?,
         val charset: String?,

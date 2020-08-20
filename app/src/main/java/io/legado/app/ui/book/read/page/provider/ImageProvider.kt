@@ -11,6 +11,7 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.externalFilesDir
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 
 object ImageProvider {
 
@@ -31,13 +32,13 @@ object ImageProvider {
         indexCache[src] = bitmap
     }
 
-    fun getImage(book: Book, chapterIndex: Int, src: String, referrer: String?, onUi: Boolean = false): Bitmap? {
+    fun getImage(book: Book, chapterIndex: Int, src: String, onUi: Boolean = false): Bitmap? {
         getCache(chapterIndex, src)?.let {
             return it
         }
         val vFile = FileUtils.getFile(
             App.INSTANCE.externalFilesDir,
-            "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".")}",
+            "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
             "images", book.name
         )
         if (!vFile.exists()) {
@@ -48,8 +49,9 @@ object ImageProvider {
                     out.flush()
                     out.close()
                 }
-            } else if (!onUi && referrer != null) {
-                HttpHelper.getBytes(src, referrer)?.let {
+            } else if (!onUi) {
+                val analyzeUrl = AnalyzeUrl(src, null, null, null, null)
+                analyzeUrl.getImageBytes(book.origin)?.let {
                     FileUtils.createFileIfNotExist(vFile.absolutePath).writeBytes(it)
                 }
             }
