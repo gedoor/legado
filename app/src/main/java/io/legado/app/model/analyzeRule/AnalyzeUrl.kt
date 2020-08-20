@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
+import io.legado.app.constant.AppConst.UA_NAME
+import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.constant.AppPattern.EXP_PATTERN
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
@@ -326,6 +328,7 @@ class AnalyzeUrl(
         tag: String
     ): ByteArray? {
         //资源为本站的资源，保留cookie
+        //图片盗链的不保留当前的cookie，可由js生成图片源站的cookie
         val cookie = CookieStore.getCookie(tag)
         NetworkUtils.getBaseUrl(url)?.let {
             val regex: Any
@@ -336,11 +339,11 @@ class AnalyzeUrl(
             }
             if(regex.containsMatchIn(tag)) {
                 if (cookie.isNotEmpty()) {
-                    headerMap["Cookie"] = cookie
+                    headerMap["Cookie"] += cookie
                 }
             }
         }
-        //图片盗链的不保留当前的cookie，可由js生成图片源站的cookie
+        headerMap[UA_NAME] = headerMap[UA_NAME] ?:userAgent
         if(fieldMap.isEmpty()) {
             return HttpHelper.getBytes(url, mapOf(), headerMap)
         } else {
