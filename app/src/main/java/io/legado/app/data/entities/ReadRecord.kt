@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "readRecord")
 data class ReadRecord(
     @PrimaryKey
-    val bookName: String = "",
-    val readTime: Long = 0L
+    var bookName: String = "",
+    var readTime: Long = 0L
 )
