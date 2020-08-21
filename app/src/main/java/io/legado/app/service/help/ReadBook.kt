@@ -8,6 +8,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.ReadRecord
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
@@ -40,9 +41,13 @@ object ReadBook {
     var webBook: WebBook? = null
     var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
+    private val readRecord = ReadRecord()
+    var readStartTime: Long = System.currentTimeMillis()
 
     fun resetData(book: Book) {
         this.book = book
+        readRecord.bookName = book.name
+        readRecord.readTime = App.db.readRecordDao().getReadTime(book.name) ?: 0
         durChapterIndex = book.durChapterIndex
         durPageIndex = book.durChapterPos
         isLocalBook = book.origin == BookType.local
@@ -67,6 +72,14 @@ object ReadBook {
                 bookSource = null
                 webBook = null
             }
+        }
+    }
+
+    fun upReadStartTime() {
+        Coroutine.async {
+            readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
+            readStartTime = System.currentTimeMillis()
+            App.db.readRecordDao().insert(readRecord)
         }
     }
 
@@ -159,6 +172,7 @@ object ReadBook {
         if (BaseReadAloudService.isRun) {
             readAloud(!BaseReadAloudService.pause)
         }
+        upReadStartTime()
     }
 
     /**

@@ -111,4 +111,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun rssStarDao(): RssStarDao
     abstract fun cookieDao(): CookieDao
     abstract fun txtTocRule(): TxtTocRuleDao
+    abstract fun readRecordDao(): ReadRecordDao
 }
