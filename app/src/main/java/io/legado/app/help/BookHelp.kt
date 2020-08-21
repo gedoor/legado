@@ -7,7 +7,9 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.ui.book.read.page.provider.ChapterProvider.srcPattern
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.externalFilesDir
@@ -63,11 +65,30 @@ object BookHelp {
     @Synchronized
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
+        //保存文本
         FileUtils.createFileIfNotExist(
             downloadDir,
             formatChapterName(bookChapter),
             subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
         ).writeText(content)
+        //保存图片
+        content.forEachIndexed { index, text ->
+            val matcher = srcPattern.matcher(text)
+            if (matcher.find()) {
+                var src = matcher.group(1)
+                src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
+                src?.let {
+                    val analyzeUrl = AnalyzeUrl(src, null, null, null, null)
+                    analyzeUrl.getImageBytes(book.origin)?.let {
+                        FileUtils.createFileIfNotExist(
+                            downloadDir,
+                            "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
+                            "images", book.name
+                        ).writeBytes(it)
+                    }
+                 }
+             }
+        }
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
