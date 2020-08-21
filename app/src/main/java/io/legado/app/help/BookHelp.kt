@@ -9,22 +9,25 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.ui.book.read.page.provider.ChapterProvider.srcPattern
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.externalFilesDir
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
 import org.jetbrains.anko.toast
 import java.io.File
+import java.util.regex.Pattern
 import kotlin.math.min
 
 object BookHelp {
     private const val cacheFolderName = "book_cache"
     private val downloadDir: File = App.INSTANCE.externalFilesDir
+    private val srcPattern =
+        Pattern.compile("<img .*?src.*?=.*?\"(.*?(?:,\\{.*\\})?)\".*?>", Pattern.CASE_INSENSITIVE)
 
     private fun bookFolderName(book: Book): String {
         return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
@@ -72,8 +75,8 @@ object BookHelp {
             subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
         ).writeText(content)
         //保存图片
-        content.forEachIndexed { index, text ->
-            val matcher = srcPattern.matcher(text)
+        content.split("\n").forEach {
+            val matcher = srcPattern.matcher(it)
             if (matcher.find()) {
                 var src = matcher.group(1)
                 src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
