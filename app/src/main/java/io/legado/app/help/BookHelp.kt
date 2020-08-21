@@ -25,11 +25,12 @@ import kotlin.math.min
 
 object BookHelp {
     private const val cacheFolderName = "book_cache"
+    private const val cacheImageFolderName = "images"
     private val downloadDir: File = App.INSTANCE.externalFilesDir
     private val srcPattern =
         Pattern.compile("<img .*?src.*?=.*?\"(.*?(?:,\\{.*\\})?)\".*?>", Pattern.CASE_INSENSITIVE)
 
-    private fun bookFolderName(book: Book): String {
+    fun bookFolderName(book: Book): String {
         return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
     }
 
@@ -81,18 +82,30 @@ object BookHelp {
                 var src = matcher.group(1)
                 src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
                 src?.let {
-                    val analyzeUrl = AnalyzeUrl(src, null, null, null, null)
-                    analyzeUrl.getImageBytes(book.origin)?.let {
-                        FileUtils.createFileIfNotExist(
-                            downloadDir,
-                            "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
-                            "images", book.name
-                        ).writeBytes(it)
-                    }
+                    saveImage(book, src)
                  }
              }
         }
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
+    }
+    
+    fun saveImage(book: Book, src:String) {
+        val analyzeUrl = AnalyzeUrl(src, null, null, null, null)
+        analyzeUrl.getImageBytes(book.origin)?.let {
+            FileUtils.createFileIfNotExist(
+                downloadDir,
+                "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
+                subDirs = *arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
+            ).writeBytes(it)
+        }
+    }
+    
+    fun getImage(book:Book, src:String): File {
+        return FileUtils.getFile(
+                    downloadDir,
+                    "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
+                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
+                )
     }
 
     fun getChapterFiles(book: Book): List<String> {
