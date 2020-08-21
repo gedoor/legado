@@ -39,7 +39,7 @@ object ChapterProvider {
     lateinit var titlePaint: TextPaint
     lateinit var contentPaint: TextPaint
     private val srcPattern =
-        Pattern.compile("<img .*?src.*?=.*?\"(.*?)\".*?>", Pattern.CASE_INSENSITIVE)
+        Pattern.compile("<img .*?src.*?=.*?\"(.*?(?:,\\{.*\\})?)\".*?>", Pattern.CASE_INSENSITIVE)
 
     init {
         upStyle()
@@ -122,7 +122,7 @@ object ChapterProvider {
         imageStyle: String?
     ): Float {
         var durY = y
-        ImageProvider.getImage(book, chapter.index, src, chapter.url)?.let {
+        ImageProvider.getImage(book, chapter.index, src)?.let {
             if (durY > visibleHeight) {
                 textPages.last().height = durY
                 textPages.add(TextPage())
