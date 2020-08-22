@@ -18,6 +18,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
+import io.legado.app.ui.about.ReadRecordActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.config.BackupRestoreUi
 import io.legado.app.ui.config.ConfigActivity
@@ -140,6 +141,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                 "theme_setting" -> context?.startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_THEME_CONFIG)
                 )
+                "readRecord" -> context?.startActivity<ReadRecordActivity>()
                 "donate" -> context?.startActivity<DonateActivity>()
                 "about" -> context?.startActivity<AboutActivity>()
             }

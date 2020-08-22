@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_book_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:gravity="right"
+        android:textIsSelectable="true"
+        tools:ignore="RtlHardcoded" />
+
+    <TextView
+        android:id="@+id/tv_read_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp" />
+
+</LinearLayout>

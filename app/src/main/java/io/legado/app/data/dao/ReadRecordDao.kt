@@ -9,6 +9,9 @@ interface ReadRecordDao {
     @get:Query("select * from readRecord")
     val all: List<ReadRecord>
 
+    @get:Query("select sum(readTime) from readRecord")
+    val allTime: Long
+
     @Query("select readTime from readRecord where bookName = :bookName")
     fun getReadTime(bookName: String): Long?
 

@@ -1,0 +1,77 @@
+package io.legado.app.ui.about
+
+import android.content.Context
+import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
+import io.legado.app.R
+import io.legado.app.base.BaseActivity
+import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.data.entities.ReadRecord
+import kotlinx.android.synthetic.main.activity_read_record.*
+import kotlinx.android.synthetic.main.item_read_record.*
+import kotlinx.android.synthetic.main.item_read_record.view.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
+
+    lateinit var adapter: RecordAdapter
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initView()
+        initData()
+    }
+
+    private fun initView() {
+        tv_book_name.text = "总阅读时间"
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        adapter = RecordAdapter(this)
+        recycler_view.adapter = adapter
+    }
+
+    private fun initData() {
+        launch(IO) {
+            val allTime = App.db.readRecordDao().allTime
+            withContext(Main) {
+                tv_read_time.text = formatDuring(allTime)
+            }
+            val readRecords = App.db.readRecordDao().all
+            withContext(Main) {
+                adapter.setItems(readRecords)
+            }
+        }
+    }
+
+    inner class RecordAdapter(context: Context) :
+        SimpleRecyclerAdapter<ReadRecord>(context, R.layout.item_read_record) {
+
+        override fun convert(holder: ItemViewHolder, item: ReadRecord, payloads: MutableList<Any>) {
+            holder.itemView.apply {
+                tv_book_name.text = item.bookName
+                tv_read_time.text = formatDuring(item.readTime)
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder) {
+
+        }
+
+    }
+
+    fun formatDuring(mss: Long): String {
+        val days = mss / (1000 * 60 * 60 * 24)
+        val hours = mss % (1000 * 60 * 60 * 24) / (1000 * 60 * 60)
+        val minutes = mss % (1000 * 60 * 60) / (1000 * 60)
+        val seconds = mss % (1000 * 60) / 1000
+        val d = if (days > 0) "${days}天" else ""
+        val h = if (hours > 0) "${hours}小时" else ""
+        val m = if (minutes > 0) "${minutes}分钟" else ""
+        val s = if (seconds > 0) "${seconds}秒" else ""
+        return "$d$h$m$s"
+    }
+
+}

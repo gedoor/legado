@@ -257,6 +257,11 @@
             android:name=".ui.login.SourceLogin"
             android:configChanges="orientation|screenSize"
             android:hardwareAccelerated="true" />
+        <!-- 阅读记录 -->
+        <activity
+            android:name=".ui.about.ReadRecordActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true" />
         <!-- 文字处理 -->
         <activity
             android:name=".receiver.SharedReceiverActivity"
