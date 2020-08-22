@@ -32,7 +32,8 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_11_12,
                     migration_12_13,
                     migration_13_14,
-                    migration_14_15
+                    migration_14_15,
+                    migration_15_17
                 )
                 .allowMainThreadQueries()
                 .build()
@@ -85,6 +86,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val migration_14_15 = object : Migration(14, 15) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE bookmarks ADD bookAuthor TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val migration_15_17 = object : Migration(15, 17) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `readRecord` (`bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`bookName`))")
             }
         }
     }
