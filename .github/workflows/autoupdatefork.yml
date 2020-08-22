@@ -2,20 +2,13 @@
 name: update fork
 
 on: 
-  release:
-    types: [published]
-  push:
-    tags:
-    - 'v*'
   schedule:
-    - cron: '50 3 * * *' #设置定时任务
-  watch:
-    types: [started]
-#1.设置secrets并命名为EMAIL，内容为邮箱地址，设置方法百度，不介意邮箱泄露，可以直接将${{ secrets.EMAIL }}替换为邮箱。2.设置用户名
+    - cron: '0 16 * * *' #设置定时任务
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id
+    if: ${{ github.event.repository.owner.id == github.event.sender.id && github.actor != 'gedoor' }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -27,11 +20,10 @@ jobs:
         sudo apt-get -y install git
     - name: Set env
       run: |
-        git config --global user.email "${{ secrets.EMAIL }}"
-        git config --global user.name "[用户名]"
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "github-actions"
     - name: Update fork
       run: |
-        cd /home/runner/work/legado/legado
         git remote add upstream https://github.com/gedoor/legado.git
         git remote -v
         git fetch upstream
