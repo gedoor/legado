@@ -3,15 +3,13 @@ package io.legado.app.ui.book.read.page.provider
 import android.graphics.Bitmap
 import io.legado.app.App
 import io.legado.app.data.entities.Book
-import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.BookHelp
 import io.legado.app.model.localBook.EPUBFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.externalFilesDir
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
-import io.legado.app.model.analyzeRule.AnalyzeUrl
 
 object ImageProvider {
 
@@ -36,11 +34,7 @@ object ImageProvider {
         getCache(chapterIndex, src)?.let {
             return it
         }
-        val vFile = FileUtils.getFile(
-            App.INSTANCE.externalFilesDir,
-            "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
-            "images", book.name
-        )
+        val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) {
             if (book.isEpub()) {
                 EPUBFile.getImage(book, src).use {
@@ -50,10 +44,7 @@ object ImageProvider {
                     out.close()
                 }
             } else if (!onUi) {
-                val analyzeUrl = AnalyzeUrl(src, null, null, null, null)
-                analyzeUrl.getImageBytes(book.origin)?.let {
-                    FileUtils.createFileIfNotExist(vFile.absolutePath).writeBytes(it)
-                }
+                BookHelp.saveImage(book, src)
             }
         }
         return try {
