@@ -8,10 +8,6 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
-import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.Restore
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 
 @Database(
@@ -38,11 +34,6 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_13_14,
                     migration_14_15
                 )
-                .addCallback(object : Callback() {
-                    override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
-                        GlobalScope.launch { Restore.restoreDatabase(Backup.backupPath) }
-                    }
-                })
                 .allowMainThreadQueries()
                 .build()
         }
