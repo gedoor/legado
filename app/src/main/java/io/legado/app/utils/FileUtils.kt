@@ -9,7 +9,7 @@ import java.io.IOException
 object FileUtils {
 
     fun exists(root: File, fileName: String, vararg subDirs: String): Boolean {
-        return getFile(root, fileName, subDirs = *subDirs).exists()
+        return getFile(root, fileName, subDirs = subDirs).exists()
     }
 
     fun createFileIfNotExist(root: File, fileName: String, vararg subDirs: String): File {
@@ -18,7 +18,7 @@ object FileUtils {
     }
 
     fun createFolderIfNotExist(root: File, vararg subDirs: String): File {
-        val filePath = getPath(root, subDirs = *subDirs)
+        val filePath = getPath(root, subDirs = subDirs)
         return createFolderIfNotExist(filePath)
     }
 
@@ -55,7 +55,7 @@ object FileUtils {
     }
 
     fun getDirFile(root: File, vararg subDirs: String): File {
-        val filePath = getPath(root, subDirs = *subDirs)
+        val filePath = getPath(root, subDirs = subDirs)
         return File(filePath)
     }
 

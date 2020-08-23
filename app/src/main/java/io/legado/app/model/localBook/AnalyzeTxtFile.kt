@@ -248,7 +248,7 @@ class AnalyzeTxtFile {
             val rootFile = App.INSTANCE.getExternalFilesDir(null)
                 ?: App.INSTANCE.externalCacheDir
                 ?: App.INSTANCE.cacheDir
-            FileUtils.createFolderIfNotExist(rootFile, subDirs = *arrayOf(folderName))
+            FileUtils.createFolderIfNotExist(rootFile, subDirs = arrayOf(folderName))
         }
 
         fun getContent(book: Book, bookChapter: BookChapter): String {
@@ -264,7 +264,7 @@ class AnalyzeTxtFile {
         private fun getBookFile(book: Book): File {
             if (book.bookUrl.isContentPath()) {
                 val uri = Uri.parse(book.bookUrl)
-                val bookFile = FileUtils.getFile(cacheFolder, book.originName, subDirs = *arrayOf())
+                val bookFile = FileUtils.getFile(cacheFolder, book.originName, subDirs = arrayOf())
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
                     DocumentUtils.readBytes(App.INSTANCE, uri)?.let {

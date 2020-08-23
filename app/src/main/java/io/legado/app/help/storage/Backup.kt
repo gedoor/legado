@@ -107,7 +107,7 @@ object Backup {
                         DocumentUtils.createFileIfNotExist(
                             treeDoc,
                             fileName,
-                            subDirs = *arrayOf("auto")
+                            subDirs = arrayOf("auto")
                         )?.writeBytes(context, file.readBytes())
                     } else {
                         treeDoc.findFile(fileName)?.delete()

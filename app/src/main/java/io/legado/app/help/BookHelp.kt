@@ -9,11 +9,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFilesDir
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
@@ -44,7 +40,7 @@ object BookHelp {
 
     fun clearCache() {
         FileUtils.deleteFile(
-            FileUtils.getPath(downloadDir, subDirs = *arrayOf(cacheFolderName))
+            FileUtils.getPath(downloadDir, subDirs = arrayOf(cacheFolderName))
         )
     }
 
@@ -73,7 +69,7 @@ object BookHelp {
         FileUtils.createFileIfNotExist(
             downloadDir,
             formatChapterName(bookChapter),
-            subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            subDirs = arrayOf(cacheFolderName, bookFolderName(book))
         ).writeText(content)
         //保存图片
         content.split("\n").forEach {
@@ -95,24 +91,24 @@ object BookHelp {
             FileUtils.createFileIfNotExist(
                 downloadDir,
                 "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
+                subDirs = arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
             ).writeBytes(it)
         }
     }
     
     fun getImage(book:Book, src:String): File {
         return FileUtils.getFile(
-                    downloadDir,
-                    "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
-                    subDirs = *arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
-                )
+            downloadDir,
+            "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
+            subDirs = arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
+        )
     }
 
     fun getChapterFiles(book: Book): List<String> {
         val fileNameList = arrayListOf<String>()
         FileUtils.createFolderIfNotExist(
             downloadDir,
-            subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+            subDirs = arrayOf(cacheFolderName, bookFolderName(book))
         ).list()?.let {
             fileNameList.addAll(it)
         }
@@ -126,7 +122,7 @@ object BookHelp {
             FileUtils.exists(
                 downloadDir,
                 formatChapterName(bookChapter),
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                subDirs = arrayOf(cacheFolderName, bookFolderName(book))
             )
         }
     }
@@ -138,7 +134,7 @@ object BookHelp {
             val file = FileUtils.getFile(
                 downloadDir,
                 formatChapterName(bookChapter),
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                subDirs = arrayOf(cacheFolderName, bookFolderName(book))
             )
             if (file.exists()) {
                 return file.readText()
@@ -154,7 +150,7 @@ object BookHelp {
             FileUtils.createFileIfNotExist(
                 downloadDir,
                 formatChapterName(bookChapter),
-                subDirs = *arrayOf(cacheFolderName, bookFolderName(book))
+                subDirs = arrayOf(cacheFolderName, bookFolderName(book))
             ).delete()
         }
     }
