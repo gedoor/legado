@@ -227,6 +227,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_check_source -> checkSource()
             R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
+            R.id.menu_add_group -> selectionAddToGroups()
+            R.id.menu_remove_group -> selectionRemoveFromGroups()
         }
         return true
     }
@@ -248,6 +250,48 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
                 CheckSource.start(this@BookSourceActivity, adapter.getSelection())
+            }
+            noButton { }
+        }.show().applyTint()
+    }
+
+    @SuppressLint("InflateParams")
+    private fun selectionAddToGroups() {
+        alert(titleResource = R.string.add_group) {
+            var editText: AutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
+                    edit_view.setHint(R.string.group_name)
+                }
+            }
+            okButton {
+                editText?.text?.toString()?.let {
+                    if (it.isNotEmpty()) {
+                        viewModel.selectionAddToGroups(adapter.getSelection(), it)
+                    }
+                }
+            }
+            noButton { }
+        }.show().applyTint()
+    }
+
+    @SuppressLint("InflateParams")
+    private fun selectionRemoveFromGroups() {
+        alert(titleResource = R.string.remove_group) {
+            var editText: AutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
+                    edit_view.setHint(R.string.group_name)
+                }
+            }
+            okButton {
+                editText?.text?.toString()?.let {
+                    if (it.isNotEmpty()) {
+                        viewModel.selectionRemoveFromGroups(adapter.getSelection(), it)
+                    }
+                }
             }
             noButton { }
         }.show().applyTint()
