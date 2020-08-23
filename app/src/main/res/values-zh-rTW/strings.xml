@@ -554,6 +554,7 @@
     <string name="group_edit">編輯分組</string>
     <string name="move_to_group">移入分組</string>
     <string name="add_group">添加分組</string>
+    <string name="remove_group">移除分組</string>
     <string name="add_replace_rule">建立取代</string>
     <string name="group">分組</string>
     <string name="group_s">分組: %s</string>

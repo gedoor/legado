@@ -93,6 +93,44 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    fun selectionAddToGroup(sources: List<BookSource>, group: String) {
+            execute {
+                val list = arrayListOf<BookSource>()
+                sources.forEach {
+                    val newGroupList = arrayListOf<String>()
+                    it.bookSourceGroup?.splitNotBlank(",", ";")?.forEach {
+                        newGroupList.add(it)
+                    }
+                    group.splitNotBlank(",", ";").forEach {
+                        newGroupList.add(it)
+                    }
+                    val lh = LinkedHashSet(newGroupList)
+                    val newGroup = ArrayList(lh).joinToString(separator = ",")
+                    list.add(it.copy(bookSourceGroup = newGroup))
+                }
+                App.db.bookSourceDao().update(*list.toTypedArray())
+            }
+    }
+
+    fun selectionRemoveFromGroup(sources: List<BookSource>, group: String) {
+            execute {
+                val list = arrayListOf<BookSource>()
+                sources.forEach {
+                    val newGroupList = arrayListOf<String>()
+                    it.bookSourceGroup?.splitNotBlank(",", ";")?.forEach {
+                        newGroupList.add(it)
+                    }
+                    group.splitNotBlank(",", ";").forEach {
+                        newGroupList.remove(it)
+                    }
+                    val lh = LinkedHashSet(newGroupList)
+                    val newGroup = ArrayList(lh).joinToString(separator = ",")
+                    list.add(it.copy(bookSourceGroup = newGroup))
+                }
+                App.db.bookSourceDao().update(*list.toTypedArray())
+            }
+    }
+
     fun delSelection(sources: List<BookSource>) {
         execute {
             App.db.bookSourceDao().delete(*sources.toTypedArray())
