@@ -134,6 +134,9 @@ object Restore {
             fileToListT<TxtTocRule>(path, "txtTocRule.json")?.let {
                 App.db.txtTocRule().insert(*it.toTypedArray())
             }
+            fileToListT<ReadRecord>(path, "readRecord.json")?.let {
+                App.db.readRecordDao().insert(*it.toTypedArray())
+            }
         }
     }
 
