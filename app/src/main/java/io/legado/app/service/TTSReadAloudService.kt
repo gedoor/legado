@@ -1,6 +1,7 @@
 package io.legado.app.service
 
 import android.app.PendingIntent
+import android.content.Intent
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import io.legado.app.R
@@ -38,6 +39,12 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         super.onCreate()
         initTts()
         upSpeechRate()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        clearTTS()
+        stopSelf()
     }
 
     private fun initTts() {
