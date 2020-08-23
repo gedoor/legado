@@ -227,8 +227,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_check_source -> checkSource()
             R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
-            R.id.menu_add_group -> selectionAddToGroup()
-            R.id.menu_remove_group -> selectionRemoveFromGroup()
+            R.id.menu_add_group -> selectionAddToGroups()
+            R.id.menu_remove_group -> selectionRemoveFromGroups()
         }
         return true
     }
@@ -256,7 +256,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     @SuppressLint("InflateParams")
-    private fun selectionAddToGroup() {
+    private fun selectionAddToGroups() {
         alert(titleResource = R.string.add_group) {
             var editText: AutoCompleteTextView? = null
             customView {
@@ -268,7 +268,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             okButton {
                 editText?.text?.toString()?.let {
                     if (it.isNotEmpty()) {
-                        viewModel.selectionAddToGroup(adapter.getSelection(), it)
+                        viewModel.selectionAddToGroups(adapter.getSelection(), it)
                     }
                 }
             }
@@ -277,7 +277,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     @SuppressLint("InflateParams")
-    private fun selectionRemoveFromGroup() {
+    private fun selectionRemoveFromGroups() {
         alert(titleResource = R.string.remove_group) {
             var editText: AutoCompleteTextView? = null
             customView {
@@ -289,7 +289,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             okButton {
                 editText?.text?.toString()?.let {
                     if (it.isNotEmpty()) {
-                        viewModel.selectionRemoveFromGroup(adapter.getSelection(), it)
+                        viewModel.selectionRemoveFromGroups(adapter.getSelection(), it)
                     }
                 }
             }

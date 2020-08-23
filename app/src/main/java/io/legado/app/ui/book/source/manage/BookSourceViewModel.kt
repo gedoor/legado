@@ -93,7 +93,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun selectionAddToGroup(sources: List<BookSource>, group: String) {
+    fun selectionAddToGroups(sources: List<BookSource>, groups: String) {
             execute {
                 val list = arrayListOf<BookSource>()
                 sources.forEach {
@@ -101,7 +101,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                     it.bookSourceGroup?.splitNotBlank(",", ";")?.forEach {
                         newGroupList.add(it)
                     }
-                    group.splitNotBlank(",", ";").forEach {
+                    groups.splitNotBlank(",", ";", "，").forEach {
                         newGroupList.add(it)
                     }
                     val lh = LinkedHashSet(newGroupList)
@@ -112,7 +112,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             }
     }
 
-    fun selectionRemoveFromGroup(sources: List<BookSource>, group: String) {
+    fun selectionRemoveFromGroups(sources: List<BookSource>, groups: String) {
             execute {
                 val list = arrayListOf<BookSource>()
                 sources.forEach {
@@ -120,7 +120,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                     it.bookSourceGroup?.splitNotBlank(",", ";")?.forEach {
                         newGroupList.add(it)
                     }
-                    group.splitNotBlank(",", ";").forEach {
+                    groups.splitNotBlank(",", ";", "，").forEach {
                         newGroupList.remove(it)
                     }
                     val lh = LinkedHashSet(newGroupList)
