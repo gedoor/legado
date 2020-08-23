@@ -20,6 +20,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
@@ -83,11 +84,16 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 FileUtils.deleteFile(requireActivity().cacheDir.absolutePath)
                 toast(R.string.clear_cache_success)
             }
-            PreferKey.defaultCover -> {
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.addCategory(Intent.CATEGORY_OPENABLE)
-                intent.type = "image/*"
-                startActivityForResult(intent, requestCodeCover)
+            PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
+                selectDefaultCover()
+            } else {
+                selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
+                    if (i == 0) {
+                        removePref(PreferKey.defaultCover)
+                    } else {
+                        selectDefaultCover()
+                    }
+                }
             }
         }
         return super.onPreferenceTreeClick(preference)
@@ -137,6 +143,13 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 preference.summary = value
             }
         }
+    }
+
+    private fun selectDefaultCover() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "image/*"
+        startActivityForResult(intent, requestCodeCover)
     }
 
     private fun isProcessTextEnabled(): Boolean {
