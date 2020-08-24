@@ -557,6 +557,7 @@
     <string name="group_edit">Group editing</string>
     <string name="move_to_group">Move to group</string>
     <string name="add_group">Add to Groups</string>
+    <string name="remove_group">Remove from Groups</string>
     <string name="add_replace_rule">New replacement</string>
     <string name="group">Group</string>
     <string name="group_s">Group: %s</string>
