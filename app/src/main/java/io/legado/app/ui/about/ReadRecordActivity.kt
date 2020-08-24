@@ -13,6 +13,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_read_record.*
 import kotlinx.android.synthetic.main.item_read_record.*
 import kotlinx.android.synthetic.main.item_read_record.view.*
@@ -58,6 +59,7 @@ class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
             holder.itemView.apply {
                 tv_book_name.text = item.bookName
                 tv_read_time.text = formatDuring(item.readTime)
+                iv_remove.visible()
             }
         }
 
