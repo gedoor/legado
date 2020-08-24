@@ -137,6 +137,9 @@ object Restore {
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
                 App.db.readRecordDao().insert(*it.toTypedArray())
             }
+            fileToListT<HttpTTS>(path, "httpTTS.json")?.let {
+                App.db.httpTTSDao().insert(*it.toTypedArray())
+            }
         }
     }
 
