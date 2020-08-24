@@ -21,7 +21,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.Theme
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
@@ -29,7 +28,7 @@ import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
@@ -68,11 +67,11 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.setBackgroundColor(bottomBackground)
+        tool_bar.setBackgroundColor(primaryColor)
         durRegex = arguments?.getString("tocRegex")
         tool_bar.setTitle(R.string.txt_toc_regex)
         tool_bar.inflateMenu(R.menu.txt_toc_regex)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         initView()
         initData()

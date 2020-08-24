@@ -16,10 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
-import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefBoolean
@@ -69,7 +68,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.setBackgroundColor(bottomBackground)
+        tool_bar.setBackgroundColor(primaryColor)
         viewModel.initData(arguments)
         showTitle()
         initMenu()
@@ -86,7 +85,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     private fun initMenu() {
         tool_bar.inflateMenu(R.menu.change_source)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.menu.findItem(R.id.menu_load_toc)?.isChecked =
             getPrefBoolean(PreferKey.changeSourceLoadToc)
@@ -143,7 +142,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
             } else {
                 stopMenuItem?.setIcon(R.drawable.ic_refresh_black_24dp)
             }
-            tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+            tool_bar.menu.applyTint(requireContext())
         })
         viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))

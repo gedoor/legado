@@ -83,6 +83,10 @@ object HttpHelper {
         return getRetrofit(baseUrl, encode).create(T::class.java)
     }
 
+    inline fun <reified T> getBytesApiService(baseUrl: String): T {
+        return getByteRetrofit(baseUrl).create(T::class.java)
+    }
+
     fun getRetrofit(baseUrl: String, encode: String? = null): Retrofit {
         return Retrofit.Builder().baseUrl(baseUrl)
             //增加返回值为字符串的支持(以实体类返回)

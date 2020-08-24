@@ -15,7 +15,6 @@ import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.Theme
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.ui.widget.KeyboardToolPop
@@ -70,7 +69,7 @@ class ReplaceEditDialog : BaseDialogFragment(),
         tool_bar.setBackgroundColor(bottomBackground)
         mSoftKeyboardTool = KeyboardToolPop(requireContext(), AppConst.keyboardToolChars, this)
         tool_bar.inflateMenu(R.menu.replace_edit)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         viewModel.replaceRuleData.observe(viewLifecycleOwner, Observer {
             upReplaceView(it)

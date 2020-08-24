@@ -14,18 +14,11 @@
             android:key="readAloudByPage"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.ui.widget.prefs.Preference
             android:defaultValue="false"
-            android:title="@string/read_aloud_on_line"
-            android:key="readAloudOnLine"
-            app:iconSpaceReserved="false" />
-
-        <androidx.preference.ListPreference
-            android:key="ttsSpeechPer"
-            android:title="@string/tone_colour"
-            android:defaultValue="0"
-            android:entries="@array/tts_speech_per"
-            android:entryValues="@array/tts_speech_per_value"
+            android:title="@string/speak_engine"
+            android:summary="本地TTS"
+            android:key="speakEngine"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>

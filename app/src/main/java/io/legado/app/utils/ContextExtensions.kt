@@ -24,6 +24,7 @@ import io.legado.app.App
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import org.jetbrains.anko.defaultSharedPreferences
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileOutputStream
@@ -138,7 +139,7 @@ fun Context.sendToClip(text: String) {
     val clipData = ClipData.newPlainText(null, text)
     clipboard?.let {
         clipboard.setPrimaryClip(clipData)
-        toast(R.string.copy_complete)
+        longToast(R.string.copy_complete)
     }
 }
 

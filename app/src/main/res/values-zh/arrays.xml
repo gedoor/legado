@@ -5,21 +5,6 @@
         <item>@string/book_type_audio</item>
     </string-array>
 
-    <string-array name="tts_speech_per">
-        <item>度小美</item>
-        <item>度小宇</item>
-        <item>度逍遥</item>
-        <item>度丫丫</item>
-        <item>度小娇</item>
-        <item>度米朵</item>
-        <item>度博文</item>
-        <item>度小童</item>
-        <item>度小萌</item>
-        <item>百度骚男</item>
-        <item>百度评书</item>
-        <item>百度主持</item>
-    </string-array>
-
     <string-array name="indent">
         <item>@string/indent_0</item>
         <item>@string/indent_1</item>

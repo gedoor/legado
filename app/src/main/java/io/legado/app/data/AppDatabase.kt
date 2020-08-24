@@ -14,8 +14,8 @@ import io.legado.app.data.entities.*
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
-        RssStar::class, TxtTocRule::class, ReadRecord::class],
-    version = 17,
+        RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class],
+    version = 18,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,7 +33,8 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_12_13,
                     migration_13_14,
                     migration_14_15,
-                    migration_15_17
+                    migration_15_17,
+                    migration_17_18
                 )
                 .allowMainThreadQueries()
                 .build()
@@ -94,6 +95,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `readRecord` (`bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`bookName`))")
             }
         }
+
+        private val migration_17_18 = object : Migration(17, 18) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `httpTTS` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))")
+            }
+        }
     }
 
     abstract fun bookDao(): BookDao
@@ -110,4 +117,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun cookieDao(): CookieDao
     abstract fun txtTocRule(): TxtTocRuleDao
     abstract fun readRecordDao(): ReadRecordDao
+    abstract fun httpTTSDao(): HttpTTSDao
 }

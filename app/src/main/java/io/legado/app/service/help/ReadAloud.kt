@@ -5,20 +5,28 @@ import android.content.Intent
 import io.legado.app.App
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.entities.HttpTTS
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
-import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getPrefLong
 
 object ReadAloud {
-    var aloudClass: Class<*> = getReadAloudClass()
+    private var aloudClass: Class<*> = getReadAloudClass()
+    var httpTTS: HttpTTS? = null
 
-    fun getReadAloudClass(): Class<*> {
-        return if (App.INSTANCE.getPrefBoolean(PreferKey.readAloudOnLine)) {
+    private fun getReadAloudClass(): Class<*> {
+        val spId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
+        httpTTS = App.db.httpTTSDao().get(spId)
+        return if (httpTTS != null) {
             HttpReadAloudService::class.java
         } else {
             TTSReadAloudService::class.java
         }
+    }
+
+    fun upReadAloudClass() {
+        aloudClass = getReadAloudClass()
     }
 
     fun play(

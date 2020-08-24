@@ -81,9 +81,6 @@ object AppConfig {
             App.INSTANCE.putPrefInt(PreferKey.ttsSpeechRate, value)
         }
 
-    val ttsSpeechPer: String
-        get() = App.INSTANCE.getPrefString(PreferKey.ttsSpeechPer) ?: "0"
-
     val clickAllNext: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
 
     var chineseConverterType: Int

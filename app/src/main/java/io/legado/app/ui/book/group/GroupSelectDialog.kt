@@ -20,7 +20,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.Theme
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.dialogs.alert
@@ -29,7 +28,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
@@ -81,7 +80,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.setBackgroundColor(bottomBackground)
+        tool_bar.setBackgroundColor(primaryColor)
         callBack = activity as? CallBack
         arguments?.let {
             groupId = it.getInt("groupId")
@@ -94,7 +93,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun initView() {
         tool_bar.title = getString(R.string.group_select)
         tool_bar.inflateMenu(R.menu.book_group_manage)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.menu.setGroupVisible(R.id.menu_groups, false)
         adapter = GroupAdapter(requireContext())

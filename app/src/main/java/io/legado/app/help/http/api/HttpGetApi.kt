@@ -33,6 +33,12 @@ interface HttpGetApi {
     ): Call<String>
 
     @GET
+    fun getByte(
+        @Url url: String,
+        @HeaderMap headers: Map<String, String>
+    ): Call<ByteArray>
+
+    @GET
     fun getMap(
         @Url url: String,
         @QueryMap(encoded = true) queryMap: Map<String, String>,
@@ -45,6 +51,12 @@ interface HttpGetApi {
         @QueryMap(encoded = true) queryMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
     ): Call<ByteArray>
+
+    @GET
+    suspend fun getByteAsync(
+        @Url url: String,
+        @HeaderMap headers: Map<String, String>
+    ): Response<ByteArray>
 
     @GET
     suspend fun getMapByteAsync(

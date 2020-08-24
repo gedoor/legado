@@ -17,13 +17,12 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.Theme
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
@@ -57,14 +56,14 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(backgroundColor)
-        tool_bar.setBackgroundColor(bottomBackground)
+        tool_bar.setBackgroundColor(primaryColor)
         initData()
     }
 
     private fun initData() {
         tool_bar.title = getString(R.string.group_manage)
         tool_bar.inflateMenu(R.menu.group_manage)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())

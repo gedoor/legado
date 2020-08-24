@@ -10,16 +10,17 @@ import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.Help
+import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.postEvent
 
 class ReadAloudConfigDialog : DialogFragment() {
@@ -62,11 +63,18 @@ class ReadAloudConfigDialog : DialogFragment() {
     class ReadAloudPreferenceFragment : BasePreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+        private val speakEngineSummary: String
+            get() {
+                val eid = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
+                val ht = App.db.httpTTSDao().get(eid)
+                return ht?.name ?: getString(R.string.local_tts)
+            }
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
             upPreferenceSummary(
-                findPreference<ListPreference>(PreferKey.ttsSpeechPer),
-                AppConfig.ttsSpeechPer
+                findPreference(PreferKey.speakEngine),
+                speakEngineSummary
             )
         }
 
@@ -85,6 +93,14 @@ class ReadAloudConfigDialog : DialogFragment() {
             super.onPause()
         }
 
+        override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+            when (preference?.key) {
+                PreferKey.speakEngine ->
+                    SpeakEngineDialog().show(childFragmentManager, "speakEngine")
+            }
+            return super.onPreferenceTreeClick(preference)
+        }
+
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
             key: String?
@@ -95,16 +111,9 @@ class ReadAloudConfigDialog : DialogFragment() {
                         postEvent(EventBus.MEDIA_BUTTON, false)
                     }
                 }
-                PreferKey.readAloudOnLine -> {
-                    ReadAloud.stop(requireContext())
-                    ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
-                }
-                PreferKey.ttsSpeechPer -> {
-                    upPreferenceSummary(
-                        findPreference<ListPreference>(PreferKey.ttsSpeechPer),
-                        AppConfig.ttsSpeechPer
-                    )
-                    ReadAloud.upTtsSpeechRate(requireContext())
+                PreferKey.speakEngine -> {
+                    upPreferenceSummary(findPreference(key), speakEngineSummary)
+                    ReadAloud.upReadAloudClass()
                 }
             }
         }

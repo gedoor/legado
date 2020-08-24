@@ -4,11 +4,9 @@ import android.view.MotionEvent
 import kotlin.math.abs
 import kotlin.math.atan
 
-class RotateGestureDetector(l: OnRotateListener) {
+class RotateGestureDetector(private val mListener: OnRotateListener) {
 
     private val MAX_DEGREES_STEP = 120
-
-    private val mListener: OnRotateListener? = null
 
     private var mPrevSlope = 0f
     private var mCurrSlope = 0f

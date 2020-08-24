@@ -34,6 +34,8 @@ class AnalyzeUrl(
     var ruleUrl: String,
     key: String? = null,
     page: Int? = null,
+    speakText: String? = null,
+    speakSpeed: Int? = null,
     headerMapF: Map<String, String>? = null,
     baseUrl: String? = null,
     book: BaseBook? = null,
@@ -63,13 +65,19 @@ class AnalyzeUrl(
         }
         headerMapF?.let { headerMap.putAll(it) }
         //替换参数
-        analyzeJs(key, page, book)
-        replaceKeyPageJs(key, page, book)
+        analyzeJs(key, page, speakText, speakSpeed, book)
+        replaceKeyPageJs(key, page, speakText, speakSpeed, book)
         //处理URL
         initUrl()
     }
 
-    private fun analyzeJs(key: String?, page: Int?, book: BaseBook?) {
+    private fun analyzeJs(
+        key: String?,
+        page: Int?,
+        speakText: String?,
+        speakSpeed: Int?,
+        book: BaseBook?
+    ) {
         val ruleList = arrayListOf<String>()
         var start = 0
         var tmp: String
@@ -96,11 +104,13 @@ class AnalyzeUrl(
             when {
                 ruleStr.startsWith("<js>") -> {
                     ruleStr = ruleStr.substring(4, ruleStr.lastIndexOf("<"))
-                    ruleUrl = evalJS(ruleStr, ruleUrl, page, key, book) as String
+                    ruleUrl =
+                        evalJS(ruleStr, ruleUrl, page, key, speakText, speakSpeed, book) as String
                 }
                 ruleStr.startsWith("@js", true) -> {
                     ruleStr = ruleStr.substring(4)
-                    ruleUrl = evalJS(ruleStr, ruleUrl, page, key, book) as String
+                    ruleUrl =
+                        evalJS(ruleStr, ruleUrl, page, key, speakText, speakSpeed, book) as String
                 }
                 else -> ruleUrl = ruleStr.replace("@result", ruleUrl)
             }
@@ -110,7 +120,13 @@ class AnalyzeUrl(
     /**
      * 替换关键字,页数,JS
      */
-    private fun replaceKeyPageJs(key: String?, page: Int?, book: BaseBook?) {
+    private fun replaceKeyPageJs(
+        key: String?,
+        page: Int?,
+        speakText: String?,
+        speakSpeed: Int?,
+        book: BaseBook?
+    ) {
         //page
         page?.let {
             val matcher = pagePattern.matcher(ruleUrl)
@@ -132,6 +148,8 @@ class AnalyzeUrl(
             simpleBindings["baseUrl"] = baseUrl
             simpleBindings["page"] = page
             simpleBindings["key"] = key
+            simpleBindings["speakText"] = speakText
+            simpleBindings["speakSpeed"] = speakSpeed
             simpleBindings["book"] = book
             val expMatcher = EXP_PATTERN.matcher(ruleUrl)
             while (expMatcher.find()) {
@@ -242,12 +260,16 @@ class AnalyzeUrl(
         result: Any?,
         page: Int?,
         key: String?,
+        speakText: String?,
+        speakSpeed: Int?,
         book: BaseBook?
     ): Any {
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["page"] = page
         bindings["key"] = key
+        bindings["speakText"] = speakText
+        bindings["speakSpeed"] = speakSpeed
         bindings["book"] = book
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
@@ -332,23 +354,53 @@ class AnalyzeUrl(
         val cookie = CookieStore.getCookie(tag)
         NetworkUtils.getBaseUrl(url)?.let {
             val regex: Any
-            if(it.lastIndexOf(".") != it.indexOf(".")) {
-                regex = it.substring(it.indexOf(".")+1).toRegex()
+            regex = if (it.lastIndexOf(".") != it.indexOf(".")) {
+                it.substring(it.indexOf(".") + 1).toRegex()
             } else {
-                regex = it.substring(it.lastIndexOf("/")+1).toRegex()
+                it.substring(it.lastIndexOf("/") + 1).toRegex()
             }
-            if(regex.containsMatchIn(tag)) {
+            if (regex.containsMatchIn(tag)) {
                 if (cookie.isNotEmpty()) {
                     headerMap["Cookie"] += cookie
                 }
             }
         }
-        headerMap[UA_NAME] = headerMap[UA_NAME] ?:userAgent
-        if(fieldMap.isEmpty()) {
-            return HttpHelper.getBytes(url, mapOf(), headerMap)
+        headerMap[UA_NAME] = headerMap[UA_NAME] ?: userAgent
+        return if (fieldMap.isEmpty()) {
+            HttpHelper.getBytes(url, mapOf(), headerMap)
         } else {
-            return HttpHelper.getBytes(url, fieldMap, headerMap)
+            HttpHelper.getBytes(url, fieldMap, headerMap)
         }
+    }
+
+    @Throws(Exception::class)
+    suspend fun getResponseBytes(tag: String? = null): ByteArray? {
+        if (tag != null) {
+            val cookie = CookieStore.getCookie(tag)
+            if (cookie.isNotEmpty()) {
+                headerMap["Cookie"] = cookie
+            }
+        }
+        val response = when {
+            method == RequestMethod.POST -> {
+                if (fieldMap.isNotEmpty()) {
+                    HttpHelper
+                        .getBytesApiService<HttpPostApi>(baseUrl)
+                        .postMapByteAsync(url, fieldMap, headerMap)
+                } else {
+                    HttpHelper
+                        .getBytesApiService<HttpPostApi>(baseUrl)
+                        .postBodyByteAsync(url, requestBody!!, headerMap)
+                }
+            }
+            fieldMap.isEmpty() -> HttpHelper
+                .getBytesApiService<HttpGetApi>(baseUrl)
+                .getByteAsync(url, headerMap)
+            else -> HttpHelper
+                .getBytesApiService<HttpGetApi>(baseUrl)
+                .getMapByteAsync(url, fieldMap, headerMap)
+        }
+        return response.body()
     }
 
     data class UrlOption(

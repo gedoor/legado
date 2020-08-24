@@ -12,6 +12,9 @@
         android:layout_height="wrap_content"
         android:background="@color/background_menu"
         android:elevation="5dp"
+        android:theme="?attr/actionBarStyle"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false" />
 
