@@ -13,6 +13,9 @@ interface HttpTTSDao {
     @Query("select * from httpTTS order by name")
     fun observeAll(): LiveData<List<HttpTTS>>
 
+    @get:Query("select count(*) from httpTTS")
+    val count: Int
+
     @Query("select * from httpTTS where id = :id")
     fun get(id: Long): HttpTTS?
 
