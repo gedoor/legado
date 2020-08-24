@@ -9,6 +9,10 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.ReadRecord
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
+import io.legado.app.utils.applyTint
 import kotlinx.android.synthetic.main.activity_read_record.*
 import kotlinx.android.synthetic.main.item_read_record.*
 import kotlinx.android.synthetic.main.item_read_record.view.*
@@ -16,6 +20,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
 
@@ -57,7 +62,19 @@ class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
         }
 
         override fun registerListener(holder: ItemViewHolder) {
-
+            holder.itemView.apply {
+                iv_remove.onClick {
+                    alert(R.string.delete, R.string.sure_del) {
+                        okButton {
+                            getItem(holder.layoutPosition)?.let {
+                                App.db.readRecordDao().delete(it)
+                                initData()
+                            }
+                        }
+                        noButton()
+                    }.show().applyTint()
+                }
+            }
         }
 
     }

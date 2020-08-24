@@ -21,4 +21,7 @@ interface ReadRecordDao {
     @Update
     fun update(vararg record: ReadRecord)
 
+    @Delete
+    fun delete(vararg record: ReadRecord)
+
 }
