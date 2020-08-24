@@ -25,6 +25,7 @@ import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
@@ -35,10 +36,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.widget.image.CoverImageView
-import io.legado.app.utils.dp
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.gone
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_info.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
@@ -66,6 +64,7 @@ class BookInfoActivity :
         ll_info.setBackgroundColor(backgroundColor)
         scroll_view.setBackgroundColor(backgroundColor)
         fl_action.setBackgroundColor(bottomBackground)
+        tv_shelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
         viewModel.bookData.observe(this, Observer { showBook(it) })
         viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
         viewModel.initData(intent)
