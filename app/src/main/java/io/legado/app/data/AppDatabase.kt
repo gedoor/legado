@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import io.legado.app.App
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
 
@@ -15,7 +16,7 @@ import io.legado.app.data.entities.*
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class],
-    version = 18,
+    version = 19,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -34,7 +35,8 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_13_14,
                     migration_14_15,
                     migration_15_17,
-                    migration_17_18
+                    migration_17_18,
+                    migration_18_19
                 )
                 .allowMainThreadQueries()
                 .build()
@@ -99,6 +101,15 @@ abstract class AppDatabase : RoomDatabase() {
         private val migration_17_18 = object : Migration(17, 18) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `httpTTS` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))")
+            }
+        }
+
+        private val migration_18_19 = object : Migration(18, 19) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `readRecordNew` (`androidId` TEXT NOT NULL, `bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`androidId`, `bookName`))")
+                database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${App.androidId}' as androidId, bookName, readTime from readRecord")
+                database.execSQL("DROP TABLE readRecord")
+                database.execSQL("ALTER TABLE readRecordNew RENAME TO readRecord")
             }
         }
     }

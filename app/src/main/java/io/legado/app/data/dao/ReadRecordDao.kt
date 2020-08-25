@@ -12,7 +12,7 @@ interface ReadRecordDao {
     @get:Query("select sum(readTime) from readRecord")
     val allTime: Long
 
-    @Query("select readTime from readRecord where bookName = :bookName")
+    @Query("select sum(readTime) from readRecord where bookName = :bookName")
     fun getReadTime(bookName: String): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
