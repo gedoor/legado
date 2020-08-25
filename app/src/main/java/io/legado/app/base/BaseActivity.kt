@@ -25,6 +25,7 @@ abstract class BaseActivity(
     private val layoutID: Int,
     private val fullScreen: Boolean = true,
     private val theme: Theme = Theme.Auto,
+    private val toolBarTheme: Theme = Theme.Auto,
     private val transparent: Boolean = false
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
@@ -65,7 +66,7 @@ abstract class BaseActivity(
     final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return menu?.let {
             val bool = onCompatCreateOptionsMenu(it)
-            it.applyTint(this, theme)
+            it.applyTint(this, toolBarTheme)
             bool
         } ?: super.onCreateOptionsMenu(menu)
     }
@@ -129,9 +130,9 @@ abstract class BaseActivity(
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         }
         ATH.setStatusBarColorAuto(this, fullScreen)
-        if (theme == Theme.Dark) {
+        if (toolBarTheme == Theme.Dark) {
             ATH.setLightStatusBar(this, false)
-        } else if (theme == Theme.Light) {
+        } else if (toolBarTheme == Theme.Light) {
             ATH.setLightStatusBar(this, true)
         }
         upNavigationBarColor()

@@ -45,7 +45,7 @@ import org.jetbrains.anko.toast
 
 
 class BookInfoActivity :
-    VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, theme = Theme.Dark),
+    VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, toolBarTheme = Theme.Dark),
     GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
     ChangeSourceDialog.CallBack,
@@ -58,6 +58,7 @@ class BookInfoActivity :
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
+    @SuppressLint("PrivateResource")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title_bar.transparent()
         arc_view.setBgColor(backgroundColor)

@@ -37,7 +37,7 @@ import org.jetbrains.anko.startActivityForResult
 
 
 class AudioPlayActivity :
-    VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play, theme = Theme.Dark),
+    VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play, toolBarTheme = Theme.Dark),
     ChangeSourceDialog.CallBack {
 
     override val viewModel: AudioPlayViewModel

@@ -26,7 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/book_info" />
+            app:title="@string/book_info"
+            app:themeMode="dark" />
 
         <RelativeLayout
             android:layout_width="match_parent"
