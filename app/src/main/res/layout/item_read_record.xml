@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="6dp"
-        android:gravity="right"
+        android:maxLength="10"
         android:textIsSelectable="true"
         tools:ignore="RtlHardcoded" />
 
