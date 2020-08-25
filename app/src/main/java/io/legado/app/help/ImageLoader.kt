@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isContentPath
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import java.io.File
 
 object ImageLoader {
@@ -19,7 +20,7 @@ object ImageLoader {
     fun load(context: Context, path: String?): RequestBuilder<Drawable> {
         return when {
             path.isNullOrEmpty() -> Glide.with(context).load(path)
-            path.isAbsUrl() -> Glide.with(context).load(path)
+            path.isAbsUrl() -> Glide.with(context).load(AnalyzeUrl(path).getGlideUrl())
             path.isContentPath() -> Glide.with(context).load(Uri.parse(path))
             else -> try {
                 Glide.with(context).load(File(path))
