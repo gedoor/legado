@@ -128,6 +128,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onResume() {
         super.onResume()
+        ReadBook.readStartTime = System.currentTimeMillis()
         upSystemUiVisibility()
         timeBatteryReceiver = TimeBatteryReceiver.register(this)
         page_view.upTime()
