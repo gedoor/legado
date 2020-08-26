@@ -1,7 +1,7 @@
 package io.legado.app.ui.book.chapterlist
 
 import android.content.Context
-import android.widget.TextView
+import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -33,12 +33,12 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     tv_tag.visible()
                 }
                 upHasCache(
-                    tv_chapter_name,
+                    this,
                     cacheFileNames.contains(BookHelp.formatChapterName(item))
                 )
             } else {
                 upHasCache(
-                    tv_chapter_name,
+                    this,
                     cacheFileNames.contains(BookHelp.formatChapterName(item))
                 )
             }
@@ -53,8 +53,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
     }
 
-    private fun upHasCache(textView: TextView, contains: Boolean) {
-        textView.paint.isFakeBoldText = contains
+    private fun upHasCache(itemView: View, contains: Boolean) = itemView.apply {
+        tv_chapter_name.paint.isFakeBoldText = contains
+        iv_checked.visible(contains)
     }
 
     interface Callback {
