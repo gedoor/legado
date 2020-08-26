@@ -98,6 +98,14 @@ object NetworkUtils {
         } else url.substring(0, index)
     }
 
+   fun getSubDomain(url: String?): String {
+        var baseUrl = getBaseUrl(url)
+        if (baseUrl == null) return ""
+        return if (baseUrl.indexOf(".") == baseUrl.lastIndexOf(".")) {
+            baseUrl.substring(baseUrl.lastIndexOf("/")+1)
+        } else baseUrl.substring(baseUrl.indexOf(".")+1)
+    }
+    
     /**
      * Get local Ip address.
      */

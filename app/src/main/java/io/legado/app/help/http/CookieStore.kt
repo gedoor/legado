@@ -6,13 +6,13 @@ import com.franmontiel.persistentcookiejar.persistence.SerializableCookie
 import io.legado.app.App
 import io.legado.app.data.entities.Cookie
 import io.legado.app.help.coroutine.Coroutine
-
+import io.legado.app.utils.NetworkUtils
 
 object CookieStore : CookiePersistor {
 
     fun setCookie(url: String, cookie: String?) {
         Coroutine.async {
-            val cookieBean = Cookie(url, cookie ?: "")
+            val cookieBean = Cookie(NetworkUtils.getSubDomain(url), cookie ?: "")
             App.db.cookieDao().insert(cookieBean)
         }
     }
@@ -33,12 +33,12 @@ object CookieStore : CookiePersistor {
     }
 
     fun getCookie(url: String): String {
-        val cookieBean = App.db.cookieDao().get(url)
+        val cookieBean = App.db.cookieDao().get(NetworkUtils.getSubDomain(url))
         return cookieBean?.cookie ?: ""
     }
 
     fun removeCookie(url: String) {
-        App.db.cookieDao().delete(url)
+        App.db.cookieDao().delete(NetworkUtils.getSubDomain(url))
     }
 
     private fun cookieToMap(cookie: String): MutableMap<String, String> {
