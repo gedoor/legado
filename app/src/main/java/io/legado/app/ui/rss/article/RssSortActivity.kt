@@ -8,7 +8,6 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
@@ -30,7 +29,7 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
         adapter = TabFragmentPageAdapter(supportFragmentManager)
         tab_layout.setupWithViewPager(view_pager)
         view_pager.adapter = adapter
-        viewModel.titleLiveData.observe(this, Observer {
+        viewModel.titleLiveData.observe(this, {
             title_bar.title = it
         })
         viewModel.initData(intent) {
@@ -85,7 +84,7 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
         }
     }
 
-    private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItemPosition(`object`: Any): Int {

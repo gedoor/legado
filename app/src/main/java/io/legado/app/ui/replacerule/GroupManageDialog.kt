@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -69,7 +68,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
-        App.db.replaceRuleDao().liveGroup().observe(viewLifecycleOwner, Observer {
+        App.db.replaceRuleDao().liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(",", ";"))

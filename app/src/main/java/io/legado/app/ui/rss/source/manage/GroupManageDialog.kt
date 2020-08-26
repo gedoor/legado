@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -63,7 +62,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tv_ok.setTextColor(requireContext().accentColor)
         tv_ok.visible()
         tv_ok.onClick { dismiss() }
-        App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, Observer {
+        App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(",", ";"))

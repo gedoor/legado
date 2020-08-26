@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -56,7 +55,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     }
 
     private fun initData() {
-        App.db.rssSourceDao().liveEnabled().observe(viewLifecycleOwner, Observer {
+        App.db.rssSourceDao().liveEnabled().observe(viewLifecycleOwner, {
             if (it.isEmpty()) {
                 getViewModelOfActivity(MainViewModel::class.java).initRss()
             }

@@ -7,7 +7,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -176,17 +175,17 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     }
 
     private fun initLiveData() {
-        App.db.bookSourceDao().liveGroupEnabled().observe(this, Observer {
+        App.db.bookSourceDao().liveGroupEnabled().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(",", ";"))
             }
             upGroupMenu()
         })
-        viewModel.searchBookLiveData.observe(this, Observer {
+        viewModel.searchBookLiveData.observe(this, {
             upSearchItems(it)
         })
-        viewModel.isSearchLiveData.observe(this, Observer {
+        viewModel.isSearchLiveData.observe(this, {
             if (it) {
                 startSearch()
             } else {
@@ -254,7 +253,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             rv_bookshelf_search.gone()
         } else {
             bookData = App.db.bookDao().liveDataSearch(key)
-            bookData?.observe(this, Observer {
+            bookData?.observe(this, {
                 if (it.isEmpty()) {
                     tv_book_show.gone()
                     rv_bookshelf_search.gone()
@@ -272,7 +271,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
             } else {
                 App.db.searchKeywordDao().liveDataSearch(key)
             }
-        historyData?.observe(this, Observer {
+        historyData?.observe(this, {
             historyKeyAdapter.setItems(it)
             if (it.isEmpty()) {
                 tv_clear_history.invisible()

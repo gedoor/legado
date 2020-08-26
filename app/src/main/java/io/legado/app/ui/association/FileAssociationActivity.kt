@@ -2,7 +2,6 @@ package io.legado.app.ui.association
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
@@ -23,12 +22,12 @@ class FileAssociationActivity : VMBaseActivity<FileAssociationViewModel>(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         rotate_loading.show()
-        viewModel.errorLiveData.observe(this, Observer {
+        viewModel.errorLiveData.observe(this, {
             rotate_loading.hide()
             toast(it)
             finish()
         })
-        viewModel.successLiveData.observe(this, Observer {
+        viewModel.successLiveData.observe(this, {
             rotate_loading.hide()
             startActivity(it)
             finish()

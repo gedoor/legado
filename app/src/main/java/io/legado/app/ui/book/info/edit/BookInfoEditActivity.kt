@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
@@ -30,7 +29,7 @@ class BookInfoEditActivity :
         get() = getViewModel(BookInfoEditViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        viewModel.bookData.observe(this, Observer { upView(it) })
+        viewModel.bookData.observe(this, { upView(it) })
         if (viewModel.bookData.value == null) {
             intent.getStringExtra("bookUrl")?.let {
                 viewModel.loadBook(it)

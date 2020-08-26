@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
@@ -83,7 +82,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
+        viewModel.searchStateData.observe(viewLifecycleOwner, {
             refresh_progress_bar.isAutoLoading = it
             if (it) {
                 stopMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
@@ -92,7 +91,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
             }
             tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         })
-        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it)
             diffResult.dispatchUpdatesTo(adapter)

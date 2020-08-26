@@ -12,7 +12,6 @@ import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -114,7 +113,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     private fun initData() {
         localUriLiveData?.removeObservers(this)
         localUriLiveData = App.db.bookDao().observeLocalUri()
-        localUriLiveData?.observe(this, Observer {
+        localUriLiveData?.observe(this, {
             adapter.upBookHas(it)
         })
     }
