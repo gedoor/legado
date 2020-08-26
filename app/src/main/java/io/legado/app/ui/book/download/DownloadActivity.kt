@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
@@ -129,7 +128,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
             AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
-        booksLiveData?.observe(this, Observer { list ->
+        booksLiveData?.observe(this, { list ->
             val booksDownload = list.filter {
                 it.isOnLineTxt()
             }
@@ -147,7 +146,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     private fun initGroupData() {
         groupLiveData?.removeObservers(this)
         groupLiveData = App.db.bookGroupDao().liveDataAll()
-        groupLiveData?.observe(this, Observer {
+        groupLiveData?.observe(this, {
             groupList.clear()
             groupList.addAll(it)
             adapter.notifyDataSetChanged()

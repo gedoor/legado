@@ -11,7 +11,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -164,7 +163,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 App.db.bookSourceDao().liveDataSearch("%$searchKey%")
             }
         }
-        bookSourceLiveDate?.observe(this, Observer { data ->
+        bookSourceLiveDate?.observe(this, { data ->
             val sourceList = when (sort) {
                 1 -> data.sortedBy { it.weight }
                 2 -> data.sortedBy { it.bookSourceName }
@@ -179,7 +178,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     private fun initLiveDataGroup() {
-        App.db.bookSourceDao().liveGroup().observe(this, Observer {
+        App.db.bookSourceDao().liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(",", ";"))

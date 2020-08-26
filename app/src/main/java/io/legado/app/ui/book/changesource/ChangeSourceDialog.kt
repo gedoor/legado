@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -135,7 +134,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     private fun initLiveData() {
-        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
+        viewModel.searchStateData.observe(viewLifecycleOwner, {
             refresh_progress_bar.isAutoLoading = it
             if (it) {
                 stopMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
@@ -144,7 +143,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
             }
             tool_bar.menu.applyTint(requireContext())
         })
-        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it)
             diffResult.dispatchUpdatesTo(adapter)

@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.*
 import android.webkit.*
 import androidx.core.view.size
-import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.DrawableUtils
@@ -155,7 +154,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initLiveData() {
-        viewModel.contentLiveData.observe(this, Observer { content ->
+        viewModel.contentLiveData.observe(this, { content ->
             viewModel.rssArticle?.let {
                 upJavaScriptEnable()
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
@@ -179,7 +178,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 }
             }
         })
-        viewModel.urlLiveData.observe(this, Observer {
+        viewModel.urlLiveData.observe(this, {
             upJavaScriptEnable()
             web_view.loadUrl(it.url, it.headerMap)
         })

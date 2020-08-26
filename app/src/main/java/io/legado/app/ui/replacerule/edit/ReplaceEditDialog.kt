@@ -11,7 +11,6 @@ import android.widget.EditText
 import android.widget.PopupWindow
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppConst
@@ -71,7 +70,7 @@ class ReplaceEditDialog : BaseDialogFragment(),
         tool_bar.inflateMenu(R.menu.replace_edit)
         tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
-        viewModel.replaceRuleData.observe(viewLifecycleOwner, Observer {
+        viewModel.replaceRuleData.observe(viewLifecycleOwner, {
             upReplaceView(it)
         })
         arguments?.let {
