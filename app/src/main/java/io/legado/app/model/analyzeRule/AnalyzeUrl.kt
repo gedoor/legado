@@ -191,6 +191,7 @@ class AnalyzeUrl(
                             ?.let { headerMap.putAll(it) }
                     }
                 }
+                headerMap[UA_NAME] = headerMap[UA_NAME] ?: userAgent
                 charset = option.charset
                 body = if (option.body is String) {
                     option.body
@@ -352,7 +353,6 @@ class AnalyzeUrl(
         if (cookie.isNotEmpty()) {
             headerMap["Cookie"] += cookie
         }
-        headerMap[UA_NAME] = headerMap[UA_NAME] ?: userAgent
         return if (fieldMap.isEmpty()) {
             HttpHelper.getBytes(url, mapOf(), headerMap)
         } else {
