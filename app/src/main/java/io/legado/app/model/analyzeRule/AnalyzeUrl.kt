@@ -22,7 +22,8 @@ import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
-
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 
 /**
  * Created by GKF on 2018/1/24.
@@ -346,9 +347,7 @@ class AnalyzeUrl(
     }
 
     @Throws(Exception::class)
-    fun getImageBytes(
-        tag: String
-    ): ByteArray? {
+    fun getImageBytes(tag: String): ByteArray? {
         //资源为本站的资源，保留cookie
         //图片盗链的不保留当前的cookie，可由js生成图片源站的cookie
         val cookie = CookieStore.getCookie(tag)
@@ -401,6 +400,19 @@ class AnalyzeUrl(
                 .getMapByteAsync(url, fieldMap, headerMap)
         }
         return response.body()
+    }
+
+    @Throws(Exception::class)
+    fun getGlideUrl(): Any? {
+        var glideUrl: Any = url
+        if(headerMap.isNotEmpty()) {
+            val Headers = LazyHeaders.Builder()
+            headerMap.forEach {(key, value) -> 
+                Headers.addHeader(key, value)
+            }
+            glideUrl = GlideUrl(url, Headers.build())
+        }
+        return glideUrl
     }
 
     data class UrlOption(
