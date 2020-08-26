@@ -39,17 +39,19 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 
+    lateinit var adapter: Adapter
+    lateinit var viewModel: SpeakEngineViewModel
+    private var httpTTSData: LiveData<List<HttpTTS>>? = null
+    var engineId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = getViewModel(SpeakEngineViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
-
-    lateinit var adapter: Adapter
-    private var httpTTSData: LiveData<List<HttpTTS>>? = null
-    var engineId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initView()
@@ -97,6 +99,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> editHttpTTS()
+            R.id.menu_default -> viewModel.importDefault()
         }
         return true
     }

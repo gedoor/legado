@@ -6,6 +6,7 @@ import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
+import java.net.URLEncoder
 import java.util.*
 
 @Keep
@@ -52,10 +53,19 @@ interface JsExtensions {
     fun timeFormat(time: Long): String {
         return dateFormat.format(Date(time))
     }
+
     //utf8编码转gbk编码
     fun utf8ToGbk(str: String): String {
         val utf8 = String(str.toByteArray(charset("UTF-8")))
         val unicode = String(utf8.toByteArray(), charset("UTF-8"))
         return String(unicode.toByteArray(charset("GBK")))
+    }
+
+    fun encodeURI(str: String): String {
+        return try {
+            URLEncoder.encode(str, "UTF-8")
+        } catch (e: Exception) {
+            ""
+        }
     }
 }
