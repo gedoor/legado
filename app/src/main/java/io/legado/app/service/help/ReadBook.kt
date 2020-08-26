@@ -376,6 +376,14 @@ object ReadBook {
 
     private val imageStyle get() = webBook?.bookSource?.ruleContent?.imageStyle
 
+    fun setCharset(charset: String) {
+        book?.let {
+            it.charset = charset
+            callBack?.loadChapterList(it)
+        }
+        saveRead()
+    }
+
     fun saveRead() {
         Coroutine.async {
             book?.let { book ->
@@ -392,6 +400,7 @@ object ReadBook {
     }
 
     interface CallBack {
+        fun loadChapterList(book: Book)
         fun upContent(relativePosition: Int = 0, resetPageOffset: Boolean = true)
         fun upView()
         fun pageChanged()
