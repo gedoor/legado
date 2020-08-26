@@ -135,7 +135,18 @@ object Restore {
                 App.db.txtTocRule().insert(*it.toTypedArray())
             }
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
-                App.db.readRecordDao().insert(*it.toTypedArray())
+                it.forEach { readRecord ->
+                    //判断是不是本机记录
+                    if (readRecord.androidId != App.androidId) {
+                        App.db.readRecordDao().insert(readRecord)
+                    } else {
+                        val time = App.db.readRecordDao()
+                            .getReadTime(readRecord.androidId, readRecord.bookName)
+                        if (time == null || time < readRecord.readTime) {
+                            App.db.readRecordDao().insert(readRecord)
+                        }
+                    }
+                }
             }
             fileToListT<HttpTTS>(path, "httpTTS.json")?.let {
                 App.db.httpTTSDao().insert(*it.toTypedArray())
