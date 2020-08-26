@@ -14,7 +14,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
-import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
@@ -108,11 +107,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         initView()
         upScreenTimeOut()
         ReadBook.callBack = this
-        ReadBook.titleDate.observe(this, Observer {
+        ReadBook.titleDate.observe(this) {
             title_bar.title = it
             upMenu()
             upView()
-        })
+        }
         viewModel.initData(intent)
     }
 
