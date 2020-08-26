@@ -610,7 +610,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     override fun ajax(urlStr: String): String? {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr, baseUrl = baseUrl, book = book)
-            val call = analyzeUrl.getResponse(urlStr)
+            val call = analyzeUrl.getResponse(baseUrl)
             val response = call.execute()
             response.body()
         } catch (e: Exception) {
