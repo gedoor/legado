@@ -8,7 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
-import io.legado.app.model.SearchBookModel
+import io.legado.app.model.webBook.SearchBookModel
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive

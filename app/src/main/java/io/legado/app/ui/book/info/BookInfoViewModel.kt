@@ -9,7 +9,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.service.help.ReadBook
 import kotlinx.coroutines.Dispatchers.IO

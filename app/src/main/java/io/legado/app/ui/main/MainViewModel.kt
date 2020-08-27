@@ -11,7 +11,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.DefaultValueHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject

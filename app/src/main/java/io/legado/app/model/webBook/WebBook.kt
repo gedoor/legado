@@ -1,15 +1,12 @@
-package io.legado.app.model
+package io.legado.app.model.webBook
 
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.webBook.BookChapterList
-import io.legado.app.model.webBook.BookContent
-import io.legado.app.model.webBook.BookInfo
-import io.legado.app.model.webBook.BookList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext

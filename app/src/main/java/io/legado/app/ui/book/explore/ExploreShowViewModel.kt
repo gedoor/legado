@@ -7,7 +7,7 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import kotlinx.coroutines.Dispatchers.IO
 
 class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
