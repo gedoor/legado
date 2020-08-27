@@ -48,29 +48,31 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun upToc(books: List<Book>) {
-        books.filter {
-            it.origin != BookType.local && it.canUpdate
-        }.forEach {
-            bookMap[it.bookUrl] = it
-        }
-        for (i in 0 until threadCount) {
-            if (usePoolCount < threadCount) {
-                usePoolCount++
-                updateToc()
+        execute {
+            books.filter {
+                it.origin != BookType.local && it.canUpdate
+            }.forEach {
+                bookMap[it.bookUrl] = it
+            }
+            for (i in 0 until threadCount) {
+                if (usePoolCount < threadCount) {
+                    usePoolCount++
+                    updateToc()
+                }
             }
         }
     }
 
     private fun updateToc() {
-        execute {
+        synchronized(this) {
             bookMap.forEach { bookEntry ->
                 if (!updateList.contains(bookEntry.key)) {
                     val book = bookEntry.value
+                    synchronized(this) {
+                        updateList.add(book.bookUrl)
+                        postEvent(EventBus.UP_BOOK, book.bookUrl)
+                    }
                     App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-                        synchronized(this) {
-                            updateList.add(book.bookUrl)
-                            postEvent(EventBus.UP_BOOK, book.bookUrl)
-                        }
                         WebBook(bookSource).getChapterList(book, context = upTocPool)
                             .timeout(300000)
                             .onSuccess(IO) {
@@ -91,6 +93,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                             }
                     } ?: synchronized(this) {
                         bookMap.remove(bookEntry.key)
+                        updateList.remove(book.bookUrl)
+                        postEvent(EventBus.UP_BOOK, book.bookUrl)
                         upNext()
                     }
                     return@forEach
