@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.LinearLayout
-import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
@@ -66,8 +65,8 @@ class BookInfoActivity :
         scroll_view.setBackgroundColor(backgroundColor)
         fl_action.setBackgroundColor(bottomBackground)
         tv_shelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
-        viewModel.bookData.observe(this, Observer { showBook(it) })
-        viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
+        viewModel.bookData.observe(this, { showBook(it) })
+        viewModel.chapterListData.observe(this, { upLoading(false, it) })
         viewModel.initData(intent)
         initOnClick()
     }

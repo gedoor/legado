@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
-import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
@@ -48,8 +47,8 @@ class AudioPlayActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title_bar.transparent()
-        AudioPlay.titleData.observe(this, Observer { title_bar.title = it })
-        AudioPlay.coverData.observe(this, Observer { upCover(it) })
+        AudioPlay.titleData.observe(this, { title_bar.title = it })
+        AudioPlay.coverData.observe(this, { upCover(it) })
         viewModel.initData(intent)
         initView()
     }

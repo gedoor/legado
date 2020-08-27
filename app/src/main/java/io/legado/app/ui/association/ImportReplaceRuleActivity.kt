@@ -1,7 +1,6 @@
 package io.legado.app.ui.association
 
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -26,11 +25,11 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         rotate_loading.show()
-        viewModel.errorLiveData.observe(this, Observer {
+        viewModel.errorLiveData.observe(this, {
             rotate_loading.hide()
             errorDialog(it)
         })
-        viewModel.successLiveData.observe(this, Observer {
+        viewModel.successLiveData.observe(this, {
             rotate_loading.hide()
             if (it.size > 0) {
                 successDialog(it)

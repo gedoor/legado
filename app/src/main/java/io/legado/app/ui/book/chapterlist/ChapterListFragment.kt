@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
@@ -89,7 +88,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     private fun initDoc() {
         tocLiveData?.removeObservers(this@ChapterListFragment)
         tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
-        tocLiveData?.observe(viewLifecycleOwner, Observer {
+        tocLiveData?.observe(viewLifecycleOwner, {
             adapter.setItems(it)
             if (!scrollToDurChapter) {
                 mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
@@ -124,7 +123,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         } else {
             tocLiveData?.removeObservers(this)
             tocLiveData = App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl, newText)
-            tocLiveData?.observe(viewLifecycleOwner, Observer {
+            tocLiveData?.observe(viewLifecycleOwner, {
                 adapter.setItems(it)
             })
         }

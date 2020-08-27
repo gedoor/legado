@@ -20,7 +20,9 @@ class AnalyzeTxtFile {
     @Throws(Exception::class)
     fun analyze(book: Book): ArrayList<BookChapter> {
         val bookFile = getBookFile(book)
-        book.charset = EncodingDetect.getEncode(bookFile)
+        if (book.charset == null) {
+            book.charset = EncodingDetect.getEncode(bookFile)
+        }
         charset = book.fileCharset()
         val rulePattern = if (book.tocUrl.isNotEmpty()) {
             Pattern.compile(book.tocUrl, Pattern.MULTILINE)

@@ -6,13 +6,16 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.HttpTTS
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.AppConfig
+import io.legado.app.help.DefaultValueHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
 import io.legado.app.model.WebBook
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -96,11 +99,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         execute {
             FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
             if (App.db.httpTTSDao().count == 0) {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                val json = String(App.INSTANCE.assets.open("httpTTS.json").readBytes())
-                GSON.fromJsonArray<HttpTTS>(json)?.let {
-                    App.db.httpTTSDao().insert(*it.toTypedArray())
-                }
+                DefaultValueHelp.initHttpTTS()
             }
         }
     }

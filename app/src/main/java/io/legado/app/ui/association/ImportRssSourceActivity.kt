@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -41,11 +40,11 @@ class ImportRssSourceActivity : VMBaseActivity<ImportRssSourceViewModel>(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         rotate_loading.show()
-        viewModel.errorLiveData.observe(this, Observer {
+        viewModel.errorLiveData.observe(this, {
             rotate_loading.hide()
             errorDialog(it)
         })
-        viewModel.successLiveData.observe(this, Observer {
+        viewModel.successLiveData.observe(this, {
             rotate_loading.hide()
             if (it > 0) {
                 successDialog()

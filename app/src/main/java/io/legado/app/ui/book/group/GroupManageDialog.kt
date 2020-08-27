@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -78,7 +77,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tv_ok.setTextColor(requireContext().accentColor)
         tv_ok.visible()
         tv_ok.onClick { dismiss() }
-        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
+        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, {
             val diffResult =
                 DiffUtil.calculateDiff(GroupDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it, diffResult)

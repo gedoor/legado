@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,7 +58,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
                 LivePagedListBuilder(
                     App.db.bookmarkDao().observeByBook(book.bookUrl, book.name, book.author), 20
                 ).build()
-            bookmarkLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+            bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.submitList(it) })
         }
     }
 
@@ -74,7 +73,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
                     newText
                 ), 20
             ).build()
-            bookmarkLiveData?.observe(viewLifecycleOwner, Observer { adapter.submitList(it) })
+            bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.submitList(it) })
         }
     }
 

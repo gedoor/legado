@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -113,7 +112,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     private fun initData() {
-        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
+        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, {
             adapter.setItems(it)
         })
     }

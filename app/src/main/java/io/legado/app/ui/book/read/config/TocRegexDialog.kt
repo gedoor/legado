@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -104,7 +103,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private fun initData() {
         tocRegexLiveData?.removeObservers(viewLifecycleOwner)
         tocRegexLiveData = App.db.txtTocRule().observeAll()
-        tocRegexLiveData?.observe(viewLifecycleOwner, Observer { tocRules ->
+        tocRegexLiveData?.observe(viewLifecycleOwner, { tocRules ->
             initSelectedName(tocRules)
             adapter.setItems(tocRules)
         })

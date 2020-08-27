@@ -34,7 +34,7 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.about)
         findPreference<Preference>("check_update")?.summary =
-            "${getString(R.string.version)} ${App.INSTANCE.versionName}"
+            "${getString(R.string.version)} ${App.versionName}"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
