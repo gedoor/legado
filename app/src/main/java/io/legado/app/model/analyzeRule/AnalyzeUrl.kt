@@ -50,7 +50,7 @@ class AnalyzeUrl(
     private var baseUrl: String = ""
     lateinit var url: String
         private set
-    var path: String? = null
+    lateinit var urlHasQuery: String
         private set
     val headerMap = HashMap<String, String>()
     private var queryStr: String? = null
@@ -174,6 +174,7 @@ class AnalyzeUrl(
     private fun initUrl() {
         var urlArray = ruleUrl.split(",[^\\{]*".toRegex(), 2)
         url = urlArray[0]
+        urlHasQuery = urlArray[0]
         NetworkUtils.getBaseUrl(url)?.let {
             baseUrl = it
         }
@@ -392,13 +393,13 @@ class AnalyzeUrl(
 
     @Throws(Exception::class)
     fun getGlideUrl(): Any? {
-        var glideUrl: Any = url
+        var glideUrl: Any = urlHasQuery
         if(headerMap.isNotEmpty()) {
             val headers = LazyHeaders.Builder()
             headerMap.forEach {(key, value) ->
                 headers.addHeader(key, value)
             }
-            glideUrl = GlideUrl(url, headers.build())
+            glideUrl = GlideUrl(urlHasQuery, headers.build())
         }
         return glideUrl
     }
