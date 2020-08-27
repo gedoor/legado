@@ -3,6 +3,8 @@ package io.legado.app.model.analyzeRule
 import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.annotation.Keep
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppConst.userAgent
@@ -22,8 +24,6 @@ import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
 
 /**
  * Created by GKF on 2018/1/24.
@@ -394,11 +394,11 @@ class AnalyzeUrl(
     fun getGlideUrl(): Any? {
         var glideUrl: Any = url
         if(headerMap.isNotEmpty()) {
-            val Headers = LazyHeaders.Builder()
-            headerMap.forEach {(key, value) -> 
-                Headers.addHeader(key, value)
+            val headers = LazyHeaders.Builder()
+            headerMap.forEach {(key, value) ->
+                headers.addHeader(key, value)
             }
-            glideUrl = GlideUrl(url, Headers.build())
+            glideUrl = GlideUrl(url, headers.build())
         }
         return glideUrl
     }

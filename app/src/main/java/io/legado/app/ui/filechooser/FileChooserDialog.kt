@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.constant.Theme
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -93,6 +93,7 @@ class FileChooserDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        tool_bar.setBackgroundColor(primaryColor)
         view.setBackgroundResource(R.color.background_card)
         arguments?.let {
             requestCode = it.getInt("requestCode")
@@ -129,7 +130,7 @@ class FileChooserDialog : DialogFragment(),
                 tool_bar.menu.add(menuTitle)
             }
         }
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
     }
 
