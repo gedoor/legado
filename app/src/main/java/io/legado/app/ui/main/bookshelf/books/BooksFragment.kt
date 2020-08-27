@@ -66,7 +66,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         refresh_layout.setColorSchemeColors(accentColor)
         refresh_layout.setOnRefreshListener {
             refresh_layout.isRefreshing = false
-            activityViewModel.upChapterList(booksAdapter.getItems())
+            activityViewModel.upToc(booksAdapter.getItems())
         }
         val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
         if (bookshelfLayout == 0) {

@@ -78,7 +78,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 val group = bookGroups[tab_layout.selectedTabPosition]
                 val fragment = fragmentMap[group.groupId]
                 fragment?.getBooks()?.let {
-                    activityViewModel.upChapterList(it)
+                    activityViewModel.upToc(it)
                 }
             }
             R.id.menu_bookshelf_layout -> configBookshelf()

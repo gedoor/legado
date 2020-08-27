@@ -1,4 +1,4 @@
-package io.legado.app.model
+package io.legado.app.model.rss
 
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource

@@ -62,7 +62,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         //自动更新书籍
         if (AppConfig.autoRefreshBook) {
             view_pager_main.postDelayed({
-                viewModel.upChapterList()
+                viewModel.upAllBookToc()
             }, 1000)
         }
         view_pager_main.postDelayed({

@@ -3,6 +3,8 @@ package io.legado.app.model.analyzeRule
 import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.annotation.Keep
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppConst.userAgent
@@ -22,8 +24,6 @@ import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
 
 /**
  * Created by GKF on 2018/1/24.
@@ -50,7 +50,7 @@ class AnalyzeUrl(
     private var baseUrl: String = ""
     lateinit var url: String
         private set
-    var path: String? = null
+    lateinit var urlHasQuery: String
         private set
     val headerMap = HashMap<String, String>()
     private var queryStr: String? = null
@@ -59,10 +59,11 @@ class AnalyzeUrl(
     private var body: String? = null
     private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
+    private val splitUrlRegex = Regex(",[^\\{]*")
 
     init {
         baseUrl?.let {
-            this.baseUrl = it.split(",[^\\{]*".toRegex(), 1)[0]
+            this.baseUrl = it.split(splitUrlRegex, 1)[0]
         }
         headerMapF?.let { headerMap.putAll(it) }
         //替换参数
@@ -172,8 +173,9 @@ class AnalyzeUrl(
      * 处理URL
      */
     private fun initUrl() {
-        var urlArray = ruleUrl.split(",[^\\{]*".toRegex(), 2)
+        var urlArray = ruleUrl.split(splitUrlRegex, 2)
         url = urlArray[0]
+        urlHasQuery = urlArray[0]
         NetworkUtils.getBaseUrl(url)?.let {
             baseUrl = it
         }
@@ -392,13 +394,13 @@ class AnalyzeUrl(
 
     @Throws(Exception::class)
     fun getGlideUrl(): Any? {
-        var glideUrl: Any = url
+        var glideUrl: Any = urlHasQuery
         if(headerMap.isNotEmpty()) {
-            val Headers = LazyHeaders.Builder()
-            headerMap.forEach {(key, value) -> 
-                Headers.addHeader(key, value)
+            val headers = LazyHeaders.Builder()
+            headerMap.forEach {(key, value) ->
+                headers.addHeader(key, value)
             }
-            glideUrl = GlideUrl(url, Headers.build())
+            glideUrl = GlideUrl(urlHasQuery, headers.build())
         }
         return glideUrl
     }

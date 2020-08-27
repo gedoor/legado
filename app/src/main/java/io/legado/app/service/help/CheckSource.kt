@@ -7,7 +7,7 @@ import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CheckSourceService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

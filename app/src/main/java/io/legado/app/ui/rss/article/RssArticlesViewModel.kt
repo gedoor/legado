@@ -7,7 +7,7 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
-import io.legado.app.model.Rss
+import io.legado.app.model.rss.Rss
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

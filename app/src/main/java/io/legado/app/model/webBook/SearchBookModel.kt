@@ -1,4 +1,4 @@
-package io.legado.app.model
+package io.legado.app.model.webBook
 
 import io.legado.app.App
 import io.legado.app.data.entities.SearchBook

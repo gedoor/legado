@@ -16,7 +16,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.Download
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
