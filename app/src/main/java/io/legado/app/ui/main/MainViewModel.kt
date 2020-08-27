@@ -18,13 +18,18 @@ import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.delay
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
-    private var upTocPool =
-        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    val updateList = hashSetOf<String>()
+    val threadCount = AppConfig.threadCount
+    private var upTocPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
+    val updateList = CopyOnWriteArraySet<String>()
+    private val bookMap = ConcurrentHashMap<String, Book>()
+
+    @Volatile
+    private var usePoolCount = 0
 
     override fun onCleared() {
         super.onCleared()
@@ -36,18 +41,31 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         upTocPool = Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
     }
 
-    fun upChapterList() {
+    fun upAllBookToc() {
         execute {
-            upChapterList(App.db.bookDao().hasUpdateBooks)
+            upToc(App.db.bookDao().hasUpdateBooks)
         }
     }
 
-    fun upChapterList(books: List<Book>) {
+    fun upToc(books: List<Book>) {
+        books.filter {
+            it.origin != BookType.local && it.canUpdate
+        }.forEach {
+            bookMap[it.bookUrl] = it
+        }
+        for (i in 0 until threadCount) {
+            if (usePoolCount < threadCount) {
+                usePoolCount++
+                updateToc()
+            }
+        }
+    }
+
+    private fun updateToc() {
         execute {
-            books.filter {
-                it.origin != BookType.local && it.canUpdate
-            }.forEach { book ->
-                if (!updateList.contains(book.bookUrl)) {
+            bookMap.forEach { bookEntry ->
+                if (!updateList.contains(bookEntry.key)) {
+                    val book = bookEntry.value
                     App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                         synchronized(this) {
                             updateList.add(book.bookUrl)
@@ -56,25 +74,36 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         WebBook(bookSource).getChapterList(book, context = upTocPool)
                             .timeout(300000)
                             .onSuccess(IO) {
-                                synchronized(this) {
-                                    updateList.remove(book.bookUrl)
-                                    postEvent(EventBus.UP_BOOK, book.bookUrl)
-                                }
                                 App.db.bookDao().update(book)
                                 App.db.bookChapterDao().delByBook(book.bookUrl)
                                 App.db.bookChapterDao().insert(*it.toTypedArray())
                             }
                             .onError {
-                                synchronized(this) {
-                                    updateList.remove(book.bookUrl)
-                                    postEvent(EventBus.UP_BOOK, book.bookUrl)
-                                }
                                 it.printStackTrace()
                             }
+                            .onFinally {
+                                synchronized(this) {
+                                    bookMap.remove(bookEntry.key)
+                                    updateList.remove(book.bookUrl)
+                                    postEvent(EventBus.UP_BOOK, book.bookUrl)
+                                    upNext()
+                                }
+                            }
+                    } ?: synchronized(this) {
+                        bookMap.remove(bookEntry.key)
+                        upNext()
                     }
+                    return@forEach
                 }
-                delay(50)
             }
+        }
+    }
+
+    private fun upNext() {
+        if (bookMap.size > updateList.size) {
+            updateToc()
+        } else {
+            usePoolCount--
         }
     }
 
