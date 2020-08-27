@@ -59,10 +59,11 @@ class AnalyzeUrl(
     private var body: String? = null
     private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
+    private val splitUrlRegex = Regex(",[^\\{]*")
 
     init {
         baseUrl?.let {
-            this.baseUrl = it.split(",[^\\{]*".toRegex(), 1)[0]
+            this.baseUrl = it.split(splitUrlRegex, 1)[0]
         }
         headerMapF?.let { headerMap.putAll(it) }
         //替换参数
@@ -172,7 +173,7 @@ class AnalyzeUrl(
      * 处理URL
      */
     private fun initUrl() {
-        var urlArray = ruleUrl.split(",[^\\{]*".toRegex(), 2)
+        var urlArray = ruleUrl.split(splitUrlRegex, 2)
         url = urlArray[0]
         urlHasQuery = urlArray[0]
         NetworkUtils.getBaseUrl(url)?.let {
