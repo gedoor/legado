@@ -19,7 +19,6 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.ui.book.read.Help
 import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.postEvent
 
@@ -33,8 +32,8 @@ class ReadAloudConfigDialog : DialogFragment() {
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
-            Help.upSystemUiVisibility(it)
-            it.setBackgroundDrawableResource(R.color.transparent)
+
+        it.setBackgroundDrawableResource(R.color.transparent)
             it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
