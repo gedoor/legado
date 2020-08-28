@@ -90,18 +90,26 @@ object BookHelp {
         analyzeUrl.getImageBytes(book.origin)?.let {
             FileUtils.createFileIfNotExist(
                 downloadDir,
-                "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
+                "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}",
                 subDirs = arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
             ).writeBytes(it)
         }
     }
-    
-    fun getImage(book:Book, src:String): File {
+
+    fun getImage(book: Book, src: String): File {
         return FileUtils.getFile(
             downloadDir,
-            "${MD5Utils.md5Encode16(src)}${src.substringAfterLast(".").substringBefore(",")}",
+            "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}",
             subDirs = arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
         )
+    }
+
+    private fun getImageSuffix(src: String): String {
+        var suffix = src.substringAfterLast(".").substringBefore(",")
+        if (suffix.length > 5) {
+            suffix = ".jpg"
+        }
+        return suffix
     }
 
     fun getChapterFiles(book: Book): List<String> {
