@@ -20,6 +20,9 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
@@ -79,11 +82,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 .show {
                     putPrefInt(PreferKey.webPort, it)
                 }
-            PreferKey.cleanCache -> {
-                BookHelp.clearCache()
-                FileUtils.deleteFile(requireActivity().cacheDir.absolutePath)
-                toast(R.string.clear_cache_success)
-            }
+            PreferKey.cleanCache -> clearCache()
             PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
                 selectDefaultCover()
             } else {
@@ -143,6 +142,18 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 preference.summary = value
             }
         }
+    }
+
+    private fun clearCache() {
+        requireContext().alert(titleResource = R.string.clear_cache,
+            messageResource = R.string.sure_del) {
+            okButton {
+                BookHelp.clearCache()
+                FileUtils.deleteFile(requireActivity().cacheDir.absolutePath)
+                toast(R.string.clear_cache_success)
+            }
+            noButton()
+        }.show().applyTint()
     }
 
     private fun selectDefaultCover() {
