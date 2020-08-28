@@ -29,13 +29,7 @@ object ReadBookConfig {
 
     var bg: Drawable? = null
     var bgMeanColor: Int = 0
-    val textColor: Int
-        get() =
-            if (AppConfig.isEInkMode && !AppConfig.isNightTheme) {
-                Color.BLACK
-            } else {
-                durConfig.textColor()
-            }
+    val textColor: Int get() = durConfig.textColor()
 
     init {
         upConfig()
