@@ -21,8 +21,10 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         with(holder.itemView) {
+            val isDur = callback.durChapterIndex() == item.index
+            val cached = cacheFileNames.contains(BookHelp.formatChapterName(item))
             if (payloads.isEmpty()) {
-                if (callback.durChapterIndex() == item.index) {
+                if (isDur) {
                     tv_chapter_name.setTextColor(context.accentColor)
                 } else {
                     tv_chapter_name.setTextColor(context.getCompatColor(R.color.primaryText))
@@ -32,15 +34,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     tv_tag.text = item.tag
                     tv_tag.visible()
                 }
-                upHasCache(
-                    this,
-                    cacheFileNames.contains(BookHelp.formatChapterName(item))
-                )
+                upHasCache(this, isDur, cached)
             } else {
-                upHasCache(
-                    this,
-                    cacheFileNames.contains(BookHelp.formatChapterName(item))
-                )
+                upHasCache(this, isDur, cached)
             }
         }
     }
@@ -53,9 +49,14 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
     }
 
-    private fun upHasCache(itemView: View, contains: Boolean) = itemView.apply {
-        tv_chapter_name.paint.isFakeBoldText = contains
-        iv_checked.visible(contains)
+    private fun upHasCache(itemView: View, isDur: Boolean, cached: Boolean) = itemView.apply {
+        tv_chapter_name.paint.isFakeBoldText = cached
+        iv_checked.setImageResource(R.drawable.ic_outline_cloud_24)
+        iv_checked.visible(!cached)
+        if (isDur) {
+            iv_checked.setImageResource(R.drawable.ic_check)
+            iv_checked.visible()
+        }
     }
 
     interface Callback {
