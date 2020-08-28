@@ -13,7 +13,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
@@ -208,9 +207,6 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             upStyle()
             upBg()
             postEvent(EventBus.UP_CONFIG, true)
-        }
-        if (AppConfig.isEInkMode) {
-            toast(R.string.e_ink_change_bg)
         }
     }
 
