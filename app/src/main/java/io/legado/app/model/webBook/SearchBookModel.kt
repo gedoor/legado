@@ -54,6 +54,7 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
         } else {
             searchPage++
         }
+        searchIndex = -1
         for (i in 0 until threadCount) {
             search(searchId)
         }

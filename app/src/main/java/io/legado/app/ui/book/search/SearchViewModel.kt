@@ -30,12 +30,15 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      * 开始搜索
      */
     fun search(key: String) {
-        if ((searchKey != key && key.isEmpty()) || key.isNotEmpty()) {
+        if ((searchKey == key) || key.isNotEmpty()) {
             searchBookModel.cancelSearch()
             searchBooks.clear()
             searchBookLiveData.postValue(searchBooks)
             searchID = System.currentTimeMillis()
             searchKey = key
+        }
+        if (searchKey.isEmpty()) {
+            return
         }
         searchBookModel.search(searchID, searchKey)
     }
@@ -111,7 +114,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
                             && item.author == searchBook.author
                         ) {
                             hasSame = true
-                            searchBook.addOrigin(item.bookUrl)
+                            searchBook.addOrigin(item.origin)
                             break
                         }
                     }
