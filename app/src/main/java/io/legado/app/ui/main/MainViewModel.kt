@@ -97,7 +97,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         postEvent(EventBus.UP_BOOK, book.bookUrl)
                         upNext()
                     }
-                    return@forEach
+                    return
                 }
             }
         }
