@@ -58,7 +58,7 @@ class AnalyzeUrl(
     private var body: String? = null
     private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
-    private val splitUrlRegex = Regex(",[\\s]*(?=\\{)")
+    private val splitUrlRegex = Regex(",\\s*(?=\\{)")
 
     init {
         baseUrl?.let {
