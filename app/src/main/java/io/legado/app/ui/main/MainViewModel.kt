@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
-    val threadCount = AppConfig.threadCount
+    private var threadCount = AppConfig.threadCount
     private var upTocPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
     val updateList = CopyOnWriteArraySet<String>()
     private val bookMap = ConcurrentHashMap<String, Book>()
@@ -37,8 +37,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun upPool() {
+        threadCount = AppConfig.threadCount
         upTocPool.close()
-        upTocPool = Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
+        upTocPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
     }
 
     fun upAllBookToc() {
