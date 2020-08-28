@@ -13,6 +13,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
@@ -178,7 +179,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         App.db.bookSourceDao().liveGroupEnabled().observe(this, {
             groups.clear()
             it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
+                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             upGroupMenu()
         })
