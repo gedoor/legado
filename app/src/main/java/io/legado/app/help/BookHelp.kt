@@ -2,6 +2,7 @@ package io.legado.app.help
 
 import com.hankcs.hanlp.HanLP
 import io.legado.app.App
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -16,19 +17,12 @@ import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
 import org.jetbrains.anko.toast
 import java.io.File
-import java.util.regex.Pattern
 import kotlin.math.min
 
 object BookHelp {
     private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
     private val downloadDir: File = App.INSTANCE.externalFilesDir
-    private val srcPattern =
-        Pattern.compile("<img .*?src.*?=.*?\"(.*?(?:,\\{.*\\})?)\".*?>", Pattern.CASE_INSENSITIVE)
-
-    fun bookFolderName(book: Book): String {
-        return formatFolderName(book.name) + MD5Utils.md5Encode16(book.bookUrl)
-    }
 
     fun formatChapterName(bookChapter: BookChapter): String {
         return String.format(
@@ -51,7 +45,7 @@ object BookHelp {
         Coroutine.async {
             val bookFolderNames = arrayListOf<String>()
             App.db.bookDao().all.forEach {
-                bookFolderNames.add(bookFolderName(it))
+                bookFolderNames.add(it.getFolderName())
             }
             val file = FileUtils.getDirFile(downloadDir, cacheFolderName)
             file.listFiles()?.forEach { bookFile ->
@@ -69,11 +63,11 @@ object BookHelp {
         FileUtils.createFileIfNotExist(
             downloadDir,
             formatChapterName(bookChapter),
-            subDirs = arrayOf(cacheFolderName, bookFolderName(book))
+            subDirs = arrayOf(cacheFolderName, book.getFolderName())
         ).writeText(content)
         //保存图片
         content.split("\n").forEach {
-            val matcher = srcPattern.matcher(it)
+            val matcher = AppPattern.imgPattern.matcher(it)
             if (matcher.find()) {
                 var src = matcher.group(1)
                 src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
@@ -91,7 +85,7 @@ object BookHelp {
             FileUtils.createFileIfNotExist(
                 downloadDir,
                 "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}",
-                subDirs = arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
+                subDirs = arrayOf(cacheFolderName, book.getFolderName(), cacheImageFolderName)
             ).writeBytes(it)
         }
     }
@@ -100,7 +94,7 @@ object BookHelp {
         return FileUtils.getFile(
             downloadDir,
             "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}",
-            subDirs = arrayOf(cacheFolderName, bookFolderName(book), cacheImageFolderName)
+            subDirs = arrayOf(cacheFolderName, book.getFolderName(), cacheImageFolderName)
         )
     }
 
@@ -116,7 +110,7 @@ object BookHelp {
         val fileNameList = arrayListOf<String>()
         FileUtils.createFolderIfNotExist(
             downloadDir,
-            subDirs = arrayOf(cacheFolderName, bookFolderName(book))
+            subDirs = arrayOf(cacheFolderName, book.getFolderName())
         ).list()?.let {
             fileNameList.addAll(it)
         }
@@ -130,7 +124,7 @@ object BookHelp {
             FileUtils.exists(
                 downloadDir,
                 formatChapterName(bookChapter),
-                subDirs = arrayOf(cacheFolderName, bookFolderName(book))
+                subDirs = arrayOf(cacheFolderName, book.getFolderName())
             )
         }
     }
@@ -142,7 +136,7 @@ object BookHelp {
             val file = FileUtils.getFile(
                 downloadDir,
                 formatChapterName(bookChapter),
-                subDirs = arrayOf(cacheFolderName, bookFolderName(book))
+                subDirs = arrayOf(cacheFolderName, book.getFolderName())
             )
             if (file.exists()) {
                 return file.readText()
@@ -158,24 +152,20 @@ object BookHelp {
             FileUtils.createFileIfNotExist(
                 downloadDir,
                 formatChapterName(bookChapter),
-                subDirs = arrayOf(cacheFolderName, bookFolderName(book))
+                subDirs = arrayOf(cacheFolderName, book.getFolderName())
             ).delete()
         }
     }
 
-    private fun formatFolderName(folderName: String): String {
-        return folderName.replace("[\\\\/:*?\"<>|.]".toRegex(), "")
-    }
-
     fun formatBookName(name: String): String {
         return name
-            .replace("\\s+作\\s*者.*".toRegex(), "")
+            .replace(AppPattern.nameRegex, "")
             .trim { it <= ' ' }
     }
 
     fun formatBookAuthor(author: String): String {
         return author
-            .replace(".*?作\\s*?者[:：]".toRegex(), "")
+            .replace(AppPattern.authorRegex, "")
             .trim { it <= ' ' }
     }
 

@@ -11,6 +11,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.help.AppConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
+import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
@@ -113,6 +114,10 @@ data class Book(
 
     fun fileCharset(): Charset {
         return charset(charset ?: "UTF-8")
+    }
+
+    fun getFolderName(): String {
+        return name.replace(AppPattern.fileNameRegex, "") + MD5Utils.md5Encode16(bookUrl)
     }
 
     fun toSearchBook(): SearchBook {
