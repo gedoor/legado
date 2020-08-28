@@ -68,7 +68,7 @@ class BookInfoEditActivity :
     private fun upView(book: Book) {
         tie_book_name.setText(book.name)
         tie_book_author.setText(book.author)
-        tie_cover_url.setText(book.getDisplayCover()?.substringBefore(","))
+        tie_cover_url.setText(book.getDisplayCover())
         tie_book_intro.setText(book.getDisplayIntro())
         upCover()
     }
