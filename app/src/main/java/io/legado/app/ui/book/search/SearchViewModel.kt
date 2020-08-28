@@ -30,7 +30,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      * 开始搜索
      */
     fun search(key: String) {
-        if (searchKey != key && key.isNotEmpty()) {
+        if ((searchKey != key && key.isEmpty()) || key.isNotEmpty()) {
             searchBookModel.cancelSearch()
             searchBooks.clear()
             searchBookLiveData.postValue(searchBooks)
@@ -54,6 +54,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
 
     override fun onSearchStart() {
         isSearchLiveData.postValue(true)
+        isLoading = true
     }
 
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {

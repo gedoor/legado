@@ -22,10 +22,11 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import org.jetbrains.anko.debug
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
+import kotlin.math.min
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     val threadCount = AppConfig.threadCount
-    private lateinit var searchPool: ExecutorCoroutineDispatcher
+    private var searchPool: ExecutorCoroutineDispatcher? = null
     val handler = Handler()
     val searchStateData = MutableLiveData<Boolean>()
     val searchBooksLiveData = MutableLiveData<List<SearchBook>>()
@@ -106,9 +107,12 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     private fun search() {
         synchronized(this) {
+            if (searchIndex >= bookSourceList.lastIndex) {
+                return
+            }
             searchIndex++
             val source = bookSourceList[searchIndex]
-            val task = WebBook(source).searchBook(name, scope = this, context = searchPool)
+            val task = WebBook(source).searchBook(name, scope = this, context = searchPool!!)
                 .timeout(60000L)
                 .onSuccess(IO) {
                     it.forEach { searchBook ->
@@ -133,7 +137,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         } else {
                             searchIndex++
                         }
-                        if (searchIndex >= bookSourceList.lastIndex + threadCount) {
+                        if (searchIndex >= bookSourceList.lastIndex + min(bookSourceList.size,
+                                threadCount)
+                        ) {
                             searchStateData.postValue(false)
                         }
                     }
@@ -194,14 +200,14 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             startSearch()
         } else {
             tasks.clear()
-            searchPool.close()
+            searchPool?.close()
             searchStateData.postValue(false)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        searchPool.close()
+        searchPool?.close()
     }
 
     fun disableSource(searchBook: SearchBook) {
