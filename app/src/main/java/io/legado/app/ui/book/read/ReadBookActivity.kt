@@ -691,7 +691,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 更新状态栏,导航栏
      */
     override fun upSystemUiVisibility() {
-        Help.upSystemUiVisibility(this, !read_menu.isVisible)
+        Help.upSystemUiVisibility(window, !read_menu.isVisible)
         upNavigationBarColor()
     }
 

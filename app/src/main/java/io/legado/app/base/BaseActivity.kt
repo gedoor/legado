@@ -131,9 +131,9 @@ abstract class BaseActivity(
         }
         ATH.setStatusBarColorAuto(this, fullScreen)
         if (toolBarTheme == Theme.Dark) {
-            ATH.setLightStatusBar(this, false)
+            ATH.setLightStatusBar(window, false)
         } else if (toolBarTheme == Theme.Light) {
-            ATH.setLightStatusBar(this, true)
+            ATH.setLightStatusBar(window, true)
         }
         upNavigationBarColor()
     }

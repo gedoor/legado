@@ -35,7 +35,7 @@ object Help {
     /**
      * 更新状态栏,导航栏
      */
-    fun upSystemUiVisibility(activity: Activity, toolBarHide: Boolean = true) {
+    fun upSystemUiVisibility(window: Window, toolBarHide: Boolean = true) {
         var flag = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -51,13 +51,13 @@ object Help {
                 flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             }
         }
-        activity.window.decorView.systemUiVisibility = flag
+        window.decorView.systemUiVisibility = flag
         if (toolBarHide) {
-            ATH.setLightStatusBar(activity, ReadBookConfig.durConfig.statusIconDark())
+            ATH.setLightStatusBar(window, ReadBookConfig.durConfig.statusIconDark())
         } else {
             ATH.setLightStatusBarAuto(
-                activity,
-                ThemeStore.statusBarColor(activity, AppConfig.isTransparentStatusBar)
+                window,
+                ThemeStore.statusBarColor(App.INSTANCE, AppConfig.isTransparentStatusBar)
             )
         }
     }

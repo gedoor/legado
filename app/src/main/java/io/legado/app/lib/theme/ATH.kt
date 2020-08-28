@@ -9,6 +9,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+import android.view.Window
 import android.widget.EdgeEffect
 import android.widget.ScrollView
 import androidx.annotation.ColorInt
@@ -63,16 +64,16 @@ object ATH {
         } else {
             activity.window.statusBarColor = color
         }
-        setLightStatusBarAuto(activity, color)
+        setLightStatusBarAuto(activity.window, color)
     }
 
-    fun setLightStatusBarAuto(activity: Activity, bgColor: Int) {
-        setLightStatusBar(activity, ColorUtils.isColorLight(bgColor))
+    fun setLightStatusBarAuto(window: Window, bgColor: Int) {
+        setLightStatusBar(window, ColorUtils.isColorLight(bgColor))
     }
 
-    fun setLightStatusBar(activity: Activity, enabled: Boolean) {
+    fun setLightStatusBar(window: Window, enabled: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val decorView = activity.window.decorView
+            val decorView = window.decorView
             val systemUiVisibility = decorView.systemUiVisibility
             if (enabled) {
                 decorView.systemUiVisibility =

@@ -20,10 +20,10 @@ class PaddingConfigDialog : BaseDialogFragment() {
         super.onStart()
         val dm = DisplayMetrics()
         activity?.let {
-            Help.upSystemUiVisibility(it)
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
+            Help.upSystemUiVisibility(it)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             it.attributes = attr
