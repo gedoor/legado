@@ -39,7 +39,8 @@ object Restore {
         "readConfig",
         PreferKey.themeMode,
         PreferKey.bookshelfLayout,
-        PreferKey.showRss
+        PreferKey.showRss,
+        PreferKey.threadCount
     )
 
     //忽略标题
@@ -47,7 +48,8 @@ object Restore {
         App.INSTANCE.getString(R.string.read_config),
         App.INSTANCE.getString(R.string.theme_mode),
         App.INSTANCE.getString(R.string.bookshelf_layout),
-        App.INSTANCE.getString(R.string.show_rss)
+        App.INSTANCE.getString(R.string.show_rss),
+        App.INSTANCE.getString(R.string.thread_count)
     )
 
     //默认忽略keys
@@ -219,6 +221,7 @@ object Restore {
             PreferKey.themeMode == key && ignoreThemeMode -> false
             PreferKey.bookshelfLayout == key && ignoreBookshelfLayout -> false
             PreferKey.showRss == key && ignoreShowRss -> false
+            PreferKey.threadCount == key && ignoreThreadCount -> false
             else -> true
         }
     }
@@ -231,6 +234,8 @@ object Restore {
         get() = ignoreConfig[PreferKey.bookshelfLayout] == true
     private val ignoreShowRss: Boolean
         get() = ignoreConfig[PreferKey.showRss] == true
+    private val ignoreThreadCount: Boolean
+        get() = ignoreConfig[PreferKey.threadCount] == true
 
     fun saveIgnoreConfig() {
         val json = GSON.toJson(ignoreConfig)
