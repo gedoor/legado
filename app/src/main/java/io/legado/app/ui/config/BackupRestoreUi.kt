@@ -19,6 +19,7 @@ import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentPath
+import io.legado.app.utils.longToast
 import io.legado.app.utils.toast
 import kotlinx.coroutines.Dispatchers.Main
 import org.jetbrains.anko.toast
@@ -77,24 +78,24 @@ object BackupRestoreUi {
 
     fun restore(fragment: Fragment) {
         Coroutine.async(context = Main) {
-            val restoreFromWebDav = WebDavHelp.showRestoreDialog(fragment.requireContext())
-            if (!restoreFromWebDav) {
-                val backupPath = fragment.getPrefString(PreferKey.backupPath)
-                if (backupPath?.isNotEmpty() == true) {
-                    if (backupPath.isContentPath()) {
-                        val uri = Uri.parse(backupPath)
-                        val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
-                        if (doc?.canWrite() == true) {
-                            Restore.restore(fragment.requireContext(), backupPath)
-                        } else {
-                            selectBackupFolder(fragment, restoreSelectRequestCode)
-                        }
+            WebDavHelp.showRestoreDialog(fragment.requireContext())
+        }.onError {
+            fragment.longToast("WebDavError:${it.localizedMessage}，将从本地备份恢复。")
+            val backupPath = fragment.getPrefString(PreferKey.backupPath)
+            if (backupPath?.isNotEmpty() == true) {
+                if (backupPath.isContentPath()) {
+                    val uri = Uri.parse(backupPath)
+                    val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
+                    if (doc?.canWrite() == true) {
+                        Restore.restore(fragment.requireContext(), backupPath)
                     } else {
-                        restoreUsePermission(fragment, backupPath)
+                        selectBackupFolder(fragment, restoreSelectRequestCode)
                     }
                 } else {
-                    selectBackupFolder(fragment, restoreSelectRequestCode)
+                    restoreUsePermission(fragment, backupPath)
                 }
+            } else {
+                selectBackupFolder(fragment, restoreSelectRequestCode)
             }
         }
     }
