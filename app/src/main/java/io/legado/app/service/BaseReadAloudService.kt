@@ -336,6 +336,7 @@ abstract class BaseReadAloudService : BaseService(),
     abstract fun aloudServicePendingIntent(actionStr: String): PendingIntent?
 
     open fun nextChapter() {
+        ReadBook.upReadStartTime()
         if (!ReadBook.moveToNextChapter(true)) {
             stopSelf()
         }
