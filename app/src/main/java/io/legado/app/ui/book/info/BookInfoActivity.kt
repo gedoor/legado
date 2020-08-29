@@ -96,7 +96,7 @@ class BookInfoActivity :
                     if (it.isLocalBook()) {
                         it.tocUrl = ""
                     }
-                    viewModel.loadBookInfo(it)
+                    viewModel.loadBookInfo(it, false)
                 }
             }
             R.id.menu_can_update -> {
