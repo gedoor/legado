@@ -108,6 +108,9 @@ object BookHelp {
 
     fun getChapterFiles(book: Book): List<String> {
         val fileNameList = arrayListOf<String>()
+        if (book.isLocalBook()) {
+            return fileNameList
+        }
         FileUtils.createFolderIfNotExist(
             downloadDir,
             subDirs = arrayOf(cacheFolderName, book.getFolderName())

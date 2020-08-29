@@ -22,7 +22,8 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         with(holder.itemView) {
             val isDur = callback.durChapterIndex() == item.index
-            val cached = cacheFileNames.contains(BookHelp.formatChapterName(item))
+            val cached = callback.isLocalBook
+                    || cacheFileNames.contains(BookHelp.formatChapterName(item))
             if (payloads.isEmpty()) {
                 if (isDur) {
                     tv_chapter_name.setTextColor(context.accentColor)
@@ -60,6 +61,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     }
 
     interface Callback {
+        val isLocalBook: Boolean
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
     }

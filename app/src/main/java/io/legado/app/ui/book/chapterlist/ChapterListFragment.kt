@@ -129,6 +129,9 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         }
     }
 
+    override val isLocalBook: Boolean
+        get() = viewModel.book?.isLocalBook() == true
+
     override fun durChapterIndex(): Int {
         return durChapterIndex
     }
