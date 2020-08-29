@@ -9,8 +9,8 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.model.webBook.WebBook
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.ReadBook
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -49,15 +49,15 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun loadBookInfo(
-        book: Book,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
+        book: Book, canReName: Boolean = true,
+        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
     ) {
         execute {
             if (book.isLocalBook()) {
                 loadChapter(book, changeDruChapterIndex)
             } else {
                 App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-                    WebBook(bookSource).getBookInfo(book, this)
+                    WebBook(bookSource).getBookInfo(book, this, canReName = canReName)
                         .onSuccess(IO) {
                             bookData.postValue(book)
                             if (inBookshelf) {
@@ -138,7 +138,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             }
             bookData.postValue(newBook)
             if (newBook.tocUrl.isEmpty()) {
-                loadBookInfo(newBook) { upChangeDurChapterIndex(newBook, it) }
+                loadBookInfo(newBook, false) { upChangeDurChapterIndex(newBook, it) }
             } else {
                 loadChapter(newBook) { upChangeDurChapterIndex(newBook, it) }
             }
