@@ -90,7 +90,8 @@ class WebBook(val bookSource: BookSource) {
     fun getBookInfo(
         book: Book,
         scope: CoroutineScope = Coroutine.DEFAULT,
-        context: CoroutineContext = Dispatchers.IO
+        context: CoroutineContext = Dispatchers.IO,
+        canReName: Boolean = true,
     ): Coroutine<Book> {
         return Coroutine.async(scope, context) {
             book.type = bookSource.bookSourceType
@@ -106,7 +107,7 @@ class WebBook(val bookSource: BookSource) {
                     )
                     analyzeUrl.getResponseAwait(bookSource.bookSourceUrl).body
                 }
-            BookInfo.analyzeBookInfo(book, body, bookSource, book.bookUrl)
+            BookInfo.analyzeBookInfo(book, body, bookSource, book.bookUrl, canReName)
             book
         }
     }

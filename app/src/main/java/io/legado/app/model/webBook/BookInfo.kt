@@ -2,7 +2,6 @@ package io.legado.app.model.webBook
 
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
@@ -19,7 +18,8 @@ object BookInfo {
         book: Book,
         body: String?,
         bookSource: BookSource,
-        baseUrl: String
+        baseUrl: String,
+        canReName: Boolean,
     ) {
         body ?: throw Exception(
             App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
@@ -35,13 +35,17 @@ object BookInfo {
             }
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取书名")
-        BookHelp.formatBookName(analyzeRule.getString(infoRule.name)).trim { it <= ' ' }.let {
-            if (it.isNotEmpty()) book.name = it
+        BookHelp.formatBookName(analyzeRule.getString(infoRule.name)).let {
+            if (it.isNotEmpty() && canReName) {
+                book.name = it
+            }
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.name}")
         Debug.log(bookSource.bookSourceUrl, "┌获取作者")
         BookHelp.formatBookAuthor(analyzeRule.getString(infoRule.author)).let {
-            if (it.isNotEmpty()) book.author = it.replace(AppPattern.authorRegex, "")
+            if (it.isNotEmpty() && canReName) {
+                book.author = it
+            }
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.author}")
         Debug.log(bookSource.bookSourceUrl, "┌获取分类")

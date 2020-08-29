@@ -10,8 +10,8 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.model.webBook.WebBook
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -95,7 +95,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             if (book.isLocalBook()) {
                 loadChapterList(book, changeDruChapterIndex)
             } else {
-                ReadBook.webBook?.getBookInfo(book, this)
+                ReadBook.webBook?.getBookInfo(book, this, canReName = false)
                     ?.onSuccess {
                         loadChapterList(book, changeDruChapterIndex)
                     }
