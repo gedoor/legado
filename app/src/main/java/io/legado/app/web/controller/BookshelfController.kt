@@ -94,6 +94,7 @@ object BookshelfController {
             App.db.bookDao().update(book)
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book
+                ReadBook.durChapterIndex = index
             }
         }
     }
