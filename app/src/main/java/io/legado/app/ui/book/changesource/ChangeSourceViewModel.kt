@@ -25,7 +25,7 @@ import java.util.concurrent.Executors
 import kotlin.math.min
 
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
-    val threadCount = AppConfig.threadCount
+    private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
     val handler = Handler()
     val searchStateData = MutableLiveData<Boolean>()
@@ -54,6 +54,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     private fun initSearchPool() {
         searchPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
+        searchIndex = -1
     }
 
     fun loadDbSearchBook() {
