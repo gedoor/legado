@@ -4,11 +4,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.ConnectionSpec
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Protocol
-import okhttp3.Credentials
+import okhttp3.*
 import retrofit2.Retrofit
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -111,19 +107,14 @@ object HttpHelper {
         encode: String? = null,
         proxy: String? = null
     ): Retrofit {
-        val r =
-            Regex(
-                """
-                (http|socks4|socks5)://(.*):(\d{2,5})(@.*@.*)?
-                """.trimIndent()
-            )
+        val r = Regex("(http|socks4|socks5)://(.*):(\\d{2,5})(@.*@.*)?")
         val ms = proxy?.let { r.findAll(it) };
         val group = ms?.first()
-        var type: String = "direct"     //直接连接
-        var host: String = "127.0.0.1"  //代理服务器hostname
-        var port: Int = 1080            //代理服务器port
-        var username: String = ""       //代理服务器验证用户名
-        var password: String = ""       //代理服务器验证密码
+        var type = "direct"     //直接连接
+        var host = "127.0.0.1"  //代理服务器hostname
+        var port = 1080            //代理服务器port
+        var username = ""       //代理服务器验证用户名
+        var password = ""       //代理服务器验证密码
         if (group != null) {
             type = if (group.groupValues[1] == "http") {
                 "http"
@@ -133,11 +124,11 @@ object HttpHelper {
             host = group.groupValues[2]
             port = group.groupValues[3].toInt()
             if (group.groupValues[4] != "") {
-                username = group.groupValues[4].split("@")[1];
-                password = group.groupValues[4].split("@")[2];
+                username = group.groupValues[4].split("@")[1]
+                password = group.groupValues[4].split("@")[2]
             }
         }
-        val builder = client.newBuilder();
+        val builder = client.newBuilder()
         if (type != "direct" && host != "") {
             if (type == "http") {
                 builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(host, port)));
