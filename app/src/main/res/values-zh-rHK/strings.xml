@@ -751,4 +751,5 @@
     <string name="read_record_summary">阅读时间记录</string>
     <string name="local_tts">本地TTS</string>
     <string name="thread_count">线程数</string>
+    <string name="all_read_time">总阅读时间</string>
 </resources>

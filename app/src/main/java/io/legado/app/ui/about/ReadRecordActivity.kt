@@ -33,7 +33,7 @@ class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
     }
 
     private fun initView() {
-        tv_book_name.text = "总阅读时间"
+        tv_book_name.setText(R.string.all_read_time)
         recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = RecordAdapter(this)
         recycler_view.adapter = adapter
