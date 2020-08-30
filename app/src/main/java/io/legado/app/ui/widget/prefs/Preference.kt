@@ -66,7 +66,7 @@ class Preference(context: Context, attrs: AttributeSet) :
             }
             val iconView = it.findViewById(R.id.preference_icon)
             if (iconView is ImageView) {
-                iconView.isVisible = icon != null && icon.isVisible
+                iconView.isVisible = icon != null
                 iconView.setImageDrawable(icon)
                 iconView.setColorFilter(context.accentColor)
             }
