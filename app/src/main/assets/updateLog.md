@@ -5,8 +5,8 @@
 
 **2020/08/29**
 * 修复从详情页目录打开章节内容不对的bug
-* 书源选择增加滑动选择, 选择框区域滑动时进行选择
-* 请求头,支持http代理,socks4 socks5代理设置
+* 书源选择增加滑动选择, 选择框区域滑动时进行选择 by [Mupceet](https://github.com/Mupceet)
+* 请求头,支持http代理,socks4 socks5代理设置 by [10bits](https://github.com/10bits)
 ```
 socks5代理
 {
