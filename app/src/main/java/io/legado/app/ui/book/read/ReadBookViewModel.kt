@@ -64,10 +64,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.loadContent(resetPageOffset = true)
             }
         } else {
-            isInitFinish = true
+            if (ReadBook.durChapterIndex != book.durChapterIndex) {
+                ReadBook.durChapterIndex = book.durChapterIndex
+                ReadBook.durPageIndex = book.durChapterPos
+                ReadBook.prevTextChapter = null
+                ReadBook.curTextChapter = null
+                ReadBook.nextTextChapter = null
+            }
             ReadBook.book!!.group = book.group
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
+            isInitFinish = true
             if (!book.isLocalBook() && ReadBook.webBook == null) {
                 autoChangeSource(book.name, book.author)
                 return
@@ -82,6 +89,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 if (ReadBook.curTextChapter != null) {
                     ReadBook.callBack?.upContent(resetPageOffset = false)
+                } else {
+                    ReadBook.loadContent(resetPageOffset = true)
                 }
             }
         }
