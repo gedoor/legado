@@ -14,6 +14,7 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ItemTouchCallback.OnItemTouchCallbackListener
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_book_source.view.*
@@ -190,6 +191,31 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         if (movedItems.isNotEmpty()) {
             callBack.update(*movedItems.toTypedArray())
             movedItems.clear()
+        }
+    }
+
+    fun initDragSelectTouchHelperCallback(): DragSelectTouchHelper.Callback {
+        return object : DragSelectTouchHelper.AdvanceCallback<BookSource>(Mode.ToggleAndReverse) {
+            override fun currentSelectedId(): MutableSet<BookSource> {
+                return selected
+            }
+
+            override fun getItemId(position: Int): BookSource {
+                return getItem(position)!!
+            }
+
+            override fun updateSelectState(position: Int, isSelected: Boolean): Boolean {
+                getItem(position)?.let {
+                    if (isSelected) {
+                        selected.add(it)
+                    } else {
+                        selected.remove(it)
+                    }
+                    notifyItemChanged(position, bundleOf(Pair("selected", null)))
+                    return true
+                }
+                return false
+            }
         }
     }
 
