@@ -56,7 +56,6 @@ object BookHelp {
         }
     }
 
-    @Synchronized
     fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
         //保存文本
@@ -80,7 +79,7 @@ object BookHelp {
     }
     
     fun saveImage(book: Book, src:String) {
-        val analyzeUrl = AnalyzeUrl(src, null, null, null, null)
+        val analyzeUrl = AnalyzeUrl(src)
         analyzeUrl.getImageBytes(book.origin)?.let {
             FileUtils.createFileIfNotExist(
                 downloadDir,
