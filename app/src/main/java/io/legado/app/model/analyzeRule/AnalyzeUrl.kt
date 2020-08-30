@@ -40,7 +40,7 @@ class AnalyzeUrl(
     headerMapF: Map<String, String>? = null,
     baseUrl: String? = null,
     book: BaseBook? = null,
-    var useWebView: Boolean = false
+    var useWebView: Boolean = false,
 ) : JsExtensions {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
@@ -68,7 +68,7 @@ class AnalyzeUrl(
         headerMapF?.let {
             headerMap.putAll(it)
             if (it.containsKey("proxy")) {
-                proxy = it["proxy"];
+                proxy = it["proxy"]
                 headerMap.remove("proxy")
             }
         }
@@ -84,7 +84,7 @@ class AnalyzeUrl(
         page: Int?,
         speakText: String?,
         speakSpeed: Int?,
-        book: BaseBook?
+        book: BaseBook?,
     ) {
         val ruleList = arrayListOf<String>()
         var start = 0
@@ -133,7 +133,7 @@ class AnalyzeUrl(
         page: Int?,
         speakText: String?,
         speakSpeed: Int?,
-        book: BaseBook?
+        book: BaseBook?,
     ) {
         //page
         page?.let {
@@ -161,7 +161,9 @@ class AnalyzeUrl(
             simpleBindings["book"] = book
             val expMatcher = EXP_PATTERN.matcher(ruleUrl)
             while (expMatcher.find()) {
-                jsEval = SCRIPT_ENGINE.eval(expMatcher.group(1), simpleBindings)
+                jsEval = expMatcher.group(1)?.let {
+                    SCRIPT_ENGINE.eval(it, simpleBindings)
+                } ?: ""
                 if (jsEval is String) {
                     expMatcher.appendReplacement(sb, jsEval)
                 } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
@@ -272,7 +274,7 @@ class AnalyzeUrl(
         key: String?,
         speakText: String?,
         speakSpeed: Int?,
-        book: BaseBook?
+        book: BaseBook?,
     ): Any {
         val bindings = SimpleBindings()
         bindings["java"] = this
@@ -317,7 +319,7 @@ class AnalyzeUrl(
     suspend fun getResponseAwait(
         tag: String,
         jsStr: String? = null,
-        sourceRegex: String? = null
+        sourceRegex: String? = null,
     ): Res {
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
@@ -432,9 +434,9 @@ class AnalyzeUrl(
     @Throws(Exception::class)
     fun getGlideUrl(): Any? {
         var glideUrl: Any = urlHasQuery
-        if(headerMap.isNotEmpty()) {
+        if (headerMap.isNotEmpty()) {
             val headers = LazyHeaders.Builder()
-            headerMap.forEach {(key, value) ->
+            headerMap.forEach { (key, value) ->
                 headers.addHeader(key, value)
             }
             glideUrl = GlideUrl(urlHasQuery, headers.build())
@@ -447,7 +449,7 @@ class AnalyzeUrl(
         val charset: String?,
         val webView: Any?,
         val headers: Any?,
-        val body: Any?
+        val body: Any?,
     )
 
 }

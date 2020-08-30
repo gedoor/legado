@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.toast
 
 
@@ -370,7 +371,7 @@ object ReadBook {
             }
         }.onError {
             it.printStackTrace()
-            App.INSTANCE.toast(it.localizedMessage ?: "ChapterProvider ERROR")
+            App.INSTANCE.toast("ChapterProvider ERROR:\n${it.getStackTraceString()}")
         }
     }
 
