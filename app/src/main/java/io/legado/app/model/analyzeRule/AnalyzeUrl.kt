@@ -59,12 +59,19 @@ class AnalyzeUrl(
     private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
     private val splitUrlRegex = Regex(",\\s*(?=\\{)")
+    private var proxy: String? = null
 
     init {
         baseUrl?.let {
             this.baseUrl = it.split(splitUrlRegex, 1)[0]
         }
-        headerMapF?.let { headerMap.putAll(it) }
+        headerMapF?.let {
+            headerMap.putAll(it)
+            if (it.containsKey("proxy")) {
+                proxy = it["proxy"];
+                headerMap.remove("proxy")
+            }
+        }
         //替换参数
         analyzeJs(key, page, speakText, speakSpeed, book)
         replaceKeyPageJs(key, page, speakText, speakSpeed, book)
@@ -329,21 +336,52 @@ class AnalyzeUrl(
         val res = when {
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
-                    HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl, charset)
-                        .postMapAsync(url, fieldMap, headerMap)
+                    if (proxy == null) {
+                        HttpHelper
+                            .getApiService<HttpPostApi>(baseUrl, charset)
+                            .postMapAsync(url, fieldMap, headerMap)
+                    } else {
+                        HttpHelper
+                            .getApiServiceWithProxy<HttpPostApi>(baseUrl, charset, proxy)
+                            .postMapAsync(url, fieldMap, headerMap)
+                    }
                 } else {
-                    HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl, charset)
-                        .postBodyAsync(url, requestBody!!, headerMap)
+                    if (proxy == null) {
+                        HttpHelper
+                            .getApiService<HttpPostApi>(baseUrl, charset)
+                            .postBodyAsync(url, requestBody!!, headerMap)
+                    } else {
+                        HttpHelper
+                            .getApiServiceWithProxy<HttpPostApi>(baseUrl, charset, proxy)
+                            .postBodyAsync(url, requestBody!!, headerMap)
+                    }
                 }
             }
-            fieldMap.isEmpty() -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl, charset)
-                .getAsync(url, headerMap)
-            else -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl, charset)
-                .getMapAsync(url, fieldMap, headerMap)
+            fieldMap.isEmpty() -> {
+                if (proxy == null) {
+                    HttpHelper
+                        .getApiService<HttpGetApi>(baseUrl, charset)
+                        .getAsync(url, headerMap)
+
+                } else {
+                    HttpHelper
+                        .getApiServiceWithProxy<HttpGetApi>(baseUrl, charset, proxy)
+                        .getAsync(url, headerMap)
+                }
+
+            }
+            else -> {
+                if (proxy == null) {
+                    HttpHelper
+                        .getApiService<HttpGetApi>(baseUrl, charset)
+                        .getMapAsync(url, fieldMap, headerMap)
+                } else {
+                    HttpHelper
+                        .getApiServiceWithProxy<HttpGetApi>(baseUrl, charset, proxy)
+                        .getMapAsync(url, fieldMap, headerMap)
+                }
+
+            }
         }
         return Res(NetworkUtils.getUrl(res), res.body())
     }
