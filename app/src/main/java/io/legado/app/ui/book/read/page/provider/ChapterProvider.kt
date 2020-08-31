@@ -1,14 +1,13 @@
 package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
-import android.text.TextUtils
 import io.legado.app.App
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
@@ -382,18 +381,27 @@ object ChapterProvider {
      */
     fun upStyle() {
         typeface = try {
-            val fontPath = App.INSTANCE.getPrefString(PreferKey.readBookFont)
-            if (!TextUtils.isEmpty(fontPath)) {
-                Typeface.createFromFile(fontPath)
-            } else {
-                when (AppConfig.systemTypefaces) {
+            val fontPath = ReadBookConfig.textFont
+            when {
+                fontPath.isContentPath() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                    val fd = App.INSTANCE.contentResolver
+                        .openFileDescriptor(Uri.parse(fontPath), "r")!!
+                        .fileDescriptor
+                    Typeface.Builder(fd).build()
+                }
+                fontPath.isContentPath() -> {
+                    Typeface.createFromFile(RealPathUtil.getPath(App.INSTANCE, Uri.parse(fontPath)))
+                }
+                fontPath.isNotEmpty() -> Typeface.createFromFile(fontPath)
+                else -> when (AppConfig.systemTypefaces) {
                     1 -> Typeface.SERIF
                     2 -> Typeface.MONOSPACE
                     else -> Typeface.SANS_SERIF
                 }
             }
         } catch (e: Exception) {
-            App.INSTANCE.removePref(PreferKey.readBookFont)
+            ReadBookConfig.textFont = ""
+            ReadBookConfig.save()
             Typeface.SANS_SERIF
         }
         // 字体统一处理

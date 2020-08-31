@@ -9,7 +9,6 @@ import androidx.core.view.get
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
@@ -256,10 +255,12 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     override val curFontPath: String
-        get() = requireContext().getPrefString(PreferKey.readBookFont) ?: ""
+        get() = ReadBookConfig.textFont
 
-    override fun selectFile(path: String) {
-        requireContext().putPrefString(PreferKey.readBookFont, path)
-        postEvent(EventBus.UP_CONFIG, true)
+    override fun selectFont(path: String) {
+        if (path != ReadBookConfig.textFont) {
+            ReadBookConfig.textFont = path
+            postEvent(EventBus.UP_CONFIG, true)
+        }
     }
 }

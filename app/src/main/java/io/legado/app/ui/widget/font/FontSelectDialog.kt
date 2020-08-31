@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.permission.Permissions
@@ -28,7 +27,6 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_font_select.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.*
 
@@ -170,34 +168,16 @@ class FontSelectDialog : BaseDialogFragment(),
 
     override fun onClick(docItem: DocItem) {
         execute {
-            fontFolder.listFiles()?.forEach {
-                it.delete()
-            }
-            if (docItem.isContentPath) {
-                val file = FileUtils.createFileIfNotExist(fontFolder, docItem.name)
-                @Suppress("BlockingMethodInNonBlockingContext")
-                requireActivity().contentResolver.openInputStream(docItem.uri)?.use { input ->
-                    file.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                callBack?.selectFile(file.path)
-            } else {
-                val file = File(docItem.uri.toString())
-                file.copyTo(FileUtils.createFileIfNotExist(fontFolder, file.name), true)
-                    .absolutePath.let { path ->
-                        if (curFilePath != path) {
-                            withContext(Main) {
-                                callBack?.selectFile(path)
-                            }
-                        }
-                    }
-            }
+            FileUtils.deleteFile(fontFolder.absolutePath)
+            callBack?.selectFont(docItem.uri.toString())
         }.onSuccess {
             dialog?.dismiss()
         }
     }
 
+    /**
+     * 字体文件夹
+     */
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
             fontFolderRequestCode -> {
@@ -231,11 +211,7 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     private fun onDefaultFontChange() {
-        if (curFilePath == "") {
-            postEvent(EventBus.UP_CONFIG, true)
-        } else {
-            callBack?.selectFile("")
-        }
+        callBack?.selectFont("")
     }
 
     override val curFilePath: String get() = callBack?.curFontPath ?: ""
@@ -244,7 +220,7 @@ class FontSelectDialog : BaseDialogFragment(),
         get() = (parentFragment as? CallBack) ?: (activity as? CallBack)
 
     interface CallBack {
-        fun selectFile(path: String)
+        fun selectFont(path: String)
         val curFontPath: String
     }
 }

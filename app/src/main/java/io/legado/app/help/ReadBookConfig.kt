@@ -83,8 +83,10 @@ object ReadBookConfig {
 
     fun save() {
         Coroutine.async {
-            val json = GSON.toJson(configList)
-            FileUtils.createFileIfNotExist(configFilePath).writeText(json)
+            synchronized(this) {
+                val json = GSON.toJson(configList)
+                FileUtils.createFileIfNotExist(configFilePath).writeText(json)
+            }
         }
     }
 
@@ -148,6 +150,12 @@ object ReadBookConfig {
     var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
 
     private val config get() = if (shareLayout) getConfig(5) else durConfig
+
+    var textFont: String
+        get() = config.textFont
+        set(value) {
+            config.textFont = value
+        }
 
     var textBold: Int
         get() = config.textBold
@@ -296,6 +304,7 @@ object ReadBookConfig {
         private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
         private var textColor: String = "#3E3D3B",//白天文字颜色
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
+        var textFont: String = "",//字体
         var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
         var textSize: Int = 20,//文字大小
         var letterSpacing: Float = 0.1f,//字间距
@@ -318,7 +327,7 @@ object ReadBookConfig {
         var footerPaddingRight: Int = 16,
         var footerPaddingTop: Int = 6,
         var showHeaderLine: Boolean = false,
-        var showFooterLine: Boolean = true
+        var showFooterLine: Boolean = true,
     ) {
         fun setBg(bgType: Int, bg: String) {
             if (AppConfig.isNightTheme) {
