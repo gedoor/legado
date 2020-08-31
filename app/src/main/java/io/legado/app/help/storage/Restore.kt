@@ -27,7 +27,7 @@ import org.jetbrains.anko.toast
 import java.io.File
 
 object Restore {
-    private val ignoreConfigPath = FileUtils.getPath("restoreIgnore.json", App.INSTANCE.filesDir)
+    private val ignoreConfigPath = FileUtils.getPath(App.INSTANCE.filesDir, "restoreIgnore.json")
     val ignoreConfig: HashMap<String, Boolean> by lazy {
         val file = FileUtils.createFileIfNotExist(ignoreConfigPath)
         val json = file.readText()

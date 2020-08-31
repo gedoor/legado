@@ -34,13 +34,12 @@ object BookHelp {
 
     fun clearCache() {
         FileUtils.deleteFile(
-            FileUtils.getPath(root = downloadDir, subDirs = arrayOf(cacheFolderName))
+            FileUtils.getPath(downloadDir, cacheFolderName)
         )
     }
 
     fun clearCache(book: Book) {
-        val filePath = FileUtils.getPath(root = downloadDir,
-            subDirs = arrayOf(cacheFolderName, book.getFolderName()))
+        val filePath = FileUtils.getPath(downloadDir, cacheFolderName, book.getFolderName())
         FileUtils.deleteFile(filePath)
     }
 
@@ -67,8 +66,9 @@ object BookHelp {
         //保存文本
         FileUtils.createFileIfNotExist(
             downloadDir,
+            cacheFolderName,
+            book.getFolderName(),
             formatChapterName(bookChapter),
-            subDirs = arrayOf(cacheFolderName, book.getFolderName())
         ).writeText(content)
         //保存图片
         content.split("\n").forEach {
@@ -78,19 +78,21 @@ object BookHelp {
                 src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
                 src?.let {
                     saveImage(book, src)
-                 }
-             }
+                }
+            }
         }
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
-    
-    fun saveImage(book: Book, src:String) {
+
+    fun saveImage(book: Book, src: String) {
         val analyzeUrl = AnalyzeUrl(src)
         analyzeUrl.getImageBytes(book.origin)?.let {
             FileUtils.createFileIfNotExist(
                 downloadDir,
-                "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}",
-                subDirs = arrayOf(cacheFolderName, book.getFolderName(), cacheImageFolderName)
+                cacheFolderName,
+                book.getFolderName(),
+                cacheImageFolderName,
+                "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}"
             ).writeBytes(it)
         }
     }
@@ -98,8 +100,10 @@ object BookHelp {
     fun getImage(book: Book, src: String): File {
         return FileUtils.getFile(
             downloadDir,
-            "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}",
-            subDirs = arrayOf(cacheFolderName, book.getFolderName(), cacheImageFolderName)
+            cacheFolderName,
+            book.getFolderName(),
+            cacheImageFolderName,
+            "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}"
         )
     }
 
@@ -131,8 +135,9 @@ object BookHelp {
         } else {
             FileUtils.exists(
                 downloadDir,
-                formatChapterName(bookChapter),
-                subDirs = arrayOf(cacheFolderName, book.getFolderName())
+                cacheFolderName,
+                book.getFolderName(),
+                formatChapterName(bookChapter)
             )
         }
     }
@@ -143,8 +148,9 @@ object BookHelp {
         } else {
             val file = FileUtils.getFile(
                 downloadDir,
-                formatChapterName(bookChapter),
-                subDirs = arrayOf(cacheFolderName, book.getFolderName())
+                cacheFolderName,
+                book.getFolderName(),
+                formatChapterName(bookChapter)
             )
             if (file.exists()) {
                 return file.readText()
@@ -159,8 +165,9 @@ object BookHelp {
         } else {
             FileUtils.createFileIfNotExist(
                 downloadDir,
-                formatChapterName(bookChapter),
-                subDirs = arrayOf(cacheFolderName, book.getFolderName())
+                cacheFolderName,
+                book.getFolderName(),
+                formatChapterName(bookChapter)
             ).delete()
         }
     }
@@ -183,7 +190,7 @@ object BookHelp {
     fun getDurChapterIndexByChapterTitle(
         title: String?,
         index: Int,
-        chapters: List<BookChapter>
+        chapters: List<BookChapter>,
     ): Int {
         if (title.isNullOrEmpty()) {
             return min(index, chapters.lastIndex)
@@ -253,7 +260,7 @@ object BookHelp {
         name: String,
         origin: String?,
         content: String,
-        enableReplace: Boolean
+        enableReplace: Boolean,
     ): List<String> {
         var c = content
         if (enableReplace) {
