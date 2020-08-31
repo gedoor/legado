@@ -212,6 +212,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                         selected.remove(it)
                     }
                     notifyItemChanged(position, bundleOf(Pair("selected", null)))
+                    callBack.upCountView()
                     return true
                 }
                 return false

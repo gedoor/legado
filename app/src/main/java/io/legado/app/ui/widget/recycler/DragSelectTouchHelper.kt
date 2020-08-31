@@ -13,316 +13,324 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.legado.app.ui.widget.recycler
 
-package io.legado.app.ui.widget.recycler;
-
-import android.content.res.Resources;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.MotionEvent;
-import android.view.View;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
-import io.legado.app.BuildConfig;
+import android.content.res.Resources
+import android.text.TextUtils
+import android.util.DisplayMetrics
+import android.util.Log
+import android.util.TypedValue
+import android.view.MotionEvent
+import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
+import io.legado.app.BuildConfig
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper.AdvanceCallback.Mode
+import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author mupceet
+ *                        !autoChangeMode           +-------------------+     inactiveSelect()
+ *           +------------------------------------> |                   | <--------------------+
+ *           |                                      |      Normal       |                      |
+ *           |        activeDragSelect(position)    |                   | activeSlideSelect()  |
+ *           |      +------------------------------ |                   | ----------+          |
+ *           |      v                               +-------------------+           v          |
+ *  +-------------------+                              autoChangeMode     +-----------------------+
+ *  | Drag From Disable | ----------------------------------------------> |                       |
+ *  +-------------------+                                                 |                       |
+ *  |                   |                                                 |                       |
+ *  |                   | activeDragSelect(position) && allowDragInSlide  |        Slide          |
+ *  |                   | <---------------------------------------------- |                       |
+ *  |  Drag From Slide  |                                                 |                       |
+ *  |                   |                                                 |                       |
+ *  |                   | ----------------------------------------------> |                       |
+ *  +-------------------+                                                 +-----------------------+
  */
-public class DragSelectTouchHelper {
-    private static final String TAG = "DSTH";
-    private static final float MAX_HOTSPOT_RATIO = 0.5f;
-    private static final EdgeType DEFAULT_EDGE_TYPE = EdgeType.INSIDE_EXTEND;
-    private static final float DEFAULT_HOTSPOT_RATIO = 0.2f;
-    private static final int DEFAULT_HOTSPOT_OFFSET = 0;
-    private static final int DEFAULT_MAX_SCROLL_VELOCITY = 10;
-    private static final int SELECT_STATE_NORMAL = 0x00;
-
-    /*
-     *                        !autoChangeMode           +-------------------+     inactiveSelect()
-     *           +------------------------------------> |                   | <--------------------+
-     *           |                                      |      Normal       |                      |
-     *           |        activeDragSelect(position)    |                   | activeSlideSelect()  |
-     *           |      +------------------------------ |                   | ----------+          |
-     *           |      v                               +-------------------+           v          |
-     *  +-------------------+                              autoChangeMode     +-----------------------+
-     *  | Drag From Disable | ----------------------------------------------> |                       |
-     *  +-------------------+                                                 |                       |
-     *  |                   |                                                 |                       |
-     *  |                   | activeDragSelect(position) && allowDragInSlide  |        Slide          |
-     *  |                   | <---------------------------------------------- |                       |
-     *  |  Drag From Slide  |                                                 |                       |
-     *  |                   |                                                 |                       |
-     *  |                   | ----------------------------------------------> |                       |
-     *  +-------------------+                                                 +-----------------------+
-     */
-
-    private static final int SELECT_STATE_SLIDE = 0x01;
-    private static final int SELECT_STATE_DRAG_FROM_NORMAL = 0x10;
-    private static final int SELECT_STATE_DRAG_FROM_SLIDE = 0x11;
-    private final DisplayMetrics mDisplayMetrics;
-    /**
-     * Start of the slide area.
-     */
-    private float mSlideAreaLeft;
-    /**
-     * End of the slide area.
-     */
-    private float mSlideAreaRight;
-    /**
-     * The hotspot height by the ratio of RecyclerView.
-     */
-    private float mHotspotHeightRatio;
-    /**
-     * The hotspot height.
-     */
-    private float mHotspotHeight = 0f;
-    /**
-     * The hotspot offset.
-     */
-    private float mHotspotOffset;
-    /**
-     * Whether should continue scrolling when move outside top hotspot region.
-     */
-    private boolean mScrollAboveTopRegion;
-    /**
-     * Whether should continue scrolling when move outside bottom hotspot region.
-     */
-    private boolean mScrollBelowBottomRegion;
-    /**
-     * The maximum velocity of auto scrolling.
-     */
-    private int mMaximumVelocity;
-    /**
-     * Whether should auto enter slide mode after drag select finished.
-     */
-    private boolean mShouldAutoChangeState;
-    /**
-     * Whether can drag selection in slide select mode.
-     */
-    private boolean mIsAllowDragInSlideState;
-    private RecyclerView mRecyclerView = null;
-    /**
-     * The coordinate of hotspot area.
-     */
-    private float mTopRegionFrom = -1f;
-    private float mTopRegionTo = -1f;
-    private float mBottomRegionFrom = -1f;
-    private float mBottomRegionTo = -1f;
-    private final View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                   int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            if (oldLeft != left || oldRight != right || oldTop != top || oldBottom != bottom) {
-                if (v == mRecyclerView) {
-                    Logger.i("onLayoutChange:new: "
-                            + left + " " + top + " " + right + " " + bottom);
-                    Logger.i("onLayoutChange:old: "
-                            + oldLeft + " " + oldTop + " " + oldRight + " " + oldBottom);
-                    init(bottom - top);
-                }
-            }
-        }
-    };
-    /**
-     * The current mode of selection.
-     */
-    private int mSelectState = SELECT_STATE_NORMAL;
-    /**
-     * Whether is in top hotspot area.
-     */
-    private boolean mIsInTopHotspot = false;
-    /**
-     * Whether is in bottom hotspot area.
-     */
-    private boolean mIsInBottomHotspot = false;
-    /**
-     * Indicates automatically scroll.
-     */
-    private boolean mIsScrolling;
-    /**
-     * The actual speed of the current moment.
-     */
-    private int mScrollDistance = 0;
-    /**
-     * The reference coordinate for the action start, used to avoid reverse scrolling.
-     */
-    private float mDownY = Float.MIN_VALUE;
-    /**
-     * The reference coordinates for the last action.
-     */
-    private float mLastX = Float.MIN_VALUE;
-    private float mLastY = Float.MIN_VALUE;
-    /**
-     * The selected items position.
-     */
-    private int mStart = RecyclerView.NO_POSITION;
-    private int mEnd = RecyclerView.NO_POSITION;
-    private int mLastRealStart = RecyclerView.NO_POSITION;
-    private int mLastRealEnd = RecyclerView.NO_POSITION;
-    private int mSlideStateStartPosition = RecyclerView.NO_POSITION;
-    private boolean mHaveCalledSelectStart = false;
+@Suppress("unused")
+class DragSelectTouchHelper(
     /**
      * Developer callback which controls the behavior of DragSelectTouchHelper.
      */
-    @NonNull
-    private Callback mCallback;
-    private Runnable mScrollRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mIsScrolling) {
-                scrollBy(mScrollDistance);
-                ViewCompat.postOnAnimation(mRecyclerView, mScrollRunnable);
+    private val mCallback: Callback,
+) {
+
+    companion object {
+        private const val TAG = "DSTH"
+        private const val MAX_HOTSPOT_RATIO = 0.5f
+        private val DEFAULT_EDGE_TYPE = EdgeType.INSIDE_EXTEND
+        private const val DEFAULT_HOTSPOT_RATIO = 0.2f
+        private const val DEFAULT_HOTSPOT_OFFSET = 0
+        private const val DEFAULT_MAX_SCROLL_VELOCITY = 10
+        private const val SELECT_STATE_NORMAL = 0x00
+        private const val SELECT_STATE_SLIDE = 0x01
+        private const val SELECT_STATE_DRAG_FROM_NORMAL = 0x10
+        private const val SELECT_STATE_DRAG_FROM_SLIDE = 0x11
+    }
+
+    private val mDisplayMetrics: DisplayMetrics = Resources.getSystem().displayMetrics
+
+    /**
+     * Start of the slide area.
+     */
+    private var mSlideAreaLeft = 0f
+
+    /**
+     * End of the slide area.
+     */
+    private var mSlideAreaRight = 0f
+
+    /**
+     * The hotspot height by the ratio of RecyclerView.
+     */
+    private var mHotspotHeightRatio = 0f
+
+    /**
+     * The hotspot height.
+     */
+    private var mHotspotHeight = 0f
+
+    /**
+     * The hotspot offset.
+     */
+    private var mHotspotOffset = 0f
+
+    /**
+     * Whether should continue scrolling when move outside top hotspot region.
+     */
+    private var mScrollAboveTopRegion = false
+
+    /**
+     * Whether should continue scrolling when move outside bottom hotspot region.
+     */
+    private var mScrollBelowBottomRegion = false
+
+    /**
+     * The maximum velocity of auto scrolling.
+     */
+    private var mMaximumVelocity = 0
+
+    /**
+     * Whether should auto enter slide mode after drag select finished.
+     */
+    private var mShouldAutoChangeState = false
+
+    /**
+     * Whether can drag selection in slide select mode.
+     */
+    private var mIsAllowDragInSlideState = false
+    private var mRecyclerView: RecyclerView? = null
+
+    /**
+     * The coordinate of hotspot area.
+     */
+    private var mTopRegionFrom = -1f
+    private var mTopRegionTo = -1f
+    private var mBottomRegionFrom = -1f
+    private var mBottomRegionTo = -1f
+    private val mOnLayoutChangeListener =
+        View.OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            if (oldLeft != left || oldRight != right || oldTop != top || oldBottom != bottom) {
+                if (v === mRecyclerView) {
+                    Logger.i("onLayoutChange:new: "
+                            + left + " " + top + " " + right + " " + bottom)
+                    Logger.i("onLayoutChange:old: "
+                            + oldLeft + " " + oldTop + " " + oldRight + " " + oldBottom)
+                    init(bottom - top)
+                }
             }
         }
-    };
-    private final RecyclerView.OnItemTouchListener mOnItemTouchListener = new RecyclerView.OnItemTouchListener() {
-        @Override
-        public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-            Logger.d("onInterceptTouchEvent: x:" + e.getX() + ",y:" + e.getY()
-                    + ", " + MotionEvent.actionToString(e.getAction()));
-            RecyclerView.Adapter<?> adapter = rv.getAdapter();
-            if (adapter == null || adapter.getItemCount() == 0) {
-                return false;
+
+    /**
+     * The current mode of selection.
+     */
+    private var mSelectState = SELECT_STATE_NORMAL
+
+    /**
+     * Whether is in top hotspot area.
+     */
+    private var mIsInTopHotspot = false
+
+    /**
+     * Whether is in bottom hotspot area.
+     */
+    private var mIsInBottomHotspot = false
+
+    /**
+     * Indicates automatically scroll.
+     */
+    private var mIsScrolling = false
+
+    /**
+     * The actual speed of the current moment.
+     */
+    private var mScrollDistance = 0
+
+    /**
+     * The reference coordinate for the action start, used to avoid reverse scrolling.
+     */
+    private var mDownY = Float.MIN_VALUE
+
+    /**
+     * The reference coordinates for the last action.
+     */
+    private var mLastX = Float.MIN_VALUE
+    private var mLastY = Float.MIN_VALUE
+
+    /**
+     * The selected items position.
+     */
+    private var mStart = RecyclerView.NO_POSITION
+    private var mEnd = RecyclerView.NO_POSITION
+    private var mLastRealStart = RecyclerView.NO_POSITION
+    private var mLastRealEnd = RecyclerView.NO_POSITION
+    private var mSlideStateStartPosition = RecyclerView.NO_POSITION
+    private var mHaveCalledSelectStart = false
+    private val mScrollRunnable: Runnable = object : Runnable {
+        override fun run() {
+            if (mIsScrolling) {
+                scrollBy(mScrollDistance)
+                ViewCompat.postOnAnimation(mRecyclerView!!, this)
             }
-            boolean intercept = false;
-            int action = e.getAction();
-            int actionMask = action & MotionEvent.ACTION_MASK;
-            // It seems that it's unnecessary to process multiple pointers.
-            switch (actionMask) {
-                case MotionEvent.ACTION_DOWN:
-                    mDownY = e.getY();
+        }
+    }
+    private val mOnItemTouchListener: OnItemTouchListener = object : OnItemTouchListener {
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            Logger.d("onInterceptTouchEvent: x:" + e.x + ",y:" + e.y
+                    + ", " + MotionEvent.actionToString(e.action))
+            val adapter = rv.adapter
+            if (adapter == null || adapter.itemCount == 0) {
+                return false
+            }
+            var intercept = false
+            val action = e.action
+            when (action and MotionEvent.ACTION_MASK) {
+                MotionEvent.ACTION_DOWN -> {
+                    mDownY = e.y
                     // call the selection start's callback before moving
                     if (mSelectState == SELECT_STATE_SLIDE && isInSlideArea(e)) {
-                        mSlideStateStartPosition = getItemPosition(rv, e);
+                        mSlideStateStartPosition = getItemPosition(rv, e)
                         if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
-                            mCallback.onSelectStart(mSlideStateStartPosition);
-                            mHaveCalledSelectStart = true;
+                            mCallback.onSelectStart(mSlideStateStartPosition)
+                            mHaveCalledSelectStart = true
                         }
-                        intercept = true;
+                        intercept = true
                     }
-                    break;
-                case MotionEvent.ACTION_MOVE:
+                }
+                MotionEvent.ACTION_MOVE -> if (mSelectState == SELECT_STATE_DRAG_FROM_NORMAL
+                    || mSelectState == SELECT_STATE_DRAG_FROM_SLIDE
+                ) {
+                    Logger.i("onInterceptTouchEvent: drag mode move")
+                    intercept = true
+                }
+                MotionEvent.ACTION_UP -> {
                     if (mSelectState == SELECT_STATE_DRAG_FROM_NORMAL
-                            || mSelectState == SELECT_STATE_DRAG_FROM_SLIDE) {
-                        Logger.i("onInterceptTouchEvent: drag mode move");
-                        intercept = true;
+                        || mSelectState == SELECT_STATE_DRAG_FROM_SLIDE
+                    ) {
+                        intercept = true
                     }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if (mSelectState == SELECT_STATE_DRAG_FROM_NORMAL
-                            || mSelectState == SELECT_STATE_DRAG_FROM_SLIDE) {
-                        intercept = true;
-                    }
-                    // fall through
-                case MotionEvent.ACTION_CANCEL:
                     // finger is lifted before moving
                     if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
-                        selectFinished(mSlideStateStartPosition);
-                        mSlideStateStartPosition = RecyclerView.NO_POSITION;
+                        selectFinished(mSlideStateStartPosition)
+                        mSlideStateStartPosition = RecyclerView.NO_POSITION
                     }
                     // selection has triggered
                     if (mStart != RecyclerView.NO_POSITION) {
-                        selectFinished(mEnd);
+                        selectFinished(mEnd)
                     }
-                    break;
-                default:
-                    // do nothing
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
+                        selectFinished(mSlideStateStartPosition)
+                        mSlideStateStartPosition = RecyclerView.NO_POSITION
+                    }
+                    if (mStart != RecyclerView.NO_POSITION) {
+                        selectFinished(mEnd)
+                    }
+                }
+                else -> {
+                }
             }
             // Intercept only when the selection is triggered
-            Logger.d("intercept result: " + intercept);
-            return intercept;
+            Logger.d("intercept result: $intercept")
+            return intercept
         }
 
-        @Override
-        public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-            if (!isActivated()) {
-                return;
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+            if (!isActivated) {
+                return
             }
-            Logger.d("onTouchEvent: x:" + e.getX() + ",y:" + e.getY()
-                    + ", " + MotionEvent.actionToString(e.getAction()));
-            int action = e.getAction();
-            int actionMask = action & MotionEvent.ACTION_MASK;
-            switch (actionMask) {
-                case MotionEvent.ACTION_MOVE:
+            Logger.d("onTouchEvent: x:" + e.x + ",y:" + e.y
+                    + ", " + MotionEvent.actionToString(e.action))
+            val action = e.action
+            when (action and MotionEvent.ACTION_MASK) {
+                MotionEvent.ACTION_MOVE -> {
                     if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
-                        selectFirstItem(mSlideStateStartPosition);
+                        selectFirstItem(mSlideStateStartPosition)
                         // selection is triggered
-                        mSlideStateStartPosition = RecyclerView.NO_POSITION;
-                        Logger.i("onTouchEvent: after slide mode down");
+                        mSlideStateStartPosition = RecyclerView.NO_POSITION
+                        Logger.i("onTouchEvent: after slide mode down")
                     }
-                    processAutoScroll(e);
+                    processAutoScroll(e)
                     if (!mIsInTopHotspot && !mIsInBottomHotspot) {
-                        updateSelectedRange(rv, e);
+                        updateSelectedRange(rv, e)
                     }
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                case MotionEvent.ACTION_UP:
-                    selectFinished(mEnd);
-                    break;
-                default:
-                    // do nothing
+                }
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> selectFinished(mEnd)
+                else -> {
+                }
             }
         }
 
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
             if (disallowIntercept) {
-                inactiveSelect();
+                inactiveSelect()
             }
         }
-    };
+    }
 
-    public DragSelectTouchHelper(@NonNull Callback callback) {
-        mCallback = callback;
-        mDisplayMetrics = Resources.getSystem().getDisplayMetrics();
-        setHotspotRatio(DEFAULT_HOTSPOT_RATIO);
-        setHotspotOffset(DEFAULT_HOTSPOT_OFFSET);
-        setMaximumVelocity(DEFAULT_MAX_SCROLL_VELOCITY);
-        setEdgeType(DEFAULT_EDGE_TYPE);
-        setAutoEnterSlideState(false);
-        setAllowDragInSlideState(false);
-        setSlideArea(0, 0);
+    init {
+        setHotspotRatio(DEFAULT_HOTSPOT_RATIO)
+        setHotspotOffset(DEFAULT_HOTSPOT_OFFSET)
+        setMaximumVelocity(DEFAULT_MAX_SCROLL_VELOCITY)
+        setEdgeType(DEFAULT_EDGE_TYPE)
+        setAutoEnterSlideState(false)
+        setAllowDragInSlideState(false)
+        setSlideArea(0, 0)
     }
 
     /**
      * Attaches the DragSelectTouchHelper to the provided RecyclerView. If TouchHelper is already
      * attached to a RecyclerView, it will first detach from the previous one. You can call this
-     * method with {@code null} to detach it from the current RecyclerView.
+     * method with `null` to detach it from the current RecyclerView.
      *
      * @param recyclerView The RecyclerView instance to which you want to add this helper or
-     *                     {@code null} if you want to remove DragSelectTouchHelper from the
-     *                     current RecyclerView.
+     * `null` if you want to remove DragSelectTouchHelper from the
+     * current RecyclerView.
      */
-    public void attachToRecyclerView(@Nullable RecyclerView recyclerView) {
-        if (mRecyclerView == recyclerView) {
-            return; // nothing to do
+    fun attachToRecyclerView(recyclerView: RecyclerView?) {
+        if (mRecyclerView === recyclerView) {
+            return  // nothing to do
         }
         if (mRecyclerView != null) {
-            mRecyclerView.removeOnItemTouchListener(mOnItemTouchListener);
+            mRecyclerView!!.removeOnItemTouchListener(mOnItemTouchListener)
         }
-        mRecyclerView = recyclerView;
+        mRecyclerView = recyclerView
         if (mRecyclerView != null) {
-            mRecyclerView.addOnItemTouchListener(mOnItemTouchListener);
-            mRecyclerView.addOnLayoutChangeListener(mOnLayoutChangeListener);
+            mRecyclerView!!.addOnItemTouchListener(mOnItemTouchListener)
+            mRecyclerView!!.addOnLayoutChangeListener(mOnLayoutChangeListener)
         }
     }
 
     /**
      * Activate the slide selection mode.
      */
-    public void activeSlideSelect() {
-        activeSelectInternal(RecyclerView.NO_POSITION);
+    fun activeSlideSelect() {
+        activeSelectInternal(RecyclerView.NO_POSITION)
     }
 
     /**
@@ -330,21 +338,21 @@ public class DragSelectTouchHelper {
      *
      * @param position Indicates the position of selected item.
      */
-    public void activeDragSelect(int position) {
-        activeSelectInternal(position);
+    fun activeDragSelect(position: Int) {
+        activeSelectInternal(position)
     }
 
     /**
      * Exit the selection mode.
      */
-    public void inactiveSelect() {
-        if (isActivated()) {
-            selectFinished(mEnd);
+    fun inactiveSelect() {
+        if (isActivated) {
+            selectFinished(mEnd)
         } else {
-            selectFinished(RecyclerView.NO_POSITION);
+            selectFinished(RecyclerView.NO_POSITION)
         }
-        Logger.logSelectStateChange(mSelectState, SELECT_STATE_NORMAL);
-        mSelectState = SELECT_STATE_NORMAL;
+        Logger.logSelectStateChange(mSelectState, SELECT_STATE_NORMAL)
+        mSelectState = SELECT_STATE_NORMAL
     }
 
     /**
@@ -352,9 +360,8 @@ public class DragSelectTouchHelper {
      *
      * @return true if is in the selection mode.
      */
-    public boolean isActivated() {
-        return (mSelectState != SELECT_STATE_NORMAL);
-    }
+    val isActivated: Boolean
+        get() = mSelectState != SELECT_STATE_NORMAL
 
     /**
      * Sets hotspot height by ratio of RecyclerView.
@@ -362,9 +369,9 @@ public class DragSelectTouchHelper {
      * @param ratio range (0, 0.5).
      * @return The select helper, which may used to chain setter calls.
      */
-    public DragSelectTouchHelper setHotspotRatio(float ratio) {
-        mHotspotHeightRatio = ratio;
-        return this;
+    fun setHotspotRatio(ratio: Float): DragSelectTouchHelper {
+        mHotspotHeightRatio = ratio
+        return this
     }
 
     /**
@@ -373,9 +380,9 @@ public class DragSelectTouchHelper {
      * @param hotspotHeight hotspot height which unit is dp.
      * @return The select helper, which may used to chain setter calls.
      */
-    public DragSelectTouchHelper setHotspotHeight(int hotspotHeight) {
-        mHotspotHeight = dp2px(hotspotHeight);
-        return this;
+    fun setHotspotHeight(hotspotHeight: Int): DragSelectTouchHelper {
+        mHotspotHeight = dp2px(hotspotHeight.toFloat()).toFloat()
+        return this
     }
 
     /**
@@ -384,37 +391,40 @@ public class DragSelectTouchHelper {
      * @param hotspotOffset hotspot offset which unit is dp.
      * @return The select helper, which may used to chain setter calls.
      */
-    public DragSelectTouchHelper setHotspotOffset(int hotspotOffset) {
-        mHotspotOffset = dp2px(hotspotOffset);
-        return this;
+    fun setHotspotOffset(hotspotOffset: Int): DragSelectTouchHelper {
+        mHotspotOffset = dp2px(hotspotOffset.toFloat()).toFloat()
+        return this
     }
 
     /**
      * Sets the activation edge type, one of:
-     * <ul>
-     * <li>{@link EdgeType#INSIDE} for edges that respond to touches inside
+     *
+     *  * [EdgeType.INSIDE] for edges that respond to touches inside
      * the bounds of the host view. If touch moves outside the bounds, scrolling
      * will stop.
-     * <li>{@link EdgeType#INSIDE_EXTEND} for inside edges that continued to
+     *  * [EdgeType.INSIDE_EXTEND] for inside edges that continued to
      * scroll when touch moves outside the bounds of the host view.
-     * </ul>
+     *
      *
      * @param type The type of edge to use.
      * @return The select helper, which may used to chain setter calls.
      */
-    public DragSelectTouchHelper setEdgeType(EdgeType type) {
-        switch (type) {
-            case INSIDE:
-                mScrollAboveTopRegion = false;
-                mScrollBelowBottomRegion = false;
-                break;
-            case INSIDE_EXTEND:
-            default:
-                mScrollAboveTopRegion = true;
-                mScrollBelowBottomRegion = true;
-                break;
+    fun setEdgeType(type: EdgeType?): DragSelectTouchHelper {
+        when (type) {
+            EdgeType.INSIDE -> {
+                mScrollAboveTopRegion = false
+                mScrollBelowBottomRegion = false
+            }
+            EdgeType.INSIDE_EXTEND -> {
+                mScrollAboveTopRegion = true
+                mScrollBelowBottomRegion = true
+            }
+            else -> {
+                mScrollAboveTopRegion = true
+                mScrollBelowBottomRegion = true
+            }
         }
-        return this;
+        return this
     }
 
     /**
@@ -424,16 +434,16 @@ public class DragSelectTouchHelper {
      * @param endDp   The end of the sliding area
      * @return The select helper, which may used to chain setter calls.
      */
-    public DragSelectTouchHelper setSlideArea(int startDp, int endDp) {
-        if (!isRtl()) {
-            mSlideAreaLeft = dp2px(startDp);
-            mSlideAreaRight = dp2px(endDp);
+    fun setSlideArea(startDp: Int, endDp: Int): DragSelectTouchHelper {
+        if (!isRtl) {
+            mSlideAreaLeft = dp2px(startDp.toFloat()).toFloat()
+            mSlideAreaRight = dp2px(endDp.toFloat()).toFloat()
         } else {
-            int displayWidth = mDisplayMetrics.widthPixels;
-            mSlideAreaLeft = displayWidth - dp2px(endDp);
-            mSlideAreaRight = displayWidth - dp2px(startDp);
+            val displayWidth = mDisplayMetrics.widthPixels
+            mSlideAreaLeft = displayWidth - dp2px(endDp.toFloat()).toFloat()
+            mSlideAreaRight = displayWidth - dp2px(startDp.toFloat()).toFloat()
         }
-        return this;
+        return this
     }
 
     /**
@@ -442,9 +452,9 @@ public class DragSelectTouchHelper {
      * @param velocity maximum velocity
      * @return The select helper, which may used to chain setter calls.
      */
-    public DragSelectTouchHelper setMaximumVelocity(int velocity) {
-        mMaximumVelocity = (int) (velocity * mDisplayMetrics.density + 0.5f);
-        return this;
+    fun setMaximumVelocity(velocity: Int): DragSelectTouchHelper {
+        mMaximumVelocity = (velocity * mDisplayMetrics.density + 0.5f).toInt()
+        return this
     }
 
     /**
@@ -454,9 +464,9 @@ public class DragSelectTouchHelper {
      * @param autoEnterSlideState should auto enter slide mode
      * @return The select helper, which may used to chain setter calls.
      */
-    public DragSelectTouchHelper setAutoEnterSlideState(boolean autoEnterSlideState) {
-        mShouldAutoChangeState = autoEnterSlideState;
-        return this;
+    fun setAutoEnterSlideState(autoEnterSlideState: Boolean): DragSelectTouchHelper {
+        mShouldAutoChangeState = autoEnterSlideState
+        return this
     }
 
     /**
@@ -466,277 +476,270 @@ public class DragSelectTouchHelper {
      * @param allowDragInSlideState allow drag selection in slide select mode
      * @return The select helper, which may used to chain setter calls.
      */
-    public DragSelectTouchHelper setAllowDragInSlideState(boolean allowDragInSlideState) {
-        mIsAllowDragInSlideState = allowDragInSlideState;
-        return this;
+    fun setAllowDragInSlideState(allowDragInSlideState: Boolean): DragSelectTouchHelper {
+        mIsAllowDragInSlideState = allowDragInSlideState
+        return this
     }
 
-    private void init(int rvHeight) {
+    private fun init(rvHeight: Int) {
         if (mHotspotOffset >= rvHeight * MAX_HOTSPOT_RATIO) {
-            mHotspotOffset = rvHeight * MAX_HOTSPOT_RATIO;
+            mHotspotOffset = rvHeight * MAX_HOTSPOT_RATIO
         }
         // The height of hotspot area is not set, using (RV height x ratio)
         if (mHotspotHeight <= 0) {
             if (mHotspotHeightRatio <= 0 || mHotspotHeightRatio >= MAX_HOTSPOT_RATIO) {
-                mHotspotHeightRatio = DEFAULT_HOTSPOT_RATIO;
+                mHotspotHeightRatio = DEFAULT_HOTSPOT_RATIO
             }
-            mHotspotHeight = rvHeight * mHotspotHeightRatio;
+            mHotspotHeight = rvHeight * mHotspotHeightRatio
         } else {
             if (mHotspotHeight >= rvHeight * MAX_HOTSPOT_RATIO) {
-                mHotspotHeight = rvHeight * MAX_HOTSPOT_RATIO;
+                mHotspotHeight = rvHeight * MAX_HOTSPOT_RATIO
             }
         }
-
-        mTopRegionFrom = mHotspotOffset;
-        mTopRegionTo = mTopRegionFrom + mHotspotHeight;
-        mBottomRegionTo = rvHeight - mHotspotOffset;
-        mBottomRegionFrom = mBottomRegionTo - mHotspotHeight;
-
+        mTopRegionFrom = mHotspotOffset
+        mTopRegionTo = mTopRegionFrom + mHotspotHeight
+        mBottomRegionTo = rvHeight - mHotspotOffset
+        mBottomRegionFrom = mBottomRegionTo - mHotspotHeight
         if (mTopRegionTo > mBottomRegionFrom) {
-            mTopRegionTo = mBottomRegionFrom = rvHeight >> 1;
+            mBottomRegionFrom = (rvHeight shr 1.toFloat().toInt()).toFloat()
+            mTopRegionTo = mBottomRegionFrom
         }
-
         Logger.d("Hotspot: [" + mTopRegionFrom + ", " + mTopRegionTo + "], ["
-                + mBottomRegionFrom + ", " + mBottomRegionTo + "]");
+                + mBottomRegionFrom + ", " + mBottomRegionTo + "]")
     }
 
-    private void activeSelectInternal(int position) {
+    private fun activeSelectInternal(position: Int) {
         // We should initialize the hotspot here, because its data may be delayed load
         if (mRecyclerView != null) {
-            init(mRecyclerView.getHeight());
+            init(mRecyclerView!!.height)
         }
         if (position == RecyclerView.NO_POSITION) {
-            Logger.logSelectStateChange(mSelectState, SELECT_STATE_SLIDE);
-            mSelectState = SELECT_STATE_SLIDE;
+            Logger.logSelectStateChange(mSelectState, SELECT_STATE_SLIDE)
+            mSelectState = SELECT_STATE_SLIDE
         } else {
             if (!mHaveCalledSelectStart) {
-                mCallback.onSelectStart(position);
-                mHaveCalledSelectStart = true;
+                mCallback.onSelectStart(position)
+                mHaveCalledSelectStart = true
             }
             if (mSelectState == SELECT_STATE_SLIDE) {
                 if (mIsAllowDragInSlideState && selectFirstItem(position)) {
-                    Logger.logSelectStateChange(mSelectState, SELECT_STATE_DRAG_FROM_SLIDE);
-                    mSelectState = SELECT_STATE_DRAG_FROM_SLIDE;
+                    Logger.logSelectStateChange(mSelectState, SELECT_STATE_DRAG_FROM_SLIDE)
+                    mSelectState = SELECT_STATE_DRAG_FROM_SLIDE
                 }
             } else if (mSelectState == SELECT_STATE_NORMAL) {
                 if (selectFirstItem(position)) {
-                    Logger.logSelectStateChange(mSelectState, SELECT_STATE_DRAG_FROM_NORMAL);
-                    mSelectState = SELECT_STATE_DRAG_FROM_NORMAL;
+                    Logger.logSelectStateChange(mSelectState, SELECT_STATE_DRAG_FROM_NORMAL)
+                    mSelectState = SELECT_STATE_DRAG_FROM_NORMAL
                 }
             } else {
-                Logger.e("activeSelect in unexpected state: " + mSelectState);
+                Logger.e("activeSelect in unexpected state: $mSelectState")
             }
         }
     }
 
-    private boolean selectFirstItem(int position) {
-        boolean selectFirstItemSucceed = mCallback.onSelectChange(position, true);
+    private fun selectFirstItem(position: Int): Boolean {
+        val selectFirstItemSucceed = mCallback.onSelectChange(position, true)
         // The drag select feature is only available if the first item is available for selection
         if (selectFirstItemSucceed) {
-            mStart = position;
-            mEnd = position;
-            mLastRealStart = position;
-            mLastRealEnd = position;
+            mStart = position
+            mEnd = position
+            mLastRealStart = position
+            mLastRealEnd = position
         }
-        return selectFirstItemSucceed;
+        return selectFirstItemSucceed
     }
 
-    private void updateSelectedRange(RecyclerView rv, MotionEvent e) {
-        updateSelectedRange(rv, e.getX(), e.getY());
+    private fun updateSelectedRange(rv: RecyclerView, e: MotionEvent) {
+        updateSelectedRange(rv, e.x, e.y)
     }
 
-    private void updateSelectedRange(RecyclerView rv, float x, float y) {
-        int position = getItemPosition(rv, x, y);
+    private fun updateSelectedRange(rv: RecyclerView?, x: Float, y: Float) {
+        val position = getItemPosition(rv, x, y)
         if (position != RecyclerView.NO_POSITION && mEnd != position) {
-            mEnd = position;
-            notifySelectRangeChange();
+            mEnd = position
+            notifySelectRangeChange()
         }
     }
 
-    private void notifySelectRangeChange() {
+    private fun notifySelectRangeChange() {
         if (mStart == RecyclerView.NO_POSITION || mEnd == RecyclerView.NO_POSITION) {
-            return;
+            return
         }
-
-        int newStart, newEnd;
-        newStart = Math.min(mStart, mEnd);
-        newEnd = Math.max(mStart, mEnd);
+        val newStart: Int = min(mStart, mEnd)
+        val newEnd: Int = max(mStart, mEnd)
         if (mLastRealStart == RecyclerView.NO_POSITION || mLastRealEnd == RecyclerView.NO_POSITION) {
             if (newEnd - newStart == 1) {
-                notifySelectChange(newStart, newStart, true);
+                notifySelectChange(newStart, newStart, true)
             } else {
-                notifySelectChange(newStart, newEnd, true);
+                notifySelectChange(newStart, newEnd, true)
             }
         } else {
             if (newStart > mLastRealStart) {
-                notifySelectChange(mLastRealStart, newStart - 1, false);
+                notifySelectChange(mLastRealStart, newStart - 1, false)
             } else if (newStart < mLastRealStart) {
-                notifySelectChange(newStart, mLastRealStart - 1, true);
+                notifySelectChange(newStart, mLastRealStart - 1, true)
             }
-
             if (newEnd > mLastRealEnd) {
-                notifySelectChange(mLastRealEnd + 1, newEnd, true);
+                notifySelectChange(mLastRealEnd + 1, newEnd, true)
             } else if (newEnd < mLastRealEnd) {
-                notifySelectChange(newEnd + 1, mLastRealEnd, false);
+                notifySelectChange(newEnd + 1, mLastRealEnd, false)
             }
         }
-
-        mLastRealStart = newStart;
-        mLastRealEnd = newEnd;
+        mLastRealStart = newStart
+        mLastRealEnd = newEnd
     }
 
-    private void notifySelectChange(int start, int end, boolean newState) {
-        for (int i = start; i <= end; i++) {
-            mCallback.onSelectChange(i, newState);
+    private fun notifySelectChange(start: Int, end: Int, newState: Boolean) {
+        for (i in start..end) {
+            mCallback.onSelectChange(i, newState)
         }
     }
 
-    private void selectFinished(int lastItem) {
+    private fun selectFinished(lastItem: Int) {
         if (lastItem != RecyclerView.NO_POSITION) {
-            mCallback.onSelectEnd(lastItem);
+            mCallback.onSelectEnd(lastItem)
         }
-        mStart = RecyclerView.NO_POSITION;
-        mEnd = RecyclerView.NO_POSITION;
-        mLastRealStart = RecyclerView.NO_POSITION;
-        mLastRealEnd = RecyclerView.NO_POSITION;
-        mHaveCalledSelectStart = false;
-        mIsInTopHotspot = false;
-        mIsInBottomHotspot = false;
-        stopAutoScroll();
-        switch (mSelectState) {
-            case SELECT_STATE_DRAG_FROM_NORMAL:
-                if (mShouldAutoChangeState) {
-                    Logger.logSelectStateChange(mSelectState, SELECT_STATE_SLIDE);
-                    mSelectState = SELECT_STATE_SLIDE;
-                } else {
-                    Logger.logSelectStateChange(mSelectState, SELECT_STATE_NORMAL);
-                    mSelectState = SELECT_STATE_NORMAL;
-                }
-                break;
-            case SELECT_STATE_DRAG_FROM_SLIDE:
-                Logger.logSelectStateChange(mSelectState, SELECT_STATE_SLIDE);
-                mSelectState = SELECT_STATE_SLIDE;
-                break;
-            default:
-                // doesn't change the selection state
-                break;
+        mStart = RecyclerView.NO_POSITION
+        mEnd = RecyclerView.NO_POSITION
+        mLastRealStart = RecyclerView.NO_POSITION
+        mLastRealEnd = RecyclerView.NO_POSITION
+        mHaveCalledSelectStart = false
+        mIsInTopHotspot = false
+        mIsInBottomHotspot = false
+        stopAutoScroll()
+        when (mSelectState) {
+            SELECT_STATE_DRAG_FROM_NORMAL -> mSelectState = if (mShouldAutoChangeState) {
+                Logger.logSelectStateChange(
+                    mSelectState,
+                    SELECT_STATE_SLIDE)
+                SELECT_STATE_SLIDE
+            } else {
+                Logger.logSelectStateChange(
+                    mSelectState,
+                    SELECT_STATE_NORMAL)
+                SELECT_STATE_NORMAL
+            }
+            SELECT_STATE_DRAG_FROM_SLIDE -> {
+                Logger.logSelectStateChange(mSelectState, SELECT_STATE_SLIDE)
+                mSelectState = SELECT_STATE_SLIDE
+            }
+            else -> {
+            }
         }
     }
 
     /**
      * Process motion event, according to the location to determine whether to scroll
      */
-    private void processAutoScroll(MotionEvent e) {
-        float y = e.getY();
-        if (y >= mTopRegionFrom && y <= mTopRegionTo && y < mDownY) {
-            mLastX = e.getX();
-            mLastY = e.getY();
-            float scrollDistanceFactor = (y - mTopRegionTo) / mHotspotHeight;
-            mScrollDistance = (int) (mMaximumVelocity * scrollDistanceFactor);
+    private fun processAutoScroll(e: MotionEvent) {
+        val y = e.y
+        if (y in mTopRegionFrom..mTopRegionTo && y < mDownY) {
+            mLastX = e.x
+            mLastY = e.y
+            val scrollDistanceFactor = (y - mTopRegionTo) / mHotspotHeight
+            mScrollDistance = (mMaximumVelocity * scrollDistanceFactor).toInt()
             if (!mIsInTopHotspot) {
-                mIsInTopHotspot = true;
-                startAutoScroll();
-                mDownY = mTopRegionTo;
+                mIsInTopHotspot = true
+                startAutoScroll()
+                mDownY = mTopRegionTo
             }
         } else if (mScrollAboveTopRegion && y < mTopRegionFrom && mIsInTopHotspot) {
-            mLastX = e.getX();
-            mLastY = mTopRegionFrom;
+            mLastX = e.x
+            mLastY = mTopRegionFrom
             // Use the maximum speed
-            mScrollDistance = mMaximumVelocity * -1;
-            startAutoScroll();
-        } else if (y >= mBottomRegionFrom && y <= mBottomRegionTo && y > mDownY) {
-            mLastX = e.getX();
-            mLastY = e.getY();
-            float scrollDistanceFactor = (y - mBottomRegionFrom) / mHotspotHeight;
-            mScrollDistance = (int) (mMaximumVelocity * scrollDistanceFactor);
+            mScrollDistance = mMaximumVelocity * -1
+            startAutoScroll()
+        } else if (y in mBottomRegionFrom..mBottomRegionTo && y > mDownY) {
+            mLastX = e.x
+            mLastY = e.y
+            val scrollDistanceFactor = (y - mBottomRegionFrom) / mHotspotHeight
+            mScrollDistance = (mMaximumVelocity * scrollDistanceFactor).toInt()
             if (!mIsInBottomHotspot) {
-                mIsInBottomHotspot = true;
-                startAutoScroll();
-                mDownY = mBottomRegionFrom;
+                mIsInBottomHotspot = true
+                startAutoScroll()
+                mDownY = mBottomRegionFrom
             }
         } else if (mScrollBelowBottomRegion && y > mBottomRegionTo && mIsInBottomHotspot) {
-            mLastX = e.getX();
-            mLastY = mBottomRegionTo;
+            mLastX = e.x
+            mLastY = mBottomRegionTo
             // Use the maximum speed
-            mScrollDistance = mMaximumVelocity;
-            startAutoScroll();
+            mScrollDistance = mMaximumVelocity
+            startAutoScroll()
         } else {
-            mIsInTopHotspot = false;
-            mIsInBottomHotspot = false;
-            mLastX = Float.MIN_VALUE;
-            mLastY = Float.MIN_VALUE;
-            stopAutoScroll();
+            mIsInTopHotspot = false
+            mIsInBottomHotspot = false
+            mLastX = Float.MIN_VALUE
+            mLastY = Float.MIN_VALUE
+            stopAutoScroll()
         }
-
     }
 
-    private void startAutoScroll() {
+    private fun startAutoScroll() {
         if (!mIsScrolling) {
-            mIsScrolling = true;
-            mRecyclerView.removeCallbacks(mScrollRunnable);
-            ViewCompat.postOnAnimation(mRecyclerView, mScrollRunnable);
+            mIsScrolling = true
+            mRecyclerView!!.removeCallbacks(mScrollRunnable)
+            ViewCompat.postOnAnimation(mRecyclerView!!, mScrollRunnable)
         }
     }
 
-    private void stopAutoScroll() {
+    private fun stopAutoScroll() {
         if (mIsScrolling) {
-            mIsScrolling = false;
-            mRecyclerView.removeCallbacks(mScrollRunnable);
+            mIsScrolling = false
+            mRecyclerView!!.removeCallbacks(mScrollRunnable)
         }
     }
 
-    private void scrollBy(int distance) {
-        int scrollDistance;
-        if (distance > 0) {
-            scrollDistance = Math.min(distance, mMaximumVelocity);
-        } else {
-            scrollDistance = Math.max(distance, -mMaximumVelocity);
-        }
-        mRecyclerView.scrollBy(0, scrollDistance);
+    private fun scrollBy(distance: Int) {
+        val scrollDistance: Int =
+            if (distance > 0) {
+                min(distance, mMaximumVelocity)
+            } else {
+                max(distance, -mMaximumVelocity)
+            }
+        mRecyclerView!!.scrollBy(0, scrollDistance)
         if (mLastX != Float.MIN_VALUE && mLastY != Float.MIN_VALUE) {
-            updateSelectedRange(mRecyclerView, mLastX, mLastY);
+            updateSelectedRange(mRecyclerView, mLastX, mLastY)
         }
     }
 
-    private int dp2px(float dpVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                dpVal, mDisplayMetrics);
+    private fun dp2px(dpVal: Float): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+            dpVal, mDisplayMetrics).toInt()
     }
 
-    private boolean isRtl() {
-        return TextUtils.getLayoutDirectionFromLocale(Locale.getDefault())
-                == View.LAYOUT_DIRECTION_RTL;
+    private val isRtl: Boolean
+        get() = (TextUtils.getLayoutDirectionFromLocale(Locale.getDefault())
+                == View.LAYOUT_DIRECTION_RTL)
+
+    private fun isInSlideArea(e: MotionEvent): Boolean {
+        val x = e.x
+        return x > mSlideAreaLeft && x < mSlideAreaRight
     }
 
-    private boolean isInSlideArea(MotionEvent e) {
-        float x = e.getX();
-        return (x > mSlideAreaLeft && x < mSlideAreaRight);
+    private fun getItemPosition(rv: RecyclerView, e: MotionEvent): Int {
+        return getItemPosition(rv, e.x, e.y)
     }
 
-    private int getItemPosition(RecyclerView rv, MotionEvent e) {
-        return getItemPosition(rv, e.getX(), e.getY());
-    }
-
-    private int getItemPosition(RecyclerView rv, float x, float y) {
-        final View v = rv.findChildViewUnder(x, y);
+    private fun getItemPosition(rv: RecyclerView?, x: Float, y: Float): Int {
+        val v = rv!!.findChildViewUnder(x, y)
         if (v == null) {
-            RecyclerView.LayoutManager layoutManager = rv.getLayoutManager();
-            if (layoutManager instanceof GridLayoutManager) {
-                int lastVisibleItemPosition = ((GridLayoutManager) layoutManager).findLastVisibleItemPosition();
-                int lastItemPosition = layoutManager.getItemCount() - 1;
+            val layoutManager = rv.layoutManager
+            if (layoutManager is GridLayoutManager) {
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                val lastItemPosition = layoutManager.getItemCount() - 1
                 if (lastItemPosition == lastVisibleItemPosition) {
-                    return lastItemPosition;
+                    return lastItemPosition
                 }
             }
-            return RecyclerView.NO_POSITION;
+            return RecyclerView.NO_POSITION
         }
-        return rv.getChildAdapterPosition(v);
+        return rv.getChildAdapterPosition(v)
     }
 
     /**
      * Edge type that specifies an activation area starting at the view bounds and extending inward.
      */
-    public enum EdgeType {
+    enum class EdgeType {
         /**
          * After activation begins, moving outside the view bounds will stop scrolling.
          */
@@ -752,7 +755,7 @@ public class DragSelectTouchHelper {
      * This class is the contract between DragSelectTouchHelper and your application. It lets you
      * update adapter when selection start/end and state changed.
      */
-    public abstract static class Callback {
+    abstract class Callback {
         /**
          * Called when changing item state.
          *
@@ -760,45 +763,42 @@ public class DragSelectTouchHelper {
          * @param isSelected true if the position should be selected, false otherwise.
          * @return Whether to set the new state successfully.
          */
-        public abstract boolean onSelectChange(int position, boolean isSelected);
+        abstract fun onSelectChange(position: Int, isSelected: Boolean): Boolean
 
         /**
          * Called when selection start.
          *
          * @param start the first selected item.
          */
-        public void onSelectStart(int start) {
-
-        }
+        open fun onSelectStart(start: Int) {}
 
         /**
          * Called when selection end.
          *
          * @param end the last selected item.
          */
-        public void onSelectEnd(int end) {
-
-        }
+        open fun onSelectEnd(end: Int) {}
     }
 
     /**
-     * An advance Callback which provide 4 useful selection modes {@link Mode}.
-     * <p>
+     * An advance Callback which provide 4 useful selection modes [Mode].
+     *
+     *
      * Note: Since the state of item may be repeatedly set, in order to improve efficiency,
      * please process it in the Adapter
      */
-    public abstract static class AdvanceCallback<T> extends Callback {
-        private Mode mMode;
-        private Set<T> mOriginalSelection;
-        private boolean mFirstWasSelected;
+    abstract class AdvanceCallback<T> : Callback {
+        private var mMode: Mode? = null
+        private var mOriginalSelection: MutableSet<T> = mutableSetOf()
+        private var mFirstWasSelected = false
 
         /**
-         * Creates a SimpleCallback with default {@link Mode#SelectAndReverse}# mode.
+         * Creates a SimpleCallback with default [Mode.SelectAndReverse]# mode.
          *
          * @see Mode
          */
-        public AdvanceCallback() {
-            setMode(Mode.SelectAndReverse);
+        constructor() {
+            setMode(Mode.SelectAndReverse)
         }
 
         /**
@@ -807,8 +807,8 @@ public class DragSelectTouchHelper {
          * @param mode the initial select mode
          * @see Mode
          */
-        public AdvanceCallback(Mode mode) {
-            setMode(mode);
+        constructor(mode: Mode?) {
+            setMode(mode)
         }
 
         /**
@@ -817,70 +817,60 @@ public class DragSelectTouchHelper {
          * @param mode The type of select mode.
          * @see Mode
          */
-        public void setMode(Mode mode) {
-            mMode = mode;
+        fun setMode(mode: Mode?) {
+            mMode = mode
         }
 
-        @Override
-        public void onSelectStart(int start) {
-            mOriginalSelection = new HashSet<>();
-            Set<T> selected = currentSelectedId();
+        override fun onSelectStart(start: Int) {
+            mOriginalSelection.clear()
+            val selected = currentSelectedId()
             if (selected != null) {
-                mOriginalSelection.addAll(selected);
+                mOriginalSelection.addAll(selected)
             }
-            mFirstWasSelected = mOriginalSelection.contains(getItemId(start));
+            mFirstWasSelected = mOriginalSelection.contains(getItemId(start))
         }
 
-        @Override
-        public void onSelectEnd(int end) {
-            mOriginalSelection = null;
+        override fun onSelectEnd(end: Int) {
+            mOriginalSelection.clear()
         }
 
-        @Override
-        public boolean onSelectChange(int position, boolean isSelected) {
-            boolean stateChanged;
-            switch (mMode) {
-                case SelectAndKeep: {
-                    stateChanged = updateSelectState(position, true);
-                    break;
+        override fun onSelectChange(position: Int, isSelected: Boolean): Boolean {
+            return when (mMode) {
+                Mode.SelectAndKeep -> {
+                    updateSelectState(position, true)
                 }
-                case SelectAndReverse: {
-                    stateChanged = updateSelectState(position, isSelected);
-                    break;
+                Mode.SelectAndReverse -> {
+                    updateSelectState(position, isSelected)
                 }
-                case SelectAndUndo: {
+                Mode.SelectAndUndo -> {
                     if (isSelected) {
-                        stateChanged = updateSelectState(position, true);
+                        updateSelectState(position, true)
                     } else {
-                        stateChanged = updateSelectState(position, mOriginalSelection.contains(getItemId(position)));
+                        updateSelectState(position,
+                            mOriginalSelection.contains(getItemId(position)))
                     }
-                    break;
                 }
-                case ToggleAndKeep: {
-                    stateChanged = updateSelectState(position, !mFirstWasSelected);
-                    break;
+                Mode.ToggleAndKeep -> {
+                    updateSelectState(position, !mFirstWasSelected)
                 }
-                case ToggleAndReverse: {
+                Mode.ToggleAndReverse -> {
                     if (isSelected) {
-                        stateChanged = updateSelectState(position, !mFirstWasSelected);
+                        updateSelectState(position, !mFirstWasSelected)
                     } else {
-                        stateChanged = updateSelectState(position, mFirstWasSelected);
+                        updateSelectState(position, mFirstWasSelected)
                     }
-                    break;
                 }
-                case ToggleAndUndo: {
+                Mode.ToggleAndUndo -> {
                     if (isSelected) {
-                        stateChanged = updateSelectState(position, !mFirstWasSelected);
+                        updateSelectState(position, !mFirstWasSelected)
                     } else {
-                        stateChanged = updateSelectState(position, mOriginalSelection.contains(getItemId(position)));
+                        updateSelectState(position,
+                            mOriginalSelection.contains(getItemId(position)))
                     }
-                    break;
                 }
-                default:
-                    // SelectAndReverse Mode
-                    stateChanged = updateSelectState(position, isSelected);
+                else ->                     // SelectAndReverse Mode
+                    updateSelectState(position, isSelected)
             }
-            return stateChanged;
         }
 
         /**
@@ -888,7 +878,7 @@ public class DragSelectTouchHelper {
          *
          * @return the currently selected item's id set.
          */
-        public abstract Set<T> currentSelectedId();
+        abstract fun currentSelectedId(): Set<T>?
 
         /**
          * Get the ID of the item.
@@ -896,7 +886,7 @@ public class DragSelectTouchHelper {
          * @param position item position to be judged.
          * @return item's identity.
          */
-        public abstract T getItemId(int position);
+        abstract fun getItemId(position: Int): T
 
         /**
          * Update the selection status of the position.
@@ -905,79 +895,80 @@ public class DragSelectTouchHelper {
          * @param isSelected true if the position should be selected, false otherwise.
          * @return Whether to set the state successfully.
          */
-        public abstract boolean updateSelectState(int position, boolean isSelected);
+        abstract fun updateSelectState(position: Int, isSelected: Boolean): Boolean
 
         /**
          * Different existing selection modes
          */
-        public enum Mode {
+        enum class Mode {
             /**
              * Selects the first item and applies the same state to each item you go by
              * and keep the state on move back
              */
             SelectAndKeep,
+
             /**
              * Selects the first item and applies the same state to each item you go by
              * and applies inverted state on move back
              */
             SelectAndReverse,
+
             /**
              * Selects the first item and applies the same state to each item you go by
              * and reverts to the original state on move back
              */
             SelectAndUndo,
+
             /**
              * Toggles the first item and applies the same state to each item you go by
              * and keep the state on move back
              */
             ToggleAndKeep,
+
             /**
              * Toggles the first item and applies the same state to each item you go by
              * and applies inverted state on move back
              */
             ToggleAndReverse,
+
             /**
              * Toggles the first item and applies the same state to each item you go by
              * and reverts to the original state on move back
              */
-            ToggleAndUndo,
+            ToggleAndUndo
         }
     }
 
-    private static class Logger {
-        private static boolean DEBUG = BuildConfig.DEBUG;
-
-        private static void d(String msg) {
+    private object Logger {
+        private val DEBUG = BuildConfig.DEBUG
+        fun d(msg: String) {
             if (DEBUG) {
-                Log.d(TAG, msg);
+                Log.d(TAG, msg)
             }
         }
 
-        private static void e(String msg) {
-            Log.e(TAG, msg);
+        fun e(msg: String) {
+            Log.e(TAG, msg)
         }
 
-        private static void i(String msg) {
-            Log.i(TAG, msg);
+        fun i(msg: String) {
+            Log.i(TAG, msg)
         }
 
-        private static void logSelectStateChange(int before, int after) {
-            i("Select state changed: " + stateName(before) + " --> " + stateName(after));
+        fun logSelectStateChange(before: Int, after: Int) {
+            i("Select state changed: " + stateName(before) + " --> " + stateName(after))
         }
 
-        private static String stateName(int state) {
-            switch (state) {
-                case SELECT_STATE_NORMAL:
-                    return "NormalState";
-                case SELECT_STATE_SLIDE:
-                    return "SlideState";
-                case SELECT_STATE_DRAG_FROM_NORMAL:
-                    return "DragFromNormal";
-                case SELECT_STATE_DRAG_FROM_SLIDE:
-                    return "DragFromSlide";
-                default:
-                    return "Unknown";
+        private fun stateName(state: Int): String {
+            return when (state) {
+                SELECT_STATE_NORMAL -> "NormalState"
+                SELECT_STATE_SLIDE -> "SlideState"
+                SELECT_STATE_DRAG_FROM_NORMAL -> "DragFromNormal"
+                SELECT_STATE_DRAG_FROM_SLIDE -> "DragFromSlide"
+                else -> "Unknown"
             }
         }
     }
+
+
 }
