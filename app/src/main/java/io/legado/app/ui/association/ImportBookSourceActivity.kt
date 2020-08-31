@@ -173,6 +173,14 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
                     }
                     adapter.notifyDataSetChanged()
                 }
+                R.id.menu_un_select_all -> {
+                    adapter.selectStatus.forEachIndexed { index, b ->
+                        if (b) {
+                            adapter.selectStatus[index] = false
+                        }
+                    }
+                    adapter.notifyDataSetChanged()
+                }
             }
             return false
         }
