@@ -80,7 +80,7 @@ object BackupRestoreUi {
         Coroutine.async(context = Main) {
             WebDavHelp.showRestoreDialog(fragment.requireContext())
         }.onError {
-            fragment.longToast("WebDavError:${it.localizedMessage}，将从本地备份恢复。")
+            fragment.longToast("WebDavError:${it.localizedMessage}\n将从本地备份恢复。")
             val backupPath = fragment.getPrefString(PreferKey.backupPath)
             if (backupPath?.isNotEmpty() == true) {
                 if (backupPath.isContentPath()) {
