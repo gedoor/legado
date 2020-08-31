@@ -190,105 +190,109 @@ class DragSelectTouchHelper(
     private var mLastRealEnd = RecyclerView.NO_POSITION
     private var mSlideStateStartPosition = RecyclerView.NO_POSITION
     private var mHaveCalledSelectStart = false
-    private val mScrollRunnable: Runnable = object : Runnable {
-        override fun run() {
-            if (mIsScrolling) {
-                scrollBy(mScrollDistance)
-                ViewCompat.postOnAnimation(mRecyclerView!!, this)
+    private val mScrollRunnable: Runnable by lazy {
+        object : Runnable {
+            override fun run() {
+                if (mIsScrolling) {
+                    scrollBy(mScrollDistance)
+                    ViewCompat.postOnAnimation(mRecyclerView!!, this)
+                }
             }
         }
     }
-    private val mOnItemTouchListener: OnItemTouchListener = object : OnItemTouchListener {
-        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-            Logger.d("onInterceptTouchEvent: x:" + e.x + ",y:" + e.y
-                    + ", " + MotionEvent.actionToString(e.action))
-            val adapter = rv.adapter
-            if (adapter == null || adapter.itemCount == 0) {
-                return false
-            }
-            var intercept = false
-            val action = e.action
-            when (action and MotionEvent.ACTION_MASK) {
-                MotionEvent.ACTION_DOWN -> {
-                    mDownY = e.y
-                    // call the selection start's callback before moving
-                    if (mSelectState == SELECT_STATE_SLIDE && isInSlideArea(e)) {
-                        mSlideStateStartPosition = getItemPosition(rv, e)
-                        if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
-                            mCallback.onSelectStart(mSlideStateStartPosition)
-                            mHaveCalledSelectStart = true
+    private val mOnItemTouchListener: OnItemTouchListener by lazy {
+        object : OnItemTouchListener {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                Logger.d("onInterceptTouchEvent: x:" + e.x + ",y:" + e.y
+                        + ", " + MotionEvent.actionToString(e.action))
+                val adapter = rv.adapter
+                if (adapter == null || adapter.itemCount == 0) {
+                    return false
+                }
+                var intercept = false
+                val action = e.action
+                when (action and MotionEvent.ACTION_MASK) {
+                    MotionEvent.ACTION_DOWN -> {
+                        mDownY = e.y
+                        // call the selection start's callback before moving
+                        if (mSelectState == SELECT_STATE_SLIDE && isInSlideArea(e)) {
+                            mSlideStateStartPosition = getItemPosition(rv, e)
+                            if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
+                                mCallback.onSelectStart(mSlideStateStartPosition)
+                                mHaveCalledSelectStart = true
+                            }
+                            intercept = true
                         }
-                        intercept = true
                     }
-                }
-                MotionEvent.ACTION_MOVE -> if (mSelectState == SELECT_STATE_DRAG_FROM_NORMAL
-                    || mSelectState == SELECT_STATE_DRAG_FROM_SLIDE
-                ) {
-                    Logger.i("onInterceptTouchEvent: drag mode move")
-                    intercept = true
-                }
-                MotionEvent.ACTION_UP -> {
-                    if (mSelectState == SELECT_STATE_DRAG_FROM_NORMAL
+                    MotionEvent.ACTION_MOVE -> if (mSelectState == SELECT_STATE_DRAG_FROM_NORMAL
                         || mSelectState == SELECT_STATE_DRAG_FROM_SLIDE
                     ) {
+                        Logger.i("onInterceptTouchEvent: drag mode move")
                         intercept = true
                     }
-                    // finger is lifted before moving
-                    if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
-                        selectFinished(mSlideStateStartPosition)
-                        mSlideStateStartPosition = RecyclerView.NO_POSITION
+                    MotionEvent.ACTION_UP -> {
+                        if (mSelectState == SELECT_STATE_DRAG_FROM_NORMAL
+                            || mSelectState == SELECT_STATE_DRAG_FROM_SLIDE
+                        ) {
+                            intercept = true
+                        }
+                        // finger is lifted before moving
+                        if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
+                            selectFinished(mSlideStateStartPosition)
+                            mSlideStateStartPosition = RecyclerView.NO_POSITION
+                        }
+                        // selection has triggered
+                        if (mStart != RecyclerView.NO_POSITION) {
+                            selectFinished(mEnd)
+                        }
                     }
-                    // selection has triggered
-                    if (mStart != RecyclerView.NO_POSITION) {
-                        selectFinished(mEnd)
+                    MotionEvent.ACTION_CANCEL -> {
+                        if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
+                            selectFinished(mSlideStateStartPosition)
+                            mSlideStateStartPosition = RecyclerView.NO_POSITION
+                        }
+                        if (mStart != RecyclerView.NO_POSITION) {
+                            selectFinished(mEnd)
+                        }
+                    }
+                    else -> {
                     }
                 }
-                MotionEvent.ACTION_CANCEL -> {
-                    if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
-                        selectFinished(mSlideStateStartPosition)
-                        mSlideStateStartPosition = RecyclerView.NO_POSITION
-                    }
-                    if (mStart != RecyclerView.NO_POSITION) {
-                        selectFinished(mEnd)
-                    }
-                }
-                else -> {
-                }
+                // Intercept only when the selection is triggered
+                Logger.d("intercept result: $intercept")
+                return intercept
             }
-            // Intercept only when the selection is triggered
-            Logger.d("intercept result: $intercept")
-            return intercept
-        }
 
-        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-            if (!isActivated) {
-                return
-            }
-            Logger.d("onTouchEvent: x:" + e.x + ",y:" + e.y
-                    + ", " + MotionEvent.actionToString(e.action))
-            val action = e.action
-            when (action and MotionEvent.ACTION_MASK) {
-                MotionEvent.ACTION_MOVE -> {
-                    if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
-                        selectFirstItem(mSlideStateStartPosition)
-                        // selection is triggered
-                        mSlideStateStartPosition = RecyclerView.NO_POSITION
-                        Logger.i("onTouchEvent: after slide mode down")
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                if (!isActivated) {
+                    return
+                }
+                Logger.d("onTouchEvent: x:" + e.x + ",y:" + e.y
+                        + ", " + MotionEvent.actionToString(e.action))
+                val action = e.action
+                when (action and MotionEvent.ACTION_MASK) {
+                    MotionEvent.ACTION_MOVE -> {
+                        if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
+                            selectFirstItem(mSlideStateStartPosition)
+                            // selection is triggered
+                            mSlideStateStartPosition = RecyclerView.NO_POSITION
+                            Logger.i("onTouchEvent: after slide mode down")
+                        }
+                        processAutoScroll(e)
+                        if (!mIsInTopHotspot && !mIsInBottomHotspot) {
+                            updateSelectedRange(rv, e)
+                        }
                     }
-                    processAutoScroll(e)
-                    if (!mIsInTopHotspot && !mIsInBottomHotspot) {
-                        updateSelectedRange(rv, e)
+                    MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> selectFinished(mEnd)
+                    else -> {
                     }
                 }
-                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> selectFinished(mEnd)
-                else -> {
-                }
             }
-        }
 
-        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-            if (disallowIntercept) {
-                inactiveSelect()
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+                if (disallowIntercept) {
+                    inactiveSelect()
+                }
             }
         }
     }
@@ -316,13 +320,11 @@ class DragSelectTouchHelper(
         if (mRecyclerView === recyclerView) {
             return  // nothing to do
         }
-        if (mRecyclerView != null) {
-            mRecyclerView!!.removeOnItemTouchListener(mOnItemTouchListener)
-        }
+        mRecyclerView?.removeOnItemTouchListener(mOnItemTouchListener)
         mRecyclerView = recyclerView
-        if (mRecyclerView != null) {
-            mRecyclerView!!.addOnItemTouchListener(mOnItemTouchListener)
-            mRecyclerView!!.addOnLayoutChangeListener(mOnLayoutChangeListener)
+        mRecyclerView?.let {
+            it.addOnItemTouchListener(mOnItemTouchListener)
+            it.addOnLayoutChangeListener(mOnLayoutChangeListener)
         }
     }
 
@@ -510,8 +512,8 @@ class DragSelectTouchHelper(
 
     private fun activeSelectInternal(position: Int) {
         // We should initialize the hotspot here, because its data may be delayed load
-        if (mRecyclerView != null) {
-            init(mRecyclerView!!.height)
+        mRecyclerView?.let {
+            init(it.height)
         }
         if (position == RecyclerView.NO_POSITION) {
             Logger.logSelectStateChange(mSelectState, SELECT_STATE_SLIDE)
@@ -553,7 +555,7 @@ class DragSelectTouchHelper(
         updateSelectedRange(rv, e.x, e.y)
     }
 
-    private fun updateSelectedRange(rv: RecyclerView?, x: Float, y: Float) {
+    private fun updateSelectedRange(rv: RecyclerView, x: Float, y: Float) {
         val position = getItemPosition(rv, x, y)
         if (position != RecyclerView.NO_POSITION && mEnd != position) {
             mEnd = position
@@ -685,7 +687,7 @@ class DragSelectTouchHelper(
     private fun stopAutoScroll() {
         if (mIsScrolling) {
             mIsScrolling = false
-            mRecyclerView!!.removeCallbacks(mScrollRunnable)
+            mRecyclerView?.removeCallbacks(mScrollRunnable)
         }
     }
 
@@ -698,7 +700,7 @@ class DragSelectTouchHelper(
             }
         mRecyclerView!!.scrollBy(0, scrollDistance)
         if (mLastX != Float.MIN_VALUE && mLastY != Float.MIN_VALUE) {
-            updateSelectedRange(mRecyclerView, mLastX, mLastY)
+            updateSelectedRange(mRecyclerView!!, mLastX, mLastY)
         }
     }
 
@@ -720,8 +722,8 @@ class DragSelectTouchHelper(
         return getItemPosition(rv, e.x, e.y)
     }
 
-    private fun getItemPosition(rv: RecyclerView?, x: Float, y: Float): Int {
-        val v = rv!!.findChildViewUnder(x, y)
+    private fun getItemPosition(rv: RecyclerView, x: Float, y: Float): Int {
+        val v = rv.findChildViewUnder(x, y)
         if (v == null) {
             val layoutManager = rv.layoutManager
             if (layoutManager is GridLayoutManager) {
