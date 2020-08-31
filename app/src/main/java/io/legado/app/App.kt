@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
@@ -34,14 +35,16 @@ class App : MultiDexApplication() {
         @JvmStatic
         lateinit var db: AppDatabase
             private set
-    }
 
-    var versionCode = 0
-    var versionName = ""
+        lateinit var androidId: String
+        var versionCode = 0
+        var versionName = ""
+    }
 
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
+        androidId = Settings.System.getString(contentResolver, Settings.Secure.ANDROID_ID)
         CrashHandler().init(this)
         LanguageUtils.setConfigurationOld(this)
         db = AppDatabase.createDatabase(INSTANCE)

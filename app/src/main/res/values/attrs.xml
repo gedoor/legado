@@ -3,6 +3,11 @@
 
     <attr name="radius" format="dimension" />
     <attr name="isBottomBackground" format="boolean" />
+    <attr name="themeMode" format="enum">
+        <enum name="dark" value="1" />
+        <enum name="light" value="2" />
+        <enum name="auto" value="0" />
+    </attr>
 
     <declare-styleable name="TitleBar">
         <attr name="title" />
@@ -25,6 +30,7 @@
         <attr name="fitNavigationBar" format="boolean" />
         <attr name="navigationContentDescription" format="reference|string" />
         <attr name="navigationIconTint" format="color|reference" />
+        <attr name="themeMode" />
         <attr name="navigationIconTintMode" format="enum">
             <enum name="clear" value="0" />
             <enum name="src" value="1" />

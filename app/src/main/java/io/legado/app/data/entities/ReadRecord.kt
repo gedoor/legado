@@ -1,11 +1,10 @@
 package io.legado.app.data.entities
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "readRecord")
+@Entity(tableName = "readRecord", primaryKeys = ["androidId", "bookName"])
 data class ReadRecord(
-    @PrimaryKey
+    var androidId: String = "",
     var bookName: String = "",
     var readTime: Long = 0L
 )

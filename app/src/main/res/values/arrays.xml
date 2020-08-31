@@ -5,21 +5,6 @@
 		<item>@string/book_type_audio</item>
 	</string-array>
 
-	<string-array name="tts_speech_per">
-		<item>du Xiao Mei</item>
-		<item>du Xiao Yu</item>
-		<item>du Xiao Yao</item>
-		<item>du Ya Ya</item>
-		<item>du Xiao Jiao</item>
-		<item>du Mi Duo</item>
-		<item>du Bo Wen</item>
-		<item>du Xiao Tong</item>
-		<item>du Xiao Meng</item>
-		<item>baidu SaoNan</item>
-		<item>baidu PingShu</item>
-		<item>baidu ZhuChi</item>
-	</string-array>
-
 	<string-array name="indent">
 		<item>@string/indent_0</item>
 		<item>@string/indent_1</item>

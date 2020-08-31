@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +19,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.Theme
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ItemTouchCallback
@@ -30,7 +28,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
@@ -65,7 +63,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.setBackgroundColor(bottomBackground)
+        tool_bar.setBackgroundColor(primaryColor)
         tool_bar.title = getString(R.string.group_manage)
         initData()
         initMenu()
@@ -79,7 +77,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tv_ok.setTextColor(requireContext().accentColor)
         tv_ok.visible()
         tv_ok.onClick { dismiss() }
-        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
+        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, {
             val diffResult =
                 DiffUtil.calculateDiff(GroupDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it, diffResult)
@@ -94,7 +92,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.inflateMenu(R.menu.book_group_manage)
         tool_bar.menu.let {
-            it.applyTint(requireContext(), Theme.getTheme())
+            it.applyTint(requireContext())
             it.findItem(R.id.menu_group_all)
                 .isChecked = AppConfig.bookGroupAllShow
             it.findItem(R.id.menu_group_local)

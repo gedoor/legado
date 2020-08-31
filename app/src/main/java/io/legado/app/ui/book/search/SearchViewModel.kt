@@ -8,7 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
-import io.legado.app.model.SearchBookModel
+import io.legado.app.model.webBook.SearchBookModel
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
@@ -30,12 +30,15 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      * 开始搜索
      */
     fun search(key: String) {
-        if (searchKey != key && key.isNotEmpty()) {
+        if ((searchKey == key) || key.isNotEmpty()) {
             searchBookModel.cancelSearch()
             searchBooks.clear()
             searchBookLiveData.postValue(searchBooks)
             searchID = System.currentTimeMillis()
             searchKey = key
+        }
+        if (searchKey.isEmpty()) {
+            return
         }
         searchBookModel.search(searchID, searchKey)
     }
@@ -54,6 +57,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
 
     override fun onSearchStart() {
         isSearchLiveData.postValue(true)
+        isLoading = true
     }
 
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
@@ -110,7 +114,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
                             && item.author == searchBook.author
                         ) {
                             hasSame = true
-                            searchBook.addOrigin(item.bookUrl)
+                            searchBook.addOrigin(item.origin)
                             break
                         }
                     }

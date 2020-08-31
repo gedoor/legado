@@ -11,13 +11,13 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.ItemTouchCallback
@@ -142,10 +142,10 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     private fun initLiveDataGroup() {
-        App.db.rssSourceDao().liveGroup().observe(this, Observer {
+        App.db.rssSourceDao().liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
+                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             upGroupMenu()
         })
@@ -195,7 +195,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             } else {
                 App.db.rssSourceDao().liveSearch("%$key%")
             }
-        sourceLiveData?.observe(this, Observer {
+        sourceLiveData?.observe(this, {
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it, diffResult)

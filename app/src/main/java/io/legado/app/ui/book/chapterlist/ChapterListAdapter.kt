@@ -1,7 +1,7 @@
 package io.legado.app.ui.book.chapterlist
 
 import android.content.Context
-import android.widget.TextView
+import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -21,8 +21,11 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         with(holder.itemView) {
+            val isDur = callback.durChapterIndex() == item.index
+            val cached = callback.isLocalBook
+                    || cacheFileNames.contains(BookHelp.formatChapterName(item))
             if (payloads.isEmpty()) {
-                if (callback.durChapterIndex() == item.index) {
+                if (isDur) {
                     tv_chapter_name.setTextColor(context.accentColor)
                 } else {
                     tv_chapter_name.setTextColor(context.getCompatColor(R.color.primaryText))
@@ -32,15 +35,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     tv_tag.text = item.tag
                     tv_tag.visible()
                 }
-                upHasCache(
-                    tv_chapter_name,
-                    cacheFileNames.contains(BookHelp.formatChapterName(item))
-                )
+                upHasCache(this, isDur, cached)
             } else {
-                upHasCache(
-                    tv_chapter_name,
-                    cacheFileNames.contains(BookHelp.formatChapterName(item))
-                )
+                upHasCache(this, isDur, cached)
             }
         }
     }
@@ -53,11 +50,18 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
     }
 
-    private fun upHasCache(textView: TextView, contains: Boolean) {
-        textView.paint.isFakeBoldText = contains
+    private fun upHasCache(itemView: View, isDur: Boolean, cached: Boolean) = itemView.apply {
+        tv_chapter_name.paint.isFakeBoldText = cached
+        iv_checked.setImageResource(R.drawable.ic_outline_cloud_24)
+        iv_checked.visible(!cached)
+        if (isDur) {
+            iv_checked.setImageResource(R.drawable.ic_check)
+            iv_checked.visible()
+        }
     }
 
     interface Callback {
+        val isLocalBook: Boolean
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
     }

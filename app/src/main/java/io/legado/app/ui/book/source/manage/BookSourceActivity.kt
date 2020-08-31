@@ -11,13 +11,13 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.ItemTouchCallback
@@ -31,6 +31,7 @@ import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
@@ -137,6 +138,13 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
         itemTouchCallback.isCanDrag = true
+        val dragSelectTouchHelper: DragSelectTouchHelper =
+            DragSelectTouchHelper(adapter.initDragSelectTouchHelperCallback()).setSlideArea(16, 50)
+        dragSelectTouchHelper.attachToRecyclerView(recycler_view)
+        // When this page is opened, it is in selection mode
+        dragSelectTouchHelper.activeSlideSelect()
+
+        // Note: need judge selection first, so add ItemTouchHelper after it.
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
@@ -164,7 +172,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 App.db.bookSourceDao().liveDataSearch("%$searchKey%")
             }
         }
-        bookSourceLiveDate?.observe(this, Observer { data ->
+        bookSourceLiveDate?.observe(this, { data ->
             val sourceList = when (sort) {
                 1 -> data.sortedBy { it.weight }
                 2 -> data.sortedBy { it.bookSourceName }
@@ -179,10 +187,10 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     private fun initLiveDataGroup() {
-        App.db.bookSourceDao().liveGroup().observe(this, Observer {
+        App.db.bookSourceDao().liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
+                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             upGroupMenu()
         })

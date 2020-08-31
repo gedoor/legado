@@ -7,6 +7,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import io.legado.app.App
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -18,7 +19,6 @@ import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
 import java.util.*
-import java.util.regex.Pattern
 
 
 @Suppress("DEPRECATION")
@@ -38,8 +38,6 @@ object ChapterProvider {
     var typeface: Typeface = Typeface.SANS_SERIF
     lateinit var titlePaint: TextPaint
     lateinit var contentPaint: TextPaint
-    private val srcPattern =
-        Pattern.compile("<img .*?src.*?=.*?\"(.*?(?:,\\{.*\\})?)\".*?>", Pattern.CASE_INSENSITIVE)
 
     init {
         upStyle()
@@ -62,7 +60,7 @@ object ChapterProvider {
         var durY = 0f
         textPages.add(TextPage())
         contents.forEachIndexed { index, text ->
-            val matcher = srcPattern.matcher(text)
+            val matcher = AppPattern.imgPattern.matcher(text)
             if (matcher.find()) {
                 var src = matcher.group(1)
                 if (!book.isEpub()) {

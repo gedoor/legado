@@ -29,13 +29,7 @@ object ReadBookConfig {
 
     var bg: Drawable? = null
     var bgMeanColor: Int = 0
-    val textColor: Int
-        get() =
-            if (AppConfig.isEInkMode && !AppConfig.isNightTheme) {
-                Color.BLACK
-            } else {
-                durConfig.textColor()
-            }
+    val textColor: Int get() = durConfig.textColor()
 
     init {
         upConfig()
@@ -77,16 +71,11 @@ object ReadBookConfig {
         val dm = resources.displayMetrics
         val width = dm.widthPixels
         val height = dm.heightPixels
-        if (AppConfig.isEInkMode && !AppConfig.isNightTheme) {
-            bg = ColorDrawable(Color.WHITE)
-            bgMeanColor = Color.WHITE
-        } else {
-            bg = durConfig.bgDrawable(width, height).apply {
-                if (this is BitmapDrawable) {
-                    bgMeanColor = BitmapUtils.getMeanColor(bitmap)
-                } else if (this is ColorDrawable) {
-                    bgMeanColor = color
-                }
+        bg = durConfig.bgDrawable(width, height).apply {
+            if (this is BitmapDrawable) {
+                bgMeanColor = BitmapUtils.getMeanColor(bitmap)
+            } else if (this is ColorDrawable) {
+                bgMeanColor = color
             }
         }
         isScroll = pageAnim == 3

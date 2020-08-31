@@ -14,7 +14,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
-import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
@@ -108,11 +107,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         initView()
         upScreenTimeOut()
         ReadBook.callBack = this
-        ReadBook.titleDate.observe(this, Observer {
+        ReadBook.titleDate.observe(this) {
             title_bar.title = it
             upMenu()
             upView()
-        })
+        }
         viewModel.initData(intent)
     }
 
@@ -128,6 +127,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onResume() {
         super.onResume()
+        ReadBook.readStartTime = System.currentTimeMillis()
         upSystemUiVisibility()
         timeBatteryReceiver = TimeBatteryReceiver.register(this)
         page_view.upTime()
@@ -251,8 +251,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             R.id.menu_copy_text ->
                 TextDialog.show(supportFragmentManager, ReadBook.curTextChapter?.getContent())
             R.id.menu_update_toc -> ReadBook.book?.let {
-                ReadBook.upMsg(getString(R.string.toc_updateing))
-                viewModel.loadChapterList(it)
+                loadChapterList(it)
             }
             R.id.menu_enable_replace -> ReadBook.book?.let {
                 it.useReplaceRule = !it.useReplaceRule
@@ -275,6 +274,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     Pair("loginUrl", it.loginUrl)
                 )
             }
+            R.id.menu_set_charset -> Help.showCharsetConfig(this)
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -515,6 +515,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         return false
     }
 
+    override fun loadChapterList(book: Book) {
+        ReadBook.upMsg(getString(R.string.toc_updateing))
+        viewModel.loadChapterList(book)
+    }
+
     /**
      * 内容加载完成
      */
@@ -686,7 +691,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 更新状态栏,导航栏
      */
     override fun upSystemUiVisibility() {
-        Help.upSystemUiVisibility(this, !read_menu.isVisible)
+        Help.upSystemUiVisibility(window, !read_menu.isVisible)
         upNavigationBarColor()
     }
 

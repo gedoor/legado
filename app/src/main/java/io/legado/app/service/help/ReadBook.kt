@@ -13,7 +13,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.toast
 
 
@@ -370,11 +371,19 @@ object ReadBook {
             }
         }.onError {
             it.printStackTrace()
-            App.INSTANCE.toast(it.localizedMessage ?: "ChapterProvider ERROR")
+            App.INSTANCE.toast("ChapterProvider ERROR:\n${it.getStackTraceString()}")
         }
     }
 
     private val imageStyle get() = webBook?.bookSource?.ruleContent?.imageStyle
+
+    fun setCharset(charset: String) {
+        book?.let {
+            it.charset = charset
+            callBack?.loadChapterList(it)
+        }
+        saveRead()
+    }
 
     fun saveRead() {
         Coroutine.async {
@@ -392,6 +401,7 @@ object ReadBook {
     }
 
     interface CallBack {
+        fun loadChapterList(book: Book)
         fun upContent(relativePosition: Int = 0, resetPageOffset: Boolean = true)
         fun upView()
         fun pageChanged()

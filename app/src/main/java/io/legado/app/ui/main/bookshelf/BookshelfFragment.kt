@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.App
 import io.legado.app.R
@@ -79,7 +78,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 val group = bookGroups[tab_layout.selectedTabPosition]
                 val fragment = fragmentMap[group.groupId]
                 fragment?.getBooks()?.let {
-                    activityViewModel.upChapterList(it)
+                    activityViewModel.upToc(it)
                 }
             }
             R.id.menu_bookshelf_layout -> configBookshelf()
@@ -114,7 +113,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private fun initBookGroupData() {
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
-        bookGroupLiveData?.observe(viewLifecycleOwner, Observer {
+        bookGroupLiveData?.observe(viewLifecycleOwner, {
             viewModel.checkGroup(it)
             launch {
                 synchronized(this) {
@@ -152,7 +151,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         })
         noGroupLiveData?.removeObservers(viewLifecycleOwner)
         noGroupLiveData = App.db.bookDao().observeNoGroupSize()
-        noGroupLiveData?.observe(viewLifecycleOwner, Observer {
+        noGroupLiveData?.observe(viewLifecycleOwner, {
             if (it > 0 && !showGroupNone && AppConfig.bookGroupNoneShow) {
                 showGroupNone = true
                 upGroup()
@@ -270,7 +269,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         fragmentMap[selectedGroup?.groupId]?.gotoTop()
     }
 
-    private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getPageTitle(position: Int): CharSequence? {

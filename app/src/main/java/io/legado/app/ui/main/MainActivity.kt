@@ -62,7 +62,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         //自动更新书籍
         if (AppConfig.autoRefreshBook) {
             view_pager_main.postDelayed({
-                viewModel.upChapterList()
+                viewModel.upAllBookToc()
             }, 1000)
         }
         view_pager_main.postDelayed({
@@ -93,8 +93,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     private fun upVersion() {
-        if (getPrefInt(PreferKey.versionCode) != App.INSTANCE.versionCode) {
-            putPrefInt(PreferKey.versionCode, App.INSTANCE.versionCode)
+        if (getPrefInt(PreferKey.versionCode) != App.versionCode) {
+            putPrefInt(PreferKey.versionCode, App.versionCode)
             if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
                 TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
@@ -168,7 +168,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         }
     }
 
-    private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItemPosition(`object`: Any): Int {

@@ -6,6 +6,8 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.CompositeCoroutine
+import io.legado.app.model.rss.Rss
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.htmlFormat
 import io.legado.app.utils.isAbsUrl
 import java.text.SimpleDateFormat

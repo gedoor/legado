@@ -45,8 +45,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     private val attachToActivity: Boolean
 
     init {
-        inflate(context, R.layout.view_title_bar, this)
-        toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.TitleBar,
             R.attr.titleBarStyle, 0
@@ -61,6 +59,12 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             a.getText(R.styleable.TitleBar_navigationContentDescription)
         val titleText = a.getString(R.styleable.TitleBar_title)
         val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
+
+        when (a.getInt(R.styleable.TitleBar_themeMode, 0)) {
+            1 -> inflate(context, R.layout.view_title_bar_dark, this)
+            else -> inflate(context, R.layout.view_title_bar, this)
+        }
+        toolbar = findViewById(R.id.toolbar)
 
         toolbar.apply {
             navigationIcon?.let {

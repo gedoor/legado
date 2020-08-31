@@ -7,8 +7,8 @@ import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.http.HttpHelper
-import io.legado.app.help.http.api.HttpPostApi
+import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.LogUtils
@@ -17,7 +17,6 @@ import kotlinx.coroutines.isActive
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
-import java.net.URLEncoder
 
 class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnPreparedListener,
@@ -31,7 +30,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onCreate() {
         super.onCreate()
-        ttsFolder = cacheDir.absolutePath + File.separator + "bdTts"
+        ttsFolder = externalCacheDir!!.absolutePath + File.separator + "httpTTS"
         mediaPlayer.setOnErrorListener(this)
         mediaPlayer.setOnPreparedListener(this)
         mediaPlayer.setOnCompletionListener(this)
@@ -72,19 +71,21 @@ class HttpReadAloudService : BaseReadAloudService(),
             FileUtils.deleteFile(ttsFolder)
             for (index in 0 until contentList.size) {
                 if (isActive) {
-                    val bytes = HttpHelper.getByteRetrofit("http://tts.baidu.com")
-                        .create(HttpPostApi::class.java)
-                        .postMapByteAsync(
-                            "http://tts.baidu.com/text2audio",
-                            getAudioBody(contentList[index]), mapOf()
-                        ).body()
-                    if (bytes != null && isActive) {
-                        val file = getSpeakFile(index)
-                        file.writeBytes(bytes)
-                        if (index == nowSpeak) {
-                            @Suppress("BlockingMethodInNonBlockingContext")
-                            val fis = FileInputStream(file)
-                            playAudio(fis.fd)
+                    ReadAloud.httpTTS?.let {
+                        AnalyzeUrl(
+                            it.url,
+                            speakText = contentList[index],
+                            speakSpeed = AppConfig.ttsSpeechRate
+                        ).getResponseBytes()?.let { bytes ->
+                            if (isActive) {
+                                val file = getSpeakFile(index)
+                                file.writeBytes(bytes)
+                                if (index == nowSpeak) {
+                                    @Suppress("BlockingMethodInNonBlockingContext")
+                                    val fis = FileInputStream(file)
+                                    playAudio(fis.fd)
+                                }
+                            }
                         }
                     }
                 } else {
@@ -111,31 +112,6 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun getSpeakFile(index: Int = nowSpeak): File {
         return FileUtils.createFileIfNotExist("${ttsFolder}${File.separator}${index}.mp3")
-    }
-
-    private fun getAudioBody(content: String): Map<String, String> {
-        return mapOf(
-            Pair("tex", encodeTwo(content)),
-            Pair("spd", ((AppConfig.ttsSpeechRate + 5) / 10 + 4).toString()),
-            Pair("per", AppConfig.ttsSpeechPer),
-            Pair("cuid", "baidu_speech_demo"),
-            Pair("idx", "1"),
-            Pair("cod", "2"),
-            Pair("lan", "zh"),
-            Pair("ctp", "1"),
-            Pair("pdt", "1"),
-            Pair("vol", "5"),
-            Pair("pit", "5"),
-            Pair("_res_tag_", "audio")
-        )
-    }
-
-    private fun encodeTwo(content: String): String {
-        return try {
-            URLEncoder.encode(URLEncoder.encode(content, "UTF-8"), "UTF-8")
-        } catch (e: Exception) {
-            " "
-        }
     }
 
     override fun pauseReadAloud(pause: Boolean) {

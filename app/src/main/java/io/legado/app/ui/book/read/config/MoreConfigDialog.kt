@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.Preference
@@ -30,10 +27,10 @@ class MoreConfigDialog : DialogFragment() {
         super.onStart()
         val dm = DisplayMetrics()
         activity?.let {
-            Help.upSystemUiVisibility(it)
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
+            it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
             it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes

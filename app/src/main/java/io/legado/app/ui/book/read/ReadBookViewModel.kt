@@ -10,8 +10,8 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.model.WebBook
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
@@ -64,10 +64,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.loadContent(resetPageOffset = true)
             }
         } else {
-            isInitFinish = true
+            if (ReadBook.durChapterIndex != book.durChapterIndex) {
+                ReadBook.durChapterIndex = book.durChapterIndex
+                ReadBook.durPageIndex = book.durChapterPos
+                ReadBook.prevTextChapter = null
+                ReadBook.curTextChapter = null
+                ReadBook.nextTextChapter = null
+            }
             ReadBook.book!!.group = book.group
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
+            isInitFinish = true
             if (!book.isLocalBook() && ReadBook.webBook == null) {
                 autoChangeSource(book.name, book.author)
                 return
@@ -82,6 +89,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 if (ReadBook.curTextChapter != null) {
                     ReadBook.callBack?.upContent(resetPageOffset = false)
+                } else {
+                    ReadBook.loadContent(resetPageOffset = true)
                 }
             }
         }
@@ -95,7 +104,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             if (book.isLocalBook()) {
                 loadChapterList(book, changeDruChapterIndex)
             } else {
-                ReadBook.webBook?.getBookInfo(book, this)
+                ReadBook.webBook?.getBookInfo(book, this, canReName = false)
                     ?.onSuccess {
                         loadChapterList(book, changeDruChapterIndex)
                     }

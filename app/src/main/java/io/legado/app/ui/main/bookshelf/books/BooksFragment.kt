@@ -3,7 +3,6 @@ package io.legado.app.ui.main.bookshelf.books
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -67,7 +66,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         refresh_layout.setColorSchemeColors(accentColor)
         refresh_layout.setOnRefreshListener {
             refresh_layout.isRefreshing = false
-            activityViewModel.upChapterList(booksAdapter.getItems())
+            activityViewModel.upToc(booksAdapter.getItems())
         }
         val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
         if (bookshelfLayout == 0) {
@@ -106,7 +105,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
-        bookshelfLiveData?.observe(this, Observer { list ->
+        bookshelfLiveData?.observe(this, { list ->
             val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                 1 -> list.sortedByDescending { it.latestChapterTime }
                 2 -> list.sortedBy { it.name }

@@ -10,19 +10,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.Theme
+import io.legado.app.constant.AppPattern
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
@@ -51,9 +51,10 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(primaryColor)
         tool_bar.title = getString(R.string.group_manage)
         tool_bar.inflateMenu(R.menu.group_manage)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
@@ -62,10 +63,10 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tv_ok.setTextColor(requireContext().accentColor)
         tv_ok.visible()
         tv_ok.onClick { dismiss() }
-        App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, Observer {
+        App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
+                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             adapter.setItems(groups.toList())
         })

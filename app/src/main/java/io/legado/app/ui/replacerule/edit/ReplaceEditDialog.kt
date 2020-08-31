@@ -11,13 +11,11 @@ import android.widget.EditText
 import android.widget.PopupWindow
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.Theme
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
@@ -67,12 +65,12 @@ class ReplaceEditDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.setBackgroundColor(bottomBackground)
+        tool_bar.setBackgroundColor(primaryColor)
         mSoftKeyboardTool = KeyboardToolPop(requireContext(), AppConst.keyboardToolChars, this)
         tool_bar.inflateMenu(R.menu.replace_edit)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
-        viewModel.replaceRuleData.observe(viewLifecycleOwner, Observer {
+        viewModel.replaceRuleData.observe(viewLifecycleOwner, {
             upReplaceView(it)
         })
         arguments?.let {

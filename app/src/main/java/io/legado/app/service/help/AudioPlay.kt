@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.AudioPlayService
 
 object AudioPlay {

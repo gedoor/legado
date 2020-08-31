@@ -11,13 +11,13 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
@@ -133,7 +133,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         } else {
             App.db.replaceRuleDao().liveDataSearch(key)
         }
-        replaceRuleLiveData?.observe(this, Observer {
+        replaceRuleLiveData?.observe(this, {
             if (dataInit) {
                 setResult(Activity.RESULT_OK)
             }
@@ -146,10 +146,10 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun observeGroupData() {
-        App.db.replaceRuleDao().liveGroup().observe(this, Observer {
+        App.db.replaceRuleDao().liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
+                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             upGroupMenu()
         })

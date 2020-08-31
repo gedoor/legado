@@ -25,7 +25,8 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:themeMode="dark" />
 
     <TextView
         android:id="@+id/tv_speed"
@@ -37,8 +38,8 @@
         android:paddingStart="3dp"
         android:paddingEnd="3dp"
         android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@id/title_bar"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_bar" />
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/iv_cover"
@@ -46,8 +47,8 @@
         android:layout_height="260dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
-        app:civ_border_width="2dp"
         app:civ_border_color="@color/accent"
+        app:civ_border_width="2dp"
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -118,7 +119,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/set_timer"
             android:src="@drawable/ic_timer_black_24dp"
-            android:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000" />
 
         <View
             android:layout_width="0dp"
@@ -132,7 +133,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_previous"
             android:src="@drawable/ic_fast_rewind"
-            android:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000" />
 
         <View
             android:layout_width="0dp"
@@ -146,7 +147,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_previous"
             android:src="@drawable/ic_skip_previous"
-            android:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_play_stop"
@@ -168,7 +169,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_next"
             android:src="@drawable/ic_skip_next"
-            android:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000" />
 
         <View
             android:layout_width="0dp"
@@ -182,7 +183,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_next"
             android:src="@drawable/ic_fast_forward"
-            android:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000" />
 
         <View
             android:layout_width="0dp"
@@ -195,8 +196,8 @@
             android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_chapter_list"
-            android:tint="@color/md_white_1000"
-            android:contentDescription="@string/chapter_list" />
+            android:contentDescription="@string/chapter_list"
+            app:tint="@color/md_white_1000" />
 
     </LinearLayout>
 

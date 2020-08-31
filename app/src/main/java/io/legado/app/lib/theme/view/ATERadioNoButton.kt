@@ -34,7 +34,6 @@ class ATERadioNoButton(context: Context, attrs: AttributeSet) :
             isBottomBackground -> {
                 val isLight = ColorUtils.isColorLight(context.bottomBackground)
                 val textColor = context.getPrimaryTextColor(isLight)
-                setTextColor(textColor)
                 background = Selector.shapeBuild()
                     .setCornerRadius(2.dp)
                     .setStrokeWidth(2.dp)
@@ -42,15 +41,28 @@ class ATERadioNoButton(context: Context, attrs: AttributeSet) :
                     .setCheckedStrokeColor(context.accentColor)
                     .setDefaultStrokeColor(textColor)
                     .create()
+                setTextColor(
+                    Selector.colorBuild()
+                        .setDefaultColor(textColor)
+                        .setCheckedColor(context.getPrimaryTextColor(ColorUtils.isColorLight(context.accentColor)))
+                        .create()
+                )
             }
             else -> {
+                val textColor = context.getCompatColor(R.color.primaryText)
                 background = Selector.shapeBuild()
                     .setCornerRadius(2.dp)
                     .setStrokeWidth(2.dp)
                     .setCheckedBgColor(context.accentColor)
                     .setCheckedStrokeColor(context.accentColor)
-                    .setDefaultStrokeColor(context.getCompatColor(R.color.primaryText))
+                    .setDefaultStrokeColor(textColor)
                     .create()
+                setTextColor(
+                    Selector.colorBuild()
+                        .setDefaultColor(textColor)
+                        .setCheckedColor(context.getPrimaryTextColor(ColorUtils.isColorLight(context.accentColor)))
+                        .create()
+                )
             }
         }
 

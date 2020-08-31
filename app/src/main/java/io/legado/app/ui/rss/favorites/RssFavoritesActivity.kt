@@ -2,7 +2,6 @@ package io.legado.app.ui.rss.favorites
 
 import android.os.Bundle
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -37,7 +36,7 @@ class RssFavoritesActivity : BaseActivity(R.layout.activity_rss_favorites),
     private fun initData() {
         liveData?.removeObservers(this)
         liveData = App.db.rssStarDao().liveAll()
-        liveData?.observe(this, Observer {
+        liveData?.observe(this, {
             adapter.setItems(it)
         })
     }

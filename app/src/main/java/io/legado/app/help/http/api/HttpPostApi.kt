@@ -49,4 +49,12 @@ interface HttpPostApi {
         @FieldMap(encoded = true) fieldMap: Map<String, String>,
         @HeaderMap headers: Map<String, String>
     ): Response<ByteArray>
+
+    @POST
+    suspend fun postBodyByteAsync(
+        @Url url: String,
+        @Body body: RequestBody,
+        @HeaderMap headers: Map<String, String>
+    ): Response<ByteArray>
+
 }

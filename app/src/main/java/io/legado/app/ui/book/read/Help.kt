@@ -14,15 +14,13 @@ import io.legado.app.R
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.help.Download
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_download_choice.view.*
@@ -37,7 +35,7 @@ object Help {
     /**
      * 更新状态栏,导航栏
      */
-    fun upSystemUiVisibility(activity: Activity, toolBarHide: Boolean = true) {
+    fun upSystemUiVisibility(window: Window, toolBarHide: Boolean = true) {
         var flag = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -53,13 +51,13 @@ object Help {
                 flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             }
         }
-        activity.window.decorView.systemUiVisibility = flag
+        window.decorView.systemUiVisibility = flag
         if (toolBarHide) {
-            ATH.setLightStatusBar(activity, ReadBookConfig.durConfig.statusIconDark())
+            ATH.setLightStatusBar(window, ReadBookConfig.durConfig.statusIconDark())
         } else {
             ATH.setLightStatusBarAuto(
-                activity,
-                ThemeStore.statusBarColor(activity, AppConfig.isTransparentStatusBar)
+                window,
+                ThemeStore.statusBarColor(App.INSTANCE, AppConfig.isTransparentStatusBar)
             )
         }
     }
@@ -180,5 +178,28 @@ object Help {
             }
             noButton()
         }.show().applyTint().requestInputMethod()
+    }
+
+    @SuppressLint("InflateParams")
+    fun showCharsetConfig(context: Context) = with(context) {
+        val charsets =
+            arrayListOf("UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "UTF-16LE", "ASCII")
+        alert(R.string.set_charset) {
+            var editText: AutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
+                    edit_view.setFilterValues(charsets)
+                    edit_view.setText(ReadBook.book?.charset)
+                }
+            }
+            okButton {
+                val text = editText?.text?.toString()
+                text?.let {
+                    ReadBook.setCharset(it)
+                }
+            }
+            cancelButton()
+        }.show().applyTint()
     }
 }

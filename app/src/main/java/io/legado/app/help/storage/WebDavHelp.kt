@@ -51,28 +51,25 @@ object WebDavHelp {
         return false
     }
 
+    @Throws(Exception::class)
     private fun getWebDavFileNames(): ArrayList<String> {
         val url = rootWebDavUrl
         val names = arrayListOf<String>()
         if (initWebDav()) {
-            try {
-                var files = WebDav(url).listFiles()
-                files = files.reversed()
-                for (index: Int in 0 until min(10, files.size)) {
-                    files[index].displayName?.let {
-                        names.add(it)
-                    }
+            var files = WebDav(url).listFiles()
+            files = files.reversed()
+            for (index: Int in 0 until min(10, files.size)) {
+                files[index].displayName?.let {
+                    names.add(it)
                 }
-            } catch (e: Exception) {
-                return names
             }
         }
         return names
     }
 
-    suspend fun showRestoreDialog(context: Context): Boolean {
+    suspend fun showRestoreDialog(context: Context) {
         val names = withContext(IO) { getWebDavFileNames() }
-        return if (names.isNotEmpty()) {
+        if (names.isNotEmpty()) {
             withContext(Main) {
                 context.selector(
                     title = context.getString(R.string.select_restore_file),
@@ -83,9 +80,8 @@ object WebDavHelp {
                     }
                 }
             }
-            true
         } else {
-            false
+            throw Exception("Web dav no back up file")
         }
     }
 

@@ -4,7 +4,7 @@ import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
@@ -94,6 +94,7 @@ object BookshelfController {
             App.db.bookDao().update(book)
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book
+                ReadBook.durChapterIndex = index
             }
         }
     }

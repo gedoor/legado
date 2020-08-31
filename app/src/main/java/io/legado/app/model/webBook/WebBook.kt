@@ -1,15 +1,12 @@
-package io.legado.app.model
+package io.legado.app.model.webBook
 
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.webBook.BookChapterList
-import io.legado.app.model.webBook.BookContent
-import io.legado.app.model.webBook.BookInfo
-import io.legado.app.model.webBook.BookList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
@@ -93,7 +90,8 @@ class WebBook(val bookSource: BookSource) {
     fun getBookInfo(
         book: Book,
         scope: CoroutineScope = Coroutine.DEFAULT,
-        context: CoroutineContext = Dispatchers.IO
+        context: CoroutineContext = Dispatchers.IO,
+        canReName: Boolean = true,
     ): Coroutine<Book> {
         return Coroutine.async(scope, context) {
             book.type = bookSource.bookSourceType
@@ -109,7 +107,7 @@ class WebBook(val bookSource: BookSource) {
                     )
                     analyzeUrl.getResponseAwait(bookSource.bookSourceUrl).body
                 }
-            BookInfo.analyzeBookInfo(book, body, bookSource, book.bookUrl)
+            BookInfo.analyzeBookInfo(book, body, bookSource, book.bookUrl, canReName)
             book
         }
     }

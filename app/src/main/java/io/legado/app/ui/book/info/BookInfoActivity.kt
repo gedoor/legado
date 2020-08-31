@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.LinearLayout
-import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
@@ -25,6 +24,7 @@ import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
@@ -35,10 +35,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.widget.image.CoverImageView
-import io.legado.app.utils.dp
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.gone
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_info.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
@@ -47,7 +44,7 @@ import org.jetbrains.anko.toast
 
 
 class BookInfoActivity :
-    VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, theme = Theme.Dark),
+    VMBaseActivity<BookInfoViewModel>(R.layout.activity_book_info, toolBarTheme = Theme.Dark),
     GroupSelectDialog.CallBack,
     ChapterListAdapter.CallBack,
     ChangeSourceDialog.CallBack,
@@ -60,14 +57,16 @@ class BookInfoActivity :
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
+    @SuppressLint("PrivateResource")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title_bar.transparent()
         arc_view.setBgColor(backgroundColor)
         ll_info.setBackgroundColor(backgroundColor)
         scroll_view.setBackgroundColor(backgroundColor)
         fl_action.setBackgroundColor(bottomBackground)
-        viewModel.bookData.observe(this, Observer { showBook(it) })
-        viewModel.chapterListData.observe(this, Observer { upLoading(false, it) })
+        tv_shelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
+        viewModel.bookData.observe(this, { showBook(it) })
+        viewModel.chapterListData.observe(this, { upLoading(false, it) })
         viewModel.initData(intent)
         initOnClick()
     }
@@ -97,7 +96,7 @@ class BookInfoActivity :
                     if (it.isLocalBook()) {
                         it.tocUrl = ""
                     }
-                    viewModel.loadBookInfo(it)
+                    viewModel.loadBookInfo(it, false)
                 }
             }
             R.id.menu_can_update -> {

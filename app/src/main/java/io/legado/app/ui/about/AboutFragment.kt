@@ -11,6 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.toast
@@ -34,7 +35,7 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.about)
         findPreference<Preference>("check_update")?.summary =
-            "${getString(R.string.version)} ${App.INSTANCE.versionName}"
+            "${getString(R.string.version)} ${App.versionName}"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,7 +93,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
-        }.show()
+        }.show().applyTint()
     }
 
     private fun joinQQGroup(key: String): Boolean {

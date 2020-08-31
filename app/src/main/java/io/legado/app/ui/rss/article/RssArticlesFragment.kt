@@ -3,7 +3,6 @@ package io.legado.app.ui.rss.article
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -87,7 +86,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         activityViewModel.url?.let {
             rssArticlesData?.removeObservers(this)
             rssArticlesData = App.db.rssArticleDao().liveByOriginSort(it, viewModel.sortName)
-            rssArticlesData?.observe(viewLifecycleOwner, Observer { list ->
+            rssArticlesData?.observe(viewLifecycleOwner, { list ->
                 adapter.setItems(list)
             })
         }
@@ -104,7 +103,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     }
 
     override fun observeLiveBus() {
-        viewModel.loadFinally.observe(viewLifecycleOwner, Observer {
+        viewModel.loadFinally.observe(viewLifecycleOwner, {
             refresh_recycler_view.stopLoading()
             if (it) {
                 loadMoreView.startLoad()
