@@ -161,8 +161,8 @@
     <string name="author">作者</string>
     <string name="author_show">作者: %s</string>
     <string name="aloud_stop">朗讀停止</string>
-    <string name="clear_cache">清除緩存</string>
-    <string name="clear_cache_success">成功清除緩存</string>
+    <string name="clear_cache">清理緩存</string>
+    <string name="clear_cache_success">成功清理緩存</string>
     <string name="action_save">保存</string>
     <string name="edit_source">編輯源</string>
     <string name="edit_book_source">編輯書源</string>
@@ -322,7 +322,6 @@
     <string name="use_to">替換範圍，選填書名或者書源url</string>
     <string name="menu_action_group">分組</string>
     <string name="download_path">內容緩存路徑</string>
-    <string name="cleanCache">清理緩存</string>
     <string name="sys_file_picker">系統文件選擇器</string>
     <string name="new_version">新版本</string>
     <string name="download_update">下載更新</string>

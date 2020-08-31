@@ -13,12 +13,12 @@ object FileUtils {
     }
 
     fun createFileIfNotExist(root: File, fileName: String, vararg subDirs: String): File {
-        val filePath = getPath(root, fileName, *subDirs)
+        val filePath = getPath(fileName, root, *subDirs)
         return createFileIfNotExist(filePath)
     }
 
     fun createFolderIfNotExist(root: File, vararg subDirs: String): File {
-        val filePath = getPath(root, subDirs = subDirs)
+        val filePath = getPath(root = root, subDirs = subDirs)
         return createFolderIfNotExist(filePath)
     }
 
@@ -50,16 +50,16 @@ object FileUtils {
     }
 
     fun getFile(root: File, fileName: String, vararg subDirs: String): File {
-        val filePath = getPath(root, fileName, *subDirs)
+        val filePath = getPath(fileName, root, *subDirs)
         return File(filePath)
     }
 
     fun getDirFile(root: File, vararg subDirs: String): File {
-        val filePath = getPath(root, subDirs = subDirs)
+        val filePath = getPath(root = root, subDirs = subDirs)
         return File(filePath)
     }
 
-    fun getPath(root: File, fileName: String? = null, vararg subDirs: String): String {
+    fun getPath(fileName: String? = null, root: File, vararg subDirs: String): String {
         val path = StringBuilder(root.absolutePath)
         subDirs.forEach {
             path.append(File.separator).append(it)

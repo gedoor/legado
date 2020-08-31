@@ -109,6 +109,7 @@ class BookInfoActivity :
                     toast(R.string.after_add_bookshelf)
                 }
             }
+            R.id.menu_clear_cache -> viewModel.clearCache()
         }
         return super.onCompatOptionsItemSelected(item)
     }

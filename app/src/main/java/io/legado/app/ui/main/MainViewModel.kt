@@ -131,7 +131,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun postLoad() {
         execute {
-            FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
+            FileUtils.deleteFile(FileUtils.getPath(root = context.cacheDir,
+                subDirs = arrayOf("Fonts")))
             if (App.db.httpTTSDao().count == 0) {
                 DefaultValueHelp.initHttpTTS()
             }

@@ -161,7 +161,7 @@
     <string name="author">作者</string>
     <string name="author_show">作者: %s</string>
     <string name="aloud_stop">朗讀停止</string>
-    <string name="clear_cache">清除快取</string>
+    <string name="clear_cache">清理快取</string>
     <string name="clear_cache_success">成功清理快取</string>
     <string name="action_save">儲存</string>
     <string name="edit_source">編輯源</string>
@@ -323,7 +323,6 @@
     <string name="use_to">取代範圍，選填書名或者書源url</string>
     <string name="menu_action_group">分組</string>
     <string name="download_path">內容快取路徑</string>
-    <string name="cleanCache">清理快取</string>
     <string name="sys_file_picker">系統檔案選擇器</string>
     <string name="new_version">新版本</string>
     <string name="download_update">下載更新</string>

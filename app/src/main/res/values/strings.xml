@@ -324,7 +324,6 @@
     <string name="use_to">Replacement object. Book name or source url is available</string>
     <string name="menu_action_group">Groups</string>
     <string name="download_path">Cache path</string>
-    <string name="cleanCache">Clear cache</string>
     <string name="sys_file_picker">System file picker</string>
     <string name="new_version">New version</string>
     <string name="download_update">Download updates</string>

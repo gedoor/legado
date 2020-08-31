@@ -61,8 +61,8 @@ object LocalBook {
             author = author,
             originName = fileName,
             coverUrl = FileUtils.getPath(
-                App.INSTANCE.externalFilesDir,
                 "${MD5Utils.md5Encode16(path)}.jpg",
+                App.INSTANCE.externalFilesDir,
                 "covers"
             )
         )

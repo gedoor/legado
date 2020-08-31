@@ -34,8 +34,14 @@ object BookHelp {
 
     fun clearCache() {
         FileUtils.deleteFile(
-            FileUtils.getPath(downloadDir, subDirs = arrayOf(cacheFolderName))
+            FileUtils.getPath(root = downloadDir, subDirs = arrayOf(cacheFolderName))
         )
+    }
+
+    fun clearCache(book: Book) {
+        val filePath = FileUtils.getPath(root = downloadDir,
+            subDirs = arrayOf(cacheFolderName, book.getFolderName()))
+        FileUtils.deleteFile(filePath)
     }
 
     /**

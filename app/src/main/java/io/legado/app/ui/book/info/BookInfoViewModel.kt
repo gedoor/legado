@@ -227,6 +227,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun clearCache() {
+        execute {
+            BookHelp.clearCache(bookData.value!!)
+        }.onSuccess {
+            toast(R.string.clear_cache_success)
+        }.onError {
+            toast(it.stackTraceToString())
+        }
+    }
+
     fun upEditBook() {
         bookData.value?.let {
             App.db.bookDao().getBook(it.bookUrl)?.let { book ->
