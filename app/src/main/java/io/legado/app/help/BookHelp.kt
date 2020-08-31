@@ -52,7 +52,7 @@ object BookHelp {
             App.db.bookDao().all.forEach {
                 bookFolderNames.add(it.getFolderName())
             }
-            val file = FileUtils.getDirFile(downloadDir, cacheFolderName)
+            val file = FileUtils.getFile(downloadDir, cacheFolderName)
             file.listFiles()?.forEach { bookFile ->
                 if (!bookFolderNames.contains(bookFile.name)) {
                     FileUtils.deleteFile(bookFile.absolutePath)

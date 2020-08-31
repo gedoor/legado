@@ -54,11 +54,6 @@ object FileUtils {
         return File(filePath)
     }
 
-    fun getDirFile(root: File, vararg subDirs: String): File {
-        val filePath = getPath(root = root, *subDirs)
-        return File(filePath)
-    }
-
     fun getPath(root: File, vararg subDirFiles: String): String {
         val path = StringBuilder(root.absolutePath)
         subDirFiles.forEach {

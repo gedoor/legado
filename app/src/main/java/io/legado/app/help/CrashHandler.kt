@@ -142,7 +142,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
             val time = format.format(Date())
             val fileName = "crash-$time-$timestamp.log"
             mContext?.externalCacheDir?.let { rootFile ->
-                FileUtils.getDirFile(rootFile, "crash").listFiles()?.forEach {
+                FileUtils.getFile(rootFile, "crash").listFiles()?.forEach {
                     if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)) {
                         it.delete()
                     }
