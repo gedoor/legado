@@ -27,6 +27,17 @@ interface JsExtensions {
         }
     }
 
+    fun connect(urlStr: String): Any {
+        return try {
+            val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
+            val call = analyzeUrl.getResponse(urlStr)
+            val response = call.execute()
+            response
+        } catch (e: Exception) {
+            e.localizedMessage
+        }
+    }
+
     /**
      * js实现解码,不能删
      */
