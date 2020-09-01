@@ -192,9 +192,8 @@ class AnalyzeUrl(
             option?.let { _ ->
                 option.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
                 option.headers?.let { headers ->
-                    if (headers is Map<*, *>) {
-                        @Suppress("unchecked_cast")
-                        headerMap.putAll(headers as Map<out String, String>)
+                    (headers as? Map<*, *>)?.forEach { key, value ->
+                        headerMap[key.toString()] = value.toString()
                     }
                     if (headers is String) {
                         GSON.fromJsonObject<Map<String, String>>(headers)
@@ -242,7 +241,6 @@ class AnalyzeUrl(
     /**
      * 解析QueryMap
      */
-    @Throws(Exception::class)
     private fun analyzeFields(fieldsTxt: String) {
         queryStr = fieldsTxt
         val queryS = fieldsTxt.splitNotBlank("&")
@@ -266,7 +264,6 @@ class AnalyzeUrl(
     /**
      * 执行JS
      */
-    @Throws(Exception::class)
     private fun evalJS(
         jsStr: String,
         result: Any?,
@@ -288,7 +285,6 @@ class AnalyzeUrl(
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
-    @Throws(Exception::class)
     fun getResponse(tag: String): Call<String> {
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
@@ -315,7 +311,6 @@ class AnalyzeUrl(
         }
     }
 
-    @Throws(Exception::class)
     suspend fun getResponseAwait(
         tag: String,
         jsStr: String? = null,
@@ -388,7 +383,6 @@ class AnalyzeUrl(
         return Res(NetworkUtils.getUrl(res), res.body())
     }
 
-    @Throws(Exception::class)
     fun getImageBytes(tag: String): ByteArray? {
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
@@ -401,7 +395,6 @@ class AnalyzeUrl(
         }
     }
 
-    @Throws(Exception::class)
     suspend fun getResponseBytes(tag: String? = null): ByteArray? {
         if (tag != null) {
             val cookie = CookieStore.getCookie(tag)
@@ -431,7 +424,6 @@ class AnalyzeUrl(
         return response.body()
     }
 
-    @Throws(Exception::class)
     fun getGlideUrl(): Any? {
         var glideUrl: Any = urlHasQuery
         if (headerMap.isNotEmpty()) {
