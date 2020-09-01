@@ -4,12 +4,17 @@ on:
   release:
     types: [published]
   push:
+    branches: 
+      - master
     tags:
-    - '3.*'
-  watch:
-    types: [started]
-  schedule:
-    - cron: '0 4 * * *'
+      - '3.*'
+  pull_request:
+    branches: 
+      - master
+#  watch:
+#    types: [started]
+#  schedule:
+#    - cron: '0 4 * * *'
 
 jobs:
   build:
