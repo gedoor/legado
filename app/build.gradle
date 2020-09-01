@@ -19,7 +19,6 @@ def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], projec
 
 android {
     compileSdkVersion 29
-    flavorDimensions("version")
     signingConfigs {
         if (project.hasProperty("RELEASE_STORE_FILE")) {
             myConfig {
@@ -71,17 +70,19 @@ android {
         }
         android.applicationVariants.all { variant ->
             variant.outputs.all {
-                outputFileName = "${name}_${defaultConfig.versionName}.apk"
+                def flavor = variant.productFlavors[0].name
+                outputFileName = "${name}_${flavor}_${defaultConfig.versionName}.apk"
             }
         }
     }
+    flavorDimensions "mode"
     productFlavors {
         app {
-            dimension "version"
+            dimension "mode"
             manifestPlaceholders = [APP_CHANNEL_VALUE: "app"]
         }
         google {
-            dimension "version"
+            dimension "mode"
             applicationId "io.legado.play"
             manifestPlaceholders = [APP_CHANNEL_VALUE: "google"]
         }
