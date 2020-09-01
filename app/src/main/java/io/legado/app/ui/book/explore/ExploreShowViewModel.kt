@@ -14,6 +14,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
 
     val booksData = MutableLiveData<List<SearchBook>>()
     private var bookSource: BookSource? = null
+    private val variableBook = SearchBook()
     private var exploreUrl: String? = null
     private var page = 1
 
@@ -32,7 +33,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         val source = bookSource
         val url = exploreUrl
         if (source != null && url != null) {
-            WebBook(source).exploreBook(url, page, this)
+            WebBook(source).exploreBook(url, page, variableBook, this)
                 .timeout(30000L)
                 .onSuccess(IO) { searchBooks ->
                     booksData.postValue(searchBooks)

@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
@@ -98,7 +99,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun loadBookInfo(
         book: Book,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
+        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
     ) {
         execute {
             if (book.isLocalBook()) {
@@ -114,7 +115,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun loadChapterList(
         book: Book,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
+        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
     ) {
         execute {
             if (book.isLocalBook()) {
@@ -182,13 +183,15 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookSourceDao().allTextEnabled.forEach { source ->
                 try {
-                    val searchBooks = WebBook(source).searchBookSuspend(this, name)
-                    searchBooks.getOrNull(0)?.let {
-                        if (it.name == name && (it.author == author || author == "")) {
-                            changeTo(it.toBook())
-                            return@forEach
+                    val variableBook = SearchBook()
+                    WebBook(source)
+                        .searchBookSuspend(this, name, variableBook = variableBook)
+                        .getOrNull(0)?.let {
+                            if (it.name == name && (it.author == author || author == "")) {
+                                changeTo(it.toBook())
+                                return@forEach
+                            }
                         }
-                    }
                 } catch (e: Exception) {
                     //nothing
                 }

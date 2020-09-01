@@ -22,18 +22,20 @@ class WebBook(val bookSource: BookSource) {
     fun searchBook(
         key: String,
         page: Int? = 1,
+        variableBook: SearchBook,
         scope: CoroutineScope = Coroutine.DEFAULT,
-        context: CoroutineContext = Dispatchers.IO
+        context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<ArrayList<SearchBook>> {
         return Coroutine.async(scope, context) {
-            searchBookSuspend(scope, key, page)
+            searchBookSuspend(scope, key, page, variableBook)
         }
     }
 
     suspend fun searchBookSuspend(
         scope: CoroutineScope,
         key: String,
-        page: Int? = 1
+        page: Int? = 1,
+        variableBook: SearchBook,
     ): ArrayList<SearchBook> {
         bookSource.searchUrl?.let { searchUrl ->
             val analyzeUrl = AnalyzeUrl(
@@ -41,7 +43,8 @@ class WebBook(val bookSource: BookSource) {
                 key = key,
                 page = page,
                 baseUrl = sourceUrl,
-                headerMapF = bookSource.getHeaderMap()
+                headerMapF = bookSource.getHeaderMap(),
+                book = variableBook
             )
             val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
             return BookList.analyzeBookList(
@@ -50,6 +53,7 @@ class WebBook(val bookSource: BookSource) {
                 bookSource,
                 analyzeUrl,
                 res.url,
+                variableBook,
                 true
             )
         }
@@ -62,8 +66,9 @@ class WebBook(val bookSource: BookSource) {
     fun exploreBook(
         url: String,
         page: Int? = 1,
+        variableBook: SearchBook,
         scope: CoroutineScope = Coroutine.DEFAULT,
-        context: CoroutineContext = Dispatchers.IO
+        context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<List<SearchBook>> {
         return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(
@@ -79,6 +84,7 @@ class WebBook(val bookSource: BookSource) {
                 bookSource,
                 analyzeUrl,
                 res.url,
+                variableBook,
                 false
             )
         }

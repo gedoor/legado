@@ -39,7 +39,7 @@ class AnalyzeUrl(
     speakSpeed: Int? = null,
     headerMapF: Map<String, String>? = null,
     baseUrl: String? = null,
-    book: BaseBook? = null,
+    val book: BaseBook? = null,
     var useWebView: Boolean = false,
 ) : JsExtensions {
     companion object {
@@ -283,6 +283,15 @@ class AnalyzeUrl(
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
         return SCRIPT_ENGINE.eval(jsStr, bindings)
+    }
+
+    fun put(key: String, value: String): String {
+        book?.putVariable(key, value)
+        return value
+    }
+
+    fun get(key: String): String {
+        return book?.variableMap?.get(key) ?: ""
     }
 
     fun getResponse(tag: String): Call<String> {

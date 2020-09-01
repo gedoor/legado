@@ -113,7 +113,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             }
             searchIndex++
             val source = bookSourceList[searchIndex]
-            val task = WebBook(source).searchBook(name, scope = this, context = searchPool!!)
+            val variableBook = SearchBook()
+            val task = WebBook(source)
+                .searchBook(name, variableBook = variableBook, scope = this, context = searchPool!!)
                 .timeout(60000L)
                 .onSuccess(IO) {
                     it.forEach { searchBook ->

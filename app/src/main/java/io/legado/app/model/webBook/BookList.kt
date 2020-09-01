@@ -25,7 +25,8 @@ object BookList {
         bookSource: BookSource,
         analyzeUrl: AnalyzeUrl,
         baseUrl: String,
-        isSearch: Boolean = true
+        variableBook: SearchBook,
+        isSearch: Boolean = true,
     ): ArrayList<SearchBook> {
         val bookList = ArrayList<SearchBook>()
         body ?: throw Exception(
@@ -36,7 +37,6 @@ object BookList {
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${analyzeUrl.ruleUrl}")
         if (!scope.isActive) throw CancellationException()
-        val variableBook = SearchBook()
         val analyzeRule = AnalyzeRule(variableBook)
         analyzeRule.setContent(body, baseUrl)
         bookSource.bookUrlPattern?.let {
