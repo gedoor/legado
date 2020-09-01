@@ -20,6 +20,7 @@ import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
+import kotlinx.coroutines.CoroutineScope
 
 
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
@@ -105,7 +106,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private fun draw(
         canvas: Canvas,
         textLine: TextLine,
-        relativeOffset: Float
+        relativeOffset: Float,
     ) {
         val lineTop = textLine.lineTop + relativeOffset
         val lineBase = textLine.lineBase + relativeOffset
@@ -135,7 +136,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineBase: Float,
         lineBottom: Float,
         isTitle: Boolean,
-        isReadAloud: Boolean
+        isReadAloud: Boolean,
     ) {
         val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
         textPaint.color =
@@ -155,16 +156,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         canvas: Canvas,
         textLine: TextLine,
         lineTop: Float,
-        lineBottom: Float
+        lineBottom: Float,
     ) {
         textLine.textChars.forEach { textChar ->
             val rectF = RectF(textChar.start, lineTop, textChar.end, lineBottom)
-            ImageProvider.getImage(
-                ReadBook.book!!,
+            ImageProvider.getImage(ReadBook.book!!,
                 textPage.chapterIndex,
                 textChar.charData,
-                true
-            )?.let {
+                true)?.let {
                 canvas.drawBitmap(it, null, rectF, null)
             }
         }
@@ -211,7 +210,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun selectText(
         x: Float,
         y: Float,
-        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit
+        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
         if (!selectAble) return
         if (!visibleRect.contains(x, y)) return
@@ -257,7 +256,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineIndex: Int,
         charIndex: Int,
         relativeOffset: Float,
-        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit
+        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
         if (textChar.isImage) {
             activity?.supportFragmentManager?.let {
@@ -613,5 +612,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         fun onCancelSelect()
         val headerHeight: Int
         val pageFactory: TextPageFactory
+        val scope: CoroutineScope
     }
 }

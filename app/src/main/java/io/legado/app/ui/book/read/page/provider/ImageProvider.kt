@@ -1,13 +1,12 @@
 package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Bitmap
-import io.legado.app.App
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.model.localBook.EPUBFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.externalFilesDir
+import kotlinx.coroutines.runBlocking
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
 
@@ -37,14 +36,16 @@ object ImageProvider {
         val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) {
             if (book.isEpub()) {
-                EPUBFile.getImage(book, src).use {
-                    val out = FileOutputStream(FileUtils.createFileIfNotExist(vFile.absolutePath))
-                    it?.copyTo(out)
-                    out.flush()
-                    out.close()
+                EPUBFile.getImage(book, src)?.use { input ->
+                    val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
+                    FileOutputStream(newFile).use { output ->
+                        input.copyTo(output)
+                    }
                 }
             } else if (!onUi) {
-                BookHelp.saveImage(book, src)
+                runBlocking {
+                    BookHelp.saveImage(book, src)
+                }
             }
         }
         return try {

@@ -20,7 +20,7 @@ class PhotoDialog : BaseDialogFragment() {
         fun show(
             fragmentManager: FragmentManager,
             chapterIndex: Int,
-            src: String
+            src: String,
         ) {
             PhotoDialog().apply {
                 val bundle = Bundle()
@@ -45,7 +45,7 @@ class PhotoDialog : BaseDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.dialog_photo_view, container)
     }
@@ -56,8 +56,12 @@ class PhotoDialog : BaseDialogFragment() {
             val src = it.getString("src")
             ReadBook.book?.let { book ->
                 src?.let {
-                    ImageProvider.getImage(book, chapterIndex, src)?.let { bitmap ->
-                        photo_view.setImageBitmap(bitmap)
+                    execute {
+                        ImageProvider.getImage(book, chapterIndex, src)
+                    }.onSuccess { bitmap ->
+                        if (bitmap != null) {
+                            photo_view.setImageBitmap(bitmap)
+                        }
                     }
                 }
             }

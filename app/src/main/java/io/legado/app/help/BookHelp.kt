@@ -13,16 +13,19 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
 import org.jetbrains.anko.toast
 import java.io.File
+import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.math.min
 
 object BookHelp {
     private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
     private val downloadDir: File = App.INSTANCE.externalFilesDir
+    private val downloadImages = CopyOnWriteArraySet<String>()
 
     fun formatChapterName(bookChapter: BookChapter): String {
         return String.format(
@@ -61,7 +64,7 @@ object BookHelp {
         }
     }
 
-    fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
+    suspend fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
         if (content.isEmpty()) return
         //保存文本
         FileUtils.createFileIfNotExist(
@@ -84,7 +87,14 @@ object BookHelp {
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
-    fun saveImage(book: Book, src: String) {
+    suspend fun saveImage(book: Book, src: String) {
+        while (downloadImages.contains(src)) {
+            delay(100)
+        }
+        if (getImage(book, src).exists()) {
+            return
+        }
+        downloadImages.add(src)
         val analyzeUrl = AnalyzeUrl(src)
         analyzeUrl.getImageBytes(book.origin)?.let {
             FileUtils.createFileIfNotExist(
@@ -95,6 +105,7 @@ object BookHelp {
                 "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}"
             ).writeBytes(it)
         }
+        downloadImages.remove(src)
     }
 
     fun getImage(book: Book, src: String): File {

@@ -45,12 +45,12 @@ object ChapterProvider {
     /**
      * 获取拆分完的章节数据
      */
-    fun getTextChapter(
+    suspend fun getTextChapter(
         book: Book,
         bookChapter: BookChapter,
         contents: List<String>,
         chapterSize: Int,
-        imageStyle: String?
+        imageStyle: String?,
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val pageLines = arrayListOf<Int>()
@@ -110,13 +110,13 @@ object ChapterProvider {
         )
     }
 
-    private fun setTypeImage(
+    private suspend fun setTypeImage(
         book: Book,
         chapter: BookChapter,
         src: String,
         y: Float,
         textPages: ArrayList<TextPage>,
-        imageStyle: String?
+        imageStyle: String?,
     ): Float {
         var durY = y
         ImageProvider.getImage(book, chapter.index, src)?.let {
