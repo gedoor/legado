@@ -96,16 +96,21 @@ object BookHelp {
         }
         downloadImages.add(src)
         val analyzeUrl = AnalyzeUrl(src)
-        analyzeUrl.getImageBytes(book.origin)?.let {
-            FileUtils.createFileIfNotExist(
-                downloadDir,
-                cacheFolderName,
-                book.getFolderName(),
-                cacheImageFolderName,
-                "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}"
-            ).writeBytes(it)
+        try {
+            analyzeUrl.getImageBytes(book.origin)?.let {
+                FileUtils.createFileIfNotExist(
+                    downloadDir,
+                    cacheFolderName,
+                    book.getFolderName(),
+                    cacheImageFolderName,
+                    "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}"
+                ).writeBytes(it)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            downloadImages.remove(src)
         }
-        downloadImages.remove(src)
     }
 
     fun getImage(book: Book, src: String): File {
