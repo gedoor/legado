@@ -7,6 +7,7 @@ import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.htmlFormat
 import io.legado.app.utils.isAbsUrl
+import org.jetbrains.anko.getStackTraceString
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -76,7 +77,7 @@ object Debug {
                 }
             }
             .onError {
-                log(debugSource, it.localizedMessage, state = -1)
+                log(debugSource, it.getStackTraceString(), state = -1)
             }
     }
 
@@ -88,7 +89,7 @@ object Debug {
                 log(debugSource, "︽内容页解析完成", state = 1000)
             }
             .onError {
-                log(debugSource, it.localizedMessage, state = -1)
+                log(debugSource, it.getStackTraceString(), state = -1)
             }
     }
 
@@ -148,11 +149,7 @@ object Debug {
                 }
             }
             .onError {
-                log(
-                    debugSource,
-                    it.localizedMessage,
-                    state = -1
-                )
+                log(debugSource, it.getStackTraceString(), state = -1)
             }
         tasks.add(explore)
     }
@@ -171,7 +168,7 @@ object Debug {
                 }
             }
             .onError {
-                log(debugSource, it.localizedMessage, state = -1)
+                log(debugSource, it.getStackTraceString(), state = -1)
             }
         tasks.add(search)
     }
@@ -185,7 +182,7 @@ object Debug {
                 tocDebug(webBook, book)
             }
             .onError {
-                log(debugSource, it.localizedMessage, state = -1)
+                log(debugSource, it.getStackTraceString(), state = -1)
             }
         tasks.add(info)
     }
@@ -204,7 +201,7 @@ object Debug {
                 }
             }
             .onError {
-                log(debugSource, it.localizedMessage, state = -1)
+                log(debugSource, it.getStackTraceString(), state = -1)
             }
         tasks.add(chapterList)
     }
@@ -221,7 +218,7 @@ object Debug {
                 log(debugSource, "︽正文页解析完成", state = 1000)
             }
             .onError {
-                log(debugSource, it.localizedMessage, state = -1)
+                log(debugSource, it.getStackTraceString(), state = -1)
             }
         tasks.add(content)
     }

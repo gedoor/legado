@@ -589,7 +589,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 执行JS
      */
-    @Throws(Exception::class)
     private fun evalJS(jsStr: String, result: Any?): Any? {
         try {
             val bindings = SimpleBindings()

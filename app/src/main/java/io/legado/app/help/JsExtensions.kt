@@ -6,6 +6,7 @@ import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
+import org.jetbrains.anko.getStackTraceString
 import java.net.URLEncoder
 import java.util.*
 
@@ -23,7 +24,7 @@ interface JsExtensions {
             val response = call.execute()
             response.body()
         } catch (e: Exception) {
-            e.localizedMessage
+            e.getStackTraceString()
         }
     }
 
@@ -34,7 +35,7 @@ interface JsExtensions {
             val response = call.execute()
             response
         } catch (e: Exception) {
-            e.localizedMessage
+            e.getStackTraceString()
         }
     }
 
