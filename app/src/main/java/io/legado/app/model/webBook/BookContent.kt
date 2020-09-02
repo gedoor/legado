@@ -10,7 +10,6 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.htmlFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 
@@ -96,7 +95,7 @@ object BookContent {
             }
         }
         content.deleteCharAt(content.length - 1)
-        var contentStr = content.toString().htmlFormat()
+        var contentStr = content.toString()
         val replaceRegex = bookSource.ruleContent?.replaceRegex?.trim()
         if (!replaceRegex.isNullOrEmpty()) {
             contentStr = AnalyzeRule(book).setContent(contentStr).getString(replaceRegex)
