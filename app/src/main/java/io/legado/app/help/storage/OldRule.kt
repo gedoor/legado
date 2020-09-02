@@ -81,6 +81,7 @@ object OldRule {
                     }
                     ruleContent = ContentRule(
                         content = content,
+                        replaceRegex = toNewRule(jsonItem.readString("ruleBookContentReplace")),
                         nextContentUrl = toNewRule(jsonItem.readString("ruleContentUrlNext"))
                     )
                 }
