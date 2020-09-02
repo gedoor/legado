@@ -97,11 +97,9 @@ object BookContent {
         }
         content.deleteCharAt(content.length - 1)
         var contentStr = content.toString().htmlFormat()
-        val replaceRegex = bookSource.ruleContent?.replaceRegex
-        replaceRegex?.trim { it <= ' ' }?.split("##")?.let {
-            if (it.size > 1) {
-                contentStr = contentStr.replace(it[1].toRegex(), it.getOrNull(2) ?: "")
-            }
+        val replaceRegex = bookSource.ruleContent?.replaceRegex?.trim()
+        if (!replaceRegex.isNullOrEmpty()) {
+            contentStr = AnalyzeRule(book).setContent(contentStr).getString(replaceRegex)
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
