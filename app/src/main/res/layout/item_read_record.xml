@@ -31,7 +31,6 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_remove"
         android:contentDescription="@string/delete"
-        android:visibility="invisible"
         app:tint="@color/primaryText" />
 
 </LinearLayout>

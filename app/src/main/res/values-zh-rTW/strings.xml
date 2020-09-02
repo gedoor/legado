@@ -752,5 +752,6 @@
     <string name="thread_count">线程数</string>
     <string name="all_read_time">总阅读时间</string>
     <string name="un_select_all">全不选</string>
+    <string name="delete_all">删除所有</string>
 
 </resources>

@@ -28,6 +28,7 @@
     <string name="draw">Warning</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="delete_all">Delete all</string>
     <string name="replace">Replace</string>
     <string name="replace_purify">Replacement</string>
     <string name="replace_purify_desc">Configure replacement rules</string>

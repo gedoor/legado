@@ -31,6 +31,9 @@ interface ReadRecordDao {
     @Delete
     fun delete(vararg record: ReadRecord)
 
+    @Query("delete from readRecord")
+    fun clear()
+
     @Query("delete from readRecord where bookName = :bookName")
     fun deleteByName(bookName: String)
 }
