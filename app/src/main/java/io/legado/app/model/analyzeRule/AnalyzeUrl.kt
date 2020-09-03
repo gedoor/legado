@@ -433,7 +433,7 @@ class AnalyzeUrl(
         return response.body()
     }
 
-    fun getGlideUrl(): Any? {
+    fun getGlideUrl(): GlideUrl {
         val headers = LazyHeaders.Builder()
         headerMap.forEach { (key, value) ->
             headers.addHeader(key, value)
