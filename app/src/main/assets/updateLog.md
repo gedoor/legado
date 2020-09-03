@@ -16,7 +16,7 @@ String(java.connect(url).raw().request().url())
 </js>
 ```
 * 正文合并后替换规则支持所有规则写法,包括js
-* htmlFormat只作用于@html规则,以免格式话错误,缺内容
+* htmlFormat只作用于@html规则,以免格式化错误,缺内容
 
 **2020/09/01**
 * 导入书源列表添加全不选
