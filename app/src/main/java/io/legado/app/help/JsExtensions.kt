@@ -82,7 +82,7 @@ interface JsExtensions {
         }
     }
 
-    fun formatHtml(str: String): String {
+    fun htmlFormat(str: String): String {
         return str.htmlFormat()
     }
 }
