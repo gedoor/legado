@@ -5,8 +5,8 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.AppPattern
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.utils.*
@@ -44,10 +44,14 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
                         var src = matcher.group(1)
                         src = NetworkUtils.getAbsoluteURL(chapter.url, src)
                         src?.let {
-                            val vfile = BookHelp.getImage(book, src)
-                            if(vfile.exists()) {
-                                DocumentUtils.createFileIfNotExist(doc, "${index}-${MD5Utils.md5Encode16(src)}.jpg", subDirs = arrayOf("${book.name}_${book.author}", "images", chapter.title))
-                                    ?.writeBytes(context, vfile.readBytes())
+                            val vFile = BookHelp.getImage(book, src)
+                            if (vFile.exists()) {
+                                DocumentUtils.createFileIfNotExist(doc,
+                                    "${index}-${MD5Utils.md5Encode16(src)}.jpg",
+                                    subDirs = arrayOf("${book.name}_${book.author}",
+                                        "images",
+                                        chapter.title))
+                                    ?.writeBytes(context, vFile.readBytes())
                             }
                         }
                     }
@@ -67,10 +71,14 @@ class DownloadViewModel(application: Application) : BaseViewModel(application) {
                         var src = matcher.group(1)
                         src = NetworkUtils.getAbsoluteURL(chapter.url, src)
                         src?.let {
-                            val vfile = BookHelp.getImage(book, src)
-                            if(vfile.exists()) {
-                                FileUtils.createFileIfNotExist(file, "${book.name}_${book.author}", "images", chapter.title, "${index}-${MD5Utils.md5Encode16(src)}.jpg")
-                                    .writeBytes(vfile.readBytes())
+                            val vFile = BookHelp.getImage(book, src)
+                            if (vFile.exists()) {
+                                FileUtils.createFileIfNotExist(file,
+                                    "${book.name}_${book.author}",
+                                    "images",
+                                    chapter.title,
+                                    "${index}-${MD5Utils.md5Encode16(src)}.jpg")
+                                    .writeBytes(vFile.readBytes())
                             }
                         }
                     }
