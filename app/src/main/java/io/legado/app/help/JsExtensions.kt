@@ -6,6 +6,7 @@ import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.htmlFormat
 import org.jetbrains.anko.getStackTraceString
 import java.net.URLEncoder
 import java.util.*
@@ -79,5 +80,9 @@ interface JsExtensions {
         } catch (e: Exception) {
             ""
         }
+    }
+
+    fun formatHtml(str: String): String {
+        return str.htmlFormat()
     }
 }

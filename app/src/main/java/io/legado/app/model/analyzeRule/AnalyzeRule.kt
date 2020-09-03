@@ -376,7 +376,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         val jsMatcher = JS_PATTERN.matcher(vRuleStr)
         while (jsMatcher.find()) {
             if (jsMatcher.start() > start) {
-                tmp = vRuleStr.substring(start, jsMatcher.start()).replace("\n", "")
+                tmp = vRuleStr.substring(start, jsMatcher.start())
                     .trim { it <= ' ' }
                 if (!TextUtils.isEmpty(tmp)) {
                     ruleList.add(SourceRule(tmp, mMode))
@@ -386,7 +386,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             start = jsMatcher.end()
         }
         if (vRuleStr.length > start) {
-            tmp = vRuleStr.substring(start).replace("\n", "").trim { it <= ' ' }
+            tmp = vRuleStr.substring(start).trim { it <= ' ' }
             if (!TextUtils.isEmpty(tmp)) {
                 ruleList.add(SourceRule(tmp, mMode))
             }

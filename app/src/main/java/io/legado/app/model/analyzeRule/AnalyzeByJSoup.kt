@@ -3,7 +3,6 @@ package io.legado.app.model.analyzeRule
 import android.text.TextUtils.isEmpty
 import android.text.TextUtils.join
 import androidx.annotation.Keep
-import io.legado.app.utils.htmlFormat
 import io.legado.app.utils.splitNotBlank
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -380,7 +379,7 @@ class AnalyzeByJSoup {
                 "html" -> {
                     elements.select("script").remove()
                     elements.select("style").remove()
-                    val html = elements.outerHtml().htmlFormat()
+                    val html = elements.outerHtml()
                     textS.add(html)
                 }
                 "all" -> textS.add(elements.outerHtml())
