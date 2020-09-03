@@ -434,15 +434,11 @@ class AnalyzeUrl(
     }
 
     fun getGlideUrl(): Any? {
-        var glideUrl: Any = urlHasQuery
-        if (headerMap.isNotEmpty()) {
-            val headers = LazyHeaders.Builder()
-            headerMap.forEach { (key, value) ->
-                headers.addHeader(key, value)
-            }
-            glideUrl = GlideUrl(urlHasQuery, headers.build())
+        val headers = LazyHeaders.Builder()
+        headerMap.forEach { (key, value) ->
+            headers.addHeader(key, value)
         }
-        return glideUrl
+        return GlideUrl(urlHasQuery, headers.build())
     }
 
     data class UrlOption(
