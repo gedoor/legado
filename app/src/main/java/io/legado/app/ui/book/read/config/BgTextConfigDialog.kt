@@ -23,7 +23,7 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.ui.book.read.Help
+import io.legado.app.ui.book.read.ReadBookActivityHelp
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
@@ -100,7 +100,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
             if (buttonView?.isPressed == true) {
                 setStatusIconDark(isChecked)
                 activity?.window?.let {
-                    Help.upSystemUiVisibility(it)
+                    ReadBookActivityHelp.upSystemUiVisibility(it)
                 }
             }
         }

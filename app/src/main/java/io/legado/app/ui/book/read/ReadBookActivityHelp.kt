@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.AsyncTask
 import android.os.Build
-import android.view.*
-import android.view.View.NO_ID
+import android.view.LayoutInflater
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.EditText
 import io.legado.app.App
 import io.legado.app.R
@@ -28,9 +30,8 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import org.jetbrains.anko.layoutInflater
 
 
-object Help {
+object ReadBookActivityHelp {
 
-    private const val NAVIGATION = "navigationBarBackground"
 
     /**
      * 更新状态栏,导航栏
@@ -75,28 +76,6 @@ object Help {
         }
     }
 
-
-    /**
-     * 返回NavigationBar是否存在
-     * 该方法需要在View完全被绘制出来之后调用，否则判断不了
-     * 在比如 onWindowFocusChanged（）方法中可以得到正确的结果
-     */
-    fun isNavigationBarExist(activity: Activity?): Boolean {
-        activity?.let {
-            val vp = it.window.decorView as? ViewGroup
-            if (vp != null) {
-                for (i in 0 until vp.childCount) {
-                    vp.getChildAt(i).context.packageName
-                    if (vp.getChildAt(i).id != NO_ID
-                        && NAVIGATION == activity.resources.getResourceEntryName(vp.getChildAt(i).id)
-                    ) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
-    }
 
     /**
      * 保持亮屏

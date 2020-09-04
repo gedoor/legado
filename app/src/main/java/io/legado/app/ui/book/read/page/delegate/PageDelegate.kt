@@ -50,7 +50,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     var mDirection = Direction.NONE
     var isCancel = false
     var isRunning = false
-    private var isStarted = false
+    var isStarted = false
 
     private var selectedOnDown = false
 

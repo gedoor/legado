@@ -15,7 +15,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.ui.book.read.Help
+import io.legado.app.ui.book.read.ReadBookActivityHelp
 import io.legado.app.utils.dp
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
@@ -107,7 +107,7 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
                 getString(R.string.pk_requested_direction) -> {
                     activity?.let {
-                        Help.setOrientation(it)
+                        ReadBookActivityHelp.setOrientation(it)
                     }
                 }
                 PreferKey.textFullJustify,

@@ -89,7 +89,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
 
     private val mHandler = Handler()
-    private val keepScreenRunnable: Runnable = Runnable { Help.keepScreenOn(window, false) }
+    private val keepScreenRunnable: Runnable =
+        Runnable { ReadBookActivityHelp.keepScreenOn(window, false) }
     private val autoPageRunnable: Runnable = Runnable { autoPagePlus() }
     override var autoPageProgress = 0
     override var isAutoPage = false
@@ -100,12 +101,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ReadBook.msg = null
-        Help.setOrientation(this)
+        ReadBookActivityHelp.setOrientation(this)
         super.onCreate(savedInstanceState)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        Help.upLayoutInDisplayCutoutMode(window)
+        ReadBookActivityHelp.upLayoutInDisplayCutoutMode(window)
         initView()
         upScreenTimeOut()
         ReadBook.callBack = this
@@ -248,8 +249,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     viewModel.refreshContent(it)
                 }
             }
-            R.id.menu_download -> Help.showDownloadDialog(this)
-            R.id.menu_add_bookmark -> Help.showBookMark(this)
+            R.id.menu_download -> ReadBookActivityHelp.showDownloadDialog(this)
+            R.id.menu_add_bookmark -> ReadBookActivityHelp.showBookMark(this)
             R.id.menu_copy_text ->
                 TextDialog.show(supportFragmentManager, ReadBook.curTextChapter?.getContent())
             R.id.menu_update_toc -> ReadBook.book?.let {
@@ -276,7 +277,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     Pair("loginUrl", it.loginUrl)
                 )
             }
-            R.id.menu_set_charset -> Help.showCharsetConfig(this)
+            R.id.menu_set_charset -> ReadBookActivityHelp.showCharsetConfig(this)
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -693,7 +694,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 更新状态栏,导航栏
      */
     override fun upSystemUiVisibility() {
-        Help.upSystemUiVisibility(window, !read_menu.isVisible)
+        ReadBookActivityHelp.upSystemUiVisibility(window, !read_menu.isVisible)
         upNavigationBarColor()
     }
 
@@ -854,16 +855,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun screenOffTimerStart() {
         if (screenTimeOut < 0) {
-            Help.keepScreenOn(window, true)
+            ReadBookActivityHelp.keepScreenOn(window, true)
             return
         }
         val t = screenTimeOut - sysScreenOffTime
         if (t > 0) {
             mHandler.removeCallbacks(keepScreenRunnable)
-            Help.keepScreenOn(window, true)
+            ReadBookActivityHelp.keepScreenOn(window, true)
             mHandler.postDelayed(keepScreenRunnable, screenTimeOut)
         } else {
-            Help.keepScreenOn(window, false)
+            ReadBookActivityHelp.keepScreenOn(window, false)
         }
     }
 }
