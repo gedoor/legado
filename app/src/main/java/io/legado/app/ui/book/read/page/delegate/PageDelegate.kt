@@ -139,7 +139,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     /**
      * 按下
      */
-    fun onDown(): Boolean {
+    fun onDown() {
         //是否移动
         isMoved = false
         //是否存在下一章
@@ -150,8 +150,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
         isCancel = false
         //是下一章还是前一章
         setDirection(Direction.NONE)
-        //设置起始位置的触摸点
-        return true
     }
 
     /**

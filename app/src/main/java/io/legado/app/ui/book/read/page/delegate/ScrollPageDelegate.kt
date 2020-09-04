@@ -85,6 +85,9 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun abortAnim() {
+        isStarted = false
+        isMoved = false
+        isRunning = false
         if (!scroller.isFinished) {
             pageView.isAbortAnim = true
             scroller.abortAnimation()

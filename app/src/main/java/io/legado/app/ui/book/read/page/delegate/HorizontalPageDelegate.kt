@@ -99,12 +99,12 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     }
 
     override fun abortAnim() {
+        isStarted = false
+        isMoved = false
+        isRunning = false
         if (!scroller.isFinished) {
             pageView.isAbortAnim = true
             scroller.abortAnimation()
-            isStarted = false
-            isMoved = false
-            isRunning = false
             if (!isCancel) {
                 pageView.fillPage(mDirection)
                 pageView.invalidate()

@@ -141,6 +141,7 @@ class PageView(context: Context, attrs: AttributeSet) :
                 pressDown = true
                 isMove = false
                 pageDelegate?.onTouch(event)
+                pageDelegate?.onDown()
                 setStartPoint(event.x, event.y)
             }
             MotionEvent.ACTION_MOVE -> {
