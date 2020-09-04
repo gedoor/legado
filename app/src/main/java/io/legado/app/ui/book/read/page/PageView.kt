@@ -200,11 +200,9 @@ class PageView(context: Context, attrs: AttributeSet) :
         lastY = touchY
         touchX = x
         touchY = y
-
         if (invalidate) {
             invalidate()
         }
-
         pageDelegate?.onScroll()
     }
 

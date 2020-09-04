@@ -35,7 +35,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     protected var viewWidth: Int = pageView.width
     protected var viewHeight: Int = pageView.height
 
-    private val scroller: Scroller by lazy {
+    protected val scroller: Scroller by lazy {
         Scroller(pageView.context, DecelerateInterpolator())
     }
 
@@ -103,21 +103,15 @@ abstract class PageDelegate(protected val pageView: PageView) {
         }
     }
 
-    fun abort(): Boolean {
-        if (!scroller.isFinished) {
-            scroller.abortAnimation()
-            return true
-        }
-        return false
-    }
+    open fun onScroll() = Unit
 
-    open fun onAnimStart(animationSpeed: Int) {}//scroller start
+    abstract fun abortAnim()
 
-    open fun onDraw(canvas: Canvas) {}//绘制
+    abstract fun onAnimStart(animationSpeed: Int) //scroller start
 
-    open fun onAnimStop() {}//scroller finish
+    abstract fun onDraw(canvas: Canvas) //绘制
 
-    open fun onScroll() {}//移动contentView， slidePage
+    abstract fun onAnimStop() //scroller finish
 
     abstract fun nextPageByAnim(animationSpeed: Int)
 

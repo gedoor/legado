@@ -37,10 +37,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     override fun onTouch(event: MotionEvent) {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (abort()) {
-                    onAnimStop()
-                    stopScroll()
-                }
+                abortAnim()
             }
             MotionEvent.ACTION_MOVE -> {
                 onScroll(event)
@@ -101,8 +98,16 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         }
     }
 
+    override fun abortAnim() {
+        if (!scroller.isFinished) {
+            scroller.abortAnimation()
+            onAnimStop()
+            stopScroll()
+        }
+    }
+
     override fun nextPageByAnim(animationSpeed: Int) {
-        abort()
+        abortAnim()
         if (!hasNext()) return
         setDirection(Direction.NEXT)
         pageView.setTouchPoint(viewWidth.toFloat(), 0f)
@@ -110,7 +115,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
     }
 
     override fun prevPageByAnim(animationSpeed: Int) {
-        abort()
+        abortAnim()
         if (!hasPrev()) return
         setDirection(Direction.PREV)
         pageView.setTouchPoint(0f, 0f)

@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.page.delegate
 
+import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import io.legado.app.ui.book.read.page.PageView
@@ -20,15 +21,15 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         )
     }
 
-    override fun onScroll() {
-        curPage.onScroll(touchY - lastY)
+    override fun onAnimStop() {
+        // nothing
     }
 
     override fun onTouch(event: MotionEvent) {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                abortAnim()
                 pageView.setStartPoint(event.x, event.y)
-                abort()
                 mVelocity.clear()
             }
             MotionEvent.ACTION_MOVE -> {
@@ -38,6 +39,14 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                 onAnimStart(pageView.defaultAnimationSpeed)
             }
         }
+    }
+
+    override fun onScroll() {
+        curPage.onScroll(touchY - lastY)
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        // nothing
     }
 
     private fun onScroll(event: MotionEvent) {
@@ -76,14 +85,20 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         mVelocity.recycle()
     }
 
+    override fun abortAnim() {
+        if (!scroller.isFinished) {
+            scroller.abortAnimation()
+        }
+    }
+
     override fun nextPageByAnim(animationSpeed: Int) {
-        abort()
+        abortAnim()
         pageView.setStartPoint(0f, 0f, false)
         startScroll(0, 0, 0, -ChapterProvider.visibleHeight, animationSpeed)
     }
 
     override fun prevPageByAnim(animationSpeed: Int) {
-        abort()
+        abortAnim()
         pageView.setStartPoint(0f, 0f, false)
         startScroll(0, 0, 0, ChapterProvider.visibleHeight, animationSpeed)
     }
