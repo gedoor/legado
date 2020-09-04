@@ -298,12 +298,16 @@ object ReadBookConfig {
     class Config(
         private var bgStr: String = "#EEEEEE",//白天背景
         private var bgStrNight: String = "#000000",//夜间背景
+        private var bgStrEInk: String = "#FFFFFF",
         private var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片
         private var bgTypeNight: Int = 0,//夜间背景类型
+        private var bgTypeEInk: Int = 0,
         private var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
         private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
+        private var darkStatusIconEInk: Boolean = true,
         private var textColor: String = "#3E3D3B",//白天文字颜色
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
+        private var textColorEInk: String = "#000000",
         var textFont: String = "",//字体
         var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
         var textSize: Int = 20,//文字大小
@@ -330,53 +334,69 @@ object ReadBookConfig {
         var showFooterLine: Boolean = true,
     ) {
         fun setBg(bgType: Int, bg: String) {
-            if (AppConfig.isNightTheme) {
-                bgTypeNight = bgType
-                bgStrNight = bg
-            } else {
-                this.bgType = bgType
-                bgStr = bg
+            when {
+                AppConfig.isEInkMode -> {
+                    bgTypeEInk = bgType
+                    bgStrEInk = bg
+                }
+                AppConfig.isNightTheme -> {
+                    bgTypeNight = bgType
+                    bgStrNight = bg
+                }
+                else -> {
+                    this.bgType = bgType
+                    bgStr = bg
+                }
             }
         }
 
         fun setTextColor(color: Int) {
-            if (AppConfig.isNightTheme) {
-                textColorNight = "#${color.hexString}"
-            } else {
-                textColor = "#${color.hexString}"
+            when {
+                AppConfig.isEInkMode -> textColorEInk = "#${color.hexString}"
+                AppConfig.isNightTheme -> textColorNight = "#${color.hexString}"
+                else -> textColor = "#${color.hexString}"
             }
             ChapterProvider.upStyle()
         }
 
         fun setStatusIconDark(isDark: Boolean) {
-            if (AppConfig.isNightTheme) {
-                darkStatusIconNight = isDark
-            } else {
-                darkStatusIcon = isDark
+            when {
+                AppConfig.isEInkMode -> darkStatusIconEInk = isDark
+                AppConfig.isNightTheme -> darkStatusIconNight = isDark
+                else -> darkStatusIcon = isDark
             }
         }
 
         fun statusIconDark(): Boolean {
-            return if (AppConfig.isNightTheme) {
-                darkStatusIconNight
-            } else {
-                darkStatusIcon
+            return when {
+                AppConfig.isEInkMode -> darkStatusIconEInk
+                AppConfig.isNightTheme -> darkStatusIconNight
+                else -> darkStatusIcon
             }
         }
 
         fun textColor(): Int {
-            return if (AppConfig.isNightTheme) Color.parseColor(textColorNight)
-            else Color.parseColor(textColor)
+            return when {
+                AppConfig.isEInkMode -> Color.parseColor(textColorEInk)
+                AppConfig.isNightTheme -> Color.parseColor(textColorNight)
+                else -> Color.parseColor(textColor)
+            }
         }
 
         fun bgStr(): String {
-            return if (AppConfig.isNightTheme) bgStrNight
-            else bgStr
+            return when {
+                AppConfig.isEInkMode -> bgStrEInk
+                AppConfig.isNightTheme -> bgStrNight
+                else -> bgStr
+            }
         }
 
         fun bgType(): Int {
-            return if (AppConfig.isNightTheme) bgTypeNight
-            else bgType
+            return when {
+                AppConfig.isEInkMode -> bgTypeEInk
+                AppConfig.isNightTheme -> bgTypeNight
+                else -> bgType
+            }
         }
 
         fun bgDrawable(width: Int, height: Int): Drawable {
