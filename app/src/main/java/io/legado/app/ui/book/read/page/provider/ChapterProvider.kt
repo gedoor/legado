@@ -45,7 +45,7 @@ object ChapterProvider {
     /**
      * 获取拆分完的章节数据
      */
-    suspend fun getTextChapter(
+    fun getTextChapter(
         book: Book,
         bookChapter: BookChapter,
         contents: List<String>,
@@ -110,7 +110,7 @@ object ChapterProvider {
         )
     }
 
-    private suspend fun setTypeImage(
+    private fun setTypeImage(
         book: Book,
         chapter: BookChapter,
         src: String,
@@ -184,14 +184,12 @@ object ChapterProvider {
         pageLines: ArrayList<Int>,
         pageLengths: ArrayList<Int>,
         stringBuilder: StringBuilder,
-        isTitle: Boolean
+        isTitle: Boolean,
     ): Float {
         var durY = if (isTitle) y + titleTopSpacing else y
         val textPaint = if (isTitle) titlePaint else contentPaint
         val layout = StaticLayout(
-            text, textPaint,
-            visibleWidth,
-            Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
+            text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         for (lineIndex in 0 until layout.lineCount) {
             val textLine = TextLine(isTitle = isTitle)
@@ -262,7 +260,7 @@ object ChapterProvider {
         textLine: TextLine,
         words: Array<String>,
         textPaint: TextPaint,
-        desiredWidth: Float
+        desiredWidth: Float,
     ) {
         var x = 0f
         if (!ReadBookConfig.textFullJustify) {
@@ -303,7 +301,7 @@ object ChapterProvider {
         words: Array<String>,
         textPaint: TextPaint,
         desiredWidth: Float,
-        startX: Float
+        startX: Float,
     ) {
         if (!ReadBookConfig.textFullJustify) {
             addCharsToLineLast(
@@ -340,7 +338,7 @@ object ChapterProvider {
         textLine: TextLine,
         words: Array<String>,
         textPaint: TextPaint,
-        startX: Float
+        startX: Float,
     ) {
         var x = startX
         words.forEach {
