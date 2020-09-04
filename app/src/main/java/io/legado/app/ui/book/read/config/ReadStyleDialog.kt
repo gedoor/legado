@@ -15,7 +15,6 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
 import io.legado.app.utils.*
@@ -239,18 +238,38 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         }
     }
 
-    private fun upBg() = requireContext().apply {
-        bg0.borderColor = primaryColor
-        bg1.borderColor = primaryColor
-        bg2.borderColor = primaryColor
-        bg3.borderColor = primaryColor
-        bg4.borderColor = primaryColor
-        when (ReadBookConfig.styleSelect) {
-            1 -> bg1.borderColor = accentColor
-            2 -> bg2.borderColor = accentColor
-            3 -> bg3.borderColor = accentColor
-            4 -> bg4.borderColor = accentColor
-            else -> bg0.borderColor = accentColor
+    private fun upBg() = ReadBookConfig.apply {
+        bg0.borderColor = getConfig(0).textColor()
+        bg0.setTextBold(false)
+        bg1.borderColor = getConfig(1).textColor()
+        bg1.setTextBold(false)
+        bg2.borderColor = getConfig(2).textColor()
+        bg2.setTextBold(false)
+        bg3.borderColor = getConfig(3).textColor()
+        bg3.setTextBold(false)
+        bg4.borderColor = getConfig(4).textColor()
+        bg4.setTextBold(false)
+        when (styleSelect) {
+            1 -> {
+                bg1.borderColor = accentColor
+                bg1.setTextBold(true)
+            }
+            2 -> {
+                bg2.borderColor = accentColor
+                bg2.setTextBold(true)
+            }
+            3 -> {
+                bg3.borderColor = accentColor
+                bg3.setTextBold(true)
+            }
+            4 -> {
+                bg4.borderColor = accentColor
+                bg4.setTextBold(true)
+            }
+            else -> {
+                bg0.borderColor = accentColor
+                bg0.setTextBold(true)
+            }
         }
     }
 
