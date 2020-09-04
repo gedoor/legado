@@ -137,8 +137,8 @@ class PageView(context: Context, attrs: AttributeSet) :
                 postDelayed(longPressRunnable, longPressTimeout)
                 pressDown = true
                 isMove = false
-                setStartPoint(event.x, event.y)
                 pageDelegate?.onTouch(event)
+                setStartPoint(event.x, event.y)
             }
             MotionEvent.ACTION_MOVE -> {
                 pressDown = true

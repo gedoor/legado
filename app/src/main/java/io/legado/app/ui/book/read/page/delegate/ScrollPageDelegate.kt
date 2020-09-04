@@ -29,7 +29,6 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 abortAnim()
-                pageView.setStartPoint(event.x, event.y)
                 mVelocity.clear()
             }
             MotionEvent.ACTION_MOVE -> {
