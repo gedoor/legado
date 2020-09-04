@@ -105,7 +105,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         headerView.tv_name.setTextColor(secondaryTextColor)
         headerView.tv_name.text = getString(R.string.select_image)
         headerView.iv_bg.setImageResource(R.drawable.ic_image)
-        headerView.iv_bg.setColorFilter(getCompatColor(R.color.primaryText))
+        headerView.iv_bg.setColorFilter(primaryTextColor)
         headerView.onClick { selectImage() }
         requireContext().assets.list("bg/")?.let {
             adapter.setItems(it.toList())
@@ -143,6 +143,12 @@ class BgTextConfigDialog : BaseDialogFragment() {
         tv_default.onClick {
             ReadBookConfig.resetDur()
             postEvent(EventBus.UP_CONFIG, false)
+        }
+        tv_import.onClick {
+
+        }
+        tv_export.onClick {
+
         }
     }
 
