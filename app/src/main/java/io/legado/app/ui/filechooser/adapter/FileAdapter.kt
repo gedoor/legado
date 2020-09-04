@@ -2,10 +2,12 @@ package io.legado.app.ui.filechooser.adapter
 
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.help.AppConfig
+import io.legado.app.lib.theme.getPrimaryDisabledTextColor
+import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.filechooser.entity.FileItem
 import io.legado.app.ui.filechooser.utils.ConvertUtils
 import io.legado.app.ui.filechooser.utils.FilePickerIcon
@@ -21,26 +23,16 @@ class FileAdapter(context: Context, val callBack: CallBack) :
     private var rootPath: String? = null
     var currentPath: String? = null
         private set
-    private var homeIcon: Drawable? = null
-    private var upIcon: Drawable? = null
-    private var folderIcon: Drawable? = null
-    private var fileIcon: Drawable? = null
+    private val homeIcon = ConvertUtils.toDrawable(FilePickerIcon.getHOME())
+    private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUPDIR())
+    private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFOLDER())
+    private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFILE())
+    private val primaryTextColor = context.getPrimaryTextColor(!AppConfig.isNightTheme)
+    private val disabledTextColor = context.getPrimaryDisabledTextColor(!AppConfig.isNightTheme)
 
     fun loadData(path: String?) {
         if (path == null) {
             return
-        }
-        if (homeIcon == null) {
-            homeIcon = ConvertUtils.toDrawable(FilePickerIcon.getHOME())
-        }
-        if (upIcon == null) {
-            upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUPDIR())
-        }
-        if (folderIcon == null) {
-            folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFOLDER())
-        }
-        if (fileIcon == null) {
-            fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFILE())
         }
         val data = ArrayList<FileItem>()
         if (rootPath == null) {
@@ -69,17 +61,9 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         }
         currentPath?.let { currentPath ->
             val files: Array<File?>? = callBack.allowExtensions?.let { allowExtensions ->
-                if (callBack.isOnlyListDir) {
-                    FileUtils.listDirs(currentPath, allowExtensions)
-                } else {
-                    FileUtils.listDirsAndFiles(currentPath, allowExtensions)
-                }
+                FileUtils.listDirsAndFiles(currentPath, allowExtensions)
             } ?: let {
-                if (callBack.isOnlyListDir) {
-                    FileUtils.listDirs(currentPath)
-                } else {
-                    FileUtils.listDirsAndFiles(currentPath)
-                }
+                FileUtils.listDirsAndFiles(currentPath)
             }
             if (files != null) {
                 for (file in files) {
@@ -110,6 +94,21 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         holder.itemView.apply {
             image_view.setImageDrawable(item.icon)
             text_view.text = item.name
+            if (item.isDirectory) {
+                text_view.setTextColor(primaryTextColor)
+            } else {
+                if (callBack.isSelectDir) {
+                    text_view.setTextColor(disabledTextColor)
+                } else {
+                    callBack.allowExtensions?.let {
+                        if (it.contains(FileUtils.getExtension(item.path))) {
+                            text_view.setTextColor(primaryTextColor)
+                        } else {
+                            text_view.setTextColor(disabledTextColor)
+                        }
+                    } ?: text_view.setTextColor(primaryTextColor)
+                }
+            }
         }
     }
 
@@ -121,12 +120,15 @@ class FileAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         fun onFileClick(position: Int)
+
         //允许的扩展名
         var allowExtensions: Array<String>?
+
         /**
-         * 是否仅仅读取目录
+         * 是否选取目录
          */
-        val isOnlyListDir: Boolean
+        val isSelectDir: Boolean
+
         /**
          * 是否显示返回主目录
          */

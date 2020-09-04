@@ -16,10 +16,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.filechooser.adapter.FileAdapter
 import io.legado.app.ui.filechooser.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.gone
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_file_chooser.*
 
 
@@ -62,7 +59,7 @@ class FileChooserDialog : DialogFragment(),
     }
 
     override var allowExtensions: Array<String>? = null
-    override val isOnlyListDir: Boolean
+    override val isSelectDir: Boolean
         get() = mode == DIRECTORY
     override var isShowHomeDir: Boolean = false
     override var isShowUpDir: Boolean = true
@@ -109,7 +106,7 @@ class FileChooserDialog : DialogFragment(),
             menus = it.getStringArray("menus")
         }
         tool_bar.title = title ?: let {
-            if (isOnlyListDir) {
+            if (isSelectDir) {
                 getString(R.string.folder_chooser)
             } else {
                 getString(R.string.file_chooser)
@@ -122,7 +119,7 @@ class FileChooserDialog : DialogFragment(),
 
     private fun initMenu() {
         tool_bar.inflateMenu(R.menu.file_chooser)
-        if (isOnlyListDir) {
+        if (isSelectDir) {
             tool_bar.menu.findItem(R.id.menu_ok).isVisible = true
         }
         menus?.let {
@@ -169,7 +166,9 @@ class FileChooserDialog : DialogFragment(),
             refreshCurrentDirPath(fileItem.path)
         } else {
             fileItem?.path?.let { path ->
-                if (mode != DIRECTORY) {
+                if (mode == DIRECTORY) {
+                    toast("这是文件夹选择,不能选择文件,点击右上角的确定选择文件夹")
+                } else {
                     (parentFragment as? CallBack)?.onFilePicked(requestCode, path)
                     (activity as? CallBack)?.onFilePicked(requestCode, path)
                     dismiss()

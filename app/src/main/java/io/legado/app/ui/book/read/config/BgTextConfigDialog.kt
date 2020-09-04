@@ -41,6 +41,8 @@ class BgTextConfigDialog : BaseDialogFragment() {
     }
 
     private val requestCodeBg = 123
+    private val requestCodeExport = 131
+    private val requestCodeImport = 132
     private lateinit var adapter: BgAdapter
     var primaryTextColor = 0
     var secondaryTextColor = 0
