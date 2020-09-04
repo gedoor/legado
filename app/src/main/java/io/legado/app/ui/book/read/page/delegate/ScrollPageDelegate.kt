@@ -86,18 +86,25 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
 
     override fun abortAnim() {
         if (!scroller.isFinished) {
+            pageView.isAbortAnim = true
             scroller.abortAnimation()
+        } else {
+            pageView.isAbortAnim = false
         }
     }
 
     override fun nextPageByAnim(animationSpeed: Int) {
-        abortAnim()
+        if (pageView.isAbortAnim) {
+            return
+        }
         pageView.setStartPoint(0f, 0f, false)
         startScroll(0, 0, 0, -ChapterProvider.visibleHeight, animationSpeed)
     }
 
     override fun prevPageByAnim(animationSpeed: Int) {
-        abortAnim()
+        if (pageView.isAbortAnim) {
+            return
+        }
         pageView.setStartPoint(0f, 0f, false)
         startScroll(0, 0, 0, ChapterProvider.visibleHeight, animationSpeed)
     }

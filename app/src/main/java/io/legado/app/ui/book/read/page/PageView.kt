@@ -49,6 +49,9 @@ class PageView(context: Context, attrs: AttributeSet) :
     var touchX: Float = 0f
     var touchY: Float = 0f
 
+    //是否停止动画动作
+    var isAbortAnim = false
+
     //长按
     private var longPressed = false
     private val longPressTimeout = 800L
@@ -227,7 +230,9 @@ class PageView(context: Context, attrs: AttributeSet) :
             return true
         }
         if (centerRectF.contains(startX, startY)) {
-            callBack.clickCenter()
+            if (!isAbortAnim) {
+                callBack.clickCenter()
+            }
         } else if (ReadBookConfig.clickTurnPage) {
             if (startX > width / 2 || AppConfig.clickAllNext) {
                 pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
