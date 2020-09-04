@@ -332,7 +332,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         upSelectedStart(
             textChar.start,
             textLine.lineBottom + relativeOffset(relativePage),
-            textLine.lineTop
+            textLine.lineTop + relativeOffset(relativePage)
         )
         upSelectChars()
     }
