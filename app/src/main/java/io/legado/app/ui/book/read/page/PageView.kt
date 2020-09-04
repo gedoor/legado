@@ -5,9 +5,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.widget.FrameLayout
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.service.help.ReadBook
@@ -17,6 +20,7 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.activity
 import io.legado.app.utils.screenshot
 import kotlinx.android.synthetic.main.activity_book_read.view.*
+import kotlin.math.abs
 
 class PageView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
@@ -29,6 +33,37 @@ class PageView(context: Context, attrs: AttributeSet) :
     var prevPage: ContentView = ContentView(context)
     var curPage: ContentView = ContentView(context)
     var nextPage: ContentView = ContentView(context)
+    val defaultAnimationSpeed = 300
+    private var pressDown = false
+    private var isMove = false
+
+    //起始点
+    var startX: Float = 0f
+    var startY: Float = 0f
+
+    //上一个触碰点
+    var lastX: Float = 0f
+    var lastY: Float = 0f
+
+    //触碰点
+    var touchX: Float = 0f
+    var touchY: Float = 0f
+
+    //长按
+    private var longPressed = false
+    private val longPressTimeout = 1000L
+    private val longPressRunnable = Runnable {
+        longPressed = true
+        onLongPress()
+    }
+    var isTextSelected = false
+    private var pressOnTextSelected = false
+    private var firstRelativePage = 0
+    private var firstLineIndex: Int = 0
+    private var firstCharIndex: Int = 0
+
+    val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
+    private val centerRectF = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
     private val autoPageRect by lazy { Rect() }
     private val autoPagePint by lazy {
         Paint().apply {
@@ -49,6 +84,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         super.onSizeChanged(w, h, oldw, oldh)
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
+        centerRectF.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
         if (oldw != 0 && oldh != 0) {
             ReadBook.loadContent(resetPageOffset = false)
         }
@@ -82,11 +118,160 @@ class PageView(context: Context, attrs: AttributeSet) :
         return true
     }
 
+    /**
+     * 触摸事件
+     */
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        pageDelegate?.onTouch(event)
         callBack.screenOffTimerStart()
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (isTextSelected) {
+                    curPage.cancelSelect()
+                    isTextSelected = false
+                    pressOnTextSelected = true
+                } else {
+                    pressOnTextSelected = false
+                }
+                longPressed = false
+                postDelayed(longPressRunnable, longPressTimeout)
+                pressDown = true
+                isMove = false
+                setStartPoint(event.x, event.y)
+                pageDelegate?.onTouch(event)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                pressDown = true
+                if (!isMove) {
+                    isMove =
+                        abs(startX - event.x) > slopSquare || abs(startY - event.y) > slopSquare
+                }
+                if (isMove) {
+                    longPressed = false
+                    removeCallbacks(longPressRunnable)
+                    if (isTextSelected) {
+                        selectText(event.x, event.y)
+                    } else {
+                        pageDelegate?.onTouch(event)
+                    }
+                }
+            }
+            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                removeCallbacks(longPressRunnable)
+                if (!pressDown) return true
+                if (!isMove) {
+                    if (!longPressed && !pressOnTextSelected) {
+                        onSingleTapUp()
+                        return true
+                    }
+                }
+                if (isTextSelected) {
+                    callBack.showTextActionMenu()
+                } else if (isMove) {
+                    pageDelegate?.onTouch(event)
+                }
+                pressOnTextSelected = false
+            }
+        }
         return true
+    }
+
+    /**
+     * 保存开始位置
+     */
+    fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
+        startX = x
+        startY = y
+        lastX = x
+        lastY = y
+        touchX = x
+        touchY = y
+
+        if (invalidate) {
+            invalidate()
+        }
+    }
+
+    /**
+     * 保存当前位置
+     */
+    fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
+        lastX = touchX
+        lastY = touchY
+        touchX = x
+        touchY = y
+
+        if (invalidate) {
+            invalidate()
+        }
+
+        pageDelegate?.onScroll()
+    }
+
+    /**
+     * 长按选择
+     */
+    private fun onLongPress() {
+        curPage.selectText(startX, startY) { relativePage, lineIndex, charIndex ->
+            isTextSelected = true
+            firstRelativePage = relativePage
+            firstLineIndex = lineIndex
+            firstCharIndex = charIndex
+        }
+    }
+
+    /**
+     * 单击
+     */
+    private fun onSingleTapUp(): Boolean {
+        if (isTextSelected) {
+            isTextSelected = false
+            return true
+        }
+        if (centerRectF.contains(startX, startY)) {
+            callBack.clickCenter()
+        } else if (ReadBookConfig.clickTurnPage) {
+            if (startX > width / 2 || AppConfig.clickAllNext) {
+                pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
+            } else {
+                pageDelegate?.prevPageByAnim(defaultAnimationSpeed)
+            }
+        }
+        return true
+    }
+
+    /**
+     * 选择文本
+     */
+    private fun selectText(x: Float, y: Float) {
+        curPage.selectText(x, y) { relativePage, lineIndex, charIndex ->
+            when {
+                relativePage > firstRelativePage -> {
+                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                relativePage < firstRelativePage -> {
+                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                lineIndex > firstLineIndex -> {
+                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                lineIndex < firstLineIndex -> {
+                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                charIndex > firstCharIndex -> {
+                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+                }
+                else -> {
+                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+                }
+            }
+        }
     }
 
     fun onDestroy() {

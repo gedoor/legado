@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.page.delegate
 import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.view.MotionEvent
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.PageView
 import kotlin.math.*
@@ -114,26 +115,26 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         mMaxLength = hypot(viewWidth.toDouble(), viewHeight.toDouble()).toFloat()
     }
 
-    override fun setStartPoint(x: Float, y: Float, invalidate: Boolean) {
-        super.setStartPoint(x, y, false)
-        calcCornerXY(x, y)
-    }
+    override fun onTouch(event: MotionEvent) {
+        super.onTouch(event)
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                calcCornerXY(event.x, event.y)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                if ((startY > viewHeight / 3 && startY < viewHeight * 2 / 3)
+                    || mDirection == Direction.PREV
+                ) {
+                    pageView.touchY = viewHeight.toFloat()
+                }
 
-    override fun setTouchPoint(x: Float, y: Float, invalidate: Boolean) {
-        super.setTouchPoint(x, y, false)
-        //触摸y中间位置吧y变成屏幕高度
-        if ((startY > viewHeight / 3 && startY < viewHeight * 2 / 3)
-            || mDirection == Direction.PREV
-        ) {
-            touchY = viewHeight.toFloat()
+                if (startY > viewHeight / 3 && startY < viewHeight / 2
+                    && mDirection == Direction.NEXT
+                ) {
+                    pageView.touchY = 1f
+                }
+            }
         }
-
-        if (startY > viewHeight / 3 && startY < viewHeight / 2
-            && mDirection == Direction.NEXT
-        ) {
-            touchY = 1f
-        }
-        pageView.invalidate()
     }
 
     override fun setDirection(direction: Direction) {

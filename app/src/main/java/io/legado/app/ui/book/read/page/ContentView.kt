@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.page
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -222,11 +221,10 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun selectText(
-        e: MotionEvent,
-        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit
+        x: Float, y: Float,
+        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
-        val y = e.y - headerHeight
-        return content_text_view.selectText(e.x, y, select)
+        return content_text_view.selectText(x, y - headerHeight, select)
     }
 
     fun selectStartMove(x: Float, y: Float) {

@@ -43,14 +43,12 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if (isTextSelected) {
-                    selectText(event)
-                } else {
-                    onScroll(event)
-                }
+                onScroll(event)
+            }
+            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                onAnimStart(pageView.defaultAnimationSpeed)
             }
         }
-        super.onTouch(event)
     }
 
     private fun onScroll(event: MotionEvent) {
@@ -76,7 +74,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             val deltaX = (focusX - startX).toInt()
             val deltaY = (focusY - startY).toInt()
             val distance = deltaX * deltaX + deltaY * deltaY
-            isMoved = distance > slopSquare
+            isMoved = distance > pageView.slopSquare
             if (isMoved) {
                 if (sumX - startX > 0) {
                     //如果上一页不存在
@@ -99,7 +97,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             isCancel = if (mDirection == Direction.NEXT) sumX > lastX else sumX < lastX
             isRunning = true
             //设置触摸点
-            setTouchPoint(sumX, sumY)
+            pageView.setTouchPoint(sumX, sumY)
         }
     }
 
@@ -107,7 +105,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         abort()
         if (!hasNext()) return
         setDirection(Direction.NEXT)
-        setTouchPoint(viewWidth.toFloat(), 0f)
+        pageView.setTouchPoint(viewWidth.toFloat(), 0f)
         onAnimStart(animationSpeed)
     }
 
@@ -115,7 +113,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         abort()
         if (!hasPrev()) return
         setDirection(Direction.PREV)
-        setTouchPoint(0f, 0f)
+        pageView.setTouchPoint(0f, 0f)
         onAnimStart(animationSpeed)
     }
 

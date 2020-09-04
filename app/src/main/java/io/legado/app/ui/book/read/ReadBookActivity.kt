@@ -496,7 +496,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onMenuActionFinally() {
         textActionMenu?.dismiss()
         page_view.curPage.cancelSelect()
-        page_view.pageDelegate?.isTextSelected = false
+        page_view.isTextSelected = false
     }
 
     /**
