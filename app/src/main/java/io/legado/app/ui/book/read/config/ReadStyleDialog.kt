@@ -70,10 +70,10 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
+        root_view.setBackgroundColor(bg)
         tv_page_anim.setTextColor(textColor)
         tv_bg_ts.setTextColor(textColor)
         tv_share_layout.setTextColor(textColor)
-        root_view.setBackgroundColor(bg)
         dsb_text_size.valueFormat = {
             (it + 5).toString()
         }

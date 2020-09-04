@@ -23,6 +23,9 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivityHelp
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
@@ -39,6 +42,8 @@ class BgTextConfigDialog : BaseDialogFragment() {
 
     private val requestCodeBg = 123
     private lateinit var adapter: BgAdapter
+    var primaryTextColor = 0
+    var secondaryTextColor = 0
 
     override fun onStart() {
         super.onStart()
@@ -49,7 +54,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
-            it.decorView.setPadding(0, 5, 0, 0)
+            it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
@@ -67,13 +72,24 @@ class BgTextConfigDialog : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        initData()
         initView()
+        initData()
+        initEvent()
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         ReadBookConfig.save()
+    }
+
+    private fun initView() {
+        val bg = requireContext().bottomBackground
+        val isLight = ColorUtils.isColorLight(bg)
+        primaryTextColor = requireContext().getPrimaryTextColor(isLight)
+        secondaryTextColor = requireContext().getSecondaryTextColor(isLight)
+        root_view.setBackgroundColor(bg)
+        sw_dark_status_icon.setTextColor(primaryTextColor)
+        tv_bg_image.setTextColor(primaryTextColor)
     }
 
     @SuppressLint("InflateParams")
@@ -86,6 +102,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         val headerView = LayoutInflater.from(requireContext())
             .inflate(R.layout.item_bg_image, recycler_view, false)
         adapter.addHeaderView(headerView)
+        headerView.tv_name.setTextColor(secondaryTextColor)
         headerView.tv_name.text = getString(R.string.select_image)
         headerView.iv_bg.setImageResource(R.drawable.ic_image)
         headerView.iv_bg.setColorFilter(getCompatColor(R.color.primaryText))
@@ -95,7 +112,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         }
     }
 
-    private fun initView() = with(ReadBookConfig.durConfig) {
+    private fun initEvent() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
                 setStatusIconDark(isChecked)
@@ -136,7 +153,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         startActivityForResult(intent, requestCodeBg)
     }
 
-    class BgAdapter(context: Context) :
+    inner class BgAdapter(context: Context) :
         SimpleRecyclerAdapter<String>(context, R.layout.item_bg_image) {
 
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
@@ -144,6 +161,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
                     .centerCrop()
                     .into(iv_bg)
+                tv_name.setTextColor(secondaryTextColor)
                 tv_name.text = item.substringBeforeLast(".")
             }
         }
