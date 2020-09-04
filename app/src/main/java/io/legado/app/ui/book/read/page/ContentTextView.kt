@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -297,10 +298,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (!ReadBookConfig.isScroll) return
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
+            Log.e("y", "$y")
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
                 if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
+                    Log.e("line", "$relativePos  $lineIndex")
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (x > textChar.start && x < textChar.end) {
+                            Log.e("char", "$relativePos  $lineIndex $charIndex")
                             if (selectEnd[0] != relativePos || selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
                                 if (selectToInt(relativePos, lineIndex, charIndex) < selectToInt(selectStart)) {
                                     return
@@ -462,11 +466,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
 
     private fun selectToInt(page: Int, line: Int, char: Int): Int {
-        return page * 1000000 + line * 100000 + char
+        return page * 10000000 + line * 100000 + char
     }
 
     private fun selectToInt(select: Array<Int>): Int {
-        return select[0] * 1000000 + select[1] * 100000 + select[2]
+        return select[0] * 10000000 + select[1] * 100000 + select[2]
     }
 
     private fun relativeOffset(relativePos: Int): Float {
