@@ -27,7 +27,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="6dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
             android:singleLine="true"
@@ -43,7 +44,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="6dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
             android:singleLine="true"
@@ -59,7 +61,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="6dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
             android:singleLine="true"
@@ -69,29 +72,39 @@
             android:textSize="14sp"
             app:isBottomBackground="true"
             tools:ignore="HardcodedText" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_import_export"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:singleLine="true"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="导入导出"
+            android:textSize="14sp"
+            app:isBottomBackground="true"
+            tools:ignore="HardcodedText" />
+
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_bg_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:clickable="true"
-        android:padding="6dp"
-        android:focusable="true">
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:text="@string/bg_image" />
 
-        <TextView
-            android:id="@+id/tv_bg_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:text="@string/bg_image" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="100dp" />
-
-    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="6dp" />
 
 
 </LinearLayout>
