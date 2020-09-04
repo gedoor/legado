@@ -219,6 +219,8 @@ class PageView(context: Context, attrs: AttributeSet) :
             firstRelativePage = relativePage
             firstLineIndex = lineIndex
             firstCharIndex = charIndex
+            curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+            curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
         }
     }
 
