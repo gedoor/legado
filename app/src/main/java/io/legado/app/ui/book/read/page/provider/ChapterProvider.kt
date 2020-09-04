@@ -22,8 +22,8 @@ import java.util.*
 
 @Suppress("DEPRECATION")
 object ChapterProvider {
-    var viewWidth = 0
-    var viewHeight = 0
+    private var viewWidth = 0
+    private var viewHeight = 0
     var paddingLeft = 0
     var paddingTop = 0
     var visibleWidth = 0
@@ -440,19 +440,32 @@ object ChapterProvider {
         paragraphSpacing = ReadBookConfig.paragraphSpacing
         titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
         titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
-        upViewSize()
+        upVisibleSize()
     }
 
     /**
      * 更新View尺寸
      */
-    fun upViewSize() {
-        paddingLeft = ReadBookConfig.paddingLeft.dp
-        paddingTop = ReadBookConfig.paddingTop.dp
-        visibleWidth = viewWidth - paddingLeft - ReadBookConfig.paddingRight.dp
-        visibleHeight = viewHeight - paddingTop - ReadBookConfig.paddingBottom.dp
-        visibleRight = paddingLeft + visibleWidth
-        visibleBottom = paddingTop + visibleHeight
+    fun upViewSize(width: Int, height: Int) {
+        if (width > 0 && height > 0) {
+            viewWidth = width
+            viewHeight = height
+            upVisibleSize()
+        }
+    }
+
+    /**
+     * 更新绘制尺寸
+     */
+    private fun upVisibleSize() {
+        if (viewWidth > 0 && viewHeight > 0) {
+            paddingLeft = ReadBookConfig.paddingLeft.dp
+            paddingTop = ReadBookConfig.paddingTop.dp
+            visibleWidth = viewWidth - paddingLeft - ReadBookConfig.paddingRight.dp
+            visibleHeight = viewHeight - paddingTop - ReadBookConfig.paddingBottom.dp
+            visibleRight = paddingLeft + visibleWidth
+            visibleBottom = paddingTop + visibleHeight
+        }
     }
 
     val TextPaint.textHeight: Float
