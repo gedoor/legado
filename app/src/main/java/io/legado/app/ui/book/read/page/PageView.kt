@@ -51,7 +51,7 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     //长按
     private var longPressed = false
-    private val longPressTimeout = 1000L
+    private val longPressTimeout = 800L
     private val longPressRunnable = Runnable {
         longPressed = true
         onLongPress()
