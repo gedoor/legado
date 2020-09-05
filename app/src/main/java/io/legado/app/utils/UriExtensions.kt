@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import java.io.File
 
+fun Uri.isContentPath() = this.toString().isContentPath()
+
 @Throws(Exception::class)
 fun Uri.readBytes(context: Context): ByteArray? {
     if (this.toString().isContentPath()) {

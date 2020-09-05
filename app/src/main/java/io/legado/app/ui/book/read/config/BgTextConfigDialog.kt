@@ -197,6 +197,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun exportConfig(uri: Uri) {
         execute {
+            val exportFiles = arrayListOf<File>()
             val configDirPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig")
             FileUtils.deleteFile(configDirPath)
             val configDir = FileUtils.createFolderIfNotExist(configDirPath)
@@ -204,6 +205,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             FileUtils.deleteFile(configExportPath)
             val configExportFile = FileUtils.createFileIfNotExist(configExportPath)
             configExportFile.writeText(GSON.toJson(ReadBookConfig.durConfig))
+            exportFiles.add(configExportFile)
             val fontPath = ReadBookConfig.textFont
             if (fontPath.isNotEmpty()) {
                 val fontName = FileUtils.getName(fontPath)
@@ -211,6 +213,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 fontBytes?.let {
                     val fontExportFile = FileUtils.createFileIfNotExist(configDir, fontName)
                     fontExportFile.writeBytes(it)
+                    exportFiles.add(fontExportFile)
                 }
             }
             if (ReadBookConfig.durConfig.bgType() == 2) {
@@ -219,16 +222,30 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 if (bgFile.exists()) {
                     val bgExportFile = FileUtils.createFileIfNotExist(configDir, bgName)
                     bgFile.copyTo(bgExportFile)
+                    exportFiles.add(bgExportFile)
                 }
             }
-            val configZipPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig.zip")
-            if (ZipUtils.zipFile(configDirPath, configZipPath)) {
-                uri.writeBytes(requireContext(), File(configZipPath).readBytes())
+            val configFileName = "readConfig.zip"
+            val configZipPath = FileUtils.getPath(requireContext().eCacheDir, configFileName)
+            if (ZipUtils.zipFiles(exportFiles, File(configZipPath))) {
+                if (uri.isContentPath()) {
+                    DocumentFile.fromTreeUri(requireContext(), uri)?.let { treeDoc ->
+                        treeDoc.findFile(configFileName)?.delete()
+                        treeDoc.createFile("", configFileName)
+                            ?.writeBytes(requireContext(), File(configZipPath).readBytes())
+                    }
+                } else {
+                    val exportPath = FileUtils.getPath(File(uri.toString()), configFileName)
+                    FileUtils.deleteFile(exportPath)
+                    FileUtils.createFileIfNotExist(exportPath)
+                        .writeBytes(File(configZipPath).readBytes())
+                }
             }
         }.onSuccess {
             toast("导出成功")
         }.onError {
-            toast("导出失败:${it.localizedMessage}")
+            it.printStackTrace()
+            longToast("导出失败:${it.localizedMessage}")
         }
     }
 
