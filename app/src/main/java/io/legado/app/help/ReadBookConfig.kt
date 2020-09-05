@@ -25,7 +25,15 @@ object ReadBookConfig {
         val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
         GSON.fromJsonArray<Config>(json)!!
     }
-    val durConfig get() = getConfig(styleSelect)
+    var durConfig
+        get() = getConfig(styleSelect)
+        set(value) {
+            configList[styleSelect] = value
+            if (shareLayout) {
+                configList[5] = value
+            }
+            upBg()
+        }
 
     var bg: Drawable? = null
     var bgMeanColor: Int = 0

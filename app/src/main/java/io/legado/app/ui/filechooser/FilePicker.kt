@@ -212,7 +212,6 @@ object FilePicker {
         allowExtensions.forEach {
             when (it) {
                 "txt", "xml" -> types.add("text/*")
-                "zip" -> types.add("application/x-zip-compressed")
                 else -> types.add("application/$it")
             }
         }

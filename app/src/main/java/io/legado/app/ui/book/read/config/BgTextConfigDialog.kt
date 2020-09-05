@@ -235,7 +235,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                             ?.writeBytes(requireContext(), File(configZipPath).readBytes())
                     }
                 } else {
-                    val exportPath = FileUtils.getPath(File(uri.toString()), configFileName)
+                    val exportPath = FileUtils.getPath(File(uri.path!!), configFileName)
                     FileUtils.deleteFile(exportPath)
                     FileUtils.createFileIfNotExist(exportPath)
                         .writeBytes(File(configZipPath).readBytes())
@@ -274,8 +274,15 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             }
             if (config.bgType() == 2) {
                 val bgName = FileUtils.getName(config.bgStr())
-
+                val file = FileUtils.createFileIfNotExist(
+                    requireContext().externalFilesDir,
+                    "bg",
+                    bgName
+                )
+                FileUtils.getFile(configDir, bgName).compareTo(file)
             }
+            ReadBookConfig.durConfig = config
+            postEvent(EventBus.UP_CONFIG, true)
         }.onSuccess {
             toast("导入成功")
         }.onError {
@@ -316,9 +323,8 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         if (uri.toString().isContentPath()) {
             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
             doc?.name?.let {
-                var file = requireContext().getExternalFilesDir(null)
-                    ?: requireContext().filesDir
-                file = FileUtils.createFileIfNotExist(file, "bg", it)
+                val file =
+                    FileUtils.createFileIfNotExist(requireContext().externalFilesDir, "bg", it)
                 kotlin.runCatching {
                     DocumentUtils.readBytes(requireContext(), doc.uri)
                 }.getOrNull()?.let { byteArray ->
