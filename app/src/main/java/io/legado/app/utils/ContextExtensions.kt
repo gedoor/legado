@@ -59,8 +59,10 @@ fun Context.getPrefString(@StringRes keyId: Int, defValue: String? = null) =
 fun Context.putPrefString(key: String, value: String) =
     defaultSharedPreferences.edit { putString(key, value) }
 
-fun Context.getPrefStringSet(key: String, defValue: MutableSet<String>? = null) =
-    defaultSharedPreferences.getStringSet(key, defValue)
+fun Context.getPrefStringSet(
+    key: String,
+    defValue: MutableSet<String>? = null
+): MutableSet<String>? = defaultSharedPreferences.getStringSet(key, defValue)
 
 fun Context.putPrefStringSet(key: String, value: MutableSet<String>) =
     defaultSharedPreferences.edit { putStringSet(key, value) }
@@ -194,10 +196,10 @@ val Context.channel: String
     get() {
         try {
             val pm = packageManager
-            val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+            val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
             return appInfo.metaData.getString("channel") ?: ""
         } catch (e: Exception) {
-            e.printStackTrace();
+            e.printStackTrace()
         }
         return ""
     }
