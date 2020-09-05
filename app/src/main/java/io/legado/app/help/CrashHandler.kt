@@ -147,7 +147,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
                         it.delete()
                     }
                 }
-                FileUtils.createFileIfNotExist(rootFile, fileName, "crash")
+                FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
                     .writeText(sb.toString())
             }
         }

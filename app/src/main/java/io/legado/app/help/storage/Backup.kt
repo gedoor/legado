@@ -130,7 +130,7 @@ object Backup {
             if (file.exists()) {
                 file.copyTo(
                     if (isAuto) {
-                        FileUtils.createFileIfNotExist(rootFile, fileName, "auto")
+                        FileUtils.createFileIfNotExist(rootFile, "auto", fileName)
                     } else {
                         FileUtils.createFileIfNotExist(rootFile, fileName)
                     }, true

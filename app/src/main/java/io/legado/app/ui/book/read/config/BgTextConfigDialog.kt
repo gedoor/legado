@@ -46,6 +46,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
     private val requestCodeBg = 123
     private val requestCodeExport = 131
     private val requestCodeImport = 132
+    private val configFileName = "readConfig.zip"
     private lateinit var adapter: BgAdapter
     var primaryTextColor = 0
     var secondaryTextColor = 0
@@ -225,7 +226,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                     exportFiles.add(bgExportFile)
                 }
             }
-            val configFileName = "readConfig.zip"
             val configZipPath = FileUtils.getPath(requireContext().eCacheDir, configFileName)
             if (ZipUtils.zipFiles(exportFiles, File(configZipPath))) {
                 if (uri.isContentPath()) {
@@ -242,25 +242,52 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 }
             }
         }.onSuccess {
-            toast("导出成功")
+            toast("导出成功, 文件名为 $configFileName")
         }.onError {
             it.printStackTrace()
             longToast("导出失败:${it.localizedMessage}")
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private fun importConfig(uri: Uri) {
-        if (uri.toString().isContentPath()) {
+        execute {
+            val configZipPath = FileUtils.getPath(requireContext().eCacheDir, configFileName)
+            FileUtils.deleteFile(configZipPath)
+            val zipFile = FileUtils.createFileIfNotExist(configZipPath)
+            zipFile.writeBytes(uri.readBytes(requireContext())!!)
+            val configDirPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig")
+            FileUtils.deleteFile(configDirPath)
+            ZipUtils.unzipFile(zipFile, FileUtils.createFolderIfNotExist(configDirPath))
+            val configDir = FileUtils.createFolderIfNotExist(configDirPath)
+            val configFile = FileUtils.getFile(configDir, "readConfig.json")
+            val config: ReadBookConfig.Config = GSON.fromJsonObject(configFile.readText())!!
+            if (config.textFont.isNotEmpty()) {
+                val fontName = FileUtils.getName(config.textFont)
+                val file = FileUtils.createFileIfNotExist(
+                    requireContext().externalFilesDir,
+                    "font",
+                    fontName
+                )
+                FileUtils.getFile(configDir, fontName).copyTo(file)
+                config.textFont = file.absolutePath
+            }
+            if (config.bgType() == 2) {
+                val bgName = FileUtils.getName(config.bgStr())
 
-        } else {
-
+            }
+        }.onSuccess {
+            toast("导入成功")
+        }.onError {
+            it.printStackTrace()
+            longToast("导入失败:${it.localizedMessage}")
         }
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
-            requestCodeImport -> importConfig(Uri.parse(currentPath))
-            requestCodeExport -> exportConfig(Uri.parse(currentPath))
+            requestCodeImport -> importConfig(Uri.fromFile(File(currentPath)))
+            requestCodeExport -> exportConfig(Uri.fromFile(File(currentPath)))
         }
     }
 
@@ -291,7 +318,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             doc?.name?.let {
                 var file = requireContext().getExternalFilesDir(null)
                     ?: requireContext().filesDir
-                file = FileUtils.createFileIfNotExist(file, it, "bg")
+                file = FileUtils.createFileIfNotExist(file, "bg", it)
                 kotlin.runCatching {
                     DocumentUtils.readBytes(requireContext(), doc.uri)
                 }.getOrNull()?.let { byteArray ->

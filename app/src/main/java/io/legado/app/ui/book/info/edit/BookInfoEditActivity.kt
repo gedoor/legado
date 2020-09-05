@@ -111,7 +111,7 @@ class BookInfoEditActivity :
             val doc = DocumentFile.fromSingleUri(this, uri)
             doc?.name?.let {
                 var file = this.externalFilesDir
-                file = FileUtils.createFileIfNotExist(file, it, "covers")
+                file = FileUtils.createFileIfNotExist(file, "covers", it)
                 kotlin.runCatching {
                     DocumentUtils.readBytes(this, doc.uri)
                 }.getOrNull()?.let { byteArray ->
@@ -131,7 +131,7 @@ class BookInfoEditActivity :
                         val imgFile = File(path)
                         if (imgFile.exists()) {
                             var file = this.externalFilesDir
-                            file = FileUtils.createFileIfNotExist(file, imgFile.name, "covers")
+                            file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
                             file.writeBytes(imgFile.readBytes())
                             coverChangeTo(file.absolutePath)
                         }
