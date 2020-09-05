@@ -27,6 +27,7 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivityHelp
+import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
@@ -147,10 +148,14 @@ class BgTextConfigDialog : BaseDialogFragment() {
             postEvent(EventBus.UP_CONFIG, false)
         }
         tv_import.onClick {
-
+            FilePicker.selectFile(
+                this@BgTextConfigDialog,
+                requestCodeImport,
+                allowExtensions = arrayOf("zip")
+            )
         }
         tv_export.onClick {
-
+            FilePicker.selectFolder(this@BgTextConfigDialog, requestCodeExport)
         }
     }
 
@@ -185,6 +190,10 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 }
             }
         }
+    }
+
+    private fun exportConfig(uri: Uri) {
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

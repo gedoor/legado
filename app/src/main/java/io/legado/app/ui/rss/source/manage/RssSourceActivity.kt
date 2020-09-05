@@ -86,7 +86,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                 .selectFile(
                     this,
                     importRequestCode,
-                    type = arrayOf("text/*", "application/json"),
                     allowExtensions = arrayOf("txt", "json")
                 )
             R.id.menu_import_source_onLine -> showImportDialog()

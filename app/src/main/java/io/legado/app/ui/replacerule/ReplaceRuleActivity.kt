@@ -168,7 +168,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 .selectFile(
                     this,
                     importRequestCode,
-                    type = arrayOf("text/*", "application/json"),
                     allowExtensions = arrayOf("txt", "json")
                 )
             else -> if (item.groupId == R.id.replace_group) {

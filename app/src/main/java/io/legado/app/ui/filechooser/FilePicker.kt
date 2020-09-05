@@ -92,8 +92,7 @@ object FilePicker {
         activity: BaseActivity,
         requestCode: Int,
         title: String = activity.getString(R.string.select_file),
-        type: Array<String>,
-        allowExtensions: Array<String>?,
+        allowExtensions: Array<String>,
         default: (() -> Unit)? = null
     ) {
         activity.alert(title = title) {
@@ -108,7 +107,10 @@ object FilePicker {
                     1 -> {
                         try {
                             val intent = createSelectFileIntent()
-                            intent.putExtra(Intent.EXTRA_MIME_TYPES, type)
+                            intent.putExtra(
+                                Intent.EXTRA_MIME_TYPES,
+                                typesOfExtensions(allowExtensions)
+                            )
                             activity.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
@@ -132,7 +134,6 @@ object FilePicker {
         fragment: Fragment,
         requestCode: Int,
         title: String = fragment.getString(R.string.select_file),
-        type: Array<String>,
         allowExtensions: Array<String>,
         default: (() -> Unit)? = null
     ) {
@@ -149,7 +150,10 @@ object FilePicker {
                         1 -> {
                             try {
                                 val intent = createSelectFileIntent()
-                                intent.putExtra(Intent.EXTRA_MIME_TYPES, type)
+                                intent.putExtra(
+                                    Intent.EXTRA_MIME_TYPES,
+                                    typesOfExtensions(allowExtensions)
+                                )
                                 fragment.startActivityForResult(intent, requestCode)
                             } catch (e: java.lang.Exception) {
                                 e.printStackTrace()
@@ -201,5 +205,17 @@ object FilePicker {
                 success?.invoke()
             }
             .request()
+    }
+
+    private fun typesOfExtensions(allowExtensions: Array<String>): Array<String> {
+        val types = hashSetOf<String>()
+        allowExtensions.forEach {
+            when (it) {
+                "txt", "xml" -> types.add("text/*")
+                "zip" -> types.add("application/x-zip-compressed")
+                else -> types.add("application/$it")
+            }
+        }
+        return types.toTypedArray()
     }
 }
