@@ -11,7 +11,7 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.filechooser.entity.FileItem
 import io.legado.app.ui.filechooser.utils.ConvertUtils
 import io.legado.app.ui.filechooser.utils.FilePickerIcon
-import io.legado.app.ui.filechooser.utils.FileUtils
+import io.legado.app.utils.FileUtils
 import kotlinx.android.synthetic.main.item_path_filepicker.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
@@ -60,11 +60,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             data.add(fileParent)
         }
         currentPath?.let { currentPath ->
-            val files: Array<File?>? = callBack.allowExtensions?.let { allowExtensions ->
-                FileUtils.listDirsAndFiles(currentPath, allowExtensions)
-            } ?: let {
-                FileUtils.listDirsAndFiles(currentPath)
-            }
+            val files: Array<File?>? = FileUtils.listDirsAndFiles(currentPath)
             if (files != null) {
                 for (file in files) {
                     if (file == null || (!callBack.isShowHideDir && file.name.startsWith("."))) {
