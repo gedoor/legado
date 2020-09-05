@@ -1,4 +1,5 @@
 @file:Suppress("unused")
+
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
@@ -20,7 +21,6 @@ import androidx.core.content.edit
 import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import io.legado.app.App
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import org.jetbrains.anko.defaultSharedPreferences
@@ -83,24 +83,25 @@ val Context.sysScreenOffTime: Int
     get() {
         var screenOffTime = 0
         try {
-            screenOffTime = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
+            screenOffTime =
+                Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return screenOffTime
-}
+    }
 
 val Context.statusBarHeight: Int
     get() {
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
-}
+    }
 
 val Context.navigationBarHeight: Int
     get() {
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
-}
+    }
 
 @SuppressLint("SetWorldReadable")
 fun Context.shareWithQr(title: String, text: String) {
@@ -162,7 +163,10 @@ val Context.sysBattery: Int
     }
 
 val Context.externalFilesDir: File
-    get() = App.INSTANCE.getExternalFilesDir(null) ?: App.INSTANCE.filesDir
+    get() = this.getExternalFilesDir(null) ?: this.filesDir
+
+val Context.eCacheDir: File
+    get() = this.externalCacheDir ?: this.cacheDir
 
 fun Context.openUrl(url: String) {
     openUrl(Uri.parse(url))

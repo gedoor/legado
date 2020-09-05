@@ -27,14 +27,16 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivityHelp
+import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.io.File
 
-class BgTextConfigDialog : BaseDialogFragment() {
+class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
 
     companion object {
         const val TEXT_COLOR = 121
@@ -192,8 +194,57 @@ class BgTextConfigDialog : BaseDialogFragment() {
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private fun exportConfig(uri: Uri) {
+        execute {
+            val configDirPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig")
+            FileUtils.deleteFile(configDirPath)
+            val configDir = FileUtils.createFolderIfNotExist(configDirPath)
+            val configExportPath = FileUtils.getPath(configDir, "readConfig.json")
+            FileUtils.deleteFile(configExportPath)
+            val configExportFile = FileUtils.createFileIfNotExist(configExportPath)
+            configExportFile.writeText(GSON.toJson(ReadBookConfig.durConfig))
+            val fontPath = ReadBookConfig.textFont
+            if (fontPath.isNotEmpty()) {
+                val fontName = FileUtils.getName(fontPath)
+                val fontBytes = Uri.parse(fontPath).readBytes(requireContext())
+                fontBytes?.let {
+                    val fontExportFile = FileUtils.createFileIfNotExist(configDir, fontName)
+                    fontExportFile.writeBytes(it)
+                }
+            }
+            if (ReadBookConfig.durConfig.bgType() == 2) {
+                val bgName = FileUtils.getName(ReadBookConfig.durConfig.bgStr())
+                val bgFile = File(ReadBookConfig.durConfig.bgStr())
+                if (bgFile.exists()) {
+                    val bgExportFile = FileUtils.createFileIfNotExist(configDir, bgName)
+                    bgFile.copyTo(bgExportFile)
+                }
+            }
+            val configZipPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig.zip")
+            if (ZipUtils.zipFile(configDirPath, configZipPath)) {
+                uri.writeBytes(requireContext(), File(configZipPath).readBytes())
+            }
+        }.onSuccess {
+            toast("导出成功")
+        }.onError {
+            toast("导出失败:${it.localizedMessage}")
+        }
+    }
 
+    private fun importConfig(uri: Uri) {
+        if (uri.toString().isContentPath()) {
+
+        } else {
+
+        }
+    }
+
+    override fun onFilePicked(requestCode: Int, currentPath: String) {
+        when (requestCode) {
+            requestCodeImport -> importConfig(Uri.parse(currentPath))
+            requestCodeExport -> exportConfig(Uri.parse(currentPath))
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -202,6 +253,16 @@ class BgTextConfigDialog : BaseDialogFragment() {
             requestCodeBg -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
                     setBgFromUri(uri)
+                }
+            }
+            requestCodeImport -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    importConfig(uri)
+                }
+            }
+            requestCodeExport -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    exportConfig(uri)
                 }
             }
         }
