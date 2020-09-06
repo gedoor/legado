@@ -28,7 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.toast
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -191,13 +190,13 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
 
     override fun export(position: Int) {
         exportPosition = position
-        FilePicker.selectFolder(this, exportRequestCode) {
-            val path = ACache.get(this@DownloadActivity).getAsString(exportBookPathKey)
-            if (path.isNullOrEmpty()) {
-                toast(R.string.no_default_path)
-            } else {
-                startExport(path)
-            }
+        val default = arrayListOf<String>()
+        val path = ACache.get(this@DownloadActivity).getAsString(exportBookPathKey)
+        if (!path.isNullOrEmpty()) {
+            default.add(path)
+        }
+        FilePicker.selectFolder(this, exportRequestCode, otherActions = default) {
+            startExport(it)
         }
     }
 

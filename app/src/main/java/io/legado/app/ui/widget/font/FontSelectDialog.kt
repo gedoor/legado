@@ -106,10 +106,19 @@ class FontSelectDialog : BaseDialogFragment(),
 
     private fun openFolder() {
         launch(Main) {
-            FilePicker.selectFolder(this@FontSelectDialog, fontFolderRequestCode) {
-                val path = "${FileUtils.getSdCardPath()}${File.separator}Fonts"
-                putPrefString(PreferKey.fontFolder, path)
-                loadFontFilesByPermission(path)
+            val defaultPath = "SD${File.separator}Fonts"
+            FilePicker.selectFolder(
+                this@FontSelectDialog,
+                fontFolderRequestCode,
+                otherActions = arrayListOf(defaultPath)
+            ) {
+                when (it) {
+                    defaultPath -> {
+                        val path = "${FileUtils.getSdCardPath()}${File.separator}Fonts"
+                        putPrefString(PreferKey.fontFolder, path)
+                        loadFontFilesByPermission(path)
+                    }
+                }
             }
         }
     }

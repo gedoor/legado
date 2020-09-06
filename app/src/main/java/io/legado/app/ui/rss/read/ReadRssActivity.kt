@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_rss_read.*
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jetbrains.anko.share
-import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 
 
@@ -142,13 +141,18 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
     }
 
     private fun saveImage() {
-        FilePicker.selectFolder(this, savePathRequestCode, getString(R.string.save_image)) {
-            val path = ACache.get(this).getAsString(imagePathKey)
-            if (path.isNullOrEmpty()) {
-                toast(R.string.no_default_path)
-            } else {
-                viewModel.saveImage(webPic, path)
-            }
+        val default = arrayListOf<String>()
+        val path = ACache.get(this).getAsString(imagePathKey)
+        if (!path.isNullOrEmpty()) {
+            default.add(path)
+        }
+        FilePicker.selectFolder(
+            this,
+            savePathRequestCode,
+            getString(R.string.save_image),
+            default
+        ) {
+            viewModel.saveImage(webPic, it)
         }
     }
 
