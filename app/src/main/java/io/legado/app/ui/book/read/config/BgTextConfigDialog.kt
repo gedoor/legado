@@ -235,7 +235,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 val bgName = FileUtils.getName(ReadBookConfig.durConfig.bgStr())
                 val bgFile = File(ReadBookConfig.durConfig.bgStr())
                 if (bgFile.exists()) {
-                    val bgExportFile = FileUtils.createFileIfNotExist(configDir, bgName)
+                    val bgExportFile = File(FileUtils.getPath(configDir, bgName))
                     bgFile.copyTo(bgExportFile)
                     exportFiles.add(bgExportFile)
                 }
