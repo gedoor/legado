@@ -1,5 +1,8 @@
 package io.legado.app.utils
 
+import android.net.Uri
+import java.io.File
+
 val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
 val imgRegex = "<img[^>]*>".toRegex()
 val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
@@ -7,6 +10,14 @@ val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
 fun String?.isContentPath(): Boolean = this?.startsWith("content://") == true
+
+fun String.parseToUri(): Uri {
+    return if (isContentPath()) {
+        Uri.parse(this)
+    } else {
+        Uri.fromFile(File(this))
+    }
+}
 
 fun String?.isAbsUrl() =
     this?.let {

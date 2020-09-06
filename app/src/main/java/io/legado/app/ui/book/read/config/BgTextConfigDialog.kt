@@ -224,7 +224,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             val fontPath = ReadBookConfig.textFont
             if (fontPath.isNotEmpty()) {
                 val fontName = FileUtils.getName(fontPath)
-                val fontBytes = Uri.parse(fontPath).readBytes(requireContext())
+                val fontBytes = fontPath.parseToUri().readBytes(requireContext())
                 fontBytes?.let {
                     val fontExportFile = FileUtils.createFileIfNotExist(configDir, fontName)
                     fontExportFile.writeBytes(it)
