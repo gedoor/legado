@@ -86,7 +86,7 @@
             android:gravity="center"
             android:padding="6dp"
             android:singleLine="true"
-            android:text="导入"
+            android:text="@string/import_str"
             android:textSize="14sp"
             app:isBottomBackground="true"
             tools:ignore="HardcodedText" />
@@ -103,7 +103,7 @@
             android:gravity="center"
             android:padding="6dp"
             android:singleLine="true"
-            android:text="导出"
+            android:text="@string/export_str"
             android:textSize="14sp"
             app:isBottomBackground="true"
             tools:ignore="HardcodedText" />

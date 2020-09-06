@@ -753,5 +753,7 @@
     <string name="all_read_time">總閱讀時間</string>
     <string name="un_select_all">全不選</string>
     <string name="delete_all">刪除所有</string>
+    <string name="import_str">导入</string>
+    <string name="export_str">导出</string>
 
 </resources>
