@@ -21,15 +21,22 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.EventBus
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivityHelp
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
+import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_read_bg_text.*
 import kotlinx.android.synthetic.main.item_bg_image.view.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
@@ -151,11 +158,18 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             postEvent(EventBus.UP_CONFIG, false)
         }
         tv_import.onClick {
+            val importFormNet = "网络导入"
+            val otherActions = arrayListOf(importFormNet)
             FilePicker.selectFile(
                 this@BgTextConfigDialog,
                 requestCodeImport,
-                allowExtensions = arrayOf("zip")
-            )
+                allowExtensions = arrayOf("zip"),
+                otherActions = otherActions
+            ) { action ->
+                when (action) {
+                    importFormNet -> importNetConfigAlert()
+                }
+            }
         }
         tv_export.onClick {
             FilePicker.selectFolder(this@BgTextConfigDialog, requestCodeExport)
@@ -249,13 +263,51 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         }
     }
 
+    @SuppressLint("InflateParams")
+    private fun importNetConfigAlert() {
+        alert("输入地址") {
+            var editText: AutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
+                }
+            }
+            okButton {
+                editText?.text?.toString()?.let { url ->
+                    importNetConfig(url)
+                }
+            }
+            noButton { }
+        }.show().applyTint()
+    }
+
+    private fun importNetConfig(url: String) {
+        execute {
+            HttpHelper.simpleGetBytesAsync(url)?.let {
+                importConfig(it)
+            } ?: throw Exception("获取失败")
+        }.onError {
+            longToast(it.msg)
+        }
+    }
+
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun importConfig(uri: Uri) {
+        execute {
+            importConfig(uri.readBytes(requireContext())!!)
+        }.onError {
+            it.printStackTrace()
+            longToast("导入失败:${it.localizedMessage}")
+        }
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private fun importConfig(byteArray: ByteArray) {
         execute {
             val configZipPath = FileUtils.getPath(requireContext().eCacheDir, configFileName)
             FileUtils.deleteFile(configZipPath)
             val zipFile = FileUtils.createFileIfNotExist(configZipPath)
-            zipFile.writeBytes(uri.readBytes(requireContext())!!)
+            zipFile.writeBytes(byteArray)
             val configDirPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig")
             FileUtils.deleteFile(configDirPath)
             ZipUtils.unzipFile(zipFile, FileUtils.createFolderIfNotExist(configDirPath))
