@@ -316,10 +316,8 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             val config: ReadBookConfig.Config = GSON.fromJsonObject(configFile.readText())!!
             if (config.textFont.isNotEmpty()) {
                 val fontName = FileUtils.getName(config.textFont)
-                val file = FileUtils.createFileIfNotExist(
-                    requireContext().externalFilesDir,
-                    "font",
-                    fontName
+                val file = File(
+                    FileUtils.getPath(requireContext().externalFilesDir, "font", fontName)
                 )
                 FileUtils.getFile(configDir, fontName).copyTo(file)
                 config.textFont = file.absolutePath
