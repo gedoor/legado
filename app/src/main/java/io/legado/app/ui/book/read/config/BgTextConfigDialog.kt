@@ -219,7 +219,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             val configExportPath = FileUtils.getPath(configDir, "readConfig.json")
             FileUtils.deleteFile(configExportPath)
             val configExportFile = FileUtils.createFileIfNotExist(configExportPath)
-            configExportFile.writeText(GSON.toJson(ReadBookConfig.durConfig))
+            configExportFile.writeText(GSON.toJson(ReadBookConfig.getExportConfig()))
             exportFiles.add(configExportFile)
             val fontPath = ReadBookConfig.textFont
             if (fontPath.isNotEmpty()) {
@@ -324,7 +324,9 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             if (config.bgType() == 2) {
                 val bgName = FileUtils.getName(config.bgStr())
                 val bgPath = FileUtils.getPath(requireContext().externalFilesDir, "bg", bgName)
-                FileUtils.getFile(configDir, bgName).copyTo(File(bgPath))
+                if (!FileUtils.exist(bgPath)) {
+                    FileUtils.getFile(configDir, bgName).copyTo(File(bgPath))
+                }
             }
             ReadBookConfig.durConfig = config
             postEvent(EventBus.UP_CONFIG, true)

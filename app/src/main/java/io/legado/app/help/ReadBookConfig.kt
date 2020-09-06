@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Parcelable
 import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
@@ -11,6 +12,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
+import kotlinx.android.parcel.Parcelize
 import java.io.File
 
 /**
@@ -302,7 +304,40 @@ object ReadBookConfig {
             config.showFooterLine = value
         }
 
+    fun getExportConfig(): Config {
+        val exportConfig = GSON.fromJsonObject<Config>(GSON.toJson(durConfig))!!
+        if (shareLayout) {
+            val shearConfig = getConfig(5)
+            exportConfig.textFont = shearConfig.textFont
+            exportConfig.textBold = shearConfig.textBold
+            exportConfig.textSize = shearConfig.textSize
+            exportConfig.letterSpacing = shearConfig.letterSpacing
+            exportConfig.lineSpacingExtra = shearConfig.lineSpacingExtra
+            exportConfig.paragraphSpacing = shearConfig.paragraphSpacing
+            exportConfig.titleMode = shearConfig.titleMode
+            exportConfig.titleSize = shearConfig.titleSize
+            exportConfig.titleTopSpacing = shearConfig.titleTopSpacing
+            exportConfig.titleBottomSpacing = shearConfig.titleBottomSpacing
+            exportConfig.paddingBottom = shearConfig.paddingBottom
+            exportConfig.paddingLeft = shearConfig.paddingLeft
+            exportConfig.paddingRight = shearConfig.paddingRight
+            exportConfig.paddingTop = shearConfig.paddingTop
+            exportConfig.headerPaddingBottom = shearConfig.headerPaddingBottom
+            exportConfig.headerPaddingLeft = shearConfig.headerPaddingLeft
+            exportConfig.headerPaddingRight = shearConfig.headerPaddingRight
+            exportConfig.headerPaddingTop = shearConfig.headerPaddingTop
+            exportConfig.footerPaddingBottom = shearConfig.footerPaddingBottom
+            exportConfig.footerPaddingLeft = shearConfig.footerPaddingLeft
+            exportConfig.footerPaddingRight = shearConfig.footerPaddingRight
+            exportConfig.footerPaddingTop = shearConfig.footerPaddingTop
+            exportConfig.showHeaderLine = shearConfig.showHeaderLine
+            exportConfig.showFooterLine = shearConfig.showFooterLine
+        }
+        return exportConfig
+    }
+
     @Keep
+    @Parcelize
     class Config(
         private var bgStr: String = "#EEEEEE",//白天背景
         private var bgStrNight: String = "#000000",//夜间背景
@@ -340,7 +375,7 @@ object ReadBookConfig {
         var footerPaddingTop: Int = 6,
         var showHeaderLine: Boolean = false,
         var showFooterLine: Boolean = true,
-    ) {
+    ) : Parcelable {
         fun setBg(bgType: Int, bg: String) {
             when {
                 AppConfig.isEInkMode -> {
