@@ -22,10 +22,7 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ItemTouchCallback
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
@@ -171,6 +168,15 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }.show().applyTint().requestInputMethod()
     }
 
+    private fun deleteGroup(bookGroup: BookGroup) {
+        alert(R.string.delete, R.string.sure_del) {
+            okButton {
+                viewModel.delGroup(bookGroup)
+            }
+            noButton()
+        }.show().applyTint()
+    }
+
     private class GroupDiffCallBack(
         private val oldItems: List<BookGroup>,
         private val newItems: List<BookGroup>
@@ -212,7 +218,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         override fun registerListener(holder: ItemViewHolder) {
             holder.itemView.apply {
                 tv_edit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
-                tv_del.onClick { getItem(holder.layoutPosition)?.let { viewModel.delGroup(it) } }
+                tv_del.onClick { getItem(holder.layoutPosition)?.let { deleteGroup(it) } }
             }
         }
 
