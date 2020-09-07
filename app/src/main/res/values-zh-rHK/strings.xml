@@ -730,7 +730,6 @@
     <string name="replace_enable_default_t">默认启用替换净化</string>
     <string name="replace_enable_default_s">新加入书架的书是否启用替换净化</string>
     <string name="select_restore_file">选择恢复文件</string>
-    <string name="select_theme">切换默认主题</string>
     <string name="day_background_too_dark">白天背景不能太暗</string>
     <string name="day_bottom_bar_too_dark">白天底栏不能太暗</string>
     <string name="night_background_too_light">夜间背景不能太亮</string>

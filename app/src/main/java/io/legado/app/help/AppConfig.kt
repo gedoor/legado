@@ -21,10 +21,12 @@ object AppConfig {
     var isNightTheme: Boolean
         get() = isNightTheme(App.INSTANCE)
         set(value) {
-            if (value) {
-                App.INSTANCE.putPrefString(PreferKey.themeMode, "2")
-            } else {
-                App.INSTANCE.putPrefString(PreferKey.themeMode, "1")
+            if (isNightTheme != value) {
+                if (value) {
+                    App.INSTANCE.putPrefString(PreferKey.themeMode, "2")
+                } else {
+                    App.INSTANCE.putPrefString(PreferKey.themeMode, "1")
+                }
             }
         }
 

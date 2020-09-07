@@ -97,14 +97,6 @@
         <item>細體</item>
     </string-array>
 
-    <string-array name="default_themes">
-        <item>極簡</item>
-        <item>耀夜</item>
-        <item>經典</item>
-        <item>黑白</item>
-        <item>A屏黑</item>
-    </string-array>
-
     <string-array name="language">
         <item>跟隨系統</item>
         <item>簡體中文</item>
