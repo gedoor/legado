@@ -1,5 +1,6 @@
 package io.legado.app.ui.rss.source.manage
 
+import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.RssSource
 
@@ -33,10 +34,19 @@ class DiffCallBack(
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
         val oldItem = oldItems[oldItemPosition]
         val newItem = newItems[newItemPosition]
-        return when {
-            oldItem.sourceName == newItem.sourceName
-                    && oldItem.enabled != newItem.enabled -> 2
-            else -> null
+        val payload = Bundle()
+        if (oldItem.sourceName != newItem.sourceName) {
+            payload.putString("name", newItem.sourceName)
         }
+        if (oldItem.sourceGroup != newItem.sourceGroup) {
+            payload.putString("group", newItem.sourceGroup)
+        }
+        if (oldItem.enabled != newItem.enabled) {
+            payload.putBoolean("enabled", newItem.enabled)
+        }
+        if (payload.isEmpty) {
+            return null
+        }
+        return payload
     }
 }

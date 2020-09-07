@@ -12,6 +12,7 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import kotlinx.android.synthetic.main.item_replace_rule.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
@@ -152,6 +153,32 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         if (movedItems.isNotEmpty()) {
             callBack.update(*movedItems.toTypedArray())
             movedItems.clear()
+        }
+    }
+
+    fun initDragSelectTouchHelperCallback(): DragSelectTouchHelper.Callback {
+        return object : DragSelectTouchHelper.AdvanceCallback<ReplaceRule>(Mode.ToggleAndReverse) {
+            override fun currentSelectedId(): MutableSet<ReplaceRule> {
+                return selected
+            }
+
+            override fun getItemId(position: Int): ReplaceRule {
+                return getItem(position)!!
+            }
+
+            override fun updateSelectState(position: Int, isSelected: Boolean): Boolean {
+                getItem(position)?.let {
+                    if (isSelected) {
+                        selected.add(it)
+                    } else {
+                        selected.remove(it)
+                    }
+                    notifyItemChanged(position, bundleOf(Pair("selected", null)))
+                    callBack.upCountView()
+                    return true
+                }
+                return false
+            }
         }
     }
 
