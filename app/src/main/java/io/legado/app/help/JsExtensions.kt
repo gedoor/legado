@@ -7,7 +7,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.htmlFormat
-import org.jetbrains.anko.getStackTraceString
+import io.legado.app.utils.msg
 import java.net.URLEncoder
 import java.util.*
 
@@ -25,7 +25,7 @@ interface JsExtensions {
             val response = call.execute()
             response.body()
         } catch (e: Exception) {
-            e.getStackTraceString()
+            e.msg
         }
     }
 
@@ -36,7 +36,7 @@ interface JsExtensions {
             val response = call.execute()
             response
         } catch (e: Exception) {
-            e.getStackTraceString()
+            e.msg
         }
     }
 
