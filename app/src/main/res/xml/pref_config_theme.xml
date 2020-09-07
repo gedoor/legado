@@ -82,6 +82,14 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="saveDayTheme"
+            android:title="@string/save_theme_config"
+            android:summary="@string/save_day_theme_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
@@ -121,6 +129,12 @@
             android:summary="@string/night_navbar_color"
             android:title="@string/navbar_color"
             app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="saveNightTheme"
+            android:title="@string/save_theme_config"
+            android:summary="@string/save_night_theme_summary"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>

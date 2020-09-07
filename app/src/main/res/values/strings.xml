@@ -756,5 +756,8 @@
     <string name="un_select_all">全不选</string>
     <string name="import_str">导入</string>
     <string name="export_str">导出</string>
+    <string name="save_theme_config">保存主题配置</string>
+    <string name="save_day_theme_summary">保存白天主题配置以共调用和分享</string>
+    <string name="save_night_theme_summary">保存夜间主题配置以共调用和分享</string>
 
 </resources>
