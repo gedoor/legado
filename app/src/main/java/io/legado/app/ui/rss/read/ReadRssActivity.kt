@@ -1,10 +1,13 @@
 package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.*
 import android.webkit.*
 import androidx.core.view.size
@@ -137,6 +140,33 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 }
             }
             return@setOnLongClickListener false
+        }
+        web_view.setDownloadListener { url, _, contentDisposition, _, _ ->
+            val fileName = URLUtil.guessFileName(url, contentDisposition, null)
+            ll_view.longSnackbar(fileName, getString(R.string.action_download)) {
+                // 指定下载地址
+                val request = DownloadManager.Request(Uri.parse(url))
+                // 允许媒体扫描，根据下载的文件类型被加入相册、音乐等媒体库
+                @Suppress("DEPRECATION")
+                request.allowScanningByMediaScanner()
+                // 设置通知的显示类型，下载进行时和完成后显示通知
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                // 允许在计费流量下下载
+                request.setAllowedOverMetered(false)
+                // 允许该记录在下载管理界面可见
+                @Suppress("DEPRECATION")
+                request.setVisibleInDownloadsUi(false)
+                // 允许漫游时下载
+                request.setAllowedOverRoaming(true)
+                // 允许下载的网路类型
+                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+                // 设置下载文件保存的路径和文件名
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+                // 添加一个下载任务
+                val downloadId = downloadManager.enqueue(request)
+                print(downloadId)
+            }
         }
     }
 
