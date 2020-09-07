@@ -166,6 +166,10 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     AppConfig.elevation = it
                     recreateActivities()
                 }
+            "saveDayTheme" -> {
+            }
+            "saveNightTheme" -> {
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }

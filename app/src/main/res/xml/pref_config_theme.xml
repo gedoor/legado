@@ -4,13 +4,13 @@
 
     <io.legado.app.ui.widget.prefs.IconListPreference
         android:defaultValue="ic_launcher"
-        android:key="launcherIcon"
-        android:title="@string/change_icon"
-        android:summary="@string/change_icon_summary"
-        android:entryValues="@array/icons"
         android:entries="@array/icon_names"
-        app:icons="@array/icons"
-        app:iconSpaceReserved="false" />
+        android:entryValues="@array/icons"
+        android:key="launcherIcon"
+        android:summary="@string/change_icon_summary"
+        android:title="@string/change_icon"
+        app:iconSpaceReserved="false"
+        app:icons="@array/icons" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
@@ -34,19 +34,19 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
-        android:key="defaultTheme"
-        android:summary="@string/restore_default_theme"
-        android:title="@string/default_theme"
+        android:key="themeList"
+        android:summary="@string/theme_list_summary"
+        android:title="@string/theme_list"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/day"
-        app:layout="@layout/view_preference_category"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
-        app:iconSpaceReserved="false">
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
 
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_light_blue_600"
@@ -77,15 +77,15 @@
             android:key="colorBottomBackground"
             android:summary="@string/day_navbar_color"
             android:title="@string/navbar_color"
-            app:cpv_dialogType="preset"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
+            app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="saveDayTheme"
-            android:title="@string/save_theme_config"
             android:summary="@string/save_day_theme_summary"
+            android:title="@string/save_theme_config"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
@@ -94,10 +94,10 @@
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/night"
-        app:layout="@layout/view_preference_category"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
-        app:iconSpaceReserved="false">
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
 
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_900"
@@ -133,8 +133,8 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="saveNightTheme"
-            android:title="@string/save_theme_config"
             android:summary="@string/save_night_theme_summary"
+            android:title="@string/save_theme_config"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>

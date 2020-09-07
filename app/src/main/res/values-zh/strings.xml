@@ -448,8 +448,6 @@
     <string name="theme">主题</string>
     <string name="theme_mode">主题模式</string>
     <string name="theme_mode_desc">选择主题模式</string>
-    <string name="default_theme">默认主题</string>
-    <string name="restore_default_theme">恢复主题为默认配色</string>
     <string name="join_qq_group">加入QQ群</string>
     <string name="bg_image_per">获取背景图片需存储权限</string>
     <string name="input_book_source_url">输入书源网址</string>
@@ -758,4 +756,6 @@
     <string name="save_theme_config">保存主题配置</string>
     <string name="save_day_theme_summary">保存白天主题配置以共调用和分享</string>
     <string name="save_night_theme_summary">保存夜间主题配置以共调用和分享</string>
+    <string name="theme_list">主题列表</string>
+    <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
 </resources>
