@@ -44,6 +44,7 @@ object ThemeConfig {
     fun addConfig(json: String) {
         GSON.fromJsonObject<Config>(json)?.let {
             addConfig(it)
+            save()
         }
     }
 
