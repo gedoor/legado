@@ -2,6 +2,7 @@ package io.legado.app.help
 
 import android.content.Context
 import android.graphics.Color
+import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.EventBus
@@ -130,6 +131,7 @@ object ThemeConfig {
         addConfig(config)
     }
 
+    @Keep
     class Config(
         var themeName: String,
         var isNightTheme: Boolean,
