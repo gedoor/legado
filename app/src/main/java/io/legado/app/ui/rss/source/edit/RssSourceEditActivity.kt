@@ -1,9 +1,6 @@
 package io.legado.app.ui.rss.source.edit
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -23,10 +20,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
-import io.legado.app.utils.GSON
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.shareWithQr
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_source_edit.*
 import org.jetbrains.anko.*
 import kotlin.math.abs
@@ -99,8 +93,7 @@ class RssSourceEditActivity :
             }
             R.id.menu_copy_source -> {
                 GSON.toJson(getRssSource())?.let { sourceStr ->
-                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                    clipboard?.setPrimaryClip(ClipData.newPlainText(null, sourceStr))
+                    sendToClip(sourceStr)
                 }
             }
             R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)

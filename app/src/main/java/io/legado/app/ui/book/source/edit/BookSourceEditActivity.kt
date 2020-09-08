@@ -1,9 +1,6 @@
 package io.legado.app.ui.book.source.edit
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
@@ -28,10 +25,7 @@ import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.KeyboardToolPop
-import io.legado.app.utils.GSON
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.shareWithQr
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.*
 import kotlin.math.abs
@@ -82,8 +76,7 @@ class BookSourceEditActivity :
             }
             R.id.menu_copy_source -> getSource().let { source ->
                 GSON.toJson(source)?.let { sourceStr ->
-                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                    clipboard?.setPrimaryClip(ClipData.newPlainText(null, sourceStr))
+                    sendToClip(sourceStr)
                 }
             }
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }

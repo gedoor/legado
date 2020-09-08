@@ -3,8 +3,10 @@ package io.legado.app.ui.config
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -18,12 +20,13 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getClipText
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_theme_config.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.share
 
-class ThemeListDialog : BaseDialogFragment() {
+class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private lateinit var adapter: Adapter
 
@@ -46,6 +49,7 @@ class ThemeListDialog : BaseDialogFragment() {
         tool_bar.setBackgroundColor(primaryColor)
         tool_bar.setTitle(R.string.theme_list)
         initView()
+        initMenu()
         initData()
     }
 
@@ -56,8 +60,23 @@ class ThemeListDialog : BaseDialogFragment() {
         recycler_view.adapter = adapter
     }
 
+    private fun initMenu() {
+        tool_bar.setOnMenuItemClickListener(this)
+    }
+
     fun initData() {
         adapter.setItems(ThemeConfig.configList)
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_import -> {
+                requireContext().getClipText()?.let {
+                    ThemeConfig.addConfig(it)
+                }
+            }
+        }
+        return true
     }
 
     fun delete(index: Int) {

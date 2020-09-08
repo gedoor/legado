@@ -40,7 +40,13 @@ object ThemeConfig {
         }
     }
 
-    fun addConfig(newConfig: Config) {
+    fun addConfig(json: String) {
+        GSON.fromJsonObject<Config>(json)?.let {
+            addConfig(it)
+        }
+    }
+
+    private fun addConfig(newConfig: Config) {
         configList.forEachIndexed { index, config ->
             if (newConfig.themeName == config.themeName) {
                 configList[index] = newConfig
@@ -125,12 +131,12 @@ object ThemeConfig {
     }
 
     class Config(
-        var themeName: String = "典雅蓝",
-        var isNightTheme: Boolean = false,
-        var primaryColor: String = "#03A9F4",
-        var accentColor: String = "#AD1457",
-        var backgroundColor: String = "#F5F5F5",
-        var bottomBackground: String = "#EEEEEE"
+        var themeName: String,
+        var isNightTheme: Boolean,
+        var primaryColor: String,
+        var accentColor: String,
+        var backgroundColor: String,
+        var bottomBackground: String
     )
 
 }
