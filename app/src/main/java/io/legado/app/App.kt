@@ -45,7 +45,7 @@ class App : MultiDexApplication() {
         super.onCreate()
         INSTANCE = this
         androidId = Settings.System.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        CrashHandler().init(this)
+        CrashHandler(this)
         LanguageUtils.setConfigurationOld(this)
         db = AppDatabase.createDatabase(INSTANCE)
         packageManager.getPackageInfo(packageName, 0)?.let {
