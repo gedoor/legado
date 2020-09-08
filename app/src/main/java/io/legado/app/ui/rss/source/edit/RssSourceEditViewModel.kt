@@ -1,14 +1,13 @@
 package io.legado.app.ui.rss.source.edit
 
 import android.app.Application
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getClipText
 import kotlinx.coroutines.Dispatchers
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
@@ -53,12 +52,8 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     fun pasteSource(onSuccess: (source: RssSource) -> Unit) {
         execute(context = Dispatchers.Main) {
             var source: RssSource? = null
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-            clipboard?.primaryClip?.let {
-                if (it.itemCount > 0) {
-                    val json = it.getItemAt(0).text.toString().trim()
-                    source = GSON.fromJsonObject<RssSource>(json)
-                }
+            context.getClipText()?.let { json ->
+                source = GSON.fromJsonObject<RssSource>(json)
             }
             source
         }.onError {
