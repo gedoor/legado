@@ -91,19 +91,11 @@ class RssSourceEditActivity :
                     }
                 }
             }
-            R.id.menu_copy_source -> {
-                GSON.toJson(getRssSource())?.let { sourceStr ->
-                    sendToClip(sourceStr)
-                }
-            }
+            R.id.menu_copy_source -> sendToClip(GSON.toJson(getRssSource()))
             R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
-            R.id.menu_share_str -> GSON.toJson(getRssSource())?.let { sourceStr ->
-                share(sourceStr)
-            }
-            R.id.menu_share_qr -> GSON.toJson(getRssSource())?.let { sourceStr ->
-                shareWithQr(getString(R.string.share_rss_source), sourceStr)
-            }
+            R.id.menu_share_str -> share(GSON.toJson(getRssSource()))
+            R.id.menu_share_qr -> shareWithQr(getString(R.string.share_rss_source), GSON.toJson(getRssSource()))
         }
         return super.onCompatOptionsItemSelected(item)
     }

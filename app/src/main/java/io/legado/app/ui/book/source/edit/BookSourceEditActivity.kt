@@ -74,17 +74,11 @@ class BookSourceEditActivity :
                     }
                 }
             }
-            R.id.menu_copy_source -> getSource().let { source ->
-                GSON.toJson(source)?.let { sourceStr ->
-                    sendToClip(sourceStr)
-                }
-            }
+            R.id.menu_copy_source -> sendToClip(GSON.toJson(getSource()))
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
-            R.id.menu_share_str -> GSON.toJson(getSource())?.let { share(it) }
-            R.id.menu_share_qr -> GSON.toJson(getSource())?.let { sourceStr ->
-                shareWithQr(getString(R.string.share_book_source), sourceStr)
-            }
+            R.id.menu_share_str -> share(GSON.toJson(getSource()))
+            R.id.menu_share_qr -> shareWithQr(getString(R.string.share_book_source), GSON.toJson(getSource()))
             R.id.menu_rule_summary -> {
                 try {
                     val intent = Intent(Intent.ACTION_VIEW)

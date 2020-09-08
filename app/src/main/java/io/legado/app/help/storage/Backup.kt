@@ -63,11 +63,11 @@ object Backup {
                 writeListToJson(App.db.txtTocRule().all, "txtTocRule.json", backupPath)
                 writeListToJson(App.db.readRecordDao().all, "readRecord.json", backupPath)
                 writeListToJson(App.db.httpTTSDao().all, "httpTTS.json", backupPath)
-                GSON.toJson(ReadBookConfig.configList)?.let {
+                GSON.toJson(ReadBookConfig.configList).let {
                     FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
                         .writeText(it)
                 }
-                GSON.toJson(ThemeConfig.configList)?.let {
+                GSON.toJson(ThemeConfig.configList).let {
                     FileUtils.createFileIfNotExist(backupPath + File.separator + ThemeConfig.configFileName)
                         .writeText(it)
                 }
