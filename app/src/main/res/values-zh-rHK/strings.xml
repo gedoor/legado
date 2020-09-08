@@ -288,7 +288,6 @@
     <string name="padding_right">右邊距</string>
     <string name="check_book_source">校驗書源</string>
     <string name="check_select_source">校驗所選</string>
-    <string name="debug_select_source">debug所選</string>
     <string name="progress_show">進度 %1$d/%2$d</string>
     <string name="tts_fix">請安裝並選擇中文 TTS!</string>
     <string name="tts_init_failed">TTS 初始化失敗!</string>
