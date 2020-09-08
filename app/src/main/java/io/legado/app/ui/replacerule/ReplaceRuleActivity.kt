@@ -21,7 +21,6 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.help.ItemTouchCallback
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
@@ -32,6 +31,7 @@ import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
