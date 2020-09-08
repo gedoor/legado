@@ -20,11 +20,11 @@ import java.io.File
  */
 @Keep
 object ReadBookConfig {
-    const val readConfigFileName = "readConfig.json"
-    private val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, readConfigFileName)
+    const val configFileName = "readConfig.json"
+    val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, configFileName)
     val configList: ArrayList<Config> = arrayListOf()
     private val defaultConfigs by lazy {
-        val json = String(App.INSTANCE.assets.open(readConfigFileName).readBytes())
+        val json = String(App.INSTANCE.assets.open(configFileName).readBytes())
         GSON.fromJsonArray<Config>(json)!!
     }
     var durConfig
@@ -95,6 +95,7 @@ object ReadBookConfig {
         Coroutine.async {
             synchronized(this) {
                 val json = GSON.toJson(configList)
+                FileUtils.deleteFile(configFilePath)
                 FileUtils.createFileIfNotExist(configFilePath).writeText(json)
             }
         }

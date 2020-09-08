@@ -16,11 +16,18 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
+import io.legado.app.help.ThemeConfig
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.ui.widget.prefs.IconListPreference
+import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 
 
 @Suppress("SameParameterValue")
@@ -147,7 +154,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
 
     @SuppressLint("PrivateResource")
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+        when (val key = preference?.key) {
             PreferKey.barElevation -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.bar_elevation))
                 .setMaxValue(32)
@@ -162,17 +169,35 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     AppConfig.elevation = it
                     recreateActivities()
                 }
-            "themeList" -> themeListAlert()
-            "saveDayTheme" -> {
-            }
-            "saveNightTheme" -> {
-            }
+            "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
+            "saveDayTheme", "saveNightTheme" -> saveThemeAlert(key)
         }
         return super.onPreferenceTreeClick(preference)
     }
 
-    private fun themeListAlert() {
-
+    @SuppressLint("InflateParams")
+    private fun saveThemeAlert(key: String) {
+        alert("主题名称") {
+            var editText: AutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
+                }
+            }
+            okButton {
+                editText?.text?.toString()?.let { themeName ->
+                    when (key) {
+                        "saveDayTheme" -> {
+                            ThemeConfig.saveDayTheme(requireContext(), themeName)
+                        }
+                        "saveNightTheme" -> {
+                            ThemeConfig.saveNightTheme(requireContext(), themeName)
+                        }
+                    }
+                }
+            }
+            noButton { }
+        }.show().applyTint()
     }
 
     private fun upTheme(isNightTheme: Boolean) {

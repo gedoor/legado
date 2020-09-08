@@ -33,7 +33,7 @@ object Backup {
             "txtTocRule.json",
             "readRecord.json",
             "httpTTS.json",
-            ReadBookConfig.readConfigFileName,
+            ReadBookConfig.configFileName,
             "config.xml"
         )
     }
@@ -62,7 +62,7 @@ object Backup {
                 writeListToJson(App.db.readRecordDao().all, "readRecord.json", backupPath)
                 writeListToJson(App.db.httpTTSDao().all, "httpTTS.json", backupPath)
                 GSON.toJson(ReadBookConfig.configList)?.let {
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.readConfigFileName)
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
                         .writeText(it)
                 }
                 Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
