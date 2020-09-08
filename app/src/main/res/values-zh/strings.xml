@@ -386,7 +386,7 @@
     <string name="source_group">源分组(sourceGroup)</string>
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
-    <string name="comment">源注释（sourceComment)</string>
+    <string name="comment">源注释(sourceComment)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
     <string name="r_book_list">书籍列表规则(bookList)</string>
