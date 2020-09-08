@@ -62,6 +62,8 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private fun initMenu() {
         tool_bar.setOnMenuItemClickListener(this)
+        tool_bar.inflateMenu(R.menu.theme_list)
+        tool_bar.menu.applyTint(requireContext())
     }
 
     fun initData() {
