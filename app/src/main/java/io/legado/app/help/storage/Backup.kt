@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.ThemeConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -34,6 +35,7 @@ object Backup {
             "readRecord.json",
             "httpTTS.json",
             ReadBookConfig.configFileName,
+            ThemeConfig.configFileName,
             "config.xml"
         )
     }
@@ -63,6 +65,10 @@ object Backup {
                 writeListToJson(App.db.httpTTSDao().all, "httpTTS.json", backupPath)
                 GSON.toJson(ReadBookConfig.configList)?.let {
                     FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
+                        .writeText(it)
+                }
+                GSON.toJson(ThemeConfig.configList)?.let {
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + ThemeConfig.configFileName)
                         .writeText(it)
                 }
                 Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
