@@ -288,6 +288,7 @@
     <string name="padding_right">右邊距</string>
     <string name="check_book_source">校驗書源</string>
     <string name="check_select_source">校驗所選</string>
+    <string name="debug_select_source">debug所選</string>
     <string name="progress_show">進度 %1$d/%2$d</string>
     <string name="tts_fix">請安裝並選擇中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失敗!</string>
@@ -731,9 +732,7 @@
     <string name="replace_enable_default_s">新加入書架的書是否啟用取代淨化</string>
     <string name="select_restore_file">選擇復原文件</string>
     <string name="day_background_too_dark">白天背景不能太暗</string>
-    <string name="day_bottom_bar_too_dark">白天底欄不能太暗</string>
     <string name="night_background_too_light">夜間背景不能太亮</string>
-    <string name="night_bottom_bar_too_light">夜間底欄不能太亮</string>
     <string name="accent_background_diff">強調色不能和背景顏色相似</string>
     <string name="accent_text_diff">強調色不能和文字顏色相似</string>
     <string name="wrong_format">格式不對</string>
@@ -758,5 +757,6 @@
     <string name="theme_list">主题列表</string>
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
     <string name="select_theme">切換默認主題</string>
+    <string name="comment">書源注釋</string>
 
 </resources>

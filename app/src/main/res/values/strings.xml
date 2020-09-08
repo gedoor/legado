@@ -290,6 +290,7 @@
     <string name="padding_right">Padding right</string>
     <string name="check_book_source">Check book sources</string>
     <string name="check_select_source">Check the selected source</string>
+    <string name="debug_select_source">Debug the selected source</string>
     <string name="progress_show">Progress %1$d/%2$d</string>
     <string name="tts_fix">Please install and select Chinese TTS!</string>
     <string name="tts_init_failed">TTS initialization failed!</string>
@@ -759,4 +760,5 @@
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
+    <string name="comment">Book source comment</string>
 </resources>

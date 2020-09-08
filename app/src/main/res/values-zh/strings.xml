@@ -290,6 +290,7 @@
     <string name="padding_right">右边距</string>
     <string name="check_book_source">校验书源</string>
     <string name="check_select_source">校验所选</string>
+    <string name="debug_select_source">Debug所选</string>
     <string name="progress_show">进度 %1$d/%2$d</string>
     <string name="tts_fix">请安装并选择中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失败!</string>
@@ -758,4 +759,5 @@
     <string name="theme_list">主题列表</string>
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
     <string name="select_theme">切换默认主题</string>
+    <string name="comment">书源注释</string>
 </resources>
