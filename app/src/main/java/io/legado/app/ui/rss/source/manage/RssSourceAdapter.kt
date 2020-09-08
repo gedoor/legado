@@ -10,9 +10,9 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssSource
-import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import kotlinx.android.synthetic.main.item_rss_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*

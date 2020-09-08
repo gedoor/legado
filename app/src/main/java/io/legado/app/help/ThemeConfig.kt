@@ -2,6 +2,7 @@ package io.legado.app.help
 
 import android.content.Context
 import android.graphics.Color
+import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.EventBus
@@ -40,7 +41,14 @@ object ThemeConfig {
         }
     }
 
-    fun addConfig(newConfig: Config) {
+    fun addConfig(json: String) {
+        GSON.fromJsonObject<Config>(json)?.let {
+            addConfig(it)
+            save()
+        }
+    }
+
+    private fun addConfig(newConfig: Config) {
         configList.forEachIndexed { index, config ->
             if (newConfig.themeName == config.themeName) {
                 configList[index] = newConfig
@@ -66,10 +74,7 @@ object ThemeConfig {
     fun applyConfig(context: Context, config: Config) {
         val primary = Color.parseColor(config.primaryColor)
         val accent = Color.parseColor(config.accentColor)
-        var background = Color.parseColor(config.backgroundColor)
-        if (!ColorUtils.isColorLight(background)) {
-            background = context.getCompatColor(R.color.md_grey_100)
-        }
+        val background = Color.parseColor(config.backgroundColor)
         val bBackground = Color.parseColor(config.bottomBackground)
         if (config.isNightTheme) {
             context.putPrefInt(PreferKey.cNPrimary, primary)
@@ -127,13 +132,14 @@ object ThemeConfig {
         addConfig(config)
     }
 
+    @Keep
     class Config(
-        var themeName: String = "典雅蓝",
-        var isNightTheme: Boolean = false,
-        var primaryColor: String = "#03A9F4",
-        var accentColor: String = "#AD1457",
-        var backgroundColor: String = "#F5F5F5",
-        var bottomBackground: String = "#EEEEEE"
+        var themeName: String,
+        var isNightTheme: Boolean,
+        var primaryColor: String,
+        var accentColor: String,
+        var backgroundColor: String,
+        var bottomBackground: String
     )
 
 }

@@ -146,6 +146,16 @@ fun Context.sendToClip(text: String) {
     }
 }
 
+fun Context.getClipText(): String? {
+    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+    clipboard?.primaryClip?.let {
+        if (it.itemCount > 0) {
+            return it.getItemAt(0).text.toString().trim()
+        }
+    }
+    return null
+}
+
 /**
  * 系统是否暗色主题
  */
