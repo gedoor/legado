@@ -383,6 +383,7 @@
     <string name="source_group">源分組 (sourceGroup)</string>
     <string name="sort_url">分類 Url</string>
     <string name="login_url">登錄 URL(loginUrl)</string>
+    <string name="comment">源注釋(sourceComment)</string>
     <string name="r_search_url">搜索地址 (url)</string>
     <string name="r_find_url">發現地址規則 (url)</string>
     <string name="r_book_list">書籍列表規則 (bookList)</string>
@@ -758,5 +759,5 @@
     <string name="theme_list">主题列表</string>
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
     <string name="select_theme">切換默認主題</string>
-    <string name="comment">源注釋(sourceComment)</string>
+
 </resources>
