@@ -1,9 +1,6 @@
 package io.legado.app.ui.book.source.edit
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
@@ -28,10 +25,7 @@ import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.KeyboardToolPop
-import io.legado.app.utils.GSON
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.shareWithQr
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.*
 import kotlin.math.abs
@@ -80,18 +74,11 @@ class BookSourceEditActivity :
                     }
                 }
             }
-            R.id.menu_copy_source -> getSource().let { source ->
-                GSON.toJson(source)?.let { sourceStr ->
-                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                    clipboard?.setPrimaryClip(ClipData.newPlainText(null, sourceStr))
-                }
-            }
+            R.id.menu_copy_source -> sendToClip(GSON.toJson(getSource()))
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
-            R.id.menu_share_str -> GSON.toJson(getSource())?.let { share(it) }
-            R.id.menu_share_qr -> GSON.toJson(getSource())?.let { sourceStr ->
-                shareWithQr(getString(R.string.share_book_source), sourceStr)
-            }
+            R.id.menu_share_str -> share(GSON.toJson(getSource()))
+            R.id.menu_share_qr -> shareWithQr(getString(R.string.share_book_source), GSON.toJson(getSource()))
             R.id.menu_rule_summary -> {
                 try {
                     val intent = Intent(Intent.ACTION_VIEW)

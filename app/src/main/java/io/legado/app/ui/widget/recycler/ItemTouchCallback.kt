@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.ui.widget.recycler
 
 
 import androidx.recyclerview.widget.GridLayoutManager

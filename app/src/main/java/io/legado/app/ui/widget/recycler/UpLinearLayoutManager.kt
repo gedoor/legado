@@ -4,12 +4,7 @@ import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 
-class UpLinearLayoutManager: LinearLayoutManager {
-    val context: Context
-
-    constructor(context: Context) : super(context) {
-        this.context = context
-    }
+class UpLinearLayoutManager(val context: Context) : LinearLayoutManager(context) {
 
     fun smoothScrollToPosition(position: Int) {
         smoothScrollToPosition(position, 0)
