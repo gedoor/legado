@@ -75,6 +75,7 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
             R.id.menu_import -> {
                 requireContext().getClipText()?.let {
                     ThemeConfig.addConfig(it)
+                    initData()
                 }
             }
         }
