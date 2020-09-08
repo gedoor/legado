@@ -760,5 +760,5 @@
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
-    <string name="comment">Book source comment</string>
+    <string name="comment">源注释（sourceComment)</string>
 </resources>
