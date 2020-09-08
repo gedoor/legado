@@ -9,7 +9,7 @@
   },
   {
     "themeName": "黑白",
-    "isNightTheme": false,
+    "isNightTheme": true,
     "primaryColor": "#303030",
     "accentColor": "#E0E0E0",
     "backgroundColor": "#424242",
@@ -17,7 +17,7 @@
   },
   {
     "themeName": "A屏黑",
-    "isNightTheme": false,
+    "isNightTheme": true,
     "primaryColor": "#000000",
     "accentColor": "#FFFFFF",
     "backgroundColor": "#000000",

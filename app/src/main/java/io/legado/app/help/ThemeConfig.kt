@@ -66,10 +66,7 @@ object ThemeConfig {
     fun applyConfig(context: Context, config: Config) {
         val primary = Color.parseColor(config.primaryColor)
         val accent = Color.parseColor(config.accentColor)
-        var background = Color.parseColor(config.backgroundColor)
-        if (!ColorUtils.isColorLight(background)) {
-            background = context.getCompatColor(R.color.md_grey_100)
-        }
+        val background = Color.parseColor(config.backgroundColor)
         val bBackground = Color.parseColor(config.bottomBackground)
         if (config.isNightTheme) {
             context.putPrefInt(PreferKey.cNPrimary, primary)

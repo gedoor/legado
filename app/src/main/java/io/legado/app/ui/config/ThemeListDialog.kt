@@ -85,6 +85,9 @@ class ThemeListDialog : BaseDialogFragment() {
 
         override fun registerListener(holder: ItemViewHolder) {
             holder.itemView.apply {
+                onClick {
+                    ThemeConfig.applyConfig(context, ThemeConfig.configList[holder.layoutPosition])
+                }
                 iv_share.onClick {
                     share(holder.layoutPosition)
                 }

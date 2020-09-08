@@ -757,6 +757,5 @@
     <string name="save_night_theme_summary">保存夜间主题配置以共调用和分享</string>
     <string name="theme_list">主题列表</string>
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
-    <string name="select_theme">切換默認主題</string>
 
 </resources>
