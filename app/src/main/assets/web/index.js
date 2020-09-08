@@ -33,6 +33,7 @@ const RuleJSON = (() => {
 	ruleJson.weight = 0;
 	ruleJson.enabled = true;
 	ruleJson.enabledExplore = true;
+    ruleJson.bookSourceComment = ""
 
 	// 搜索规则
 	$$('.rules .ruleSearch').forEach(item => searchJson[item.title] = '');
@@ -159,6 +160,7 @@ function rule2json() {
 	RuleJSON.ruleContent = contentJson;
 
 	RuleJSON.lastUpdateTime = RuleJSON.lastUpdateTime == '' ? 0 : parseInt(RuleJSON.lastUpdateTime);
+	RuleJSON.bookSourceComment = RuleJSON.bookSourceComment == '' ? "" : String(RuleJSON.bookSourceComment);
 	RuleJSON.customOrder = RuleJSON.customOrder == '' ? 0 : parseInt(RuleJSON.customOrder);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
 	RuleJSON.bookSourceType == RuleJSON.bookSourceType == '' ? 0 : parseInt(RuleJSON.weight);
