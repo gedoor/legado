@@ -135,7 +135,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    testImplementation "androidx.room:room-testing:2.2.5"
 
     //lifecycle
     def lifecycle_version = '2.2.0'
