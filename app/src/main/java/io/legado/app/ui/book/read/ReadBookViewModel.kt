@@ -65,6 +65,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.loadContent(resetPageOffset = true)
             }
         } else {
+            ReadBook.book = book
             if (ReadBook.durChapterIndex != book.durChapterIndex) {
                 ReadBook.durChapterIndex = book.durChapterIndex
                 ReadBook.durPageIndex = book.durChapterPos
@@ -72,7 +73,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.curTextChapter = null
                 ReadBook.nextTextChapter = null
             }
-            ReadBook.book!!.group = book.group
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
             isInitFinish = true
@@ -160,20 +160,24 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             ReadBook.upMsg(null)
             ReadBook.book?.changeTo(newBook)
+            ReadBook.book = newBook
+            App.db.bookSourceDao().getBookSource(newBook.origin)?.let {
+                ReadBook.webBook = WebBook(it)
+            }
             ReadBook.prevTextChapter = null
             ReadBook.curTextChapter = null
             ReadBook.nextTextChapter = null
             withContext(Main) {
                 ReadBook.callBack?.upContent()
             }
-            ReadBook.book = newBook
-            App.db.bookSourceDao().getBookSource(newBook.origin)?.let {
-                ReadBook.webBook = WebBook(it)
-            }
             if (newBook.tocUrl.isEmpty()) {
-                loadBookInfo(newBook) { upChangeDurChapterIndex(newBook, it) }
+                loadBookInfo(newBook) {
+                    upChangeDurChapterIndex(newBook, it)
+                }
             } else {
-                loadChapterList(newBook) { upChangeDurChapterIndex(newBook, it) }
+                loadChapterList(newBook) {
+                    upChangeDurChapterIndex(newBook, it)
+                }
             }
         }
     }
