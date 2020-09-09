@@ -55,93 +55,91 @@ data class Book(
     var originOrder: Int = 0,                   //书源排序
     var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,         // 正文使用净化替换规则
     var variable: String? = null                // 自定义书籍变量信息(用于书源规则检索书籍信息)
-) : Parcelable, BaseBook {
-
+): Parcelable, BaseBook {
+    
     fun isLocalBook(): Boolean {
         return origin == BookType.local
     }
-
+    
     fun isLocalTxt(): Boolean {
         return isLocalBook() && originName.endsWith(".txt", true)
     }
-
+    
     fun isEpub(): Boolean {
         return originName.endsWith(".epub", true)
     }
-
+    
     fun isOnLineTxt(): Boolean {
         return !isLocalBook() && type == 0
     }
-
+    
     override fun equals(other: Any?): Boolean {
         if (other is Book) {
             return other.bookUrl == bookUrl
         }
         return false
     }
-
+    
     override fun hashCode(): Int {
         return bookUrl.hashCode()
     }
-
+    
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     override val variableMap by lazy {
         GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
     }
-
+    
     override fun putVariable(key: String, value: String) {
         variableMap[key] = value
         variable = GSON.toJson(variableMap)
     }
-
+    
     @Ignore
     @IgnoredOnParcel
     override var infoHtml: String? = null
-
+    
     @Ignore
     @IgnoredOnParcel
     override var tocHtml: String? = null
-
+    
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
-
+    
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
-
+    
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
-
+    
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
-
+    
     fun fileCharset(): Charset {
         return charset(charset ?: "UTF-8")
     }
-
+    
     fun getFolderName(): String {
         return name.replace(AppPattern.fileNameRegex, "") + MD5Utils.md5Encode16(bookUrl)
     }
-
-    fun toSearchBook(): SearchBook {
-        return SearchBook(
-            name = name,
-            author = author,
-            kind = kind,
-            bookUrl = bookUrl,
-            origin = origin,
-            originName = originName,
-            type = type,
-            wordCount = wordCount,
-            latestChapterTitle = latestChapterTitle,
-            coverUrl = coverUrl,
-            intro = intro,
-            tocUrl = tocUrl,
-            originOrder = originOrder,
-            variable = variable
-        ).apply {
-            this.infoHtml = this@Book.infoHtml
-            this.tocHtml = this@Book.tocHtml
-        }
+    
+    fun toSearchBook() = SearchBook(
+        name = name,
+        author = author,
+        kind = kind,
+        bookUrl = bookUrl,
+        origin = origin,
+        originName = originName,
+        type = type,
+        wordCount = wordCount,
+        latestChapterTitle = latestChapterTitle,
+        coverUrl = coverUrl,
+        intro = intro,
+        tocUrl = tocUrl,
+        originOrder = originOrder,
+        variable = variable
+    ).apply {
+        this.infoHtml = this@Book.infoHtml
+        this.tocHtml = this@Book.tocHtml
     }
-
+    
     fun changeTo(newBook: Book) {
         newBook.group = group
         newBook.order = order
@@ -153,7 +151,7 @@ data class Book(
         delete()
         App.db.bookDao().insert(newBook)
     }
-
+    
     fun delete() {
         if (ReadBook.book?.bookUrl == bookUrl) {
             ReadBook.book = null
