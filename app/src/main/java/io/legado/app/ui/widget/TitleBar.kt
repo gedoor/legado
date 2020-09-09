@@ -196,6 +196,10 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         backgroundColor = Color.TRANSPARENT
     }
 
+    fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, fullScreen: Boolean) {
+        topPadding = if (!isInMultiWindowMode && fullScreen) context.statusBarHeight else 0
+    }
+
     private fun attachToActivity() {
         if (attachToActivity) {
             activity?.let {

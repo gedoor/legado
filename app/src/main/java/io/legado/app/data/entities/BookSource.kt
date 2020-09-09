@@ -32,7 +32,7 @@ data class BookSource(
     var enabledExplore: Boolean = true,             // 启用发现
     var header: String? = null,                     // 请求头
     var loginUrl: String? = null,                   // 登录地址
-    var bookSourceComment: String? = "",            // 注释
+    var bookSourceComment: String? = null,            // 注释
     var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
     var weight: Int = 0,                            // 智能排序的权重
     var exploreUrl: String? = null,                 // 发现url
@@ -161,6 +161,7 @@ data class BookSource(
                 && equal(bookSourceGroup, source.bookSourceGroup)
                 && bookSourceType == source.bookSourceType
                 && equal(bookUrlPattern, source.bookUrlPattern)
+                && equal(bookSourceComment, source.bookSourceComment)
                 && enabled == source.enabled
                 && enabledExplore == source.enabledExplore
                 && equal(header, source.header)

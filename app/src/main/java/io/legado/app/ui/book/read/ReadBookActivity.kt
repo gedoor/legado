@@ -125,6 +125,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        page_view.upStatusBar()
         ReadBook.loadContent(resetPageOffset = false)
     }
 
@@ -694,7 +695,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 更新状态栏,导航栏
      */
     override fun upSystemUiVisibility() {
-        ReadBookActivityHelp.upSystemUiVisibility(window, !read_menu.isVisible)
+        ReadBookActivityHelp.upSystemUiVisibility(window, isInMultiWindow, !read_menu.isVisible)
         upNavigationBarColor()
     }
 

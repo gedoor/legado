@@ -31,7 +31,7 @@ import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
-import io.legado.app.ui.book.read.ReadBookActivityHelp
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.widget.text.AutoCompleteTextView
@@ -129,9 +129,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
                 setStatusIconDark(isChecked)
-                activity?.window?.let {
-                    ReadBookActivityHelp.upSystemUiVisibility(it)
-                }
+                (activity as? ReadBookActivity)?.upSystemUiVisibility()
             }
         }
         tv_text_color.onClick {

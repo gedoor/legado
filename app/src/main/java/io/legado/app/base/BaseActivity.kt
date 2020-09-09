@@ -1,6 +1,7 @@
 package io.legado.app.base
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.Menu
@@ -15,6 +16,7 @@ import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.widget.TitleBar
 import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -23,12 +25,21 @@ import kotlinx.coroutines.cancel
 
 abstract class BaseActivity(
     private val layoutID: Int,
-    private val fullScreen: Boolean = true,
+    val fullScreen: Boolean = true,
     private val theme: Theme = Theme.Auto,
     private val toolBarTheme: Theme = Theme.Auto,
     private val transparent: Boolean = false
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
+
+    val isInMultiWindow: Boolean
+        get() {
+            return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                isInMultiWindowMode
+            } else {
+                false
+            }
+        }
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LanguageUtils.setConfiguration(newBase))
@@ -52,8 +63,26 @@ abstract class BaseActivity(
         setupSystemBar()
         super.onCreate(savedInstanceState)
         setContentView(layoutID)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            findViewById<TitleBar>(R.id.title_bar)
+                ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
+        }
         onActivityCreated(savedInstanceState)
         observeLiveBus()
+    }
+
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
+        findViewById<TitleBar>(R.id.title_bar)
+            ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
+        setupSystemBar()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        findViewById<TitleBar>(R.id.title_bar)
+            ?.onMultiWindowModeChanged(isInMultiWindow, fullScreen)
+        setupSystemBar()
     }
 
     override fun onDestroy() {
@@ -120,7 +149,7 @@ abstract class BaseActivity(
     }
 
     private fun setupSystemBar() {
-        if (fullScreen) {
+        if (fullScreen && !isInMultiWindow) {
             window.clearFlags(
                 WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                         or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION

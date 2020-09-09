@@ -38,7 +38,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private var bookshelfReselected: Long = 0
     private var pagePosition = 0
     private val fragmentId = arrayOf(0, 1, 2, 3)
-    private val fragmentMap = mapOf<Int, Fragment>(
+    private val fragmentMap = mapOf(
         Pair(fragmentId[0], BookshelfFragment()),
         Pair(fragmentId[1], ExploreFragment()),
         Pair(fragmentId[2], RssFragment()),
