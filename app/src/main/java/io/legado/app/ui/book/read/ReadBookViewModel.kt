@@ -188,7 +188,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         .searchBookSuspend(this, name, variableBook = variableBook)
                         .getOrNull(0)?.let {
                             if (it.name == name && (it.author == author || author == "")) {
-                                changeTo(it.toBook())
+                                val book = it.toBook()
+                                book.upInfoFromOld(ReadBook.book)
+                                changeTo(book)
                                 return@execute
                             }
                         }

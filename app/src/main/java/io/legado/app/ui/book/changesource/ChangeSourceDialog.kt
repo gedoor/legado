@@ -166,19 +166,8 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     override fun changeTo(searchBook: SearchBook) {
         val book = searchBook.toBook()
-        callBack?.oldBook?.let { oldBook ->
-            book.group = oldBook.group
-            book.durChapterIndex = oldBook.durChapterIndex
-            book.durChapterPos = oldBook.durChapterPos
-            book.durChapterTitle = oldBook.durChapterTitle
-            book.customCoverUrl = oldBook.customCoverUrl
-            book.customIntro = oldBook.customIntro
-            book.order = oldBook.order
-            if (book.coverUrl.isNullOrEmpty()) {
-                book.coverUrl = oldBook.getDisplayCover()
-            }
-            callBack?.changeTo(book)
-        }
+        book.upInfoFromOld(callBack?.oldBook)
+        callBack?.changeTo(book)
         dismiss()
     }
 
