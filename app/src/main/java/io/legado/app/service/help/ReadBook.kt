@@ -264,31 +264,46 @@ object ReadBook {
 
     private fun download(chapter: BookChapter, resetPageOffset: Boolean) {
         book?.let { book ->
-            webBook?.getContent(book, chapter)
-                ?.onSuccess(Dispatchers.IO) { content ->
-                    if (content.isEmpty()) {
+            webBook?.let {
+                it.getContent(book, chapter)
+                    .onSuccess(Dispatchers.IO) { content ->
+                        if (content.isEmpty()) {
+                            contentLoadFinish(
+                                book,
+                                chapter,
+                                App.INSTANCE.getString(R.string.content_empty),
+                                resetPageOffset = resetPageOffset
+                            )
+                            removeLoading(chapter.index)
+                        } else {
+                            BookHelp.saveContent(book, chapter, content)
+                            contentLoadFinish(
+                                book,
+                                chapter,
+                                content,
+                                resetPageOffset = resetPageOffset
+                            )
+                            removeLoading(chapter.index)
+                        }
+                    }.onError {
                         contentLoadFinish(
                             book,
                             chapter,
-                            App.INSTANCE.getString(R.string.content_empty),
+                            it.localizedMessage ?: "未知错误",
                             resetPageOffset = resetPageOffset
                         )
                         removeLoading(chapter.index)
-                    } else {
-                        BookHelp.saveContent(book, chapter, content)
-                        contentLoadFinish(book, chapter, content, resetPageOffset = resetPageOffset)
-                        removeLoading(chapter.index)
                     }
-                }?.onError {
-                    contentLoadFinish(
-                        book,
-                        chapter,
-                        it.localizedMessage ?: "未知错误",
-                        resetPageOffset = resetPageOffset
-                    )
-                    removeLoading(chapter.index)
-                }
-        }
+            } ?: let {
+                contentLoadFinish(
+                    book,
+                    chapter,
+                    "没有书源",
+                    resetPageOffset = resetPageOffset
+                )
+                removeLoading(chapter.index)
+            }
+        } ?: removeLoading(chapter.index)
     }
 
     private fun addLoading(index: Int): Boolean {
