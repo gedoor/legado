@@ -44,7 +44,6 @@ object ThemeConfig {
     fun addConfig(json: String) {
         GSON.fromJsonObject<Config>(json)?.let {
             addConfig(it)
-            save()
         }
     }
 
@@ -56,6 +55,7 @@ object ThemeConfig {
             }
         }
         configList.add(newConfig)
+        save()
     }
 
     private fun getConfigs(): List<Config>? {
