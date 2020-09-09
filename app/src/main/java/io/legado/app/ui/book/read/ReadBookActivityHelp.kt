@@ -32,15 +32,20 @@ import org.jetbrains.anko.layoutInflater
 
 object ReadBookActivityHelp {
 
-
     /**
      * 更新状态栏,导航栏
      */
-    fun upSystemUiVisibility(window: Window, toolBarHide: Boolean = true) {
-        var flag = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+    fun upSystemUiVisibility(
+        window: Window,
+        isInMultiWindow: Boolean,
+        toolBarHide: Boolean = true
+    ) {
+        var flag = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_IMMERSIVE
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        if (!isInMultiWindow) {
+            flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
         if (ReadBookConfig.hideNavigationBar) {
             flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         }
