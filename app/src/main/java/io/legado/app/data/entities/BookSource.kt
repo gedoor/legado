@@ -11,8 +11,8 @@ import io.legado.app.data.entities.rule.*
 import io.legado.app.help.JsExtensions
 import io.legado.app.utils.*
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 import javax.script.SimpleBindings
+import kotlin.collections.HashMap
 
 @Parcelize
 @TypeConverters(BookSource.Converters::class)
@@ -42,23 +42,17 @@ data class BookSource(
     var ruleBookInfo: BookInfoRule? = null,         // 书籍信息页规则
     var ruleToc: TocRule? = null,                   // 目录页规则
     var ruleContent: ContentRule? = null            // 正文页规则
-) : Parcelable, JsExtensions {
-
+): Parcelable, JsExtensions {
+    
     override fun hashCode(): Int {
         return bookSourceUrl.hashCode()
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (other is BookSource) {
-            return other.bookSourceUrl == bookSourceUrl
-        }
-        return false
-    }
-
+    
+    override fun equals(other: Any?) = if (other is BookSource) other.bookSourceUrl == bookSourceUrl else false
+    
     @Throws(Exception::class)
-    fun getHeaderMap(): Map<String, String> {
-        val headerMap = HashMap<String, String>()
-        headerMap[AppConst.UA_NAME] = App.INSTANCE.getPrefString("user_agent") ?: userAgent
+    fun getHeaderMap() = (HashMap<String, String>().apply {
+        this[AppConst.UA_NAME] = App.INSTANCE.getPrefString("user_agent") ?: userAgent
         header?.let {
             val header1 = when {
                 it.startsWith("@js:", true) ->
@@ -68,32 +62,21 @@ data class BookSource(
                 else -> it
             }
             GSON.fromJsonObject<Map<String, String>>(header1)?.let { map ->
-                headerMap.putAll(map)
+                putAll(map)
             }
         }
-        return headerMap
-    }
-
-    fun getSearchRule(): SearchRule {
-        return ruleSearch ?: SearchRule()
-    }
-
-    fun getExploreRule(): ExploreRule {
-        return ruleExplore ?: ExploreRule()
-    }
-
-    fun getBookInfoRule(): BookInfoRule {
-        return ruleBookInfo ?: BookInfoRule()
-    }
-
-    fun getTocRule(): TocRule {
-        return ruleToc ?: TocRule()
-    }
-
-    fun getContentRule(): ContentRule {
-        return ruleContent ?: ContentRule()
-    }
-
+    }) as Map<String, String>
+    
+    fun getSearchRule() = ruleSearch ?: SearchRule()
+    
+    fun getExploreRule() = ruleExplore ?: ExploreRule()
+    
+    fun getBookInfoRule() = ruleBookInfo ?: BookInfoRule()
+    
+    fun getTocRule() = ruleToc ?: TocRule()
+    
+    fun getContentRule() = ruleContent ?: ContentRule()
+    
     fun addGroup(group: String) {
         bookSourceGroup?.let {
             if (!it.contains(group)) {
@@ -103,16 +86,15 @@ data class BookSource(
             bookSourceGroup = group
         }
     }
-
+    
     fun removeGroup(group: String) {
         bookSourceGroup?.splitNotBlank("[,;，；]".toRegex())?.toHashSet()?.let {
             it.remove(group)
             bookSourceGroup = TextUtils.join(",", it)
         }
     }
-
-    fun getExploreKinds(): ArrayList<ExploreKind>? {
-        val exploreKinds = arrayListOf<ExploreKind>()
+    
+    fun getExploreKinds() = arrayListOf<ExploreKind>().apply {
         exploreUrl?.let {
             var a = it
             if (a.isNotBlank()) {
@@ -135,16 +117,15 @@ data class BookSource(
                     b.forEach { c ->
                         val d = c.split("::")
                         if (d.size > 1)
-                            exploreKinds.add(ExploreKind(d[0], d[1]))
+                            add(ExploreKind(d[0], d[1]))
                     }
                 } catch (e: Exception) {
-                    exploreKinds.add(ExploreKind(e.localizedMessage ?: ""))
+                    add(ExploreKind(e.localizedMessage ?: ""))
                 }
             }
         }
-        return exploreKinds
     }
-
+    
     /**
      * 执行JS
      */
@@ -154,86 +135,63 @@ data class BookSource(
         bindings["java"] = this
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
-
-    fun equal(source: BookSource): Boolean {
-        return equal(bookSourceName, source.bookSourceName)
-                && equal(bookSourceUrl, source.bookSourceUrl)
-                && equal(bookSourceGroup, source.bookSourceGroup)
-                && bookSourceType == source.bookSourceType
-                && equal(bookUrlPattern, source.bookUrlPattern)
-                && equal(bookSourceComment, source.bookSourceComment)
-                && enabled == source.enabled
-                && enabledExplore == source.enabledExplore
-                && equal(header, source.header)
-                && equal(loginUrl, source.loginUrl)
-                && equal(exploreUrl, source.exploreUrl)
-                && equal(searchUrl, source.searchUrl)
-                && getSearchRule() == source.getSearchRule()
-                && getExploreRule() == source.getExploreRule()
-                && getBookInfoRule() == source.getBookInfoRule()
-                && getTocRule() == source.getTocRule()
-                && getContentRule() == source.getContentRule()
-    }
-
-    private fun equal(a: String?, b: String?): Boolean {
-        return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
-    }
-
+    
+    fun equal(source: BookSource) =
+        equal(bookSourceName, source.bookSourceName)
+            && equal(bookSourceUrl, source.bookSourceUrl)
+            && equal(bookSourceGroup, source.bookSourceGroup)
+            && bookSourceType == source.bookSourceType
+            && equal(bookUrlPattern, source.bookUrlPattern)
+            && equal(bookSourceComment, source.bookSourceComment)
+            && enabled == source.enabled
+            && enabledExplore == source.enabledExplore
+            && equal(header, source.header)
+            && equal(loginUrl, source.loginUrl)
+            && equal(exploreUrl, source.exploreUrl)
+            && equal(searchUrl, source.searchUrl)
+            && getSearchRule() == source.getSearchRule()
+            && getExploreRule() == source.getExploreRule()
+            && getBookInfoRule() == source.getBookInfoRule()
+            && getTocRule() == source.getTocRule()
+            && getContentRule() == source.getContentRule()
+    
+    private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
+    
     data class ExploreKind(
         var title: String,
         var url: String? = null
     )
-
+    
     class Converters {
         @TypeConverter
-        fun exploreRuleToString(exploreRule: ExploreRule?): String? {
-            return GSON.toJson(exploreRule)
-        }
-
+        fun exploreRuleToString(exploreRule: ExploreRule?) = GSON.toJson(exploreRule)
+        
         @TypeConverter
-        fun stringToExploreRule(json: String?): ExploreRule? {
-            return GSON.fromJsonObject<ExploreRule>(json)
-        }
-
+        fun stringToExploreRule(json: String?) = GSON.fromJsonObject<ExploreRule>(json)
+        
         @TypeConverter
-        fun searchRuleToString(searchRule: SearchRule?): String? {
-            return GSON.toJson(searchRule)
-        }
-
+        fun searchRuleToString(searchRule: SearchRule?) = GSON.toJson(searchRule)
+        
         @TypeConverter
-        fun stringToSearchRule(json: String?): SearchRule? {
-            return GSON.fromJsonObject<SearchRule>(json)
-        }
-
+        fun stringToSearchRule(json: String?) = GSON.fromJsonObject<SearchRule>(json)
+        
         @TypeConverter
-        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String? {
-            return GSON.toJson(bookInfoRule)
-        }
-
+        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?) = GSON.toJson(bookInfoRule)
+        
         @TypeConverter
-        fun stringToBookInfoRule(json: String?): BookInfoRule? {
-            return GSON.fromJsonObject<BookInfoRule>(json)
-        }
-
+        fun stringToBookInfoRule(json: String?) = GSON.fromJsonObject<BookInfoRule>(json)
+        
         @TypeConverter
-        fun tocRuleToString(tocRule: TocRule?): String? {
-            return GSON.toJson(tocRule)
-        }
-
+        fun tocRuleToString(tocRule: TocRule?) = GSON.toJson(tocRule)
+        
         @TypeConverter
-        fun stringToTocRule(json: String?): TocRule? {
-            return GSON.fromJsonObject<TocRule>(json)
-        }
-
+        fun stringToTocRule(json: String?) = GSON.fromJsonObject<TocRule>(json)
+        
         @TypeConverter
-        fun contentRuleToString(contentRule: ContentRule?): String? {
-            return GSON.toJson(contentRule)
-        }
-
+        fun contentRuleToString(contentRule: ContentRule?) = GSON.toJson(contentRule)
+        
         @TypeConverter
-        fun stringToContentRule(json: String?): ContentRule? {
-            return GSON.fromJsonObject<ContentRule>(json)
-        }
-
+        fun stringToContentRule(json: String?) = GSON.fromJsonObject<ContentRule>(json)
+        
     }
 }
