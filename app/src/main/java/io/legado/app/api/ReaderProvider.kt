@@ -29,18 +29,19 @@ class ReaderProvider : ContentProvider() {
 
     private val postBodyKey = "json"
     private val sMatcher by lazy {
-        val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
-        val authority = "${context?.applicationInfo?.packageName}.readerProvider"
-        uriMatcher.addURI(authority, "source/insert", RequestCode.saveSource.ordinal)
-        uriMatcher.addURI(authority, "sources/insert", RequestCode.saveSources.ordinal)
-        uriMatcher.addURI(authority, "book/insert", RequestCode.saveBook.ordinal)
-        uriMatcher.addURI(authority, "sources/delete", RequestCode.deleteSources.ordinal)
-        uriMatcher.addURI(authority, "source/query", RequestCode.getSource.ordinal)
-        uriMatcher.addURI(authority, "sources/query", RequestCode.getSources.ordinal)
-        uriMatcher.addURI(authority, "books/query", RequestCode.getBookshelf.ordinal)
-        uriMatcher.addURI(authority, "book/chapter/query", RequestCode.getChapterList.ordinal)
-        uriMatcher.addURI(authority, "book/content/query", RequestCode.getBookContent.ordinal)
-        return@lazy uriMatcher
+        UriMatcher(UriMatcher.NO_MATCH).apply {
+            "${context?.applicationInfo?.packageName}.readerProvider".also { authority ->
+                addURI(authority, "source/insert", RequestCode.saveSource.ordinal)
+                addURI(authority, "sources/insert", RequestCode.saveSources.ordinal)
+                addURI(authority, "book/insert", RequestCode.saveBook.ordinal)
+                addURI(authority, "sources/delete", RequestCode.deleteSources.ordinal)
+                addURI(authority, "source/query", RequestCode.getSource.ordinal)
+                addURI(authority, "sources/query", RequestCode.getSources.ordinal)
+                addURI(authority, "books/query", RequestCode.getBookshelf.ordinal)
+                addURI(authority, "book/chapter/query", RequestCode.getChapterList.ordinal)
+                addURI(authority, "book/content/query", RequestCode.getBookContent.ordinal)
+            }
+        }
     }
 
     override fun onCreate(): Boolean {
