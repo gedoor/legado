@@ -44,9 +44,7 @@ class ReaderProvider : ContentProvider() {
         }
     }
 
-    override fun onCreate(): Boolean {
-        return false
-    }
+    override fun onCreate() = false
 
     override fun delete(
         uri: Uri,
@@ -63,9 +61,7 @@ class ReaderProvider : ContentProvider() {
         return 0
     }
 
-    override fun getType(uri: Uri): String? {
-        throw UnsupportedOperationException("Not yet implemented")
-    }
+    override fun getType(uri: Uri) = throw UnsupportedOperationException("Not yet implemented")
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         if (sMatcher.match(uri) < 0) return null
@@ -112,9 +108,8 @@ class ReaderProvider : ContentProvider() {
     override fun update(
         uri: Uri, values: ContentValues?, selection: String?,
         selectionArgs: Array<String>?
-    ): Int {
-        throw UnsupportedOperationException("Not yet implemented")
-    }
+    ) = throw UnsupportedOperationException("Not yet implemented")
+    
 
     /**
      * Simple inner class to deliver json callback data.
@@ -125,82 +120,46 @@ class ReaderProvider : ContentProvider() {
 
         private val mData: String = Gson().toJson(data)
 
-        override fun getCount(): Int {
-            return 1
-        }
+        override fun getCount() = 1
 
-        override fun getPosition(): Int {
-            return 0
-        }
+        override fun getPosition() = 0
 
-        override fun move(i: Int): Boolean {
-            return true
-        }
+        override fun move(i: Int) = true
 
-        override fun moveToPosition(i: Int): Boolean {
-            return true
-        }
+        override fun moveToPosition(i: Int) = true
 
-        override fun moveToFirst(): Boolean {
-            return true
-        }
+        override fun moveToFirst() = true
 
-        override fun moveToLast(): Boolean {
-            return true
-        }
+        override fun moveToLast() = true
 
-        override fun moveToNext(): Boolean {
-            return true
-        }
+        override fun moveToNext() = true
 
-        override fun moveToPrevious(): Boolean {
-            return true
-        }
+        override fun moveToPrevious() = true
 
-        override fun isFirst(): Boolean {
-            return true
-        }
+        override fun isFirst() = true
 
-        override fun isLast(): Boolean {
-            return true
-        }
+        override fun isLast() = true
 
-        override fun isBeforeFirst(): Boolean {
-            return false
-        }
+        override fun isBeforeFirst() = true
 
-        override fun isAfterLast(): Boolean {
-            return false
-        }
+        override fun isAfterLast() = true
 
-        override fun getColumnIndex(s: String): Int {
-            return 0
-        }
+        override fun getColumnIndex(s: String) = 0
 
         @Throws(IllegalArgumentException::class)
         override fun getColumnIndexOrThrow(s: String): Int {
             throw UnsupportedOperationException("Not yet implemented")
         }
 
-        override fun getColumnName(i: Int): String? {
-            return null
-        }
+        override fun getColumnName(i: Int) = null as String?
 
-        override fun getColumnNames(): Array<String> {
-            return arrayOf()
-        }
+        override fun getColumnNames() = arrayOf<String>()
 
-        override fun getColumnCount(): Int {
-            return 0
-        }
+        override fun getColumnCount() = 0
 
-        override fun getBlob(i: Int): ByteArray {
-            return ByteArray(0)
-        }
+        override fun getBlob(i: Int) = ByteArray(0)
 
-        override fun getString(i: Int): String {
-            return mData
-        }
+        override fun getString(i: Int) = mData
 
         override fun copyStringToBuffer(
             i: Int,
@@ -208,43 +167,26 @@ class ReaderProvider : ContentProvider() {
         ) {
         }
 
-        override fun getShort(i: Int): Short {
-            return 0
-        }
+        override fun getShort(i: Int) = 0.toShort()
+        
 
-        override fun getInt(i: Int): Int {
-            return 0
-        }
+        override fun getInt(i: Int) = 0
 
-        override fun getLong(i: Int): Long {
-            return 0
-        }
+        override fun getLong(i: Int) = 0L
 
-        override fun getFloat(i: Int): Float {
-            return 0f
-        }
+        override fun getFloat(i: Int) = 0F
 
-        override fun getDouble(i: Int): Double {
-            return 0.0
-        }
+        override fun getDouble(i: Int) = 0.toDouble()
 
-        override fun getType(i: Int): Int {
-            return 0
-        }
+        override fun getType(i: Int) = 0
 
-        override fun isNull(i: Int): Boolean {
-            return false
-        }
+        override fun isNull(i: Int) = false
 
         override fun deactivate() {}
-        override fun requery(): Boolean {
-            return false
-        }
+        override fun requery() = false
 
         override fun close() {}
-        override fun isClosed(): Boolean {
-            return false
-        }
+        override fun isClosed() = false
 
         override fun registerContentObserver(contentObserver: ContentObserver) {}
         override fun unregisterContentObserver(contentObserver: ContentObserver) {}
@@ -252,22 +194,14 @@ class ReaderProvider : ContentProvider() {
         override fun unregisterDataSetObserver(dataSetObserver: DataSetObserver) {}
         override fun setNotificationUri(contentResolver: ContentResolver, uri: Uri) {}
 
-        override fun getNotificationUri(): Uri? {
-            return null
-        }
+        override fun getNotificationUri() = null as Uri?
 
-        override fun getWantsAllOnMoveCalls(): Boolean {
-            return false
-        }
+        override fun getWantsAllOnMoveCalls() = false
 
         override fun setExtras(bundle: Bundle) {}
-        override fun getExtras(): Bundle? {
-            return null
-        }
-
-        override fun respond(bundle: Bundle): Bundle? {
-            return null
-        }
+        override fun getExtras() = null as Bundle?
+        
+        override fun respond(bundle: Bundle) = null as Bundle?
 
     }
 }
