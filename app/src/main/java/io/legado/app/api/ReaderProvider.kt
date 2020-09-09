@@ -24,22 +24,22 @@ import java.util.*
  */
 class ReaderProvider : ContentProvider() {
     private enum class RequestCode {
-        saveSource, saveSources, saveBook, deleteSources, getSource, getSources, getBookshelf, getChapterList, getBookContent
+        SaveSource, SaveSources, SaveBook, DeleteSources, GetSource, GetSources, GetBookshelf, GetChapterList, GetBookContent
     }
 
     private val postBodyKey = "json"
     private val sMatcher by lazy {
         UriMatcher(UriMatcher.NO_MATCH).apply {
             "${context?.applicationInfo?.packageName}.readerProvider".also { authority ->
-                addURI(authority, "source/insert", RequestCode.saveSource.ordinal)
-                addURI(authority, "sources/insert", RequestCode.saveSources.ordinal)
-                addURI(authority, "book/insert", RequestCode.saveBook.ordinal)
-                addURI(authority, "sources/delete", RequestCode.deleteSources.ordinal)
-                addURI(authority, "source/query", RequestCode.getSource.ordinal)
-                addURI(authority, "sources/query", RequestCode.getSources.ordinal)
-                addURI(authority, "books/query", RequestCode.getBookshelf.ordinal)
-                addURI(authority, "book/chapter/query", RequestCode.getChapterList.ordinal)
-                addURI(authority, "book/content/query", RequestCode.getBookContent.ordinal)
+                addURI(authority, "source/insert", RequestCode.SaveSource.ordinal)
+                addURI(authority, "sources/insert", RequestCode.SaveSources.ordinal)
+                addURI(authority, "book/insert", RequestCode.SaveBook.ordinal)
+                addURI(authority, "sources/delete", RequestCode.DeleteSources.ordinal)
+                addURI(authority, "source/query", RequestCode.GetSource.ordinal)
+                addURI(authority, "sources/query", RequestCode.GetSources.ordinal)
+                addURI(authority, "books/query", RequestCode.GetBookshelf.ordinal)
+                addURI(authority, "book/chapter/query", RequestCode.GetChapterList.ordinal)
+                addURI(authority, "book/content/query", RequestCode.GetBookContent.ordinal)
             }
         }
     }
@@ -55,7 +55,7 @@ class ReaderProvider : ContentProvider() {
     ): Int {
         if (sMatcher.match(uri) < 0) return -1
         when (RequestCode.values()[sMatcher.match(uri)]) {
-            RequestCode.deleteSources -> SourceController.deleteSources(selection)
+            RequestCode.DeleteSources -> SourceController.deleteSources(selection)
             else -> throw IllegalStateException(
                 "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
             )
@@ -70,13 +70,13 @@ class ReaderProvider : ContentProvider() {
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         if (sMatcher.match(uri) < 0) return null
         when (RequestCode.values()[sMatcher.match(uri)]) {
-            RequestCode.saveSource -> values?.let {
+            RequestCode.SaveSource -> values?.let {
                 SourceController.saveSource(values.getAsString(postBodyKey))
             }
-            RequestCode.saveBook -> values?.let {
+            RequestCode.SaveBook -> values?.let {
                 BookshelfController.saveBook(values.getAsString(postBodyKey))
             }
-            RequestCode.saveSources -> values?.let {
+            RequestCode.SaveSources -> values?.let {
                 SourceController.saveSources(values.getAsString(postBodyKey))
             }
             else -> throw IllegalStateException(
@@ -98,11 +98,11 @@ class ReaderProvider : ContentProvider() {
             map["index"] = arrayListOf(it)
         }
         return if (sMatcher.match(uri) < 0) null else when (RequestCode.values()[sMatcher.match(uri)]) {
-            RequestCode.getSource -> SimpleCursor(SourceController.getSource(map))
-            RequestCode.getSources -> SimpleCursor(SourceController.sources)
-            RequestCode.getBookshelf -> SimpleCursor(BookshelfController.bookshelf)
-            RequestCode.getBookContent -> SimpleCursor(BookshelfController.getBookContent(map))
-            RequestCode.getChapterList -> SimpleCursor(BookshelfController.getChapterList(map))
+            RequestCode.GetSource -> SimpleCursor(SourceController.getSource(map))
+            RequestCode.GetSources -> SimpleCursor(SourceController.sources)
+            RequestCode.GetBookshelf -> SimpleCursor(BookshelfController.bookshelf)
+            RequestCode.GetBookContent -> SimpleCursor(BookshelfController.getBookContent(map))
+            RequestCode.GetChapterList -> SimpleCursor(BookshelfController.getChapterList(map))
             else -> throw IllegalStateException(
                 "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
             )
