@@ -290,6 +290,7 @@
     <string name="padding_right">Padding right</string>
     <string name="check_book_source">Check book sources</string>
     <string name="check_select_source">Check the selected source</string>
+    <string name="debug_select_source">Debug the selected source</string>
     <string name="progress_show">Progress %1$d/%2$d</string>
     <string name="tts_fix">Please install and select Chinese TTS!</string>
     <string name="tts_init_failed">TTS initialization failed!</string>
@@ -386,6 +387,7 @@
     <string name="source_group">源分组(sourceGroup)</string>
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
+    <string name="comment">源注释(sourceComment)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
     <string name="r_book_list">书籍列表规则(bookList)</string>
@@ -759,4 +761,5 @@
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
+
 </resources>

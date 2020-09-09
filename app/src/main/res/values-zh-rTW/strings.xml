@@ -386,6 +386,7 @@
     <string name="login_url">登入URL(loginUrl)</string>
     <string name="r_search_url">搜尋地址(url)</string>
     <string name="r_find_url">發現地址規則(url)</string>
+    <string name="comment">源注釋(sourceComment)</string>
     <string name="r_book_list">書籍列表規則(bookList)</string>
     <string name="r_book_name">書名規則(name)</string>
     <string name="r_book_url">詳情頁url規則(bookUrl)</string>
@@ -757,5 +758,7 @@
     <string name="save_night_theme_summary">保存夜间主题配置以共调用和分享</string>
     <string name="theme_list">主题列表</string>
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
+    <string name="select_theme">切換默認主題</string>
+
 
 </resources>
