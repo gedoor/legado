@@ -51,9 +51,7 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
         scope: CoroutineScope = this,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
-    ): Coroutine<T> {
-        return Coroutine.async(scope, context) { block() }
-    }
+    ) = Coroutine.async(scope, context) { block() }
 
     open fun observeLiveBus() {
     }
