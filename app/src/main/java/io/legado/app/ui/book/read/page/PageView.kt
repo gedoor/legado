@@ -85,9 +85,9 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        centerRectF.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
-        centerRectF.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
         if (oldw != 0 && oldh != 0) {
             ReadBook.loadContent(resetPageOffset = false)
         }
@@ -178,6 +178,12 @@ class PageView(context: Context, attrs: AttributeSet) :
             }
         }
         return true
+    }
+
+    fun upStatusBar() {
+        curPage.upStatusBar()
+        prevPage.upStatusBar()
+        nextPage.upStatusBar()
     }
 
     /**

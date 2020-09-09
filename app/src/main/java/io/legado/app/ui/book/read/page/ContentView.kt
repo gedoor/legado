@@ -7,17 +7,16 @@ import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import io.legado.app.R
+import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
-import io.legado.app.utils.dp
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.statusBarHeight
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_book_page.view.*
+import org.jetbrains.anko.topPadding
 import java.util.*
 
 
@@ -65,9 +64,7 @@ class ContentView(context: Context) : FrameLayout(context) {
             tv_footer_left.setColor(textColor)
             tv_footer_middle.setColor(textColor)
             tv_footer_right.setColor(textColor)
-            //显示状态栏时隐藏header
-            vw_status_bar.setPadding(0, context.statusBarHeight, 0, 0)
-            vw_status_bar.isGone = hideStatusBar
+            upStatusBar()
             ll_header.setPadding(
                 headerPaddingLeft.dp,
                 headerPaddingTop.dp,
@@ -86,6 +83,15 @@ class ContentView(context: Context) : FrameLayout(context) {
         }
         upTime()
         upBattery(battery)
+    }
+
+    /**
+     * 显示状态栏时隐藏header
+     */
+    fun upStatusBar() {
+        vw_status_bar.topPadding = context.statusBarHeight
+        vw_status_bar.isGone =
+            ReadBookConfig.hideStatusBar || (activity as? BaseActivity)?.isInMultiWindow == true
     }
 
     fun upTipStyle() {

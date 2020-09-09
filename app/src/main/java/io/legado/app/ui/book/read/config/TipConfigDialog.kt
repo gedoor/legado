@@ -10,7 +10,6 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.ui.book.read.ReadBookActivityHelp
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.dialog_tip_config.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
@@ -24,11 +23,8 @@ class TipConfigDialog : BaseDialogFragment() {
         activity?.let {
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
-        dialog?.window?.let {
-            ReadBookActivityHelp.upSystemUiVisibility(it)
-            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
+        dialog?.window
+            ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onCreateView(

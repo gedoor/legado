@@ -125,6 +125,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        page_view.upStatusBar()
         ReadBook.loadContent(resetPageOffset = false)
     }
 
