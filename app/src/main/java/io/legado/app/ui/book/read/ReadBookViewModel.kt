@@ -221,6 +221,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             ReadBook.chapterSize = chapters.size
+            ReadBook.upMsg(null)
             ReadBook.loadContent(resetPageOffset = true)
         }
     }
