@@ -11,7 +11,7 @@ interface BookSourceDao {
     @Query("select * from book_sources order by customOrder asc")
     fun liveDataAll(): LiveData<List<BookSource>>
 
-    @Query("select * from book_sources where bookSourceName like :searchKey or bookSourceGroup like :searchKey or bookSourceUrl like :searchKey order by customOrder asc")
+    @Query("select * from book_sources where bookSourceName like :searchKey or bookSourceGroup like :searchKey or bookSourceUrl like :searchKey  or bookSourceComment like :searchKey order by customOrder asc")
     fun liveDataSearch(searchKey: String = ""): LiveData<List<BookSource>>
 
     @Query("select * from book_sources where enabled = 1 order by customOrder asc")
