@@ -16,22 +16,19 @@ class ItemAnimation private constructor() {
     var itemAnimDuration: Long = 300L
     var itemAnimStartPosition: Int = -1
 
-    fun interpolator(interpolator: Interpolator): ItemAnimation {
+    fun interpolator(interpolator: Interpolator) = apply {
         itemAnimInterpolator = interpolator
-        return this
     }
 
-    fun duration(duration: Long): ItemAnimation {
+    fun duration(duration: Long) = apply {
         itemAnimDuration = duration
-        return this
     }
 
-    fun startPostion(startPos: Int): ItemAnimation {
+    fun startPosition(startPos: Int) = apply {
         itemAnimStartPosition = startPos
-        return this
     }
 
-    fun animation(animationType: Int = NONE, animation: BaseAnimation? = null): ItemAnimation {
+    fun animation(animationType: Int = NONE, animation: BaseAnimation? = null) = apply {
         if (animation != null) {
             itemAnimation = animation
         } else {
@@ -43,17 +40,14 @@ class ItemAnimation private constructor() {
                 RIGHT_SLIDE_IN -> itemAnimation = SlideInRightAnimation()
             }
         }
-        return this
     }
 
-    fun enabled(enabled: Boolean): ItemAnimation {
+    fun enabled(enabled: Boolean) = apply {
         itemAnimEnabled = enabled
-        return this
     }
 
-    fun firstOnly(firstOnly: Boolean): ItemAnimation {
+    fun firstOnly(firstOnly: Boolean) = apply {
         itemAnimFirstOnly = firstOnly
-        return this
     }
 
     companion object {
@@ -79,8 +73,7 @@ class ItemAnimation private constructor() {
          */
         const val RIGHT_SLIDE_IN: Int = 0x00000005
 
-        fun create(): ItemAnimation {
-            return ItemAnimation()
-        }
+        fun create() = ItemAnimation()
+        
     }
 }
