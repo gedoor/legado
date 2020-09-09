@@ -12,7 +12,6 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.utils.*
 import kotlinx.android.parcel.Parcelize
 import javax.script.SimpleBindings
-import kotlin.collections.HashMap
 
 @Parcelize
 @TypeConverters(BookSource.Converters::class)
@@ -165,31 +164,31 @@ data class BookSource(
     
     class Converters {
         @TypeConverter
-        fun exploreRuleToString(exploreRule: ExploreRule?) = GSON.toJson(exploreRule)
+        fun exploreRuleToString(exploreRule: ExploreRule?): String = GSON.toJson(exploreRule)
         
         @TypeConverter
         fun stringToExploreRule(json: String?) = GSON.fromJsonObject<ExploreRule>(json)
-        
+
         @TypeConverter
-        fun searchRuleToString(searchRule: SearchRule?) = GSON.toJson(searchRule)
+        fun searchRuleToString(searchRule: SearchRule?): String = GSON.toJson(searchRule)
         
         @TypeConverter
         fun stringToSearchRule(json: String?) = GSON.fromJsonObject<SearchRule>(json)
-        
+
         @TypeConverter
-        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?) = GSON.toJson(bookInfoRule)
+        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String = GSON.toJson(bookInfoRule)
         
         @TypeConverter
         fun stringToBookInfoRule(json: String?) = GSON.fromJsonObject<BookInfoRule>(json)
-        
+
         @TypeConverter
-        fun tocRuleToString(tocRule: TocRule?) = GSON.toJson(tocRule)
+        fun tocRuleToString(tocRule: TocRule?): String = GSON.toJson(tocRule)
         
         @TypeConverter
         fun stringToTocRule(json: String?) = GSON.fromJsonObject<TocRule>(json)
         
         @TypeConverter
-        fun contentRuleToString(contentRule: ContentRule?) = GSON.toJson(contentRule)
+        fun contentRuleToString(contentRule: ContentRule?): String = GSON.toJson(contentRule)
         
         @TypeConverter
         fun stringToContentRule(json: String?) = GSON.fromJsonObject<ContentRule>(json)
