@@ -18,8 +18,7 @@ data class RssStar(
     var content: String? = null,
     var image: String? = null
 ) {
-    fun toRssArticle(): RssArticle {
-        return RssArticle(
+    fun toRssArticle() = RssArticle(
             origin = origin,
             sort = sort,
             title = title,
@@ -29,5 +28,4 @@ data class RssStar(
             content = content,
             image = image
         )
-    }
 }
