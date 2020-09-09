@@ -189,7 +189,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         .getOrNull(0)?.let {
                             if (it.name == name && (it.author == author || author == "")) {
                                 changeTo(it.toBook())
-                                return@forEach
+                                return@execute
                             }
                         }
                 } catch (e: Exception) {
