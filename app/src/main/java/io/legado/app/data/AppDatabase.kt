@@ -19,14 +19,14 @@ import io.legado.app.data.entities.*
     version = 20,
     exportSchema = true
 )
-abstract class AppDatabase : RoomDatabase() {
-
+abstract class AppDatabase: RoomDatabase() {
+    
     companion object {
-
+        
         private const val DATABASE_NAME = "legado.db"
-
-        fun createDatabase(context: Context): AppDatabase {
-            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+        
+        fun createDatabase(context: Context) =
+            Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .addMigrations(
                     migration_10_11,
@@ -41,9 +41,8 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                 .allowMainThreadQueries()
                 .build()
-        }
-
-        private val migration_10_11 = object : Migration(10, 11) {
+        
+        private val migration_10_11 = object: Migration(10, 11) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE txtTocRules")
                 database.execSQL(
@@ -55,20 +54,20 @@ abstract class AppDatabase : RoomDatabase() {
                 )
             }
         }
-
-        private val migration_11_12 = object : Migration(11, 12) {
+        
+        private val migration_11_12 = object: Migration(11, 12) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE rssSources ADD style TEXT ")
             }
         }
-
-        private val migration_12_13 = object : Migration(12, 13) {
+        
+        private val migration_12_13 = object: Migration(12, 13) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE rssSources ADD articleStyle INTEGER NOT NULL DEFAULT 0 ")
             }
         }
-
-        private val migration_13_14 = object : Migration(13, 14) {
+        
+        private val migration_13_14 = object: Migration(13, 14) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     """
@@ -86,26 +85,26 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE books_new RENAME TO books")
             }
         }
-
-        private val migration_14_15 = object : Migration(14, 15) {
+        
+        private val migration_14_15 = object: Migration(14, 15) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE bookmarks ADD bookAuthor TEXT NOT NULL DEFAULT ''")
             }
         }
-
-        private val migration_15_17 = object : Migration(15, 17) {
+        
+        private val migration_15_17 = object: Migration(15, 17) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `readRecord` (`bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`bookName`))")
             }
         }
-
-        private val migration_17_18 = object : Migration(17, 18) {
+        
+        private val migration_17_18 = object: Migration(17, 18) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `httpTTS` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))")
             }
         }
-
-        private val migration_18_19 = object : Migration(18, 19) {
+        
+        private val migration_18_19 = object: Migration(18, 19) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `readRecordNew` (`androidId` TEXT NOT NULL, `bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`androidId`, `bookName`))")
                 database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${App.androidId}' as androidId, bookName, readTime from readRecord")
@@ -113,13 +112,13 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE readRecordNew RENAME TO readRecord")
             }
         }
-        private val migration_19_20 = object : Migration(19,20) {
+        private val migration_19_20 = object: Migration(19, 20) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE book_sources ADD bookSourceComment TEXT")
             }
         }
     }
-
+    
     abstract fun bookDao(): BookDao
     abstract fun bookGroupDao(): BookGroupDao
     abstract fun bookSourceDao(): BookSourceDao
