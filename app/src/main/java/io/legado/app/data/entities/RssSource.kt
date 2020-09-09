@@ -39,80 +39,67 @@ data class RssSource(
     var header: String? = null,
     var enableJs: Boolean = false,
     var loadWithBaseUrl: Boolean = false,
-
+    
     var customOrder: Int = 0
-) : Parcelable, JsExtensions {
-
-    override fun equals(other: Any?): Boolean {
-        if (other is RssSource) {
-            return other.sourceUrl == sourceUrl
-        }
-        return false
-    }
-
-    override fun hashCode(): Int {
-        return sourceUrl.hashCode()
-    }
-
+): Parcelable, JsExtensions {
+    
+    override fun equals(other: Any?) = if (other is RssSource) other.sourceUrl == sourceUrl else false
+    
+    override fun hashCode() = sourceUrl.hashCode()
+    
     @Throws(Exception::class)
-    fun getHeaderMap(): Map<String, String> {
-        val headerMap = HashMap<String, String>()
-        headerMap[AppConst.UA_NAME] = App.INSTANCE.getPrefString("user_agent") ?: AppConst.userAgent
+    fun getHeaderMap() = HashMap<String, String>().apply {
+        this[AppConst.UA_NAME] = App.INSTANCE.getPrefString("user_agent") ?: AppConst.userAgent
         header?.let {
-            val header1 = when {
-                it.startsWith("@js:", true) ->
-                    evalJS(it.substring(4)).toString()
-                it.startsWith("<js>", true) ->
-                    evalJS(it.substring(4, it.lastIndexOf("<"))).toString()
-                else -> it
-            }
-            GSON.fromJsonObject<Map<String, String>>(header1)?.let { map ->
-                headerMap.putAll(map)
+            GSON.fromJsonObject<Map<String, String>>(
+                when {
+                    it.startsWith("@js:", true) ->
+                        evalJS(it.substring(4)).toString()
+                    it.startsWith("<js>", true) ->
+                        evalJS(it.substring(4, it.lastIndexOf("<"))).toString()
+                    else -> it
+                }
+            )?.let { map ->
+                putAll(map)
             }
         }
-        return headerMap
     }
-
+    
     /**
      * 执行JS
      */
     @Throws(Exception::class)
-    private fun evalJS(jsStr: String): Any {
-        val bindings = SimpleBindings()
-        bindings["java"] = this
-        return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
-    }
-
+    private fun evalJS(jsStr: String): Any = AppConst.SCRIPT_ENGINE.eval(jsStr, SimpleBindings().apply { this["java"] = this@RssSource })
+    
     fun equal(source: RssSource): Boolean {
         return equal(sourceUrl, source.sourceUrl)
-                && equal(sourceIcon, source.sourceIcon)
-                && enabled == source.enabled
-                && equal(sourceGroup, source.sourceGroup)
-                && equal(ruleArticles, source.ruleArticles)
-                && equal(ruleNextPage, source.ruleNextPage)
-                && equal(ruleTitle, source.ruleTitle)
-                && equal(rulePubDate, source.rulePubDate)
-                && equal(ruleDescription, source.ruleDescription)
-                && equal(ruleLink, source.ruleLink)
-                && equal(ruleContent, source.ruleContent)
-                && enableJs == source.enableJs
-                && loadWithBaseUrl == source.loadWithBaseUrl
+            && equal(sourceIcon, source.sourceIcon)
+            && enabled == source.enabled
+            && equal(sourceGroup, source.sourceGroup)
+            && equal(ruleArticles, source.ruleArticles)
+            && equal(ruleNextPage, source.ruleNextPage)
+            && equal(ruleTitle, source.ruleTitle)
+            && equal(rulePubDate, source.rulePubDate)
+            && equal(ruleDescription, source.ruleDescription)
+            && equal(ruleLink, source.ruleLink)
+            && equal(ruleContent, source.ruleContent)
+            && enableJs == source.enableJs
+            && loadWithBaseUrl == source.loadWithBaseUrl
     }
-
+    
     private fun equal(a: String?, b: String?): Boolean {
         return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
     }
-
-    fun sortUrls(): LinkedHashMap<String, String> {
-        val sortMap = linkedMapOf<String, String>()
-        sortUrl?.split("(&&|\n)+".toRegex())?.forEach { c ->
-            val d = c.split("::")
-            if (d.size > 1)
-                sortMap[d[0]] = d[1]
+    
+    fun sortUrls(): LinkedHashMap<String, String> =
+        linkedMapOf<String, String>().apply {
+            sortUrl?.split("(&&|\n)+".toRegex())?.forEach { c ->
+                val d = c.split("::")
+                if (d.size > 1)
+                    this[d[0]] = d[1]
+            }
+            if (isEmpty()) {
+                this[""] = sourceUrl
+            }
         }
-        if (sortMap.isEmpty()) {
-            sortMap[""] = sourceUrl
-        }
-        return sortMap
-    }
 }
