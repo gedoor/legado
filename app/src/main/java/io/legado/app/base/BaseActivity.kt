@@ -108,9 +108,7 @@ abstract class BaseActivity(
         return true
     }
 
-    open fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        return super.onCreateOptionsMenu(menu)
-    }
+    open fun onCompatCreateOptionsMenu(menu: Menu) = super.onCreateOptionsMenu(menu)
 
     final override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
@@ -122,9 +120,7 @@ abstract class BaseActivity(
         return item != null && onCompatOptionsItemSelected(item)
     }
 
-    open fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
-    }
+    open fun onCompatOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item)
 
     private fun initTheme() {
         when (theme) {
