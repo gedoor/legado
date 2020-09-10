@@ -102,6 +102,8 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         secondaryTextColor = requireContext().getSecondaryTextColor(isLight)
         root_view.setBackgroundColor(bg)
         sw_dark_status_icon.setTextColor(primaryTextColor)
+        iv_import.setColorFilter(primaryTextColor)
+        iv_export.setColorFilter(primaryTextColor)
         tv_bg_image.setTextColor(primaryTextColor)
     }
 
@@ -155,12 +157,13 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
             ReadBookConfig.resetDur()
             postEvent(EventBus.UP_CONFIG, false)
         }
-        tv_import.onClick {
+        iv_import.onClick {
             val importFormNet = "网络导入"
             val otherActions = arrayListOf(importFormNet)
             FilePicker.selectFile(
                 this@BgTextConfigDialog,
                 requestCodeImport,
+                title = getString(R.string.import_str),
                 allowExtensions = arrayOf("zip"),
                 otherActions = otherActions
             ) { action ->
@@ -169,8 +172,12 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 }
             }
         }
-        tv_export.onClick {
-            FilePicker.selectFolder(this@BgTextConfigDialog, requestCodeExport)
+        iv_export.onClick {
+            FilePicker.selectFolder(
+                this@BgTextConfigDialog,
+                requestCodeExport,
+                title = getString(R.string.export_str)
+            )
         }
     }
 

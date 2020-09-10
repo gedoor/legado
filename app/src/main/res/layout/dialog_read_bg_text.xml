@@ -19,18 +19,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="6dp">
 
         <io.legado.app.ui.widget.text.StrokeTextView
             android:id="@+id/tv_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
             android:layout_gravity="center"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
+            android:layout_weight="5"
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="6dp"
@@ -44,10 +44,10 @@
             android:id="@+id/tv_bg_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
             android:layout_gravity="center"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
+            android:layout_weight="5"
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="6dp"
@@ -61,10 +61,10 @@
             android:id="@+id/tv_default"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:layout_gravity="center"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
+            android:layout_weight="3"
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="6dp"
@@ -74,39 +74,30 @@
             app:isBottomBackground="true"
             tools:ignore="HardcodedText" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_import"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:layout_gravity="center"
+        <ImageView
+            android:id="@+id/iv_import"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="@string/import_str"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            tools:ignore="HardcodedText" />
+            android:contentDescription="@string/import_str"
+            android:src="@drawable/ic_import"
+            android:tooltipText="@string/import_str"
+            tools:ignore="UnusedAttribute" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_export"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:layout_gravity="center"
+        <ImageView
+            android:id="@+id/iv_export"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="@string/export_str"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            tools:ignore="HardcodedText" />
+            android:contentDescription="@string/import_str"
+            android:src="@drawable/ic_export"
+            android:tooltipText="@string/export_str"
+            tools:ignore="UnusedAttribute" />
+
     </LinearLayout>
 
     <TextView
