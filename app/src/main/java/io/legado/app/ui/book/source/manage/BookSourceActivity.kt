@@ -2,6 +2,7 @@ package io.legado.app.ui.book.source.manage
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -9,18 +10,25 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
+import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
@@ -41,6 +49,7 @@ import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
+
 import java.io.File
 import java.text.Collator
 
@@ -60,6 +69,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private var groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var sort = 0
+    private var sortAscending = 0
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -86,6 +96,21 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         when (item.itemId) {
             R.id.menu_add_book_source -> startActivity<BookSourceEditActivity>()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
+            R.id.menu_share_source -> {
+                try {
+                    val json = GSON.toJson(adapter.getSelection())
+                    val intent = Intent(Intent.ACTION_SEND)
+                    val file = FileUtils.createFileWithReplace("$filesDir/shareBookSource.json")
+                    file.writeText(json)
+                    val fileUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", file)
+                    intent.type = "text/*"
+                    intent.putExtra(Intent.EXTRA_STREAM, fileUri)
+                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    startActivity(Intent.createChooser(intent, getString(R.string.share_selected_source)))
+                } catch (e: ActivityNotFoundException) {
+                    e.printStackTrace()
+                }
+            }
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> FilePicker
@@ -93,22 +118,27 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_sort_manual -> {
                 item.isChecked = true
-                sort = 0
+                sortCheck(0)
                 initLiveDataBookSource(search_view.query?.toString())
             }
             R.id.menu_sort_auto -> {
                 item.isChecked = true
-                sort = 2
+                sortCheck(1)
                 initLiveDataBookSource(search_view.query?.toString())
             }
             R.id.menu_sort_pin_yin -> {
                 item.isChecked = true
-                sort = 3
+                sortCheck(2)
                 initLiveDataBookSource(search_view.query?.toString())
             }
             R.id.menu_sort_url -> {
                 item.isChecked = true
-                sort = 4
+                sortCheck(3)
+                initLiveDataBookSource(search_view.query?.toString())
+            }
+            R.id.menu_sort_time -> {
+                item.isChecked = true
+                sortCheck(4)
                 initLiveDataBookSource(search_view.query?.toString())
             }
             R.id.menu_enabled_group -> {
@@ -168,17 +198,37 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
         }
         bookSourceLiveDate?.observe(this, { data ->
-            val sourceList = when (sort) {
-                1 -> data.sortedBy { it.weight }
-                2 -> data.sortedBy { it.bookSourceName }
-                3 -> data.sortedBy { it.bookSourceUrl }
-                else -> data
+            val sourceList = when (sortAscending % 2){
+                0 -> when (sort) {
+                    1 -> data.sortedBy { it.weight }
+                    2 -> data.sortedBy { it.bookSourceName }
+                    3 -> data.sortedBy { it.bookSourceUrl }
+                    4 -> data.sortedByDescending { it.lastUpdateTime}
+                    else -> data
+                }
+                else -> when (sort) {
+                    1 -> data.sortedByDescending { it.weight }
+                    2 -> data.sortedByDescending { it.bookSourceName }
+                    3 -> data.sortedByDescending { it.bookSourceUrl }
+                    4 -> data.sortedBy { it.lastUpdateTime}
+                    else -> data.reversed()
+                }
             }
+            recycler_view.scrollToPosition(0)
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), sourceList))
             adapter.setItems(sourceList, diffResult)
             upCountView()
         })
+    }
+    private fun sortCheck (sortId: Int){
+        if (sort == sortId){
+            sortAscending +=1
+        }
+        else{
+            sortAscending = 0
+            sort = sortId
+        }
     }
 
     private fun initLiveDataGroup() {
@@ -226,12 +276,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
             R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
-            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
             R.id.menu_check_source -> checkSource()
             R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
             R.id.menu_add_group -> selectionAddToGroups()
             R.id.menu_remove_group -> selectionRemoveFromGroups()
+            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
         }
         return true
     }
