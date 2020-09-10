@@ -3,6 +3,7 @@ package io.legado.app.ui.main
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -28,6 +29,7 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 
+
 class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     BottomNavigationView.OnNavigationItemSelectedListener,
     BottomNavigationView.OnNavigationItemReselectedListener,
@@ -37,13 +39,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private var exitTime: Long = 0
     private var bookshelfReselected: Long = 0
     private var pagePosition = 0
-    private val fragmentId = arrayOf(0, 1, 2, 3)
-    private val fragmentMap = mapOf(
-        Pair(fragmentId[0], BookshelfFragment()),
-        Pair(fragmentId[1], ExploreFragment()),
-        Pair(fragmentId[2], RssFragment()),
-        Pair(fragmentId[3], MyFragment())
-    )
+    private val fragmentMap = hashMapOf<Int, Fragment>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ATH.applyEdgeEffectColor(view_pager_main)
@@ -171,25 +167,65 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private inner class TabFragmentPageAdapter(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
+        private fun getBookshelfFragment(): Fragment {
+            if (!fragmentMap.containsKey(0)) {
+                fragmentMap[0] = BookshelfFragment()
+            }
+            return fragmentMap.getValue(0)
+        }
+
+        private fun getExploreFragment(): Fragment {
+            if (!fragmentMap.containsKey(1)) {
+                fragmentMap[1] = ExploreFragment()
+            }
+            return fragmentMap.getValue(1)
+        }
+
+        private fun getRssFragment(): Fragment {
+            if (!fragmentMap.containsKey(2)) {
+                fragmentMap[2] = RssFragment()
+            }
+            return fragmentMap.getValue(2)
+        }
+
+        private fun getMyFragment(): Fragment {
+            if (!fragmentMap.containsKey(3)) {
+                fragmentMap[3] = MyFragment()
+            }
+            return fragmentMap.getValue(3)
+        }
+
         override fun getItemPosition(`object`: Any): Int {
             return POSITION_NONE
         }
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> fragmentMap.getValue(fragmentId[0])
-                1 -> fragmentMap.getValue(fragmentId[1])
+                0 -> getBookshelfFragment()
+                1 -> getExploreFragment()
                 2 -> if (AppConfig.isShowRSS) {
-                    fragmentMap.getValue(fragmentId[2])
+                    getRssFragment()
                 } else {
-                    fragmentMap.getValue(fragmentId[3])
+                    getMyFragment()
                 }
-                else -> fragmentMap.getValue(fragmentId[3])
+                else -> getMyFragment()
             }
         }
 
         override fun getCount(): Int {
             return if (AppConfig.isShowRSS) 4 else 3
+        }
+
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val fragment = super.instantiateItem(container, position) as Fragment
+            val id = when (position) {
+                2 -> if (AppConfig.isShowRSS) 2 else 3
+                else -> position
+            }
+            if (!fragmentMap.containsKey(id)) {
+                fragmentMap[id] = fragment
+            }
+            return fragment
         }
 
     }

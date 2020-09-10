@@ -2,10 +2,7 @@ package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -292,6 +289,15 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
         override fun getCount(): Int {
             return bookGroups.size
+        }
+
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val fragment = super.instantiateItem(container, position) as BooksFragment
+            val group = bookGroups[position]
+            if (!fragmentMap.containsKey(group.groupId)) {
+                fragmentMap[group.groupId] = fragment
+            }
+            return fragment
         }
 
     }
