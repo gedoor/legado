@@ -85,8 +85,10 @@ object ReadBook {
     }
 
     fun upMsg(msg: String?) {
-        this.msg = msg
-        callBack?.upContent()
+        if (this.msg != msg) {
+            this.msg = msg
+            callBack?.upContent()
+        }
     }
 
     fun moveToNextPage() {
@@ -263,9 +265,11 @@ object ReadBook {
     }
 
     private fun download(chapter: BookChapter, resetPageOffset: Boolean) {
-        book?.let { book ->
-            webBook?.getContent(book, chapter)
-                ?.onSuccess(Dispatchers.IO) { content ->
+        val book = book
+        val webBook = webBook
+        if (book != null && webBook != null) {
+            webBook.getContent(book, chapter)
+                .onSuccess(Dispatchers.IO) { content ->
                     if (content.isEmpty()) {
                         contentLoadFinish(
                             book,
@@ -276,10 +280,15 @@ object ReadBook {
                         removeLoading(chapter.index)
                     } else {
                         BookHelp.saveContent(book, chapter, content)
-                        contentLoadFinish(book, chapter, content, resetPageOffset = resetPageOffset)
+                        contentLoadFinish(
+                            book,
+                            chapter,
+                            content,
+                            resetPageOffset = resetPageOffset
+                        )
                         removeLoading(chapter.index)
                     }
-                }?.onError {
+                }.onError {
                     contentLoadFinish(
                         book,
                         chapter,
@@ -288,6 +297,16 @@ object ReadBook {
                     )
                     removeLoading(chapter.index)
                 }
+        } else if (book != null) {
+            contentLoadFinish(
+                book,
+                chapter,
+                "没有书源",
+                resetPageOffset = resetPageOffset
+            )
+            removeLoading(chapter.index)
+        } else {
+            removeLoading(chapter.index)
         }
     }
 

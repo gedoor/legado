@@ -151,11 +151,26 @@ data class Book(
         delete()
         App.db.bookDao().insert(newBook)
     }
-    
+
     fun delete() {
         if (ReadBook.book?.bookUrl == bookUrl) {
             ReadBook.book = null
         }
         App.db.bookDao().delete(this)
+    }
+
+    fun upInfoFromOld(oldBook: Book?) {
+        oldBook?.let {
+            group = oldBook.group
+            durChapterIndex = oldBook.durChapterIndex
+            durChapterPos = oldBook.durChapterPos
+            durChapterTitle = oldBook.durChapterTitle
+            customCoverUrl = oldBook.customCoverUrl
+            customIntro = oldBook.customIntro
+            order = oldBook.order
+            if (coverUrl.isNullOrEmpty()) {
+                coverUrl = oldBook.getDisplayCover()
+            }
+        }
     }
 }
