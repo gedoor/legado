@@ -1,6 +1,7 @@
 package io.legado.app.utils
 
 import android.os.Environment
+import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
 import io.legado.app.App
@@ -51,6 +52,24 @@ object FileUtils {
             }
         } catch (e: IOException) {
             e.printStackTrace()
+        }
+        return file
+    }
+
+    fun createFileWithReplace(filePath: String) : File{
+        val file = File(filePath)
+        if (!file.exists()) {
+            //创建父类文件夹
+            file.parent?.let {
+                createFolderIfNotExist(it)
+            }
+            //创建文件
+            file.createNewFile()
+        }
+        else{
+            val result = file.delete()
+            Log.d("Jason", result.toString())
+            file.createNewFile()
         }
         return file
     }
