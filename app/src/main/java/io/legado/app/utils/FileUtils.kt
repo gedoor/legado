@@ -55,6 +55,23 @@ object FileUtils {
         return file
     }
 
+    fun createFileWithReplace(filePath: String) : File{
+        val file = File(filePath)
+        if (!file.exists()) {
+            //创建父类文件夹
+            file.parent?.let {
+                createFolderIfNotExist(it)
+            }
+            //创建文件
+            file.createNewFile()
+        }
+        else{
+            file.delete()
+            file.createNewFile()
+        }
+        return file
+    }
+
     fun getFile(root: File, vararg subDirFiles: String): File {
         val filePath = getPath(root, *subDirFiles)
         return File(filePath)

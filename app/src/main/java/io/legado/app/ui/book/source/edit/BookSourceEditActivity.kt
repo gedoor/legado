@@ -63,6 +63,9 @@ class BookSourceEditActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> getSource().let { source ->
+                if (!source.equal(viewModel.bookSource ?: BookSource())){
+                    source.lastUpdateTime = System.currentTimeMillis()
+                }
                 if (checkSource(source)) {
                     viewModel.save(source) { setResult(Activity.RESULT_OK); finish() }
                 }
@@ -170,10 +173,11 @@ class BookSourceEditActivity :
             add(EditEntity("bookSourceUrl", source?.bookSourceUrl, R.string.source_url))
             add(EditEntity("bookSourceName", source?.bookSourceName, R.string.source_name))
             add(EditEntity("bookSourceGroup", source?.bookSourceGroup, R.string.source_group))
+            add(EditEntity("bookSourceComment", source?.bookSourceComment, R.string.comment))
             add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
             add(EditEntity("bookUrlPattern", source?.bookUrlPattern, R.string.book_url_pattern))
             add(EditEntity("header", source?.header, R.string.source_http_header))
-            add(EditEntity("bookSourceComment", source?.bookSourceComment, R.string.comment))
+
         }
         //搜索
         val sr = source?.getSearchRule()

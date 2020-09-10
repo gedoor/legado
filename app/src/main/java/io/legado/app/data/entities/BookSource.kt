@@ -135,7 +135,7 @@ data class BookSource(
         bindings["java"] = this
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
-    
+
     fun equal(source: BookSource) =
         equal(bookSourceName, source.bookSourceName)
             && equal(bookSourceUrl, source.bookSourceUrl)
@@ -156,7 +156,7 @@ data class BookSource(
             && getContentRule() == source.getContentRule()
     
     private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
-    
+
     data class ExploreKind(
         var title: String,
         var url: String? = null

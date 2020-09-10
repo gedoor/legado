@@ -388,6 +388,7 @@
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
+    <string name="source_http_header">请求头(header)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
     <string name="r_book_list">书籍列表规则(bookList)</string>
@@ -444,7 +445,7 @@
     <string name="net_error_10003">Data parsing failed</string>
     <!--error string end-->
 
-    <string name="source_http_header">Source http header</string>
+
     <string name="debug_source">Debug source</string>
     <string name="import_by_qr_code">Import from QR code</string>
     <string name="scan_qr_code">Scan QR code</string>
@@ -761,5 +762,7 @@
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
+    <string name="share_selected_source">Share selected sources</string>
+    <string name="sort_by_lastUppdateTime">Sort by update time</string>
 
 </resources>

@@ -46,6 +46,10 @@
                             android:checkable="true"
                             android:title="@string/sort_by_url" />
 
+                        <item
+                            android:id="@+id/menu_sort_time"
+                            android:checkable="true"
+                            android:title="@string/sort_by_lastUppdateTime" />
                     </group>
 
                 </menu>
@@ -91,5 +95,12 @@
         android:icon="@drawable/ic_import"
         android:title="@string/import_by_qr_code"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_share_source"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share_selected_source"
+        app:showAsAction="never" />
+
 
 </menu>
