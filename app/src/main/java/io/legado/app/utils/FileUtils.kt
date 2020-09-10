@@ -1,7 +1,6 @@
 package io.legado.app.utils
 
 import android.os.Environment
-import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
 import io.legado.app.App
@@ -67,8 +66,7 @@ object FileUtils {
             file.createNewFile()
         }
         else{
-            val result = file.delete()
-            Log.d("Jason", result.toString())
+            file.delete()
             file.createNewFile()
         }
         return file
