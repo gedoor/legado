@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
@@ -24,7 +23,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
