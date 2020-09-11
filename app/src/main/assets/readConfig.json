@@ -10,6 +10,16 @@
     "darkStatusIconNight": false
   },
   {
+    "bgStr": "#FFFFFF",
+    "bgStrNight": "#000000",
+    "textColor": "#000000",
+    "textColorNight": "#FFFFFF",
+    "bgType": 0,
+    "bgTypeNight": 0,
+    "darkStatusIcon": true,
+    "darkStatusIconNight": false
+  },
+  {
     "bgStr": "#DDC090",
     "bgStrNight": "#3C3F43",
     "textColor": "#3E3422",

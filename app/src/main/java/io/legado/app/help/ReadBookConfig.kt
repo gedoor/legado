@@ -28,9 +28,9 @@ object ReadBookConfig {
         GSON.fromJsonArray<Config>(json)!!
     }
     var durConfig
-        get() = getConfig(styleSelect)
+        get() = getConfig(styleSelect + 1)
         set(value) {
-            configList[styleSelect] = value
+            configList[styleSelect + 1] = value
             if (shareLayout) {
                 configList[5] = value
             }
@@ -51,7 +51,7 @@ object ReadBookConfig {
             resetAll()
         }
         if (configList.size < 6) {
-            configList.add(Config())
+            configList.add(0, Config())
         }
         return configList[index]
     }
@@ -160,7 +160,7 @@ object ReadBookConfig {
     var hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
     var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
 
-    val config get() = if (shareLayout) getConfig(5) else durConfig
+    val config get() = if (shareLayout) getConfig(0) else durConfig
 
     var textFont: String
         get() = config.textFont
@@ -308,7 +308,7 @@ object ReadBookConfig {
     fun getExportConfig(): Config {
         val exportConfig = GSON.fromJsonObject<Config>(GSON.toJson(durConfig))!!
         if (shareLayout) {
-            val shearConfig = getConfig(5)
+            val shearConfig = getConfig(0)
             exportConfig.textFont = shearConfig.textFont
             exportConfig.textBold = shearConfig.textBold
             exportConfig.textSize = shearConfig.textSize
