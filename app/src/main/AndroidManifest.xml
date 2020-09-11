@@ -248,7 +248,7 @@
         <activity
             android:name=".ui.rss.favorites.RssFavoritesActivity"
             android:launchMode="singleTop" />
-        <!-- 下载界面 -->
+        <!-- 缓存界面 -->
         <activity
             android:name=".ui.book.cache.CacheActivity"
             android:launchMode="singleTop" />
