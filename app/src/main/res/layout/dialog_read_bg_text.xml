@@ -112,7 +112,9 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:padding="6dp" />
-
+        android:orientation="horizontal"
+        android:padding="6dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_bg_image" />
 
 </LinearLayout>

@@ -11,8 +11,6 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
 import androidx.documentfile.provider.DocumentFile
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -111,8 +109,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
     private fun initData() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.isChecked = statusIconDark()
         adapter = BgAdapter(requireContext())
-        recycler_view.layoutManager =
-            LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
         recycler_view.adapter = adapter
         val headerView = LayoutInflater.from(requireContext())
             .inflate(R.layout.item_bg_image, recycler_view, false)

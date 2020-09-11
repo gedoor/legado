@@ -8,6 +8,8 @@ import android.view.*
 import androidx.core.view.get
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.EventBus
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
@@ -21,6 +23,7 @@ import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
 import kotlinx.android.synthetic.main.dialog_title_config.view.*
+import kotlinx.android.synthetic.main.item_read_style.view.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -28,6 +31,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
 
     val callBack get() = activity as? ReadBookActivity
+    lateinit var styleAdapter: StyleAdapter
 
     override fun onStart() {
         super.onStart()
@@ -82,6 +86,8 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         }
         dsb_line_size.valueFormat = { ((it - 10) / 10f).toString() }
         dsb_paragraph_spacing.valueFormat = { (it / 10f).toString() }
+        styleAdapter = StyleAdapter()
+        rv_style.adapter = styleAdapter
     }
 
     private fun initData() {
@@ -92,8 +98,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             }
         }
         upStyle()
-        setBg()
-        upBg()
+        styleAdapter.setItems(ReadBookConfig.configList)
     }
 
     private fun initViewEvent() {
@@ -152,16 +157,6 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             ReadBookConfig.paragraphSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        bg0.onClick { changeBg(0) }
-        bg0.onLongClick { showBgTextConfig(0) }
-        bg1.onClick { changeBg(1) }
-        bg1.onLongClick { showBgTextConfig(1) }
-        bg2.onClick { changeBg(2) }
-        bg2.onLongClick { showBgTextConfig(2) }
-        bg3.onClick { changeBg(3) }
-        bg3.onLongClick { showBgTextConfig(3) }
-        bg4.onClick { changeBg(4) }
-        bg4.onLongClick { showBgTextConfig(4) }
     }
 
     @SuppressLint("InflateParams")
@@ -195,11 +190,13 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun changeBg(index: Int) {
-        if (ReadBookConfig.styleSelect != index) {
+        val oldIndex = ReadBookConfig.styleSelect
+        if (index != oldIndex) {
             ReadBookConfig.styleSelect = index
             ReadBookConfig.upBg()
             upStyle()
-            upBg()
+            styleAdapter.notifyItemChanged(oldIndex)
+            styleAdapter.notifyItemChanged(index)
             postEvent(EventBus.UP_CONFIG, true)
         }
     }
@@ -220,59 +217,6 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         }
     }
 
-    private fun setBg() = ReadBookConfig.apply {
-        bg0.setTextColor(getConfig(0).textColor())
-        bg1.setTextColor(getConfig(1).textColor())
-        bg2.setTextColor(getConfig(2).textColor())
-        bg3.setTextColor(getConfig(3).textColor())
-        bg4.setTextColor(getConfig(4).textColor())
-        for (i in 0..4) {
-            val iv = when (i) {
-                1 -> bg1
-                2 -> bg2
-                3 -> bg3
-                4 -> bg4
-                else -> bg0
-            }
-            iv.setImageDrawable(getConfig(i).bgDrawable(100, 150))
-        }
-    }
-
-    private fun upBg() = ReadBookConfig.apply {
-        bg0.borderColor = getConfig(0).textColor()
-        bg0.setTextBold(false)
-        bg1.borderColor = getConfig(1).textColor()
-        bg1.setTextBold(false)
-        bg2.borderColor = getConfig(2).textColor()
-        bg2.setTextBold(false)
-        bg3.borderColor = getConfig(3).textColor()
-        bg3.setTextBold(false)
-        bg4.borderColor = getConfig(4).textColor()
-        bg4.setTextBold(false)
-        when (styleSelect) {
-            1 -> {
-                bg1.borderColor = accentColor
-                bg1.setTextBold(true)
-            }
-            2 -> {
-                bg2.borderColor = accentColor
-                bg2.setTextBold(true)
-            }
-            3 -> {
-                bg3.borderColor = accentColor
-                bg3.setTextBold(true)
-            }
-            4 -> {
-                bg4.borderColor = accentColor
-                bg4.setTextBold(true)
-            }
-            else -> {
-                bg0.borderColor = accentColor
-                bg0.setTextBold(true)
-            }
-        }
-    }
-
     override val curFontPath: String
         get() = ReadBookConfig.textFont
 
@@ -281,5 +225,39 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             ReadBookConfig.textFont = path
             postEvent(EventBus.UP_CONFIG, true)
         }
+    }
+
+    inner class StyleAdapter :
+        SimpleRecyclerAdapter<ReadBookConfig.Config>(requireContext(), R.layout.item_read_style) {
+
+        override fun convert(
+            holder: ItemViewHolder,
+            item: ReadBookConfig.Config,
+            payloads: MutableList<Any>
+        ) {
+            holder.itemView.apply {
+                iv_style.setTextColor(item.textColor())
+                iv_style.setImageDrawable(item.bgDrawable(100, 150))
+                if (ReadBookConfig.styleSelect == holder.layoutPosition) {
+                    iv_style.borderColor = accentColor
+                    iv_style.setTextBold(true)
+                } else {
+                    iv_style.borderColor = item.textColor()
+                    iv_style.setTextBold(false)
+                }
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder) {
+            holder.itemView.apply {
+                iv_style.onClick {
+                    changeBg(holder.layoutPosition)
+                }
+                iv_style.onLongClick {
+                    showBgTextConfig(holder.layoutPosition)
+                }
+            }
+        }
+
     }
 }

@@ -177,7 +177,18 @@ object Restore {
                     if (file.exists()) {
                         FileUtils.deleteFile(ReadBookConfig.configFilePath)
                         file.copyTo(File(ReadBookConfig.configFilePath))
-                        ReadBookConfig.upConfig()
+                        ReadBookConfig.initConfigs()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                try {
+                    val file =
+                        FileUtils.createFileIfNotExist(path + File.separator + ReadBookConfig.shareConfigFileName)
+                    if (file.exists()) {
+                        FileUtils.deleteFile(ReadBookConfig.shareConfigFilePath)
+                        file.copyTo(File(ReadBookConfig.shareConfigFilePath))
+                        ReadBookConfig.initShareConfig()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
