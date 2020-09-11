@@ -106,9 +106,14 @@ object ReadBookConfig {
     fun save() {
         Coroutine.async {
             synchronized(this) {
-                val json = GSON.toJson(configList)
-                FileUtils.deleteFile(configFilePath)
-                FileUtils.createFileIfNotExist(configFilePath).writeText(json)
+                GSON.toJson(configList).let {
+                    FileUtils.deleteFile(configFilePath)
+                    FileUtils.createFileIfNotExist(configFilePath).writeText(it)
+                }
+                GSON.toJson(shareConfig).let {
+                    FileUtils.deleteFile(shareConfigFilePath)
+                    FileUtils.createFileIfNotExist(shareConfigFilePath).writeText(it)
+                }
             }
         }
     }
