@@ -87,7 +87,7 @@
             android:key="donate"
             android:summary="@string/donate_summary"
             android:title="@string/donate"
-            android:icon="@drawable/ic_cfg_jz"
+            android:icon="@drawable/ic_cfg_donate"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
