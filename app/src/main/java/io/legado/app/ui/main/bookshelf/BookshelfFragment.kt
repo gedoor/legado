@@ -23,7 +23,7 @@ import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.arrange.ArrangeBookActivity
-import io.legado.app.ui.book.download.DownloadActivity
+import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.book.search.SearchActivity
@@ -87,7 +87,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 Pair("groupId", selectedGroup?.groupId ?: 0),
                 Pair("groupName", selectedGroup?.groupName ?: 0)
             )
-            R.id.menu_download -> startActivity<DownloadActivity>(
+            R.id.menu_download -> startActivity<CacheActivity>(
                 Pair("groupId", selectedGroup?.groupId ?: 0),
                 Pair("groupName", selectedGroup?.groupName ?: 0)
             )

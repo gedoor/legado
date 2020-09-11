@@ -17,7 +17,7 @@ import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.service.help.Download
+import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 
-class DownloadService : BaseService() {
+class CacheBookService : BaseService() {
     private val threadCount = AppConfig.threadCount
     private var searchPool =
         Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
@@ -49,11 +49,11 @@ class DownloadService : BaseService() {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
             .setOngoing(true)
-            .setContentTitle(getString(R.string.download_offline))
+            .setContentTitle(getString(R.string.offline_cache))
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.stop)
+            IntentHelp.servicePendingIntent<CacheBookService>(this, IntentAction.stop)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
     }
@@ -138,7 +138,7 @@ class DownloadService : BaseService() {
                     chapters.addAll(it)
                     downloadMap[bookUrl] = chapters
                 } else {
-                    Download.addLog("${getBook(bookUrl)?.name} is empty")
+                    CacheBook.addLog("${getBook(bookUrl)?.name} is empty")
                 }
             }
             for (i in 0 until threadCount) {
@@ -158,7 +158,7 @@ class DownloadService : BaseService() {
         downloadingCount += 1
         val task = Coroutine.async(this, context = searchPool) {
             if (!isActive) return@async
-            val bookChapter: BookChapter? = synchronized(this@DownloadService) {
+            val bookChapter: BookChapter? = synchronized(this@CacheBookService) {
                 downloadMap.forEach {
                     it.value.forEach { chapter ->
                         if (!downloadingList.contains(chapter.url)) {
@@ -193,12 +193,12 @@ class DownloadService : BaseService() {
                             synchronized(this) {
                                 downloadingList.remove(bookChapter.url)
                             }
-                            Download.addLog("getContentError${it.localizedMessage}")
+                            CacheBook.addLog("getContentError${it.localizedMessage}")
                             updateNotification("getContentError${it.localizedMessage}")
                         }
                         .onSuccess(IO) { content ->
                             BookHelp.saveContent(book, bookChapter, content)
-                            synchronized(this@DownloadService) {
+                            synchronized(this@CacheBookService) {
                                 downloadCount[book.bookUrl]?.increaseSuccess()
                                 downloadCount[book.bookUrl]?.increaseFinished()
                                 downloadCount[book.bookUrl]?.let {
@@ -231,7 +231,7 @@ class DownloadService : BaseService() {
                 }
             }
         }.onError {
-            Download.addLog("ERROR:${it.localizedMessage}")
+            CacheBook.addLog("ERROR:${it.localizedMessage}")
             updateNotification("ERROR:${it.localizedMessage}")
         }
         tasks.add(task)

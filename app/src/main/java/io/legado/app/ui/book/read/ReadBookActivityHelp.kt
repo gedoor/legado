@@ -20,7 +20,7 @@ import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.service.help.Download
+import io.legado.app.service.help.CacheBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
@@ -108,7 +108,7 @@ object ReadBookActivityHelp {
     @SuppressLint("InflateParams")
     fun showDownloadDialog(context: Context) {
         ReadBook.book?.let { book ->
-            context.alert(titleResource = R.string.download_offline) {
+            context.alert(titleResource = R.string.offline_cache) {
                 var view: View? = null
                 customView {
                     LayoutInflater.from(context).inflate(R.layout.dialog_download_choice, null)
@@ -123,7 +123,7 @@ object ReadBookActivityHelp {
                     view?.apply {
                         val start = edit_start?.text?.toString()?.toInt() ?: 0
                         val end = edit_end?.text?.toString()?.toInt() ?: book.totalChapterNum
-                        Download.start(context, book.bookUrl, start - 1, end - 1)
+                        CacheBook.start(context, book.bookUrl, start - 1, end - 1)
                     }
                 }
                 noButton()

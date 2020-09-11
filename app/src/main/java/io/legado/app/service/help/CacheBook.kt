@@ -3,9 +3,9 @@ package io.legado.app.service.help
 import android.content.Context
 import android.content.Intent
 import io.legado.app.constant.IntentAction
-import io.legado.app.service.DownloadService
+import io.legado.app.service.CacheBookService
 
-object Download {
+object CacheBook {
 
     val logs = arrayListOf<String>()
 
@@ -20,7 +20,7 @@ object Download {
     }
 
     fun start(context: Context, bookUrl: String, start: Int, end: Int) {
-        Intent(context, DownloadService::class.java).let {
+        Intent(context, CacheBookService::class.java).let {
             it.action = IntentAction.start
             it.putExtra("bookUrl", bookUrl)
             it.putExtra("start", start)
@@ -30,7 +30,7 @@ object Download {
     }
 
     fun remove(context: Context, bookUrl: String) {
-        Intent(context, DownloadService::class.java).let {
+        Intent(context, CacheBookService::class.java).let {
             it.action = IntentAction.remove
             it.putExtra("bookUrl", bookUrl)
             context.startService(it)
@@ -38,7 +38,7 @@ object Download {
     }
 
     fun stop(context: Context) {
-        Intent(context, DownloadService::class.java).let {
+        Intent(context, CacheBookService::class.java).let {
             it.action = IntentAction.stop
             context.startService(it)
         }

@@ -83,9 +83,9 @@
     <string name="web_service_desc">啟用Web服務</string>
     <string name="web_edit_source">web編輯書源</string>
     <string name="http_ip">http://%1$s:%2$d</string>
-    <string name="download_offline">離線下載</string>
-    <string name="download_offline_t">離線下載</string>
-    <string name="download_offline_s">下載選擇的章節到本機</string>
+    <string name="offline_cache">離線緩存</string>
+    <string name="offline_cache_t">離線緩存</string>
+    <string name="offline_cache_s">緩存選擇的章節到本機</string>
     <string name="change_origin">換源</string>
     <string name="about_description">
         \u3000\u3000這是一款使用Kotlin全新開發的開源的閱讀軟體，歡迎您的加入。關注公眾號[legado-top]！

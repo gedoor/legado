@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.download
+package io.legado.app.ui.book.cache
 
 import android.app.Activity
 import android.content.Intent
@@ -18,7 +18,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.BookHelp
-import io.legado.app.service.help.Download
+import io.legado.app.service.help.CacheBook
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.widget.dialog.TextListDialog
@@ -32,12 +32,12 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
 
-class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_download),
+class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download),
     FileChooserDialog.CallBack,
-    DownloadAdapter.CallBack {
+    CacheAdapter.CallBack {
     private val exportRequestCode = 32
     private val exportBookPathKey = "exportBookPath"
-    lateinit var adapter: DownloadAdapter
+    lateinit var adapter: CacheAdapter
     private var groupLiveData: LiveData<List<BookGroup>>? = null
     private var booksLiveData: LiveData<List<Book>>? = null
     private var menu: Menu? = null
@@ -45,8 +45,8 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     private val groupList: ArrayList<BookGroup> = arrayListOf()
     private var groupId: Int = -1
 
-    override val viewModel: DownloadViewModel
-        get() = getViewModel(DownloadViewModel::class.java)
+    override val viewModel: CacheViewModel
+        get() = getViewModel(CacheViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getIntExtra("groupId", -1)
@@ -81,19 +81,19 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
             R.id.menu_download -> launch(IO) {
                 if (adapter.downloadMap.isNullOrEmpty()) {
                     adapter.getItems().forEach { book ->
-                        Download.start(
-                            this@DownloadActivity,
+                        CacheBook.start(
+                            this@CacheActivity,
                             book.bookUrl,
                             book.durChapterIndex,
                             book.totalChapterNum
                         )
                     }
                 } else {
-                    Download.stop(this@DownloadActivity)
+                    CacheBook.stop(this@CacheActivity)
                 }
             }
             R.id.menu_log -> {
-                TextListDialog.show(supportFragmentManager, getString(R.string.log), Download.logs)
+                TextListDialog.show(supportFragmentManager, getString(R.string.log), CacheBook.logs)
             }
             R.id.menu_no_group -> {
                 title_bar.subtitle = getString(R.string.no_group)
@@ -116,7 +116,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
 
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
-        adapter = DownloadAdapter(this, this)
+        adapter = CacheAdapter(this, this)
         recycler_view.adapter = adapter
     }
 
@@ -191,7 +191,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     override fun export(position: Int) {
         exportPosition = position
         val default = arrayListOf<String>()
-        val path = ACache.get(this@DownloadActivity).getAsString(exportBookPathKey)
+        val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
         if (!path.isNullOrEmpty()) {
             default.add(path)
         }
@@ -213,7 +213,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
             exportRequestCode -> {
-                ACache.get(this@DownloadActivity).put(exportBookPathKey, currentPath)
+                ACache.get(this@CacheActivity).put(exportBookPathKey, currentPath)
                 startExport(currentPath)
             }
         }
@@ -228,7 +228,7 @@ class DownloadActivity : VMBaseActivity<DownloadViewModel>(R.layout.activity_dow
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-                    ACache.get(this@DownloadActivity).put(exportBookPathKey, uri.toString())
+                    ACache.get(this@CacheActivity).put(exportBookPathKey, uri.toString())
                     startExport(uri.toString())
                 }
             }

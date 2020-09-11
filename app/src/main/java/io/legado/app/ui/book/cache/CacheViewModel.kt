@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.download
+package io.legado.app.ui.book.cache
 
 import android.app.Application
 import android.net.Uri
@@ -13,7 +13,7 @@ import io.legado.app.utils.*
 import java.io.File
 
 
-class DownloadViewModel(application: Application) : BaseViewModel(application) {
+class CacheViewModel(application: Application) : BaseViewModel(application) {
 
 
     fun export(path: String, book: Book, finally: (msg: String) -> Unit) {

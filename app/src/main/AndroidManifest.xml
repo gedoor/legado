@@ -250,7 +250,7 @@
             android:launchMode="singleTop" />
         <!-- 下载界面 -->
         <activity
-            android:name=".ui.book.download.DownloadActivity"
+            android:name=".ui.book.cache.CacheActivity"
             android:launchMode="singleTop" />
         <!-- 书源登录 -->
         <activity
@@ -349,7 +349,7 @@
         </activity>
 
         <service android:name=".service.CheckSourceService" />
-        <service android:name=".service.DownloadService" />
+        <service android:name=".service.CacheBookService" />
         <service android:name=".service.WebService" />
         <service android:name=".service.TTSReadAloudService" />
         <service android:name=".service.HttpReadAloudService" />

@@ -85,9 +85,9 @@
     <string name="web_service_desc">启用Web服务</string>
     <string name="web_edit_source">web编辑书源</string>
     <string name="http_ip">http://%1$s:%2$d</string>
-    <string name="download_offline">离线下载</string>
-    <string name="download_offline_t">离线下载</string>
-    <string name="download_offline_s">下载选择的章节到本地</string>
+    <string name="offline_cache">离线缓存</string>
+    <string name="offline_cache_t">离线缓存</string>
+    <string name="offline_cache_s">缓存选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
         \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读]！

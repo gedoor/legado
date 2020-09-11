@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.download
+package io.legado.app.ui.book.cache
 
 import android.content.Context
 import android.widget.ImageView
@@ -7,14 +7,14 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.service.help.Download
+import io.legado.app.service.help.CacheBook
 import kotlinx.android.synthetic.main.item_download.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
 
-class DownloadAdapter(context: Context, private val callBack: CallBack) :
+class CacheAdapter(context: Context, private val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_download) {
 
     val cacheChapters = hashMapOf<String, HashSet<String>>()
@@ -47,9 +47,9 @@ class DownloadAdapter(context: Context, private val callBack: CallBack) :
             iv_download.onClick {
                 getItem(holder.layoutPosition)?.let {
                     if (downloadMap?.containsKey(it.bookUrl) == true) {
-                        Download.remove(context, it.bookUrl)
+                        CacheBook.remove(context, it.bookUrl)
                     } else {
-                        Download.start(context, it.bookUrl, 0, it.totalChapterNum)
+                        CacheBook.start(context, it.bookUrl, 0, it.totalChapterNum)
                     }
                 }
             }
