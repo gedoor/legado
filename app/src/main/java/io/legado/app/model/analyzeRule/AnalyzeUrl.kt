@@ -192,10 +192,11 @@ class AnalyzeUrl(
             option?.let { _ ->
                 option.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
                 option.headers?.let { headers ->
-                    (headers as? Map<*, *>)?.forEach { key, value ->
-                        headerMap[key.toString()] = value.toString()
-                    }
-                    if (headers is String) {
+                    if (headers is Map<*, *>) {
+                        headers.forEach { entry ->
+                            headerMap[entry.key.toString()] = entry.value.toString()
+                        }
+                    } else if (headers is String) {
                         GSON.fromJsonObject<Map<String, String>>(headers)
                             ?.let { headerMap.putAll(it) }
                     }
