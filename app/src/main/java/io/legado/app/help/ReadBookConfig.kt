@@ -118,13 +118,16 @@ object ReadBookConfig {
         }
     }
 
-    fun resetDur() {
-        defaultConfigs[styleSelect].let {
-            durConfig.setBg(it.bgType(), it.bgStr())
-            durConfig.setTextColor(it.textColor())
+    fun deleteDur(): Boolean {
+        if (configList.size > 5) {
+            configList.removeAt(styleSelect)
+            if (styleSelect > 0) {
+                styleSelect -= 1
+            }
             upBg()
-            save()
+            return true
         }
+        return false
     }
 
     private fun resetAll() {
