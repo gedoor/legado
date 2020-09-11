@@ -119,6 +119,7 @@ class CircleImageView(context: Context, attrs: AttributeSet) :
 
     private var textColor = context.getCompatColor(R.color.primaryText)
     private var textBold = false
+    var isInView = false
 
     init {
         super.setScaleType(SCALE_TYPE)
@@ -221,6 +222,11 @@ class CircleImageView(context: Context, attrs: AttributeSet) :
                 textPaint
             )
         }
+    }
+
+    fun setText(text: String?) {
+        this.text = text
+        invalidate()
     }
 
     fun setTextColor(@ColorInt textColor: Int) {
@@ -422,7 +428,12 @@ class CircleImageView(context: Context, attrs: AttributeSet) :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return inTouchableArea(event.x, event.y) && super.onTouchEvent(event)
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                isInView = (inTouchableArea(event.x, event.y))
+            }
+        }
+        return super.onTouchEvent(event)
     }
 
     private fun inTouchableArea(x: Float, y: Float): Boolean {

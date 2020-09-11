@@ -31,7 +31,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
 
     val callBack get() = activity as? ReadBookActivity
-    lateinit var styleAdapter: StyleAdapter
+    private lateinit var styleAdapter: StyleAdapter
 
     override fun onStart() {
         super.onStart()
@@ -88,6 +88,18 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         dsb_paragraph_spacing.valueFormat = { (it / 10f).toString() }
         styleAdapter = StyleAdapter()
         rv_style.adapter = styleAdapter
+        val footerView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.item_read_style, rv_style, false)
+        footerView.iv_style.setPadding(6.dp, 6.dp, 6.dp, 6.dp)
+        footerView.iv_style.setText(null)
+        footerView.iv_style.setColorFilter(textColor)
+        footerView.iv_style.borderColor = textColor
+        footerView.iv_style.setImageResource(R.drawable.ic_add)
+        styleAdapter.addFooterView(footerView)
+        footerView.onClick {
+            ReadBookConfig.configList.add(ReadBookConfig.Config())
+            showBgTextConfig(ReadBookConfig.configList.lastIndex)
+        }
     }
 
     private fun initData() {
@@ -251,10 +263,16 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         override fun registerListener(holder: ItemViewHolder) {
             holder.itemView.apply {
                 iv_style.onClick {
-                    changeBg(holder.layoutPosition)
+                    if (iv_style.isInView) {
+                        changeBg(holder.layoutPosition)
+                    }
                 }
                 iv_style.onLongClick {
-                    showBgTextConfig(holder.layoutPosition)
+                    if (iv_style.isInView) {
+                        showBgTextConfig(holder.layoutPosition)
+                    } else {
+                        false
+                    }
                 }
             }
         }
