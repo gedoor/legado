@@ -41,10 +41,12 @@ object ThemeConfig {
         }
     }
 
-    fun addConfig(json: String) {
-        GSON.fromJsonObject<Config>(json)?.let {
+    fun addConfig(json: String): Boolean {
+        GSON.fromJsonObject<Config>(json.trim { it < ' ' })?.let {
             addConfig(it)
+            return true
         }
+        return false
     }
 
     private fun addConfig(newConfig: Config) {
