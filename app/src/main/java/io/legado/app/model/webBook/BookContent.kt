@@ -97,7 +97,7 @@ object BookContent {
         }
         content.deleteCharAt(content.length - 1)
         var contentStr = content.toString().htmlFormat()
-        val replaceRegex = bookSource.ruleContent?.replaceRegex?.trim()
+        val replaceRegex = bookSource.ruleContent?.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
             contentStr = AnalyzeRule(book).setContent(contentStr).getString(replaceRegex)
         }
