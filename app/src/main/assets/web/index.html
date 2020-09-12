@@ -14,7 +14,7 @@
             <div class="rules">
                 <div><b>基本</b></div>
                 <div>
-                    <div>源URL　:</div>
+                    <div>源域名　:</div>
                     <textarea rows="1" id="bookSourceUrl" class="base" title="bookSourceUrl"
                         placeholder="<必填>通常填写网站主页,例: https://www.qidian.com"></textarea>
                 </div>
@@ -34,14 +34,14 @@
                         placeholder="&lt;选填&gt;描述书源的特征信息"></textarea>
                 </div>
                 <div>
+                    <div>源注释　:</div>
+                    <textarea rows="1" id="bookSourceComment" class="base" title="bookSourceComment"
+                              placeholder="&lt;选填&gt;描述书源作者和状态"></textarea>
+                </div>
+                <div>
                     <div>登录地址:</div>
                     <textarea rows="1" id="loginUrl" class="base" title="loginUrl"
                         placeholder="&lt;选填&gt;填写网站登录网址,仅在需要登录的书源有用"></textarea>
-                </div>
-                <div>
-                    <div>注释:</div>
-                    <textarea rows="1" id="bookSourceComment" class="base" title="bookSourceComment"
-                              placeholder="&lt;选填&gt;描述书源作者和状态"></textarea>
                 </div>
                 <div>
                     <div>链接验证:</div>
@@ -256,6 +256,16 @@
                     <div>资源正则:</div>
                     <textarea rows="1" id="ruleContent_sourceRegex" class="ruleContent" title="sourceRegex"
                         placeholder="匹配资源的url特征，用于嗅探"></textarea>
+                </div>
+                <div>
+                    <div>替换规则:</div>
+                    <textarea rows="1" id="ruleContent_replaceRegex" class="ruleContent" title="replaceRegex"
+                        placeholder="多页内容合并后替换，用于正文净化"></textarea>
+                </div>
+                <div>
+                    <div>图片样式:</div>
+                    <textarea rows="1" id="ruleContent_imageStyle" class="ruleContent" title="imageStyle"
+                        placeholder="FULL:铺满 不填:默认样式"></textarea>
                 </div>
                 <p></p>
                 <div><b>其它规则</b></div>
