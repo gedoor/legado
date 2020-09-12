@@ -96,7 +96,10 @@ object BookContent {
         var contentStr = content.toString().htmlFormat()
         val replaceRegex = bookSource.ruleContent?.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
-            contentStr = AnalyzeRule(book).setContent(contentStr).getString(replaceRegex)
+            val analyzeRule = AnalyzeRule(book)
+            analyzeRule.setContent(body, baseUrl)
+            analyzeRule.chapter = bookChapter
+            contentStr = analyzeRule.getString(replaceRegex)
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")

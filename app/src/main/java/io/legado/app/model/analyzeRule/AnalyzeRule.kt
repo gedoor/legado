@@ -580,6 +580,10 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     }
 
     fun get(key: String): String {
+        val chapter = chapter
+        if (chapter != null && key == "title") {
+            return chapter.title
+        }
         return chapter?.variableMap?.get(key)
             ?: book?.variableMap?.get(key)
             ?: ""
@@ -594,6 +598,8 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         bindings["book"] = book
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
+        bindings["chapter"] = chapter
+        bindings["title"] = chapter?.title
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
