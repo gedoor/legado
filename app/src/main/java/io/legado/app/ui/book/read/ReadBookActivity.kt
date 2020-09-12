@@ -668,6 +668,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     }
 
     /**
+     * 打开搜索界面
+     */
+    override fun openSearchList() {
+        ReadBook.book?.let {
+            startActivityForResult<ChapterListActivity>(
+                requestCodeChapterList,
+                Pair("bookUrl", it.bookUrl)
+            )
+        }
+    }
+
+    /**
      * 替换规则变化
      */
     override fun onReplaceRuleSave() {

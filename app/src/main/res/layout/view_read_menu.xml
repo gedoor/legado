@@ -260,6 +260,40 @@
                             android:textSize="12sp" />
                     </LinearLayout>
 
+                    <!--目录按钮-->
+                    <LinearLayout
+                        android:id="@+id/ll_search"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="@string/search_content"
+                        android:focusable="true"
+                        android:orientation="vertical"
+                        android:paddingBottom="7dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_search"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/search_content"
+                            android:src="@drawable/ic_toc"
+                            app:tint="@color/primaryText"
+                            tools:ignore="NestedWeights" />
+
+                        <TextView
+                            android:id="@+id/tv_search"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="3dp"
+                            android:maxLines="1"
+                            android:text="@string/search_content"
+                            android:textColor="@color/primaryText"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
