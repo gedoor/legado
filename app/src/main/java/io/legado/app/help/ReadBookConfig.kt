@@ -21,8 +21,11 @@ import java.io.File
 @Keep
 object ReadBookConfig {
     const val configFileName = "readConfig.json"
+    const val shareConfigFileName = "shareReadConfig.json"
     val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, configFileName)
+    val shareConfigFilePath = FileUtils.getPath(App.INSTANCE.filesDir, shareConfigFileName)
     val configList: ArrayList<Config> = arrayListOf()
+    lateinit var shareConfig: Config
     private val defaultConfigs by lazy {
         val json = String(App.INSTANCE.assets.open(configFileName).readBytes())
         GSON.fromJsonArray<Config>(json)!!
@@ -32,7 +35,7 @@ object ReadBookConfig {
         set(value) {
             configList[styleSelect] = value
             if (shareLayout) {
-                configList[5] = value
+                shareConfig = value
             }
             upBg()
         }
@@ -42,7 +45,8 @@ object ReadBookConfig {
     val textColor: Int get() = durConfig.textColor()
 
     init {
-        upConfig()
+        initConfigs()
+        initShareConfig()
     }
 
     @Synchronized
@@ -50,30 +54,38 @@ object ReadBookConfig {
         if (configList.size < 5) {
             resetAll()
         }
-        if (configList.size < 6) {
-            configList.add(Config())
-        }
-        return configList[index]
+        return configList.getOrNull(index) ?: configList[0]
     }
 
-    fun upConfig() {
-        (getConfigs() ?: defaultConfigs).let {
+    fun initConfigs() {
+        val configFile = File(configFilePath)
+        var configs: List<Config>? = null
+        if (configFile.exists()) {
+            try {
+                val json = configFile.readText()
+                configs = GSON.fromJsonArray(json)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        (configs ?: defaultConfigs).let {
             configList.clear()
             configList.addAll(it)
         }
     }
 
-    private fun getConfigs(): List<Config>? {
+    fun initShareConfig() {
         val configFile = File(configFilePath)
+        var c: Config? = null
         if (configFile.exists()) {
             try {
                 val json = configFile.readText()
-                return GSON.fromJsonArray(json)
+                c = GSON.fromJsonObject(json)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-        return null
+        shareConfig = c ?: configList.getOrNull(5) ?: Config()
     }
 
     fun upBg() {
@@ -94,20 +106,28 @@ object ReadBookConfig {
     fun save() {
         Coroutine.async {
             synchronized(this) {
-                val json = GSON.toJson(configList)
-                FileUtils.deleteFile(configFilePath)
-                FileUtils.createFileIfNotExist(configFilePath).writeText(json)
+                GSON.toJson(configList).let {
+                    FileUtils.deleteFile(configFilePath)
+                    FileUtils.createFileIfNotExist(configFilePath).writeText(it)
+                }
+                GSON.toJson(shareConfig).let {
+                    FileUtils.deleteFile(shareConfigFilePath)
+                    FileUtils.createFileIfNotExist(shareConfigFilePath).writeText(it)
+                }
             }
         }
     }
 
-    fun resetDur() {
-        defaultConfigs[styleSelect].let {
-            durConfig.setBg(it.bgType(), it.bgStr())
-            durConfig.setTextColor(it.textColor())
+    fun deleteDur(): Boolean {
+        if (configList.size > 5) {
+            configList.removeAt(styleSelect)
+            if (styleSelect > 0) {
+                styleSelect -= 1
+            }
             upBg()
-            save()
+            return true
         }
+        return false
     }
 
     private fun resetAll() {
@@ -160,7 +180,7 @@ object ReadBookConfig {
     var hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
     var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
 
-    val config get() = if (shareLayout) getConfig(5) else durConfig
+    val config get() = if (shareLayout) shareConfig else durConfig
 
     var textFont: String
         get() = config.textFont
@@ -308,39 +328,38 @@ object ReadBookConfig {
     fun getExportConfig(): Config {
         val exportConfig = GSON.fromJsonObject<Config>(GSON.toJson(durConfig))!!
         if (shareLayout) {
-            val shearConfig = getConfig(5)
-            exportConfig.textFont = shearConfig.textFont
-            exportConfig.textBold = shearConfig.textBold
-            exportConfig.textSize = shearConfig.textSize
-            exportConfig.letterSpacing = shearConfig.letterSpacing
-            exportConfig.lineSpacingExtra = shearConfig.lineSpacingExtra
-            exportConfig.paragraphSpacing = shearConfig.paragraphSpacing
-            exportConfig.titleMode = shearConfig.titleMode
-            exportConfig.titleSize = shearConfig.titleSize
-            exportConfig.titleTopSpacing = shearConfig.titleTopSpacing
-            exportConfig.titleBottomSpacing = shearConfig.titleBottomSpacing
-            exportConfig.paddingBottom = shearConfig.paddingBottom
-            exportConfig.paddingLeft = shearConfig.paddingLeft
-            exportConfig.paddingRight = shearConfig.paddingRight
-            exportConfig.paddingTop = shearConfig.paddingTop
-            exportConfig.headerPaddingBottom = shearConfig.headerPaddingBottom
-            exportConfig.headerPaddingLeft = shearConfig.headerPaddingLeft
-            exportConfig.headerPaddingRight = shearConfig.headerPaddingRight
-            exportConfig.headerPaddingTop = shearConfig.headerPaddingTop
-            exportConfig.footerPaddingBottom = shearConfig.footerPaddingBottom
-            exportConfig.footerPaddingLeft = shearConfig.footerPaddingLeft
-            exportConfig.footerPaddingRight = shearConfig.footerPaddingRight
-            exportConfig.footerPaddingTop = shearConfig.footerPaddingTop
-            exportConfig.showHeaderLine = shearConfig.showHeaderLine
-            exportConfig.showFooterLine = shearConfig.showFooterLine
-            exportConfig.tipHeaderLeft = shearConfig.tipHeaderLeft
-            exportConfig.tipHeaderMiddle = shearConfig.tipHeaderMiddle
-            exportConfig.tipHeaderRight = shearConfig.tipHeaderRight
-            exportConfig.tipFooterLeft = shearConfig.tipFooterLeft
-            exportConfig.tipFooterMiddle = shearConfig.tipFooterMiddle
-            exportConfig.tipFooterRight = shearConfig.tipFooterRight
-            exportConfig.hideHeader = shearConfig.hideHeader
-            exportConfig.hideFooter = shearConfig.hideFooter
+            exportConfig.textFont = shareConfig.textFont
+            exportConfig.textBold = shareConfig.textBold
+            exportConfig.textSize = shareConfig.textSize
+            exportConfig.letterSpacing = shareConfig.letterSpacing
+            exportConfig.lineSpacingExtra = shareConfig.lineSpacingExtra
+            exportConfig.paragraphSpacing = shareConfig.paragraphSpacing
+            exportConfig.titleMode = shareConfig.titleMode
+            exportConfig.titleSize = shareConfig.titleSize
+            exportConfig.titleTopSpacing = shareConfig.titleTopSpacing
+            exportConfig.titleBottomSpacing = shareConfig.titleBottomSpacing
+            exportConfig.paddingBottom = shareConfig.paddingBottom
+            exportConfig.paddingLeft = shareConfig.paddingLeft
+            exportConfig.paddingRight = shareConfig.paddingRight
+            exportConfig.paddingTop = shareConfig.paddingTop
+            exportConfig.headerPaddingBottom = shareConfig.headerPaddingBottom
+            exportConfig.headerPaddingLeft = shareConfig.headerPaddingLeft
+            exportConfig.headerPaddingRight = shareConfig.headerPaddingRight
+            exportConfig.headerPaddingTop = shareConfig.headerPaddingTop
+            exportConfig.footerPaddingBottom = shareConfig.footerPaddingBottom
+            exportConfig.footerPaddingLeft = shareConfig.footerPaddingLeft
+            exportConfig.footerPaddingRight = shareConfig.footerPaddingRight
+            exportConfig.footerPaddingTop = shareConfig.footerPaddingTop
+            exportConfig.showHeaderLine = shareConfig.showHeaderLine
+            exportConfig.showFooterLine = shareConfig.showFooterLine
+            exportConfig.tipHeaderLeft = shareConfig.tipHeaderLeft
+            exportConfig.tipHeaderMiddle = shareConfig.tipHeaderMiddle
+            exportConfig.tipHeaderRight = shareConfig.tipHeaderRight
+            exportConfig.tipFooterLeft = shareConfig.tipFooterLeft
+            exportConfig.tipFooterMiddle = shareConfig.tipFooterMiddle
+            exportConfig.tipFooterRight = shareConfig.tipFooterRight
+            exportConfig.hideHeader = shareConfig.hideHeader
+            exportConfig.hideFooter = shareConfig.hideFooter
         }
         return exportConfig
     }
@@ -365,7 +384,7 @@ object ReadBookConfig {
         var textSize: Int = 20,//文字大小
         var letterSpacing: Float = 0.1f,//字间距
         var lineSpacingExtra: Int = 12,//行间距
-        var paragraphSpacing: Int = 4,//段距
+        var paragraphSpacing: Int = 2,//段距
         var titleMode: Int = 0,//标题居中
         var titleSize: Int = 0,
         var titleTopSpacing: Int = 0,

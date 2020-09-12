@@ -11,8 +11,6 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
 import androidx.documentfile.provider.DocumentFile
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -104,6 +102,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         sw_dark_status_icon.setTextColor(primaryTextColor)
         iv_import.setColorFilter(primaryTextColor)
         iv_export.setColorFilter(primaryTextColor)
+        iv_delete.setColorFilter(primaryTextColor)
         tv_bg_image.setTextColor(primaryTextColor)
     }
 
@@ -111,8 +110,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
     private fun initData() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.isChecked = statusIconDark()
         adapter = BgAdapter(requireContext())
-        recycler_view.layoutManager =
-            LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
         recycler_view.adapter = adapter
         val headerView = LayoutInflater.from(requireContext())
             .inflate(R.layout.item_bg_image, recycler_view, false)
@@ -153,10 +150,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 .setDialogId(BG_COLOR)
                 .show(requireActivity())
         }
-        tv_default.onClick {
-            ReadBookConfig.resetDur()
-            postEvent(EventBus.UP_CONFIG, false)
-        }
         iv_import.onClick {
             val importFormNet = "网络导入"
             val otherActions = arrayListOf(importFormNet)
@@ -178,6 +171,14 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 requestCodeExport,
                 title = getString(R.string.export_str)
             )
+        }
+        iv_delete.onClick {
+            if (ReadBookConfig.deleteDur()) {
+                postEvent(EventBus.UP_CONFIG, true)
+                dismiss()
+            } else {
+                toast("数量以是最少,不能删除.")
+            }
         }
     }
 

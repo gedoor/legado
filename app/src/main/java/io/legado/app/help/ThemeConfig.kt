@@ -7,7 +7,6 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.*
 import java.io.File
 
@@ -32,19 +31,22 @@ object ThemeConfig {
     }
 
     fun save() {
-        Coroutine.async {
-            synchronized(this) {
-                val json = GSON.toJson(configList)
-                FileUtils.deleteFile(configFilePath)
-                FileUtils.createFileIfNotExist(configFilePath).writeText(json)
-            }
-        }
+        val json = GSON.toJson(configList)
+        FileUtils.deleteFile(configFilePath)
+        FileUtils.createFileIfNotExist(configFilePath).writeText(json)
     }
 
-    fun addConfig(json: String) {
-        GSON.fromJsonObject<Config>(json)?.let {
+    fun delConfig(index: Int) {
+        configList.removeAt(index)
+        save()
+    }
+
+    fun addConfig(json: String): Boolean {
+        GSON.fromJsonObject<Config>(json.trim { it < ' ' })?.let {
             addConfig(it)
+            return true
         }
+        return false
     }
 
     private fun addConfig(newConfig: Config) {
@@ -114,9 +116,15 @@ object ThemeConfig {
 
     fun saveNightTheme(context: Context, name: String) {
         val primary =
-            context.getPrefInt(PreferKey.cNPrimary, context.getCompatColor(R.color.md_blue_grey_600))
+            context.getPrefInt(
+                PreferKey.cNPrimary,
+                context.getCompatColor(R.color.md_blue_grey_600)
+            )
         val accent =
-            context.getPrefInt(PreferKey.cNAccent, context.getCompatColor(R.color.md_deep_orange_800))
+            context.getPrefInt(
+                PreferKey.cNAccent,
+                context.getCompatColor(R.color.md_deep_orange_800)
+            )
         val background =
             context.getPrefInt(PreferKey.cNBackground, context.getCompatColor(R.color.md_grey_900))
         val bBackground =

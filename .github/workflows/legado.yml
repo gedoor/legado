@@ -6,11 +6,11 @@ on:
   push:
     branches: 
       - master
-    tags:
-      - '3.*'
-  pull_request:
-    branches: 
-      - master
+#    tags:
+#      - '3.*'
+#  pull_request:
+#    branches:
+#      - master
 #  watch:
 #    types: [started]
 #  schedule:

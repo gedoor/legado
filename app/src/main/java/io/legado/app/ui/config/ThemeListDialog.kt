@@ -21,6 +21,7 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getClipText
+import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_theme_config.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -74,8 +75,11 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         when (item?.itemId) {
             R.id.menu_import -> {
                 requireContext().getClipText()?.let {
-                    ThemeConfig.addConfig(it)
-                    initData()
+                    if (ThemeConfig.addConfig(it)) {
+                        initData()
+                    } else {
+                        toast("格式不对,添加失败")
+                    }
                 }
             }
         }
@@ -85,8 +89,7 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     fun delete(index: Int) {
         alert(R.string.delete, R.string.sure_del) {
             okButton {
-                ThemeConfig.configList.removeAt(index)
-                ThemeConfig.save()
+                ThemeConfig.delConfig(index)
                 initData()
             }
             noButton()

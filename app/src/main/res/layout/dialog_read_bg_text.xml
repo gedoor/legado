@@ -57,23 +57,6 @@
             app:isBottomBackground="true"
             tools:ignore="HardcodedText" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_default"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_weight="3"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="@string/btn_default_s"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            tools:ignore="HardcodedText" />
-
         <ImageView
             android:id="@+id/iv_import"
             android:layout_width="36dp"
@@ -98,6 +81,18 @@
             android:tooltipText="@string/export_str"
             tools:ignore="UnusedAttribute" />
 
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/delete"
+            android:src="@drawable/ic_clear_all"
+            android:tooltipText="@string/delete"
+            tools:ignore="UnusedAttribute" />
+
     </LinearLayout>
 
     <TextView
@@ -112,7 +107,9 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:padding="6dp" />
-
+        android:orientation="horizontal"
+        android:padding="6dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_bg_image" />
 
 </LinearLayout>
