@@ -89,8 +89,7 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     fun delete(index: Int) {
         alert(R.string.delete, R.string.sure_del) {
             okButton {
-                ThemeConfig.configList.removeAt(index)
-                ThemeConfig.save()
+                ThemeConfig.delConfig(index)
                 initData()
             }
             noButton()
