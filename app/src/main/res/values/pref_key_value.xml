@@ -13,7 +13,7 @@
     <string name="pk_check_update" translatable="false">checkUpdate</string>
     <string name="legado_gzh" translatable="false">开源阅读</string>
 
-    <string name="source_rule_url" translatable="false">https://alanskycn.gitee.io/teachme</string>
+    <string name="source_rule_url" translatable="false">https://alanskycn.gitee.io/teachme/</string>
     <string name="this_github_url" translatable="false">https://github.com/gedoor/legado</string>
     <string name="contributors_url" translatable="false">https://github.com/gedoor/legado/graphs/contributors</string>
     <string name="disclaimer_url" translatable="false">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
