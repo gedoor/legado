@@ -589,17 +589,12 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      * 执行JS
      */
     private fun evalJS(jsStr: String, result: Any?): Any? {
-        try {
-            val bindings = SimpleBindings()
-            bindings["java"] = this
-            bindings["book"] = book
-            bindings["result"] = result
-            bindings["baseUrl"] = baseUrl
-            return SCRIPT_ENGINE.eval(jsStr, bindings)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
-        }
+        val bindings = SimpleBindings()
+        bindings["java"] = this
+        bindings["book"] = book
+        bindings["result"] = result
+        bindings["baseUrl"] = baseUrl
+        return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
     /**
