@@ -358,6 +358,7 @@
         <service android:name=".service.TTSReadAloudService" />
         <service android:name=".service.HttpReadAloudService" />
         <service android:name=".service.AudioPlayService" />
+        <service android:name=".service.DownloadService" />
 
         <receiver android:name=".receiver.MediaButtonReceiver">
             <intent-filter>

@@ -156,7 +156,7 @@ class App : MultiDexApplication() {
             //用唯一的ID创建渠道对象
             val downloadChannel = NotificationChannel(
                 channelIdDownload,
-                getString(R.string.offline_cache),
+                getString(R.string.action_download),
                 NotificationManager.IMPORTANCE_LOW
             )
             //初始化channel
