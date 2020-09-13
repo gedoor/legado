@@ -260,7 +260,12 @@
                             android:textSize="12sp" />
                     </LinearLayout>
 
-                    <!--目录按钮-->
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2" />
+
+                    <!--搜索按钮-->
                     <LinearLayout
                         android:id="@+id/ll_search"
                         android:layout_width="60dp"
@@ -278,7 +283,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:contentDescription="@string/search_content"
-                            android:src="@drawable/ic_toc"
+                            android:src="@drawable/ic_search"
                             app:tint="@color/primaryText"
                             tools:ignore="NestedWeights" />
 

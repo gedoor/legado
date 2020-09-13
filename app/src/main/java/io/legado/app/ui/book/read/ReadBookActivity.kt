@@ -47,6 +47,7 @@ import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
+import io.legado.app.ui.book.searchContent.SearchListActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
@@ -672,7 +673,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun openSearchList() {
         ReadBook.book?.let {
-            startActivityForResult<ChapterListActivity>(
+            startActivityForResult<SearchListActivity>(
                 requestCodeChapterList,
                 Pair("bookUrl", it.bookUrl)
             )

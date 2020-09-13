@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import io.legado.app.App
@@ -13,19 +14,16 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_search_list.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.regex.Pattern
 
 class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment_search_list),
     SearchListAdapter.Callback,
@@ -123,19 +121,90 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
 
     override fun startContentSearch(newText: String?) {
         if (newText.isNullOrBlank()) {
-            //initDoc()
+            initDoc()
         } else {
-            if (isLocalBook){
-
+            var count: Int = 0
+            val beginTime = System.currentTimeMillis()
+            App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map{
+                launch(IO) {
+                    if (isLocalBook ||
+                        adapter.cacheFileNames.contains(BookHelp.formatChapterName(it))
+                    ) {
+                        val value = searchChapter(newText, it)
+                        count += value
+                    }
+                }
+            }
+            //adapter.setItems(list)
+            val finishedTime = System.currentTimeMillis() - beginTime
+            Log.d("Jason", "Search finished, the total time cost is $finishedTime")
+            Log.d("Jason", "Search finished, the total count is $count")
+            //tocLiveData?.removeObservers(this)
+            //tocLiveData = App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl, newText)
+            //tocLiveData?.observe(viewLifecycleOwner, {
+                //adapter.setItems(it)
+            //})
             }
 
-            tocLiveData?.removeObservers(this)
-            tocLiveData = App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl, newText)
-            tocLiveData?.observe(viewLifecycleOwner, {
-                adapter.setItems(it)
-            })
-        }
     }
+
+
+
+    private suspend fun searchChapter(query: String, chapter: BookChapter?): Int  {
+
+
+        val startTime = System.currentTimeMillis()
+        val searchResult: MutableList<String> = mutableListOf()
+        var count = 0
+        if (chapter != null){
+            Log.d("Jason", "Search ${chapter.title}")
+            viewModel.book?.let { bookSource ->
+                val bookContent = BookHelp.getContent(bookSource, chapter)
+                /* replace content, let's focus on original content first
+                chapter.title = when (AppConfig.chineseConverterType) {
+                    1 -> HanLP.convertToSimplifiedChinese(chapter.title)
+                    2 -> HanLP.convertToTraditionalChinese(chapter.title)
+                    else -> chapter.title
+                }
+                var replaceContents: List<String>? = null
+                bookContent?.let {
+                    replaceContents = BookHelp.disposeContent(
+                        chapter.title,
+                        bookSource.name,
+                        bookSource.bookUrl,
+                        it,
+                        bookSource.useReplaceRule
+                    )
+                }
+
+                replaceContents?.map {
+                    async(IO) {
+                        if (it.contains(query)) {
+                            Log.d("targetd contents", it)
+                            searchResult.add(it)
+                        }
+                    }
+                }?.awaitAll()
+                */
+                count = bookContent?.let { countMatches(it, query) }!!
+                Log.d("Jason", "Search ${chapter.title} finished, the appeared count is $count")
+            }
+            val endTime = System.currentTimeMillis() - startTime
+            Log.d("Jason", "Search ${chapter.title} finished, the time cost is $endTime")
+        }
+        return count
+    }
+
+    fun countMatches(string: String, pattern: String): Int {
+        val matcher = Pattern.compile(pattern).matcher(string)
+
+        var count = 0
+        while (matcher.find()) {
+            count++
+        }
+        return count
+    }
+
 
     override val isLocalBook: Boolean
         get() = viewModel.book?.isLocalBook() == true
