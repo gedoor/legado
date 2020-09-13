@@ -24,9 +24,6 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.*
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
@@ -47,7 +44,6 @@ import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
-
 import java.io.File
 import java.text.Collator
 
@@ -212,7 +208,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     else -> data.reversed()
                 }
             }
-            recycler_view.scrollToPosition(0)
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), sourceList))
             adapter.setItems(sourceList, diffResult)
