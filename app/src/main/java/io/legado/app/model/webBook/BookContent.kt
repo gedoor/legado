@@ -97,7 +97,7 @@ object BookContent {
         val replaceRegex = bookSource.ruleContent?.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
             val analyzeRule = AnalyzeRule(book)
-            analyzeRule.setContent(body, baseUrl)
+            analyzeRule.setContent(contentStr, baseUrl)
             analyzeRule.chapter = bookChapter
             contentStr = analyzeRule.getString(replaceRegex)
         }

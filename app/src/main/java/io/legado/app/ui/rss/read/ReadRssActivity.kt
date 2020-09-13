@@ -160,6 +160,7 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 request.setAllowedOverRoaming(true)
                 // 允许下载的网路类型
                 request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 // 设置下载文件保存的路径和文件名
                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
                 val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
