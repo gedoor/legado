@@ -122,8 +122,8 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                         }
                     }
                     val finishedTime = System.currentTimeMillis() - beginTime
-                    Log.d("Jason", "Search finished, the total time cost is $finishedTime")
-                    Log.d("Jason", "Search finished, the total count is $searchResultCounts")
+                    Log.d("h11128", "Search finished, the total time cost is $finishedTime")
+                    Log.d("h11128", "Search finished, the total count is $searchResultCounts")
                 }
             }
         }
@@ -135,7 +135,7 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         val searchResults: MutableList<SearchResult> = mutableListOf()
         var positions : List<Int>? = listOf()
         if (chapter != null){
-            Log.d("Jason", "Search ${chapter.title}")
+            Log.d("h11128", "Search ${chapter.title}")
             viewModel.book?.let { bookSource ->
                 val bookContent = BookHelp.getContent(bookSource, chapter)
                 if (bookContent != null){
@@ -178,13 +178,13 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                             newPosition = construct[0] as Int
                         )
                         searchResults.add(result)
-                        Log.d("Jason", result.presentText)
+                        // Log.d("h11128", result.presentText)
                     }
-                    Log.d("Jason", "Search ${chapter.title} finished, the appeared count is ${positions!!.size}")
+                    Log.d("h11128", "Search ${chapter.title} finished, the appeared count is ${positions!!.size}")
                 }
             }
             val endTime = System.currentTimeMillis() - startTime
-            Log.d("Jason", "Search ${chapter.title} finished, the time cost is $endTime")
+            Log.d("h11128", "Search ${chapter.title} finished, the time cost is $endTime")
         }
         return searchResults
     }
