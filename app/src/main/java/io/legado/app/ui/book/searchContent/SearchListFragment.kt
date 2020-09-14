@@ -32,10 +32,9 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         get() = getViewModelOfActivity(SearchListViewModel::class.java)
 
     lateinit var adapter: SearchListAdapter
-    private var durChapterIndex = 0
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var tocLiveData: LiveData<List<BookChapter>>? = null
-    private var scrollToDurChapter = false
+    private var searchResultCounts = 0
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.searchCallBack = this
@@ -69,35 +68,28 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                 mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
             }
         }
-        tv_current_search_info.onClick {
-            mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
-        }
     }
 
     @SuppressLint("SetTextI18n")
     private fun initBook() {
         launch {
-            initDoc()
             viewModel.book?.let {
-                durChapterIndex = it.durChapterIndex
                 tv_current_search_info.text =
-                    "${it.durChapterTitle}(${it.durChapterIndex + 1}/${it.totalChapterNum})"
+                    "搜索结果：$searchResultCounts"
                 initCacheFileNames(it)
             }
         }
     }
 
+    /*
     private fun initDoc() {
         tocLiveData?.removeObservers(this@SearchListFragment)
         tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
         tocLiveData?.observe(viewLifecycleOwner, {
             adapter.setItems(it)
-            if (!scrollToDurChapter) {
-                mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
-                scrollToDurChapter = true
-            }
         })
     }
+    */
 
     private fun initCacheFileNames(book: Book) {
         launch(IO) {
@@ -120,46 +112,34 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
     }
 
     override fun startContentSearch(newText: String?) {
-        if (newText.isNullOrBlank()) {
-            initDoc()
-        } else {
-            var count: Int = 0
-            val beginTime = System.currentTimeMillis()
+        if (!newText.isNullOrBlank()) {
             App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map{
                 launch(IO) {
+                    val beginTime = System.currentTimeMillis()
                     if (isLocalBook ||
                         adapter.cacheFileNames.contains(BookHelp.formatChapterName(it))
                     ) {
                         val value = searchChapter(newText, it)
-                        count += value
+                        searchResultCounts += value
                     }
+                    val finishedTime = System.currentTimeMillis() - beginTime
+                    Log.d("Jason", "Search finished, the total time cost is $finishedTime")
+                    Log.d("Jason", "Search finished, the total count is $searchResultCounts")
                 }
             }
-            //adapter.setItems(list)
-            val finishedTime = System.currentTimeMillis() - beginTime
-            Log.d("Jason", "Search finished, the total time cost is $finishedTime")
-            Log.d("Jason", "Search finished, the total count is $count")
-            //tocLiveData?.removeObservers(this)
-            //tocLiveData = App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl, newText)
-            //tocLiveData?.observe(viewLifecycleOwner, {
-                //adapter.setItems(it)
-            //})
-            }
+        }
 
     }
 
-
-
     private suspend fun searchChapter(query: String, chapter: BookChapter?): Int  {
-
-
         val startTime = System.currentTimeMillis()
-        val searchResult: MutableList<String> = mutableListOf()
-        var count = 0
+        val searchResult: MutableList<SearchResult> = mutableListOf()
+        var positions : List<Int>? = listOf()
         if (chapter != null){
             Log.d("Jason", "Search ${chapter.title}")
             viewModel.book?.let { bookSource ->
                 val bookContent = BookHelp.getContent(bookSource, chapter)
+                if (bookContent != null){
                 /* replace content, let's focus on original content first
                 chapter.title = when (AppConfig.chineseConverterType) {
                     1 -> HanLP.convertToSimplifiedChinese(chapter.title)
@@ -186,35 +166,73 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                     }
                 }?.awaitAll()
                 */
-                count = bookContent?.let { countMatches(it, query) }!!
-                Log.d("Jason", "Search ${chapter.title} finished, the appeared count is $count")
+                    positions = countMatches(bookContent, query)
+                    positions?.map{
+                        searchResult.add(
+                            SearchResult(index = 0,
+                                text = constructText(bookContent, it),
+                                chapterTitle = chapter.title,
+                                query = query,
+                                pageSize = 0, // to be finished
+                                chapterIndex = chapter.index,   // to be finished
+                                pageIndex = 0,  // to be finished
+                                )
+                        )
+                    }
+                    adapter.addItems(searchResult)
+                    Log.d("Jason", "Search ${chapter.title} finished, the appeared count is ${positions!!.size}")
+                }
             }
             val endTime = System.currentTimeMillis() - startTime
             Log.d("Jason", "Search ${chapter.title} finished, the time cost is $endTime")
         }
-        return count
+        return positions!!.size
     }
 
-    fun countMatches(string: String, pattern: String): Int {
-        val matcher = Pattern.compile(pattern).matcher(string)
-
+    private fun countMatches(content: String, pattern: String): List<Int> {
+        val position : MutableList<Int> = mutableListOf()
         var count = 0
-        while (matcher.find()) {
-            count++
+        var index = content.indexOf(pattern)
+        while(index >= 0){
+            position.add(index)
+            index = content.indexOf(pattern, index + 1);
         }
-        return count
+        return position
     }
 
+    private fun constructText(content: String, position: Int): String{
 
-    override val isLocalBook: Boolean
+        val length = 10
+        var po1 = position - length
+        var po2 = position + length
+        if (po1 <0) {
+            po1 = 0
+        }
+        if (po2 > content.length){
+            po2 = content.length
+        }
+        return content.substring(po1, po2)
+        /*
+        if (position >= length && position <= content.length - length){
+            return content.substring(position - length, position + length)
+        }
+        else if (position <= length){
+            return content.substring(0, position + length)
+        }
+        else if (position >= content.length - length){
+            return content.substring(position - length, content.length)
+        }
+         */
+    }
+
+    val isLocalBook: Boolean
         get() = viewModel.book?.isLocalBook() == true
 
-    override fun durChapterIndex(): Int {
-        return durChapterIndex
-    }
-
-    override fun openSearchResult(bookChapter: BookChapter) {
-        activity?.setResult(RESULT_OK, Intent().putExtra("index", bookChapter.index))
+    override fun openSearchResult(searchResult: SearchResult) {
+        val searchData = Intent()
+        searchData.putExtra("index", searchResult.chapterIndex)
+        searchData.putExtra("pageIndex", searchResult.pageIndex)
+        activity?.setResult(RESULT_OK, searchData)
         activity?.finish()
     }
 

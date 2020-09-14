@@ -8,24 +8,12 @@
     android:padding="12dp">
 
     <TextView
-        android:id="@+id/tv_chapter_name"
+        android:id="@+id/tv_search_result"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
-
-    <ImageView
-        android:id="@+id/iv_checked"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@drawable/ic_check"
-        android:visibility="invisible"
-        android:contentDescription="@string/success"
-        app:tint="@color/secondaryText"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintRight_toLeftOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

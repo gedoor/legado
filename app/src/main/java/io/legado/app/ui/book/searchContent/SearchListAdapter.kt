@@ -1,7 +1,11 @@
 package io.legado.app.ui.book.searchContent
 
 import android.content.Context
+import android.os.Build
+import android.text.Html
 import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.core.text.HtmlCompat
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -10,32 +14,23 @@ import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_bookmark.view.tv_chapter_name
-import kotlinx.android.synthetic.main.item_chapter_list.view.*
+import kotlinx.android.synthetic.main.item_search_list.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchListAdapter(context: Context, val callback: Callback) :
-    SimpleRecyclerAdapter<BookChapter>(context, R.layout.item_search_list) {
+    SimpleRecyclerAdapter<SearchResult>(context, R.layout.item_search_list) {
 
     val cacheFileNames = hashSetOf<String>()
 
-    override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun convert(holder: ItemViewHolder, item: SearchResult, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            val isDur = callback.durChapterIndex() == item.index
-            val cached = callback.isLocalBook
-                    || cacheFileNames.contains(BookHelp.formatChapterName(item))
             if (payloads.isEmpty()) {
                 // set search result color here
-                if (isDur) {
-                    tv_chapter_name.setTextColor(context.accentColor)
-                } else {
-                    tv_chapter_name.setTextColor(context.getCompatColor(R.color.primaryText))
-                }
-                tv_chapter_name.text = item.title
-
-                upHasCache(this, isDur, cached)
+                tv_search_result.text = HtmlCompat.fromHtml(item.presentText, HtmlCompat.FROM_HTML_MODE_LEGACY)
             } else {
-                upHasCache(this, isDur, cached)
+                //to do
+
             }
         }
     }
@@ -49,18 +44,10 @@ class SearchListAdapter(context: Context, val callback: Callback) :
     }
 
     private fun upHasCache(itemView: View, isDur: Boolean, cached: Boolean) = itemView.apply {
-        tv_chapter_name.paint.isFakeBoldText = cached
-        iv_checked.setImageResource(R.drawable.ic_outline_cloud_24)
-        iv_checked.visible(!cached)
-        if (isDur) {
-            iv_checked.setImageResource(R.drawable.ic_check)
-            iv_checked.visible()
-        }
+        tv_search_result.paint.isFakeBoldText = cached
     }
 
     interface Callback {
-        val isLocalBook: Boolean
-        fun openSearchResult(bookChapter: BookChapter)
-        fun durChapterIndex(): Int
+        fun openSearchResult(searchResult: SearchResult)
     }
 }
