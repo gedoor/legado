@@ -10,6 +10,7 @@ class SearchListViewModel(application: Application) : BaseViewModel(application)
     var bookUrl: String = ""
     var book: Book? = null
     var searchCallBack: SearchListCallBack? = null
+    var lastQuery: String = ""
 
     fun initBook(bookUrl: String, success: () -> Unit) {
         this.bookUrl = bookUrl

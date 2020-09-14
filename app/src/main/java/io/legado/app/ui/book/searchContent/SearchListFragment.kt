@@ -81,16 +81,6 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         }
     }
 
-    /*
-    private fun initDoc() {
-        tocLiveData?.removeObservers(this@SearchListFragment)
-        tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
-        tocLiveData?.observe(viewLifecycleOwner, {
-            adapter.setItems(it)
-        })
-    }
-    */
-
     private fun initCacheFileNames(book: Book) {
         launch(IO) {
             adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
@@ -113,14 +103,21 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
 
     override fun startContentSearch(newText: String?) {
         if (!newText.isNullOrBlank()) {
+            adapter.clearItems()
+            viewModel.lastQuery = newText
             App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map{
                 launch(IO) {
                     val beginTime = System.currentTimeMillis()
-                    if (isLocalBook ||
-                        adapter.cacheFileNames.contains(BookHelp.formatChapterName(it))
+                    if (isLocalBook
+                        || adapter.cacheFileNames.contains(BookHelp.formatChapterName(it))
                     ) {
-                        val value = searchChapter(newText, it)
-                        searchResultCounts += value
+                        val searchResults = searchChapter(newText, it)
+                        if (searchResults.size > 0 ){
+                            searchResultCounts += searchResults.size
+                            withContext(Main){
+                                adapter.addItems(searchResults)
+                            }
+                        }
                     }
                     val finishedTime = System.currentTimeMillis() - beginTime
                     Log.d("Jason", "Search finished, the total time cost is $finishedTime")
@@ -131,15 +128,17 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
 
     }
 
-    private suspend fun searchChapter(query: String, chapter: BookChapter?): Int  {
+    private fun searchChapter(query: String, chapter: BookChapter?): MutableList<SearchResult>  {
         val startTime = System.currentTimeMillis()
-        val searchResult: MutableList<SearchResult> = mutableListOf()
+        val searchResults: MutableList<SearchResult> = mutableListOf()
         var positions : List<Int>? = listOf()
         if (chapter != null){
             Log.d("Jason", "Search ${chapter.title}")
             viewModel.book?.let { bookSource ->
                 val bookContent = BookHelp.getContent(bookSource, chapter)
                 if (bookContent != null){
+                    //todo: 搜索替换后的正文
+                    //todo: 计算搜索结果所在的pageIndex直接跳转
                 /* replace content, let's focus on original content first
                 chapter.title = when (AppConfig.chineseConverterType) {
                     1 -> HanLP.convertToSimplifiedChinese(chapter.title)
@@ -168,30 +167,28 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                 */
                     positions = countMatches(bookContent, query)
                     positions?.map{
-                        searchResult.add(
-                            SearchResult(index = 0,
-                                text = constructText(bookContent, it),
-                                chapterTitle = chapter.title,
-                                query = query,
-                                pageSize = 0, // to be finished
-                                chapterIndex = chapter.index,   // to be finished
-                                pageIndex = 0,  // to be finished
-                                )
+                        val result = SearchResult(index = 0,
+                            text = constructText(bookContent, it),
+                            chapterTitle = chapter.title,
+                            query = query,
+                            pageSize = 0, // to be finished
+                            chapterIndex = chapter.index,   // to be finished
+                            pageIndex = 0,  // to be finished
                         )
+                        searchResults.add(result)
+                        Log.d("Jason", result.presentText)
                     }
-                    adapter.addItems(searchResult)
                     Log.d("Jason", "Search ${chapter.title} finished, the appeared count is ${positions!!.size}")
                 }
             }
             val endTime = System.currentTimeMillis() - startTime
             Log.d("Jason", "Search ${chapter.title} finished, the time cost is $endTime")
         }
-        return positions!!.size
+        return searchResults
     }
 
     private fun countMatches(content: String, pattern: String): List<Int> {
         val position : MutableList<Int> = mutableListOf()
-        var count = 0
         var index = content.indexOf(pattern)
         while(index >= 0){
             position.add(index)
@@ -201,8 +198,11 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
     }
 
     private fun constructText(content: String, position: Int): String{
-
-        val length = 10
+        // 构建关键词周边文字，在搜索结果里显示
+        // todo: 判断段落，只在关键词所在段落内分割
+        // todo: 利用标点符号分割完整的句
+        // todo: length和设置结合，自由调整周边文字长度
+        val length = 20
         var po1 = position - length
         var po2 = position + length
         if (po1 <0) {
@@ -211,18 +211,7 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         if (po2 > content.length){
             po2 = content.length
         }
-        return content.substring(po1, po2)
-        /*
-        if (position >= length && position <= content.length - length){
-            return content.substring(position - length, position + length)
-        }
-        else if (position <= length){
-            return content.substring(0, position + length)
-        }
-        else if (position >= content.length - length){
-            return content.substring(position - length, content.length)
-        }
-         */
+        return "..." + content.substring(po1, po2)
     }
 
     val isLocalBook: Boolean

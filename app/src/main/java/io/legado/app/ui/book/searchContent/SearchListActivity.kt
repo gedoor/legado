@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.view_tab_layout.*
 
 
 class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity_search_list) {
+    // todo: 完善搜索界面UI
     override val viewModel: SearchListViewModel
         get() = getViewModel(SearchListViewModel::class.java)
 
@@ -51,7 +52,9 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
         searchView?.setOnSearchClickListener { tab_layout.gone() }
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                viewModel.startContentSearch(query)
+                if (viewModel.lastQuery != query){
+                    viewModel.startContentSearch(query)
+                }
                 return false
             }
 
