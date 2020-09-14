@@ -20,7 +20,6 @@ import io.legado.app.help.IntentHelp
 import io.legado.app.utils.RealPathUtil
 import io.legado.app.utils.msg
 import org.jetbrains.anko.downloadManager
-import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -69,10 +68,8 @@ class DownloadService : BaseService() {
             }
             IntentAction.stop -> {
                 val downloadId = intent.getLongExtra("downloadId", 0)
-                if (downloadId > 0) {
-                    downloadManager.remove(downloadId)
-                    notificationManager.cancel(downloadId.toInt())
-                } else {
+                downloads.remove(downloadId)
+                if (downloads.isEmpty()) {
                     stopSelf()
                 }
             }
