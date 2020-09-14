@@ -14,8 +14,11 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
+import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.fragment_search_list.*
@@ -33,21 +36,16 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
 
     lateinit var adapter: SearchListAdapter
     private lateinit var mLayoutManager: UpLinearLayoutManager
-    private var tocLiveData: LiveData<List<BookChapter>>? = null
     private var searchResultCounts = 0
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.searchCallBack = this
-
-        /* set color for the bottom bar
         val bbg = bottomBackground
         val btc = requireContext().getPrimaryTextColor(ColorUtils.isColorLight(bbg))
-        ll_chapter_base_info.setBackgroundColor(bbg)
-        tv_current_chapter_info.setTextColor(btc)
-        iv_chapter_top.setColorFilter(btc)
-        iv_chapter_bottom.setColorFilter(btc)
-
-         */
+        ll_search_base_info.setBackgroundColor(bbg)
+        tv_current_search_info.setTextColor(btc)
+        iv_search_content_top.setColorFilter(btc)
+        iv_search_content_bottom.setColorFilter(btc)
         initRecyclerView()
         initView()
         initBook()
@@ -73,9 +71,8 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
     @SuppressLint("SetTextI18n")
     private fun initBook() {
         launch {
+            tv_current_search_info.text = "搜索结果：$searchResultCounts"
             viewModel.book?.let {
-                tv_current_search_info.text =
-                    "搜索结果：$searchResultCounts"
                 initCacheFileNames(it)
             }
         }
@@ -101,6 +98,7 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun startContentSearch(newText: String?) {
         if (!newText.isNullOrBlank()) {
             adapter.clearItems()
@@ -114,7 +112,9 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                         val searchResults = searchChapter(newText, it)
                         if (searchResults.size > 0 ){
                             searchResultCounts += searchResults.size
+
                             withContext(Main){
+                                tv_current_search_info.text = "搜索结果：$searchResultCounts"
                                 adapter.addItems(searchResults)
                             }
                         }
@@ -137,43 +137,43 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
             viewModel.book?.let { bookSource ->
                 val bookContent = BookHelp.getContent(bookSource, chapter)
                 if (bookContent != null){
-                    //todo: 搜索替换后的正文
-                    //todo: 计算搜索结果所在的pageIndex直接跳转
-                /* replace content, let's focus on original content first
-                chapter.title = when (AppConfig.chineseConverterType) {
-                    1 -> HanLP.convertToSimplifiedChinese(chapter.title)
-                    2 -> HanLP.convertToTraditionalChinese(chapter.title)
-                    else -> chapter.title
-                }
-                var replaceContents: List<String>? = null
-                bookContent?.let {
-                    replaceContents = BookHelp.disposeContent(
-                        chapter.title,
-                        bookSource.name,
-                        bookSource.bookUrl,
-                        it,
-                        bookSource.useReplaceRule
-                    )
-                }
-
-                replaceContents?.map {
-                    async(IO) {
-                        if (it.contains(query)) {
-                            Log.d("targetd contents", it)
-                            searchResult.add(it)
-                        }
+                    //todo: 搜索替换后的正文句子列表
+                    /*
+                    chapter.title = when (AppConfig.chineseConverterType) {
+                        1 -> HanLP.convertToSimplifiedChinese(chapter.title)
+                        2 -> HanLP.convertToTraditionalChinese(chapter.title)
+                        else -> chapter.title
                     }
-                }?.awaitAll()
-                */
-                    positions = countMatches(bookContent, query)
+                    var replaceContents: List<String>? = null
+                    bookContent?.let {
+                        replaceContents = BookHelp.disposeContent(
+                            chapter.title,
+                            bookSource.name,
+                            bookSource.bookUrl,
+                            it,
+                            bookSource.useReplaceRule
+                        )
+                    }
+
+                    replaceContents?.map {
+                        async(IO) {
+                            if (it.contains(query)) {
+                                Log.d("targetd contents", it)
+                                searchResult.add(it)
+                            }
+                        }
+                    }?.awaitAll()
+                    */
+                    positions = searchPosition(bookContent, query)
                     positions?.map{
+                        val construct = constructText(bookContent, it)
                         val result = SearchResult(index = 0,
-                            text = constructText(bookContent, it),
+                            text = construct[1] as String,
                             chapterTitle = chapter.title,
                             query = query,
-                            pageSize = 0, // to be finished
-                            chapterIndex = chapter.index,   // to be finished
-                            pageIndex = 0,  // to be finished
+                            pageIndex = 0, //todo: 计算搜索结果所在的pageIndex直接跳转
+                            chapterIndex = chapter.index,
+                            newPosition = construct[0] as Int
                         )
                         searchResults.add(result)
                         Log.d("Jason", result.presentText)
@@ -187,7 +187,7 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         return searchResults
     }
 
-    private fun countMatches(content: String, pattern: String): List<Int> {
+    private fun searchPosition(content: String, pattern: String): List<Int> {
         val position : MutableList<Int> = mutableListOf()
         var index = content.indexOf(pattern)
         while(index >= 0){
@@ -197,7 +197,7 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         return position
     }
 
-    private fun constructText(content: String, position: Int): String{
+    private fun constructText(content: String, position: Int): Array<Any>{
         // 构建关键词周边文字，在搜索结果里显示
         // todo: 判断段落，只在关键词所在段落内分割
         // todo: 利用标点符号分割完整的句
@@ -211,7 +211,9 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         if (po2 > content.length){
             po2 = content.length
         }
-        return "..." + content.substring(po1, po2)
+        val newPosition = position - po1
+        val newText = "..." + content.substring(po1, po2)
+        return arrayOf(newPosition, newText)
     }
 
     val isLocalBook: Boolean
