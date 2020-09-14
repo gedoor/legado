@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.core.view.get
@@ -48,6 +49,7 @@ import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.searchContent.SearchListActivity
+import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
@@ -80,6 +82,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
     private val requestCodeReplace = 312
+    private val requestCodeSearchResult = 123
     private var menu: Menu? = null
     private var textActionMenu: TextActionMenu? = null
 
@@ -675,7 +678,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun openSearchList() {
         ReadBook.book?.let {
             startActivityForResult<SearchListActivity>(
-                requestCodeChapterList,
+                requestCodeSearchResult,
                 Pair("bookUrl", it.bookUrl)
             )
         }
@@ -761,11 +764,31 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 requestCodeChapterList ->
                     data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
                         if (index != ReadBook.durChapterIndex) {
-                            viewModel.openChapter(index)
+                                val pageIndex = data.getIntExtra("pageIndex", 0)
+                                viewModel.openChapter(index, pageIndex)
+                            }
+                        }
+                requestCodeSearchResult ->
+                    data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
+                        val contentPosition = data.getIntExtra("contentPosition", 0)
+                        val query = data.getStringExtra("query")
+                        ReadBook.durChapterIndex = index
+                        ReadBook.saveRead()
+                        ReadBook.loadContent(resetPageOffset = true)
+                        val pages = ReadBook.curTextChapter?.pages
+                        if (pages != null){
+                            val positions = ReadBook.searchResultPositions(pages, contentPosition)
+                            viewModel.openChapter(index, positions[0])
+                            Log.d("h11128", positions[0].toString())
+                            Log.d("h11128", positions[1].toString())
+                            Log.d("h11128", positions[2].toString())
+                            //page_view.curPage.selectStartMoveIndex(positions[0], positions[1], 0)
+                            //page_view.curPage.selectEndMoveIndex(positions[0], positions[1], 0 + query!!.length )
                         }
                     }
                 requestCodeReplace -> onReplaceRuleSave()
             }
+
         }
     }
 

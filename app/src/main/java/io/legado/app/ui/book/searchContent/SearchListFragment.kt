@@ -16,6 +16,9 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
@@ -37,6 +40,8 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
     lateinit var adapter: SearchListAdapter
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var searchResultCounts = 0
+    private var pageSize = 0
+    private var searchResultList: MutableList<SearchResult> = mutableListOf()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.searchCallBack = this
@@ -103,39 +108,36 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         // 按章节搜索内容
         if (!newText.isBlank()) {
             adapter.clearItems()
+            searchResultList.clear()
             searchResultCounts = 0
             viewModel.lastQuery = newText
-            App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map{
-                launch(IO) {
-                    val beginTime = System.currentTimeMillis()
-                    if (isLocalBook
-                        || adapter.cacheFileNames.contains(BookHelp.formatChapterName(it))
-                    ) {
-                        val searchResults = searchChapter(newText, it)
-                        if (searchResults.size > 0 ){
-                            searchResultCounts += searchResults.size
-
-                            withContext(Main){
-                                tv_current_search_info.text = "搜索结果：$searchResultCounts"
-                                adapter.addItems(searchResults)
-                            }
+            var searchResults = listOf<SearchResult>()
+            launch(Main){
+                App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map{ chapter ->
+                    val job = async(IO){
+                        if (isLocalBook || adapter.cacheFileNames.contains(BookHelp.formatChapterName(chapter))) {
+                            searchResults = searchChapter(newText, chapter)
+                            Log.d("h11128", "find ${searchResults.size} results in chapter ${chapter.title}")
                         }
                     }
-                    val finishedTime = System.currentTimeMillis() - beginTime
-                    Log.d("h11128", "Search finished, the total time cost is $finishedTime")
-                    Log.d("h11128", "Search finished, the total count is $searchResultCounts")
+                    job.await()
+                    if (searchResults.isNotEmpty()){
+                        Log.d("h11128", "load ${searchResults.size} results in chapter ${chapter.title}")
+                        searchResultList.addAll(searchResults)
+                        tv_current_search_info.text = "搜索结果：$searchResultCounts"
+                        Log.d("h11128", "searchResultList size ${searchResultList.size}")
+                        adapter.addItems(searchResults)
+                        searchResults = listOf<SearchResult>()
+                    }
                 }
             }
         }
-
     }
 
-    private fun searchChapter(query: String, chapter: BookChapter?): MutableList<SearchResult>  {
-        val startTime = System.currentTimeMillis()
+    private fun searchChapter(query: String, chapter: BookChapter?): List<SearchResult> {
         val searchResults: MutableList<SearchResult> = mutableListOf()
         var positions : List<Int>? = listOf()
         if (chapter != null){
-            Log.d("h11128", "Search ${chapter.title}")
             viewModel.book?.let { bookSource ->
                 val bookContent = BookHelp.getContent(bookSource, chapter)
                 if (bookContent != null){
@@ -169,22 +171,21 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                     positions = searchPosition(bookContent, query)
                     positions?.map{
                         val construct = constructText(bookContent, it, query)
-                        val result = SearchResult(index = 0,
+                        val result = SearchResult(index = searchResultCounts,
                             text = construct[1] as String,
                             chapterTitle = chapter.title,
                             query = query,
                             pageIndex = 0, //todo: 计算搜索结果所在的pageIndex直接跳转
                             chapterIndex = chapter.index,
-                            newPosition = construct[0] as Int
+                            newPosition = construct[0] as Int,
+                            contentPosition = it
                         )
+                        searchResultCounts += 1
                         searchResults.add(result)
                         // Log.d("h11128", result.presentText)
                     }
-                    Log.d("h11128", "Search ${chapter.title} finished, the appeared count is ${positions!!.size}")
                 }
             }
-            val endTime = System.currentTimeMillis() - startTime
-            Log.d("h11128", "Search ${chapter.title} finished, the time cost is $endTime")
         }
         return searchResults
     }
@@ -222,11 +223,16 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         get() = viewModel.book?.isLocalBook() == true
 
     override fun openSearchResult(searchResult: SearchResult) {
+
         val searchData = Intent()
         searchData.putExtra("index", searchResult.chapterIndex)
-        searchData.putExtra("pageIndex", searchResult.pageIndex)
+        searchData.putExtra("contentPosition", searchResult.contentPosition)
+        searchData.putExtra("query", searchResult.query)
+        Log.d("h11128","current chapter index ${searchResult.chapterIndex}")
         activity?.setResult(RESULT_OK, searchData)
         activity?.finish()
+
+
     }
 
 }

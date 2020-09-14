@@ -1,5 +1,8 @@
 package io.legado.app.ui.book.searchContent
 
+import android.util.Log
+import io.legado.app.ui.book.read.page.entities.TextPage
+
 data class SearchResult(
     var index: Int = 0,
     var text: String = "",
@@ -8,7 +11,8 @@ data class SearchResult(
     var pageSize: Int = 0,
     var chapterIndex: Int = 0,
     var pageIndex: Int = 0,
-    var newPosition: Int = 0
+    var newPosition: Int = 0,
+    var contentPosition: Int =0
 ) {
     val presentText: String
         get(){
@@ -19,5 +23,6 @@ data class SearchResult(
                     "<font color=#000000>$sub2</font>" +
                     "<font color=#0000ff>($chapterTitle)</font>"
         }
+
 
 }

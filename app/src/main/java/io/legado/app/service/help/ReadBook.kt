@@ -1,5 +1,6 @@
 package io.legado.app.service.help
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.hankcs.hanlp.HanLP
 import io.legado.app.App
@@ -16,6 +17,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import kotlinx.coroutines.Dispatchers
@@ -324,6 +326,46 @@ object ReadBook {
         }
     }
 
+    fun searchResultPositions(pages: List<TextPage>, contentPosition: Int): Array<Int>{
+        //
+        // calculate search result's pageIndex
+        var pageIndex = 0
+        var length = pages[pageIndex].text.length
+        Log.d("h11128", "page size ${pages.size}")
+        while (length < contentPosition){
+            pageIndex += 1
+            if (pageIndex >pages.size){
+                pageIndex = pages.size
+                break
+            }
+            length += pages[pageIndex].text.length
+            Log.d("h11128", "to next page , add length change to $length")
+        }
+
+        Log.d("h11128", "at pageindex $pageIndex")
+
+        // calculate search result's lineIndex
+        val currentPage = pages[pageIndex]
+        var lineIndex = 0
+        length = length - currentPage.text.length + currentPage.textLines[lineIndex].text.length
+        while (length < contentPosition){
+            lineIndex += 1
+            if (lineIndex >currentPage.textLines.size){
+                lineIndex = currentPage.textLines.size
+                break
+            }
+            length += currentPage.textLines[lineIndex].text.length
+
+        }
+
+        // charIndex
+        val currentLine = currentPage.textLines[lineIndex]
+        length -= currentLine.text.length
+        val charIndex = contentPosition - length
+
+        return arrayOf(pageIndex, lineIndex, charIndex)
+    }
+
     /**
      * 内容加载完成
      */
@@ -426,4 +468,5 @@ object ReadBook {
         fun pageChanged()
         fun contentLoadFinish()
     }
+
 }
