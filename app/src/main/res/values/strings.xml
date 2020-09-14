@@ -763,6 +763,6 @@
     <string name="theme_list_summary">Save, Import, Share theme</string>
     <string name="share_selected_source">Share selected sources</string>
     <string name="sort_by_lastUppdateTime">Sort by update time</string>
-    <string name="search_content">Search content</string>
+    <string name="search_content">Search</string>
 
 </resources>

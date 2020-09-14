@@ -99,9 +99,11 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
     }
 
     @SuppressLint("SetTextI18n")
-    override fun startContentSearch(newText: String?) {
-        if (!newText.isNullOrBlank()) {
+    override fun startContentSearch(newText: String) {
+        // 按章节搜索内容
+        if (!newText.isBlank()) {
             adapter.clearItems()
+            searchResultCounts = 0
             viewModel.lastQuery = newText
             App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map{
                 launch(IO) {
@@ -166,7 +168,7 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                     */
                     positions = searchPosition(bookContent, query)
                     positions?.map{
-                        val construct = constructText(bookContent, it)
+                        val construct = constructText(bookContent, it, query)
                         val result = SearchResult(index = 0,
                             text = construct[1] as String,
                             chapterTitle = chapter.title,
@@ -197,14 +199,14 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         return position
     }
 
-    private fun constructText(content: String, position: Int): Array<Any>{
+    private fun constructText(content: String, position: Int, query: String): Array<Any>{
         // 构建关键词周边文字，在搜索结果里显示
         // todo: 判断段落，只在关键词所在段落内分割
         // todo: 利用标点符号分割完整的句
         // todo: length和设置结合，自由调整周边文字长度
         val length = 20
         var po1 = position - length
-        var po2 = position + length
+        var po2 = position + query.length + length
         if (po1 <0) {
             po1 = 0
         }
@@ -212,7 +214,7 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
             po2 = content.length
         }
         val newPosition = position - po1
-        val newText = "..." + content.substring(po1, po2)
+        val newText = content.substring(po1, po2)
         return arrayOf(newPosition, newText)
     }
 

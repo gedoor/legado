@@ -671,6 +671,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 打开搜索界面
      */
+    //todo: change request code
     override fun openSearchList() {
         ReadBook.book?.let {
             startActivityForResult<SearchListActivity>(

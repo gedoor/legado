@@ -14,9 +14,9 @@ data class SearchResult(
         get(){
             val sub1 = text.substring(0, newPosition)
             val sub2 = text.substring(newPosition + query.length, text.length)
-            return "<font color=#000000>$sub1</font> " +
+            return "<font color=#000000>$sub1</font>" +
                     "<font color=#ff0000>$query</font>" +
-                    "<font color=#000000>$sub2</font> " +
+                    "<font color=#000000>$sub2</font>" +
                     "<font color=#0000ff>($chapterTitle)</font>"
         }
 

@@ -21,13 +21,13 @@ class SearchListViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun startContentSearch(newText: String?) {
+    fun startContentSearch(newText: String) {
         searchCallBack?.startContentSearch(newText)
     }
 
 
     interface SearchListCallBack {
-        fun startContentSearch(newText: String?)
+        fun startContentSearch(newText: String)
     }
 
 }
