@@ -5,16 +5,24 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import androidx.core.app.NotificationCompat
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
 import io.legado.app.help.IntentHelp
+import io.legado.app.utils.RealPathUtil
+import io.legado.app.utils.msg
 import org.jetbrains.anko.downloadManager
 import org.jetbrains.anko.notificationManager
+import org.jetbrains.anko.toast
+import java.io.File
 
 
 class DownloadService : BaseService() {
@@ -91,42 +99,62 @@ class DownloadService : BaseService() {
         val ids = downloads.keys
         val query = DownloadManager.Query()
         query.setFilterById(*ids.toLongArray())
-        val cursor = downloadManager.query(query)
-        if (!cursor.moveToFirst()) return
-        val id = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID))
-        val progress: Int =
-            cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-        val max: Int =
-            cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-        val status = when (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
-            DownloadManager.STATUS_PAUSED -> "暂停"
-            DownloadManager.STATUS_PENDING -> "待下载"
-            DownloadManager.STATUS_RUNNING -> "下载中"
-            DownloadManager.STATUS_SUCCESSFUL -> {
-                if (!completeDownloads.contains(id)) {
-                    completeDownloads.add(id)
-                    if (downloads[id]?.endsWith(".apk") == true) {
-                        installApk(id)
+        downloadManager.query(query).use { cursor ->
+            if (!cursor.moveToFirst()) return
+            val id = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID))
+            val progress: Int =
+                cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+            val max: Int =
+                cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+            val status =
+                when (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+                    DownloadManager.STATUS_PAUSED -> "暂停"
+                    DownloadManager.STATUS_PENDING -> "待下载"
+                    DownloadManager.STATUS_RUNNING -> "下载中"
+                    DownloadManager.STATUS_SUCCESSFUL -> {
+                        if (!completeDownloads.contains(id)) {
+                            completeDownloads.add(id)
+                            if (downloads[id]?.endsWith(".apk") == true) {
+                                installApk(id)
+                            }
+                        }
+                        "下载完成"
                     }
+                    DownloadManager.STATUS_FAILED -> "下载失败"
+                    else -> "未知状态"
                 }
-                "下载完成"
-            }
-            DownloadManager.STATUS_FAILED -> "下载失败"
-            else -> "未知状态"
-        }
-        updateNotification(id, "${downloads[id]} $status", max, progress)
-        if (!cursor.isClosed) {
-            cursor.close()
+            updateNotification(id, "${downloads[id]} $status", max, progress)
         }
     }
 
     private fun installApk(downloadId: Long) {
-        val downloadFileUri = downloadManager.getUriForDownloadedFile(downloadId)
-        downloadFileUri?.let {
-            val install = Intent(Intent.ACTION_VIEW)
-            install.setDataAndType(downloadFileUri, "application/vnd.android.package-archive")
-            install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(install)
+        downloadManager.getUriForDownloadedFile(downloadId)?.let {
+            val filePath = RealPathUtil.getPath(this, it) ?: return
+            val file = File(filePath)
+            //调用系统安装apk
+            val intent = Intent()
+            intent.action = Intent.ACTION_VIEW
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {   //7.0版本以上
+                val uriForFile: Uri =
+                    FileProvider.getUriForFile(
+                        this,
+                        "${BuildConfig.APPLICATION_ID}.fileProvider",
+                        file
+                    )
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                intent.setDataAndType(uriForFile, "application/vnd.android.package-archive")
+            } else {
+                val uri: Uri = Uri.fromFile(file)
+                intent.setDataAndType(uri, "application/vnd.android.package-archive")
+            }
+
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                toast(e.msg)
+            }
         }
     }
 
