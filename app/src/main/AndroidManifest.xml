@@ -223,6 +223,10 @@
             android:name=".ui.book.chapterlist.ChapterListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
+        <activity
+            android:name=".ui.book.searchContent.SearchListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind" />
         <!-- RSS条目 -->
         <activity
             android:name=".ui.rss.article.RssSortActivity"
