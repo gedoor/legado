@@ -1,10 +1,13 @@
 package io.legado.app.ui.book.searchContent
 
+import android.text.Spanned
 import android.util.Log
+import androidx.core.text.HtmlCompat
 import io.legado.app.ui.book.read.page.entities.TextPage
 
 data class SearchResult(
     var index: Int = 0,
+    var indexWithinChapter: Int = 0,
     var text: String = "",
     var chapterTitle: String = "",
     val query: String,
@@ -16,13 +19,22 @@ data class SearchResult(
 ) {
     val presentText: String
         get(){
-            val sub1 = text.substring(0, newPosition)
-            val sub2 = text.substring(newPosition + query.length, text.length)
-            return "<font color=#000000>$sub1</font>" +
-                    "<font color=#ff0000>$query</font>" +
-                    "<font color=#000000>$sub2</font>" +
+            return colorPresentText(newPosition, query, text) +
                     "<font color=#0000ff>($chapterTitle)</font>"
         }
+
+    fun colorPresentText(position: Int, center: String, targetText: String): String{
+        val sub1 = text.substring(0, position)
+        val sub2 = text.substring(position + center.length, targetText.length)
+        return "<font color=#000000>$sub1</font>" +
+                "<font color=#ff0000>$center</font>" +
+                "<font color=#000000>$sub2</font>"
+    }
+
+    fun parseText(targetText: String): Spanned {
+        return HtmlCompat.fromHtml(targetText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    }
+
 
 
 }

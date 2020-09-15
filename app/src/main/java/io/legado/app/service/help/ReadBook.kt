@@ -326,9 +326,21 @@ object ReadBook {
         }
     }
 
-    fun searchResultPositions(pages: List<TextPage>, contentPosition: Int): Array<Int>{
+    fun searchResultPositions(pages: List<TextPage>, indexWithinChapter: Int, query: String): Array<Int>{
         //
         // calculate search result's pageIndex
+        var content = ""
+        pages.map{
+            content+= it.text
+        }
+        var count = 1
+        var index = content.indexOf(query)
+        while(count != indexWithinChapter){
+            index = content.indexOf(query, index + 1);
+            count += 1
+        }
+        Log.d("h11128", "new index $index")
+        val contentPosition = index
         var pageIndex = 0
         var length = pages[pageIndex].text.length
         Log.d("h11128", "page size ${pages.size}")
@@ -348,6 +360,7 @@ object ReadBook {
         val currentPage = pages[pageIndex]
         var lineIndex = 0
         length = length - currentPage.text.length + currentPage.textLines[lineIndex].text.length
+        Log.d("h11128", "currentLine ${currentPage.textLines[lineIndex].text}")
         while (length < contentPosition){
             lineIndex += 1
             if (lineIndex >currentPage.textLines.size){
@@ -355,14 +368,17 @@ object ReadBook {
                 break
             }
             length += currentPage.textLines[lineIndex].text.length
-
+            Log.d("h11128", "currentLine ${currentPage.textLines[lineIndex].text}")
         }
 
         // charIndex
+        Log.d("h11128", "currentLine ${currentPage.textLines[lineIndex].text}")
+        Log.d("h11128", "currentLength $length")
         val currentLine = currentPage.textLines[lineIndex]
         length -= currentLine.text.length
+        Log.d("h11128", "currentLength $length")
         val charIndex = contentPosition - length
-
+        Log.d("h11128", "contentLength $contentPosition")
         return arrayOf(pageIndex, lineIndex, charIndex)
     }
 

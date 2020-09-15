@@ -15,6 +15,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.visible
+import kotlinx.android.synthetic.main.item_bookmark.view.*
 import kotlinx.android.synthetic.main.item_search_list.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -25,8 +26,12 @@ class SearchListAdapter(context: Context, val callback: Callback) :
 
     override fun convert(holder: ItemViewHolder, item: SearchResult, payloads: MutableList<Any>) {
         with(holder.itemView) {
+            val isDur = callback.durChapterIndex() == item.chapterIndex
             if (payloads.isEmpty()) {
-                tv_search_result.text = HtmlCompat.fromHtml(item.presentText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                tv_search_result.text = item.parseText(item.presentText)
+                if (isDur){
+                    tv_search_result.paint.isFakeBoldText = true
+                }
             }
         }
     }
@@ -41,5 +46,6 @@ class SearchListAdapter(context: Context, val callback: Callback) :
 
     interface Callback {
         fun openSearchResult(searchResult: SearchResult)
+        fun durChapterIndex(): Int
     }
 }

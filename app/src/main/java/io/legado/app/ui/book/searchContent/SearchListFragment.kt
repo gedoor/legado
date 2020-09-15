@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -40,7 +42,7 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
     lateinit var adapter: SearchListAdapter
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var searchResultCounts = 0
-    private var pageSize = 0
+    private var durChapterIndex = 0
     private var searchResultList: MutableList<SearchResult> = mutableListOf()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,9 +78,11 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
     @SuppressLint("SetTextI18n")
     private fun initBook() {
         launch {
+
             tv_current_search_info.text = "搜索结果：$searchResultCounts"
             viewModel.book?.let {
                 initCacheFileNames(it)
+                durChapterIndex = it.durChapterIndex
             }
         }
     }
@@ -117,15 +121,15 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                     val job = async(IO){
                         if (isLocalBook || adapter.cacheFileNames.contains(BookHelp.formatChapterName(chapter))) {
                             searchResults = searchChapter(newText, chapter)
-                            Log.d("h11128", "find ${searchResults.size} results in chapter ${chapter.title}")
+                            //Log.d("h11128", "find ${searchResults.size} results in chapter ${chapter.title}")
                         }
                     }
                     job.await()
                     if (searchResults.isNotEmpty()){
-                        Log.d("h11128", "load ${searchResults.size} results in chapter ${chapter.title}")
+                        //Log.d("h11128", "load ${searchResults.size} results in chapter ${chapter.title}")
                         searchResultList.addAll(searchResults)
                         tv_current_search_info.text = "搜索结果：$searchResultCounts"
-                        Log.d("h11128", "searchResultList size ${searchResultList.size}")
+                        //Log.d("h11128", "searchResultList size ${searchResultList.size}")
                         adapter.addItems(searchResults)
                         searchResults = listOf<SearchResult>()
                     }
@@ -134,55 +138,51 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         }
     }
 
-    private fun searchChapter(query: String, chapter: BookChapter?): List<SearchResult> {
+    private suspend fun searchChapter(query: String, chapter: BookChapter?): List<SearchResult> {
         val searchResults: MutableList<SearchResult> = mutableListOf()
-        var positions : List<Int>? = listOf()
+        var positions : List<Int> = listOf()
+        var replaceContents: List<String>? = null
+        var totalContents = ""
         if (chapter != null){
             viewModel.book?.let { bookSource ->
                 val bookContent = BookHelp.getContent(bookSource, chapter)
                 if (bookContent != null){
-                    //todo: 搜索替换后的正文句子列表
-                    /*
-                    chapter.title = when (AppConfig.chineseConverterType) {
-                        1 -> HanLP.convertToSimplifiedChinese(chapter.title)
-                        2 -> HanLP.convertToTraditionalChinese(chapter.title)
-                        else -> chapter.title
-                    }
-                    var replaceContents: List<String>? = null
-                    bookContent?.let {
+                    //搜索替换后的正文
+                    val job = async(IO) {
+                        chapter.title = when (AppConfig.chineseConverterType) {
+                            1 -> HanLP.convertToSimplifiedChinese(chapter.title)
+                            2 -> HanLP.convertToTraditionalChinese(chapter.title)
+                            else -> chapter.title
+                        }
                         replaceContents = BookHelp.disposeContent(
                             chapter.title,
                             bookSource.name,
                             bookSource.bookUrl,
-                            it,
+                            bookContent,
                             bookSource.useReplaceRule
                         )
                     }
-
-                    replaceContents?.map {
-                        async(IO) {
-                            if (it.contains(query)) {
-                                Log.d("targetd contents", it)
-                                searchResult.add(it)
-                            }
-                        }
-                    }?.awaitAll()
-                    */
-                    positions = searchPosition(bookContent, query)
-                    positions?.map{
-                        val construct = constructText(bookContent, it, query)
+                    job.await()
+                    while (replaceContents == null){
+                        delay(100L)
+                    }
+                    totalContents = replaceContents!!.joinToString("")
+                    positions = searchPosition(totalContents, query)
+                    var count = 1
+                    positions.map{
+                        val construct = constructText(totalContents, it, query)
                         val result = SearchResult(index = searchResultCounts,
+                            indexWithinChapter = count,
                             text = construct[1] as String,
                             chapterTitle = chapter.title,
                             query = query,
-                            pageIndex = 0, //todo: 计算搜索结果所在的pageIndex直接跳转
                             chapterIndex = chapter.index,
                             newPosition = construct[0] as Int,
                             contentPosition = it
                         )
+                        count += 1
                         searchResultCounts += 1
                         searchResults.add(result)
-                        // Log.d("h11128", result.presentText)
                     }
                 }
             }
@@ -228,11 +228,16 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         searchData.putExtra("index", searchResult.chapterIndex)
         searchData.putExtra("contentPosition", searchResult.contentPosition)
         searchData.putExtra("query", searchResult.query)
+        searchData.putExtra("indexWithinChapter", searchResult.indexWithinChapter)
         Log.d("h11128","current chapter index ${searchResult.chapterIndex}")
         activity?.setResult(RESULT_OK, searchData)
         activity?.finish()
 
 
+    }
+
+    override fun durChapterIndex(): Int {
+        return durChapterIndex
     }
 
 }

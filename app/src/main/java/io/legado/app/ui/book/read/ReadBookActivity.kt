@@ -60,6 +60,9 @@ import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.view_read_menu.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
@@ -100,6 +103,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override var isAutoPage = false
     private var screenTimeOut: Long = 0
     private var timeBatteryReceiver: TimeBatteryReceiver? = null
+    private var loadStates: Boolean = false
     override val pageFactory: TextPageFactory get() = page_view.pageFactory
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
@@ -536,6 +540,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             intent.removeExtra("readAloud")
             ReadBook.readAloud()
         }
+        loadStates = true
     }
 
     /**
@@ -547,6 +552,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             page_view.upContent(relativePosition, resetPageOffset)
             seek_read_page.progress = ReadBook.durPageIndex
         }
+        loadStates = false
     }
 
     /**
@@ -770,20 +776,29 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                         }
                 requestCodeSearchResult ->
                     data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
-                        val contentPosition = data.getIntExtra("contentPosition", 0)
-                        val query = data.getStringExtra("query")
-                        ReadBook.durChapterIndex = index
-                        ReadBook.saveRead()
-                        ReadBook.loadContent(resetPageOffset = true)
-                        val pages = ReadBook.curTextChapter?.pages
-                        if (pages != null){
-                            val positions = ReadBook.searchResultPositions(pages, contentPosition)
-                            viewModel.openChapter(index, positions[0])
+                        launch(IO){
+                            val indexWithinChapter = data.getIntExtra("indexWithinChapter", 0)
+                            val query = data.getStringExtra("query")
+                            viewModel.openChapter(index)
+
+                            // block until load correct chapter and pages
+                            while (ReadBook.durChapterIndex != index || ReadBook.curTextChapter?.pages == null ){
+                                delay(100L)
+                            }
+                            val pages = ReadBook.curTextChapter?.pages
+                            Log.d("Jason", "Current chapter pages ${pages!!.size}")
+                            val positions = ReadBook.searchResultPositions(pages, indexWithinChapter, query!!)
                             Log.d("h11128", positions[0].toString())
                             Log.d("h11128", positions[1].toString())
                             Log.d("h11128", positions[2].toString())
-                            //page_view.curPage.selectStartMoveIndex(positions[0], positions[1], 0)
-                            //page_view.curPage.selectEndMoveIndex(positions[0], positions[1], 0 + query!!.length )
+                            //todo: show selected text
+                            val job1 = async(Main){
+                                ReadBook.skipToPage(positions[0])
+                                page_view.curPage.selectStartMoveIndex(positions[0], positions[1], 0)
+                                page_view.curPage.selectEndMoveIndex(positions[0], positions[1], 0 + query.length )
+                                page_view.isTextSelected = true
+                            }
+                            job1.await()
                         }
                     }
                 requestCodeReplace -> onReplaceRuleSave()
