@@ -121,15 +121,12 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
                     val job = async(IO){
                         if (isLocalBook || adapter.cacheFileNames.contains(BookHelp.formatChapterName(chapter))) {
                             searchResults = searchChapter(newText, chapter)
-                            //Log.d("h11128", "find ${searchResults.size} results in chapter ${chapter.title}")
                         }
                     }
                     job.await()
                     if (searchResults.isNotEmpty()){
-                        //Log.d("h11128", "load ${searchResults.size} results in chapter ${chapter.title}")
                         searchResultList.addAll(searchResults)
                         tv_current_search_info.text = "搜索结果：$searchResultCounts"
-                        //Log.d("h11128", "searchResultList size ${searchResultList.size}")
                         adapter.addItems(searchResults)
                         searchResults = listOf<SearchResult>()
                     }
@@ -229,7 +226,6 @@ class SearchListFragment : VMBaseFragment<SearchListViewModel>(R.layout.fragment
         searchData.putExtra("contentPosition", searchResult.contentPosition)
         searchData.putExtra("query", searchResult.query)
         searchData.putExtra("indexWithinChapter", searchResult.indexWithinChapter)
-        Log.d("h11128","current chapter index ${searchResult.chapterIndex}")
         activity?.setResult(RESULT_OK, searchData)
         activity?.finish()
 

@@ -780,17 +780,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                             val indexWithinChapter = data.getIntExtra("indexWithinChapter", 0)
                             val query = data.getStringExtra("query")
                             viewModel.openChapter(index)
-
                             // block until load correct chapter and pages
                             while (ReadBook.durChapterIndex != index || ReadBook.curTextChapter?.pages == null ){
                                 delay(100L)
                             }
                             val pages = ReadBook.curTextChapter?.pages
-                            Log.d("Jason", "Current chapter pages ${pages!!.size}")
                             val positions = ReadBook.searchResultPositions(pages, indexWithinChapter, query!!)
-                            Log.d("h11128", positions[0].toString())
-                            Log.d("h11128", positions[1].toString())
-                            Log.d("h11128", positions[2].toString())
                             //todo: show selected text
                             val job1 = async(Main){
                                 ReadBook.skipToPage(positions[0])
