@@ -11,6 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.toast
@@ -22,17 +23,19 @@ class AboutFragment : PreferenceFragmentCompat() {
     private val qqGroups = linkedMapOf(
         Pair("(QQ群VIP1)701903217", "-iolizL4cbJSutKRpeImHlXlpLDZnzeF"),
         Pair("(QQ群VIP2)263949160", "xwfh7_csb2Gf3Aw2qexEcEtviLfLfd4L"),
+        Pair("(QQ群VIP3)680280282", "_N0i7yZObjKSeZQvzoe2ej7j02kLnOOK"),
         Pair("(QQ群1)805192012", "6GlFKjLeIk5RhQnR3PNVDaKB6j10royo"),
         Pair("(QQ群2)773736122", "5Bm5w6OgLupXnICbYvbgzpPUgf0UlsJF"),
         Pair("(QQ群3)981838750", "g_Sgmp2nQPKqcZQ5qPcKLHziwX_mpps9"),
         Pair("(QQ群4)256929088", "czEJPLDnT4Pd9SKQ6RoRVzKhDxLchZrO"),
-        Pair("(QQ群5)811843556", "zKZ2UYGZ7o5CzcA6ylxzlqi21si_iqaX")
+        Pair("(QQ群5)811843556", "zKZ2UYGZ7o5CzcA6ylxzlqi21si_iqaX"),
+        Pair("(QQ群6)870270970", "FeCF8iSxfQbe90HPvGsvcqs5P5oSeY5n")
     )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.about)
         findPreference<Preference>("check_update")?.summary =
-            "${getString(R.string.version)} ${App.INSTANCE.versionName}"
+            "${getString(R.string.version)} ${App.versionName}"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,12 +49,13 @@ class AboutFragment : PreferenceFragmentCompat() {
             "update_log" -> showUpdateLog()
             "check_update" -> openUrl(R.string.latest_release_url)
             "mail" -> sendMail()
+            "sourceRuleSummary" -> openUrl(R.string.source_rule_url)
             "git" -> openUrl(R.string.this_github_url)
             "home_page" -> openUrl(R.string.home_page_url)
             "license" -> requireContext().openUrl(licenseUrl)
             "disclaimer" -> requireContext().openUrl(disclaimerUrl)
             "qq" -> showQqGroups()
-            "gzGzh" -> requireContext().sendToClip("开源阅读软件")
+            "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -89,7 +93,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
-        }.show()
+        }.show().applyTint()
     }
 
     private fun joinQQGroup(key: String): Boolean {

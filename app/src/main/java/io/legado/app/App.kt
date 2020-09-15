@@ -1,28 +1,31 @@
 package io.legado.app
 
-import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Build
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDexApplication
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.AppDatabase
 import io.legado.app.help.ActivityHelp
 import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.*
 
 @Suppress("DEPRECATION")
-class App : Application() {
+class App : MultiDexApplication() {
 
     companion object {
         @JvmStatic
@@ -32,15 +35,18 @@ class App : Application() {
         @JvmStatic
         lateinit var db: AppDatabase
             private set
-    }
 
-    var versionCode = 0
-    var versionName = ""
+        lateinit var androidId: String
+        var versionCode = 0
+        var versionName = ""
+    }
 
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
-        CrashHandler().init(this)
+        androidId = Settings.System.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        CrashHandler(this)
+        LanguageUtils.setConfigurationOld(this)
         db = AppDatabase.createDatabase(INSTANCE)
         packageManager.getPackageInfo(packageName, 0)?.let {
             versionCode = it.versionCode
@@ -60,7 +66,8 @@ class App : Application() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         when (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES, Configuration.UI_MODE_NIGHT_NO -> applyDayNight()
+            Configuration.UI_MODE_NIGHT_YES,
+            Configuration.UI_MODE_NIGHT_NO -> applyDayNight()
         }
     }
 
@@ -68,28 +75,58 @@ class App : Application() {
      * 更新主题
      */
     fun applyTheme() {
-        if (AppConfig.isNightTheme) {
-            ThemeStore.editTheme(this)
-                .primaryColor(
-                    getPrefInt("colorPrimaryNight", getCompatColor(R.color.md_blue_grey_600))
-                ).accentColor(
-                    getPrefInt("colorAccentNight", getCompatColor(R.color.md_brown_800))
-                ).backgroundColor(
-                    getPrefInt("colorBackgroundNight", getCompatColor(R.color.shine_color))
-                ).bottomBackground(
-                    getPrefInt("colorBottomBackgroundNight", getCompatColor(R.color.md_grey_850))
-                ).apply()
-        } else {
-            ThemeStore.editTheme(this)
-                .primaryColor(
-                    getPrefInt("colorPrimary", getCompatColor(R.color.md_indigo_800))
-                ).accentColor(
-                    getPrefInt("colorAccent", getCompatColor(R.color.md_red_600))
-                ).backgroundColor(
-                    getPrefInt("colorBackground", getCompatColor(R.color.md_grey_100))
-                ).bottomBackground(
-                    getPrefInt("colorBottomBackground", getCompatColor(R.color.md_grey_200))
-                ).apply()
+        when {
+            AppConfig.isEInkMode -> {
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(Color.WHITE)
+                    .accentColor(Color.BLACK)
+                    .backgroundColor(Color.WHITE)
+                    .bottomBackground(Color.WHITE)
+                    .apply()
+            }
+            AppConfig.isNightTheme -> {
+                val primary =
+                    getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
+                val accent =
+                    getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
+                var background =
+                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
+                if (ColorUtils.isColorLight(background)) {
+                    background = getCompatColor(R.color.md_grey_900)
+                    putPrefInt(PreferKey.cNBackground, background)
+                }
+                val bBackground =
+                    getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
+                    .accentColor(ColorUtils.withAlpha(accent, 1f))
+                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
+                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
+                    .apply()
+            }
+            else -> {
+                val primary =
+                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))
+                val accent =
+                    getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
+                var background =
+                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                if (!ColorUtils.isColorLight(background)) {
+                    background = getCompatColor(R.color.md_grey_100)
+                    putPrefInt(PreferKey.cBackground, background)
+                }
+                val bBackground =
+                    getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
+                    .accentColor(ColorUtils.withAlpha(accent, 1f))
+                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
+                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
+                    .apply()
+            }
         }
     }
 
@@ -97,6 +134,7 @@ class App : Application() {
         ReadBookConfig.upBg()
         applyTheme()
         initNightMode()
+        postEvent(EventBus.RECREATE, "")
     }
 
     private fun initNightMode() {
@@ -118,7 +156,7 @@ class App : Application() {
             //用唯一的ID创建渠道对象
             val downloadChannel = NotificationChannel(
                 channelIdDownload,
-                getString(R.string.download_offline),
+                getString(R.string.action_download),
                 NotificationManager.IMPORTANCE_LOW
             )
             //初始化channel

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
@@ -11,6 +12,9 @@
         android:layout_height="wrap_content"
         android:background="@color/background_menu"
         android:elevation="5dp"
+        android:theme="?attr/actionBarStyle"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false" />
 

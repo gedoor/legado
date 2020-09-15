@@ -17,7 +17,7 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
 import io.legado.app.help.http.HttpHelper
-import io.legado.app.model.Rss
+import io.legado.app.model.rss.Rss
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
@@ -131,24 +131,35 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
 
     private suspend fun webData2bitmap(data: String): ByteArray? {
         return if (URLUtil.isValidUrl(data)) {
-            HttpHelper.simpleGetByteAsync(data)
+            HttpHelper.simpleGetBytesAsync(data)
         } else {
             Base64.decode(data.split(",").toTypedArray()[1], Base64.DEFAULT)
         }
     }
 
     fun clHtml(content: String): String {
-        return if (content.contains("<style>".toRegex())) {
-            content
-        } else {
-            """
-                <style>
-                    img{max-width:100% !important; width:auto; height:auto;}
-                    video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
-                    body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
-                </style>
-                $content
-            """.trimIndent()
+        return when {
+            !rssSource?.style.isNullOrEmpty() -> {
+                """
+                    <style>
+                        ${rssSource?.style}
+                    </style>
+                    $content
+                """.trimIndent()
+            }
+            content.contains("<style>".toRegex()) -> {
+                content
+            }
+            else -> {
+                """
+                    <style>
+                        img{max-width:100% !important; width:auto; height:auto;}
+                        video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}
+                        body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}
+                    </style>
+                    $content
+                """.trimIndent()
+            }
         }
     }
 

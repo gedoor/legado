@@ -8,10 +8,9 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.AudioPlay
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
 
@@ -93,9 +92,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             AudioPlay.book?.let {
                 book1.order = it.order
                 App.db.bookDao().delete(it)
-            }
-            withContext(Dispatchers.Main) {
-
             }
             App.db.bookDao().insert(book1)
             AudioPlay.book = book1

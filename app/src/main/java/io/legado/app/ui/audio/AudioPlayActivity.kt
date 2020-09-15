@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
-import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
@@ -27,6 +26,7 @@ import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.chapterlist.ChapterListActivity
+import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_audio_play.*
 import org.apache.commons.lang3.time.DateFormatUtils
@@ -36,7 +36,7 @@ import org.jetbrains.anko.startActivityForResult
 
 
 class AudioPlayActivity :
-    VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play, theme = Theme.Dark),
+    VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play, toolBarTheme = Theme.Dark),
     ChangeSourceDialog.CallBack {
 
     override val viewModel: AudioPlayViewModel
@@ -47,8 +47,8 @@ class AudioPlayActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title_bar.transparent()
-        AudioPlay.titleData.observe(this, Observer { title_bar.title = it })
-        AudioPlay.coverData.observe(this, Observer { upCover(it) })
+        AudioPlay.titleData.observe(this, { title_bar.title = it })
+        AudioPlay.coverData.observe(this, { upCover(it) })
         viewModel.initData(intent)
         initView()
     }
@@ -117,8 +117,8 @@ class AudioPlayActivity :
 
     private fun upCover(path: String?) {
         ImageLoader.load(this, path)
-            .placeholder(R.drawable.image_cover_default)
-            .error(R.drawable.image_cover_default)
+            .placeholder(CoverImageView.defaultDrawable)
+            .error(CoverImageView.defaultDrawable)
             .into(iv_cover)
         ImageLoader.load(this, path)
             .transition(DrawableTransitionOptions.withCrossFade(1500))
@@ -128,7 +128,7 @@ class AudioPlayActivity :
     }
 
     private fun defaultCover(): RequestBuilder<Drawable> {
-        return ImageLoader.load(this, R.drawable.image_cover_default)
+        return ImageLoader.load(this, CoverImageView.defaultDrawable)
             .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 
@@ -152,7 +152,10 @@ class AudioPlayActivity :
             if (!AudioPlay.inBookshelf) {
                 this.alert(title = getString(R.string.add_to_shelf)) {
                     message = getString(R.string.check_add_bookshelf, it.name)
-                    okButton { AudioPlay.inBookshelf = true }
+                    okButton {
+                        AudioPlay.inBookshelf = true
+                        setResult(Activity.RESULT_OK)
+                    }
                     noButton { viewModel.removeFromBookshelf { super.finish() } }
                 }.show().applyTint()
             } else {

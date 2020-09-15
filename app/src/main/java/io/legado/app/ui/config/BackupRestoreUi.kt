@@ -19,6 +19,7 @@ import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentPath
+import io.legado.app.utils.longToast
 import io.legado.app.utils.toast
 import kotlinx.coroutines.Dispatchers.Main
 import org.jetbrains.anko.toast
@@ -77,28 +78,30 @@ object BackupRestoreUi {
 
     fun restore(fragment: Fragment) {
         Coroutine.async(context = Main) {
-            if (!WebDavHelp.showRestoreDialog(fragment.requireContext()) {
-                    fragment.toast(R.string.restore_success)
-                }) {
-                val backupPath = fragment.getPrefString(PreferKey.backupPath)
-                if (backupPath?.isNotEmpty() == true) {
-                    if (backupPath.isContentPath()) {
-                        val uri = Uri.parse(backupPath)
-                        val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
-                        if (doc?.canWrite() == true) {
-                            Restore.restore(fragment.requireContext(), backupPath)
-                            fragment.toast(R.string.restore_success)
-                        } else {
-                            selectBackupFolder(fragment, restoreSelectRequestCode)
-                        }
+            WebDavHelp.showRestoreDialog(fragment.requireContext())
+        }.onError {
+            fragment.longToast("WebDavError:${it.localizedMessage}\n将从本地备份恢复。")
+            val backupPath = fragment.getPrefString(PreferKey.backupPath)
+            if (backupPath?.isNotEmpty() == true) {
+                if (backupPath.isContentPath()) {
+                    val uri = Uri.parse(backupPath)
+                    val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
+                    if (doc?.canWrite() == true) {
+                        Restore.restore(fragment.requireContext(), backupPath)
                     } else {
-                        restoreUsePermission(fragment, backupPath)
+                        selectBackupFolder(fragment, restoreSelectRequestCode)
                     }
                 } else {
-                    selectBackupFolder(fragment, restoreSelectRequestCode)
+                    restoreUsePermission(fragment, backupPath)
                 }
+            } else {
+                selectBackupFolder(fragment, restoreSelectRequestCode)
             }
         }
+    }
+
+    fun restoreByFolder(fragment: Fragment) {
+        selectBackupFolder(fragment, restoreSelectRequestCode)
     }
 
     private fun restoreUsePermission(fragment: Fragment, path: String) {
@@ -110,8 +113,6 @@ object BackupRestoreUi {
                     AppConfig.backupPath = path
                     Restore.restoreDatabase(path)
                     Restore.restoreConfig(path)
-                }.onSuccess {
-                    fragment.toast(R.string.restore_success)
                 }
             }
             .request()
@@ -135,8 +136,6 @@ object BackupRestoreUi {
                 AppConfig.backupPath = currentPath
                 Coroutine.async {
                     Restore.restore(App.INSTANCE, currentPath)
-                }.onSuccess {
-                    App.INSTANCE.toast(R.string.restore_success)
                 }
             }
             selectFolderRequestCode -> {
@@ -175,8 +174,6 @@ object BackupRestoreUi {
                     AppConfig.backupPath = uri.toString()
                     Coroutine.async {
                         Restore.restore(App.INSTANCE, uri.toString())
-                    }.onSuccess {
-                        App.INSTANCE.toast(R.string.restore_success)
                     }
                 }
             }
@@ -190,10 +187,11 @@ object BackupRestoreUi {
                     AppConfig.backupPath = uri.toString()
                 }
             }
-            oldDataRequestCode ->
-                if (resultCode == RESULT_OK) data?.data?.let { uri ->
+            oldDataRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
                     ImportOldData.importUri(uri)
                 }
+            }
         }
     }
 

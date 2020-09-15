@@ -16,7 +16,7 @@
                 android:id="@+id/menu_group_manage"
                 android:title="@string/group_manage" />
 
-            <group android:id="@+id/source_group">
+            <group android:id="@+id/replace_group">
 
             </group>
 

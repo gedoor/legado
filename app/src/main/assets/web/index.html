@@ -14,7 +14,7 @@
             <div class="rules">
                 <div><b>基本</b></div>
                 <div>
-                    <div>源URL　:</div>
+                    <div>源域名　:</div>
                     <textarea rows="1" id="bookSourceUrl" class="base" title="bookSourceUrl"
                         placeholder="<必填>通常填写网站主页,例: https://www.qidian.com"></textarea>
                 </div>
@@ -34,6 +34,11 @@
                         placeholder="&lt;选填&gt;描述书源的特征信息"></textarea>
                 </div>
                 <div>
+                    <div>源注释　:</div>
+                    <textarea rows="1" id="bookSourceComment" class="base" title="bookSourceComment"
+                              placeholder="&lt;选填&gt;描述书源作者和状态"></textarea>
+                </div>
+                <div>
                     <div>登录地址:</div>
                     <textarea rows="1" id="loginUrl" class="base" title="loginUrl"
                         placeholder="&lt;选填&gt;填写网站登录网址,仅在需要登录的书源有用"></textarea>
@@ -51,7 +56,7 @@
                 <div><b>搜索</b></div>
                 <div>
                     <div>搜索地址:</div>
-                    <textarea rows="1" id="searchUrl" class="base" title="searchUrl"
+                    <textarea rows="3" id="searchUrl" class="base" title="searchUrl"
                         placeholder="[域名可省略]/search.php@kw={{key}}"></textarea>
                 </div>
                 <div>
@@ -245,12 +250,22 @@
                 <div>
                     <div>脚本注入:</div>
                     <textarea rows="3" id="ruleContent_webJs" class="ruleContent" title="webJs"
-                        placeholder="注入javascript，用于模拟鼠标点击等，无返回结果"></textarea>
+                        placeholder="注入javascript，用于模拟鼠标点击等，必须有返回值，一般为String类型"></textarea>
                 </div>
                 <div>
                     <div>资源正则:</div>
                     <textarea rows="1" id="ruleContent_sourceRegex" class="ruleContent" title="sourceRegex"
                         placeholder="匹配资源的url特征，用于嗅探"></textarea>
+                </div>
+                <div>
+                    <div>替换规则:</div>
+                    <textarea rows="1" id="ruleContent_replaceRegex" class="ruleContent" title="replaceRegex"
+                        placeholder="多页内容合并后替换，用于正文净化"></textarea>
+                </div>
+                <div>
+                    <div>图片样式:</div>
+                    <textarea rows="1" id="ruleContent_imageStyle" class="ruleContent" title="imageStyle"
+                        placeholder="FULL:铺满 不填:默认样式"></textarea>
                 </div>
                 <p></p>
                 <div><b>其它规则</b></div>
@@ -348,19 +363,19 @@
                     </div>
                     <div class="tab4">
                         <div class="context link">
-                            <a target="_blank" href="https://celeter.github.io">源制作教程</a>
+                            <a target="_blank" href="https://alanskycn.gitee.io/teachme">源制作教程</a>
                             <a target="_blank" href="https://zhuanlan.zhihu.com/p/29436838">Xpath基础教程</a>
                             <a target="_blank" href="https://zhuanlan.zhihu.com/p/32187820">Xpath高级教程</a>
-                            <a target="_blank" href="https://www.w3cschool.cn/regex_rmjc/?">正则表达式教程</a>
-                            <a target="_blank" href="https://regexr.com/">正则表达式在线验证工具</a>
+                            <a target="_blank" href="https://www.w3cschool.cn/regex_rmjc">正则表达式教程</a>
+                            <a target="_blank" href="https://regexr.com">正则表达式在线验证工具</a>
                             <div>^$()[]{}.?+*| 这些是Java正则特殊符号,匹配需转义
                                 <br>(?s) 前缀表示跨行解析
                                 <br>(?m) 前缀表示逐行匹配
                                 <br>(?i) 前缀表示忽略大小写
                             </div>
-                            <a target="_blank" href="https://www.beta.browxy.com/">代码在线运行工具</a>
-                            <a target="_blank" href="book.html">阅读书架(经典)</a>
-							<a target="_blank" href="bookshelf.html">阅读书架(新潮)</a>
+                            <a target="_blank" href="https://www.beta.browxy.com">代码在线运行工具</a>
+                            <a target="_blank" href="bookshelf.html">阅读书架(经典)</a>
+                            <a target="_blank" href="new/index.html">阅读书架(新潮)</a>
                         </div>
                     </div>
                 </div>

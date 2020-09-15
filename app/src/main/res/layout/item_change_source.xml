@@ -11,6 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:textColor="@color/primaryText"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
@@ -20,6 +21,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:textColor="@color/secondaryText"
         app:layout_constraintTop_toBottomOf="@+id/tv_origin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -32,7 +34,7 @@
         android:layout_margin="8dp"
         android:src="@drawable/ic_check"
         android:visibility="invisible"
-        app:tint="@color/tv_text_default"
+        app:tint="@color/primaryText"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

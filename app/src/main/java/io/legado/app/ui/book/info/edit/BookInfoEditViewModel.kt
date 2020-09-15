@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
+import io.legado.app.service.help.ReadBook
 
 class BookInfoEditViewModel(application: Application) : BaseViewModel(application) {
     var book: Book? = null
@@ -21,6 +22,9 @@ class BookInfoEditViewModel(application: Application) : BaseViewModel(applicatio
 
     fun saveBook(book: Book, success: (() -> Unit)?) {
         execute {
+            if (ReadBook.book?.bookUrl == book.bookUrl) {
+                ReadBook.book = book
+            }
             App.db.bookDao().insert(book)
         }.onSuccess {
             success?.invoke()

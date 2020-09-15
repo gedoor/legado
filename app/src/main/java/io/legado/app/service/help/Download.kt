@@ -7,20 +7,11 @@ import io.legado.app.service.DownloadService
 
 object Download {
 
-    fun start(context: Context, bookUrl: String, start: Int, end: Int) {
+    fun start(context: Context, downloadId: Long, fileName: String) {
         Intent(context, DownloadService::class.java).let {
             it.action = IntentAction.start
-            it.putExtra("bookUrl", bookUrl)
-            it.putExtra("start", start)
-            it.putExtra("end", end)
-            context.startService(it)
-        }
-    }
-
-    fun remove(context: Context, bookUrl: String) {
-        Intent(context, DownloadService::class.java).let {
-            it.action = IntentAction.remove
-            it.putExtra("bookUrl", bookUrl)
+            it.putExtra("downloadId", downloadId)
+            it.putExtra("fileName", fileName)
             context.startService(it)
         }
     }

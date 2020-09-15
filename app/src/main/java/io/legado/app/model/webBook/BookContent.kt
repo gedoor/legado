@@ -2,7 +2,6 @@ package io.legado.app.model.webBook
 
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
@@ -28,10 +27,7 @@ object BookContent {
         nextChapterUrlF: String? = null
     ): String {
         body ?: throw Exception(
-            App.INSTANCE.getString(
-                R.string.error_get_web_content,
-                baseUrl
-            )
+            App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         val content = StringBuilder()
@@ -40,11 +36,7 @@ object BookContent {
         var contentData = analyzeContent(
             book, baseUrl, body, contentRule, bookChapter, bookSource
         )
-        if (bookSource.bookSourceType == BookType.default) {
-            content.append(contentData.content.replace(bookChapter.title, "")).append("\n")
-        } else {
-            content.append(contentData.content).append("\n")
-        }
+        content.append(contentData.content).append("\n")
 
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
@@ -92,20 +84,28 @@ object BookContent {
                             analyzeContent(
                                 book, item.nextUrl, it, contentRule, bookChapter, bookSource, false
                             )
-                        item.content = contentData.content
-                    }
+                            item.content = contentData.content
+                        }
                 }
             }
             for (item in contentDataList) {
                 content.append(item.content).append("\n")
             }
         }
-
+        content.deleteCharAt(content.length - 1)
+        var contentStr = content.toString().htmlFormat()
+        val replaceRegex = bookSource.ruleContent?.replaceRegex
+        if (!replaceRegex.isNullOrEmpty()) {
+            val analyzeRule = AnalyzeRule(book)
+            analyzeRule.setContent(contentStr, baseUrl)
+            analyzeRule.chapter = bookChapter
+            contentStr = analyzeRule.getString(replaceRegex)
+        }
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")
-        Debug.log(bookSource.bookSourceUrl, "└\n$content")
-        return content.toString()
+        Debug.log(bookSource.bookSourceUrl, "└\n$contentStr")
+        return contentStr
     }
 
     @Throws(Exception::class)
@@ -130,7 +130,7 @@ object BookContent {
             }
             Debug.log(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString("，"), printLog)
         }
-        val content = analyzeRule.getString(contentRule.content).htmlFormat()
+        val content = analyzeRule.getString(contentRule.content)
         return ContentData(content, nextUrlList)
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,16 +9,34 @@
 
     <TextView
         android:id="@+id/tv_chapter_name"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:singleLine="true" />
+        android:singleLine="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
 
     <TextView
         android:id="@+id/tv_tag"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:visibility="gone"
-        android:singleLine="true" />
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/iv_checked"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_check"
+        android:visibility="invisible"
+        android:contentDescription="@string/success"
+        app:tint="@color/secondaryText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

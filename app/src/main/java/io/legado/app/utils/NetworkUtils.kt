@@ -11,9 +11,9 @@ import java.util.regex.Pattern
 @Suppress("unused")
 object NetworkUtils {
     fun getUrl(response: Response<*>): String {
-        val networkResponse = response.raw().networkResponse
-        return networkResponse?.request?.url?.toString()
-            ?: response.raw().request.url.toString()
+        val networkResponse = response.raw().networkResponse()
+        return networkResponse?.request()?.url()?.toString()
+            ?: response.raw().request().url().toString()
     }
 
     private val notNeedEncoding: BitSet by lazy {
@@ -98,6 +98,14 @@ object NetworkUtils {
         } else url.substring(0, index)
     }
 
+   fun getSubDomain(url: String?): String {
+        var baseUrl = getBaseUrl(url)
+        if (baseUrl == null) return ""
+        return if (baseUrl.indexOf(".") == baseUrl.lastIndexOf(".")) {
+            baseUrl.substring(baseUrl.lastIndexOf("/")+1)
+        } else baseUrl.substring(baseUrl.indexOf(".")+1)
+    }
+    
     /**
      * Get local Ip address.
      */

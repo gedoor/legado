@@ -5,16 +5,23 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.ImageProvider
+import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
+import kotlinx.coroutines.CoroutineScope
 
 
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
@@ -59,9 +66,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        ChapterProvider.viewWidth = w
-        ChapterProvider.viewHeight = h
-        ChapterProvider.upSize()
+        ChapterProvider.upViewSize(w, h)
         upVisibleRect()
         textPage.format()
     }
@@ -78,18 +83,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private fun drawPage(canvas: Canvas) {
         var relativeOffset = relativeOffset(0)
         textPage.textLines.forEach { textLine ->
-            val lineTop = textLine.lineTop + relativeOffset
-            val lineBase = textLine.lineBase + relativeOffset
-            val lineBottom = textLine.lineBottom + relativeOffset
-            drawChars(
-                canvas,
-                textLine.textChars,
-                lineTop,
-                lineBase,
-                lineBottom,
-                textLine.isTitle,
-                textLine.isReadAloud
-            )
+            draw(canvas, textLine, relativeOffset)
         }
         if (!ReadBookConfig.isScroll) return
         //滚动翻页
@@ -97,36 +91,37 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val nextPage = relativePage(1)
         relativeOffset = relativeOffset(1)
         nextPage.textLines.forEach { textLine ->
-            val lineTop = textLine.lineTop + relativeOffset
-            val lineBase = textLine.lineBase + relativeOffset
-            val lineBottom = textLine.lineBottom + relativeOffset
+            draw(canvas, textLine, relativeOffset)
+        }
+        if (!pageFactory.hasNextPlus()) return
+        relativeOffset = relativeOffset(2)
+        if (relativeOffset < ChapterProvider.visibleHeight) {
+            relativePage(2).textLines.forEach { textLine ->
+                draw(canvas, textLine, relativeOffset)
+            }
+        }
+    }
+
+    private fun draw(
+        canvas: Canvas,
+        textLine: TextLine,
+        relativeOffset: Float,
+    ) {
+        val lineTop = textLine.lineTop + relativeOffset
+        val lineBase = textLine.lineBase + relativeOffset
+        val lineBottom = textLine.lineBottom + relativeOffset
+        if (textLine.isImage) {
+            drawImage(canvas, textLine, lineTop, lineBottom)
+        } else {
             drawChars(
                 canvas,
                 textLine.textChars,
                 lineTop,
                 lineBase,
                 lineBottom,
-                textLine.isTitle,
-                textLine.isReadAloud
+                isTitle = textLine.isTitle,
+                isReadAloud = textLine.isReadAloud
             )
-        }
-        if (!pageFactory.hasNextPlus()) return
-        relativeOffset = relativeOffset(2)
-        if (relativeOffset < ChapterProvider.visibleHeight) {
-            relativePage(2).textLines.forEach { textLine ->
-                val lineTop = textLine.lineTop + relativeOffset
-                val lineBase = textLine.lineBase + relativeOffset
-                val lineBottom = textLine.lineBottom + relativeOffset
-                drawChars(
-                    canvas,
-                    textLine.textChars,
-                    lineTop,
-                    lineBase,
-                    lineBottom,
-                    textLine.isTitle,
-                    textLine.isReadAloud
-                )
-            }
         }
     }
 
@@ -140,15 +135,35 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineBase: Float,
         lineBottom: Float,
         isTitle: Boolean,
-        isReadAloud: Boolean
+        isReadAloud: Boolean,
     ) {
         val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
         textPaint.color =
-            if (isReadAloud) context.accentColor else ReadBookConfig.durConfig.textColor()
+            if (isReadAloud) context.accentColor else ReadBookConfig.textColor
         textChars.forEach {
             canvas.drawText(it.charData, it.start, lineBase, textPaint)
             if (it.selected) {
                 canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
+            }
+        }
+    }
+
+    /**
+     * 绘制图片
+     */
+    private fun drawImage(
+        canvas: Canvas,
+        textLine: TextLine,
+        lineTop: Float,
+        lineBottom: Float,
+    ) {
+        textLine.textChars.forEach { textChar ->
+            ReadBook.book?.let { book ->
+                val rectF = RectF(textChar.start, lineTop, textChar.end, lineBottom)
+                ImageProvider.getImage(book, textPage.chapterIndex, textChar.charData, true)
+                    ?.let {
+                        canvas.drawBitmap(it, null, rectF, null)
+                    }
             }
         }
     }
@@ -189,97 +204,44 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     /**
-     * 选择初始文字
+     * 选择文字
      */
     fun selectText(
         x: Float,
         y: Float,
-        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit
+        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
         if (!selectAble) return
         if (!visibleRect.contains(x, y)) return
-        var relativeOffset = relativeOffset(0)
-        for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        textChar.selected = true
-                        invalidate()
-                        selectStart[0] = 0
-                        selectStart[1] = lineIndex
-                        selectStart[2] = charIndex
-                        selectEnd[0] = 0
-                        selectEnd[1] = lineIndex
-                        selectEnd[2] = charIndex
-                        upSelectedStart(
-                            textChar.start,
-                            textLine.lineBottom + relativeOffset,
-                            textLine.lineTop + relativeOffset
-                        )
-                        upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                        select(0, lineIndex, charIndex)
-                        return
-                    }
-                }
-                return
+        var relativeOffset: Float
+        for (relativePos in 0..2) {
+            relativeOffset = relativeOffset(relativePos)
+            if (relativePos > 0) {
+                //滚动翻页
+                if (!ReadBookConfig.isScroll) return
+                if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
-        }
-        if (!ReadBookConfig.isScroll) return
-        //滚动翻页
-        relativeOffset = relativeOffset(1)
-        if (relativeOffset >= ChapterProvider.visibleHeight) return
-        val nextPage = relativePage(1)
-        for ((lineIndex, textLine) in nextPage.textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        textChar.selected = true
-                        invalidate()
-                        selectStart[0] = 1
-                        selectStart[1] = lineIndex
-                        selectStart[2] = charIndex
-                        selectEnd[0] = 1
-                        selectEnd[1] = lineIndex
-                        selectEnd[2] = charIndex
-                        upSelectedStart(
-                            textChar.start,
-                            textLine.lineBottom + relativeOffset,
-                            textLine.lineTop + relativeOffset
-                        )
-                        upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                        select(1, lineIndex, charIndex)
-                        return
+            val page = relativePage(relativePos)
+            for ((lineIndex, textLine) in page.textLines.withIndex()) {
+                if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
+                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
+                        if (x > textChar.start && x < textChar.end) {
+                            if (textChar.isImage) {
+                                activity?.supportFragmentManager?.let {
+                                    PhotoDialog.show(it, page.chapterIndex, textChar.charData)
+                                }
+                            } else {
+                                textChar.selected = true
+                                invalidate()
+                                select(relativePos, lineIndex, charIndex)
+                            }
+                            return
+                        }
                     }
+                    return
                 }
-                return
             }
-        }
-        relativeOffset = relativeOffset(2)
-        if (relativeOffset >= ChapterProvider.visibleHeight) return
-        for ((lineIndex, textLine) in relativePage(2).textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        textChar.selected = true
-                        invalidate()
-                        selectStart[0] = 2
-                        selectStart[1] = lineIndex
-                        selectStart[2] = charIndex
-                        selectEnd[0] = 2
-                        selectEnd[1] = lineIndex
-                        selectEnd[2] = charIndex
-                        upSelectedStart(
-                            textChar.start,
-                            textLine.lineBottom + relativeOffset,
-                            textLine.lineTop + relativeOffset
-                        )
-                        upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                        select(2, lineIndex, charIndex)
-                        return
-                    }
-                }
-                return
-            }
+
         }
     }
 
@@ -288,83 +250,37 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     fun selectStartMove(x: Float, y: Float) {
         if (!visibleRect.contains(x, y)) return
-        var relativeOffset = relativeOffset(0)
-        for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        if (selectStart[0] != 0 || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
-                            if (selectToInt(0, lineIndex, charIndex) > selectToInt(selectEnd)) {
-                                return
-                            }
-                            selectStart[0] = 0
-                            selectStart[1] = lineIndex
-                            selectStart[2] = charIndex
-                            upSelectedStart(
-                                textChar.start,
-                                textLine.lineBottom + relativeOffset,
-                                textLine.lineTop + relativeOffset
-                            )
-                            upSelectChars()
-                        }
-                        return
-                    }
-                }
-                return
+        var relativeOffset: Float
+        for (relativePos in 0..2) {
+            relativeOffset = relativeOffset(relativePos)
+            if (relativePos > 0) {
+                //滚动翻页
+                if (!ReadBookConfig.isScroll) return
+                if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
-        }
-        if (!ReadBookConfig.isScroll) return
-        //滚动翻页
-        relativeOffset = relativeOffset(1)
-        if (relativeOffset >= ChapterProvider.visibleHeight) return
-        for ((lineIndex, textLine) in relativePage(1).textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        if (selectStart[0] != 1 || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
-                            if (selectToInt(1, lineIndex, charIndex) > selectToInt(selectEnd)) {
-                                return
+            for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
+                if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
+                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
+                        if (x > textChar.start && x < textChar.end) {
+                            if (selectStart[0] != relativePos || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
+                                if (selectToInt(relativePos, lineIndex, charIndex) > selectToInt(selectEnd)) {
+                                    return
+                                }
+                                selectStart[0] = relativePos
+                                selectStart[1] = lineIndex
+                                selectStart[2] = charIndex
+                                upSelectedStart(
+                                    textChar.start,
+                                    textLine.lineBottom + relativeOffset,
+                                    textLine.lineTop + relativeOffset
+                                )
+                                upSelectChars()
                             }
-                            selectStart[0] = 1
-                            selectStart[1] = lineIndex
-                            selectStart[2] = charIndex
-                            upSelectedStart(
-                                textChar.start,
-                                textLine.lineBottom + relativeOffset,
-                                textLine.lineTop + relativeOffset
-                            )
-                            upSelectChars()
+                            return
                         }
-                        return
                     }
+                    return
                 }
-                return
-            }
-        }
-        relativeOffset = relativeOffset(2)
-        if (relativeOffset >= ChapterProvider.visibleHeight) return
-        for ((lineIndex, textLine) in relativePage(2).textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        if (selectStart[0] != 2 || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
-                            if (selectToInt(2, lineIndex, charIndex) > selectToInt(selectEnd)) {
-                                return
-                            }
-                            selectStart[0] = 2
-                            selectStart[1] = lineIndex
-                            selectStart[2] = charIndex
-                            upSelectedStart(
-                                textChar.start,
-                                textLine.lineBottom + relativeOffset,
-                                textLine.lineTop + relativeOffset
-                            )
-                            upSelectChars()
-                        }
-                        return
-                    }
-                }
-                return
             }
         }
     }
@@ -374,71 +290,36 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     fun selectEndMove(x: Float, y: Float) {
         if (!visibleRect.contains(x, y)) return
-        var relativeOffset = relativeOffset(0)
-        for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        if (selectEnd[0] != 0 || selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
-                            if (selectToInt(0, lineIndex, charIndex) < selectToInt(selectStart)) {
-                                return
-                            }
-                            selectEnd[0] = 0
-                            selectEnd[1] = lineIndex
-                            selectEnd[2] = charIndex
-                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
-                        }
-                        return
-                    }
-                }
-                return
+        var relativeOffset: Float
+        for (relativePos in 0..2) {
+            relativeOffset = relativeOffset(relativePos)
+            if (relativePos > 0) {
+                //滚动翻页
+                if (!ReadBookConfig.isScroll) return
+                if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
-        }
-        if (!ReadBookConfig.isScroll) return
-        //滚动翻页
-        relativeOffset = relativeOffset(1)
-        if (relativeOffset >= ChapterProvider.visibleHeight) return
-        for ((lineIndex, textLine) in relativePage(1).textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        if (selectEnd[0] != 1 || selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
-                            if (selectToInt(1, lineIndex, charIndex) < selectToInt(selectStart)) {
-                                return
+            Log.e("y", "$y")
+            for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
+                if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
+                    Log.e("line", "$relativePos  $lineIndex")
+                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
+                        if (x > textChar.start && x < textChar.end) {
+                            Log.e("char", "$relativePos  $lineIndex $charIndex")
+                            if (selectEnd[0] != relativePos || selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
+                                if (selectToInt(relativePos, lineIndex, charIndex) < selectToInt(selectStart)) {
+                                    return
+                                }
+                                selectEnd[0] = relativePos
+                                selectEnd[1] = lineIndex
+                                selectEnd[2] = charIndex
+                                upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
+                                upSelectChars()
                             }
-                            selectEnd[0] = 1
-                            selectEnd[1] = lineIndex
-                            selectEnd[2] = charIndex
-                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
+                            return
                         }
-                        return
                     }
+                    return
                 }
-                return
-            }
-        }
-        relativeOffset = relativeOffset(2)
-        if (relativeOffset >= ChapterProvider.visibleHeight) return
-        for ((lineIndex, textLine) in relativePage(2).textLines.withIndex()) {
-            if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
-                for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    if (x > textChar.start && x < textChar.end) {
-                        if (selectEnd[0] != 2 || selectEnd[1] != lineIndex || selectEnd[2] != charIndex) {
-                            if (selectToInt(2, lineIndex, charIndex) < selectToInt(selectStart)) {
-                                return
-                            }
-                            selectEnd[0] = 2
-                            selectEnd[1] = lineIndex
-                            selectEnd[2] = charIndex
-                            upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                            upSelectChars()
-                        }
-                        return
-                    }
-                }
-                return
             }
         }
     }
@@ -455,7 +336,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         upSelectedStart(
             textChar.start,
             textLine.lineBottom + relativeOffset(relativePage),
-            textLine.lineTop
+            textLine.lineTop + relativeOffset(relativePage)
         )
         upSelectChars()
     }
@@ -585,11 +466,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
 
     private fun selectToInt(page: Int, line: Int, char: Int): Int {
-        return page * 1000000 + line * 100000 + char
+        return page * 10000000 + line * 100000 + char
     }
 
     private fun selectToInt(select: Array<Int>): Int {
-        return select[0] * 1000000 + select[1] * 100000 + select[2]
+        return select[0] * 10000000 + select[1] * 100000 + select[2]
     }
 
     private fun relativeOffset(relativePos: Int): Float {
@@ -614,5 +495,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         fun onCancelSelect()
         val headerHeight: Int
         val pageFactory: TextPageFactory
+        val scope: CoroutineScope
     }
 }

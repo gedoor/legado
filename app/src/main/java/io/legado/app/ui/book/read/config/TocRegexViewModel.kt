@@ -11,13 +11,10 @@ import io.legado.app.utils.fromJsonArray
 
 class TocRegexViewModel(application: Application) : BaseViewModel(application) {
 
-    fun saveRule(rule: TxtTocRule, oldRule: TxtTocRule? = null) {
+    fun saveRule(rule: TxtTocRule) {
         execute {
             if (rule.serialNumber < 0) {
                 rule.serialNumber = App.db.txtTocRule().lastOrderNum + 1
-            }
-            oldRule?.let {
-                App.db.txtTocRule().delete(oldRule)
             }
             App.db.txtTocRule().insert(rule)
         }
@@ -25,9 +22,8 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
 
     fun importDefault() {
         execute {
-            AnalyzeTxtFile.getDefaultRules().let {
-                App.db.txtTocRule().insert(*it.toTypedArray())
-            }
+            App.db.txtTocRule().deleteDefault()
+            AnalyzeTxtFile.getDefaultEnabledRules()
         }
     }
 

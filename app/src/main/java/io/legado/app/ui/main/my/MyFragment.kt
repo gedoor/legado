@@ -7,17 +7,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
+import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.channel
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
+import io.legado.app.ui.about.ReadRecordActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.config.BackupRestoreUi
 import io.legado.app.ui.config.ConfigActivity
@@ -65,7 +66,10 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
         BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
     }
 
-    class PreferenceFragment : PreferenceFragmentCompat(),
+    /**
+     * 配置
+     */
+    class PreferenceFragment : BasePreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -85,7 +89,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                     true
                 }
             }
-            if (requireContext().channel == "google") {
+            if (AppConfig.isGooglePlay) {
                 findPreference<PreferenceCategory>("aboutCategory")
                     ?.removePreference(findPreference("donate"))
             }
@@ -137,6 +141,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                 "theme_setting" -> context?.startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_THEME_CONFIG)
                 )
+                "readRecord" -> context?.startActivity<ReadRecordActivity>()
                 "donate" -> context?.startActivity<DonateActivity>()
                 "about" -> context?.startActivity<AboutActivity>()
             }

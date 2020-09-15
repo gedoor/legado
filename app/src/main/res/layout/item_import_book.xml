@@ -28,7 +28,7 @@
             android:scaleType="center"
             android:visibility="invisible"
             android:src="@drawable/ic_folder"
-            app:tint="@color/tv_text_default" />
+            app:tint="@color/primaryText" />
     </FrameLayout>
 
     <LinearLayout

@@ -26,7 +26,7 @@ object LauncherIconHelp {
     fun changeIcon(icon: String?) {
         if (icon.isNullOrEmpty()) return
         if (Build.VERSION.SDK_INT < 26) {
-            App.INSTANCE.toast(R.string.chage_icon_error)
+            App.INSTANCE.toast(R.string.change_icon_error)
             return
         }
         var hasEnabled = false

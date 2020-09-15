@@ -10,15 +10,16 @@ import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.ui.book.read.Help
+import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.postEvent
 
 class ReadAloudConfigDialog : DialogFragment() {
@@ -28,11 +29,11 @@ class ReadAloudConfigDialog : DialogFragment() {
         super.onStart()
         val dm = DisplayMetrics()
         activity?.let {
-            Help.upSystemUiVisibility(it)
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
-            it.setBackgroundDrawableResource(R.color.transparent)
+
+        it.setBackgroundDrawableResource(R.color.transparent)
             it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
@@ -42,8 +43,8 @@ class ReadAloudConfigDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = LinearLayout(context)
-        view.setBackgroundResource(R.color.background)
+        val view = LinearLayout(requireContext())
+        view.setBackgroundColor(requireContext().backgroundColor)
         view.id = R.id.tag1
         container?.addView(view)
         return view
@@ -58,14 +59,21 @@ class ReadAloudConfigDialog : DialogFragment() {
             .commit()
     }
 
-    class ReadAloudPreferenceFragment : PreferenceFragmentCompat(),
+    class ReadAloudPreferenceFragment : BasePreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
+
+        private val speakEngineSummary: String
+            get() {
+                val eid = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
+                val ht = App.db.httpTTSDao().get(eid)
+                return ht?.name ?: getString(R.string.local_tts)
+            }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
             upPreferenceSummary(
-                findPreference<ListPreference>(PreferKey.ttsSpeechPer),
-                AppConfig.ttsSpeechPer
+                findPreference(PreferKey.speakEngine),
+                speakEngineSummary
             )
         }
 
@@ -84,6 +92,14 @@ class ReadAloudConfigDialog : DialogFragment() {
             super.onPause()
         }
 
+        override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+            when (preference?.key) {
+                PreferKey.speakEngine ->
+                    SpeakEngineDialog().show(childFragmentManager, "speakEngine")
+            }
+            return super.onPreferenceTreeClick(preference)
+        }
+
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
             key: String?
@@ -94,16 +110,9 @@ class ReadAloudConfigDialog : DialogFragment() {
                         postEvent(EventBus.MEDIA_BUTTON, false)
                     }
                 }
-                PreferKey.readAloudOnLine -> {
-                    ReadAloud.stop(requireContext())
-                    ReadAloud.aloudClass = ReadAloud.getReadAloudClass()
-                }
-                PreferKey.ttsSpeechPer -> {
-                    upPreferenceSummary(
-                        findPreference<ListPreference>(PreferKey.ttsSpeechPer),
-                        AppConfig.ttsSpeechPer
-                    )
-                    ReadAloud.upTtsSpeechRate(requireContext())
+                PreferKey.speakEngine -> {
+                    upPreferenceSummary(findPreference(key), speakEngineSummary)
+                    ReadAloud.upReadAloudClass()
                 }
             }
         }

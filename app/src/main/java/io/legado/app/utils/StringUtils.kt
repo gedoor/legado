@@ -214,7 +214,7 @@ object StringUtils {
 
     fun stringToInt(str: String?): Int {
         if (str != null) {
-            val num = fullToHalf(str).replace("\\s".toRegex(), "")
+            val num = fullToHalf(str).replace("\\s+".toRegex(), "")
             return try {
                 Integer.parseInt(num)
             } catch (e: Exception) {
@@ -226,15 +226,33 @@ object StringUtils {
     }
 
     fun isContainNumber(company: String): Boolean {
-        val p = Pattern.compile("[0-9]")
+        val p = Pattern.compile("[0-9]+")
         val m = p.matcher(company)
         return m.find()
     }
 
     fun isNumeric(str: String): Boolean {
-        val pattern = Pattern.compile("[0-9]*")
+        val pattern = Pattern.compile("[0-9]+")
         val isNum = pattern.matcher(str)
         return isNum.matches()
+    }
+
+    fun wordCountFormat(wc: String?): String {
+        if (wc == null) return ""
+        var wordsS = ""
+        if (isNumeric(wc)) {
+            val words: Int = wc.toInt()
+            if (words > 0) {
+                wordsS = words.toString() + "字"
+                if (words > 10000) {
+                    val df = DecimalFormat("#.#")
+                    wordsS = df.format(words * 1.0f / 10000f.toDouble()) + "万字"
+                }
+            }
+        } else {
+            wordsS = wc
+        }
+        return wordsS
     }
 
     // 移除字符串首尾空字符的高效方法(利用ASCII值判断,包括全角空格)
@@ -274,14 +292,4 @@ object StringUtils {
         return buf.toString()
     }
 
-    fun formatHtml(html: String): String {
-        return if (isEmpty(html)) "" else html.replace(
-            "(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>".toRegex(),
-            "\n"
-        )// 替换特定标签为换行符
-            .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
-            .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
-            .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
-            .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
-    }
 }

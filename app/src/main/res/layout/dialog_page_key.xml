@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_view"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -57,5 +58,5 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:text="@string/ok"
-        android:textColor="@color/tv_text_default" />
+        android:textColor="@color/primaryText" />
 </LinearLayout>

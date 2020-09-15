@@ -2,20 +2,18 @@ package io.legado.app.ui.book.read.config
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
-import io.legado.app.ui.book.read.Help
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.putPrefBoolean
@@ -29,10 +27,10 @@ class ReadAloudDialog : BaseDialogFragment() {
         super.onStart()
         val dm = DisplayMetrics()
         activity?.let {
-            Help.upSystemUiVisibility(it)
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
+            it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
             it.decorView.setPadding(0, 0, 0, 0)
             val attr = it.attributes
@@ -53,7 +51,28 @@ class ReadAloudDialog : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        root_view.setBackgroundColor(requireContext().bottomBackground)
+        val bg = requireContext().bottomBackground
+        val isLight = ColorUtils.isColorLight(bg)
+        val textColor = requireContext().getPrimaryTextColor(isLight)
+        root_view.setBackgroundColor(bg)
+        tv_pre.setTextColor(textColor)
+        tv_next.setTextColor(textColor)
+        iv_play_prev.setColorFilter(textColor)
+        iv_play_pause.setColorFilter(textColor)
+        iv_play_next.setColorFilter(textColor)
+        iv_stop.setColorFilter(textColor)
+        iv_timer.setColorFilter(textColor)
+        tv_timer.setTextColor(textColor)
+        tv_tts_speed.setTextColor(textColor)
+        iv_catalog.setColorFilter(textColor)
+        tv_catalog.setTextColor(textColor)
+        iv_main_menu.setColorFilter(textColor)
+        tv_main_menu.setTextColor(textColor)
+        iv_to_backstage.setColorFilter(textColor)
+        tv_to_backstage.setTextColor(textColor)
+        iv_setting.setColorFilter(textColor)
+        tv_setting.setTextColor(textColor)
+        cb_tts_follow_sys.setTextColor(textColor)
         initOnChange()
         initData()
         initEvent()
@@ -121,6 +140,10 @@ class ReadAloudDialog : BaseDialogFragment() {
         } else {
             iv_play_pause.setImageResource(R.drawable.ic_play_24dp)
         }
+        val bg = requireContext().bottomBackground
+        val isLight = ColorUtils.isColorLight(bg)
+        val textColor = requireContext().getPrimaryTextColor(isLight)
+        iv_play_pause.setColorFilter(textColor)
     }
 
     private fun upTimerText(timeMinute: Int) {

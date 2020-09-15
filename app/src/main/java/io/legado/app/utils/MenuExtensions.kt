@@ -10,7 +10,6 @@ import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.DrawableUtils
-import io.legado.app.lib.theme.primaryTextColor
 import java.lang.reflect.Method
 import java.util.*
 
@@ -19,13 +18,8 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)
     }
-    val primaryTextColor = context.primaryTextColor
-    val defaultTextColor = context.getCompatColor(R.color.tv_text_default)
-    val tintColor = when (theme) {
-        Theme.Dark -> context.getCompatColor(R.color.md_white_1000)
-        Theme.Light -> context.getCompatColor(R.color.md_black_1000)
-        else -> primaryTextColor
-    }
+    val defaultTextColor = context.getCompatColor(R.color.primaryText)
+    val tintColor = UIUtils.getMenuColor(context, theme)
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->
             //overflow：展开的item
@@ -42,7 +36,7 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
 fun Menu.applyOpenTint(context: Context) {
     //展开菜单显示图标
     if (this.javaClass.simpleName.equals("MenuBuilder", ignoreCase = true)) {
-        val defaultTextColor = context.getCompatColor(R.color.tv_text_default)
+        val defaultTextColor = context.getCompatColor(R.color.primaryText)
         try {
             var method: Method =
                 this.javaClass.getDeclaredMethod("setOptionalIconsVisible", java.lang.Boolean.TYPE)

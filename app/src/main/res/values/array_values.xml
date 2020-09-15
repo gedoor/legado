@@ -23,21 +23,7 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
-    </string-array>
-
-    <string-array name="tts_speech_per_value">
-        <item>0</item>
-        <item>1</item>
         <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>103</item>
-        <item>106</item>
-        <item>110</item>
-        <item>111</item>
-        <item>11</item>
-        <item>6</item>
-        <item>9</item>
     </string-array>
 
     <string-array name="screen_direction_value">
@@ -45,6 +31,13 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
+    </string-array>
+
+    <string-array name="language_value">
+        <item>auto</item>
+        <item>zh</item>
+        <item>tw</item>
+        <item>en</item>
     </string-array>
 
 </resources>

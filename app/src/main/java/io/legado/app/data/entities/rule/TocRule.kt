@@ -1,5 +1,9 @@
 package io.legado.app.data.entities.rule
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class TocRule(
     var chapterList: String? = null,
     var chapterName: String? = null,
@@ -7,4 +11,4 @@ data class TocRule(
     var isVip: String? = null,
     var updateTime: String? = null,
     var nextTocUrl: String? = null
-)
+) : Parcelable

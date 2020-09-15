@@ -1,15 +1,13 @@
 [
   {
-    "bgStr": "#EBD9BB",
-    "bgStrNight": "#1E2021",
-    "textColor": "#63543C",
-    "textColorNight": "#DCDFE1",
+    "bgStr": "#FFFFFF",
+    "bgStrNight": "#000000",
+    "textColor": "#000000",
+    "textColorNight": "#FFFFFF",
     "bgType": 0,
     "bgTypeNight": 0,
     "darkStatusIcon": true,
-    "textSize": 24,
-    "letterSpacing": 0,
-    "lineSpacingExtra": 10
+    "darkStatusIconNight": false
   },
   {
     "bgStr": "#DDC090",
@@ -19,9 +17,7 @@
     "bgType": 0,
     "bgTypeNight": 0,
     "darkStatusIcon": true,
-    "textSize": 24,
-    "letterSpacing": 0,
-    "lineSpacingExtra": 10
+    "darkStatusIconNight": false
   },
   {
     "bgStr": "#C2D8AA",
@@ -31,9 +27,7 @@
     "bgType": 0,
     "bgTypeNight": 0,
     "darkStatusIcon": false,
-    "textSize": 24,
-    "letterSpacing": 0,
-    "lineSpacingExtra": 10
+    "darkStatusIconNight": false
   },
   {
     "bgStr": "#DBB8E2",
@@ -43,9 +37,7 @@
     "bgType": 0,
     "bgTypeNight": 0,
     "darkStatusIcon": false,
-    "textSize": 24,
-    "letterSpacing": 0,
-    "lineSpacingExtra": 10
+    "darkStatusIconNight": false
   },
   {
     "bgStr": "#ABCEE0",
@@ -55,8 +47,6 @@
     "bgType": 0,
     "bgTypeNight": 0,
     "darkStatusIcon": false,
-    "textSize": 24,
-    "letterSpacing": 0,
-    "lineSpacingExtra": 10
+    "darkStatusIconNight": false
   }
 ]

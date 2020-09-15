@@ -6,7 +6,7 @@ import fi.iki.elonen.NanoWSD
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.model.Debug
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.isJson

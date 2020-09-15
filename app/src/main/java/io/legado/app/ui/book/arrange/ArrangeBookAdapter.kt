@@ -8,8 +8,8 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import kotlinx.android.synthetic.main.item_arrange_book.view.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.sdk27.listeners.onClick

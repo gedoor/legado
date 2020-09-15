@@ -1,12 +1,14 @@
 package io.legado.app.help.http
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.text.TextUtils
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import io.legado.app.App
 import io.legado.app.constant.AppConst
 import org.apache.commons.text.StringEscapeUtils
@@ -142,30 +144,6 @@ class AjaxWebView {
             handler.postDelayed(runnable, 1000)
         }
 
-        override fun onReceivedError(
-            view: WebView,
-            errorCode: Int,
-            description: String,
-            failingUrl: String
-        ) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                handler.obtainMessage(MSG_ERROR, Exception(description))
-                    .sendToTarget()
-            }
-        }
-
-        override fun onReceivedError(
-            view: WebView,
-            request: WebResourceRequest,
-            error: WebResourceError
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                handler.obtainMessage(
-                    MSG_ERROR,
-                    Exception(error.description.toString())
-                ).sendToTarget()
-            }
-        }
     }
 
     private class EvalJsRunnable(
@@ -180,6 +158,7 @@ class AjaxWebView {
             mWebView.get()?.evaluateJavascript(mJavaScript) {
                 if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
+                        .replace("^\"|\"$".toRegex(), "")
                     handler.obtainMessage(MSG_SUCCESS, Res(url, content))
                         .sendToTarget()
                     handler.removeCallbacks(this)
@@ -209,31 +188,6 @@ class AjaxWebView {
                     handler.obtainMessage(MSG_SUCCESS, Res(view.url ?: params.url, url))
                         .sendToTarget()
                 }
-            }
-        }
-
-        override fun onReceivedError(
-            view: WebView,
-            errorCode: Int,
-            description: String,
-            failingUrl: String
-        ) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                handler.obtainMessage(MSG_ERROR, Exception(description))
-                    .sendToTarget()
-            }
-        }
-
-        override fun onReceivedError(
-            view: WebView,
-            request: WebResourceRequest,
-            error: WebResourceError
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                handler.obtainMessage(
-                    MSG_ERROR,
-                    Exception(error.description.toString())
-                ).sendToTarget()
             }
         }
 

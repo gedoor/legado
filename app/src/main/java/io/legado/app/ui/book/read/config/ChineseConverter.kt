@@ -10,6 +10,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.widget.text.StrokeTextView
+import io.legado.app.utils.applyTint
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChineseConverter(context: Context, attrs: AttributeSet?) : StrokeTextView(context, attrs) {
@@ -44,7 +45,7 @@ class ChineseConverter(context: Context, attrs: AttributeSet?) : StrokeTextView(
                 upUi(i)
                 onChanged?.invoke()
             }
-        }.show()
+        }.show().applyTint()
     }
 
     fun onChanged(unit: () -> Unit) {

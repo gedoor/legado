@@ -1,6 +1,5 @@
 package io.legado.app.ui.widget.font
 
-import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
@@ -16,32 +15,29 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_font_select.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.*
 
 class FontSelectDialog : BaseDialogFragment(),
     FileChooserDialog.CallBack,
     Toolbar.OnMenuItemClickListener,
     FontAdapter.CallBack {
     private val fontFolderRequestCode = 35485
+    private val fontRegex = Regex(".*\\.[ot]tf")
     private val fontFolder by lazy {
         FileUtils.createFolderIfNotExist(App.INSTANCE.filesDir, "Fonts")
-    }
-    private val fontCacheFolder by lazy {
-        FileUtils.createFolderIfNotExist(App.INSTANCE.cacheDir, "Fonts")
     }
     private var adapter: FontAdapter? = null
 
@@ -61,8 +57,10 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(primaryColor)
         tool_bar.setTitle(R.string.select_font)
         tool_bar.inflateMenu(R.menu.font_select)
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         adapter = FontAdapter(requireContext(), this)
         recycler_view.layoutManager = LinearLayoutManager(context)
@@ -75,12 +73,12 @@ class FontSelectDialog : BaseDialogFragment(),
             if (fontPath.isContentPath()) {
                 val doc = DocumentFile.fromTreeUri(requireContext(), Uri.parse(fontPath))
                 if (doc?.canRead() == true) {
-                    getFontFiles(doc)
+                    loadFontFiles(doc)
                 } else {
                     openFolder()
                 }
             } else {
-                getFontFilesByPermission(fontPath)
+                loadFontFilesByPermission(fontPath)
             }
         }
     }
@@ -90,7 +88,9 @@ class FontSelectDialog : BaseDialogFragment(),
             R.id.menu_default -> {
                 val requireContext = requireContext()
                 requireContext.alert(titleResource = R.string.system_typeface) {
-                    items(requireContext.resources.getStringArray(R.array.system_typefaces).toList()) { _, i ->
+                    items(
+                        requireContext.resources.getStringArray(R.array.system_typefaces).toList()
+                    ) { _, i ->
                         AppConfig.systemTypefaces = i
                         onDefaultFontChange()
                         dismiss()
@@ -106,95 +106,92 @@ class FontSelectDialog : BaseDialogFragment(),
 
     private fun openFolder() {
         launch(Main) {
-            FilePicker.selectFolder(this@FontSelectDialog, fontFolderRequestCode) {
-                val path = "${FileUtils.getSdCardPath()}${File.separator}Fonts"
-                putPrefString(PreferKey.fontFolder, path)
-                getFontFilesByPermission(path)
+            val defaultPath = "SD${File.separator}Fonts"
+            FilePicker.selectFolder(
+                this@FontSelectDialog,
+                fontFolderRequestCode,
+                otherActions = arrayListOf(defaultPath)
+            ) {
+                when (it) {
+                    defaultPath -> {
+                        val path = "${FileUtils.getSdCardPath()}${File.separator}Fonts"
+                        putPrefString(PreferKey.fontFolder, path)
+                        loadFontFilesByPermission(path)
+                    }
+                }
             }
         }
     }
 
-    @SuppressLint("DefaultLocale")
-    private fun getFontFiles(doc: DocumentFile) {
+    private fun loadFontFiles(doc: DocumentFile) {
         execute {
+            val fontItems = arrayListOf<DocItem>()
             val docItems = DocumentUtils.listFiles(App.INSTANCE, doc.uri)
-            fontCacheFolder.listFiles()?.forEach { fontFile ->
-                var contain = false
-                for (item in docItems) {
-                    if (fontFile.name == item.name) {
-                        contain = true
-                        break
-                    }
-                }
-                if (!contain) {
-                    fontFile.delete()
-                }
-            }
             docItems.forEach { item ->
-                if (item.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())) {
-                    val fontFile = FileUtils.getFile(fontCacheFolder, item.name)
-                    if (!fontFile.exists()) {
-                        DocumentUtils.readBytes(App.INSTANCE, item.uri)?.let { byteArray ->
-                            fontFile.writeBytes(byteArray)
-                        }
-                    }
+                if (item.name.toLowerCase(Locale.getDefault()).matches(fontRegex)) {
+                    fontItems.add(item)
                 }
             }
-            try {
-                fontCacheFolder.listFiles { pathName ->
-                    pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
-                }?.let {
-                    withContext(Main) {
-                        adapter?.setItems(it.toList())
-                    }
-                }
-            } catch (e: Exception) {
-                toast(e.localizedMessage ?: "")
-            }
+            fontItems.sortedBy { it.name }
+        }.onSuccess {
+            adapter?.setItems(it)
         }.onError {
             toast("getFontFiles:${it.localizedMessage}")
         }
     }
 
-    @SuppressLint("DefaultLocale")
-    private fun getFontFilesByPermission(path: String) {
+    private fun loadFontFilesByPermission(path: String) {
         PermissionsCompat.Builder(this@FontSelectDialog)
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
-                try {
-                    val file = File(path)
-                    file.listFiles { pathName ->
-                        pathName.name.toLowerCase().matches(".*\\.[ot]tf".toRegex())
-                    }?.let {
-                        adapter?.setItems(it.toList())
-                    }
-                } catch (e: Exception) {
-                    toast(e.localizedMessage ?: "")
-                }
+                loadFontFiles(path)
             }
             .request()
     }
 
-    override fun onClick(file: File) {
-        launch(IO) {
-            file.copyTo(FileUtils.createFileIfNotExist(fontFolder, file.name), true)
-                .absolutePath.let { path ->
-                if (curFilePath != path) {
-                    withContext(Main) {
-                        callBack?.selectFile(path)
-                    }
-                }
+    private fun loadFontFiles(path: String) {
+        execute {
+            val fontItems = arrayListOf<DocItem>()
+            val file = File(path)
+            file.listFiles { pathName ->
+                pathName.name.toLowerCase(Locale.getDefault()).matches(fontRegex)
+            }?.forEach {
+                fontItems.add(
+                    DocItem(
+                        it.name,
+                        it.extension,
+                        it.length(),
+                        Date(it.lastModified()),
+                        Uri.parse(it.absolutePath)
+                    )
+                )
             }
+            fontItems.sortedBy { it.name }
+        }.onSuccess {
+            adapter?.setItems(it)
+        }.onError {
+            toast("getFontFiles:${it.localizedMessage}")
+        }
+    }
+
+    override fun onClick(docItem: DocItem) {
+        execute {
+            FileUtils.deleteFile(fontFolder.absolutePath)
+            callBack?.selectFont(docItem.uri.toString())
+        }.onSuccess {
             dialog?.dismiss()
         }
     }
 
+    /**
+     * 字体文件夹
+     */
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
             fontFolderRequestCode -> {
                 putPrefString(PreferKey.fontFolder, currentPath)
-                getFontFilesByPermission(currentPath)
+                loadFontFilesByPermission(currentPath)
             }
         }
     }
@@ -211,10 +208,10 @@ class FontSelectDialog : BaseDialogFragment(),
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
                         )
-                        getFontFiles(doc)
+                        loadFontFiles(doc)
                     } else {
                         RealPathUtil.getPath(requireContext(), uri)?.let {
-                            getFontFilesByPermission(it)
+                            loadFontFilesByPermission(it)
                         }
                     }
                 }
@@ -223,11 +220,7 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     private fun onDefaultFontChange() {
-        if (curFilePath == "") {
-            postEvent(EventBus.UP_CONFIG, true)
-        } else {
-            callBack?.selectFile("")
-        }
+        callBack?.selectFont("")
     }
 
     override val curFilePath: String get() = callBack?.curFontPath ?: ""
@@ -236,7 +229,7 @@ class FontSelectDialog : BaseDialogFragment(),
         get() = (parentFragment as? CallBack) ?: (activity as? CallBack)
 
     interface CallBack {
-        fun selectFile(path: String)
+        fun selectFont(path: String)
         val curFontPath: String
     }
 }

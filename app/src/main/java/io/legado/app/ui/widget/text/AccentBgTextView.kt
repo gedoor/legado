@@ -5,9 +5,9 @@ import android.graphics.Color
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
-import io.legado.app.lib.theme.ColorUtils
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 
@@ -33,8 +33,8 @@ class AccentBgTextView(context: Context, attrs: AttributeSet?) :
         background = if (isInEditMode) {
             Selector.shapeBuild()
                 .setCornerRadius(radius)
-                .setDefaultBgColor(context.getCompatColor(R.color.colorAccent))
-                .setPressedBgColor(ColorUtils.darkenColor(context.getCompatColor(R.color.colorAccent)))
+                .setDefaultBgColor(context.getCompatColor(R.color.accent))
+                .setPressedBgColor(ColorUtils.darkenColor(context.getCompatColor(R.color.accent)))
                 .create()
         } else {
             Selector.shapeBuild()

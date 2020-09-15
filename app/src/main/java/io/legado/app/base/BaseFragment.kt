@@ -1,11 +1,14 @@
 package io.legado.app.base
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import io.legado.app.R
+import io.legado.app.ui.widget.TitleBar
 import io.legado.app.utils.applyTint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,11 +39,29 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        onMultiWindowModeChanged()
         onFragmentCreated(view, savedInstanceState)
         observeLiveBus()
     }
 
     abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
+
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode)
+        onMultiWindowModeChanged()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        onMultiWindowModeChanged()
+    }
+
+    private fun onMultiWindowModeChanged() {
+        (activity as? BaseActivity)?.let {
+            view?.findViewById<TitleBar>(R.id.title_bar)
+                ?.onMultiWindowModeChanged(it.isInMultiWindow, it.fullScreen)
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()

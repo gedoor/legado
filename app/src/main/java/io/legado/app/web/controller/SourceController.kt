@@ -9,7 +9,7 @@ import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.web.utils.ReturnData
 
-class SourceController {
+object SourceController {
 
     val sources: ReturnData
         get() {

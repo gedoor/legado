@@ -20,7 +20,7 @@ object AppConst {
     const val UA_NAME = "User-Agent"
 
     val userAgent: String by lazy {
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36"
     }
 
     val SCRIPT_ENGINE: ScriptEngine by lazy {
@@ -41,17 +41,35 @@ object AppConst {
 
     val keyboardToolChars: List<String> by lazy {
         arrayListOf(
-            "@", "&", "|", "%", "/", ":", "[", "]", "{", "}", "<", ">", "\\", "$", "#", "!", ".",
-            "href", "src", "textNodes", "xpath", "json", "css", "id", "class", "tag"
+            "※", "@", "&", "|", "%", "/", ":", "[", "]", "{", "}", "<", ">", "\\",
+            "$", "#", "!", ".", "href", "src", "textNodes", "xpath", "json", "css",
+            "id", "class", "tag"
         )
     }
 
     val bookGroupAll = BookGroup(-1, App.INSTANCE.getString(R.string.all))
     val bookGroupLocal = BookGroup(-2, App.INSTANCE.getString(R.string.local))
     val bookGroupAudio = BookGroup(-3, App.INSTANCE.getString(R.string.audio))
+    val bookGroupNone = BookGroup(-4, App.INSTANCE.getString(R.string.no_group))
 
     const val notificationIdRead = 1144771
     const val notificationIdAudio = 1144772
     const val notificationIdWeb = 1144773
     const val notificationIdDownload = 1144774
+
+    val urlOption: String by lazy {
+        """
+        ,{
+        "charset": "",
+        "method": "POST",
+        "body": "",
+        "headers": {"User-Agent": ""}
+        }
+        """.trimIndent()
+    }
+
+    val menuViewNames = arrayOf(
+        "com.android.internal.view.menu.ListMenuItemView",
+        "androidx.appcompat.view.menu.ListMenuItemView"
+    )
 }

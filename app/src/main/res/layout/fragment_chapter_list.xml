@@ -37,7 +37,7 @@
             android:paddingRight="10dp"
             android:singleLine="true"
             android:gravity="center_vertical"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/primaryText"
             android:textSize="12sp" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -48,7 +48,7 @@
             android:contentDescription="@string/go_to_top"
             android:src="@drawable/ic_arrow_drop_up"
             android:tooltipText="@string/go_to_top"
-            app:tint="@color/tv_text_default"
+            app:tint="@color/primaryText"
             tools:ignore="UnusedAttribute" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -59,7 +59,7 @@
             android:contentDescription="@string/go_to_bottom"
             android:src="@drawable/ic_arrow_drop_down"
             android:tooltipText="@string/go_to_bottom"
-            app:tint="@color/tv_text_default"
+            app:tint="@color/primaryText"
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 

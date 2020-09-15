@@ -3,11 +3,14 @@ package io.legado.app.base
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.lib.theme.ThemeStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
+
 
 abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
     override val coroutineContext: CoroutineContext
@@ -21,11 +24,23 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.setBackgroundColor(ThemeStore.backgroundColor())
         onFragmentCreated(view, savedInstanceState)
         observeLiveBus()
     }
 
     abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
+
+    override fun show(manager: FragmentManager, tag: String?) {
+        try {
+            //在每个add事务前增加一个remove事务，防止连续的add
+            manager.beginTransaction().remove(this).commit()
+            super.show(manager, tag)
+        } catch (e: Exception) {
+            //同一实例使用不同的tag会异常,这里捕获一下
+            e.printStackTrace()
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -36,9 +51,7 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
         scope: CoroutineScope = this,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
-    ): Coroutine<T> {
-        return Coroutine.async(scope, context) { block() }
-    }
+    ) = Coroutine.async(scope, context) { block() }
 
     open fun observeLiveBus() {
     }

@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.chapterlist
 
-import android.os.AsyncTask.execute
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,19 +46,17 @@ class BookmarkAdapter(val callback: Callback) : PagedListAdapter<Bookmark, Bookm
             tv_chapter_name.text = bookmark.chapterName
             tv_content.text = bookmark.content
             itemView.onClick {
-                callback?.open(bookmark)
+                callback?.onClick(bookmark)
             }
             itemView.onLongClick {
-                execute {
-                    callback?.delBookmark(bookmark)
-                }
+                callback?.onLongClick(bookmark)
                 true
             }
         }
     }
 
     interface Callback {
-        fun open(bookmark: Bookmark)
-        fun delBookmark(bookmark: Bookmark)
+        fun onClick(bookmark: Bookmark)
+        fun onLongClick(bookmark: Bookmark)
     }
 }

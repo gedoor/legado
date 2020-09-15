@@ -1,208 +1,197 @@
 package io.legado.app.service
 
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import androidx.core.app.NotificationCompat
-import io.legado.app.App
+import androidx.core.content.FileProvider
+import androidx.core.os.bundleOf
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
-import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.AppConfig
-import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
-import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.WebBook
-import io.legado.app.utils.postEvent
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.isActive
+import io.legado.app.utils.RealPathUtil
+import io.legado.app.utils.msg
+import org.jetbrains.anko.downloadManager
 import org.jetbrains.anko.toast
-import java.util.concurrent.Executors
+import java.io.File
+
 
 class DownloadService : BaseService() {
-    private var searchPool =
-        Executors.newFixedThreadPool(AppConfig.threadCount).asCoroutineDispatcher()
-    private var tasks: ArrayList<Coroutine<*>> = arrayListOf()
-    private val handler = Handler()
-    private var runnable: Runnable = Runnable { upDownload() }
-    private val downloadMap = hashMapOf<String, LinkedHashSet<BookChapter>>()
-    private val downloadCount = hashMapOf<String, DownloadCount>();
-    private val finalMap = hashMapOf<String, LinkedHashSet<BookChapter>>()
-    private var notificationContent = "正在启动下载"
 
-    private val notificationBuilder by lazy {
-        val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
-            .setSmallIcon(R.drawable.ic_download)
-            .setOngoing(true)
-            .setContentTitle(getString(R.string.download_offline))
-        builder.addAction(
-            R.drawable.ic_stop_black_24dp,
-            getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.stop)
-        )
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+    private val downloads = hashMapOf<Long, String>()
+    private val completeDownloads = hashSetOf<Long>()
+    private val handler = Handler()
+    private val runnable = Runnable {
+        checkDownloadState()
+    }
+
+    private val downloadReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            queryState()
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
-        updateNotification(notificationContent)
-        handler.postDelayed(runnable, 1000)
+        registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopSelf()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(downloadReceiver)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        intent?.action?.let { action ->
-            when (action) {
-                IntentAction.start -> addDownloadData(
-                    intent.getStringExtra("bookUrl"),
-                    intent.getIntExtra("start", 0),
-                    intent.getIntExtra("end", 0)
-                )
-                IntentAction.remove -> removeDownload(intent.getStringExtra("bookUrl"))
-                IntentAction.stop -> stopDownload()
+        when (intent?.action) {
+            IntentAction.start -> startDownload(
+                intent.getLongExtra("downloadId", 0),
+                intent.getStringExtra("fileName") ?: "未知文件"
+            )
+            IntentAction.play -> {
+                val id = intent.getLongExtra("downloadId", 0)
+                if (downloads[id]?.endsWith(".apk") == true) {
+                    installApk(id)
+                }
+            }
+            IntentAction.stop -> {
+                val downloadId = intent.getLongExtra("downloadId", 0)
+                downloads.remove(downloadId)
+                if (downloads.isEmpty()) {
+                    stopSelf()
+                }
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onDestroy() {
-        tasks.clear()
-        searchPool.close()
+    private fun startDownload(downloadId: Long, fileName: String) {
+        if (downloadId > 0) {
+            downloads[downloadId] = fileName
+            queryState()
+            checkDownloadState()
+        }
+    }
+
+    private fun checkDownloadState() {
         handler.removeCallbacks(runnable)
-        downloadMap.clear()
-        finalMap.clear()
-        super.onDestroy()
-        postEvent(EventBus.UP_DOWNLOAD, downloadMap)
+        queryState()
+        handler.postDelayed(runnable, 1000)
     }
 
-    private fun addDownloadData(bookUrl: String?, start: Int, end: Int) {
-        bookUrl ?: return
-        if (downloadMap.containsKey(bookUrl)) {
-            toast("该书已在下载列表")
-            return
-        }
-        execute {
-            val chapterMap = downloadMap[bookUrl] ?: linkedSetOf<BookChapter>().apply {
-                downloadMap[bookUrl] = this
-            }
-            App.db.bookChapterDao().getChapterList(bookUrl, start, end).let {
-                chapterMap.addAll(it)
-            }
-            download()
-        }
-    }
-
-    private fun removeDownload(bookUrl: String?) {
-        downloadMap.remove(bookUrl)
-        finalMap.remove(bookUrl)
-    }
-
-    private fun updateNotification(downloadCount:DownloadCount, totalCount: Int, content: String){
-        notificationContent =
-            "进度:${downloadCount.downloadFinishedCount}/$totalCount,成功:${downloadCount.successCount},$content"
-    }
-
-    private fun download() {
-        val task = Coroutine.async(this, context = searchPool) {
-            downloadMap.forEach { entry ->
-                if (!isActive) return@async
-                if (!finalMap.containsKey(entry.key)) {
-                    val book = App.db.bookDao().getBook(entry.key) ?: return@async
-                    val bookSource =
-                        App.db.bookSourceDao().getBookSource(book.origin) ?: return@async
-                    val webBook = WebBook(bookSource)
-
-                    downloadCount[entry.key] = DownloadCount()
-
-                    entry.value.forEach { chapter ->
-                        if (!isActive) return@async
-                        if (downloadMap.containsKey(book.bookUrl)) {
-                            if (!BookHelp.hasContent(book, chapter)) {
-                                webBook.getContent(
-                                    book,
-                                    chapter,
-                                    scope = this,
-                                    context = searchPool
-                                )
-                                    //.onStart {
-                                    //    notificationContent = "启动:" + chapter.title
-                                    //}
-                                    .onSuccess(IO) { content ->
-                                        downloadCount[entry.key]?.increaseSuccess()
-                                        BookHelp.saveContent(book, chapter, content)
-                                    }
-                                    .onFinally(IO) {
-                                        synchronized(this@DownloadService) {
-                                            downloadCount[entry.key]?.increaseFinished()
-                                            downloadCount[entry.key]?.let { updateNotification(it, entry.value.size, chapter.title) }
-                                            val chapterMap =
-                                                finalMap[book.bookUrl]
-                                                    ?: linkedSetOf<BookChapter>().apply {
-                                                        finalMap[book.bookUrl] = this
-                                                    }
-                                            chapterMap.add(chapter)
-                                            if (chapterMap.size == entry.value.size) {
-                                                downloadMap.remove(book.bookUrl)
-                                                finalMap.remove(book.bookUrl)
-                                                downloadCount.remove(entry.key)
-                                            }
-                                        }
-                                    }
-                            } else{
-                                //无需下载的，设置为增加成功
-                                downloadCount[entry.key]?.increaseSuccess()
-                                downloadCount[entry.key]?.increaseFinished()
+    //查询下载进度
+    private fun queryState() {
+        val ids = downloads.keys
+        val query = DownloadManager.Query()
+        query.setFilterById(*ids.toLongArray())
+        downloadManager.query(query).use { cursor ->
+            if (!cursor.moveToFirst()) return
+            val id = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID))
+            val progress: Int =
+                cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+            val max: Int =
+                cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+            val status =
+                when (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+                    DownloadManager.STATUS_PAUSED -> "暂停"
+                    DownloadManager.STATUS_PENDING -> "待下载"
+                    DownloadManager.STATUS_RUNNING -> "下载中"
+                    DownloadManager.STATUS_SUCCESSFUL -> {
+                        if (!completeDownloads.contains(id)) {
+                            completeDownloads.add(id)
+                            if (downloads[id]?.endsWith(".apk") == true) {
+                                installApk(id)
                             }
                         }
+                        "下载完成"
                     }
+                    DownloadManager.STATUS_FAILED -> "下载失败"
+                    else -> "未知状态"
                 }
-
-            }
-        }
-
-        tasks.add(task)
-        task.invokeOnCompletion {
-            tasks.remove(task)
-            if (tasks.isEmpty()) {
-                stopSelf()
-            }
+            updateNotification(id, "${downloads[id]} $status", max, progress)
         }
     }
 
-    private fun stopDownload() {
-        tasks.clear()
-        stopSelf()
-    }
+    private fun installApk(downloadId: Long) {
+        downloadManager.getUriForDownloadedFile(downloadId)?.let {
+            val filePath = RealPathUtil.getPath(this, it) ?: return
+            val file = File(filePath)
+            //调用系统安装apk
+            val intent = Intent()
+            intent.action = Intent.ACTION_VIEW
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-    private fun upDownload() {
-        updateNotification(notificationContent)
-        postEvent(EventBus.UP_DOWNLOAD, downloadMap)
-        handler.removeCallbacks(runnable)
-        handler.postDelayed(runnable, 1000)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {   //7.0版本以上
+                val uriForFile: Uri =
+                    FileProvider.getUriForFile(
+                        this,
+                        "${BuildConfig.APPLICATION_ID}.fileProvider",
+                        file
+                    )
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                intent.setDataAndType(uriForFile, "application/vnd.android.package-archive")
+            } else {
+                val uri: Uri = Uri.fromFile(file)
+                intent.setDataAndType(uri, "application/vnd.android.package-archive")
+            }
+
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                toast(e.msg)
+            }
+        }
     }
 
     /**
      * 更新通知
      */
-    private fun updateNotification(content: String) {
-        val builder = notificationBuilder
-        builder.setContentText(content)
-        val notification = builder.build()
-        startForeground(AppConst.notificationIdDownload, notification)
+    private fun updateNotification(downloadId: Long, content: String, max: Int, progress: Int) {
+        val notificationBuilder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
+            .setSmallIcon(R.drawable.ic_download)
+            .setOngoing(true)
+            .setContentTitle(getString(R.string.action_download))
+        notificationBuilder.setContentIntent(
+            IntentHelp.servicePendingIntent<DownloadService>(
+                this,
+                IntentAction.play,
+                bundleOf("downloadId" to downloadId)
+            )
+        )
+        notificationBuilder.addAction(
+            R.drawable.ic_stop_black_24dp,
+            getString(R.string.cancel),
+            IntentHelp.servicePendingIntent<DownloadService>(
+                this,
+                IntentAction.stop,
+                bundleOf("downloadId" to downloadId)
+            )
+        )
+        notificationBuilder.setDeleteIntent(
+            IntentHelp.servicePendingIntent<DownloadService>(
+                this,
+                IntentAction.stop,
+                bundleOf("downloadId" to downloadId)
+            )
+        )
+        notificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        notificationBuilder.setContentText(content)
+        notificationBuilder.setProgress(max, progress, false)
+        notificationBuilder.setAutoCancel(true)
+        val notification = notificationBuilder.build()
+        startForeground(downloadId.toInt(), notification)
     }
-}
 
-class DownloadCount{
-    @Volatile public var downloadFinishedCount = 0 // 下载完成的条目数量
-    @Volatile public var successCount = 0 //下载成功的条目数量
-
-    fun increaseSuccess(){
-        ++successCount;
-    }
-
-    fun increaseFinished(){
-        ++downloadFinishedCount;
-    }
 }

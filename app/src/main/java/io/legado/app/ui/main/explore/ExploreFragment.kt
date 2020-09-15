@@ -7,13 +7,13 @@ import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
@@ -93,10 +93,10 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
     private fun initGroupData() {
         liveGroup?.removeObservers(viewLifecycleOwner)
         liveGroup = App.db.bookSourceDao().liveGroupExplore()
-        liveGroup?.observe(viewLifecycleOwner, Observer {
+        liveGroup?.observe(viewLifecycleOwner, {
             groups.clear()
             it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
+                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             upGroupsMenu()
         })
@@ -109,7 +109,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
         } else {
             App.db.bookSourceDao().liveExplore("%$key%")
         }
-        liveExplore?.observe(viewLifecycleOwner, Observer {
+        liveExplore?.observe(viewLifecycleOwner, {
             val diffResult = DiffUtil
                 .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it)

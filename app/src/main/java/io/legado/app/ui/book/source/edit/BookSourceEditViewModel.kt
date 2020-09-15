@@ -1,13 +1,14 @@
 package io.legado.app.ui.book.source.edit
 
 import android.app.Application
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.storage.OldRule
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getClipText
 import kotlinx.coroutines.Dispatchers
 
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
@@ -52,12 +53,8 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
     fun pasteSource(onSuccess: (source: BookSource) -> Unit) {
         execute(context = Dispatchers.Main) {
             var source: BookSource? = null
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-            clipboard?.primaryClip?.let {
-                if (it.itemCount > 0) {
-                    val json = it.getItemAt(0).text.toString()
-                    source = OldRule.jsonToBookSource(json)
-                }
+            context.getClipText()?.let { json ->
+                source = OldRule.jsonToBookSource(json)
             }
             source
         }.onError {
@@ -69,6 +66,17 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             } else {
                 toast("格式不对")
             }
+        }
+    }
+
+    fun importSource(text: String, finally: (source: BookSource) -> Unit) {
+        execute {
+            val text1 = text.trim()
+            GSON.fromJsonObject<BookSource>(text1)?.let {
+                finally.invoke(it)
+            }
+        }.onError {
+            toast(it.localizedMessage ?: "Error")
         }
     }
 }

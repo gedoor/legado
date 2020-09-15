@@ -8,7 +8,8 @@
         android:title="@string/screen_direction"
         android:entries="@array/screen_direction_title"
         android:entryValues="@array/screen_direction_value"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.NameListPreference
         android:key="keep_light"
@@ -16,53 +17,97 @@
         android:entryValues="@array/screen_time_out_value"
         android:entries="@array/screen_time_out"
         android:title="@string/keep_light"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/pt_hide_status_bar"
         android:key="hideStatusBar"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/read_body_to_lh"
+        android:key="readBodyToLh"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/pt_hide_navigation_bar"
         android:key="hideNavigationBar"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/text_full_justify"
+        android:key="textFullJustify"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/text_bottom_justify"
+        android:key="textBottomJustify"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
         android:title="@string/volume_key_page"
         android:key="volumeKeyPage"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
         android:title="@string/click_turn_page"
         android:key="clickTurnPage"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/click_all_next_page"
         android:key="clickAllNext"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/volume_key_page_on_play"
         android:key="volumeKeyPageOnPlay"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/auto_change_source"
+        android:key="autoChangeSource"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/selectText"
         android:key="selectText"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:title="@string/show_brightness_view"
+        android:key="showBrightnessView"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.Preference
         android:key="customPageKey"
         android:title="@string/custom_page_key"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
 
 </androidx.preference.PreferenceScreen>

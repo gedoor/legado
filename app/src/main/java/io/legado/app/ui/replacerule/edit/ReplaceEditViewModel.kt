@@ -20,12 +20,16 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
                         replaceRuleData.postValue(it)
                     }
                 } else {
-                    bundle.getString("pattern")?.let { pattern ->
-                        val isRegex = bundle.getBoolean("isRegex")
-                        replaceRuleData.postValue(
-                            ReplaceRule(name = pattern, pattern = pattern, isRegex = isRegex)
-                        )
-                    }
+                    val pattern = bundle.getString("pattern") ?: ""
+                    val isRegex = bundle.getBoolean("isRegex")
+                    val scope = bundle.getString("scope")
+                    val rule = ReplaceRule(
+                        name = pattern,
+                        pattern = pattern,
+                        isRegex = isRegex,
+                        scope = scope
+                    )
+                    replaceRuleData.postValue(rule)
                 }
             }
         }

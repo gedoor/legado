@@ -1,15 +1,18 @@
 package io.legado.app.ui.rss.source.manage
 
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import android.widget.PopupMenu
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssSource
-import io.legado.app.help.ItemTouchCallback
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import kotlinx.android.synthetic.main.item_rss_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
@@ -24,7 +27,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         getItems().forEach {
             selected.add(it)
         }
-        notifyItemRangeChanged(0, itemCount, 1)
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
     }
 
@@ -36,23 +39,24 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 selected.add(it)
             }
         }
-        notifyItemRangeChanged(0, itemCount, 1)
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
     }
 
-    fun getSelection(): LinkedHashSet<RssSource> {
-        val selection = linkedSetOf<RssSource>()
+    fun getSelection(): List<RssSource> {
+        val selection = arrayListOf<RssSource>()
         getItems().forEach {
             if (selected.contains(it)) {
                 selection.add(it)
             }
         }
-        return selection
+        return selection.sortedBy { it.customOrder }
     }
 
     override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {
         with(holder.itemView) {
-            if (payloads.isEmpty()) {
+            val bundle = payloads.getOrNull(0) as? Bundle
+            if (bundle == null) {
                 this.setBackgroundColor(context.backgroundColor)
                 if (item.sourceGroup.isNullOrEmpty()) {
                     cb_source.text = item.sourceName
@@ -63,9 +67,18 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 swt_enabled.isChecked = item.enabled
                 cb_source.isChecked = selected.contains(item)
             } else {
-                when (payloads[0]) {
-                    1 -> cb_source.isChecked = selected.contains(item)
-                    2 -> swt_enabled.isChecked = item.enabled
+                bundle.keySet().map {
+                    when (it) {
+                        "name", "group" ->
+                            if (item.sourceGroup.isNullOrEmpty()) {
+                                cb_source.text = item.sourceName
+                            } else {
+                                cb_source.text =
+                                    String.format("%s (%s)", item.sourceName, item.sourceGroup)
+                            }
+                        "selected" -> cb_source.isChecked = selected.contains(item)
+                        "enabled" -> swt_enabled.isChecked = item.enabled
+                    }
                 }
             }
         }
@@ -111,6 +124,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
+                R.id.menu_bottom -> callBack.toBottom(source)
                 R.id.menu_del -> callBack.del(source)
             }
             true
@@ -146,11 +160,38 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
+    fun initDragSelectTouchHelperCallback(): DragSelectTouchHelper.Callback {
+        return object : DragSelectTouchHelper.AdvanceCallback<RssSource>(Mode.ToggleAndReverse) {
+            override fun currentSelectedId(): MutableSet<RssSource> {
+                return selected
+            }
+
+            override fun getItemId(position: Int): RssSource {
+                return getItem(position)!!
+            }
+
+            override fun updateSelectState(position: Int, isSelected: Boolean): Boolean {
+                getItem(position)?.let {
+                    if (isSelected) {
+                        selected.add(it)
+                    } else {
+                        selected.remove(it)
+                    }
+                    notifyItemChanged(position, bundleOf(Pair("selected", null)))
+                    callBack.upCountView()
+                    return true
+                }
+                return false
+            }
+        }
+    }
+
     interface CallBack {
         fun del(source: RssSource)
         fun edit(source: RssSource)
         fun update(vararg source: RssSource)
         fun toTop(source: RssSource)
+        fun toBottom(source: RssSource)
         fun upOrder()
         fun upCountView()
     }

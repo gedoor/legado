@@ -2,12 +2,13 @@ package io.legado.app.model.webBook
 
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.StringUtils.wordCountFormat
 import io.legado.app.utils.htmlFormat
 
 object BookInfo {
@@ -17,7 +18,8 @@ object BookInfo {
         book: Book,
         body: String?,
         bookSource: BookSource,
-        baseUrl: String
+        baseUrl: String,
+        canReName: Boolean,
     ) {
         body ?: throw Exception(
             App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
@@ -33,13 +35,17 @@ object BookInfo {
             }
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取书名")
-        analyzeRule.getString(infoRule.name).let {
-            if (it.isNotEmpty()) book.name = it
+        BookHelp.formatBookName(analyzeRule.getString(infoRule.name)).let {
+            if (it.isNotEmpty() && (canReName || book.name.isEmpty())) {
+                book.name = it
+            }
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.name}")
         Debug.log(bookSource.bookSourceUrl, "┌获取作者")
-        analyzeRule.getString(infoRule.author).let {
-            if (it.isNotEmpty()) book.author = it.replace(AppPattern.authorRegex, "")
+        BookHelp.formatBookAuthor(analyzeRule.getString(infoRule.author)).let {
+            if (it.isNotEmpty() && (canReName || book.name.isEmpty())) {
+                book.author = it
+            }
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.author}")
         Debug.log(bookSource.bookSourceUrl, "┌获取分类")
@@ -50,7 +56,7 @@ object BookInfo {
             }
         Debug.log(bookSource.bookSourceUrl, "└${book.kind}")
         Debug.log(bookSource.bookSourceUrl, "┌获取字数")
-        analyzeRule.getString(infoRule.wordCount).let {
+        wordCountFormat(analyzeRule.getString(infoRule.wordCount)).let {
             if (it.isNotEmpty()) book.wordCount = it
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.wordCount}")

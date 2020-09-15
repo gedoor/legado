@@ -10,25 +10,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.constant.Theme
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.AppConfig
-import io.legado.app.help.ItemTouchCallback
-import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
+import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
@@ -41,7 +38,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 import kotlin.collections.ArrayList
 
-class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
+class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: GroupViewModel
     private lateinit var adapter: GroupAdapter
     private val callBack: CallBack? get() = parentFragment as? CallBack
@@ -62,8 +59,8 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(primaryColor)
         tool_bar.title = getString(R.string.group_manage)
         initData()
         initMenu()
@@ -77,7 +74,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tv_ok.setTextColor(requireContext().accentColor)
         tv_ok.visible()
         tv_ok.onClick { dismiss() }
-        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, Observer {
+        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, {
             val diffResult =
                 DiffUtil.calculateDiff(GroupDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it, diffResult)
@@ -92,13 +89,15 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.inflateMenu(R.menu.book_group_manage)
         tool_bar.menu.let {
-            it.applyTint(requireContext(), Theme.getTheme())
+            it.applyTint(requireContext())
             it.findItem(R.id.menu_group_all)
                 .isChecked = AppConfig.bookGroupAllShow
             it.findItem(R.id.menu_group_local)
                 .isChecked = AppConfig.bookGroupLocalShow
             it.findItem(R.id.menu_group_audio)
                 .isChecked = AppConfig.bookGroupAudioShow
+            it.findItem(R.id.menu_group_none)
+                .isChecked = AppConfig.bookGroupNoneShow
         }
     }
 
@@ -119,6 +118,10 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 item.isChecked = !item.isChecked
                 AppConfig.bookGroupAudioShow = item.isChecked
                 callBack?.upGroup()
+            }
+            R.id.menu_group_none -> {
+                item.isChecked = !item.isChecked
+                AppConfig.bookGroupNoneShow = item.isChecked
             }
         }
         return true
@@ -165,6 +168,15 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         }.show().applyTint().requestInputMethod()
     }
 
+    private fun deleteGroup(bookGroup: BookGroup) {
+        alert(R.string.delete, R.string.sure_del) {
+            okButton {
+                viewModel.delGroup(bookGroup)
+            }
+            noButton()
+        }.show().applyTint()
+    }
+
     private class GroupDiffCallBack(
         private val oldItems: List<BookGroup>,
         private val newItems: List<BookGroup>
@@ -198,15 +210,15 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
             holder.itemView.apply {
+                setBackgroundColor(context.backgroundColor)
                 tv_group.text = item.groupName
-
             }
         }
 
         override fun registerListener(holder: ItemViewHolder) {
             holder.itemView.apply {
                 tv_edit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
-                tv_del.onClick { getItem(holder.layoutPosition)?.let { viewModel.delGroup(it) } }
+                tv_del.onClick { getItem(holder.layoutPosition)?.let { deleteGroup(it) } }
             }
         }
 

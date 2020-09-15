@@ -16,13 +16,9 @@ abstract class BaseService : Service(), CoroutineScope by MainScope() {
         scope: CoroutineScope = this,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
-    ): Coroutine<T> {
-        return Coroutine.async(scope, context) { block() }
-    }
+    ) = Coroutine.async(scope, context) { block() }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent?) = null
 
     override fun onDestroy() {
         super.onDestroy()

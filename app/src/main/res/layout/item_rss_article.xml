@@ -13,7 +13,7 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:text="@string/app_name"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tv_pub_date"
@@ -43,6 +43,7 @@
         android:paddingLeft="16dp"
         android:visibility="gone"
         android:scaleType="centerCrop"
+        android:src="@drawable/image_rss_article"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded,RtlSymmetry" />

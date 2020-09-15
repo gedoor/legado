@@ -1,5 +1,9 @@
 package io.legado.app.data.entities.rule
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class ExploreRule(
     override var bookList: String? = null,
     override var name: String? = null,
@@ -11,4 +15,4 @@ data class ExploreRule(
     override var bookUrl: String? = null,
     override var coverUrl: String? = null,
     override var wordCount: String? = null
-) : BookListRule
+) : BookListRule, Parcelable

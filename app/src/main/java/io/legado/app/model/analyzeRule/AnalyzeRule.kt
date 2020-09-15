@@ -324,17 +324,37 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun replaceRegex(result: String, rule: SourceRule): String {
         var vResult = result
-        if (rule.replaceRegex.isNotEmpty()) {
+        val stringBuffer = StringBuffer()
+        val evalMatcher = replacePattern.matcher(rule.replaceRegex)
+        while (evalMatcher.find()) {
+            val jsEval = evalMatcher.group().let {
+                if (it.startsWith("@get:", true)) {
+                    get(it.substring(6, it.lastIndex))
+                } else {
+                    evalJS(it.substring(2, it.length - 2), result)
+                }
+            } ?: ""
+            if (jsEval is String) {
+                evalMatcher.appendReplacement(stringBuffer, jsEval)
+            } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
+                evalMatcher.appendReplacement(stringBuffer, String.format("%.0f", jsEval))
+            } else {
+                evalMatcher.appendReplacement(stringBuffer, jsEval.toString())
+            }
+        }
+        evalMatcher.appendTail(stringBuffer)
+        val replaceRegex = stringBuffer.toString()
+        if (replaceRegex.isNotEmpty()) {
             vResult = if (rule.replaceFirst) {
-                val pattern = Pattern.compile(rule.replaceRegex)
+                val pattern = Pattern.compile(replaceRegex)
                 val matcher = pattern.matcher(vResult)
                 if (matcher.find()) {
-                    matcher.group(0)!!.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
+                    matcher.group(0)!!.replaceFirst(replaceRegex.toRegex(), rule.replacement)
                 } else {
                     ""
                 }
             } else {
-                vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
+                vResult.replace(replaceRegex.toRegex(), rule.replacement)
             }
         }
         return vResult
@@ -376,8 +396,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         val jsMatcher = JS_PATTERN.matcher(vRuleStr)
         while (jsMatcher.find()) {
             if (jsMatcher.start() > start) {
-                tmp = vRuleStr.substring(start, jsMatcher.start()).replace("\n", "")
-                    .trim { it <= ' ' }
+                tmp = vRuleStr.substring(start, jsMatcher.start()).trim { it <= ' ' }
                 if (!TextUtils.isEmpty(tmp)) {
                     ruleList.add(SourceRule(tmp, mMode))
                 }
@@ -386,7 +405,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             start = jsMatcher.end()
         }
         if (vRuleStr.length > start) {
-            tmp = vRuleStr.substring(start).replace("\n", "").trim { it <= ' ' }
+            tmp = vRuleStr.substring(start).trim { it <= ' ' }
             if (!TextUtils.isEmpty(tmp)) {
                 ruleList.add(SourceRule(tmp, mMode))
             }
@@ -581,6 +600,14 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     }
 
     fun get(key: String): String {
+        when (key) {
+            "bookName" -> book?.let {
+                return it.name
+            }
+            "title" -> chapter?.let {
+                return it.title
+            }
+        }
         return chapter?.variableMap?.get(key)
             ?: book?.variableMap?.get(key)
             ?: ""
@@ -589,19 +616,15 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 执行JS
      */
-    @Throws(Exception::class)
     private fun evalJS(jsStr: String, result: Any?): Any? {
-        try {
-            val bindings = SimpleBindings()
-            bindings["java"] = this
-            bindings["book"] = book
-            bindings["result"] = result
-            bindings["baseUrl"] = baseUrl
-            return SCRIPT_ENGINE.eval(jsStr, bindings)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
-        }
+        val bindings = SimpleBindings()
+        bindings["java"] = this
+        bindings["book"] = book
+        bindings["result"] = result
+        bindings["baseUrl"] = baseUrl
+        bindings["chapter"] = chapter
+        bindings["title"] = chapter?.title
+        return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
     /**
@@ -609,7 +632,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     override fun ajax(urlStr: String): String? {
         return try {
-            val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, baseUrl, book)
+            val analyzeUrl = AnalyzeUrl(urlStr, baseUrl = baseUrl, book = book)
             val call = analyzeUrl.getResponse(urlStr)
             val response = call.execute()
             response.body()
@@ -639,6 +662,10 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
         private val evalPattern = Pattern.compile(
             "@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}|\\$\\d{1,2}",
+            Pattern.CASE_INSENSITIVE
+        )
+        private val replacePattern = Pattern.compile(
+            "@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}",
             Pattern.CASE_INSENSITIVE
         )
     }

@@ -18,7 +18,7 @@ function hashParam(key, val) {
 	}
 }
 // 创建书源规则容器对象
-const RuleJSON = (() => {
+function Container() {
 	let ruleJson = {};
 	let searchJson = {};
 	let exploreJson = {};
@@ -36,26 +36,31 @@ const RuleJSON = (() => {
 
 	// 搜索规则
 	$$('.rules .ruleSearch').forEach(item => searchJson[item.title] = '');
-	ruleJson.ruleSearch = JSON.stringify(searchJson);
+	//ruleJson.ruleSearch = JSON.stringify(searchJson);
+	ruleJson.ruleSearch = searchJson;
 
 	// 发现规则
 	$$('.rules .ruleExplore').forEach(item => exploreJson[item.title] = '');
-	ruleJson.ruleExplore = JSON.stringify(exploreJson);
+	//ruleJson.ruleExplore = JSON.stringify(exploreJson);
+	ruleJson.ruleExplore = exploreJson;
 
 	// 详情页规则
 	$$('.rules .ruleBookInfo').forEach(item => bookInfoJson[item.title] = '');
-	ruleJson.ruleBookInfo = JSON.stringify(bookInfoJson);
+	//ruleJson.ruleBookInfo = JSON.stringify(bookInfoJson);
+	ruleJson.ruleBookInfo = bookInfoJson;
 
 	// 目录规则
 	$$('.rules .ruleToc').forEach(item => tocJson[item.title] = '');
-	ruleJson.ruleToc = JSON.stringify(tocJson);
+	//ruleJson.ruleToc = JSON.stringify(tocJson);
+	ruleJson.ruleToc = tocJson;
 
 	// 正文规则
 	$$('.rules .ruleContent').forEach(item => contentJson[item.title] = '');
-	ruleJson.ruleContent = JSON.stringify(contentJson);
+	//ruleJson.ruleContent = JSON.stringify(contentJson);
+	ruleJson.ruleContent = contentJson;
 
 	return ruleJson;
-})();
+}
 // 选项卡Tab切换事件处理
 function showTab(tabName) {
 	$$('.tabtitle>*').forEach(node => { node.className = node.className.replace(' this', ''); });
@@ -101,6 +106,7 @@ function HttpPost(url, data) {
 }
 // 将书源表单转化为书源对象
 function rule2json() {
+	let RuleJSON = Container();
 	// 转换base
 	Object.keys(RuleJSON).forEach(key => {
 		if (!key.startsWith("rule")) {
@@ -110,38 +116,53 @@ function rule2json() {
 
 	// 转换搜索规则
 	let searchJson = {};
-	Object.keys(JSON.parse(RuleJSON.ruleSearch)).forEach(key => {
-		searchJson[key] = $('#' + 'ruleSearch_' + key).value;
+	//Object.keys(JSON.parse(RuleJSON.ruleSearch)).forEach(key => {
+	Object.keys(RuleJSON.ruleSearch).forEach(key => {
+		if ($('#' + 'ruleSearch_' + key).value)
+			searchJson[key] = $('#' + 'ruleSearch_' + key).value;
 	});
-	RuleJSON.ruleSearch = JSON.stringify(searchJson);
+	//RuleJSON.ruleSearch = JSON.stringify(searchJson);
+	RuleJSON.ruleSearch = searchJson;
 
 	// 转换发现规则
 	let exploreJson = {};
-	Object.keys(JSON.parse(RuleJSON.ruleExplore)).forEach(key => {
-		exploreJson[key] = $('#' + 'ruleExplore_' + key).value;
+	//Object.keys(JSON.parse(RuleJSON.ruleExplore)).forEach(key => {
+	Object.keys(RuleJSON.ruleExplore).forEach(key => {
+		if ($('#' + 'ruleExplore_' + key).value)
+			exploreJson[key] = $('#' + 'ruleExplore_' + key).value;
 	});
-	RuleJSON.ruleExplore = JSON.stringify(exploreJson);
+	//RuleJSON.ruleExplore = JSON.stringify(exploreJson);
+	RuleJSON.ruleExplore = exploreJson;
 
 	// 转换详情页规则
 	let bookInfoJson = {};
-	Object.keys(JSON.parse(RuleJSON.ruleBookInfo)).forEach(key => {
-		bookInfoJson[key] = $('#' + 'ruleBookInfo_' + key).value;
+	//Object.keys(JSON.parse(RuleJSON.ruleBookInfo)).forEach(key => {
+	Object.keys(RuleJSON.ruleBookInfo).forEach(key => {
+		if ($('#' + 'ruleBookInfo_' + key).value)
+			bookInfoJson[key] = $('#' + 'ruleBookInfo_' + key).value;
 	});
-	RuleJSON.ruleBookInfo = JSON.stringify(bookInfoJson);
+	//RuleJSON.ruleBookInfo = JSON.stringify(bookInfoJson);
+	RuleJSON.ruleBookInfo = bookInfoJson;
 
 	// 转换目录规则
 	let tocJson = {};
-	Object.keys(JSON.parse(RuleJSON.ruleToc)).forEach(key => {
-		tocJson[key] = $('#' + 'ruleToc_' + key).value;
+	//Object.keys(JSON.parse(RuleJSON.ruleToc)).forEach(key => {
+	Object.keys(RuleJSON.ruleToc).forEach(key => {
+		if ($('#' + 'ruleToc_' + key).value)
+			tocJson[key] = $('#' + 'ruleToc_' + key).value;
 	});
-	RuleJSON.ruleToc = JSON.stringify(tocJson);
+	//RuleJSON.ruleToc = JSON.stringify(tocJson);
+	RuleJSON.ruleToc = tocJson;
 
 	// 转换正文规则
 	let contentJson = {};
-	Object.keys(JSON.parse(RuleJSON.ruleContent)).forEach(key => {
-		contentJson[key] = $('#' + 'ruleContent_' + key).value;
+	//Object.keys(JSON.parse(RuleJSON.ruleContent)).forEach(key => {
+	Object.keys(RuleJSON.ruleContent).forEach(key => {
+		if ($('#' + 'ruleContent_' + key).value)
+			contentJson[key] = $('#' + 'ruleContent_' + key).value;
 	});
-	RuleJSON.ruleContent = JSON.stringify(contentJson);
+	//RuleJSON.ruleContent = JSON.stringify(contentJson);
+	RuleJSON.ruleContent = contentJson;
 
 	RuleJSON.lastUpdateTime = RuleJSON.lastUpdateTime == '' ? 0 : parseInt(RuleJSON.lastUpdateTime);
 	RuleJSON.customOrder = RuleJSON.customOrder == '' ? 0 : parseInt(RuleJSON.customOrder);
@@ -153,6 +174,7 @@ function rule2json() {
 }
 // 将书源对象填充到书源表单
 function json2rule(RuleEditor) {
+	let RuleJSON = Container();
 	// 转换base
 	Object.keys(RuleJSON).forEach(key => {
 		if (!key.startsWith("rule")) {
@@ -171,40 +193,50 @@ function json2rule(RuleEditor) {
 
 	// 转换搜索规则
 	if (RuleEditor.ruleSearch) {
-		let searchJson = JSON.parse(RuleEditor.ruleSearch);
-		Object.keys(JSON.parse(RuleJSON.ruleSearch)).forEach(key => {
+		//let searchJson = JSON.parse(RuleEditor.ruleSearch);
+		let searchJson = RuleEditor.ruleSearch;
+		//Object.keys(JSON.parse(RuleJSON.ruleSearch)).forEach(key => {
+		Object.keys(RuleJSON.ruleSearch).forEach(key => {
 			$('#' + 'ruleSearch_' + key).value = searchJson[key] ? searchJson[key] : '';
 		});
 	}
 
 	// 转换发现规则
 	if (RuleEditor.ruleExplore) {
-		let exploreJson = JSON.parse(RuleEditor.ruleExplore);
-		Object.keys(JSON.parse(RuleJSON.ruleExplore)).forEach(key => {
+		//let exploreJson = JSON.parse(RuleEditor.ruleExplore);
+		//Object.keys(JSON.parse(RuleJSON.ruleExplore)).forEach(key => {
+		let exploreJson = RuleEditor.ruleExplore;
+		Object.keys(RuleJSON.ruleExplore).forEach(key => {
 			$('#' + 'ruleExplore_' + key).value = exploreJson[key] ? exploreJson[key] : '';
 		});
 	}
 
 	// 转换详情页规则
 	if (RuleEditor.ruleBookInfo) {
-		let bookInfoJson = JSON.parse(RuleEditor.ruleBookInfo);
-		Object.keys(JSON.parse(RuleJSON.ruleBookInfo)).forEach(key => {
+		//let bookInfoJson = JSON.parse(RuleEditor.ruleBookInfo);
+		//Object.keys(JSON.parse(RuleJSON.ruleBookInfo)).forEach(key => {
+		let bookInfoJson = RuleEditor.ruleBookInfo;
+        Object.keys(RuleJSON.ruleBookInfo).forEach(key => {
 			$('#' + 'ruleBookInfo_' + key).value = bookInfoJson[key] ? bookInfoJson[key] : '';
 		});
 	}
 
 	// 转换目录规则
 	if (RuleEditor.ruleToc) {
-		let tocJson = JSON.parse(RuleEditor.ruleToc);
-		Object.keys(JSON.parse(RuleJSON.ruleToc)).forEach(key => {
+		//let tocJson = JSON.parse(RuleEditor.ruleToc);
+		//Object.keys(JSON.parse(RuleJSON.ruleToc)).forEach(key => {
+		let tocJson = RuleEditor.ruleToc;
+		Object.keys(RuleJSON.ruleToc).forEach(key => {
 			$('#' + 'ruleToc_' + key).value = tocJson[key] ? tocJson[key] : '';
 		});
 	}
 
 	// 转换正文规则
 	if (RuleEditor.ruleContent) {
-		let contentJson = JSON.parse(RuleEditor.ruleContent);
-		Object.keys(JSON.parse(RuleJSON.ruleContent)).forEach(key => {
+		//let contentJson = JSON.parse(RuleEditor.ruleContent);
+		//Object.keys(JSON.parse(RuleJSON.ruleContent)).forEach(key => {
+		let contentJson = RuleEditor.ruleContent;
+        Object.keys(RuleJSON.ruleContent).forEach(key => {
 			$('#' + 'ruleContent_' + key).value = contentJson[key] ? contentJson[key] : '';
 		});
 	}

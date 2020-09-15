@@ -33,10 +33,10 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     val postData = files["postData"]
 
                     when (uri) {
-                        "/saveSource" -> returnData = SourceController().saveSource(postData)
-                        "/saveSources" -> returnData = SourceController().saveSources(postData)
-                        "/saveBook" -> returnData = BookshelfController().saveBook(postData)
-                        "/deleteSources" -> returnData = SourceController().deleteSources(postData)
+                        "/saveSource" -> returnData = SourceController.saveSource(postData)
+                        "/saveSources" -> returnData = SourceController.saveSources(postData)
+                        "/saveBook" -> returnData = BookshelfController.saveBook(postData)
+                        "/deleteSources" -> returnData = SourceController.deleteSources(postData)
                     }
                 }
 
@@ -44,13 +44,13 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     val parameters = session.parameters
 
                     when (uri) {
-                        "/getSource" -> returnData = SourceController().getSource(parameters)
-                        "/getSources" -> returnData = SourceController().sources
-                        "/getBookshelf" -> returnData = BookshelfController().bookshelf
+                        "/getSource" -> returnData = SourceController.getSource(parameters)
+                        "/getSources" -> returnData = SourceController.sources
+                        "/getBookshelf" -> returnData = BookshelfController.bookshelf
                         "/getChapterList" ->
-                            returnData = BookshelfController().getChapterList(parameters)
+                            returnData = BookshelfController.getChapterList(parameters)
                         "/getBookContent" ->
-                            returnData = BookshelfController().getBookContent(parameters)
+                            returnData = BookshelfController.getBookContent(parameters)
                     }
                 }
             }

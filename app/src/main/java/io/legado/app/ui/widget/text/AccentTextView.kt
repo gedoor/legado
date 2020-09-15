@@ -15,7 +15,7 @@ class AccentTextView(context: Context, attrs: AttributeSet?) :
         if (!isInEditMode) {
             textColor = context.accentColor
         } else {
-            textColorResource = R.color.colorAccent
+            textColorResource = R.color.accent
         }
     }
 

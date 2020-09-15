@@ -21,14 +21,14 @@ interface BookDao {
     @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}'")
     fun observeLocalUri(): LiveData<List<String>>
 
-    @Query("SELECT * FROM books WHERE origin <> '${BookType.local}' and type = 0")
-    fun observeDownload(): LiveData<List<Book>>
-
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
     fun observeByGroup(group: Int): LiveData<List<Book>>
 
     @Query("select * from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
     fun observeNoGroup(): LiveData<List<Book>>
+
+    @Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
+    fun observeNoGroupSize(): LiveData<Int>
 
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
     fun liveDataSearch(key: String): LiveData<List<Book>>
@@ -41,6 +41,12 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE bookUrl = :bookUrl")
     fun getBook(bookUrl: String): Book?
+
+    @Query("SELECT * FROM books WHERE name = :name and author = :author")
+    fun getBook(name: String, author: String): Book?
+
+    @get:Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
+    val noGroupSize: Int
 
     @get:Query("SELECT * FROM books where origin <> '${BookType.local}' and type = 0")
     val webBooks: List<Book>
@@ -78,7 +84,7 @@ interface BookDao {
     @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
     fun upGroup(oldGroupId: Int, newGroupId: Int)
 
-    @get:Query("select bookUrl, durChapterIndex, durChapterPos, durChapterTime, durChapterTitle from books")
+    @get:Query("select bookUrl, tocUrl, origin, originName, durChapterIndex, durChapterPos, durChapterTime, durChapterTitle from books")
     val allBookProgress: List<BookProgress>
 
     @Query(

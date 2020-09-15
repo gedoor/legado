@@ -193,6 +193,7 @@ object BookChapterList {
             list.getOrNull(book.durChapterIndex)?.title ?: book.latestChapterTitle
         if (book.totalChapterNum < list.size) {
             book.lastCheckCount = list.size - book.totalChapterNum
+            book.latestChapterTime = System.currentTimeMillis()
         }
         book.totalChapterNum = list.size
         return list

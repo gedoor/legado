@@ -6,6 +6,9 @@ import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.htmlFormat
+import io.legado.app.utils.msg
+import java.net.URLEncoder
 import java.util.*
 
 @Keep
@@ -22,7 +25,18 @@ interface JsExtensions {
             val response = call.execute()
             response.body()
         } catch (e: Exception) {
-            e.localizedMessage
+            e.msg
+        }
+    }
+
+    fun connect(urlStr: String): Any {
+        return try {
+            val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
+            val call = analyzeUrl.getResponse(urlStr)
+            val response = call.execute()
+            response
+        } catch (e: Exception) {
+            e.msg
         }
     }
 
@@ -41,15 +55,34 @@ interface JsExtensions {
         return EncoderUtils.base64Encode(str, flags)
     }
 
-    fun md5Encode(str: String): String? {
+    fun md5Encode(str: String): String {
         return MD5Utils.md5Encode(str)
     }
 
-    fun md5Encode16(str: String): String? {
+    fun md5Encode16(str: String): String {
         return MD5Utils.md5Encode16(str)
     }
 
     fun timeFormat(time: Long): String {
         return dateFormat.format(Date(time))
+    }
+
+    //utf8编码转gbk编码
+    fun utf8ToGbk(str: String): String {
+        val utf8 = String(str.toByteArray(charset("UTF-8")))
+        val unicode = String(utf8.toByteArray(), charset("UTF-8"))
+        return String(unicode.toByteArray(charset("GBK")))
+    }
+
+    fun encodeURI(str: String): String {
+        return try {
+            URLEncoder.encode(str, "UTF-8")
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    fun htmlFormat(str: String): String {
+        return str.htmlFormat()
     }
 }

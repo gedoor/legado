@@ -1,43 +1,63 @@
 package io.legado.app.ui.book.search
 
 import android.app.Application
+import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
-import io.legado.app.model.SearchBookModel
+import io.legado.app.model.webBook.SearchBookModel
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 
-class SearchViewModel(application: Application) : BaseViewModel(application)
-    , SearchBookModel.CallBack {
+class SearchViewModel(application: Application) : BaseViewModel(application),
+    SearchBookModel.CallBack {
+    val handler = Handler()
     private val searchBookModel = SearchBookModel(this, this)
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     var searchKey: String = ""
     var isLoading = false
-    var searchBooks = arrayListOf<SearchBook>()
+    private var searchBooks = arrayListOf<SearchBook>()
     private var searchID = 0L
+    private var postTime = 0L
+    private val sendRunnable = Runnable { upAdapter() }
 
     /**
      * 开始搜索
      */
     fun search(key: String) {
-        if (searchKey != key && key.isNotEmpty()) {
+        if ((searchKey == key) || key.isNotEmpty()) {
             searchBookModel.cancelSearch()
             searchBooks.clear()
             searchBookLiveData.postValue(searchBooks)
             searchID = System.currentTimeMillis()
             searchKey = key
         }
+        if (searchKey.isEmpty()) {
+            return
+        }
         searchBookModel.search(searchID, searchKey)
+    }
+
+    @Synchronized
+    private fun upAdapter() {
+        if (System.currentTimeMillis() >= postTime + 500) {
+            handler.removeCallbacks(sendRunnable)
+            postTime = System.currentTimeMillis()
+            searchBookLiveData.postValue(searchBooks)
+        } else {
+            handler.removeCallbacks(sendRunnable)
+            handler.postDelayed(sendRunnable, 500 - System.currentTimeMillis() + postTime)
+        }
     }
 
     override fun onSearchStart() {
         isSearchLiveData.postValue(true)
+        isLoading = true
     }
 
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
@@ -94,7 +114,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application)
                             && item.author == searchBook.author
                         ) {
                             hasSame = true
-                            searchBook.addOrigin(item.bookUrl)
+                            searchBook.addOrigin(item.origin)
                             break
                         }
                     }
@@ -151,7 +171,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application)
             })
             if (!scope.isActive) return
             searchBooks = copyDataS
-            searchBookLiveData.postValue(copyDataS)
+            upAdapter()
         }
     }
 

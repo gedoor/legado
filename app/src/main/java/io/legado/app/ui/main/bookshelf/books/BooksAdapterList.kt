@@ -2,6 +2,7 @@ package io.legado.app.ui.main.bookshelf.books
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.constant.BookType
@@ -25,33 +26,30 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                 tv_read.text = item.durChapterTitle
                 tv_last.text = item.latestChapterTitle
                 iv_cover.load(item.getDisplayCover(), item.name, item.author)
-                if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
-                    bv_unread.invisible()
-                    rl_loading.show()
-                } else {
-                    rl_loading.hide()
-                    bv_unread.setBadgeCount(item.getUnreadChapterNum())
-                    bv_unread.setHighlight(item.lastCheckCount > 0)
-                }
+                upRefresh(this, item)
             } else {
-                bundle.keySet().map {
+                tv_read.text = item.durChapterTitle
+                tv_last.text = item.latestChapterTitle
+                bundle.keySet().forEach {
                     when (it) {
                         "name" -> tv_name.text = item.name
                         "author" -> tv_author.text = item.author
-                        "dur" -> tv_read.text = item.durChapterTitle
-                        "last" -> tv_last.text = item.latestChapterTitle
                         "cover" -> iv_cover.load(item.getDisplayCover(), item.name, item.author)
-                        "refresh" -> if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
-                            bv_unread.invisible()
-                            rl_loading.show()
-                        } else {
-                            rl_loading.hide()
-                            bv_unread.setBadgeCount(item.getUnreadChapterNum())
-                            bv_unread.setHighlight(item.lastCheckCount > 0)
-                        }
+                        "refresh" -> upRefresh(this, item)
                     }
                 }
             }
+        }
+    }
+
+    private fun upRefresh(itemView: View, item: Book) = with(itemView) {
+        if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
+            bv_unread.invisible()
+            rl_loading.show()
+        } else {
+            rl_loading.hide()
+            bv_unread.setHighlight(item.lastCheckCount > 0)
+            bv_unread.setBadgeCount(item.getUnreadChapterNum())
         }
     }
 

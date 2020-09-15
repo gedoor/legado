@@ -4,47 +4,16 @@ import android.app.Application
 import android.text.TextUtils
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
-import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.help.http.HttpHelper
-import io.legado.app.help.storage.ImportOldData
-import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.writeText
 import org.jetbrains.anko.toast
 import java.io.File
 
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
-    fun importSourceFromFilePath(path: String, finally: (msg: String) -> Unit) {
-        execute {
-            val file = File(path)
-            if (file.exists()) {
-                importSource(file.readText(), finally)
-            } else {
-                withContext(Dispatchers.Main) {
-                    finally("打开文件出错")
-                }
-            }
-        }.onError {
-            finally(it.localizedMessage ?: "打开文件出错")
-        }
-    }
-    fun importSource(text: String, showMsg: (msg: String) -> Unit) {
-        execute {
-            if (text.isAbsUrl()) {
-                HttpHelper.simpleGet(text)?.let {
-                    ImportOldData.importOldReplaceRule(it)
-                }
-            } else {
-                ImportOldData.importOldReplaceRule(text)
-            }
-        }.onError {
-            showMsg(it.localizedMessage ?: "ERROR")
-        }.onSuccess {
-            showMsg(context.getString(R.string.success))
-        }
-    }
 
     fun update(vararg rule: ReplaceRule) {
         execute {

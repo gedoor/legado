@@ -10,12 +10,14 @@
         android:background="@color/background_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="?attr/actionBarStyle"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="@string/replace_rule_edit" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/ll_content"

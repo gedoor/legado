@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 
-class MultilineTextView(context: Context?, attrs: AttributeSet?) :
+class MultilineTextView(context: Context, attrs: AttributeSet?) :
     AppCompatTextView(context, attrs) {
 
     override fun onDraw(canvas: Canvas?) {

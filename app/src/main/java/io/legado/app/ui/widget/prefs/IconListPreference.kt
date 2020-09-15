@@ -10,14 +10,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceViewHolder
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.getCompatDrawable
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_icon_preference.view.*
@@ -109,7 +110,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         return "icon_$key"
     }
 
-    class IconDialog : DialogFragment() {
+    class IconDialog : BaseDialogFragment() {
 
         var onChanged: ((value: String) -> Unit)? = null
         var dialogValue: String? = null
@@ -135,8 +136,8 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
             return inflater.inflate(R.layout.dialog_recycler_view, container)
         }
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
+        override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+            tool_bar.setBackgroundColor(primaryColor)
             tool_bar.setTitle(R.string.change_icon)
             recycler_view.layoutManager = LinearLayoutManager(requireContext())
             val adapter = Adapter(requireContext())

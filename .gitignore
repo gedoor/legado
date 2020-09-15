@@ -9,4 +9,7 @@
 /release
 /tmp
 node_modules/
+/app/app
+/app/google
+/app/gradle.properties
 package-lock.json

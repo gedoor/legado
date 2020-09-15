@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.Theme
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
@@ -60,6 +60,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(primaryColor)
         tool_bar.setTitle(R.string.change_cover_source)
         viewModel.initData(arguments)
         initMenu()
@@ -68,7 +69,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
 
     private fun initMenu() {
         tool_bar.inflateMenu(R.menu.change_cover)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
     }
 
@@ -81,7 +82,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
+        viewModel.searchStateData.observe(viewLifecycleOwner, {
             refresh_progress_bar.isAutoLoading = it
             if (it) {
                 stopMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
@@ -90,7 +91,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
             }
             tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
         })
-        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it)
             diffResult.dispatchUpdatesTo(adapter)

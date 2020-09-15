@@ -2,124 +2,132 @@
 <resources>
 
     <attr name="radius" format="dimension" />
+    <attr name="isBottomBackground" format="boolean" />
+    <attr name="themeMode" format="enum">
+        <enum name="dark" value="1" />
+        <enum name="light" value="2" />
+        <enum name="auto" value="0" />
+    </attr>
 
     <declare-styleable name="TitleBar">
-        <attr name="title"/>
-        <attr name="subtitle"/>
-        <attr name="titleTextAppearance"/>
-        <attr name="titleTextColor"/>
-        <attr name="subtitleTextAppearance"/>
-        <attr name="subtitleTextColor"/>
-        <attr name="contentInsetEnd"/>
-        <attr name="contentInsetEndWithActions"/>
-        <attr name="contentInsetStart"/>
-        <attr name="contentInsetStartWithNavigation"/>
-        <attr name="contentInsetLeft"/>
-        <attr name="contentInsetRight"/>
-        <attr name="contentLayout" format="reference"/>
-        <attr name="attachToActivity" format="boolean"/>
-        <attr name="displayHomeAsUp" format="boolean"/>
-        <attr name="navigationIcon" format="reference"/>
-        <attr name="fitStatusBar" format="boolean"/>
-        <attr name="fitNavigationBar" format="boolean"/>
-        <attr name="navigationContentDescription" format="reference|string"/>
-        <attr name="navigationIconTint" format="color|reference"/>
+        <attr name="title" />
+        <attr name="subtitle" />
+        <attr name="titleTextAppearance" />
+        <attr name="titleTextColor" />
+        <attr name="subtitleTextAppearance" />
+        <attr name="subtitleTextColor" />
+        <attr name="contentInsetEnd" />
+        <attr name="contentInsetEndWithActions" />
+        <attr name="contentInsetStart" />
+        <attr name="contentInsetStartWithNavigation" />
+        <attr name="contentInsetLeft" />
+        <attr name="contentInsetRight" />
+        <attr name="contentLayout" format="reference" />
+        <attr name="attachToActivity" format="boolean" />
+        <attr name="displayHomeAsUp" format="boolean" />
+        <attr name="navigationIcon" format="reference" />
+        <attr name="fitStatusBar" format="boolean" />
+        <attr name="fitNavigationBar" format="boolean" />
+        <attr name="navigationContentDescription" format="reference|string" />
+        <attr name="navigationIconTint" format="color|reference" />
+        <attr name="themeMode" />
         <attr name="navigationIconTintMode" format="enum">
-            <enum name="clear" value="0"/>
-            <enum name="src" value="1"/>
-            <enum name="dst" value="2"/>
-            <enum name="src_over" value="3"/>
-            <enum name="dst_over" value="4"/>
-            <enum name="src_in" value="5"/>
-            <enum name="dst_in" value="6"/>
-            <enum name="src_out" value="7"/>
-            <enum name="dst_out" value="8"/>
-            <enum name="src_atop" value="9"/>
-            <enum name="dst_atop" value="10"/>
-            <enum name="xor" value="11"/>
-            <enum name="darken" value="16"/>
-            <enum name="lighten" value="17"/>
-            <enum name="multiply" value="13"/>
-            <enum name="screen" value="14"/>
-            <enum name="add" value="12"/>
-            <enum name="overlay" value="15"/>
+            <enum name="clear" value="0" />
+            <enum name="src" value="1" />
+            <enum name="dst" value="2" />
+            <enum name="src_over" value="3" />
+            <enum name="dst_over" value="4" />
+            <enum name="src_in" value="5" />
+            <enum name="dst_in" value="6" />
+            <enum name="src_out" value="7" />
+            <enum name="dst_out" value="8" />
+            <enum name="src_atop" value="9" />
+            <enum name="dst_atop" value="10" />
+            <enum name="xor" value="11" />
+            <enum name="darken" value="16" />
+            <enum name="lighten" value="17" />
+            <enum name="multiply" value="13" />
+            <enum name="screen" value="14" />
+            <enum name="add" value="12" />
+            <enum name="overlay" value="15" />
         </attr>
     </declare-styleable>
 
-    <attr name="titleBarStyle" format="reference"/>
+    <attr name="titleBarStyle" format="reference" />
 
     <declare-styleable name="DynamicFrameLayout">
-        <attr name="errorSrc" format="reference"/>
-        <attr name="emptySrc" format="reference"/>
-        <attr name="errorActionDescription" format="string|reference"/>
-        <attr name="emptyActionDescription" format="string|reference"/>
-        <attr name="emptyDescription" format="string|reference"/>
+        <attr name="errorSrc" format="reference" />
+        <attr name="emptySrc" format="reference" />
+        <attr name="errorActionDescription" format="string|reference" />
+        <attr name="emptyActionDescription" format="string|reference" />
+        <attr name="emptyDescription" format="string|reference" />
     </declare-styleable>
 
     <declare-styleable name="RefreshProgressBar">
-        <attr name="max_progress" format="integer"/>
-        <attr name="dur_progress" format="integer"/>
-        <attr name="second_dur_progress" format="dimension"/>
-        <attr name="second_max_progress" format="dimension"/>
-        <attr name="bg_color" format="color"/>
-        <attr name="second_color" format="color"/>
-        <attr name="font_color" format="color"/>
-        <attr name="speed" format="dimension"/>
+        <attr name="max_progress" format="integer" />
+        <attr name="dur_progress" format="integer" />
+        <attr name="second_dur_progress" format="dimension" />
+        <attr name="second_max_progress" format="dimension" />
+        <attr name="bg_color" format="color" />
+        <attr name="second_color" format="color" />
+        <attr name="font_color" format="color" />
+        <attr name="speed" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="DetailSeekBar">
         <attr name="title" format="string" />
         <attr name="max" format="integer" />
+        <attr name="isBottomBackground" />
     </declare-styleable>
 
     <declare-styleable name="SmoothCheckBox">
-        <attr name="duration" format="integer"/>
-        <attr name="stroke_width" format="dimension"/>
-        <attr name="color_tick" format="color"/>
-        <attr name="color_checked" format="color"/>
-        <attr name="color_unchecked" format="color"/>
-        <attr name="color_unchecked_stroke" format="color"/>
+        <attr name="duration" format="integer" />
+        <attr name="stroke_width" format="dimension" />
+        <attr name="color_tick" format="color" />
+        <attr name="color_checked" format="color" />
+        <attr name="color_unchecked" format="color" />
+        <attr name="color_unchecked_stroke" format="color" />
     </declare-styleable>
 
     <declare-styleable name="NumberPickerPreference">
-        <attr name="MinValue" format="integer"/>
-        <attr name="MaxValue" format="integer"/>
-        <attr name="android:summary"/>
+        <attr name="MinValue" format="integer" />
+        <attr name="MaxValue" format="integer" />
+        <attr name="android:summary" />
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">
-        <attr name="layout_refresh_empty" format="reference"/>
-        <attr name="layout_refresh_error" format="reference"/>
-        <attr name="layout_refresh_loading" format="reference"/>
+        <attr name="layout_refresh_empty" format="reference" />
+        <attr name="layout_refresh_error" format="reference" />
+        <attr name="layout_refresh_loading" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="FastScroller">
-        <attr name="fadeScrollbar" format="boolean"/>
-        <attr name="showBubble" format="boolean"/>
-        <attr name="showTrack" format="boolean"/>
-        <attr name="trackColor" format="color"/>
-        <attr name="handleColor" format="color"/>
-        <attr name="bubbleColor" format="color"/>
-        <attr name="bubbleTextColor" format="color"/>
+        <attr name="fadeScrollbar" format="boolean" />
+        <attr name="showBubble" format="boolean" />
+        <attr name="showTrack" format="boolean" />
+        <attr name="trackColor" format="color" />
+        <attr name="handleColor" format="color" />
+        <attr name="bubbleColor" format="color" />
+        <attr name="bubbleTextColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="FilletImageView">
         <attr name="radius" />
-        <attr name="left_top_radius" format="dimension"/>
-        <attr name="right_top_radius" format="dimension"/>
-        <attr name="right_bottom_radius" format="dimension"/>
-        <attr name="left_bottom_radius" format="dimension"/>
+        <attr name="left_top_radius" format="dimension" />
+        <attr name="right_top_radius" format="dimension" />
+        <attr name="right_bottom_radius" format="dimension" />
+        <attr name="left_bottom_radius" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="IconListPreference">
-        <attr name="icons" format="reference"/>
+        <attr name="icons" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="RotateLoading">
-        <attr name="loading_width" format="dimension"/>
-        <attr name="loading_color" format="color"/>
-        <attr name="shadow_position" format="integer"/>
-        <attr name="loading_speed" format="integer"/>
+        <attr name="loading_width" format="dimension" />
+        <attr name="loading_color" format="color" />
+        <attr name="shadow_position" format="integer" />
+        <attr name="loading_speed" format="integer" />
         <attr name="hide_mode">
             <!-- Not displayed, but taken into account during layout (space is left for it). -->
             <enum name="invisible" value="1" />
@@ -161,6 +169,7 @@
 
     <declare-styleable name="StrokeTextView">
         <attr name="radius" />
+        <attr name="isBottomBackground" />
     </declare-styleable>
 
     <declare-styleable name="BadgeView">
@@ -174,16 +183,29 @@
         <attr name="arcDirectionTop" format="boolean" />
     </declare-styleable>
 
-
-    <declare-styleable name="ShadowLayout"><attr format="color" name="shadowColor"/><attr format="dimension" name="shadowRadius"/><attr format="dimension" name="shadowDx"/><attr format="dimension" name="shadowDy"/><attr name="shadowShape">
-        <flag name="rectangle" value="0x0001"/>
-        <flag name="oval" value="0x0010"/>
-        </attr><attr name="shadowSide">
-            <flag name="all" value="0x1111"/>
-            <flag name="left" value="0x0001"/>
-            <flag name="top" value="0x0010"/>
-            <flag name="right" value="0x0100"/>
-            <flag name="bottom" value="0x1000"/>
+    <declare-styleable name="ShadowLayout">
+        <attr name="shadowColor" format="color" />
+        <attr name="shadowRadius" format="dimension" />
+        <attr name="shadowDx" format="dimension" />
+        <attr name="shadowDy" format="dimension" />
+        <attr name="shadowShape">
+            <flag name="rectangle" value="0x0001" />
+            <flag name="oval" value="0x0010" />
         </attr>
+        <attr name="shadowSide">
+            <flag name="all" value="0x1111" />
+            <flag name="left" value="0x0001" />
+            <flag name="top" value="0x0010" />
+            <flag name="right" value="0x0100" />
+            <flag name="bottom" value="0x1000" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="ATERadioNoButton">
+        <attr name="isBottomBackground" />
+    </declare-styleable>
+
+    <declare-styleable name="Preference">
+        <attr name="isBottomBackground" />
     </declare-styleable>
 </resources>

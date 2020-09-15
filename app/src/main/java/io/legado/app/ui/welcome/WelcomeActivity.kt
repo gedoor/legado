@@ -2,7 +2,7 @@ package io.legado.app.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
-import com.github.houbb.opencc4j.util.ZhConverterUtil
+import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -37,13 +37,13 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
                 .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
-                1 -> ZhConverterUtil.toSimple("初始化")
-                2 -> ZhConverterUtil.toTraditional("初始化")
+                1 -> HanLP.convertToSimplifiedChinese("初始化")
+                2 -> HanLP.convertToTraditionalChinese("初始化")
                 else -> null
             }
         }
         SyncBookProgress.downloadBookProgress()
-        root_view.postDelayed({ startMainActivity() }, 300)
+        root_view.postDelayed({ startMainActivity() }, 500)
     }
 
     private fun startMainActivity() {

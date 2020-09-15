@@ -1,9 +1,6 @@
 package io.legado.app.ui.rss.source.edit
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -23,10 +20,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
-import io.legado.app.utils.GSON
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.shareWithQr
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_source_edit.*
 import org.jetbrains.anko.*
 import kotlin.math.abs
@@ -97,20 +91,11 @@ class RssSourceEditActivity :
                     }
                 }
             }
-            R.id.menu_copy_source -> {
-                GSON.toJson(getRssSource())?.let { sourceStr ->
-                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                    clipboard?.setPrimaryClip(ClipData.newPlainText(null, sourceStr))
-                }
-            }
+            R.id.menu_copy_source -> sendToClip(GSON.toJson(getRssSource()))
             R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
-            R.id.menu_share_str -> GSON.toJson(getRssSource())?.let { sourceStr ->
-                share(sourceStr)
-            }
-            R.id.menu_share_qr -> GSON.toJson(getRssSource())?.let { sourceStr ->
-                shareWithQr(getString(R.string.share_rss_source), sourceStr)
-            }
+            R.id.menu_share_str -> share(GSON.toJson(getRssSource()))
+            R.id.menu_share_qr -> shareWithQr(getString(R.string.share_rss_source), GSON.toJson(getRssSource()))
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -135,6 +120,7 @@ class RssSourceEditActivity :
             add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.source_url))
             add(EditEntity("sourceIcon", rssSource?.sourceIcon, R.string.source_icon))
             add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.source_group))
+            add(EditEntity("sortUrl", rssSource?.sortUrl, R.string.sort_url))
             add(EditEntity("ruleArticles", rssSource?.ruleArticles, R.string.r_articles))
             add(EditEntity("ruleNextPage", rssSource?.ruleNextPage, R.string.r_next))
             add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.r_title))
@@ -143,6 +129,7 @@ class RssSourceEditActivity :
             add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.r_image))
             add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.r_link))
             add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.r_content))
+            add(EditEntity("style", rssSource?.style, R.string.r_style))
             add(EditEntity("header", rssSource?.header, R.string.source_http_header))
         }
         adapter.editEntities = sourceEntities
@@ -159,6 +146,7 @@ class RssSourceEditActivity :
                 "sourceUrl" -> source.sourceUrl = it.value ?: ""
                 "sourceIcon" -> source.sourceIcon = it.value ?: ""
                 "sourceGroup" -> source.sourceGroup = it.value
+                "sortUrl" -> source.sortUrl = it.value
                 "ruleArticles" -> source.ruleArticles = it.value
                 "ruleNextPage" -> source.ruleNextPage = it.value
                 "ruleTitle" -> source.ruleTitle = it.value
@@ -167,6 +155,7 @@ class RssSourceEditActivity :
                 "ruleImage" -> source.ruleImage = it.value
                 "ruleLink" -> source.ruleLink = it.value
                 "ruleContent" -> source.ruleContent = it.value
+                "style" -> source.style = it.value
                 "header" -> source.header = it.value
             }
         }
@@ -181,7 +170,7 @@ class RssSourceEditActivity :
         return true
     }
 
-    override fun sendText(text: String) {
+    private fun insertText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -193,6 +182,14 @@ class RssSourceEditActivity :
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
             }
+        }
+    }
+
+    override fun sendText(text: String) {
+        if (text == AppConst.keyboardToolChars[0]) {
+            insertText(AppConst.urlOption)
+        } else {
+            insertText(text)
         }
     }
 

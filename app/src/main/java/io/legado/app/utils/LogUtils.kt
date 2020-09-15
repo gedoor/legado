@@ -32,7 +32,7 @@ object LogUtils {
     private val fileHandler by lazy {
         val root = App.INSTANCE.externalCacheDir ?: return@lazy null
         val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
-        val logPath = FileUtils.getPath(logFolder, "appLog")
+        val logPath = FileUtils.getPath(root = logFolder, "appLog")
         FileHandler(logPath, 10240, 10).apply {
             formatter = object : Formatter() {
                 override fun format(record: LogRecord): String {

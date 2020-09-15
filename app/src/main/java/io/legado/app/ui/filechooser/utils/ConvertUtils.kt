@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import okhttp3.internal.and
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -33,10 +32,10 @@ object ConvertUtils {
 
     fun toInt(bytes: ByteArray): Int {
         var result = 0
-        var abyte: Byte
+        var byte: Byte
         for (i in bytes.indices) {
-            abyte = bytes[i]
-            result += abyte and 0xFF shl 8 * i
+            byte = bytes[i]
+            result += (byte.toInt() and 0xFF).shl(8 * i)
         }
         return result
     }

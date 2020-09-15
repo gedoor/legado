@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
     android:padding="8dp"
     android:gravity="center_vertical"
     android:orientation="horizontal">
@@ -30,7 +29,7 @@
         android:padding="6dp"
         android:tooltipText="@string/edit"
         android:src="@drawable/ic_edit"
-        android:tint="@color/tv_text_default"
+        android:tint="@color/primaryText"
         tools:ignore="UnusedAttribute" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -42,7 +41,7 @@
         android:tooltipText="@string/more_menu"
         android:padding="6dp"
         android:src="@drawable/ic_clear_all"
-        android:tint="@color/tv_text_default"
+        android:tint="@color/primaryText"
         tools:ignore="UnusedAttribute" />
 
 </LinearLayout>

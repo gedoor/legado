@@ -9,16 +9,15 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
-import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefBoolean
@@ -68,6 +67,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(primaryColor)
         viewModel.initData(arguments)
         showTitle()
         initMenu()
@@ -84,7 +84,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     private fun initMenu() {
         tool_bar.inflateMenu(R.menu.change_source)
-        tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.menu.findItem(R.id.menu_load_toc)?.isChecked =
             getPrefBoolean(PreferKey.changeSourceLoadToc)
@@ -134,16 +134,16 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     private fun initLiveData() {
-        viewModel.searchStateData.observe(viewLifecycleOwner, Observer {
+        viewModel.searchStateData.observe(viewLifecycleOwner, {
             refresh_progress_bar.isAutoLoading = it
             if (it) {
                 stopMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
             } else {
                 stopMenuItem?.setIcon(R.drawable.ic_refresh_black_24dp)
             }
-            tool_bar.menu.applyTint(requireContext(), Theme.getTheme())
+            tool_bar.menu.applyTint(requireContext())
         })
-        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
             val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it)
             diffResult.dispatchUpdatesTo(adapter)
@@ -166,24 +166,17 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     override fun changeTo(searchBook: SearchBook) {
         val book = searchBook.toBook()
-        callBack?.oldBook?.let { oldBook ->
-            book.group = oldBook.group
-            book.durChapterIndex = oldBook.durChapterIndex
-            book.durChapterPos = oldBook.durChapterPos
-            book.durChapterTitle = oldBook.durChapterTitle
-            book.customCoverUrl = oldBook.customCoverUrl
-            book.customIntro = oldBook.customIntro
-            book.order = oldBook.order
-            if (book.coverUrl.isNullOrEmpty()) {
-                book.coverUrl = oldBook.getDisplayCover()
-            }
-            callBack?.changeTo(book)
-        }
+        book.upInfoFromOld(callBack?.oldBook)
+        callBack?.changeTo(book)
         dismiss()
     }
 
     override val bookUrl: String?
         get() = callBack?.oldBook?.bookUrl
+
+    override fun disableSource(searchBook: SearchBook) {
+        viewModel.disableSource(searchBook)
+    }
 
     interface CallBack {
         val oldBook: Book?

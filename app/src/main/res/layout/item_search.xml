@@ -34,7 +34,7 @@
         android:layout_margin="8dp"
         android:singleLine="true"
         android:text="@string/app_name"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/bv_originCount"
         app:layout_constraintStart_toEndOf="@+id/iv_cover"
@@ -57,7 +57,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:text="@string/author"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/primaryText"
             android:textSize="12sp" />
 
         <io.legado.app.ui.widget.LabelsBar
@@ -73,7 +73,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:text="@string/last_read"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/primaryText"
             android:textSize="12sp" />
 
         <io.legado.app.ui.widget.text.MultilineTextView
@@ -82,7 +82,7 @@
             android:layout_height="match_parent"
             android:ellipsize="end"
             android:text="@string/book_intro"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/primaryText"
             android:textSize="12sp" />
 
     </LinearLayout>

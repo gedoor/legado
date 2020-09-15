@@ -1,15 +1,18 @@
 package io.legado.app.web.controller
 
 import io.legado.app.App
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
-import io.legado.app.model.WebBook
+import io.legado.app.model.webBook.WebBook
+import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getPrefInt
 import io.legado.app.web.utils.ReturnData
 import kotlinx.coroutines.runBlocking
 
-class BookshelfController {
+object BookshelfController {
 
     val bookshelf: ReturnData
         get() {
@@ -17,7 +20,15 @@ class BookshelfController {
             val returnData = ReturnData()
             return if (books.isEmpty()) {
                 returnData.setErrorMsg("还没有添加小说")
-            } else returnData.setData(books)
+            } else {
+                val data = when (App.INSTANCE.getPrefInt(PreferKey.bookshelfSort)) {
+                    1 -> books.sortedByDescending { it.latestChapterTime }
+                    2 -> books.sortedBy { it.name }
+                    3 -> books.sortedBy { it.order }
+                    else -> books.sortedByDescending { it.durChapterTime }
+                }
+                returnData.setData(data)
+            }
         }
 
     fun getChapterList(parameters: Map<String, List<String>>): ReturnData {
@@ -47,12 +58,14 @@ class BookshelfController {
         } else {
             val content: String? = BookHelp.getContent(book, chapter)
             if (content != null) {
+                saveBookReadIndex(book, index)
                 returnData.setData(content)
             } else {
                 App.db.bookSourceDao().getBookSource(book.origin)?.let { source ->
                     runBlocking {
                         WebBook(source).getContentSuspend(book, chapter)
                     }.let {
+                        saveBookReadIndex(book, index)
                         returnData.setData(it)
                     }
                 } ?: returnData.setErrorMsg("未找到书源")
@@ -69,6 +82,21 @@ class BookshelfController {
             return returnData.setData("")
         }
         return returnData.setErrorMsg("格式不对")
+    }
+
+    private fun saveBookReadIndex(book: Book, index: Int) {
+        if (index > book.durChapterIndex) {
+            book.durChapterIndex = index
+            book.durChapterTime = System.currentTimeMillis()
+            App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let {
+                book.durChapterTitle = it.title
+            }
+            App.db.bookDao().update(book)
+            if (ReadBook.book?.bookUrl == book.bookUrl) {
+                ReadBook.book = book
+                ReadBook.durChapterIndex = index
+            }
+        }
     }
 
 }

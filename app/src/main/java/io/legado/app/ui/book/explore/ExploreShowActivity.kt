@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.explore
 
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -27,7 +26,7 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         title_bar.title = intent.getStringExtra("exploreName")
         initRecyclerView()
-        viewModel.booksData.observe(this, Observer { upData(it) })
+        viewModel.booksData.observe(this, { upData(it) })
         viewModel.initData(intent)
     }
 
@@ -72,7 +71,8 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
 
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity>(
-            Pair("bookUrl", book.bookUrl)
+            Pair("name", book.name),
+            Pair("author", book.author)
         )
     }
 }

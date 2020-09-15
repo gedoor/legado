@@ -4,7 +4,8 @@ import android.text.Layout
 import android.text.StaticLayout
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.ui.book.read.page.ChapterProvider
+import io.legado.app.help.ReadBookConfig
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import java.text.DecimalFormat
 
 data class TextPage(
@@ -19,8 +20,10 @@ data class TextPage(
 ) {
 
     fun upLinesPosition() = ChapterProvider.apply {
+        if (!ReadBookConfig.textBottomJustify) return@apply
         if (textLines.size <= 1) return@apply
-        if (visibleHeight - height > with(textLines.last()) { lineBottom - lineTop }) return@apply
+        if (textLines.last().isImage) return@apply
+        if (visibleHeight - height >= with(textLines.last()) { lineBottom - lineTop }) return@apply
         val surplus = (visibleBottom - textLines.last().lineBottom)
         if (surplus == 0f) return@apply
         height += surplus
@@ -44,12 +47,11 @@ data class TextPage(
             if (y < 0) y = 0f
             for (lineIndex in 0 until layout.lineCount) {
                 val textLine = TextLine()
-                textLine.lineTop = (ChapterProvider.paddingTop + y -
-                        (layout.getLineBottom(lineIndex) - layout.getLineTop(lineIndex)))
-                textLine.lineBase = (ChapterProvider.paddingTop + y -
-                        (layout.getLineBottom(lineIndex) - layout.getLineBaseline(lineIndex)))
+                textLine.lineTop = ChapterProvider.paddingTop + y + layout.getLineTop(lineIndex)
+                textLine.lineBase =
+                    ChapterProvider.paddingTop + y + layout.getLineBaseline(lineIndex)
                 textLine.lineBottom =
-                    textLine.lineBase + ChapterProvider.contentPaint.fontMetrics.descent
+                    ChapterProvider.paddingTop + y + layout.getLineBottom(lineIndex)
                 var x = ChapterProvider.paddingLeft +
                         (ChapterProvider.visibleWidth - layout.getLineMax(lineIndex)) / 2
                 textLine.text =

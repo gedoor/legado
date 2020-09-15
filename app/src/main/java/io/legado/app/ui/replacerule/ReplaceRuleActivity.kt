@@ -11,31 +11,34 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.BookHelp
-import io.legado.app.help.ItemTouchCallback
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
 import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_replace_rule.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_search.*
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -57,7 +60,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     private var dataInit = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        initUriScheme()
         initRecyclerView()
         initSearchView()
         initSelectActionView()
@@ -76,29 +78,6 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         return super.onPrepareOptionsMenu(menu)
     }
 
-    private fun initUriScheme() {
-        intent.data?.let {
-            when (it.path) {
-                "/importonline" -> it.getQueryParameter("src")?.let { url ->
-                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-                    if (url.startsWith("http", false)){
-                        viewModel.importSource(url) { msg ->
-                            title_bar.snackbar(msg)
-                        }
-                    }
-                    else{
-                        viewModel.importSourceFromFilePath(url) { msg ->
-                            title_bar.snackbar(msg)
-                        }
-                    }
-                }
-                else -> {
-                    toast("格式不对")
-                }
-            }
-        }
-    }
-
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
@@ -108,6 +87,13 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         val itemTouchCallback = ItemTouchCallback()
         itemTouchCallback.onItemTouchCallbackListener = adapter
         itemTouchCallback.isCanDrag = true
+        val dragSelectTouchHelper: DragSelectTouchHelper =
+            DragSelectTouchHelper(adapter.initDragSelectTouchHelperCallback()).setSlideArea(16, 50)
+        dragSelectTouchHelper.attachToRecyclerView(recycler_view)
+        // When this page is opened, it is in selection mode
+        dragSelectTouchHelper.activeSlideSelect()
+
+        // Note: need judge selection first, so add ItemTouchHelper after it.
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
@@ -155,7 +141,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
         } else {
             App.db.replaceRuleDao().liveDataSearch(key)
         }
-        replaceRuleLiveData?.observe(this, Observer {
+        replaceRuleLiveData?.observe(this, {
             if (dataInit) {
                 setResult(Activity.RESULT_OK)
             }
@@ -168,10 +154,10 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun observeGroupData() {
-        App.db.replaceRuleDao().liveGroup().observe(this, Observer {
+        App.db.replaceRuleDao().liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
+                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             upGroupMenu()
         })
@@ -187,12 +173,10 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_local -> FilePicker
-                .selectFile(
-                    this,
-                    importRequestCode,
-                    type = "text/*",
-                    allowExtensions = arrayOf("txt", "json")
-                )
+                .selectFile(this, importRequestCode, allowExtensions = arrayOf("txt", "json"))
+            else -> if (item.groupId == R.id.replace_group) {
+                search_view.setQuery(item.title, true)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -207,9 +191,9 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     }
 
     private fun upGroupMenu() {
-        groupMenu?.removeGroup(R.id.source_group)
+        groupMenu?.removeGroup(R.id.replace_group)
         groups.map {
-            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            groupMenu?.add(R.id.replace_group, Menu.NONE, Menu.NONE, it)
         }
     }
 
@@ -239,10 +223,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-                    viewModel.importSource(it) { msg ->
-                        title_bar.snackbar(msg)
-                    }
+                    startActivity<ImportReplaceRuleActivity>("source" to it)
                 }
             }
             cancelButton()
@@ -261,10 +242,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
             importRequestCode -> {
-                Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
-                viewModel.importSource(File(currentPath).readText()) { msg ->
-                    title_bar.snackbar(msg)
-                }
+                startActivity<ImportReplaceRuleActivity>("filePath" to currentPath)
             }
             exportRequestCode -> viewModel.exportSelection(
                 adapter.getSelection(),
@@ -280,14 +258,11 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
                 data?.data?.let { uri ->
                     try {
                         uri.readText(this)?.let {
-                            Snackbar.make(title_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
-                                .show()
-                            viewModel.importSource(it) { msg ->
-                                title_bar.snackbar(msg)
-                            }
+                            val dataKey = IntentDataHelp.putData(it)
+                            startActivity<ImportReplaceRuleActivity>("dataKey" to dataKey)
                         }
                     } catch (e: Exception) {
-                        toast(e.localizedMessage ?: "ERROR")
+                        toast("readTextError:${e.localizedMessage}")
                     }
                 }
             }

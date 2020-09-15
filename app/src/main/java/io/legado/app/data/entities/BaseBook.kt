@@ -3,8 +3,10 @@ package io.legado.app.data.entities
 import io.legado.app.utils.splitNotBlank
 
 interface BaseBook {
+    var name: String
+    var author: String
     var bookUrl: String
-    var variableMap: HashMap<String, String>?
+    val variableMap: HashMap<String, String>
     var kind: String?
     var wordCount: String?
 

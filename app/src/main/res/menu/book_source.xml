@@ -23,26 +23,46 @@
                 <menu>
                     <group
                         android:id="@+id/menu_group_sort"
-                        android:checkableBehavior="single" />
+                        android:checkableBehavior="single">
 
-                    <item
-                        android:id="@+id/sort_manual"
-                        android:checkable="true"
-                        android:title="@string/sort_manual" />
+                        <item
+                            android:id="@+id/menu_sort_manual"
+                            android:checkable="true"
+                            android:checked="true"
+                            android:title="@string/sort_manual" />
 
-                    <item
-                        android:id="@+id/sort_auto"
-                        android:checkable="true"
-                        android:title="@string/sort_auto" />
+                        <item
+                            android:id="@+id/menu_sort_auto"
+                            android:checkable="true"
+                            android:title="@string/sort_auto" />
 
-                    <item
-                        android:id="@+id/sort_pin_yin"
-                        android:checkable="true"
-                        android:title="@string/sort_pin_yin" />
+                        <item
+                            android:id="@+id/menu_sort_pin_yin"
+                            android:checkable="true"
+                            android:title="@string/sort_pin_yin" />
+
+                        <item
+                            android:id="@+id/menu_sort_url"
+                            android:checkable="true"
+                            android:title="@string/sort_by_url" />
+
+                        <item
+                            android:id="@+id/menu_sort_time"
+                            android:checkable="true"
+                            android:title="@string/sort_by_lastUppdateTime" />
+                    </group>
 
                 </menu>
 
             </item>
+
+            <item
+                android:id="@+id/menu_enabled_group"
+                android:title="@string/enabled" />
+
+            <item
+                android:id="@+id/menu_disabled_group"
+                android:title="@string/disabled" />
 
             <group android:id="@+id/source_group">
 
@@ -75,5 +95,12 @@
         android:icon="@drawable/ic_import"
         android:title="@string/import_by_qr_code"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_share_source"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share_selected_source"
+        app:showAsAction="never" />
+
 
 </menu>

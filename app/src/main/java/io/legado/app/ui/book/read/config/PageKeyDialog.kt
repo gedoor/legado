@@ -5,9 +5,11 @@ import android.content.Context
 import android.view.KeyEvent
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.removePref
 import kotlinx.android.synthetic.main.dialog_page_key.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -16,14 +18,21 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
 
     init {
         setContentView(R.layout.dialog_page_key)
+        content_view.setBackgroundColor(context.backgroundColor)
         et_prev.setText(context.getPrefInt(PreferKey.prevKey).toString())
         et_next.setText(context.getPrefInt(PreferKey.nextKey).toString())
         tv_ok.onClick {
-            et_prev.text?.let {
-                context.putPrefInt(PreferKey.prevKey, it.toString().toInt())
+            val prevKey = et_prev.text?.toString()
+            if (prevKey.isNullOrEmpty()) {
+                context.removePref(PreferKey.prevKey)
+            } else {
+                context.putPrefInt(PreferKey.prevKey, prevKey.toInt())
             }
-            et_next.text?.let {
-                context.putPrefInt(PreferKey.nextKey, it.toString().toInt())
+            val nextKey = et_next.text?.toString()
+            if (nextKey.isNullOrEmpty()) {
+                context.removePref(PreferKey.nextKey)
+            } else {
+                context.putPrefInt(PreferKey.nextKey, nextKey.toInt())
             }
             dismiss()
         }

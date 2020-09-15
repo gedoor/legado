@@ -14,7 +14,7 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:singleLine="true"
-        android:textColor="@color/tv_text_default" />
+        android:textColor="@color/primaryText" />
 
     <TextView
         android:id="@+id/tv_edit"

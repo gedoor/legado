@@ -2,9 +2,8 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:divider="@color/transparent"
-    app:allowDividerBelow="false"
     app:allowDividerAbove="false"
-    >
+    app:allowDividerBelow="false">
 
     <io.legado.app.ui.widget.prefs.Preference
         android:key="bookSourceManage"
@@ -32,14 +31,6 @@
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
-        android:key="isEInkMode"
-        android:title="@string/eink_theme"
-        android:summary="@string/eink_theme_desc"
-        android:icon="@drawable/ic_cfg_e_lnk"
-        app:iconSpaceReserved="false" />
-
-    <io.legado.app.ui.widget.prefs.SwitchPreference
-        android:defaultValue="false"
         android:key="webService"
         android:title="@string/web_service"
         android:summary="@string/web_service_desc"
@@ -49,9 +40,9 @@
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
         android:title="@string/setting"
-        app:iconSpaceReserved="false"
         app:allowDividerAbove="true"
-        app:allowDividerBelow="false" >
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="web_dav_setting"
@@ -78,22 +69,30 @@
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/other"
         android:key="aboutCategory"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
-        app:layout="@layout/view_preference_category"
-        app:iconSpaceReserved="false">
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="readRecord"
+            android:title="@string/read_record"
+            android:summary="@string/read_record_summary"
+            android:icon="@drawable/ic_history"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="donate"
-            android:summary="您的支持是我更新的动力"
+            android:summary="@string/donate_summary"
             android:title="@string/donate"
-            android:icon="@drawable/ic_cfg_jz"
+            android:icon="@drawable/ic_cfg_donate"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="about"
-            android:summary="公众号[开源阅读软件]"
+            android:summary="@string/about_summary"
             android:title="@string/about"
             android:icon="@drawable/ic_cfg_about"
             app:iconSpaceReserved="false" />

@@ -6,27 +6,24 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
+import android.view.WindowManager
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.ui.book.read.Help
-import io.legado.app.utils.dp
-import io.legado.app.utils.gone
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_read_padding.*
 
-class PaddingConfigDialog : DialogFragment() {
+class PaddingConfigDialog : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
         val dm = DisplayMetrics()
         activity?.let {
-            Help.upSystemUiVisibility(it)
             it.windowManager?.defaultDisplay?.getMetrics(dm)
         }
         dialog?.window?.let {
+            it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             val attr = it.attributes
             attr.dimAmount = 0.0f
             it.attributes = attr
@@ -42,8 +39,7 @@ class PaddingConfigDialog : DialogFragment() {
         return inflater.inflate(R.layout.dialog_read_padding, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initData()
         initView()
     }
@@ -54,13 +50,6 @@ class PaddingConfigDialog : DialogFragment() {
     }
 
     private fun initData() = ReadBookConfig.apply {
-        if (hideStatusBar) {
-            ll_header_padding.visible()
-            tv_body_padding.setPadding(0, 10.dp, 0, 10.dp)
-        } else {
-            ll_header_padding.gone()
-            tv_body_padding.setPadding(0, 0.dp, 0, 10.dp)
-        }
         //正文
         dsb_padding_top.progress = paddingTop
         dsb_padding_bottom.progress = paddingBottom
