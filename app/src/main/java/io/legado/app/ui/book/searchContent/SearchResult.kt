@@ -1,9 +1,11 @@
 package io.legado.app.ui.book.searchContent
 
 import android.text.Spanned
-import android.util.Log
 import androidx.core.text.HtmlCompat
-import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.App
+import io.legado.app.R
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.hexString
 
 data class SearchResult(
     var index: Int = 0,
@@ -23,12 +25,13 @@ data class SearchResult(
                     "<font color=#0000ff>($chapterTitle)</font>"
         }
 
-    fun colorPresentText(position: Int, center: String, targetText: String): String{
+    fun colorPresentText(position: Int, center: String, targetText: String): String {
         val sub1 = text.substring(0, position)
         val sub2 = text.substring(position + center.length, targetText.length)
-        return "<font color=#000000>$sub1</font>" +
+        val textColor = App.INSTANCE.getCompatColor(R.color.primaryText).hexString
+        return "<font color=#${textColor}>$sub1</font>" +
                 "<font color=#ff0000>$center</font>" +
-                "<font color=#000000>$sub2</font>"
+                "<font color=#${textColor}>$sub2</font>"
     }
 
     fun parseText(targetText: String): Spanned {
