@@ -24,6 +24,21 @@ class CheckSourceService : BaseService() {
     private val allIds = ArrayList<String>()
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
+    private val notificationBuilder by lazy {
+        NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
+            .setSmallIcon(R.drawable.ic_network_check)
+            .setOngoing(true)
+            .setContentTitle(getString(R.string.check_book_source))
+            .setContentIntent(
+                IntentHelp.activityPendingIntent<BookSourceActivity>(this, "activity")
+            )
+            .addAction(
+                R.drawable.ic_stop_black_24dp,
+                getString(R.string.cancel),
+                IntentHelp.servicePendingIntent<CheckSourceService>(this, IntentAction.stop)
+            )
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -105,23 +120,9 @@ class CheckSourceService : BaseService() {
      * 更新通知
      */
     private fun updateNotification(state: Int, msg: String) {
-        val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
-            .setSmallIcon(R.drawable.ic_network_check)
-            .setOngoing(true)
-            .setContentTitle(getString(R.string.check_book_source))
-            .setContentText(msg)
-            .setContentIntent(
-                IntentHelp.activityPendingIntent<BookSourceActivity>(this, "activity")
-            )
-            .addAction(
-                R.drawable.ic_stop_black_24dp,
-                getString(R.string.cancel),
-                IntentHelp.servicePendingIntent<CheckSourceService>(this, IntentAction.stop)
-            )
-        builder.setProgress(allIds.size, state, false)
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        val notification = builder.build()
-        startForeground(112202, notification)
+        notificationBuilder.setContentText(msg)
+        notificationBuilder.setProgress(allIds.size, state, false)
+        startForeground(112202, notificationBuilder.build())
     }
 
 }

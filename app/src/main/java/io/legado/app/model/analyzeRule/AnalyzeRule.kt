@@ -324,17 +324,37 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun replaceRegex(result: String, rule: SourceRule): String {
         var vResult = result
-        if (rule.replaceRegex.isNotEmpty()) {
+        val stringBuffer = StringBuffer()
+        val evalMatcher = replacePattern.matcher(rule.replaceRegex)
+        while (evalMatcher.find()) {
+            val jsEval = evalMatcher.group().let {
+                if (it.startsWith("@get:", true)) {
+                    get(it.substring(6, it.lastIndex))
+                } else {
+                    evalJS(it.substring(2, it.length - 2), result)
+                }
+            } ?: ""
+            if (jsEval is String) {
+                evalMatcher.appendReplacement(stringBuffer, jsEval)
+            } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
+                evalMatcher.appendReplacement(stringBuffer, String.format("%.0f", jsEval))
+            } else {
+                evalMatcher.appendReplacement(stringBuffer, jsEval.toString())
+            }
+        }
+        evalMatcher.appendTail(stringBuffer)
+        val replaceRegex = stringBuffer.toString()
+        if (replaceRegex.isNotEmpty()) {
             vResult = if (rule.replaceFirst) {
-                val pattern = Pattern.compile(rule.replaceRegex)
+                val pattern = Pattern.compile(replaceRegex)
                 val matcher = pattern.matcher(vResult)
                 if (matcher.find()) {
-                    matcher.group(0)!!.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
+                    matcher.group(0)!!.replaceFirst(replaceRegex.toRegex(), rule.replacement)
                 } else {
                     ""
                 }
             } else {
-                vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
+                vResult.replace(replaceRegex.toRegex(), rule.replacement)
             }
         }
         return vResult
@@ -642,6 +662,10 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
         private val evalPattern = Pattern.compile(
             "@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}|\\$\\d{1,2}",
+            Pattern.CASE_INSENSITIVE
+        )
+        private val replacePattern = Pattern.compile(
+            "@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}",
             Pattern.CASE_INSENSITIVE
         )
     }

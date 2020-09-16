@@ -200,6 +200,12 @@ class ReadMenu : FrameLayout {
             }
         }
 
+        ll_search.onClick {
+            runMenuOut {
+                callBack?.openSearchList()
+            }
+        }
+
         //朗读
         ll_read_aloud.onClick {
             runMenuOut {
@@ -291,6 +297,7 @@ class ReadMenu : FrameLayout {
         fun autoPage()
         fun openReplaceRule()
         fun openChapterList()
+        fun openSearchList()
         fun showReadStyle()
         fun showMoreSetting()
         fun showReadAloudDialog()

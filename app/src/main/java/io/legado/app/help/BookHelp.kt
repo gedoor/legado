@@ -145,6 +145,7 @@ object BookHelp {
         return fileNameList
     }
 
+    // 检测该章节是否下载
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
         return if (book.isLocalBook()) {
             true

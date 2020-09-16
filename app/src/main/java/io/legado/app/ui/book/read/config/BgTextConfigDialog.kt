@@ -324,7 +324,9 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 val fontName = FileUtils.getName(config.textFont)
                 val fontPath =
                     FileUtils.getPath(requireContext().externalFilesDir, "font", fontName)
-                FileUtils.getFile(configDir, fontName).copyTo(File(fontPath))
+                if (!FileUtils.exist(fontPath)) {
+                    FileUtils.getFile(configDir, fontName).copyTo(File(fontPath))
+                }
                 config.textFont = fontPath
             }
             if (config.bgType() == 2) {
