@@ -94,6 +94,8 @@
         閲讀3.0下載地址：\nhttps://play.google.com/store/apps/details?id=io.legado.play.release
     </string>
     <string name="version_name">Version %s</string>
+    <string name="pt_background_verification">後臺校驗書源</string>
+    <string name="ps_background_verification">打開后可以在校驗書源時自由操作</string>
     <string name="pt_auto_refresh">自動刷新</string>
     <string name="ps_auto_refresh">打開程式時自動更新書輯</string>
     <string name="pt_auto_download">自動下載最新章節</string>

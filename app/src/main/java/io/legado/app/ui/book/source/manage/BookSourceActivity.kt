@@ -21,6 +21,7 @@ import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.*
@@ -64,6 +65,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private var groupMenu: SubMenu? = null
     private var sort = 0
     private var sortAscending = 0
+
+    private val progressDialogBuilder by lazy {
+        progressDialog("校验书源") {
+            setCancelable(false)
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -261,6 +268,24 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
         })
 
+    }
+
+    override fun observeLiveBus() {
+        observeEvent<Int>(EventBus.CHECK_INIT) { max->
+            progressDialogBuilder.max = max
+            progressDialogBuilder.show()
+        }
+        observeEvent<Int>(EventBus.CHECK_UP_PROGRESS) { progress->
+            progressDialogBuilder.progress = progress
+        }
+        observeEvent<Int>(EventBus.CHECK_DONE) {
+            if (progressDialogBuilder.isShowing) {
+                progressDialogBuilder.progress = it
+                progressDialogBuilder.max = it
+                progressDialogBuilder.dismiss()
+            }
+            toast("校验完成")
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

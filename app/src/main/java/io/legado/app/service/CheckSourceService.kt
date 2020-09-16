@@ -6,12 +6,15 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.help.AppConfig
+import io.legado.app.help.AppConfig.backgroundVerification
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
+import io.legado.app.utils.postEvent
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.jetbrains.anko.toast
 import java.util.concurrent.Executors
@@ -42,7 +45,9 @@ class CheckSourceService : BaseService() {
 
     override fun onCreate() {
         super.onCreate()
-        updateNotification(0, getString(R.string.start))
+        if (backgroundVerification) {
+            updateNotification(0, getString(R.string.start))
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -59,6 +64,7 @@ class CheckSourceService : BaseService() {
         super.onDestroy()
         tasks.clear()
         searchPool.close()
+        postEvent(EventBus.CHECK_DONE, 0)
     }
 
     private fun check(ids: List<String>) {
@@ -72,7 +78,11 @@ class CheckSourceService : BaseService() {
         allIds.addAll(ids)
         processIndex = 0
         threadCount = min(allIds.size, threadCount)
-        updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
+        if (backgroundVerification) {
+            updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
+        } else {
+            postEvent(EventBus.CHECK_INIT, allIds.size)
+        }
         for (i in 0 until threadCount) {
             check()
         }
@@ -106,10 +116,14 @@ class CheckSourceService : BaseService() {
         synchronized(this) {
             check()
             checkedIds.add(sourceUrl)
-            updateNotification(
-                checkedIds.size,
-                getString(R.string.progress_show, checkedIds.size, allIds.size)
-            )
+            if (backgroundVerification) {
+                updateNotification(
+                    checkedIds.size,
+                    getString(R.string.progress_show, checkedIds.size, allIds.size)
+                )
+            } else {
+                postEvent(EventBus.CHECK_UP_PROGRESS, checkedIds.size)
+            }
             if (processIndex >= allIds.size + threadCount - 1) {
                 stopSelf()
             }

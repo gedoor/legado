@@ -96,6 +96,8 @@
         阅读3.0下载地址：\nhttps://www.coolapk.com/apk/256030
     </string>
     <string name="version_name">Version %s</string>
+    <string name="pt_background_verification">后台校验书源</string>
+    <string name="ps_background_verification">打开后可以在校验书源时自由操作</string>
     <string name="pt_auto_refresh">自动刷新</string>
     <string name="ps_auto_refresh">打开软件时自动更新书籍</string>
     <string name="pt_auto_download">自动下载最新章节</string>

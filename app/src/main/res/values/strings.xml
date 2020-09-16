@@ -96,6 +96,8 @@
         Legado (YueDu 3.0) download link：\n https://play.google.com/store/apps/details?id=io.legado.play.release
     </string>
     <string name="version_name">Version %s</string>
+    <string name="pt_background_verification">Background-verification</string>
+    <string name="ps_background_verification">you can operate freely when verifying the book source</string>
     <string name="pt_auto_refresh">Auto-refresh</string>
     <string name="ps_auto_refresh">Update books automatically when opening the software</string>
     <string name="pt_auto_download">Auto-download</string>
