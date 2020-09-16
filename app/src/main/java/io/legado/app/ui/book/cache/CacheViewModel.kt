@@ -35,7 +35,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun export(doc: DocumentFile, book: Book) {
-        val filename = "${book.name} 作者:${book.author}.txt"
+        val filename = "${book.name} by ${book.author}.txt"
         val content = getAllContents(book)
         DocumentUtils.createFileIfNotExist(doc, filename)
             ?.writeText(context, content)
@@ -73,7 +73,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun export(file: File, book: Book) {
-        val filename = "${book.name} 作者:${book.author}.txt"
+        val filename = "${book.name} by ${book.author}.txt"
         FileUtils.createFileIfNotExist(file, filename)
             .writeText(getAllContents(book))
         WebDavHelp.exportWebDav(file.absolutePath, filename)//导出到webdav
