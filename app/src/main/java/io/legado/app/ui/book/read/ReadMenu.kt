@@ -170,6 +170,13 @@ class ReadMenu : FrameLayout {
             }
         })
 
+        //搜索
+        fabSearch.onClick {
+            runMenuOut {
+                callBack?.openSearchList()
+            }
+        }
+
         //自动翻页
         fabAutoPage.onClick {
             runMenuOut {
@@ -197,12 +204,6 @@ class ReadMenu : FrameLayout {
         ll_catalog.onClick {
             runMenuOut {
                 callBack?.openChapterList()
-            }
-        }
-
-        ll_search.onClick {
-            runMenuOut {
-                callBack?.openSearchList()
             }
         }
 

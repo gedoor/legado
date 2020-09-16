@@ -4,6 +4,7 @@ import android.text.Spanned
 import androidx.core.text.HtmlCompat
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.hexString
 
@@ -19,18 +20,20 @@ data class SearchResult(
     var newPosition: Int = 0,
     var contentPosition: Int =0
 ) {
+    val textColor = App.INSTANCE.getCompatColor(R.color.primaryText).hexString
+    val accentColor = App.INSTANCE.accentColor.hexString
+
     val presentText: String
-        get(){
+        get() {
             return colorPresentText(newPosition, query, text) +
-                    "<font color=#0000ff>($chapterTitle)</font>"
+                    "<font color=#${accentColor}>($chapterTitle)</font>"
         }
 
-    fun colorPresentText(position: Int, center: String, targetText: String): String {
+    private fun colorPresentText(position: Int, center: String, targetText: String): String {
         val sub1 = text.substring(0, position)
         val sub2 = text.substring(position + center.length, targetText.length)
-        val textColor = App.INSTANCE.getCompatColor(R.color.primaryText).hexString
         return "<font color=#${textColor}>$sub1</font>" +
-                "<font color=#ff0000>$center</font>" +
+                "<font color=#${accentColor}>$center</font>" +
                 "<font color=#${textColor}>$sub2</font>"
     }
 
