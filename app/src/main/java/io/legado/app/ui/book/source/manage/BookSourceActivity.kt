@@ -284,12 +284,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 progressDialogBuilder.max = it
                 progressDialogBuilder.dismiss()
             }
+            toast("校验完成！")
             groups.map { group->
-                if (group.indexOf("失效") != -1) {
+                if (group.contains("失效")) {
                     search_view.setQuery("失效", true)
-                    toast("校验完成，发现有失效书源，已为您自动筛选！")
-                } else {
-                    toast("校验完成")
+                    toast("发现有失效书源，已为您自动筛选！")
                 }
             }
         }
