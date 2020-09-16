@@ -223,6 +223,7 @@
     <string name="load_error_retry">載入失敗,點擊重試</string>
     <string name="book_intro">內容簡介</string>
     <string name="intro_show">簡介:%s</string>
+    <string name="intro_show_null">簡介: 暫無簡介</string>
     <string name="open_from_other">打開外部書籍</string>
     <string name="origin_show">來源: %s</string>
     <string name="import_replace_rule">本機匯入</string>

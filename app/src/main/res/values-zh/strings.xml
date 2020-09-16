@@ -225,6 +225,7 @@
     <string name="load_error_retry">加载失败,点击重试</string>
     <string name="book_intro">内容简介</string>
     <string name="intro_show">简介:%s</string>
+    <string name="intro_show_null">简介: 暂无简介</string>
     <string name="open_from_other">打开外部书籍</string>
     <string name="origin_show">来源: %s</string>
     <string name="import_replace_rule">本地导入</string>

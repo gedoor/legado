@@ -225,6 +225,7 @@
     <string name="load_error_retry">Load failed, tap to retry</string>
     <string name="book_intro">Book description</string>
     <string name="intro_show">Description:%s</string>
+    <string name="intro_show_null">Description: no introduction</string>
     <string name="open_from_other">Open external book</string>
     <string name="origin_show">Origin: %s</string>
     <string name="import_replace_rule">Import local rules</string>

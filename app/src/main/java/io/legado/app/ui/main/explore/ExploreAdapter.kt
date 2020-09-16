@@ -11,10 +11,7 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.utils.ACache
-import io.legado.app.utils.dp
-import io.legado.app.utils.gone
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.item_find_book.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -55,12 +52,12 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                                 .inflate(R.layout.item_fillet_text, gl_child, false)
                             gl_child.addView(tv)
                             tv.text_view.text = kind.title
-                            tv.text_view.onClick {
-                                kind.url?.let { kindUrl ->
+                            if (!kind.url.isNullOrEmpty()) {
+                                tv.text_view.onClick {
                                     callBack.openExplore(
                                         item.bookSourceUrl,
                                         kind.title,
-                                        kindUrl
+                                        kind.url.toString()
                                     )
                                 }
                             }
