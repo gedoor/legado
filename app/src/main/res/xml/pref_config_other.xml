@@ -52,6 +52,13 @@
         app:layout="@layout/view_preference_category">
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pk_background_verification"
+            android:summary="@string/ps_background_verification"
+            android:title="@string/pt_background_verification"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="replaceEnableDefault"
             android:title="@string/replace_enable_default_t"
