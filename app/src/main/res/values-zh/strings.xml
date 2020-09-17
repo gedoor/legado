@@ -10,6 +10,8 @@
     <string name="menu_import_old">导入阅读数据</string>
     <string name="mkdirs">创建子文件夹</string>
     <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
+    <string name="export_webdav">离线导出WebDav</string>
+    <string name="export_webdav_s">默认导出到legado文件夹下exports目录</string>
     <string name="backup_path">备份路径</string>
     <string name="select_backup_path">请选择备份路径</string>
     <string name="menu_import_old_version">导入旧版数据</string>

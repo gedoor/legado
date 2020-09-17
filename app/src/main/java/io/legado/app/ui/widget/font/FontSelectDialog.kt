@@ -123,6 +123,26 @@ class FontSelectDialog : BaseDialogFragment(),
         }
     }
 
+    private fun getLocalFonts(): ArrayList<DocItem> {
+        val fontItems = arrayListOf<DocItem>()
+        val fontDir =
+            FileUtils.createFolderIfNotExist(requireContext().externalFilesDir, "font")
+        fontDir.listFiles { pathName ->
+            pathName.name.toLowerCase(Locale.getDefault()).matches(fontRegex)
+        }?.forEach {
+            fontItems.add(
+                DocItem(
+                    it.name,
+                    it.extension,
+                    it.length(),
+                    Date(it.lastModified()),
+                    Uri.parse(it.absolutePath)
+                )
+            )
+        }
+        return fontItems
+    }
+
     private fun loadFontFiles(doc: DocumentFile) {
         execute {
             val fontItems = arrayListOf<DocItem>()
@@ -132,6 +152,7 @@ class FontSelectDialog : BaseDialogFragment(),
                     fontItems.add(item)
                 }
             }
+            fontItems.addAll(getLocalFonts())
             fontItems.sortedBy { it.name }
         }.onSuccess {
             adapter?.setItems(it)
@@ -167,6 +188,7 @@ class FontSelectDialog : BaseDialogFragment(),
                     )
                 )
             }
+            fontItems.addAll(getLocalFonts())
             fontItems.sortedBy { it.name }
         }.onSuccess {
             adapter?.setItems(it)
