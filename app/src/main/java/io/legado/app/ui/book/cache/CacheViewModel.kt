@@ -7,6 +7,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.help.storage.WebDavHelp
@@ -39,15 +40,17 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val content = getAllContents(book)
         DocumentUtils.createFileIfNotExist(doc, filename)
             ?.writeText(context, content)
-        //写出文件到cache目录
-        FileUtils.createFileIfNotExist(
-            File(FileUtils.getCachePath()),
-            filename
-        ).writeText(content)
-        //导出到webdav
-        WebDavHelp.exportWebDav(FileUtils.getCachePath(), filename)
-        //上传完删除cache文件
-        FileUtils.deleteFile("${FileUtils.getCachePath()}${File.separator}${filename}")
+        if(App.INSTANCE.getPrefBoolean(PreferKey.webDavExport,false)) {
+            //写出文件到cache目录
+            FileUtils.createFileIfNotExist(
+                File(FileUtils.getCachePath()),
+                filename
+            ).writeText(content)
+            //导出到webdav
+            WebDavHelp.exportWebDav(FileUtils.getCachePath(), filename)
+            //上传完删除cache文件
+            FileUtils.deleteFile("${FileUtils.getCachePath()}${File.separator}${filename}")
+        }
         App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 content?.split("\n")?.forEachIndexed { index, text ->
@@ -76,7 +79,9 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val filename = "${book.name} by ${book.author}.txt"
         FileUtils.createFileIfNotExist(file, filename)
             .writeText(getAllContents(book))
-        WebDavHelp.exportWebDav(file.absolutePath, filename)//导出到webdav
+        if(App.INSTANCE.getPrefBoolean(PreferKey.webDavExport,false)) {
+            WebDavHelp.exportWebDav(file.absolutePath, filename)//导出到webdav
+        }
         App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 content?.split("\n")?.forEachIndexed { index, text ->
