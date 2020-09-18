@@ -335,15 +335,15 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                 }
             } ?: ""
             if (jsEval is String) {
-                evalMatcher.appendReplacement(stringBuffer, jsEval)
+                evalMatcher.appendReplacement(stringBuffer, Pattern.quote(jsEval))
             } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
                 evalMatcher.appendReplacement(stringBuffer, String.format("%.0f", jsEval))
             } else {
-                evalMatcher.appendReplacement(stringBuffer, jsEval.toString())
+                evalMatcher.appendReplacement(stringBuffer, Pattern.quote(jsEval.toString()))
             }
         }
         evalMatcher.appendTail(stringBuffer)
-        val replaceRegex = Pattern.quote(stringBuffer.toString())
+        val replaceRegex = stringBuffer.toString()
         if (replaceRegex.isNotEmpty()) {
             vResult = if (rule.replaceFirst) {
                 val pattern = Pattern.compile(replaceRegex)
