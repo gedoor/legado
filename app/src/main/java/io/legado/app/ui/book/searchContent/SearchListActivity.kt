@@ -70,7 +70,7 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
                 if (viewModel.lastQuery != query) {
                     viewModel.startContentSearch(query)
                 }
-                return true
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
