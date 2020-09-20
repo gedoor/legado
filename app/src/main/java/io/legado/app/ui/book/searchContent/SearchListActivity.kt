@@ -29,8 +29,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity_search_list),
-    SearchListAdapter.Callback,
-    SearchListViewModel.SearchListCallBack {
+    SearchListAdapter.Callback {
 
     override val viewModel: SearchListViewModel
         get() = getViewModel(SearchListViewModel::class.java)
@@ -42,7 +41,6 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
     private var searchResultList: MutableList<SearchResult> = mutableListOf()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        viewModel.searchCallBack = this
         val bbg = bottomBackground
         val btc = getPrimaryTextColor(ColorUtils.isColorLight(bbg))
         ll_search_base_info.setBackgroundColor(bbg)
@@ -68,7 +66,7 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
         search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (viewModel.lastQuery != query) {
-                    viewModel.startContentSearch(query)
+                    startContentSearch(query)
                 }
                 return false
             }
@@ -103,6 +101,9 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
             viewModel.book?.let {
                 initCacheFileNames(it)
                 durChapterIndex = it.durChapterIndex
+                intent.getStringExtra("searchWord")?.let { searchWord ->
+                    search_view.setQuery(searchWord, true)
+                }
             }
         }
     }
@@ -128,7 +129,7 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
     }
 
     @SuppressLint("SetTextI18n")
-    override fun startContentSearch(newText: String) {
+    fun startContentSearch(newText: String) {
         // 按章节搜索内容
         if (!newText.isBlank()) {
             adapter.clearItems()
