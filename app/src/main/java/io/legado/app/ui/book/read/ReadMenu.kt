@@ -175,7 +175,7 @@ class ReadMenu : FrameLayout {
         //搜索
         fabSearch.onClick {
             runMenuOut {
-                callBack?.openSearchList()
+                callBack?.openSearchActivity(null)
             }
         }
 
@@ -300,7 +300,7 @@ class ReadMenu : FrameLayout {
         fun autoPage()
         fun openReplaceRule()
         fun openChapterList()
-        fun openSearchList()
+        fun openSearchActivity(searchWord: String?)
         fun showReadStyle()
         fun showMoreSetting()
         fun showReadAloudDialog()

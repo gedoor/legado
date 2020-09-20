@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.core.view.get
@@ -49,7 +48,6 @@ import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.searchContent.SearchListActivity
-import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
@@ -496,6 +494,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 )
                 return true
             }
+            R.id.menu_search_content -> {
+                openSearchActivity(selectedText)
+                return true
+            }
         }
         return false
     }
@@ -680,12 +682,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 打开搜索界面
      */
-    //todo: change request code
-    override fun openSearchList() {
+    override fun openSearchActivity(searchWord: String?) {
         ReadBook.book?.let {
             startActivityForResult<SearchListActivity>(
                 requestCodeSearchResult,
-                Pair("bookUrl", it.bookUrl)
+                Pair("bookUrl", it.bookUrl),
+                Pair("searchWord", searchWord)
             )
         }
     }
