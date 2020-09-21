@@ -22,5 +22,6 @@ object EventBus {
     const val SAVE_CONTENT = "saveContent"
     const val CHECK_INIT = "checkInit"
     const val CHECK_UP_PROGRESS = "checkProgress"
+    const val CHECK_UP_PROGRESS_STRING = "checkProgressTxt"
     const val CHECK_DONE = "checkDone"
 }
