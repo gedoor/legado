@@ -535,18 +535,18 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                     }
                 }
                 rule = infoVal.toString()
-                //分离正则表达式
-                val ruleStrS = rule.trim { it <= ' ' }.split("##")
-                rule = ruleStrS[0]
-                if (ruleStrS.size > 1) {
-                    replaceRegex = ruleStrS[1]
-                }
-                if (ruleStrS.size > 2) {
-                    replacement = ruleStrS[2]
-                }
-                if (ruleStrS.size > 3) {
-                    replaceFirst = true
-                }
+            }
+            //分离正则表达式
+            val ruleStrS = rule.trim { it <= ' ' }.split("##")
+            rule = ruleStrS[0]
+            if (ruleStrS.size > 1) {
+                replaceRegex = ruleStrS[1]
+            }
+            if (ruleStrS.size > 2) {
+                replacement = ruleStrS[2]
+            }
+            if (ruleStrS.size > 3) {
+                replaceFirst = true
             }
         }
 
