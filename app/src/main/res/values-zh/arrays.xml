@@ -89,6 +89,7 @@
         <item>页数</item>
         <item>进度</item>
         <item>页数及进度</item>
+        <item>书名</item>
     </string-array>
 
     <string-array name="text_font_weight">

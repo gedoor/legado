@@ -54,6 +54,7 @@ object Backup {
         context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
         withContext(IO) {
             synchronized(this@Backup) {
+                FileUtils.deleteFile(backupPath)
                 writeListToJson(App.db.bookDao().all, "bookshelf.json", backupPath)
                 writeListToJson(App.db.bookmarkDao().all, "bookmark.json", backupPath)
                 writeListToJson(App.db.bookGroupDao().all, "bookGroup.json", backupPath)

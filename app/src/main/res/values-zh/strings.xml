@@ -10,6 +10,8 @@
     <string name="menu_import_old">导入阅读数据</string>
     <string name="mkdirs">创建子文件夹</string>
     <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
+    <string name="export_webdav">离线导出WebDav</string>
+    <string name="export_webdav_s">默认导出到legado文件夹下exports目录</string>
     <string name="backup_path">备份路径</string>
     <string name="select_backup_path">请选择备份路径</string>
     <string name="menu_import_old_version">导入旧版数据</string>
@@ -387,6 +389,9 @@
     <string name="source_name">源名称(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分组(sourceGroup)</string>
+    <string name="diy_source_group">自定义源分组</string>
+    <string name="diy_edit_source_group">输入自定义源分组名称</string>
+    <string name="diy_edit_source_group_title">【%s】</string>
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
@@ -764,6 +769,6 @@
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
     <string name="select_theme">切换默认主题</string>
     <string name="sort_by_lastUppdateTime">时间排序</string>
-    <string name="search_content">搜索</string>
+    <string name="search_content">全文搜索</string>
 
 </resources>

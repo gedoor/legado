@@ -10,6 +10,8 @@
     <string name="menu_import_old">Import Legado data</string>
     <string name="mkdirs">Create a subfolder</string>
     <string name="mkdirs_description">Create a folder named Legado as the backup folder.</string>
+    <string name="export_webdav">Export Webdav</string>
+    <string name="export_webdav_s">Default export to the exports directory under the legado folder</string>
     <string name="backup_path">Backup to</string>
     <string name="select_backup_path">Please select a backup path.</string>
     <string name="menu_import_old_version">Import legacy data</string>
@@ -387,6 +389,9 @@
     <string name="source_name">源名称(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分组(sourceGroup)</string>
+    <string name="diy_source_group">自定义源分组</string>
+    <string name="diy_edit_source_group">输入自定义源分组名称</string>
+    <string name="diy_edit_source_group_title">【%s】</string>
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
@@ -766,6 +771,6 @@
     <string name="theme_list_summary">Save, Import, Share theme</string>
     <string name="share_selected_source">Share selected sources</string>
     <string name="sort_by_lastUppdateTime">Sort by update time</string>
-    <string name="search_content">Search</string>
+    <string name="search_content">Search content</string>
 
 </resources>

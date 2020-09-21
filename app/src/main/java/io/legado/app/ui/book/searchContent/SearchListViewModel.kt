@@ -9,7 +9,6 @@ import io.legado.app.data.entities.Book
 class SearchListViewModel(application: Application) : BaseViewModel(application) {
     var bookUrl: String = ""
     var book: Book? = null
-    var searchCallBack: SearchListCallBack? = null
     var lastQuery: String = ""
 
     fun initBook(bookUrl: String, success: () -> Unit) {
@@ -19,15 +18,6 @@ class SearchListViewModel(application: Application) : BaseViewModel(application)
         }.onSuccess {
             success.invoke()
         }
-    }
-
-    fun startContentSearch(newText: String) {
-        searchCallBack?.startContentSearch(newText)
-    }
-
-
-    interface SearchListCallBack {
-        fun startContentSearch(newText: String)
     }
 
 }

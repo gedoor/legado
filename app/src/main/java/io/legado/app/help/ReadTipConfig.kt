@@ -12,6 +12,7 @@ object ReadTipConfig {
     const val page = 4
     const val totalProgress = 5
     const val pageAndTotal = 6
+    const val bookName = 7
 
     val tipHeaderLeftStr: String get() = tipArray.getOrElse(tipHeaderLeft) { tipArray[none] }
     val tipHeaderMiddleStr: String get() = tipArray.getOrElse(tipHeaderMiddle) { tipArray[none] }
