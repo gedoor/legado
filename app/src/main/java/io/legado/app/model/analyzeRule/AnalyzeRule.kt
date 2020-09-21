@@ -451,9 +451,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             var tmp: String
             val evalMatcher = evalPattern.matcher(rule)
             while (evalMatcher.find()) {
-                if (mode != Mode.Js) {
-                    mode = Mode.Regex
-                }
                 if (evalMatcher.start() > start) {
                     tmp = rule.substring(start, evalMatcher.start())
                     ruleType.add(0)
@@ -461,7 +458,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                 }
                 tmp = evalMatcher.group()
                 when {
-                    tmp.startsWith("$") -> {
+                    tmp.startsWith("$") && !rule.contains("##") -> {
                         ruleType.add(tmp.substring(1).toInt())
                         ruleParam.add(tmp)
                     }
