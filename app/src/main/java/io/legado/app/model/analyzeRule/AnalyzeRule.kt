@@ -238,6 +238,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             if (ruleList.isNotEmpty()) result = o
             for (sourceRule in ruleList) {
                 putRule(sourceRule.putMap)
+                sourceRule.makeUpRule(result)
                 result?.let {
                     result = when (sourceRule.mode) {
                         Mode.Regex -> AnalyzeByRegex.getElement(
@@ -324,37 +325,17 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun replaceRegex(result: String, rule: SourceRule): String {
         var vResult = result
-        val stringBuffer = StringBuffer()
-        val evalMatcher = replacePattern.matcher(rule.replaceRegex)
-        while (evalMatcher.find()) {
-            val jsEval = evalMatcher.group().let {
-                if (it.startsWith("@get:", true)) {
-                    get(it.substring(6, it.lastIndex))
-                } else {
-                    evalJS(it.substring(2, it.length - 2), result)
-                }
-            } ?: ""
-            if (jsEval is String) {
-                evalMatcher.appendReplacement(stringBuffer, Pattern.quote(jsEval))
-            } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
-                evalMatcher.appendReplacement(stringBuffer, String.format("%.0f", jsEval))
-            } else {
-                evalMatcher.appendReplacement(stringBuffer, Pattern.quote(jsEval.toString()))
-            }
-        }
-        evalMatcher.appendTail(stringBuffer)
-        val replaceRegex = stringBuffer.toString()
-        if (replaceRegex.isNotEmpty()) {
+        if (rule.replaceRegex.isNotEmpty()) {
             vResult = if (rule.replaceFirst) {
-                val pattern = Pattern.compile(replaceRegex)
+                val pattern = Pattern.compile(rule.replaceRegex)
                 val matcher = pattern.matcher(vResult)
                 if (matcher.find()) {
-                    matcher.group(0)!!.replaceFirst(replaceRegex.toRegex(), rule.replacement)
+                    matcher.group(0)!!.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
                 } else {
                     ""
                 }
             } else {
-                vResult.replace(replaceRegex.toRegex(), rule.replacement)
+                vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
             }
         }
         return vResult
@@ -465,18 +446,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             }
             //分离put
             rule = splitPutRule(rule, putMap)
-            //分离正则表达式
-            val ruleStrS = rule.trim { it <= ' ' }.split("##")
-            rule = ruleStrS[0]
-            if (ruleStrS.size > 1) {
-                replaceRegex = ruleStrS[1]
-            }
-            if (ruleStrS.size > 2) {
-                replacement = ruleStrS[2]
-            }
-            if (ruleStrS.size > 3) {
-                replaceFirst = true
-            }
             //@get,{{ }},$1, 拆分
             var start = 0
             var tmp: String
@@ -566,6 +535,18 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                     }
                 }
                 rule = infoVal.toString()
+                //分离正则表达式
+                val ruleStrS = rule.trim { it <= ' ' }.split("##")
+                rule = ruleStrS[0]
+                if (ruleStrS.size > 1) {
+                    replaceRegex = ruleStrS[1]
+                }
+                if (ruleStrS.size > 2) {
+                    replacement = ruleStrS[2]
+                }
+                if (ruleStrS.size > 3) {
+                    replaceFirst = true
+                }
             }
         }
 
