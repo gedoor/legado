@@ -487,7 +487,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                     mode = Mode.Regex
                 }
                 if (regexMatcher.start() > start) {
-                    tmp = rule.substring(start, regexMatcher.start())
+                    tmp = ruleStr.substring(start, regexMatcher.start())
                     ruleType.add(0)
                     ruleParam.add(tmp)
                 }
