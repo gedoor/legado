@@ -125,13 +125,13 @@ object WebDavHelp {
     fun exportWebDav(path: String, fileName: String) {
         try {
             if (initWebDav()) {
-                //默认导出到legado文件夹下exports目录
+                // 默认导出到legado文件夹下exports目录
                 val exportsWebDavUrl = rootWebDavUrl + EncoderUtils.escape("exports") + "/"
-                //在legado文件夹创建exports目录,如果不存在的话
+                // 在legado文件夹创建exports目录,如果不存在的话
                 WebDav(exportsWebDavUrl).makeAsDir()
                 val file = File("${path}${File.separator}${fileName}")
-                //如果导出的本地文件存在,开始上传
-                if(file.exists()){
+                // 如果导出的本地文件存在,开始上传
+                if(file.exists()) {
                     val putUrl = exportsWebDavUrl + fileName
                     WebDav(putUrl).upload("${path}${File.separator}${fileName}")
                 }

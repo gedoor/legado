@@ -10,8 +10,8 @@
     <string name="menu_import_old">導入閲讀數據</string>
     <string name="mkdirs">創建子文件夾</string>
     <string name="mkdirs_description">創建 legado 文件夾作爲備份路徑</string>
-    <string name="export_webdav">離線導出WebDav</string>
-    <string name="export_webdav_s">默認導出到legado文件夾下exports目錄</string>
+    <string name="webdav_cache_backup">離線緩存書籍備份</string>
+    <string name="webdav_cache_backup_s">導出本地同時備份到legado文件夾下exports目錄</string>
     <string name="backup_path">備份路徑</string>
     <string name="menu_import_old_version">導入舊版數據</string>
     <string name="menu_import_github">導入 Github 數據</string>
