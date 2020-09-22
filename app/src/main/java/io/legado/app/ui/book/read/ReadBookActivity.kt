@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.core.view.get
@@ -56,16 +57,14 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.view_read_menu.*
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
+import java.lang.Runnable
 
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read),
     View.OnTouchListener,
@@ -794,14 +793,29 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                             Log.d("h11128", positions[0].toString())
                             Log.d("h11128", positions[1].toString())
                             Log.d("h11128", positions[2].toString())
-                            //todo: show selected text
-                            val job1 = async(Main){
+                            Log.d("h11128", positions[3].toString())
+
+                            while (ReadBook.durPageIndex != positions[0]){
+                                delay(100L)
                                 ReadBook.skipToPage(positions[0])
-                                page_view.curPage.selectStartMoveIndex(positions[0], positions[1], 0)
-                                page_view.curPage.selectEndMoveIndex(positions[0], positions[1], 0 + query.length )
-                                page_view.isTextSelected = true
                             }
-                            job1.await()
+                            withContext(Main){
+                                Log.d("h11128", "currentpage ${ReadBook.durPageIndex}")
+                                Log.d("h11128", "currentpage ${page_view.pageFactory.currentPage.index}")
+                                Log.d("h11128", "${positions[0]} ${positions[1]} ${positions[2]}")
+
+                                page_view.curPage.selectStartMoveIndex(0, positions[1], positions[2])
+                                delay(20L)
+                                when (positions[3]){
+                                    0 -> page_view.curPage.selectEndMoveIndex(0, positions[1], positions[2] + query.length - 1)
+                                    1 -> page_view.curPage.selectEndMoveIndex(0, positions[1] + 1, positions[4])
+                                    //todo: consider change page, jump to scroll position
+                                    -1 -> page_view.curPage.selectEndMoveIndex(1, 0, positions[4])
+                                }
+                                page_view.isTextSelected = true
+                                delay(100L)
+                                Log.d("h11128", "asdasd $selectedText")
+                            }
                         }
                     }
                 requestCodeReplace -> onReplaceRuleSave()

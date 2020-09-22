@@ -378,8 +378,20 @@ object ReadBook {
         length -= currentLine.text.length
         Log.d("h11128", "currentLength $length")
         val charIndex = contentPosition - length
-        Log.d("h11128", "contentLength $contentPosition")
-        return arrayOf(pageIndex, lineIndex, charIndex)
+        var addLine = 0
+        var charIndex2 = 0
+        // change line
+        if ((charIndex + query.length) > currentLine.text.length){
+            addLine = 1
+            charIndex2 = charIndex + query.length - currentLine.text.length - 1
+        }
+        // changePage
+        if ((lineIndex + addLine + 1) > currentPage.textLines.size){
+            addLine = -1
+            charIndex2 = charIndex + query.length - currentLine.text.length - 1
+        }
+        Log.d("h11128", "charIndex2 $charIndex $addLine $charIndex2")
+        return arrayOf(pageIndex, lineIndex, charIndex, addLine, charIndex2)
     }
 
     /**
