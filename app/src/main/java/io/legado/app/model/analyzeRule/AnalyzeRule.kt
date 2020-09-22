@@ -458,7 +458,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                 }
                 tmp = evalMatcher.group()
                 when {
-                    tmp.startsWith("$") && !rule.contains("##") -> {
+                    tmp.startsWith("$") -> {
                         ruleType.add(tmp.substring(1).toInt())
                         ruleParam.add(tmp)
                     }
