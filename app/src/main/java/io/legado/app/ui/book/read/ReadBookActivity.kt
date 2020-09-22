@@ -781,29 +781,18 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                             val indexWithinChapter = data.getIntExtra("indexWithinChapter", 0)
                             val query = data.getStringExtra("query")
                             viewModel.openChapter(index)
-
                             // block until load correct chapter and pages
                             var pages = ReadBook.curTextChapter?.pages
                             while (ReadBook.durChapterIndex != index || pages == null ){
                                 delay(100L)
                                 pages = ReadBook.curTextChapter?.pages
                             }
-                            Log.d("h11128", "Current chapter pages ${pages.size}")
                             val positions = ReadBook.searchResultPositions(pages, indexWithinChapter, query!!)
-                            Log.d("h11128", positions[0].toString())
-                            Log.d("h11128", positions[1].toString())
-                            Log.d("h11128", positions[2].toString())
-                            Log.d("h11128", positions[3].toString())
-
                             while (ReadBook.durPageIndex != positions[0]){
                                 delay(100L)
                                 ReadBook.skipToPage(positions[0])
                             }
                             withContext(Main){
-                                Log.d("h11128", "currentpage ${ReadBook.durPageIndex}")
-                                Log.d("h11128", "currentpage ${page_view.pageFactory.currentPage.index}")
-                                Log.d("h11128", "${positions[0]} ${positions[1]} ${positions[2]}")
-
                                 page_view.curPage.selectStartMoveIndex(0, positions[1], positions[2])
                                 delay(20L)
                                 when (positions[3]){
@@ -814,7 +803,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                                 }
                                 page_view.isTextSelected = true
                                 delay(100L)
-                                Log.d("h11128", "asdasd $selectedText")
                             }
                         }
                     }
