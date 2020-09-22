@@ -79,7 +79,7 @@ class CheckSourceService : BaseService() {
         processIndex = 0
         threadCount = min(allIds.size, threadCount)
         if (backgroundVerification) {
-            updateNotification(0, getString(R.string.progress_show, 0, allIds.size))
+            updateNotification(0, getString(R.string.progress_show, "", 0, allIds.size))
         } else {
             postEvent(EventBus.CHECK_INIT, allIds.size)
         }
@@ -101,28 +101,29 @@ class CheckSourceService : BaseService() {
                 val sourceUrl = allIds[index]
                 App.db.bookSourceDao().getBookSource(sourceUrl)?.let { source ->
                     if (source.searchUrl.isNullOrEmpty()) {
-                        onNext(sourceUrl)
+                        onNext(sourceUrl, source.bookSourceName)
                     } else {
                         CheckSource(source).check(this, searchPool) {
-                            onNext(it)
+                            onNext(it, source.bookSourceName)
                         }
                     }
-                } ?: onNext(sourceUrl)
+                } ?: onNext(sourceUrl, "")
             }
         }
     }
 
-    private fun onNext(sourceUrl: String) {
+    private fun onNext(sourceUrl: String, sourceName: String) {
         synchronized(this) {
             check()
             checkedIds.add(sourceUrl)
             if (backgroundVerification) {
                 updateNotification(
                     checkedIds.size,
-                    getString(R.string.progress_show, checkedIds.size, allIds.size)
+                    getString(R.string.progress_show, sourceName, checkedIds.size, allIds.size)
                 )
             } else {
                 postEvent(EventBus.CHECK_UP_PROGRESS, checkedIds.size)
+                postEvent(EventBus.CHECK_UP_PROGRESS_STRING, getString(R.string.progress_show, sourceName, checkedIds.size, allIds.size))
             }
             if (processIndex >= allIds.size + threadCount - 1) {
                 stopSelf()
