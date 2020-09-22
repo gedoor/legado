@@ -121,7 +121,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                     it.forEach { searchBook ->
                         if (searchBook.name == name && searchBook.author == author) {
                             if (searchBook.latestChapterTitle.isNullOrEmpty()) {
-                                loadBookInfo(searchBook.toBook())
+                                if (context.getPrefBoolean(PreferKey.changeSourceLoadInfo)) {
+                                    loadBookInfo(searchBook.toBook())
+                                }
                             } else {
                                 searchFinish(searchBook)
                             }

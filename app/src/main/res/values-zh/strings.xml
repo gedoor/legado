@@ -575,6 +575,7 @@
     <string name="export_selection">导出所选</string>
     <string name="export">导出</string>
     <string name="load_toc">加载目录</string>
+    <string name="load_info">加载详情页</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav 密码</string>
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>

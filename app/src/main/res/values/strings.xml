@@ -577,6 +577,7 @@
     <string name="export_selection">Export selected</string>
     <string name="export">Export</string>
     <string name="load_toc">Load chapters</string>
+    <string name="load_info">Load book detail</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav password</string>
     <string name="web_dav_pw_s">Input you WebDav authorized password</string>
