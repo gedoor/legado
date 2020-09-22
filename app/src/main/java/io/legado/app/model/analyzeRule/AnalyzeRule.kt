@@ -451,6 +451,9 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             var tmp: String
             val evalMatcher = evalPattern.matcher(rule)
             while (evalMatcher.find()) {
+                if (mode != Mode.Js) {
+                    mode = Mode.Regex
+                }
                 if (evalMatcher.start() > start) {
                     tmp = rule.substring(start, evalMatcher.start())
                     splitRegex(tmp)
@@ -483,9 +486,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             val ruleStrArray = ruleStr.split("##")
             val regexMatcher = regexPattern.matcher(ruleStrArray[0])
             while (regexMatcher.find()) {
-                if (mode != Mode.Js) {
-                    mode = Mode.Regex
-                }
                 if (regexMatcher.start() > start) {
                     tmp = ruleStr.substring(start, regexMatcher.start())
                     ruleType.add(0)
