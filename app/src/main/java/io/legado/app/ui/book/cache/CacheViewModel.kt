@@ -40,15 +40,14 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val content = getAllContents(book)
         DocumentUtils.createFileIfNotExist(doc, filename)
             ?.writeText(context, content)
-        if(App.INSTANCE.getPrefBoolean(PreferKey.webDavExport,false)) {
-            //写出文件到cache目录
+        if(App.INSTANCE.getPrefBoolean(PreferKey.webDavCacheBackup,false)) {
             FileUtils.createFileIfNotExist(
                 File(FileUtils.getCachePath()),
                 filename
-            ).writeText(content)
-            //导出到webdav
+            ).writeText(content) // 写出文件到cache目录
+            // 导出到webdav
             WebDavHelp.exportWebDav(FileUtils.getCachePath(), filename)
-            //上传完删除cache文件
+            // 上传完删除cache文件
             FileUtils.deleteFile("${FileUtils.getCachePath()}${File.separator}${filename}")
         }
         App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
@@ -79,8 +78,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val filename = "${book.name} by ${book.author}.txt"
         FileUtils.createFileIfNotExist(file, filename)
             .writeText(getAllContents(book))
-        if(App.INSTANCE.getPrefBoolean(PreferKey.webDavExport,false)) {
-            WebDavHelp.exportWebDav(file.absolutePath, filename)//导出到webdav
+        if(App.INSTANCE.getPrefBoolean(PreferKey.webDavCacheBackup,false)) {
+            WebDavHelp.exportWebDav(file.absolutePath, filename) // 导出到webdav
         }
         App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->

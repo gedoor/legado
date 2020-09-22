@@ -10,8 +10,8 @@
     <string name="menu_import_old">匯入閱讀資料</string>
     <string name="mkdirs">建立子資料夾</string>
     <string name="mkdirs_description">建立legado資料夾作為備份資料夾</string>
-    <string name="export_webdav">離線導出WebDav</string>
-    <string name="export_webdav_s">默認導出到legado文件夾下exports目錄</string>
+    <string name="webdav_cache_backup">離線緩存書籍備份</string>
+    <string name="webdav_cache_backup_s">導出本地同時備份到legado文件夾下exports目錄</string>
     <string name="backup_path">備份路徑</string>
     <string name="menu_import_old_version">匯入舊版資料</string>
     <string name="menu_import_github">匯入Github資料</string>
@@ -569,6 +569,7 @@
     <string name="export_selection">匯出所選</string>
     <string name="export">匯出</string>
     <string name="load_toc">載入目錄</string>
+    <string name="load_info">載入詳情頁</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav 密碼</string>
     <string name="web_dav_pw_s">輸入你的WebDav授權密碼</string>
