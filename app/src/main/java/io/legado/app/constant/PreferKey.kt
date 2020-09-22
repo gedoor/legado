@@ -35,6 +35,7 @@ object PreferKey {
     const val webDavCreateDir = "webDavCreateDir"
     const val webDavCacheBackup = "webDavCacheBackup"
     const val changeSourceLoadToc = "changeSourceLoadToc"
+    const val changeSourceLoadInfo = "changeSourceLoadInfo"
     const val chineseConverterType = "chineseConverterType"
     const val launcherIcon = "launcherIcon"
     const val textSelectAble = "selectText"

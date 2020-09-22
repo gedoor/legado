@@ -569,6 +569,7 @@
     <string name="export_selection">匯出所選</string>
     <string name="export">匯出</string>
     <string name="load_toc">載入目錄</string>
+    <string name="load_info">載入詳情頁</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav 密碼</string>
     <string name="web_dav_pw_s">輸入你的WebDav授權密碼</string>

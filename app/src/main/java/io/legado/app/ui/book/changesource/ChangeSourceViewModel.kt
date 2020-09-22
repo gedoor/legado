@@ -120,11 +120,11 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                 .onSuccess(IO) {
                     it.forEach { searchBook ->
                         if (searchBook.name == name && searchBook.author == author) {
-                            if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
-                                if (searchBook.tocUrl.isEmpty()) {
+                            if (searchBook.latestChapterTitle.isNullOrEmpty()) {
+                                if (context.getPrefBoolean(PreferKey.changeSourceLoadInfo) || context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
                                     loadBookInfo(searchBook.toBook())
                                 } else {
-                                    loadChapter(searchBook.toBook())
+                                    searchFinish(searchBook)
                                 }
                             } else {
                                 searchFinish(searchBook)
@@ -156,7 +156,14 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
                 WebBook(bookSource).getBookInfo(book, this)
                     .onSuccess {
-                        loadChapter(it)
+                        if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
+                            loadChapter(it)
+                        } else {
+                            //从详情页里获取最新章节
+                            book.latestChapterTitle = it.latestChapterTitle
+                            val searchBook = book.toSearchBook()
+                            searchFinish(searchBook)
+                        }
                     }.onError {
                         debug { context.getString(R.string.error_get_book_info) }
                     }
