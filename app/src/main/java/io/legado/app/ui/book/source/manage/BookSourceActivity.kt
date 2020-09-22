@@ -15,6 +15,7 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.BuildConfig
 import io.legado.app.R
@@ -41,6 +42,7 @@ import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.activity_book_source.recycler_view
+import kotlinx.android.synthetic.main.activity_book_source.title_bar
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_progressbar_view.*
 import kotlinx.android.synthetic.main.dialog_progressbar_view.tv_footer_left
@@ -300,7 +302,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                         CheckSource.keyword = it
                     }
                 }
-                CheckSource.start(this@BookSourceActivity, adapter.getSelection())
+                val bundle = Bundle()
+                bundle.putInt("maxProgress", adapter.getSelection().size)
+                CheckSourceDialog().apply {
+                    arguments = bundle
+                    CheckSource.start(this@BookSourceActivity, adapter.getSelection())
+                }.show(supportFragmentManager, "CheckDialog")
             }
             noButton { }
         }.show().applyTint()
@@ -390,18 +397,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     override fun observeLiveBus() {
-        observeEvent<Int>(EventBus.CHECK_INIT) { max->
-            val bundle = Bundle()
-            bundle.putInt("maxProgress", max)
-            CheckSourceDialog().apply {
-                arguments = bundle
-            }.show(supportFragmentManager, "CheckDialog")
-        }
         observeEvent<Int>(EventBus.CHECK_DONE) {
             groups.map { group->
                 if (group.contains("失效")) {
                     search_view.setQuery("失效", true)
-                    toast("发现有失效书源，已为您自动筛选！")
+                    Snackbar.make(title_bar, "发现有失效书源，已为您自动筛选！", Snackbar.LENGTH_LONG).show()
                 }
             }
         }

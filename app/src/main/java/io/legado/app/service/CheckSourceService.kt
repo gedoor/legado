@@ -80,8 +80,6 @@ class CheckSourceService : BaseService() {
         threadCount = min(allIds.size, threadCount)
         if (backgroundVerification) {
             updateNotification(0, getString(R.string.progress_show, "", 0, allIds.size))
-        } else {
-            postEvent(EventBus.CHECK_INIT, allIds.size)
         }
         for (i in 0 until threadCount) {
             check()
