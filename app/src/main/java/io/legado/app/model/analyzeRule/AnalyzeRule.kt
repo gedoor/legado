@@ -406,6 +406,9 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         internal val putMap = HashMap<String, String>()
         private val ruleParam = ArrayList<String>()
         private val ruleType = ArrayList<Int>()
+        private val getRuleType = -2
+        private val jsRuleType = -1
+        private val defaultRuleType = 0
 
         init {
             this.mode = mainMode
@@ -461,11 +464,11 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                 tmp = evalMatcher.group()
                 when {
                     tmp.startsWith("@get:", true) -> {
-                        ruleType.add(-2)
+                        ruleType.add(getRuleType)
                         ruleParam.add(tmp.substring(6, tmp.lastIndex))
                     }
                     tmp.startsWith("{{") -> {
-                        ruleType.add(-1)
+                        ruleType.add(jsRuleType)
                         ruleParam.add(tmp.substring(2, tmp.length - 2))
                     }
                     else -> {
@@ -494,7 +497,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                 }
                 if (regexMatcher.start() > start) {
                     tmp = ruleStr.substring(start, regexMatcher.start())
-                    ruleType.add(0)
+                    ruleType.add(defaultRuleType)
                     ruleParam.add(tmp)
                 }
                 tmp = regexMatcher.group()
@@ -504,7 +507,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             }
             if (ruleStr.length > start) {
                 tmp = ruleStr.substring(start)
-                ruleType.add(0)
+                ruleType.add(defaultRuleType)
                 ruleParam.add(tmp)
             }
         }
@@ -519,7 +522,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                 while (index-- > 0) {
                     val regType = ruleType[index]
                     when {
-                        regType > 0 -> {
+                        regType > defaultRuleType -> {
                             @Suppress("UNCHECKED_CAST")
                             val resultList = result as? List<String?>
                             if (resultList != null) {
@@ -532,7 +535,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                                 infoVal.insert(0, ruleParam[index])
                             }
                         }
-                        regType == -1 -> {
+                        regType == jsRuleType -> {
                             if (isRule(ruleParam[index])) {
                                 getString(arrayListOf(SourceRule(ruleParam[index]))).let {
                                     infoVal.insert(0, it)
@@ -550,7 +553,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                                 }
                             }
                         }
-                        regType == -2 -> {
+                        regType == getRuleType -> {
                             infoVal.insert(0, get(ruleParam[index]))
                         }
                         else -> infoVal.insert(0, ruleParam[index])
