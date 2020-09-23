@@ -6,9 +6,11 @@ import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
+import io.legado.app.utils.EncodingDetect
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.util.*
 
 @Keep
@@ -38,6 +40,34 @@ interface JsExtensions {
         } catch (e: Exception) {
             e.msg
         }
+    }
+
+    /**
+     * js实现读取压缩文件内的文件内容，并删除压缩文件
+     */
+    fun getTxtInZip(zipPath: String): String {
+        // 解压路径
+        val unzipPath = FileUtils.getPath(
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            FileUtils.getNameExcludeExtension(zipPath)
+        )
+        FileUtils.deleteFile(unzipPath)
+        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
+        val zipFile = FileUtils.createFileIfNotExist(zipPath)
+        ZipUtils.unzipFile(zipFile, unzipFolder)
+        val content = StringBuilder()
+        unzipFolder.listFiles().let {
+            if (it != null) {
+                for (f in it) {
+                    val charsetName = EncodingDetect.getEncode(f)
+                    content.append(String(f.readBytes(), Charset.forName(charsetName))).append("\n")
+                }
+                content.deleteCharAt(content.length - 1)
+            }
+        }
+        FileUtils.deleteFile(zipPath)
+        FileUtils.deleteFile(unzipPath)
+        return content.toString()
     }
 
     /**
