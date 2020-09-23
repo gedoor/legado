@@ -59,7 +59,7 @@ object AppConfig {
         }
 
     val backgroundVerification: Boolean
-        get() = App.INSTANCE.getPrefBoolean(R.string.pk_background_verification)
+        get() = App.INSTANCE.getPrefBoolean(R.string.pk_background_verification, true)
 
     val autoRefreshBook: Boolean
         get() = App.INSTANCE.getPrefBoolean(R.string.pk_auto_refresh)
