@@ -67,6 +67,10 @@ class AnalyzeUrl(
         }
         headerMapF?.let {
             headerMap.putAll(it)
+            if (it.containsKey("proxy")) {
+                proxy = it["proxy"]
+                headerMap.remove("proxy")
+            }
         }
         //替换参数
         analyzeJs(key, page, speakText, speakSpeed, book)
@@ -187,7 +191,6 @@ class AnalyzeUrl(
             val option = GSON.fromJsonObject<UrlOption>(urlArray[1])
             option?.let { _ ->
                 option.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
-                option.proxy?.let { proxy = it }
                 option.headers?.let { headers ->
                     if (headers is Map<*, *>) {
                         headers.forEach { entry ->
@@ -417,8 +420,7 @@ class AnalyzeUrl(
         val charset: String?,
         val webView: Any?,
         val headers: Any?,
-        val body: Any?,
-        val proxy: String?
+        val body: Any?
     )
 
 }
