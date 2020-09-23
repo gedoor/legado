@@ -10,6 +10,8 @@
     <string name="menu_import_old">匯入閱讀資料</string>
     <string name="mkdirs">建立子資料夾</string>
     <string name="mkdirs_description">建立legado資料夾作為備份資料夾</string>
+    <string name="webdav_cache_backup">離線緩存書籍備份</string>
+    <string name="webdav_cache_backup_s">導出本地同時備份到legado文件夾下exports目錄</string>
     <string name="backup_path">備份路徑</string>
     <string name="menu_import_old_version">匯入舊版資料</string>
     <string name="menu_import_github">匯入Github資料</string>
@@ -94,6 +96,8 @@
         閱讀3.0下載網址：\nhttps://play.google.com/store/apps/details?id=io.legado.play.release
     </string>
     <string name="version_name">Version %s</string>
+    <string name="pt_background_verification">後臺校驗書源</string>
+    <string name="ps_background_verification">打開后可以在校驗書源時自由操作</string>
     <string name="pt_auto_refresh">自動重新整理</string>
     <string name="ps_auto_refresh">打開軟體時自動更新書籍</string>
     <string name="pt_auto_download">自動下載最新章節</string>
@@ -223,6 +227,7 @@
     <string name="load_error_retry">載入失敗,點擊重試</string>
     <string name="book_intro">內容簡介</string>
     <string name="intro_show">簡介:%s</string>
+    <string name="intro_show_null">簡介: 暫無簡介</string>
     <string name="open_from_other">打開外部書籍</string>
     <string name="origin_show">來源: %s</string>
     <string name="import_replace_rule">本機匯入</string>
@@ -288,7 +293,7 @@
     <string name="padding_right">右邊距</string>
     <string name="check_book_source">校驗書源</string>
     <string name="check_select_source">校驗所選</string>
-    <string name="progress_show">進度 %1$d/%2$d</string>
+    <string name="progress_show">%1$s      進度 %2$d/%3$d</string>
     <string name="tts_fix">請安裝並選擇中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失敗!</string>
     <string name="jf_convert">簡繁轉換</string>
@@ -564,6 +569,7 @@
     <string name="export_selection">匯出所選</string>
     <string name="export">匯出</string>
     <string name="load_toc">載入目錄</string>
+    <string name="load_info">載入詳情頁</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav 密碼</string>
     <string name="web_dav_pw_s">輸入你的WebDav授權密碼</string>
@@ -761,7 +767,6 @@
     <string name="select_theme">切換默認主題</string>
     <string name="share_selected_source">分享選中書源</string>
     <string name="sort_by_lastUppdateTime">時間排序</string>
-    <string name="search_content">搜索</string>
-
+    <string name="search_content">全文搜索</string>
 
 </resources>

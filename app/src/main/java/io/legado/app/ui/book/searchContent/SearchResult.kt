@@ -2,10 +2,6 @@ package io.legado.app.ui.book.searchContent
 
 import android.text.Spanned
 import androidx.core.text.HtmlCompat
-import io.legado.app.App
-import io.legado.app.R
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.hexString
 
 data class SearchResult(
     var index: Int = 0,
@@ -19,25 +15,25 @@ data class SearchResult(
     var newPosition: Int = 0,
     var contentPosition: Int =0
 ) {
-    val presentText: String
-        get(){
-            return colorPresentText(newPosition, query, text) +
-                    "<font color=#0000ff>($chapterTitle)</font>"
-        }
 
-    fun colorPresentText(position: Int, center: String, targetText: String): String {
+    fun getHtmlCompat(textColor: String, accentColor: String): Spanned {
+        val html = colorPresentText(newPosition, query, text, textColor, accentColor) +
+                "<font color=#${accentColor}>($chapterTitle)</font>"
+        return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    }
+
+    private fun colorPresentText(
+        position: Int,
+        center: String,
+        targetText: String,
+        textColor: String,
+        accentColor: String
+    ): String {
         val sub1 = text.substring(0, position)
         val sub2 = text.substring(position + center.length, targetText.length)
-        val textColor = App.INSTANCE.getCompatColor(R.color.primaryText).hexString
         return "<font color=#${textColor}>$sub1</font>" +
-                "<font color=#ff0000>$center</font>" +
+                "<font color=#${accentColor}>$center</font>" +
                 "<font color=#${textColor}>$sub2</font>"
     }
-
-    fun parseText(targetText: String): Spanned {
-        return HtmlCompat.fromHtml(targetText, HtmlCompat.FROM_HTML_MODE_LEGACY)
-    }
-
-
 
 }

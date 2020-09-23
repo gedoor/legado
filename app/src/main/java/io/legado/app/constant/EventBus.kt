@@ -20,4 +20,8 @@ object EventBus {
     const val WEB_SERVICE_STOP = "webServiceStop"
     const val UP_DOWNLOAD = "upDownload"
     const val SAVE_CONTENT = "saveContent"
+    const val CHECK_INIT = "checkInit"
+    const val CHECK_UP_PROGRESS = "checkProgress"
+    const val CHECK_UP_PROGRESS_STRING = "checkProgressTxt"
+    const val CHECK_DONE = "checkDone"
 }
