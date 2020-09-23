@@ -3,11 +3,11 @@ package io.legado.app.help
 import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
+import io.legado.app.help.http.SSLHelper
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.EncoderUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.htmlFormat
-import io.legado.app.utils.msg
+import io.legado.app.utils.*
+import org.jsoup.Connection
+import org.jsoup.Jsoup
 import java.net.URLEncoder
 import java.util.*
 
@@ -38,6 +38,30 @@ interface JsExtensions {
         } catch (e: Exception) {
             e.msg
         }
+    }
+
+    /**
+     * js实现重定向拦截,不能删
+     */
+    fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
+        return Jsoup.connect(urlStr)
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+            .ignoreContentType(true)
+            .followRedirects(false)
+            .headers(headers)
+            .method(Connection.Method.GET)
+            .execute()
+    }
+
+    fun post(urlStr: String, body: String, headers: Map<String, String>): Connection.Response {
+        return Jsoup.connect(urlStr)
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+            .ignoreContentType(true)
+            .followRedirects(false)
+            .requestBody(body)
+            .headers(headers)
+            .method(Connection.Method.POST)
+            .execute()
     }
 
     /**
