@@ -60,6 +60,7 @@ class AnalyzeUrl(
     private var method = RequestMethod.GET
     private val splitUrlRegex = Regex(",\\s*(?=\\{)")
     private var proxy: String? = null
+    private var type: String? = null
 
     init {
         baseUrl?.let {
@@ -191,6 +192,7 @@ class AnalyzeUrl(
             val option = GSON.fromJsonObject<UrlOption>(urlArray[1])
             option?.let { _ ->
                 option.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
+                option.type?.let { type = it }
                 option.headers?.let { headers ->
                     if (headers is Map<*, *>) {
                         headers.forEach { entry ->
@@ -326,6 +328,22 @@ class AnalyzeUrl(
         jsStr: String? = null,
         sourceRegex: String? = null,
     ): Res {
+        if (type.equals("zip", true)) {
+            val zipPath = FileUtils.getPath(
+                FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+                "${MD5Utils.md5Encode16(tag)}.zip"
+            )
+            FileUtils.deleteFile(zipPath)
+            getResponseBytes(tag).let {
+                return if (it != null) {
+                    FileUtils.createFileIfNotExist(zipPath).writeBytes(it)
+                    // 返回压缩文件的下载路径
+                    Res(url, zipPath)
+                } else {
+                    Res(url, "文件下载失败\n${zipPath}")
+                }
+            }
+        }
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
             params.headerMap = headerMap
@@ -420,7 +438,8 @@ class AnalyzeUrl(
         val charset: String?,
         val webView: Any?,
         val headers: Any?,
-        val body: Any?
+        val body: Any?,
+        val type: String?
     )
 
 }
