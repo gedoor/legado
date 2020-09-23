@@ -447,39 +447,44 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                     else -> rule = ruleStr
                 }
             }
-            //分离put
-            rule = splitPutRule(rule, putMap)
-            //@get,{{ }}, 拆分
-            var start = 0
-            var tmp: String
-            val evalMatcher = evalPattern.matcher(rule)
-            while (evalMatcher.find()) {
-                if (evalMatcher.start() > start) {
-                    tmp = rule.substring(start, evalMatcher.start())
-                    if (start == 0 && !tmp.contains("##") && mode != Mode.Js) {
-                        mode = Mode.Regex
-                    }
-                    splitRegex(tmp)
-                }
-                tmp = evalMatcher.group()
-                when {
-                    tmp.startsWith("@get:", true) -> {
-                        ruleType.add(getRuleType)
-                        ruleParam.add(tmp.substring(6, tmp.lastIndex))
-                    }
-                    tmp.startsWith("{{") -> {
-                        ruleType.add(jsRuleType)
-                        ruleParam.add(tmp.substring(2, tmp.length - 2))
-                    }
-                    else -> {
+            if (mode == Mode.Js) {
+                ruleType.add(defaultRuleType)
+                ruleParam.add(rule)
+            } else {
+                //分离put
+                rule = splitPutRule(rule, putMap)
+                //@get,{{ }}, 拆分
+                var start = 0
+                var tmp: String
+                val evalMatcher = evalPattern.matcher(rule)
+                while (evalMatcher.find()) {
+                    if (evalMatcher.start() > start) {
+                        tmp = rule.substring(start, evalMatcher.start())
+                        if (start == 0 && !tmp.contains("##")) {
+                            mode = Mode.Regex
+                        }
                         splitRegex(tmp)
                     }
+                    tmp = evalMatcher.group()
+                    when {
+                        tmp.startsWith("@get:", true) -> {
+                            ruleType.add(getRuleType)
+                            ruleParam.add(tmp.substring(6, tmp.lastIndex))
+                        }
+                        tmp.startsWith("{{") -> {
+                            ruleType.add(jsRuleType)
+                            ruleParam.add(tmp.substring(2, tmp.length - 2))
+                        }
+                        else -> {
+                            splitRegex(tmp)
+                        }
+                    }
+                    start = evalMatcher.end()
                 }
-                start = evalMatcher.end()
-            }
-            if (rule.length > start) {
-                tmp = rule.substring(start)
-                splitRegex(tmp)
+                if (rule.length > start) {
+                    tmp = rule.substring(start)
+                    splitRegex(tmp)
+                }
             }
         }
 
@@ -492,9 +497,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             val ruleStrArray = ruleStr.split("##")
             val regexMatcher = regexPattern.matcher(ruleStrArray[0])
             while (regexMatcher.find()) {
-                if (mode != Mode.Js) {
-                    mode = Mode.Regex
-                }
+                mode = Mode.Regex
                 if (regexMatcher.start() > start) {
                     tmp = ruleStr.substring(start, regexMatcher.start())
                     ruleType.add(defaultRuleType)
