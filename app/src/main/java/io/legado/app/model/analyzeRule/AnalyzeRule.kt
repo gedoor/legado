@@ -480,12 +480,18 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             }
         }
 
+        /**
+         * 拆分\$\d{1,2}
+         */
         private fun splitRegex(ruleStr: String) {
             var start = 0
             var tmp: String
             val ruleStrArray = ruleStr.split("##")
             val regexMatcher = regexPattern.matcher(ruleStrArray[0])
             while (regexMatcher.find()) {
+                if (mode != Mode.Js) {
+                    mode = Mode.Regex
+                }
                 if (regexMatcher.start() > start) {
                     tmp = ruleStr.substring(start, regexMatcher.start())
                     ruleType.add(0)
@@ -652,7 +658,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
         private val evalPattern =
             Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
-        private val regexPattern = Pattern.compile("\\\$\\d{1,2}")
+        private val regexPattern = Pattern.compile("\\$\\d{1,2}")
     }
 
 }
