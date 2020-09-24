@@ -37,7 +37,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
-            android:key="webDavExport"
+            android:key="webDavCacheBackup"
             android:defaultValue="false"
             android:title="@string/webdav_cache_backup"
             android:summary="@string/webdav_cache_backup_s"
