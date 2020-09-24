@@ -464,6 +464,8 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                             mode = Mode.Regex
                         }
                         splitRegex(tmp)
+                    } else if (evalMatcher.start() == 0) {
+                        mode = Mode.Regex
                     }
                     tmp = evalMatcher.group()
                     when {

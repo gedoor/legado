@@ -82,7 +82,7 @@
     <string name="is_loading">載入中…</string>
     <string name="retry">重試</string>
     <string name="web_service">Web 服務</string>
-    <string name="web_service_desc">啟用Web服務</string>
+    <string name="web_service_desc">瀏覽器寫源,看書</string>
     <string name="web_edit_source">web編輯書源</string>
     <string name="http_ip">http://%1$s:%2$d</string>
     <string name="offline_cache">離線緩存</string>
