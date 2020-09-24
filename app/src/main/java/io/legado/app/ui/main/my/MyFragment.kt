@@ -29,7 +29,10 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.prefs.NameListPreference
 import io.legado.app.ui.widget.prefs.PreferenceCategory
 import io.legado.app.ui.widget.prefs.SwitchPreference
-import io.legado.app.utils.*
+import io.legado.app.utils.LogUtils
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.observeEventSticky
+import io.legado.app.utils.putPrefBoolean
 import kotlinx.android.synthetic.main.view_title_bar.*
 import org.jetbrains.anko.startActivity
 
@@ -80,8 +83,15 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
             }
             addPreferencesFromResource(R.xml.pref_main)
             val webServicePre = findPreference<SwitchPreference>(PreferKey.webService)
-            observeEvent<Boolean>(EventBus.WEB_SERVICE_STOP) {
-                webServicePre?.isChecked = false
+            observeEventSticky<String>(EventBus.WEB_SERVICE) {
+                webServicePre?.let {
+                    it.isChecked = WebService.isRun
+                    it.summary = if (WebService.isRun) {
+                        WebService.hostAddress
+                    } else {
+                        getString(R.string.web_service_desc)
+                    }
+                }
             }
             findPreference<NameListPreference>(PreferKey.themeMode)?.let {
                 it.setOnPreferenceChangeListener { _, _ ->
@@ -118,10 +128,8 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
                 PreferKey.webService -> {
                     if (requireContext().getPrefBoolean("webService")) {
                         WebService.start(requireContext())
-                        toast(R.string.service_start)
                     } else {
                         WebService.stop(requireContext())
-                        toast(R.string.service_stop)
                     }
                 }
                 "recordLog" -> LogUtils.upLevel()
