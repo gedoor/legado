@@ -60,6 +60,7 @@ class AnalyzeUrl(
     private var method = RequestMethod.GET
     private val splitUrlRegex = Regex(",\\s*(?=\\{)")
     private var proxy: String? = null
+    private var type: String? = null
 
     init {
         baseUrl?.let {
@@ -191,6 +192,7 @@ class AnalyzeUrl(
             val option = GSON.fromJsonObject<UrlOption>(urlArray[1])
             option?.let { _ ->
                 option.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
+                option.type?.let { type = it }
                 option.headers?.let { headers ->
                     if (headers is Map<*, *>) {
                         headers.forEach { entry ->
@@ -304,19 +306,19 @@ class AnalyzeUrl(
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl, charset)
+                        .getApiService<HttpPostApi>(baseUrl, charset, proxy)
                         .postMap(url, fieldMap, headerMap)
                 } else {
                     HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl, charset)
+                        .getApiService<HttpPostApi>(baseUrl, charset, proxy)
                         .postBody(url, requestBody!!, headerMap)
                 }
             }
             fieldMap.isEmpty() -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl, charset)
+                .getApiService<HttpGetApi>(baseUrl, charset, proxy)
                 .get(url, headerMap)
             else -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl, charset)
+                .getApiService<HttpGetApi>(baseUrl, charset, proxy)
                 .getMap(url, fieldMap, headerMap)
         }
     }
@@ -326,6 +328,9 @@ class AnalyzeUrl(
         jsStr: String? = null,
         sourceRegex: String? = null,
     ): Res {
+        if (type != null) {
+            return Res(url, StringUtils.byteToHexString(getResponseBytes(tag)))
+        }
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
             params.headerMap = headerMap
@@ -343,51 +348,24 @@ class AnalyzeUrl(
         val res = when {
             method == RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
-                    if (proxy == null) {
-                        HttpHelper
-                            .getApiService<HttpPostApi>(baseUrl, charset)
-                            .postMapAsync(url, fieldMap, headerMap)
-                    } else {
-                        HttpHelper
-                            .getApiServiceWithProxy<HttpPostApi>(baseUrl, charset, proxy)
-                            .postMapAsync(url, fieldMap, headerMap)
-                    }
+                    HttpHelper
+                        .getApiService<HttpPostApi>(baseUrl, charset, proxy)
+                        .postMapAsync(url, fieldMap, headerMap)
                 } else {
-                    if (proxy == null) {
-                        HttpHelper
-                            .getApiService<HttpPostApi>(baseUrl, charset)
-                            .postBodyAsync(url, requestBody!!, headerMap)
-                    } else {
-                        HttpHelper
-                            .getApiServiceWithProxy<HttpPostApi>(baseUrl, charset, proxy)
-                            .postBodyAsync(url, requestBody!!, headerMap)
-                    }
+                    HttpHelper
+                        .getApiService<HttpPostApi>(baseUrl, charset, proxy)
+                        .postBodyAsync(url, requestBody!!, headerMap)
                 }
             }
             fieldMap.isEmpty() -> {
-                if (proxy == null) {
-                    HttpHelper
-                        .getApiService<HttpGetApi>(baseUrl, charset)
-                        .getAsync(url, headerMap)
-
-                } else {
-                    HttpHelper
-                        .getApiServiceWithProxy<HttpGetApi>(baseUrl, charset, proxy)
-                        .getAsync(url, headerMap)
-                }
-
+                HttpHelper
+                    .getApiService<HttpGetApi>(baseUrl, charset, proxy)
+                    .getAsync(url, headerMap)
             }
             else -> {
-                if (proxy == null) {
-                    HttpHelper
-                        .getApiService<HttpGetApi>(baseUrl, charset)
-                        .getMapAsync(url, fieldMap, headerMap)
-                } else {
-                    HttpHelper
-                        .getApiServiceWithProxy<HttpGetApi>(baseUrl, charset, proxy)
-                        .getMapAsync(url, fieldMap, headerMap)
-                }
-
+                HttpHelper
+                    .getApiService<HttpGetApi>(baseUrl, charset, proxy)
+                    .getMapAsync(url, fieldMap, headerMap)
             }
         }
         return Res(NetworkUtils.getUrl(res), res.body())
@@ -448,6 +426,7 @@ class AnalyzeUrl(
         val webView: Any?,
         val headers: Any?,
         val body: Any?,
+        val type: String?
     )
 
 }
