@@ -328,21 +328,8 @@ class AnalyzeUrl(
         jsStr: String? = null,
         sourceRegex: String? = null,
     ): Res {
-        if (type.equals("zip", true)) {
-            val zipPath = FileUtils.getPath(
-                FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-                "${MD5Utils.md5Encode16(tag)}.zip"
-            )
-            FileUtils.deleteFile(zipPath)
-            getResponseBytes(tag).let {
-                return if (it != null) {
-                    FileUtils.createFileIfNotExist(zipPath).writeBytes(it)
-                    // 返回压缩文件的下载路径
-                    Res(url, zipPath)
-                } else {
-                    Res(url, "文件下载失败\n${zipPath}")
-                }
-            }
+        if (type != null) {
+            return Res(url, StringUtils.byteToHexString(getResponseBytes(tag)))
         }
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)

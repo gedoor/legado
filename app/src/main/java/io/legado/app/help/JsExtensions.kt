@@ -43,31 +43,57 @@ interface JsExtensions {
     }
 
     /**
-     * js实现读取压缩文件内的文件内容，并删除压缩文件
+     * js实现文件下载
      */
-    fun getTxtInZip(zipPath: String): String {
-        // 解压路径
+    fun downloadFile(content: String, url: String): String {
+        val zipPath = FileUtils.getPath(
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            "${MD5Utils.md5Encode16(url)}.zip"
+        )
+        FileUtils.deleteFile(zipPath)
+        val zipFile = FileUtils.createFileIfNotExist(zipPath)
+        StringUtils.hexStringToByte(content).let {
+            if (it != null) {
+                zipFile.writeBytes(it)
+            }
+        }
+        return zipPath
+    }
+
+    /**
+     * js实现压缩文件解压
+     */
+    fun unzipFile(zipPath: String): String {
         val unzipPath = FileUtils.getPath(
             FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
             FileUtils.getNameExcludeExtension(zipPath)
         )
         FileUtils.deleteFile(unzipPath)
-        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
+        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
         ZipUtils.unzipFile(zipFile, unzipFolder)
-        val content = StringBuilder()
+        FileUtils.deleteFile(zipPath)
+        return unzipPath
+    }
+
+    /**
+     * js实现文件夹内所有文件读取
+     */
+    fun getTxtInFolder(unzipPath: String): String {
+        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
+        val contents = StringBuilder()
         unzipFolder.listFiles().let {
             if (it != null) {
                 for (f in it) {
                     val charsetName = EncodingDetect.getEncode(f)
-                    content.append(String(f.readBytes(), Charset.forName(charsetName))).append("\n")
+                    contents.append(String(f.readBytes(), Charset.forName(charsetName)))
+                        .append("\n")
                 }
-                content.deleteCharAt(content.length - 1)
+                contents.deleteCharAt(contents.length - 1)
             }
         }
-        FileUtils.deleteFile(zipPath)
         FileUtils.deleteFile(unzipPath)
-        return content.toString()
+        return contents.toString()
     }
 
     /**
