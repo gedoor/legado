@@ -1,4 +1,4 @@
-package io.legado.app.web.controller
+package io.legado.app.web
 
 
 import fi.iki.elonen.NanoHTTPD
