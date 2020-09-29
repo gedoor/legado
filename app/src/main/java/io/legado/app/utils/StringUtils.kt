@@ -295,7 +295,7 @@ object StringUtils {
 
     fun byteToHexString(bytes: ByteArray?): String {
         if (bytes == null) return ""
-        val sb = StringBuilder(bytes.size * 2)
+        val sb = StringBuilder()
         for (b in bytes) {
             val hex = 0xff and b.toInt()
             if (hex < 16) {
