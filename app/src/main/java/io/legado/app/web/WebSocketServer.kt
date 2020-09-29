@@ -1,7 +1,7 @@
 package io.legado.app.web
 
 import fi.iki.elonen.NanoWSD
-import io.legado.app.web.controller.SourceDebugWebSocket
+import io.legado.app.web.utils.SourceDebugWebSocket
 
 class WebSocketServer(port: Int) : NanoWSD(port) {
 
