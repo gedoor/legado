@@ -295,17 +295,17 @@ object StringUtils {
 
     fun byteToHexString(bytes: ByteArray?): String {
         if (bytes == null) return ""
-        val sb = StringBuilder()
+        val sb = StringBuilder(bytes.size * 2)
         for (b in bytes) {
             val hex = 0xff and b.toInt()
             if (hex < 16) {
                 sb.append('0')
             }
-            sb.append(Integer.toHexString(hex)).append(" ")
+            sb.append(Integer.toHexString(hex))
         }
         return sb.toString()
     }
-
+   
     fun hexStringToByte(hexString: String): ByteArray? {
         val hexStr = hexString.replace(" ", "")
         val len = hexStr.length
