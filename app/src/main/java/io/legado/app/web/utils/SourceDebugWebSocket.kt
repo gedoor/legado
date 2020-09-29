@@ -1,4 +1,4 @@
-package io.legado.app.web
+package io.legado.app.web.utils
 
 
 import fi.iki.elonen.NanoHTTPD
