@@ -69,9 +69,7 @@ class DownloadService : BaseService() {
             IntentAction.stop -> {
                 val downloadId = intent.getLongExtra("downloadId", 0)
                 downloads.remove(downloadId)
-                if (downloads.isEmpty()) {
-                    stopSelf()
-                }
+                stopSelf()
             }
         }
         return super.onStartCommand(intent, flags, startId)
