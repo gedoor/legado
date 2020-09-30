@@ -19,6 +19,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.elevation
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.main.bookshelf.BookshelfFragment
 import io.legado.app.ui.main.explore.ExploreFragment
@@ -47,6 +48,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         view_pager_main.offscreenPageLimit = 3
         view_pager_main.adapter = TabFragmentPageAdapter(supportFragmentManager)
         view_pager_main.addOnPageChangeListener(this)
+        bottom_navigation_view.elevation =
+            if (AppConfig.elevation < 0) elevation else AppConfig.elevation.toFloat()
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
         bottom_navigation_view.setOnNavigationItemReselectedListener(this)
         bottom_navigation_view.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
@@ -167,33 +170,37 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private inner class TabFragmentPageAdapter(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-        private fun getBookshelfFragment(): Fragment {
-            if (!fragmentMap.containsKey(0)) {
-                fragmentMap[0] = BookshelfFragment()
+        val bookshelfFragment: Fragment
+            get() {
+                if (!fragmentMap.containsKey(0)) {
+                    fragmentMap[0] = BookshelfFragment()
+                }
+                return fragmentMap.getValue(0)
             }
-            return fragmentMap.getValue(0)
-        }
 
-        private fun getExploreFragment(): Fragment {
-            if (!fragmentMap.containsKey(1)) {
-                fragmentMap[1] = ExploreFragment()
+        val exploreFragment: Fragment
+            get() {
+                if (!fragmentMap.containsKey(1)) {
+                    fragmentMap[1] = ExploreFragment()
+                }
+                return fragmentMap.getValue(1)
             }
-            return fragmentMap.getValue(1)
-        }
 
-        private fun getRssFragment(): Fragment {
-            if (!fragmentMap.containsKey(2)) {
-                fragmentMap[2] = RssFragment()
+        val rssFragment: Fragment
+            get() {
+                if (!fragmentMap.containsKey(2)) {
+                    fragmentMap[2] = RssFragment()
+                }
+                return fragmentMap.getValue(2)
             }
-            return fragmentMap.getValue(2)
-        }
 
-        private fun getMyFragment(): Fragment {
-            if (!fragmentMap.containsKey(3)) {
-                fragmentMap[3] = MyFragment()
+        val myFragment: Fragment
+            get() {
+                if (!fragmentMap.containsKey(3)) {
+                    fragmentMap[3] = MyFragment()
+                }
+                return fragmentMap.getValue(3)
             }
-            return fragmentMap.getValue(3)
-        }
 
         override fun getItemPosition(`object`: Any): Int {
             return POSITION_NONE
@@ -201,14 +208,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> getBookshelfFragment()
-                1 -> getExploreFragment()
-                2 -> if (AppConfig.isShowRSS) {
-                    getRssFragment()
-                } else {
-                    getMyFragment()
-                }
-                else -> getMyFragment()
+                0 -> bookshelfFragment
+                1 -> exploreFragment
+                2 -> if (AppConfig.isShowRSS) rssFragment else myFragment
+                else -> myFragment
             }
         }
 

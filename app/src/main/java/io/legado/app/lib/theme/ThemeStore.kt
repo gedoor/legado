@@ -187,7 +187,10 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
 
         @CheckResult
         internal fun prefs(context: Context): SharedPreferences {
-            return context.getSharedPreferences(ThemeStorePrefKeys.CONFIG_PREFS_KEY_DEFAULT, Context.MODE_PRIVATE)
+            return context.getSharedPreferences(
+                ThemeStorePrefKeys.CONFIG_PREFS_KEY_DEFAULT,
+                Context.MODE_PRIVATE
+            )
         }
 
         fun markChanged(context: Context) {
@@ -227,9 +230,15 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
             return if (!coloredStatusBar(context)) {
                 Color.BLACK
             } else if (transparent) {
-                prefs(context).getInt(ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR, primaryColor(context))
+                prefs(context).getInt(
+                    ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR,
+                    primaryColor(context)
+                )
             } else {
-                prefs(context).getInt(ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR, primaryColorDark(context))
+                prefs(context).getInt(
+                    ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR,
+                    primaryColorDark(context)
+                )
             }
         }
 
@@ -289,11 +298,16 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
             )
         }
 
+        @SuppressLint("PrivateResource")
         @CheckResult
         fun elevation(context: Context): Float {
             return prefs(context).getFloat(
                 ThemeStorePrefKeys.KEY_ELEVATION,
-                ATHUtils.resolveFloat(context, android.R.attr.elevation, context.resources.getDimension(R.dimen.design_appbar_elevation))
+                ATHUtils.resolveFloat(
+                    context,
+                    android.R.attr.elevation,
+                    context.resources.getDimension(R.dimen.design_appbar_elevation)
+                )
             )
         }
 
@@ -308,7 +322,10 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
 
         @CheckResult
         fun coloredStatusBar(context: Context): Boolean {
-            return prefs(context).getBoolean(ThemeStorePrefKeys.KEY_APPLY_PRIMARYDARK_STATUSBAR, true)
+            return prefs(context).getBoolean(
+                ThemeStorePrefKeys.KEY_APPLY_PRIMARYDARK_STATUSBAR,
+                true
+            )
         }
 
         @CheckResult
