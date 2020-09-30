@@ -150,7 +150,7 @@ class AnalyzeUrl(
         //js
         if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
             var jsEval: Any
-            val sb = StringBuffer(ruleUrl.length)
+            val sb = StringBuffer()
             val simpleBindings = SimpleBindings()
             simpleBindings["java"] = this
             simpleBindings["baseUrl"] = baseUrl

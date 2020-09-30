@@ -65,6 +65,8 @@ class ReadMenu : FrameLayout {
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
         ll_brightness.background = brightnessBackground
         ll_bottom_bg.setBackgroundColor(bgColor)
+        fabSearch.backgroundTintList = bottomBackgroundList
+        fabSearch.setColorFilter(textColor)
         fabAutoPage.backgroundTintList = bottomBackgroundList
         fabAutoPage.setColorFilter(textColor)
         fabReplaceRule.backgroundTintList = bottomBackgroundList
@@ -170,6 +172,13 @@ class ReadMenu : FrameLayout {
             }
         })
 
+        //搜索
+        fabSearch.onClick {
+            runMenuOut {
+                callBack?.openSearchActivity(null)
+            }
+        }
+
         //自动翻页
         fabAutoPage.onClick {
             runMenuOut {
@@ -197,12 +206,6 @@ class ReadMenu : FrameLayout {
         ll_catalog.onClick {
             runMenuOut {
                 callBack?.openChapterList()
-            }
-        }
-
-        ll_search.onClick {
-            runMenuOut {
-                callBack?.openSearchList()
             }
         }
 
@@ -297,7 +300,7 @@ class ReadMenu : FrameLayout {
         fun autoPage()
         fun openReplaceRule()
         fun openChapterList()
-        fun openSearchList()
+        fun openSearchActivity(searchWord: String?)
         fun showReadStyle()
         fun showMoreSetting()
         fun showReadAloudDialog()

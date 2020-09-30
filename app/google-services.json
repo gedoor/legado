@@ -8,35 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:453392274790:android:1d2b1eefbe0e78cff624a7",
-        "android_client_info": {
-          "package_name": "io.legado.app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "453392274790-hnbpatpce9hbjiggj76hgo7queu86atq.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD90mfNLhA7cAzzI9SonpSz5mrF5BnmyJA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "453392274790-hnbpatpce9hbjiggj76hgo7queu86atq.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:453392274790:android:c4eac14b1410eec5f624a7",
         "android_client_info": {
           "package_name": "io.legado.app.debug"
@@ -73,6 +44,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "453392274790-trrgennt5njr1lhil1sgtf0ogcgd38fo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.legado.app.release",
+            "certificate_hash": "fd67dba87b7b761631266f19ddde249054aac5c1"
+          }
+        },
+        {
           "client_id": "453392274790-hnbpatpce9hbjiggj76hgo7queu86atq.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -101,6 +80,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "453392274790-f8sjn6ohs72rg1dvp0pdvk42nkq54p0k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.legado.play.release",
+            "certificate_hash": "00819ace9891386e535967cbafd6a88f3797bd5b"
+          }
+        },
         {
           "client_id": "453392274790-hnbpatpce9hbjiggj76hgo7queu86atq.apps.googleusercontent.com",
           "client_type": 3

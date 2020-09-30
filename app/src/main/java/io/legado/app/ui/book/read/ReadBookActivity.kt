@@ -49,7 +49,6 @@ import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.searchContent.SearchListActivity
-import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replacerule.ReplaceRuleActivity
@@ -58,16 +57,14 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.view_read_menu.*
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
+import java.lang.Runnable
 
 class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read),
     View.OnTouchListener,
@@ -496,6 +493,10 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 )
                 return true
             }
+            R.id.menu_search_content -> {
+                openSearchActivity(selectedText)
+                return true
+            }
         }
         return false
     }
@@ -680,12 +681,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 打开搜索界面
      */
-    //todo: change request code
-    override fun openSearchList() {
+    override fun openSearchActivity(searchWord: String?) {
         ReadBook.book?.let {
             startActivityForResult<SearchListActivity>(
                 requestCodeSearchResult,
-                Pair("bookUrl", it.bookUrl)
+                Pair("bookUrl", it.bookUrl),
+                Pair("searchWord", searchWord)
             )
         }
     }
@@ -787,14 +788,22 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                                 pages = ReadBook.curTextChapter?.pages
                             }
                             val positions = ReadBook.searchResultPositions(pages, indexWithinChapter, query!!)
-                            //todo: show selected text
-                            val job1 = async(Main){
+                            while (ReadBook.durPageIndex != positions[0]){
+                                delay(100L)
                                 ReadBook.skipToPage(positions[0])
-                                page_view.curPage.selectStartMoveIndex(positions[0], positions[1], 0)
-                                page_view.curPage.selectEndMoveIndex(positions[0], positions[1], 0 + query.length )
-                                page_view.isTextSelected = true
                             }
-                            job1.await()
+                            withContext(Main){
+                                page_view.curPage.selectStartMoveIndex(0, positions[1], positions[2])
+                                delay(20L)
+                                when (positions[3]){
+                                    0 -> page_view.curPage.selectEndMoveIndex(0, positions[1], positions[2] + query.length - 1)
+                                    1 -> page_view.curPage.selectEndMoveIndex(0, positions[1] + 1, positions[4])
+                                    //todo: consider change page, jump to scroll position
+                                    -1 -> page_view.curPage.selectEndMoveIndex(1, 0, positions[4])
+                                }
+                                page_view.isTextSelected = true
+                                delay(100L)
+                            }
                         }
                     }
                 requestCodeReplace -> onReplaceRuleSave()

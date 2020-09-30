@@ -1,6 +1,7 @@
 ## 放置与界面有关的类
 
 * about 关于界面
+* association 导入书源界面
 * audio 音频播放界面
 * book\arrange 书架整理界面
 * book\info 书籍信息查看

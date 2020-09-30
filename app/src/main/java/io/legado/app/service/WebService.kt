@@ -24,6 +24,7 @@ class WebService : BaseService() {
 
     companion object {
         var isRun = false
+        var hostAddress = ""
 
         fun start(context: Context) {
             context.startService<WebService>()
@@ -36,6 +37,7 @@ class WebService : BaseService() {
                 context.startService(intent)
             }
         }
+
     }
 
     private var httpServer: HttpServer? = null
@@ -56,7 +58,7 @@ class WebService : BaseService() {
         if (webSocketServer?.isAlive == true) {
             webSocketServer?.stop()
         }
-        postEvent(EventBus.WEB_SERVICE_STOP, true)
+        postEvent(EventBus.WEB_SERVICE, "")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -82,8 +84,10 @@ class WebService : BaseService() {
             try {
                 httpServer?.start()
                 webSocketServer?.start(1000 * 30) // 通信超时设置
+                hostAddress = getString(R.string.http_ip, address.hostAddress, port)
                 isRun = true
-                updateNotification(getString(R.string.http_ip, address.hostAddress, port))
+                postEvent(EventBus.WEB_SERVICE, hostAddress)
+                updateNotification(hostAddress)
             } catch (e: IOException) {
                 launch {
                     toast(e.localizedMessage ?: "")

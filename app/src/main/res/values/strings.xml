@@ -10,6 +10,8 @@
     <string name="menu_import_old">Import Legado data</string>
     <string name="mkdirs">Create a subfolder</string>
     <string name="mkdirs_description">Create a folder named Legado as the backup folder.</string>
+    <string name="webdav_cache_backup">Offline cache book backup</string>
+    <string name="webdav_cache_backup_s">Export to local and back up to the exports directory under the legado folder</string>
     <string name="backup_path">Backup to</string>
     <string name="select_backup_path">Please select a backup path.</string>
     <string name="menu_import_old_version">Import legacy data</string>
@@ -82,7 +84,7 @@
     <string name="is_loading">Loading…</string>
     <string name="retry">Retry</string>
     <string name="web_service">Web service</string>
-    <string name="web_service_desc">Enable web service</string>
+    <string name="web_service_desc">Web edit source and read book</string>
     <string name="web_edit_source">Edit book sources on the web</string>
     <string name="http_ip">http://%1$s:%2$d</string>
     <string name="offline_cache">Offline cache</string>
@@ -96,6 +98,8 @@
         Legado (YueDu 3.0) download link：\n https://play.google.com/store/apps/details?id=io.legado.play.release
     </string>
     <string name="version_name">Version %s</string>
+    <string name="pt_background_verification">Background-verification</string>
+    <string name="ps_background_verification">you can operate freely when verifying the book source</string>
     <string name="pt_auto_refresh">Auto-refresh</string>
     <string name="ps_auto_refresh">Update books automatically when opening the software</string>
     <string name="pt_auto_download">Auto-download</string>
@@ -225,6 +229,7 @@
     <string name="load_error_retry">Load failed, tap to retry</string>
     <string name="book_intro">Book description</string>
     <string name="intro_show">Description:%s</string>
+    <string name="intro_show_null">Description: no introduction</string>
     <string name="open_from_other">Open external book</string>
     <string name="origin_show">Origin: %s</string>
     <string name="import_replace_rule">Import local rules</string>
@@ -290,7 +295,7 @@
     <string name="padding_right">Padding right</string>
     <string name="check_book_source">Check book sources</string>
     <string name="check_select_source">Check the selected source</string>
-    <string name="progress_show">Progress %1$d/%2$d</string>
+    <string name="progress_show">%1$s      Progress %2$d/%3$d</string>
     <string name="tts_fix">Please install and select Chinese TTS!</string>
     <string name="tts_init_failed">TTS initialization failed!</string>
     <string name="jf_convert">Simplified conversion</string>
@@ -384,6 +389,9 @@
     <string name="source_name">源名称(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分组(sourceGroup)</string>
+    <string name="diy_source_group">自定义源分组</string>
+    <string name="diy_edit_source_group">输入自定义源分组名称</string>
+    <string name="diy_edit_source_group_title">【%s】</string>
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
@@ -569,6 +577,7 @@
     <string name="export_selection">Export selected</string>
     <string name="export">Export</string>
     <string name="load_toc">Load chapters</string>
+    <string name="load_info">Load book detail</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav password</string>
     <string name="web_dav_pw_s">Input you WebDav authorized password</string>
@@ -763,6 +772,6 @@
     <string name="theme_list_summary">Save, Import, Share theme</string>
     <string name="share_selected_source">Share selected sources</string>
     <string name="sort_by_lastUppdateTime">Sort by update time</string>
-    <string name="search_content">Search</string>
+    <string name="search_content">Search content</string>
 
 </resources>

@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_new_group"
+        android:title="@string/diy_source_group"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
         android:id="@+id/menu_select_all"
         android:title="@string/select_all"
         app:showAsAction="always"

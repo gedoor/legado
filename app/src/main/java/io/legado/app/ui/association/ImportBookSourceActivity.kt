@@ -20,15 +20,20 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.SourceHelp
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
+import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_translucence.*
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_source_import.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.toast
+
 
 class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
     R.layout.activity_translucence,
@@ -112,6 +117,7 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
     class SourcesDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
         lateinit var adapter: SourcesAdapter
+        private var _groupName: String? = null
 
         override fun onStart() {
             super.onStart()
@@ -165,6 +171,23 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
 
         override fun onMenuItemClick(item: MenuItem): Boolean {
             when (item.itemId) {
+                R.id.menu_new_group -> {
+                    alert(R.string.diy_edit_source_group) {
+                        var editText: AutoCompleteTextView? = null
+                        customView {
+                            layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                                editText = edit_view
+                            }
+                        }
+                        okButton {
+                            editText?.text?.toString()?.let { group ->
+                                _groupName = group
+                                item.title = getString(R.string.diy_edit_source_group_title, _groupName)
+                            }
+                        }
+                        noButton { }
+                    }.show().applyTint()
+                }
                 R.id.menu_select_all -> {
                     adapter.selectStatus.forEachIndexed { index, b ->
                         if (!b) {
@@ -193,6 +216,9 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
         private fun importSelect() {
             val selectSource = arrayListOf<BookSource>()
             adapter.selectStatus.forEachIndexed { index, b ->
+                if (_groupName != null) {
+                    adapter.getItem(index)!!.bookSourceGroup = _groupName
+                }
                 if (b) {
                     selectSource.add(adapter.getItem(index)!!)
                 }

@@ -75,7 +75,7 @@ object ReadBookConfig {
     }
 
     fun initShareConfig() {
-        val configFile = File(configFilePath)
+        val configFile = File(shareConfigFilePath)
         var c: Config? = null
         if (configFile.exists()) {
             try {

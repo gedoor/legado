@@ -88,6 +88,8 @@ class ChangeSourceDialog : BaseDialogFragment(),
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.menu.findItem(R.id.menu_load_toc)?.isChecked =
             getPrefBoolean(PreferKey.changeSourceLoadToc)
+        tool_bar.menu.findItem(R.id.menu_load_info)?.isChecked =
+            getPrefBoolean(PreferKey.changeSourceLoadInfo)
     }
 
     private fun initRecyclerView() {
@@ -157,6 +159,10 @@ class ChangeSourceDialog : BaseDialogFragment(),
         when (item?.itemId) {
             R.id.menu_load_toc -> {
                 putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
+                item.isChecked = !item.isChecked
+            }
+            R.id.menu_load_info -> {
+                putPrefBoolean(PreferKey.changeSourceLoadInfo, !item.isChecked)
                 item.isChecked = !item.isChecked
             }
             R.id.menu_stop -> viewModel.stopSearch()

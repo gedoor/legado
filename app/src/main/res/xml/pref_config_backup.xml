@@ -36,6 +36,15 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:key="webDavCacheBackup"
+            android:defaultValue="false"
+            android:title="@string/webdav_cache_backup"
+            android:summary="@string/webdav_cache_backup_s"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory

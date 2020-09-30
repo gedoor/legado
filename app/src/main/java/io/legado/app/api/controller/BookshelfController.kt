@@ -1,4 +1,4 @@
-package io.legado.app.web.controller
+package io.legado.app.api.controller
 
 import io.legado.app.App
 import io.legado.app.constant.PreferKey
@@ -79,6 +79,10 @@ object BookshelfController {
         val returnData = ReturnData()
         if (book != null) {
             App.db.bookDao().insert(book)
+            if (ReadBook.book?.bookUrl == book.bookUrl) {
+                ReadBook.book = book
+                ReadBook.durChapterIndex = book.durChapterIndex
+            }
             return returnData.setData("")
         }
         return returnData.setErrorMsg("格式不对")

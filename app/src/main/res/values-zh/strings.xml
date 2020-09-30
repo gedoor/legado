@@ -10,6 +10,8 @@
     <string name="menu_import_old">导入阅读数据</string>
     <string name="mkdirs">创建子文件夹</string>
     <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
+    <string name="webdav_cache_backup">离线缓存书籍备份</string>
+    <string name="webdav_cache_backup_s">导出本地同时备份到legado文件夹下exports目录</string>
     <string name="backup_path">备份路径</string>
     <string name="select_backup_path">请选择备份路径</string>
     <string name="menu_import_old_version">导入旧版数据</string>
@@ -82,7 +84,7 @@
     <string name="is_loading">加载中…</string>
     <string name="retry">重试</string>
     <string name="web_service">Web 服务</string>
-    <string name="web_service_desc">启用Web服务</string>
+    <string name="web_service_desc">浏览器写源,看书</string>
     <string name="web_edit_source">web编辑书源</string>
     <string name="http_ip">http://%1$s:%2$d</string>
     <string name="offline_cache">离线缓存</string>
@@ -96,6 +98,8 @@
         阅读3.0下载地址：\nhttps://www.coolapk.com/apk/256030
     </string>
     <string name="version_name">Version %s</string>
+    <string name="pt_background_verification">后台校验书源</string>
+    <string name="ps_background_verification">打开后可以在校验书源时自由操作</string>
     <string name="pt_auto_refresh">自动刷新</string>
     <string name="ps_auto_refresh">打开软件时自动更新书籍</string>
     <string name="pt_auto_download">自动下载最新章节</string>
@@ -225,6 +229,7 @@
     <string name="load_error_retry">加载失败,点击重试</string>
     <string name="book_intro">内容简介</string>
     <string name="intro_show">简介:%s</string>
+    <string name="intro_show_null">简介: 暂无简介</string>
     <string name="open_from_other">打开外部书籍</string>
     <string name="origin_show">来源: %s</string>
     <string name="import_replace_rule">本地导入</string>
@@ -290,7 +295,7 @@
     <string name="padding_right">右边距</string>
     <string name="check_book_source">校验书源</string>
     <string name="check_select_source">校验所选</string>
-    <string name="progress_show">进度 %1$d/%2$d</string>
+    <string name="progress_show">%1$s      进度 %2$d/%3$d</string>
     <string name="tts_fix">请安装并选择中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失败!</string>
     <string name="jf_convert">简繁转换</string>
@@ -384,6 +389,9 @@
     <string name="source_name">源名称(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分组(sourceGroup)</string>
+    <string name="diy_source_group">自定义源分组</string>
+    <string name="diy_edit_source_group">输入自定义源分组名称</string>
+    <string name="diy_edit_source_group_title">【%s】</string>
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
@@ -567,6 +575,7 @@
     <string name="export_selection">导出所选</string>
     <string name="export">导出</string>
     <string name="load_toc">加载目录</string>
+    <string name="load_info">加载详情页</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav 密码</string>
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
@@ -761,6 +770,6 @@
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
     <string name="select_theme">切换默认主题</string>
     <string name="sort_by_lastUppdateTime">时间排序</string>
-    <string name="search_content">搜索</string>
+    <string name="search_content">全文搜索</string>
 
 </resources>
