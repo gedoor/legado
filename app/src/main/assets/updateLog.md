@@ -13,7 +13,7 @@ unzipFile(zipPath: String): String
 //文件夹内所有文件读取
 getTxtInFolder(unzipPath: String): String
 ```
-* 增加type字段，返回16进制字符串,栗:`https://www.baidu.com,{"type":"zip"}`
+* 增加type字段，返回16进制字符串,例:`https://www.baidu.com,{"type":"zip"}`
 * 底部操作栏阴影跟随设置调节
 
 **2020/09/24**
