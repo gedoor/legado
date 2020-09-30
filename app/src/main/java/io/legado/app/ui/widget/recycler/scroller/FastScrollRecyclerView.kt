@@ -9,44 +9,41 @@ import io.legado.app.R
 
 class FastScrollRecyclerView : RecyclerView {
 
-    private var mFastScroller: FastScroller? = null
+    private lateinit var mFastScroller: FastScroller
 
     constructor(context: Context) : super(context) {
-
         layout(context, null)
-
         layoutParams =
             LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-
     }
-
 
     @JvmOverloads
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int = 0) : super(context, attrs, defStyleAttr) {
-
+    constructor(
+        context: Context,
+        attrs: AttributeSet,
+        defStyleAttr: Int = 0
+    ) : super(context, attrs, defStyleAttr) {
         layout(context, attrs)
-
     }
 
+    private fun layout(context: Context, attrs: AttributeSet?) {
+        mFastScroller = FastScroller(context, attrs)
+        mFastScroller.id = R.id.fast_scroller
+    }
 
     override fun setAdapter(adapter: Adapter<*>?) {
-
         super.setAdapter(adapter)
-
         if (adapter is FastScroller.SectionIndexer) {
             setSectionIndexer(adapter as FastScroller.SectionIndexer?)
         } else if (adapter == null) {
             setSectionIndexer(null)
         }
-
     }
 
 
     override fun setVisibility(visibility: Int) {
-
         super.setVisibility(visibility)
-        mFastScroller?.visibility = visibility
-
+        mFastScroller.visibility = visibility
     }
 
 
@@ -56,9 +53,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param sectionIndexer The SectionIndexer that provides section text for the FastScroller
      */
     fun setSectionIndexer(sectionIndexer: FastScroller.SectionIndexer?) {
-
-        mFastScroller?.setSectionIndexer(sectionIndexer)
-
+        mFastScroller.setSectionIndexer(sectionIndexer)
     }
 
 
@@ -68,9 +63,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param enabled True to enable fast scrolling, false otherwise
      */
     fun setFastScrollEnabled(enabled: Boolean) {
-
-        mFastScroller!!.isEnabled = enabled
-
+        mFastScroller.isEnabled = enabled
     }
 
 
@@ -80,9 +73,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param hideScrollbar True to hide the scrollbar, false to show
      */
     fun setHideScrollbar(hideScrollbar: Boolean) {
-
-        mFastScroller?.setFadeScrollbar(hideScrollbar)
-
+        mFastScroller.setFadeScrollbar(hideScrollbar)
     }
 
     /**
@@ -91,9 +82,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param visible True to show scroll track, false to hide
      */
     fun setTrackVisible(visible: Boolean) {
-
-        mFastScroller?.setTrackVisible(visible)
-
+        mFastScroller.setTrackVisible(visible)
     }
 
     /**
@@ -102,9 +91,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param color The color for the scroll track
      */
     fun setTrackColor(@ColorInt color: Int) {
-
-        mFastScroller?.setTrackColor(color)
-
+        mFastScroller.setTrackColor(color)
     }
 
 
@@ -114,9 +101,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param color The color for the scroll handle
      */
     fun setHandleColor(@ColorInt color: Int) {
-
-        mFastScroller?.setHandleColor(color)
-
+        mFastScroller.setHandleColor(color)
     }
 
 
@@ -126,9 +111,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param visible True to show the bubble, false to hide
      */
     fun setBubbleVisible(visible: Boolean) {
-
-        mFastScroller?.setBubbleVisible(visible)
-
+        mFastScroller.setBubbleVisible(visible)
     }
 
 
@@ -138,9 +121,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param color The background color for the index bubble
      */
     fun setBubbleColor(@ColorInt color: Int) {
-
-        mFastScroller?.setBubbleColor(color)
-
+        mFastScroller.setBubbleColor(color)
     }
 
 
@@ -150,7 +131,7 @@ class FastScrollRecyclerView : RecyclerView {
      * @param color The text color for the index bubble
      */
     fun setBubbleTextColor(@ColorInt color: Int) {
-        mFastScroller?.setBubbleTextColor(color)
+        mFastScroller.setBubbleTextColor(color)
     }
 
 
@@ -160,35 +141,24 @@ class FastScrollRecyclerView : RecyclerView {
      * @param fastScrollStateChangeListener The interface that will listen to fastscroll state change events
      */
     fun setFastScrollStateChangeListener(fastScrollStateChangeListener: FastScrollStateChangeListener) {
-
-        mFastScroller?.setFastScrollStateChangeListener(fastScrollStateChangeListener)
-
+        mFastScroller.setFastScrollStateChangeListener(fastScrollStateChangeListener)
     }
 
 
     override fun onAttachedToWindow() {
-
         super.onAttachedToWindow()
-
-        mFastScroller?.attachRecyclerView(this)
-
+        mFastScroller.attachRecyclerView(this)
         val parent = parent
         if (parent is ViewGroup) {
             parent.addView(mFastScroller)
-            mFastScroller?.setLayoutParams(parent)
+            mFastScroller.setLayoutParams(parent)
         }
     }
 
 
     override fun onDetachedFromWindow() {
-        mFastScroller?.detachRecyclerView()
+        mFastScroller.detachRecyclerView()
         super.onDetachedFromWindow()
-    }
-
-
-    private fun layout(context: Context, attrs: AttributeSet?) {
-        mFastScroller = FastScroller(context, attrs)
-        mFastScroller?.id = R.id.fast_scroller
     }
 
 }
