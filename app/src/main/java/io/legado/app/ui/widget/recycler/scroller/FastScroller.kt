@@ -173,7 +173,7 @@ class FastScroller : LinearLayout {
      */
     fun setFadeScrollbar(fadeScrollbar: Boolean) {
         mFadeScrollbar = fadeScrollbar
-        mScrollbar.visibility = if (fadeScrollbar) View.GONE else View.VISIBLE
+        mScrollbar.visibility = if (fadeScrollbar) View.INVISIBLE else View.VISIBLE
     }
 
     /**
@@ -191,7 +191,7 @@ class FastScroller : LinearLayout {
      * @param visible True to show scroll track, false to hide
      */
     fun setTrackVisible(visible: Boolean) {
-        mTrackView.visibility = if (visible) View.VISIBLE else View.GONE
+        mTrackView.visibility = if (visible) View.VISIBLE else View.INVISIBLE
     }
 
     /**
@@ -264,7 +264,7 @@ class FastScroller : LinearLayout {
 
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
-        visibility = if (enabled) View.VISIBLE else View.GONE
+        visibility = if (enabled) View.VISIBLE else View.INVISIBLE
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -411,13 +411,13 @@ class FastScroller : LinearLayout {
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         super.onAnimationEnd(animation)
-                        mBubbleView.visibility = View.GONE
+                        mBubbleView.visibility = View.INVISIBLE
                         mBubbleAnimator = null
                     }
 
                     override fun onAnimationCancel(animation: Animator) {
                         super.onAnimationCancel(animation)
-                        mBubbleView.visibility = View.GONE
+                        mBubbleView.visibility = View.INVISIBLE
                         mBubbleAnimator = null
                     }
                 })
@@ -447,13 +447,13 @@ class FastScroller : LinearLayout {
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    mScrollbar.visibility = View.GONE
+                    mScrollbar.visibility = View.INVISIBLE
                     mScrollbarAnimator = null
                 }
 
                 override fun onAnimationCancel(animation: Animator) {
                     super.onAnimationCancel(animation)
-                    mScrollbar.visibility = View.GONE
+                    mScrollbar.visibility = View.INVISIBLE
                     mScrollbarAnimator = null
                 }
             })
