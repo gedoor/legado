@@ -9,9 +9,9 @@ import androidx.annotation.MenuRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.dp
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_select_action_bar.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -22,7 +22,8 @@ class SelectActionBar(context: Context, attrs: AttributeSet?) : FrameLayout(cont
 
     init {
         setBackgroundColor(context.bottomBackground)
-        elevation = 10.dp.toFloat()
+        elevation =
+            if (AppConfig.elevation < 0) context.elevation else AppConfig.elevation.toFloat()
         View.inflate(context, R.layout.view_select_action_bar, this)
         val textIsDark = ColorUtils.isColorLight(context.bottomBackground)
         val primaryTextColor = context.getPrimaryTextColor(textIsDark)
