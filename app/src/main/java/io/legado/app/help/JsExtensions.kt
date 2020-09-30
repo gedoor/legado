@@ -3,12 +3,14 @@ package io.legado.app.help
 import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
+import io.legado.app.help.http.SSLHelper
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.EncoderUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.htmlFormat
-import io.legado.app.utils.msg
+import io.legado.app.utils.*
+import io.legado.app.utils.EncodingDetect
+import org.jsoup.Connection
+import org.jsoup.Jsoup
 import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.util.*
 
 @Keep
@@ -38,6 +40,84 @@ interface JsExtensions {
         } catch (e: Exception) {
             e.msg
         }
+    }
+
+    /**
+     * js实现文件下载
+     */
+    fun downloadFile(content: String, url: String): String {
+        val zipPath = FileUtils.getPath(
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            "${MD5Utils.md5Encode16(url)}.zip"
+        )
+        FileUtils.deleteFile(zipPath)
+        val zipFile = FileUtils.createFileIfNotExist(zipPath)
+        StringUtils.hexStringToByte(content).let {
+            if (it != null) {
+                zipFile.writeBytes(it)
+            }
+        }
+        return zipPath
+    }
+
+    /**
+     * js实现压缩文件解压
+     */
+    fun unzipFile(zipPath: String): String {
+        val unzipPath = FileUtils.getPath(
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            FileUtils.getNameExcludeExtension(zipPath)
+        )
+        FileUtils.deleteFile(unzipPath)
+        val zipFile = FileUtils.createFileIfNotExist(zipPath)
+        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
+        ZipUtils.unzipFile(zipFile, unzipFolder)
+        FileUtils.deleteFile(zipPath)
+        return unzipPath
+    }
+
+    /**
+     * js实现文件夹内所有文件读取
+     */
+    fun getTxtInFolder(unzipPath: String): String {
+        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
+        val contents = StringBuilder()
+        unzipFolder.listFiles().let {
+            if (it != null) {
+                for (f in it) {
+                    val charsetName = EncodingDetect.getEncode(f)
+                    contents.append(String(f.readBytes(), Charset.forName(charsetName)))
+                        .append("\n")
+                }
+                contents.deleteCharAt(contents.length - 1)
+            }
+        }
+        FileUtils.deleteFile(unzipPath)
+        return contents.toString()
+    }
+
+    /**
+     * js实现重定向拦截,不能删
+     */
+    fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
+        return Jsoup.connect(urlStr)
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+            .ignoreContentType(true)
+            .followRedirects(false)
+            .headers(headers)
+            .method(Connection.Method.GET)
+            .execute()
+    }
+
+    fun post(urlStr: String, body: String, headers: Map<String, String>): Connection.Response {
+        return Jsoup.connect(urlStr)
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+            .ignoreContentType(true)
+            .followRedirects(false)
+            .requestBody(body)
+            .headers(headers)
+            .method(Connection.Method.POST)
+            .execute()
     }
 
     /**
