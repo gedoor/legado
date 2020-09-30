@@ -4,7 +4,7 @@
 - 旧版数据导入教程：先在旧版阅读(2.x)中进行备份，然后在新版阅读(3.x)【我的】->【备份与恢复】，选择【导入旧版本数据】。
 
 **2020/09/29**
-* 增加了几个方法用于处理文件
+* 增加了几个方法用于处理文件 by [Celeter](https://github.com/Celeter)
 ```
 //文件下载,content为十六进制字符串,url用于生成文件名，返回文件路径
 downloadFile(content: String, url: String): String
@@ -14,6 +14,7 @@ unzipFile(zipPath: String): String
 getTxtInFolder(unzipPath: String): String
 ```
 * 增加type字段，返回16进制字符串,栗:`https://www.baidu.com,{"type":"zip"}`
+* 底部操作栏阴影跟随设置调节
 
 **2020/09/24**
 * 修复规则解析bug
