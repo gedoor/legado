@@ -1,4 +1,4 @@
-package io.legado.app.web.controller
+package io.legado.app.api.controller
 
 
 import android.text.TextUtils

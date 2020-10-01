@@ -84,7 +84,7 @@
     <string name="is_loading">加载中…</string>
     <string name="retry">重试</string>
     <string name="web_service">Web 服务</string>
-    <string name="web_service_desc">启用Web服务</string>
+    <string name="web_service_desc">浏览器写源,看书</string>
     <string name="web_edit_source">web编辑书源</string>
     <string name="http_ip">http://%1$s:%2$d</string>
     <string name="offline_cache">离线缓存</string>

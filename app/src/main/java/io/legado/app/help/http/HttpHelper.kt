@@ -48,7 +48,11 @@ object HttpHelper {
         return null
     }
 
-    fun getBytes(url: String, queryMap: Map<String, String>, headers: Map<String, String>): ByteArray? {
+    fun getBytes(
+        url: String,
+        queryMap: Map<String, String>,
+        headers: Map<String, String>
+    ): ByteArray? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             return getByteRetrofit(baseUrl)
                 .create(HttpGetApi::class.java)
@@ -78,16 +82,16 @@ object HttpHelper {
         return null
     }
 
-    inline fun <reified T> getApiService(baseUrl: String, encode: String? = null): T {
-        return getRetrofit(baseUrl, encode).create(T::class.java)
-    }
-
-    inline fun <reified T> getApiServiceWithProxy(
+    inline fun <reified T> getApiService(
         baseUrl: String,
         encode: String? = null,
         proxy: String? = null
     ): T {
-        return getRetrofitWithProxy(baseUrl, encode, proxy).create(T::class.java)
+        return if (proxy.isNullOrEmpty()) {
+            getRetrofit(baseUrl, encode).create(T::class.java)
+        } else {
+            getRetrofitWithProxy(baseUrl, encode, proxy).create(T::class.java)
+        }
     }
 
     inline fun <reified T> getBytesApiService(baseUrl: String): T {
