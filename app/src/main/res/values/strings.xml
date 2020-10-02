@@ -323,8 +323,8 @@
     <string name="auto_next_page">Auto scroll</string>
     <string name="auto_next_page_stop">Stop Auto scroll</string>
     <string name="auto_next_page_speed">Auto scroll speed</string>
-    <string name="book_info">Book infomation</string>
-    <string name="book_info_edit">Edit book infomation</string>
+    <string name="book_info">Book information</string>
+    <string name="book_info_edit">Edit book information</string>
     <string name="ps_default_read">Use Bookshelf as start page</string>
     <string name="pt_default_read">Auto jump to Recent list</string>
     <string name="use_to">Replacement object. Book name or source url is available</string>
