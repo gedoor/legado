@@ -104,12 +104,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
 
     private fun initData() {
         cb_share_layout.isChecked = ReadBookConfig.shareLayout
-        ReadBookConfig.pageAnim.let {
-            if (it >= 0 && it < rg_page_anim.childCount) {
-                rg_page_anim.check(rg_page_anim[it].id)
-            }
-        }
-        upStyle()
+        upView()
         styleAdapter.setItems(ReadBookConfig.configList)
     }
 
@@ -149,7 +144,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         cb_share_layout.onCheckedChangeListener = { checkBox, isChecked ->
             if (checkBox.isPressed) {
                 ReadBookConfig.shareLayout = isChecked
-                upStyle()
+                upView()
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
@@ -206,7 +201,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         if (index != oldIndex) {
             ReadBookConfig.styleSelect = index
             ReadBookConfig.upBg()
-            upStyle()
+            upView()
             styleAdapter.notifyItemChanged(oldIndex)
             styleAdapter.notifyItemChanged(index)
             postEvent(EventBus.UP_CONFIG, true)
@@ -220,8 +215,11 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         return true
     }
 
-    private fun upStyle() {
+    private fun upView() {
         ReadBookConfig.let {
+            if (it.pageAnim >= 0 && it.pageAnim < rg_page_anim.childCount) {
+                rg_page_anim.check(rg_page_anim[it.pageAnim].id)
+            }
             dsb_text_size.progress = it.textSize - 5
             dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50
             dsb_line_size.progress = it.lineSpacingExtra

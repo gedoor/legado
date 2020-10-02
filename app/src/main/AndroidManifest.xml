@@ -224,7 +224,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
         <activity
-            android:name=".ui.book.searchContent.SearchListActivity"
+            android:name=".ui.book.searchContent.SearchContentActivity"
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
         <!-- RSS条目 -->

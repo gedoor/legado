@@ -10,8 +10,8 @@
     <string name="menu_import_old">匯入閱讀資料</string>
     <string name="mkdirs">建立子資料夾</string>
     <string name="mkdirs_description">建立legado資料夾作為備份資料夾</string>
-    <string name="webdav_cache_backup">離線緩存書籍備份</string>
-    <string name="webdav_cache_backup_s">導出本地同時備份到legado文件夾下exports目錄</string>
+    <string name="webdav_cache_backup">離線快取書籍備份</string>
+    <string name="webdav_cache_backup_s">匯出本機同時備份到legado資料夾下exports目錄</string>
     <string name="backup_path">備份路徑</string>
     <string name="menu_import_old_version">匯入舊版資料</string>
     <string name="menu_import_github">匯入Github資料</string>
@@ -56,7 +56,7 @@
     <string name="bookshelf_layout">書架布局</string>
     <string name="view">檢視</string>
     <string name="book_library">書城</string>
-    <string name="book_local">添加本機</string>
+    <string name="book_local">新增本機</string>
     <string name="book_source">書源</string>
     <string name="book_source_manage">書源管理</string>
     <string name="book_source_manage_desc">建立/匯入/編輯/管理書源</string>
@@ -85,9 +85,9 @@
     <string name="web_service_desc">瀏覽器寫源,看書</string>
     <string name="web_edit_source">web編輯書源</string>
     <string name="http_ip">http://%1$s:%2$d</string>
-    <string name="offline_cache">離線緩存</string>
-    <string name="offline_cache_t">離線緩存</string>
-    <string name="offline_cache_s">緩存選擇的章節到本機</string>
+    <string name="offline_cache">離線快取</string>
+    <string name="offline_cache_t">離線快取</string>
+    <string name="offline_cache_s">快取選擇的章節到本機</string>
     <string name="change_origin">換源</string>
     <string name="about_description">
         \u3000\u3000這是一款使用Kotlin全新開發的開源的閱讀軟體，歡迎您的加入。關注公眾號[legado-top]！
@@ -97,7 +97,7 @@
     </string>
     <string name="version_name">Version %s</string>
     <string name="pt_background_verification">後臺校驗書源</string>
-    <string name="ps_background_verification">打開后可以在校驗書源時自由操作</string>
+    <string name="ps_background_verification">打開後可以在校驗書源時自由操作</string>
     <string name="pt_auto_refresh">自動重新整理</string>
     <string name="ps_auto_refresh">打開軟體時自動更新書籍</string>
     <string name="pt_auto_download">自動下載最新章節</string>
@@ -159,8 +159,8 @@
     <string name="can_not_open">無法打開</string>
     <string name="can_not_share">分享失敗</string>
     <string name="no_chapter">無章節</string>
-    <string name="add_url">添加網址</string>
-    <string name="add_book_url">添加書籍網址</string>
+    <string name="add_url">新增網址</string>
+    <string name="add_book_url">新增書籍網址</string>
     <string name="background">背景</string>
     <string name="author">作者</string>
     <string name="author_show">作者: %s</string>
@@ -173,7 +173,7 @@
     <string name="disable_book_source">禁用書源</string>
     <string name="add_book_source">建立書源</string>
     <string name="add_rss_source">建立訂閱源</string>
-    <string name="book_file_selector">添加書籍</string>
+    <string name="book_file_selector">新增書籍</string>
     <string name="scan_book_source">掃描</string>
     <string name="copy_source">複製源</string>
     <string name="paste_source">貼上源</string>
@@ -185,7 +185,7 @@
     <string name="share">分享</string>
     <string name="share_app">軟體分享</string>
     <string name="flow_sys">跟隨系統</string>
-    <string name="add">添加</string>
+    <string name="add">新增</string>
     <string name="import_book_source">匯入書源</string>
     <string name="import_book_source_local">本機匯入</string>
     <string name="import_book_source_on_line">網路匯入</string>
@@ -733,7 +733,6 @@
     <string name="rule_replace_regex">取代規則(replaceRegex)</string>
     <string name="group_name">分組名稱</string>
     <string name="note_content">備註內容</string>
-    <string name="e_ink_change_bg">E-Ink模式下只有白紙黑字,不顯示其它背景</string>
     <string name="replace_enable_default_t">預設啟用取代淨化</string>
     <string name="replace_enable_default_s">新加入書架的書是否啟用取代淨化</string>
     <string name="select_restore_file">選擇復原文件</string>
@@ -757,16 +756,16 @@
     <string name="all_read_time">總閱讀時間</string>
     <string name="un_select_all">全不選</string>
     <string name="delete_all">刪除所有</string>
-    <string name="import_str">导入</string>
-    <string name="export_str">导出</string>
-    <string name="save_theme_config">保存主题配置</string>
-    <string name="save_day_theme_summary">保存白天主题配置以共调用和分享</string>
-    <string name="save_night_theme_summary">保存夜间主题配置以共调用和分享</string>
-    <string name="theme_list">主题列表</string>
-    <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
-    <string name="select_theme">切換默認主題</string>
+    <string name="import_str">匯入</string>
+    <string name="export_str">匯出</string>
+    <string name="save_theme_config">儲存主題配置</string>
+    <string name="save_day_theme_summary">儲存白天主題配置以供調用和分享</string>
+    <string name="save_night_theme_summary">儲存夜間主題配置以供調用和分享</string>
+    <string name="theme_list">主題列表</string>
+    <string name="theme_list_summary">使用儲存主題,匯入,分享主題</string>
+    <string name="select_theme">切換預設主題</string>
     <string name="share_selected_source">分享選中書源</string>
     <string name="sort_by_lastUppdateTime">時間排序</string>
-    <string name="search_content">全文搜索</string>
+    <string name="search_content">全文搜尋</string>
 
 </resources>

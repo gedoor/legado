@@ -11,7 +11,10 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.dp
+import io.legado.app.utils.gone
+import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_fillet_text.view.*
 import kotlinx.android.synthetic.main.item_find_book.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -94,6 +97,17 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
             ll_title.onLongClick {
                 showMenu(ll_title, holder.layoutPosition)
             }
+        }
+    }
+
+    fun compressExplore(): Boolean {
+        return if (exIndex < 0) {
+            false
+        } else {
+            val oldExIndex = exIndex
+            exIndex = -1
+            notifyItemChanged(oldExIndex)
+            true
         }
     }
 

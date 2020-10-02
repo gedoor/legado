@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     var isInitFinish = false
+    var searchContentQuery = ""
 
     fun initData(intent: Intent) {
         execute {

@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".ui.book.search.SearchActivity">
 
     <io.legado.app.ui.widget.TitleBar
-            android:id="@+id/title_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:contentLayout="@layout/view_search"
-            app:contentInsetStartWithNavigation="0dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:title="搜索"/>
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:contentInsetStartWithNavigation="0dp"
+        app:contentLayout="@layout/view_search"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="搜索" />
 
     <io.legado.app.ui.widget.anima.RefreshProgressBar
         android:id="@+id/refresh_progress_bar"
@@ -23,10 +22,10 @@
         app:layout_constraintTop_toBottomOf="@id/title_bar" />
 
     <io.legado.app.ui.widget.dynamiclayout.DynamicFrameLayout
-            android:id="@+id/content_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/content_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/refresh_progress_bar">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -41,12 +40,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/background"
-        android:orientation="vertical"
-        android:visibility="gone"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@id/title_bar"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_bar">
 
         <TextView
             android:id="@+id/tv_book_show"

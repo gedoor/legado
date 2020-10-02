@@ -456,7 +456,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             while (evalMatcher.find()) {
                 if (evalMatcher.start() > start) {
                     tmp = rule.substring(start, evalMatcher.start())
-                    if (mode != Mode.Js && mode != Mode.Json && mode != Mode.Regex
+                    if (mode != Mode.Js && mode != Mode.Regex
                         && start == 0 && !tmp.contains("##")
                     ) {
                         mode = Mode.Regex
