@@ -61,7 +61,6 @@ object Restore {
     private val readPrefKeys = arrayOf(
         PreferKey.readStyleSelect,
         PreferKey.shareLayout,
-        PreferKey.pageAnim,
         PreferKey.hideStatusBar,
         PreferKey.hideNavigationBar,
         PreferKey.bodyIndent,
@@ -215,7 +214,6 @@ object Restore {
             ReadBookConfig.apply {
                 styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
                 shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
-                pageAnim = App.INSTANCE.getPrefInt(PreferKey.pageAnim)
                 hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
                 hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
                 bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)

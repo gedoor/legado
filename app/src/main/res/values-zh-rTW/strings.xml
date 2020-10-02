@@ -733,7 +733,6 @@
     <string name="rule_replace_regex">取代規則(replaceRegex)</string>
     <string name="group_name">分組名稱</string>
     <string name="note_content">備註內容</string>
-    <string name="e_ink_change_bg">E-Ink模式下只有白紙黑字,不顯示其它背景</string>
     <string name="replace_enable_default_t">預設啟用取代淨化</string>
     <string name="replace_enable_default_s">新加入書架的書是否啟用取代淨化</string>
     <string name="select_restore_file">選擇復原文件</string>
