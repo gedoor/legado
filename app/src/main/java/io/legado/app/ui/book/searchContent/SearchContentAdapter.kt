@@ -10,7 +10,7 @@ import io.legado.app.utils.hexString
 import kotlinx.android.synthetic.main.item_search_list.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class SearchListAdapter(context: Context, val callback: Callback) :
+class SearchContentAdapter(context: Context, val callback: Callback) :
     SimpleRecyclerAdapter<SearchResult>(context, R.layout.item_search_list) {
 
     val cacheFileNames = hashSetOf<String>()

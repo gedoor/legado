@@ -22,19 +22,20 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
-import kotlinx.android.synthetic.main.activity_search_list.*
+import kotlinx.android.synthetic.main.activity_search_content.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.coroutines.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
-class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity_search_list),
-    SearchListAdapter.Callback {
+class SearchContentActivity :
+    VMBaseActivity<SearchContentViewModel>(R.layout.activity_search_content),
+    SearchContentAdapter.Callback {
 
-    override val viewModel: SearchListViewModel
-        get() = getViewModel(SearchListViewModel::class.java)
+    override val viewModel: SearchContentViewModel
+        get() = getViewModel(SearchContentViewModel::class.java)
 
-    lateinit var adapter: SearchListAdapter
+    lateinit var adapter: SearchContentAdapter
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var searchResultCounts = 0
     private var durChapterIndex = 0
@@ -78,7 +79,7 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
     }
 
     private fun initRecyclerView() {
-        adapter = SearchListAdapter(this, this)
+        adapter = SearchContentAdapter(this, this)
         mLayoutManager = UpLinearLayoutManager(this)
         recycler_view.layoutManager = mLayoutManager
         recycler_view.addItemDecoration(VerticalDivider(this))
@@ -134,6 +135,7 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
         if (!newText.isBlank()) {
             adapter.clearItems()
             searchResultList.clear()
+            refresh_progress_bar.isAutoLoading = true
             searchResultCounts = 0
             viewModel.lastQuery = newText
             var searchResults = listOf<SearchResult>()
@@ -149,6 +151,7 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
                     job.await()
                     if (searchResults.isNotEmpty()) {
                         searchResultList.addAll(searchResults)
+                        refresh_progress_bar.isAutoLoading = false
                         tv_current_search_info.text = "搜索结果：$searchResultCounts"
                         adapter.addItems(searchResults)
                         searchResults = listOf()
