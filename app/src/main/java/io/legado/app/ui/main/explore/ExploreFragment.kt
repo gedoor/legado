@@ -15,6 +15,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
@@ -152,6 +153,16 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
 
     override fun toTop(source: BookSource) {
         viewModel.topSource(source)
+    }
+
+    fun compressExplore() {
+        if (!adapter.compressExplore()) {
+            if (AppConfig.isEInkMode) {
+                rv_find.scrollToPosition(0)
+            } else {
+                rv_find.smoothScrollToPosition(0)
+            }
+        }
     }
 
 }
