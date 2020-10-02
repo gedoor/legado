@@ -140,11 +140,8 @@ class SearchListActivity : VMBaseActivity<SearchListViewModel>(R.layout.activity
             launch(Dispatchers.Main) {
                 App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map { chapter ->
                     val job = async(Dispatchers.IO) {
-                        if (isLocalBook || adapter.cacheFileNames.contains(
-                                BookHelp.formatChapterName(
-                                    chapter
-                                )
-                            )
+                        if (isLocalBook
+                            || adapter.cacheFileNames.contains(BookHelp.formatChapterName(chapter))
                         ) {
                             searchResults = searchChapter(newText, chapter)
                         }
