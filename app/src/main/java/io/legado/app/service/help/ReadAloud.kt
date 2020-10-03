@@ -6,10 +6,14 @@ import io.legado.app.App
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.HttpTTS
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
 import io.legado.app.utils.getPrefLong
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
 
 object ReadAloud {
     private var aloudClass: Class<*> = getReadAloudClass()
@@ -26,8 +30,15 @@ object ReadAloud {
         }
     }
 
-    fun upReadAloudClass() {
-        aloudClass = getReadAloudClass()
+    fun upReadAloudClass(
+        scope: CoroutineScope = Coroutine.DEFAULT,
+        context: CoroutineContext = Dispatchers.IO): Coroutine<*> {
+        return Coroutine.async(scope, context) {
+            aloudClass = getReadAloudClass()
+            while (BaseReadAloudService.isRun) {
+                continue
+            }
+        }
     }
 
     fun play(

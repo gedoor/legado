@@ -19,6 +19,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
+import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.postEvent
 
@@ -112,7 +113,11 @@ class ReadAloudConfigDialog : DialogFragment() {
                 }
                 PreferKey.speakEngine -> {
                     upPreferenceSummary(findPreference(key), speakEngineSummary)
-                    ReadAloud.upReadAloudClass()
+                    ReadAloud.upReadAloudClass().onSuccess {
+                        if (!BaseReadAloudService.isRun) {
+                            ReadBook.readAloud()
+                        }
+                    }
                 }
             }
         }

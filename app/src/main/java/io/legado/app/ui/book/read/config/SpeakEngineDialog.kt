@@ -23,7 +23,9 @@ import io.legado.app.lib.dialogs.cancelButton
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
+import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_http_tts_edit.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
@@ -123,7 +125,11 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                     httpTTS.name = tv_name.text.toString()
                     httpTTS.url = tv_url.text.toString()
                     App.db.httpTTSDao().insert(httpTTS)
-                    ReadAloud.upReadAloudClass()
+                    ReadAloud.upReadAloudClass().onSuccess {
+                        if (!BaseReadAloudService.isRun) {
+                            ReadBook.readAloud()
+                        }
+                    }
                 }
             }
         }.show().applyTint()
