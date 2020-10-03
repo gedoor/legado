@@ -24,6 +24,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.AppConfig.backgroundVerification
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
@@ -304,10 +305,12 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
                 val bundle = Bundle()
                 bundle.putInt("maxProgress", adapter.getSelection().size)
-                CheckSourceDialog().apply {
-                    arguments = bundle
-                    CheckSource.start(this@BookSourceActivity, adapter.getSelection())
-                }.show(supportFragmentManager, "CheckDialog")
+                if (!backgroundVerification) {
+                    CheckSourceDialog().apply {
+                        arguments = bundle
+                    }.show(supportFragmentManager, "CheckDialog")
+                }
+                CheckSource.start(this@BookSourceActivity, adapter.getSelection())
             }
             noButton { }
         }.show().applyTint()
