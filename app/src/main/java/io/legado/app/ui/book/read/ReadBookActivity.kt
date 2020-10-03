@@ -850,6 +850,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
 
     override fun onDestroy() {
         super.onDestroy()
+        ReadBook.curTextChapter?.let { textChapter ->
+            val page = textChapter.page(ReadBook.durPageIndex)
+            if (page != null) {
+                page.removePageAloudSpan()
+                page_view.upContent(resetPageOffset = false)
+            }
+        }
         mHandler.removeCallbacks(keepScreenRunnable)
         textActionMenu?.dismiss()
         page_view.onDestroy()
@@ -887,7 +894,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
             }
         }
         observeEvent<Int>(EventBus.ALOUD_STATE) {
-            if (it == Status.STOP || it == Status.PAUSE) {
+            if (it == Status.STOP) {
                 ReadBook.curTextChapter?.let { textChapter ->
                     val page = textChapter.page(ReadBook.durPageIndex)
                     if (page != null) {

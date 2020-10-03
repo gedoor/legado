@@ -126,7 +126,10 @@ class ReadAloudDialog : BaseDialogFragment() {
         }
         tv_pre.onClick { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
         tv_next.onClick { ReadBook.moveToNextChapter(true) }
-        iv_stop.onClick { ReadAloud.stop(requireContext()); dismiss() }
+        iv_stop.onClick {
+            ReadAloud.stop(requireContext())
+            dismiss()
+        }
         iv_play_pause.onClick { callBack?.onClickReadAloud() }
         iv_play_prev.onClick { ReadAloud.prevParagraph(requireContext()) }
         iv_play_next.onClick { ReadAloud.nextParagraph(requireContext()) }
