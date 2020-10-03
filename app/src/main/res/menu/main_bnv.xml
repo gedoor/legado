@@ -8,7 +8,7 @@
         android:icon="@drawable/ic_bottom_books"
         android:title="@string/bookshelf" />
     <item
-        android:id="@+id/menu_find_book"
+        android:id="@+id/menu_explore"
         android:icon="@drawable/ic_bottom_explore"
         android:title="@string/find" />
     <item

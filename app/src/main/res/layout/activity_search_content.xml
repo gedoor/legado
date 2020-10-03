@@ -13,13 +13,19 @@
         app:contentInsetRight="24dp"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <io.legado.app.ui.widget.anima.RefreshProgressBar
+        android:id="@+id/refresh_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:layout_constraintTop_toBottomOf="@id/title_bar" />
+
     <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:overScrollMode="never"
         app:layout_constraintBottom_toTopOf="@+id/ll_search_base_info"
-        app:layout_constraintTop_toBottomOf="@id/title_bar" />
+        app:layout_constraintTop_toBottomOf="@id/refresh_progress_bar" />
 
     <LinearLayout
         android:id="@+id/ll_search_base_info"

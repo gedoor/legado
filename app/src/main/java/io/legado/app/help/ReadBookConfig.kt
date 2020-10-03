@@ -158,12 +158,6 @@ object ReadBookConfig {
                 App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
             }
         }
-    var pageAnim: Int
-        get() = if (AppConfig.isEInkMode) -1 else App.INSTANCE.getPrefInt(PreferKey.pageAnim)
-        set(value) {
-            App.INSTANCE.putPrefInt(PreferKey.pageAnim, value)
-            isScroll = pageAnim == 3
-        }
     var isScroll = pageAnim == 3
     val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
     val textFullJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textFullJustify, true)
@@ -181,6 +175,13 @@ object ReadBookConfig {
     var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
 
     val config get() = if (shareLayout) shareConfig else durConfig
+
+    var pageAnim: Int
+        get() = config.pageAnim()
+        set(value) {
+            config.setPageAnim(value)
+            isScroll = pageAnim == 3
+        }
 
     var textFont: String
         get() = config.textFont
@@ -379,6 +380,8 @@ object ReadBookConfig {
         private var textColor: String = "#3E3D3B",//白天文字颜色
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
         private var textColorEInk: String = "#000000",
+        private var pageAnim: Int = 0,
+        private var pageAnimEInk: Int = 3,
         var textFont: String = "",//字体
         var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
         var textSize: Int = 20,//文字大小
@@ -451,6 +454,20 @@ object ReadBookConfig {
                 AppConfig.isEInkMode -> darkStatusIconEInk
                 AppConfig.isNightTheme -> darkStatusIconNight
                 else -> darkStatusIcon
+            }
+        }
+
+        fun setPageAnim(anim: Int) {
+            when {
+                AppConfig.isEInkMode -> pageAnimEInk = anim
+                else -> pageAnim = anim
+            }
+        }
+
+        fun pageAnim(): Int {
+            return when {
+                AppConfig.isEInkMode -> pageAnimEInk
+                else -> pageAnim
             }
         }
 

@@ -6,7 +6,7 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 
-class SearchListViewModel(application: Application) : BaseViewModel(application) {
+class SearchContentViewModel(application: Application) : BaseViewModel(application) {
     var bookUrl: String = ""
     var book: Book? = null
     var lastQuery: String = ""

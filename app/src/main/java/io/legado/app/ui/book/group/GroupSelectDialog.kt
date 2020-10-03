@@ -34,7 +34,6 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_book_group_picker.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.dialog_recycler_view.recycler_view
 import kotlinx.android.synthetic.main.dialog_recycler_view.tool_bar
 import kotlinx.android.synthetic.main.item_group_select.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick

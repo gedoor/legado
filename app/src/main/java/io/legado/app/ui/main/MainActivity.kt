@@ -39,6 +39,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         get() = getViewModel(MainViewModel::class.java)
     private var exitTime: Long = 0
     private var bookshelfReselected: Long = 0
+    private var exploreReselected: Long = 0
     private var pagePosition = 0
     private val fragmentMap = hashMapOf<Int, Fragment>()
 
@@ -72,7 +73,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_bookshelf -> view_pager_main.setCurrentItem(0, false)
-            R.id.menu_find_book -> view_pager_main.setCurrentItem(1, false)
+            R.id.menu_explore -> view_pager_main.setCurrentItem(1, false)
             R.id.menu_rss -> view_pager_main.setCurrentItem(2, false)
             R.id.menu_my_config -> view_pager_main.setCurrentItem(3, false)
         }
@@ -86,6 +87,13 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                     bookshelfReselected = System.currentTimeMillis()
                 } else {
                     (fragmentMap[0] as? BookshelfFragment)?.gotoTop()
+                }
+            }
+            R.id.menu_explore -> {
+                if (System.currentTimeMillis() - exploreReselected > 300) {
+                    exploreReselected = System.currentTimeMillis()
+                } else {
+                    (fragmentMap[1] as? ExploreFragment)?.compressExplore()
                 }
             }
         }
