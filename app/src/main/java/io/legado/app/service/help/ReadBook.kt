@@ -1,10 +1,8 @@
 package io.legado.app.service.help
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.hankcs.hanlp.HanLP
 import io.legado.app.App
-import io.legado.app.R
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -61,6 +59,9 @@ object ReadBook {
         titleDate.postValue(book.name)
         upWebBook(book)
         ImageProvider.clearAllCache()
+        synchronized(this) {
+            loadingChapters.clear()
+        }
     }
 
     fun upWebBook(book: Book) {
@@ -270,35 +271,7 @@ object ReadBook {
         val book = book
         val webBook = webBook
         if (book != null && webBook != null) {
-            webBook.getContent(book, chapter)
-                .onSuccess(Dispatchers.IO) { content ->
-                    if (content.isEmpty()) {
-                        contentLoadFinish(
-                            book,
-                            chapter,
-                            App.INSTANCE.getString(R.string.content_empty),
-                            resetPageOffset = resetPageOffset
-                        )
-                        removeLoading(chapter.index)
-                    } else {
-                        BookHelp.saveContent(book, chapter, content)
-                        contentLoadFinish(
-                            book,
-                            chapter,
-                            content,
-                            resetPageOffset = resetPageOffset
-                        )
-                        removeLoading(chapter.index)
-                    }
-                }.onError {
-                    contentLoadFinish(
-                        book,
-                        chapter,
-                        it.localizedMessage ?: "未知错误",
-                        resetPageOffset = resetPageOffset
-                    )
-                    removeLoading(chapter.index)
-                }
+            CacheBook.download(webBook, book, chapter)
         } else if (book != null) {
             contentLoadFinish(
                 book,
@@ -320,31 +293,34 @@ object ReadBook {
         }
     }
 
-    private fun removeLoading(index: Int) {
+    fun removeLoading(index: Int) {
         synchronized(this) {
             loadingChapters.remove(index)
         }
     }
 
-    fun searchResultPositions(pages: List<TextPage>, indexWithinChapter: Int, query: String): Array<Int>{
-        //
+    fun searchResultPositions(
+        pages: List<TextPage>,
+        indexWithinChapter: Int,
+        query: String
+    ): Array<Int> {
         // calculate search result's pageIndex
         var content = ""
-        pages.map{
-            content+= it.text
+        pages.map {
+            content += it.text
         }
         var count = 1
         var index = content.indexOf(query)
-        while(count != indexWithinChapter){
-            index = content.indexOf(query, index + 1);
+        while (count != indexWithinChapter) {
+            index = content.indexOf(query, index + 1)
             count += 1
         }
         val contentPosition = index
         var pageIndex = 0
         var length = pages[pageIndex].text.length
-        while (length < contentPosition){
+        while (length < contentPosition) {
             pageIndex += 1
-            if (pageIndex >pages.size){
+            if (pageIndex > pages.size) {
                 pageIndex = pages.size
                 break
             }
@@ -355,9 +331,9 @@ object ReadBook {
         val currentPage = pages[pageIndex]
         var lineIndex = 0
         length = length - currentPage.text.length + currentPage.textLines[lineIndex].text.length
-        while (length < contentPosition){
+        while (length < contentPosition) {
             lineIndex += 1
-            if (lineIndex >currentPage.textLines.size){
+            if (lineIndex > currentPage.textLines.size) {
                 lineIndex = currentPage.textLines.size
                 break
             }
@@ -371,12 +347,12 @@ object ReadBook {
         var addLine = 0
         var charIndex2 = 0
         // change line
-        if ((charIndex + query.length) > currentLine.text.length){
+        if ((charIndex + query.length) > currentLine.text.length) {
             addLine = 1
             charIndex2 = charIndex + query.length - currentLine.text.length - 1
         }
         // changePage
-        if ((lineIndex + addLine + 1) > currentPage.textLines.size){
+        if ((lineIndex + addLine + 1) > currentPage.textLines.size) {
             addLine = -1
             charIndex2 = charIndex + query.length - currentLine.text.length - 1
         }
@@ -386,7 +362,7 @@ object ReadBook {
     /**
      * 内容加载完成
      */
-    private fun contentLoadFinish(
+    fun contentLoadFinish(
         book: Book,
         chapter: BookChapter,
         content: String,
