@@ -23,6 +23,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
@@ -40,10 +41,8 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source.*
-import kotlinx.android.synthetic.main.activity_book_source.recycler_view
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_progressbar_view.*
-import kotlinx.android.synthetic.main.dialog_progressbar_view.tv_footer_left
 import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
@@ -300,7 +299,15 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                         CheckSource.keyword = it
                     }
                 }
-                CheckSource.start(this@BookSourceActivity, adapter.getSelection())
+                if (AppConfig.backgroundVerification) {
+                    CheckSource.start(this@BookSourceActivity, adapter.getSelection())
+                } else {
+                    val bundle = Bundle()
+                    bundle.putInt("maxProgress", adapter.getSelection().size)
+                    CheckSourceDialog().apply {
+                        arguments = bundle
+                    }.show(supportFragmentManager, "CheckDialog")
+                }
             }
             noButton { }
         }.show().applyTint()
@@ -390,13 +397,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     override fun observeLiveBus() {
-        observeEvent<Int>(EventBus.CHECK_INIT) { max->
-            val bundle = Bundle()
-            bundle.putInt("maxProgress", max)
-            CheckSourceDialog().apply {
-                arguments = bundle
-            }.show(supportFragmentManager, "CheckDialog")
-        }
         observeEvent<Int>(EventBus.CHECK_DONE) {
             groups.map { group->
                 if (group.contains("失效")) {
