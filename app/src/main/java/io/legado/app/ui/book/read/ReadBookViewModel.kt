@@ -102,15 +102,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         book: Book,
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
     ) {
-        execute {
-            if (book.isLocalBook()) {
-                loadChapterList(book, changeDruChapterIndex)
-            } else {
-                ReadBook.webBook?.getBookInfo(book, this, canReName = false)
-                    ?.onSuccess {
-                        loadChapterList(book, changeDruChapterIndex)
-                    }
-            }
+        if (book.isLocalBook()) {
+            loadChapterList(book, changeDruChapterIndex)
+        } else {
+            ReadBook.webBook?.getBookInfo(book, this, canReName = false)
+                ?.onSuccess {
+                    loadChapterList(book, changeDruChapterIndex)
+                }
         }
     }
 
@@ -118,8 +116,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         book: Book,
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
     ) {
-        execute {
-            if (book.isLocalBook()) {
+        if (book.isLocalBook()) {
+            execute {
                 LocalBook.getChapterList(book).let {
                     App.db.bookChapterDao().delByBook(book.bookUrl)
                     App.db.bookChapterDao().insert(*it.toTypedArray())
@@ -132,28 +130,28 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         ReadBook.loadContent(resetPageOffset = true)
                     }
                 }
-            } else {
-                ReadBook.webBook?.getChapterList(book, this)
-                    ?.onSuccess(IO) { cList ->
-                        if (cList.isNotEmpty()) {
-                            if (changeDruChapterIndex == null) {
-                                App.db.bookChapterDao().insert(*cList.toTypedArray())
-                                App.db.bookDao().update(book)
-                                ReadBook.chapterSize = cList.size
-                                ReadBook.upMsg(null)
-                                ReadBook.loadContent(resetPageOffset = true)
-                            } else {
-                                changeDruChapterIndex(cList)
-                            }
+            }.onError {
+                ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
+            }
+        } else {
+            ReadBook.webBook?.getChapterList(book, this)
+                ?.onSuccess(IO) { cList ->
+                    if (cList.isNotEmpty()) {
+                        if (changeDruChapterIndex == null) {
+                            App.db.bookChapterDao().insert(*cList.toTypedArray())
+                            App.db.bookDao().update(book)
+                            ReadBook.chapterSize = cList.size
+                            ReadBook.upMsg(null)
+                            ReadBook.loadContent(resetPageOffset = true)
                         } else {
-                            ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                            changeDruChapterIndex(cList)
                         }
-                    }?.onError {
+                    } else {
                         ReadBook.upMsg(context.getString(R.string.error_load_toc))
                     }
-            }
-        }.onError {
-            ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
+                }?.onError {
+                    ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                }
         }
     }
 
