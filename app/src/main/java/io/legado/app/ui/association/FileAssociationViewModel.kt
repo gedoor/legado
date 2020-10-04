@@ -5,12 +5,12 @@ import android.content.Intent
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.readText
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
@@ -46,16 +46,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                     }
                     if (scheme.isEmpty()) {
                         val book = if (uri.scheme == "content") {
-                            LocalBook.importFile(uri.toString()).apply {
-                                val bookFile =
-                                    FileUtils.getFile(AnalyzeTxtFile.cacheFolder, originName)
-                                if (!bookFile.exists()) {
-                                    bookFile.createNewFile()
-                                    DocumentUtils.readBytes(App.INSTANCE, uri)?.let {
-                                        bookFile.writeBytes(it)
-                                    }
-                                }
-                            }
+                            LocalBook.importFile(uri.toString())
                         } else {
                             LocalBook.importFile(uri.path.toString())
                         }

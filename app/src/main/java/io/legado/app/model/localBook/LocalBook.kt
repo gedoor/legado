@@ -6,10 +6,7 @@ import io.legado.app.App
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFilesDir
-import io.legado.app.utils.isContentPath
+import io.legado.app.utils.*
 import java.io.File
 
 
@@ -34,7 +31,16 @@ object LocalBook {
     fun importFile(path: String): Book {
         val fileName = if (path.isContentPath()) {
             val doc = DocumentFile.fromSingleUri(App.INSTANCE, Uri.parse(path))
-            doc?.name ?: ""
+            doc?.let {
+                val bookFile = FileUtils.getFile(AnalyzeTxtFile.cacheFolder, it.name!!)
+                if (!bookFile.exists()) {
+                    bookFile.createNewFile()
+                    doc.readBytes(App.INSTANCE)?.let { bytes ->
+                        bookFile.writeBytes(bytes)
+                    }
+                }
+            }
+            doc?.name!!
         } else {
             File(path).name
         }
