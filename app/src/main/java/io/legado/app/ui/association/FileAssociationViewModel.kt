@@ -3,15 +3,14 @@ package io.legado.app.ui.association
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.text.TextUtils
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.utils.isJsonArray
-import io.legado.app.utils.isJsonObject
-import io.legado.app.utils.readText
+import io.legado.app.utils.*
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
@@ -19,19 +18,14 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
     val successLiveData = MutableLiveData<Intent>()
     val errorLiveData = MutableLiveData<String>()
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     fun dispatchIndent(uri: Uri) {
         execute {
-            val url: String
             //如果是普通的url，需要根据返回的内容判断是什么
             if (uri.scheme == "file" || uri.scheme == "content") {
                 var scheme = ""
                 val content = if (uri.scheme == "file") {
-                    val file = File(uri.path.toString())
-                    if (file.exists()) {
-                        file.readText()
-                    } else {
-                        null
-                    }
+                    File(uri.path.toString()).readText()
                 } else {
                     DocumentFile.fromSingleUri(context, uri)?.readText(context)
                 }
@@ -50,38 +44,39 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                             }
                         }
                     }
-                    if (TextUtils.isEmpty(scheme)) {
+                    if (scheme.isEmpty()) {
                         val book = if (uri.scheme == "content") {
-                            LocalBook.importFile(uri.toString())
+                            LocalBook.importFile(uri.toString()).apply {
+                                val bookFile =
+                                    FileUtils.getFile(AnalyzeTxtFile.cacheFolder, originName)
+                                if (!bookFile.exists()) {
+                                    bookFile.createNewFile()
+                                    DocumentUtils.readBytes(App.INSTANCE, uri)?.let {
+                                        bookFile.writeBytes(it)
+                                    }
+                                }
+                            }
                         } else {
                             LocalBook.importFile(uri.path.toString())
                         }
                         val intent = Intent(context, ReadBookActivity::class.java)
                         intent.putExtra("bookUrl", book.bookUrl)
                         successLiveData.postValue(intent)
-                        return@execute
+                    } else {
+                        val url = if (uri.scheme == "content") {
+                            "yuedu://${scheme}/importonline?src=$uri"
+                        } else {
+                            "yuedu://${scheme}/importonline?src=${uri.path}"
+                        }
+                        val data = Uri.parse(url)
+                        val newIndent = Intent(Intent.ACTION_VIEW)
+                        newIndent.data = data
+                        successLiveData.postValue(newIndent)
                     }
                 } else {
-                    errorLiveData.postValue("文件不存在")
-                    return@execute
+                    throw Exception("文件不存在")
                 }
-                // content模式下，需要传递完整的路径，方便后续解析
-                url = if (uri.scheme == "content") {
-                    "yuedu://${scheme}/importonline?src=$uri"
-                } else {
-                    "yuedu://${scheme}/importonline?src=${uri.path}"
-                }
-
-            } else if (uri.scheme == "yuedu") {
-                url = uri.toString()
-            } else {
-                url = "yuedu://booksource/importonline?src=${uri.path}"
             }
-            val data = Uri.parse(url)
-            val newIndent = Intent(Intent.ACTION_VIEW)
-            newIndent.data = data
-            successLiveData.postValue(newIndent)
-            return@execute
         }.onError {
             it.printStackTrace()
             errorLiveData.postValue(it.localizedMessage)
