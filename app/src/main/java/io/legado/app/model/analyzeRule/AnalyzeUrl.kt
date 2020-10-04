@@ -191,7 +191,9 @@ class AnalyzeUrl(
         if (urlArray.size > 1) {
             val option = GSON.fromJsonObject<UrlOption>(urlArray[1])
             option?.let { _ ->
-                option.method?.let { if (it.equals("POST", true)) method = RequestMethod.POST }
+                option.method?.let {
+                    if (it.equals("POST", true)) method = RequestMethod.POST
+                }
                 option.type?.let { type = it }
                 option.headers?.let { headers ->
                     if (headers is Map<*, *>) {
@@ -202,13 +204,13 @@ class AnalyzeUrl(
                         GSON.fromJsonObject<Map<String, String>>(headers)
                             ?.let { headerMap.putAll(it) }
                     }
+                    headerMap[UA_NAME] ?: let {
+                        headerMap[UA_NAME] = userAgent
+                    }
                 }
-                headerMap[UA_NAME] = headerMap[UA_NAME] ?: userAgent
-                charset = option.charset
-                body = if (option.body is String) {
-                    option.body
-                } else {
-                    GSON.toJson(option.body)
+                option.charset?.let { charset = it }
+                option.body?.let {
+                    body = if (it is String) it else GSON.toJson(it)
                 }
                 option.webView?.let {
                     if (it.toString().isNotEmpty()) {
