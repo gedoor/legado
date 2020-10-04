@@ -22,7 +22,7 @@ interface BookDao {
     fun observeLocalUri(): LiveData<List<String>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
-    fun observeByGroup(group: Int): LiveData<List<Book>>
+    fun observeByGroup(group: Long): LiveData<List<Book>>
 
     @Query("select * from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
     fun observeNoGroup(): LiveData<List<Book>>
@@ -34,7 +34,7 @@ interface BookDao {
     fun liveDataSearch(key: String): LiveData<List<Book>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
-    fun getBooksByGroup(group: Int): List<Book>
+    fun getBooksByGroup(group: Long): List<Book>
 
     @Query("SELECT * FROM books WHERE `name` in (:names)")
     fun findByName(vararg names: String): List<Book>
@@ -82,7 +82,7 @@ interface BookDao {
     fun upProgress(bookUrl: String, pos: Int)
 
     @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
-    fun upGroup(oldGroupId: Int, newGroupId: Int)
+    fun upGroup(oldGroupId: Long, newGroupId: Long)
 
     @get:Query("select bookUrl, tocUrl, origin, originName, durChapterIndex, durChapterPos, durChapterTime, durChapterTitle from books")
     val allBookProgress: List<BookProgress>

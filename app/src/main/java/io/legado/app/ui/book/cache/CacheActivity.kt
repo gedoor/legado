@@ -43,13 +43,13 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
     private var menu: Menu? = null
     private var exportPosition = -1
     private val groupList: ArrayList<BookGroup> = arrayListOf()
-    private var groupId: Int = -1
+    private var groupId: Long = -1
 
     override val viewModel: CacheViewModel
         get() = getViewModel(CacheViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        groupId = intent.getIntExtra("groupId", -1)
+        groupId = intent.getLongExtra("groupId", -1)
         title_bar.subtitle = intent.getStringExtra("groupName") ?: getString(R.string.all)
         initRecyclerView()
         initGroupData()
@@ -71,7 +71,7 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
         menu?.findItem(R.id.menu_book_group)?.subMenu?.let { subMenu ->
             subMenu.removeGroup(R.id.menu_group)
             groupList.forEach { bookGroup ->
-                subMenu.add(R.id.menu_group, bookGroup.groupId, Menu.NONE, bookGroup.groupName)
+                subMenu.add(R.id.menu_group, bookGroup.order, Menu.NONE, bookGroup.groupName)
             }
         }
     }
@@ -107,7 +107,7 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
             }
             else -> if (item.groupId == R.id.menu_group) {
                 title_bar.subtitle = item.title
-                groupId = item.itemId
+                groupId = App.db.bookGroupDao().getByName(item.title.toString())?.groupId ?: 0
                 initBookData()
             }
         }

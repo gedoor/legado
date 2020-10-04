@@ -65,10 +65,10 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     fun checkGroup(groups: List<BookGroup>) {
         execute {
             groups.forEach { group ->
-                if (group.groupId and (group.groupId - 1) != 0) {
-                    var id = 1
+                if (group.groupId and (group.groupId - 1) != 0L) {
+                    var id = 1L
                     val idsSum = App.db.bookGroupDao().idsSum
-                    while (id and idsSum != 0) {
+                    while (id and idsSum != 0L) {
                         id = id.shl(1)
                     }
                     App.db.bookGroupDao().delete(group)

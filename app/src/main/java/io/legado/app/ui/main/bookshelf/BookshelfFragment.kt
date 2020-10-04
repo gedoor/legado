@@ -54,7 +54,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private var noGroupLiveData: LiveData<Int>? = null
     private val bookGroups = mutableListOf<BookGroup>()
-    private val fragmentMap = hashMapOf<Int, BooksFragment>()
+    private val fragmentMap = hashMapOf<Long, BooksFragment>()
     private var showGroupNone = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

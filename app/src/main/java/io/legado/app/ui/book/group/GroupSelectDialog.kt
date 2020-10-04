@@ -44,10 +44,10 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     companion object {
         const val tag = "groupSelectDialog"
 
-        fun show(manager: FragmentManager, groupId: Int, requestCode: Int = -1) {
+        fun show(manager: FragmentManager, groupId: Long, requestCode: Int = -1) {
             val fragment = GroupSelectDialog().apply {
                 val bundle = Bundle()
-                bundle.putInt("groupId", groupId)
+                bundle.putLong("groupId", groupId)
                 bundle.putInt("requestCode", requestCode)
                 arguments = bundle
             }
@@ -59,7 +59,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private lateinit var viewModel: GroupViewModel
     private lateinit var adapter: GroupAdapter
     private var callBack: CallBack? = null
-    private var groupId = 0
+    private var groupId: Long = 0
 
     override fun onStart() {
         super.onStart()
@@ -81,7 +81,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tool_bar.setBackgroundColor(primaryColor)
         callBack = activity as? CallBack
         arguments?.let {
-            groupId = it.getInt("groupId")
+            groupId = it.getLong("groupId")
             requestCode = it.getInt("requestCode", -1)
         }
         initView()
@@ -214,6 +214,6 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     interface CallBack {
-        fun upGroup(requestCode: Int, groupId: Int)
+        fun upGroup(requestCode: Int, groupId: Long)
     }
 }

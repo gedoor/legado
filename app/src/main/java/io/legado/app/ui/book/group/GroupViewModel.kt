@@ -9,9 +9,9 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
 
     fun addGroup(groupName: String) {
         execute {
-            var id = 1
+            var id = 1L
             val idsSum = App.db.bookGroupDao().idsSum
-            while (id and idsSum != 0) {
+            while (id and idsSum != 0L) {
                 id = id.shl(1)
             }
             val bookGroup = BookGroup(

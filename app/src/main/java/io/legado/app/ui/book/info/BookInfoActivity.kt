@@ -182,7 +182,7 @@ class BookInfoActivity :
         }
     }
 
-    private fun upGroup(groupId: Int) {
+    private fun upGroup(groupId: Long) {
         viewModel.loadGroup(groupId) {
             if (it.isNullOrEmpty()) {
                 tv_group.text = getString(R.string.group_s, getString(R.string.no_group))
@@ -350,7 +350,7 @@ class BookInfoActivity :
         return viewModel.durChapterIndex
     }
 
-    override fun upGroup(requestCode: Int, groupId: Int) {
+    override fun upGroup(requestCode: Int, groupId: Long) {
         upGroup(groupId)
         viewModel.bookData.value?.group = groupId
         if (viewModel.inBookshelf) {

@@ -101,13 +101,13 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
             tv_group.onClick {
                 getItem(holder.layoutPosition)?.let {
                     actionItem = it
-                    callBack.selectGroup(it.group, groupRequestCode)
+                    callBack.selectGroup(groupRequestCode, it.group)
                 }
             }
         }
     }
 
-    private fun getGroupList(groupId: Int): List<String> {
+    private fun getGroupList(groupId: Long): List<String> {
         val groupNames = arrayListOf<String>()
         callBack.groupList.forEach {
             if (it.groupId and groupId > 0) {
@@ -117,7 +117,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         return groupNames
     }
 
-    private fun getGroupName(groupId: Int): String {
+    private fun getGroupName(groupId: Long): String {
         val groupNames = getGroupList(groupId)
         if (groupNames.isEmpty()) {
             return ""
@@ -159,6 +159,6 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         fun upSelectCount()
         fun updateBook(vararg book: Book)
         fun deleteBook(book: Book)
-        fun selectGroup(groupId: Int, requestCode: Int)
+        fun selectGroup(requestCode: Int, groupId: Long)
     }
 }

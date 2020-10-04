@@ -8,13 +8,16 @@ import io.legado.app.data.entities.BookGroup
 interface BookGroupDao {
 
     @Query("select * from book_groups where groupId = :id")
-    fun getByID(id: Int): BookGroup?
+    fun getByID(id: Long): BookGroup?
+
+    @Query("select * from book_groups where groupName = :groupName")
+    fun getByName(groupName: String): BookGroup?
 
     @Query("SELECT * FROM book_groups ORDER BY `order`")
     fun liveDataAll(): LiveData<List<BookGroup>>
 
     @get:Query("SELECT sum(groupId) FROM book_groups")
-    val idsSum: Int
+    val idsSum: Long
 
     @get:Query("SELECT MAX(`order`) FROM book_groups")
     val maxOrder: Int

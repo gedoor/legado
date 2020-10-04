@@ -35,11 +35,11 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     BaseBooksAdapter.CallBack {
 
     companion object {
-        fun newInstance(position: Int, groupId: Int): BooksFragment {
+        fun newInstance(position: Int, groupId: Long): BooksFragment {
             return BooksFragment().apply {
                 val bundle = Bundle()
                 bundle.putInt("position", position)
-                bundle.putInt("groupId", groupId)
+                bundle.putLong("groupId", groupId)
                 arguments = bundle
             }
         }
@@ -50,12 +50,12 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private lateinit var booksAdapter: BaseBooksAdapter
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var position = 0
-    private var groupId = -1
+    private var groupId = -1L
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         arguments?.let {
             position = it.getInt("position", 0)
-            groupId = it.getInt("groupId", -1)
+            groupId = it.getLong("groupId", -1)
         }
         initRecyclerView()
         upRecyclerData()

@@ -9,7 +9,7 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "book_groups")
 data class BookGroup(
     @PrimaryKey
-    val groupId: Int = 0b1,
+    val groupId: Long = 0b1,
     var groupName: String,
     var order: Int = 0
 ) : Parcelable
