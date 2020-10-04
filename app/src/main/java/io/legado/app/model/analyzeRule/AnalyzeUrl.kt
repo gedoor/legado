@@ -213,9 +213,7 @@ class AnalyzeUrl(
                     body = if (it is String) it else GSON.toJson(it)
                 }
                 option.webView?.let {
-                    if (it.toString().isNotEmpty()) {
-                        useWebView = true
-                    }
+                    useWebView = it.toString().isNotEmpty()
                 }
             }
         }
