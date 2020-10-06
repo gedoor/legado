@@ -106,10 +106,10 @@ class WebBook(val bookSource: BookSource) {
                     book.infoHtml
                 } else {
                     val analyzeUrl = AnalyzeUrl(
-                        book = book,
                         ruleUrl = book.bookUrl,
                         baseUrl = sourceUrl,
-                        headerMapF = bookSource.getHeaderMap()
+                        headerMapF = bookSource.getHeaderMap(),
+                        book = book
                     )
                     analyzeUrl.getResponseAwait(bookSource.bookSourceUrl).body
                 }
@@ -177,13 +177,13 @@ class WebBook(val bookSource: BookSource) {
             if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
                 book.tocHtml
             } else {
-                val analyzeUrl =
-                    AnalyzeUrl(
-                        book = book,
-                        ruleUrl = bookChapter.url,
-                        baseUrl = book.tocUrl,
-                        headerMapF = bookSource.getHeaderMap()
-                    )
+                val analyzeUrl = AnalyzeUrl(
+                    ruleUrl = bookChapter.url,
+                    baseUrl = book.tocUrl,
+                    headerMapF = bookSource.getHeaderMap(),
+                    book = book,
+                    chapter = bookChapter
+                )
                 analyzeUrl.getResponseAwait(
                     bookSource.bookSourceUrl,
                     jsStr = bookSource.getContentRule().webJs,

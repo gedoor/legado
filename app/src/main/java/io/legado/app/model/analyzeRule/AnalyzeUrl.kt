@@ -11,6 +11,7 @@ import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.constant.AppPattern.EXP_PATTERN
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.help.http.api.HttpGetApi
@@ -39,8 +40,9 @@ class AnalyzeUrl(
     speakSpeed: Int? = null,
     headerMapF: Map<String, String>? = null,
     baseUrl: String? = null,
-    val book: BaseBook? = null,
     var useWebView: Boolean = false,
+    val book: BaseBook? = null,
+    val chapter: BookChapter? = null
 ) : JsExtensions {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
