@@ -56,6 +56,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "disclaimer" -> requireContext().openUrl(disclaimerUrl)
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
+            "tg" -> openUrl(R.string.tg_url)
         }
         return super.onPreferenceTreeClick(preference)
     }
