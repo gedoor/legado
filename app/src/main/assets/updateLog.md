@@ -6,7 +6,10 @@
 **2020/10/04**
 * 更新时预下载10章
 * 支持更多分组
-* 
+* url添加js参数,解析url时执行,可在访问url时处理url,例
+```
+https://www.baidu.com,{"js":"java.headerMap.put('xxx', 'yyy')"}
+```
 
 **2020/10/02**
 * 优化规则解析

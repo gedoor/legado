@@ -34,30 +34,28 @@ import javax.script.SimpleBindings
 @SuppressLint("DefaultLocale")
 class AnalyzeUrl(
     var ruleUrl: String,
-    key: String? = null,
-    page: Int? = null,
-    speakText: String? = null,
-    speakSpeed: Int? = null,
-    headerMapF: Map<String, String>? = null,
-    baseUrl: String? = null,
+    val key: String? = null,
+    val page: Int? = null,
+    val speakText: String? = null,
+    val speakSpeed: Int? = null,
+    var baseUrl: String = "",
     var useWebView: Boolean = false,
     val book: BaseBook? = null,
-    val chapter: BookChapter? = null
+    val chapter: BookChapter? = null,
+    headerMapF: Map<String, String>? = null
 ) : JsExtensions {
     companion object {
         private val pagePattern = Pattern.compile("<(.*?)>")
         private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }
 
-    private var baseUrl: String = ""
-    lateinit var url: String
-        private set
-    private lateinit var urlHasQuery: String
+    var url: String = ""
     val headerMap = HashMap<String, String>()
+    var body: String? = null
+    private lateinit var urlHasQuery: String
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
     private var charset: String? = null
-    private var body: String? = null
     private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
     private val splitUrlRegex = Regex(",\\s*(?=\\{)")
@@ -65,9 +63,7 @@ class AnalyzeUrl(
     private var type: String? = null
 
     init {
-        baseUrl?.let {
-            this.baseUrl = it.split(splitUrlRegex, 1)[0]
-        }
+        baseUrl = baseUrl.split(splitUrlRegex, 1)[0]
         headerMapF?.let {
             headerMap.putAll(it)
             if (it.containsKey("proxy")) {
@@ -76,19 +72,13 @@ class AnalyzeUrl(
             }
         }
         //替换参数
-        analyzeJs(key, page, speakText, speakSpeed, book)
-        replaceKeyPageJs(key, page, speakText, speakSpeed, book)
+        analyzeJs()
+        replaceKeyPageJs()
         //处理URL
         initUrl()
     }
 
-    private fun analyzeJs(
-        key: String?,
-        page: Int?,
-        speakText: String?,
-        speakSpeed: Int?,
-        book: BaseBook?,
-    ) {
+    private fun analyzeJs() {
         val ruleList = arrayListOf<String>()
         var start = 0
         var tmp: String
@@ -116,12 +106,12 @@ class AnalyzeUrl(
                 ruleStr.startsWith("<js>") -> {
                     ruleStr = ruleStr.substring(4, ruleStr.lastIndexOf("<"))
                     ruleUrl =
-                        evalJS(ruleStr, ruleUrl, page, key, speakText, speakSpeed, book) as String
+                        evalJS(ruleStr, ruleUrl) as String
                 }
                 ruleStr.startsWith("@js", true) -> {
                     ruleStr = ruleStr.substring(4)
                     ruleUrl =
-                        evalJS(ruleStr, ruleUrl, page, key, speakText, speakSpeed, book) as String
+                        evalJS(ruleStr, ruleUrl) as String
                 }
                 else -> ruleUrl = ruleStr.replace("@result", ruleUrl)
             }
@@ -131,13 +121,7 @@ class AnalyzeUrl(
     /**
      * 替换关键字,页数,JS
      */
-    private fun replaceKeyPageJs(
-        key: String?,
-        page: Int?,
-        speakText: String?,
-        speakSpeed: Int?,
-        book: BaseBook?,
-    ) {
+    private fun replaceKeyPageJs() {
         //page
         page?.let {
             val matcher = pagePattern.matcher(ruleUrl)
@@ -215,7 +199,12 @@ class AnalyzeUrl(
                     body = if (it is String) it else GSON.toJson(it)
                 }
                 option.webView?.let {
-                    useWebView = it.toString().isNotEmpty()
+                    if (it.toString().isNotEmpty()) {
+                        useWebView = true
+                    }
+                }
+                option.js?.let {
+                    evalJS(it)
                 }
             }
         }
@@ -271,12 +260,7 @@ class AnalyzeUrl(
      */
     private fun evalJS(
         jsStr: String,
-        result: Any?,
-        page: Int?,
-        key: String?,
-        speakText: String?,
-        speakSpeed: Int?,
-        book: BaseBook?,
+        result: Any? = null
     ): Any {
         val bindings = SimpleBindings()
         bindings["java"] = this
@@ -428,7 +412,8 @@ class AnalyzeUrl(
         val webView: Any?,
         val headers: Any?,
         val body: Any?,
-        val type: String?
+        val type: String?,
+        val js: String?
     )
 
 }

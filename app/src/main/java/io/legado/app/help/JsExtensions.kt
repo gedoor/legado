@@ -6,7 +6,6 @@ import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
-import io.legado.app.utils.EncodingDetect
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import java.net.URLEncoder
@@ -22,7 +21,7 @@ interface JsExtensions {
      */
     fun ajax(urlStr: String): String? {
         return try {
-            val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
+            val analyzeUrl = AnalyzeUrl(urlStr)
             val call = analyzeUrl.getResponse(urlStr)
             val response = call.execute()
             response.body()
@@ -33,7 +32,7 @@ interface JsExtensions {
 
     fun connect(urlStr: String): Any {
         return try {
-            val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, null, null)
+            val analyzeUrl = AnalyzeUrl(urlStr)
             val call = analyzeUrl.getResponse(urlStr)
             val response = call.execute()
             response

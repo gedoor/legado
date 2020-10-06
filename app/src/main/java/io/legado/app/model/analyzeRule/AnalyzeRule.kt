@@ -15,7 +15,6 @@ import java.util.regex.Pattern
 import javax.script.SimpleBindings
 import kotlin.collections.HashMap
 
-
 /**
  * Created by REFGD.
  * 统一解析接口
@@ -637,7 +636,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     override fun ajax(urlStr: String): String? {
         return try {
-            val analyzeUrl = AnalyzeUrl(urlStr, baseUrl = baseUrl, book = book)
+            val analyzeUrl = AnalyzeUrl(urlStr, book = book)
             val call = analyzeUrl.getResponse(urlStr)
             val response = call.execute()
             response.body()
