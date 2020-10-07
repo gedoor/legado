@@ -21,10 +21,10 @@ class RotateGestureDetector(private val mListener: OnRotateListener) {
         when (event.actionMasked) {
             MotionEvent.ACTION_POINTER_DOWN,
             MotionEvent.ACTION_POINTER_UP -> {
-                if (event.pointerCount == 2) mPrevSlope = caculateSlope(event)
+                if (event.pointerCount == 2) mPrevSlope = calculateSlope(event)
             }
             MotionEvent.ACTION_MOVE -> if (event.pointerCount > 1) {
-                mCurrSlope = caculateSlope(event)
+                mCurrSlope = calculateSlope(event)
 
                 val currDegrees = Math.toDegrees(atan(mCurrSlope.toDouble()));
                 val prevDegrees = Math.toDegrees(atan(mPrevSlope.toDouble()));
@@ -32,7 +32,7 @@ class RotateGestureDetector(private val mListener: OnRotateListener) {
                 val deltaSlope = currDegrees - prevDegrees;
 
                 if (abs(deltaSlope) <= MAX_DEGREES_STEP) {
-                    mListener?.onRotate(deltaSlope.toFloat(), (x2 + x1) / 2, (y2 + y1) / 2);
+                    mListener.onRotate(deltaSlope.toFloat(), (x2 + x1) / 2, (y2 + y1) / 2);
                 }
                 mPrevSlope = mCurrSlope;
             }
@@ -40,7 +40,7 @@ class RotateGestureDetector(private val mListener: OnRotateListener) {
 
     }
 
-    private fun caculateSlope(event: MotionEvent): Float {
+    private fun calculateSlope(event: MotionEvent): Float {
         val x1 = event.getX(0);
         val y1 = event.getY(0);
         val x2 = event.getX(1);
