@@ -261,7 +261,7 @@ class AnalyzeUrl(
     private fun evalJS(
         jsStr: String,
         result: Any? = null
-    ): Any {
+    ): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["page"] = page
