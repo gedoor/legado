@@ -272,7 +272,7 @@ object ChapterProvider {
             )
             return
         }
-        val bodyIndent = ReadBookConfig.bodyIndent
+        val bodyIndent = ReadBookConfig.paragraphIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
         bodyIndent.toStringArray().forEach {
             val x1 = x + icw

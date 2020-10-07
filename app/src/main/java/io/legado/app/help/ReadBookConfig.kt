@@ -162,15 +162,6 @@ object ReadBookConfig {
     val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
     val textFullJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textFullJustify, true)
     val textBottomJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textBottomJustify, true)
-    var bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
-        set(value) {
-            field = value
-            bodyIndent = "　".repeat(value)
-            if (App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2) != value) {
-                App.INSTANCE.putPrefInt(PreferKey.bodyIndent, value)
-            }
-        }
-    var bodyIndent = "　".repeat(bodyIndentCount)
     var hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
     var hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
 
@@ -240,6 +231,12 @@ object ReadBookConfig {
         get() = config.titleBottomSpacing
         set(value) {
             config.titleBottomSpacing = value
+        }
+
+    var paragraphIndent: String
+        get() = config.paragraphIndent
+        set(value) {
+            config.paragraphIndent = value
         }
 
     var paddingBottom: Int
@@ -392,6 +389,7 @@ object ReadBookConfig {
         var titleSize: Int = 0,
         var titleTopSpacing: Int = 0,
         var titleBottomSpacing: Int = 0,
+        var paragraphIndent: String = "　　",//段落缩进
         var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
