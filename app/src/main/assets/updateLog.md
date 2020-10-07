@@ -9,6 +9,7 @@
 * url添加js参数,解析url时执行,可在访问url时处理url,例
 ```
 https://www.baidu.com,{"js":"java.headerMap.put('xxx', 'yyy')"}
+https://www.baidu.com,{"js":"java.url=java.url+'yyyy'"}
 ```
 * 修复bug
 
