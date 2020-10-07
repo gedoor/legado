@@ -105,13 +105,11 @@ class AnalyzeUrl(
             when {
                 ruleStr.startsWith("<js>") -> {
                     ruleStr = ruleStr.substring(4, ruleStr.lastIndexOf("<"))
-                    ruleUrl =
-                        evalJS(ruleStr, ruleUrl) as String
+                    ruleUrl = evalJS(ruleStr, ruleUrl) as String
                 }
                 ruleStr.startsWith("@js", true) -> {
                     ruleStr = ruleStr.substring(4)
-                    ruleUrl =
-                        evalJS(ruleStr, ruleUrl) as String
+                    ruleUrl = evalJS(ruleStr, ruleUrl) as String
                 }
                 else -> ruleUrl = ruleStr.replace("@result", ruleUrl)
             }
