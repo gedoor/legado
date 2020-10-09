@@ -9,7 +9,8 @@
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
     android:gravity="center_vertical"
-    android:elevation="2dp" >
+    android:elevation="2dp"
+    tools:ignore="RtlHardcoded">
 
     <io.legado.app.lib.theme.view.ATECheckBox
         android:id="@+id/cb_selected_all"
@@ -17,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:padding="5dp"
-        android:text="@string/select_all_count" />
+        android:text="@string/select_all" />
 
     <io.legado.app.ui.widget.text.AccentStrokeTextView
         android:id="@+id/btn_revert_selection"
