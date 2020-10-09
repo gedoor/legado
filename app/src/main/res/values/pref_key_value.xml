@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pk_background_verification" translatable="false">background_verification</string>
     <string name="pk_auto_refresh" translatable="false">auto_refresh</string>
     <string name="pk_requested_direction" translatable="false">list_screen_direction</string>
     <string name="pk_full_screen" translatable="false">full_screen</string>
