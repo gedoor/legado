@@ -126,7 +126,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
-                ReadBookConfig.bodyIndentCount = index
+                ReadBookConfig.paragraphIndent = "　".repeat(index)
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }

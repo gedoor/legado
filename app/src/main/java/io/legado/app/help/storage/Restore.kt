@@ -63,7 +63,6 @@ object Restore {
         PreferKey.shareLayout,
         PreferKey.hideStatusBar,
         PreferKey.hideNavigationBar,
-        PreferKey.bodyIndent,
         PreferKey.autoReadSpeed
     )
 
@@ -216,7 +215,6 @@ object Restore {
                 shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
                 hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
                 hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
-                bodyIndentCount = App.INSTANCE.getPrefInt(PreferKey.bodyIndent, 2)
                 autoReadSpeed = App.INSTANCE.getPrefInt(PreferKey.autoReadSpeed, 46)
             }
             ChapterProvider.upStyle()

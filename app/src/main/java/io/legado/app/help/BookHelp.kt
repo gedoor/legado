@@ -327,10 +327,10 @@ object BookHelp {
             if (contents.isEmpty()) {
                 contents.add(title)
                 if (str != title && it.isNotEmpty()) {
-                    contents.add("${ReadBookConfig.bodyIndent}$str")
+                    contents.add("${ReadBookConfig.paragraphIndent}$str")
                 }
             } else if (str.isNotEmpty()) {
-                contents.add("${ReadBookConfig.bodyIndent}$str")
+                contents.add("${ReadBookConfig.paragraphIndent}$str")
             }
         }
         return contents

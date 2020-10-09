@@ -299,15 +299,14 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                         CheckSource.keyword = it
                     }
                 }
-                if (AppConfig.backgroundVerification) {
-                    CheckSource.start(this@BookSourceActivity, adapter.getSelection())
-                } else {
+                if (!AppConfig.backgroundVerification) {
                     val bundle = Bundle()
                     bundle.putInt("maxProgress", adapter.getSelection().size)
                     CheckSourceDialog().apply {
                         arguments = bundle
                     }.show(supportFragmentManager, "CheckDialog")
                 }
+                CheckSource.start(this@BookSourceActivity, adapter.getSelection())
             }
             noButton { }
         }.show().applyTint()
