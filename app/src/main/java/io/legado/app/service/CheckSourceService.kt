@@ -78,6 +78,7 @@ class CheckSourceService : BaseService() {
         allIds.addAll(ids)
         processIndex = 0
         threadCount = min(allIds.size, threadCount)
+        postEvent(EventBus.CHECK_INIT, allIds.size)
         updateNotification(0, getString(R.string.progress_show, "", 0, allIds.size))
         for (i in 0 until threadCount) {
             check()
