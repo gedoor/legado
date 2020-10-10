@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.main.MainActivity">
 
+    <item
+        android:id="@+id/menu_add_bookmark"
+        android:icon="@drawable/ic_bookmark"
+        android:title="@string/bookmark_add"
+        app:showAsAction="ifRoom" />
+
     <group android:id="@+id/menu_group_on_line">
         <item
             android:id="@+id/menu_change_source"
@@ -20,7 +26,7 @@
             android:id="@+id/menu_download"
             android:icon="@drawable/ic_download_line"
             android:title="@string/offline_cache"
-            app:showAsAction="ifRoom" />
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/menu_disable_book_source"
@@ -58,39 +64,30 @@
 
     </group>
 
-    <group android:id="@+id/menu_group_show">
-        <item
-            android:id="@+id/menu_add_bookmark"
-            android:icon="@drawable/ic_bookmark"
-            android:title="@string/bookmark_add"
-            app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_copy_text"
+        android:icon="@drawable/ic_copy"
+        android:title="@string/copy_text"
+        app:showAsAction="ifRoom" />
 
-        <item
-            android:id="@+id/menu_copy_text"
-            android:icon="@drawable/ic_copy"
-            android:title="@string/copy_text"
-            app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_enable_replace"
+        android:icon="@drawable/ic_find_replace"
+        android:title="@string/replace_rule_title"
+        android:checkable="true"
+        android:checked="true"
+        app:showAsAction="never" />
 
-        <item
-            android:id="@+id/menu_enable_replace"
-            android:icon="@drawable/ic_find_replace"
-            android:title="@string/replace_rule_title"
-            android:checkable="true"
-            android:checked="true"
-            app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_update_toc"
+        android:icon="@drawable/ic_update"
+        android:title="@string/update_toc"
+        app:showAsAction="never" />
 
-        <item
-            android:id="@+id/menu_update_toc"
-            android:icon="@drawable/ic_update"
-            android:title="@string/update_toc"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/menu_book_info"
-            android:icon="@drawable/ic_toc"
-            android:title="@string/book_info"
-            app:showAsAction="never" />
-
-    </group>
+    <item
+        android:id="@+id/menu_book_info"
+        android:icon="@drawable/ic_toc"
+        android:title="@string/book_info"
+        app:showAsAction="never" />
 
 </menu>
