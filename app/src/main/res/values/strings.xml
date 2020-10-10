@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--App-->
     <string name="app_name">Legado</string>
@@ -693,7 +694,7 @@
     <string name="hideFooter">Hide footer</string>
     <string name="switchLayout">Switch Layout</string>
     <string name="text_font_weight_converter">Text font weight switching</string>
-  
+
     <!--color-->
     <string name="primary">Primary</string>
     <string name="accent">Accent</string>

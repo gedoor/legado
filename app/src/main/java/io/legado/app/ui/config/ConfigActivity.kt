@@ -1,9 +1,14 @@
 package io.legado.app.ui.config
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Process
+import android.util.Log
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
+import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_config.*
@@ -53,6 +58,13 @@ class ConfigActivity : VMBaseActivity<ConfigViewModel>(R.layout.activity_config)
         super.observeLiveBus()
         observeEvent<String>(EventBus.RECREATE) {
             recreate()
+        }
+        observeEvent<String>(EventBus.REOPEN) {
+            Log.d("h11128", "reopen")
+            val intent = Intent(App.INSTANCE, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            App.INSTANCE.startActivity(intent)
+            Process.killProcess(Process.myPid())
         }
     }
 }
