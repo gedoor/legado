@@ -41,7 +41,8 @@ object LanguageUtils {
             val resources: Resources = context.resources
             val targetLocale = getSetLocale(context)
             val configuration: Configuration = resources.configuration
-            configuration.setLocale(targetLocale)
+            @Suppress("DEPRECATION")
+            configuration.locale = targetLocale
             @Suppress("DEPRECATION")
             resources.updateConfiguration(configuration, resources.displayMetrics)
         }
@@ -70,7 +71,7 @@ object LanguageUtils {
             locale = context.resources.configuration.locales[0]
         } else {
             @Suppress("DEPRECATION")
-            locale =context.resources.configuration.locale
+            locale = context.resources.configuration.locale
         }
         /*
         Log.d("h11128", "displayName " + locale.displayName)
@@ -97,7 +98,7 @@ object LanguageUtils {
     }
 
     /**
-     * 判断系统语言和设置语言是否相同
+     * 判断App语言和设置语言是否相同
      */
     fun isSameWithSetting(context: Context): Boolean {
         val locale = getAppLocale(context)
