@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
@@ -46,7 +47,7 @@ class App : MultiDexApplication() {
         INSTANCE = this
         androidId = Settings.System.getString(contentResolver, Settings.Secure.ANDROID_ID)
         CrashHandler(this)
-        LanguageUtils.setConfigurationOld(this)
+        LanguageUtils.setConfiguration(this)
         db = AppDatabase.createDatabase(INSTANCE)
         packageManager.getPackageInfo(packageName, 0)?.let {
             versionCode = it.versionCode

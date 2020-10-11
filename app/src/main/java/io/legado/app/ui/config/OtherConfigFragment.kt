@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
@@ -31,6 +32,7 @@ import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 import java.io.File
+import java.util.*
 
 
 class OtherConfigFragment : BasePreferenceFragment(),
@@ -123,8 +125,8 @@ class OtherConfigFragment : BasePreferenceFragment(),
             PreferKey.replaceEnableDefault -> AppConfig.replaceEnableDefault =
                 App.INSTANCE.getPrefBoolean(PreferKey.replaceEnableDefault, true)
             PreferKey.language -> {
-                LanguageUtils.setConfigurationOld(App.INSTANCE)
-                postEvent(EventBus.RECREATE, "")
+                LanguageUtils.setConfiguration(App.INSTANCE)
+                postEvent(EventBus.REOPEN, "")
             }
         }
     }
