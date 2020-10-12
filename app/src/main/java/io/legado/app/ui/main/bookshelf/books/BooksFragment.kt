@@ -1,5 +1,6 @@
 package io.legado.app.ui.main.bookshelf.books
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData
@@ -22,10 +23,9 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.MainViewModel
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getViewModelOfActivity
-import io.legado.app.utils.observeEvent
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
 import kotlin.math.max
@@ -51,6 +51,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var position = 0
     private var groupId = -1L
+    private val searchRequestCode = 68
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         arguments?.let {
@@ -142,10 +143,18 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     override fun openBookInfo(book: Book) {
-        context?.startActivity<BookInfoActivity>(
+        startActivityForResult<BookInfoActivity>(
+            searchRequestCode,
             Pair("name", book.name),
             Pair("author", book.author)
         )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        data?.getStringExtra("key")?.let {
+            startActivity<SearchActivity>(Pair("key", it))
+        }
     }
 
     override fun isUpdate(bookUrl: String): Boolean {
