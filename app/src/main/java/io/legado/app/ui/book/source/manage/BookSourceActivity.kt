@@ -5,8 +5,9 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.FileProvider
@@ -15,15 +16,14 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
@@ -42,9 +42,7 @@ import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.dialog_progressbar_view.*
 import kotlinx.android.synthetic.main.view_search.*
-import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
@@ -68,6 +66,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     private var groupMenu: SubMenu? = null
     private var sort = 0
     private var sortAscending = 0
+    private var snackBar: Snackbar? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -100,11 +99,20 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     val intent = Intent(Intent.ACTION_SEND)
                     val file = FileUtils.createFileWithReplace("$filesDir/shareBookSource.json")
                     file.writeText(json)
-                    val fileUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", file)
+                    val fileUri = FileProvider.getUriForFile(
+                        this,
+                        BuildConfig.APPLICATION_ID + ".fileProvider",
+                        file
+                    )
                     intent.type = "text/*"
                     intent.putExtra(Intent.EXTRA_STREAM, fileUri)
                     intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    startActivity(Intent.createChooser(intent, getString(R.string.share_selected_source)))
+                    startActivity(
+                        Intent.createChooser(
+                            intent,
+                            getString(R.string.share_selected_source)
+                        )
+                    )
                 } catch (e: ActivityNotFoundException) {
                     e.printStackTrace()
                 }
@@ -196,19 +204,19 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
         }
         bookSourceLiveDate?.observe(this, { data ->
-            val sourceList = when (sortAscending % 2){
+            val sourceList = when (sortAscending % 2) {
                 0 -> when (sort) {
                     1 -> data.sortedBy { it.weight }
                     2 -> data.sortedBy { it.bookSourceName }
                     3 -> data.sortedBy { it.bookSourceUrl }
-                    4 -> data.sortedByDescending { it.lastUpdateTime}
+                    4 -> data.sortedByDescending { it.lastUpdateTime }
                     else -> data
                 }
                 else -> when (sort) {
                     1 -> data.sortedByDescending { it.weight }
                     2 -> data.sortedByDescending { it.bookSourceName }
                     3 -> data.sortedByDescending { it.bookSourceUrl }
-                    4 -> data.sortedBy { it.lastUpdateTime}
+                    4 -> data.sortedBy { it.lastUpdateTime }
                     else -> data.reversed()
                 }
             }
@@ -218,11 +226,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             upCountView()
         })
     }
-    private fun sortCheck (sortId: Int){
-        if (sort == sortId){
-            sortAscending +=1
-        }
-        else{
+
+    private fun sortCheck(sortId: Int) {
+        if (sort == sortId) {
+            sortAscending += 1
+        } else {
             sortAscending = 0
             sort = sortId
         }
@@ -298,13 +306,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     if (it.isNotEmpty()) {
                         CheckSource.keyword = it
                     }
-                }
-                if (!AppConfig.backgroundVerification) {
-                    val bundle = Bundle()
-                    bundle.putInt("maxProgress", adapter.getSelection().size)
-                    CheckSourceDialog().apply {
-                        arguments = bundle
-                    }.show(supportFragmentManager, "CheckDialog")
                 }
                 CheckSource.start(this@BookSourceActivity, adapter.getSelection())
             }
@@ -396,8 +397,21 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     }
 
     override fun observeLiveBus() {
-        observeEvent<Int>(EventBus.CHECK_DONE) {
-            groups.map { group->
+        observeEvent<String>(EventBus.CHECK_SOURCE) { msg ->
+            snackBar?.setText(msg) ?: let {
+                snackBar = Snackbar
+                    .make(root_view, msg, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.cancel) {
+                        CheckSource.stop(this)
+                    }.apply { show() }
+            }
+        }
+        observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
+            snackBar?.let {
+                it.dismiss()
+                snackBar = null
+            }
+            groups.map { group ->
                 if (group.contains("失效")) {
                     search_view.setQuery("失效", true)
                     toast("发现有失效书源，已为您自动筛选！")
@@ -501,46 +515,4 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         }
     }
 
-    class CheckSourceDialog : BaseDialogFragment() {
-        override fun onStart() {
-            super.onStart()
-            val dm = DisplayMetrics()
-            activity?.windowManager?.defaultDisplay?.getMetrics(dm)
-            dialog?.window?.setLayout(
-                (dm.widthPixels * 0.9).toInt(),
-                (dm.heightPixels * 0.14).toInt()
-            )
-            dialog?.setCancelable(false)
-        }
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            return inflater.inflate(R.layout.dialog_progressbar_view, container)
-        }
-
-        override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-            arguments?.let { bundle ->
-                val maxProgress = bundle.getInt("maxProgress")
-                ck_progress_text.text = getString(R.string.progress_show, "", 0, maxProgress)
-                ck_progress.max = maxProgress
-                observeEvent<Int>(EventBus.CHECK_UP_PROGRESS) { progress->
-                    ck_progress.progress = progress
-                }
-                observeEvent<String>(EventBus.CHECK_UP_PROGRESS_STRING) {
-                    ck_progress_text.text = it
-                }
-                observeEvent<Int>(EventBus.CHECK_DONE) {
-                    dismiss()
-                }
-                tv_footer_left.onClick {
-                    CheckSource.stop(requireContext()).apply {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
 }

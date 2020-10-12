@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Process
 import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
@@ -27,6 +28,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
+import io.legado.app.ui.main.MainActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
@@ -122,10 +124,13 @@ class OtherConfigFragment : BasePreferenceFragment(),
             )
             PreferKey.replaceEnableDefault -> AppConfig.replaceEnableDefault =
                 App.INSTANCE.getPrefBoolean(PreferKey.replaceEnableDefault, true)
-            PreferKey.language -> {
-                LanguageUtils.setConfigurationOld(App.INSTANCE)
-                postEvent(EventBus.RECREATE, "")
-            }
+            PreferKey.language -> listView.postDelayed({
+                LanguageUtils.setConfiguration(App.INSTANCE)
+                val intent = Intent(App.INSTANCE, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                App.INSTANCE.startActivity(intent)
+                Process.killProcess(Process.myPid())
+            }, 1000)
         }
     }
 
