@@ -23,9 +23,7 @@ import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getViewModelOfActivity
-import io.legado.app.utils.observeEvent
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
 import kotlin.math.max
@@ -142,7 +140,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     override fun openBookInfo(book: Book) {
-        context?.startActivity<BookInfoActivity>(
+        startActivity<BookInfoActivity>(
             Pair("name", book.name),
             Pair("author", book.author)
         )

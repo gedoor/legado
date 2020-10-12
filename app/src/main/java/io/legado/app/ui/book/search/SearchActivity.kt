@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -57,7 +58,12 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         initSearchView()
         initOtherView()
         initLiveData()
-        initIntent()
+        receiptIntent(intent)
+    }
+
+    override fun onNewIntent(data: Intent?) {
+        super.onNewIntent(data)
+        receiptIntent(data)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -195,8 +201,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         })
     }
 
-    private fun initIntent() {
-        intent.getStringExtra("key")?.let {
+    private fun receiptIntent(intent: Intent? = null) {
+        intent?.getStringExtra("key")?.let {
             search_view.setQuery(it, true)
         } ?: let {
             search_view.requestFocus()
