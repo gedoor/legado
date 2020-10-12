@@ -8,6 +8,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.AppConfig
+import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultValueHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
@@ -19,6 +20,7 @@ import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
@@ -109,11 +111,23 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun cacheBook(webBook: WebBook, book: Book) {
-        if (book.totalChapterNum > book.durChapterIndex) {
-            val downloadToIndex = min(book.totalChapterNum, book.durChapterIndex.plus(10))
-            for (i in book.durChapterIndex until downloadToIndex) {
-                App.db.bookChapterDao().getChapter(book.bookUrl, i)?.let { chapter ->
-                    CacheBook.download(webBook, book, chapter)
+        execute {
+            if (book.totalChapterNum > book.durChapterIndex) {
+                val downloadToIndex = min(book.totalChapterNum, book.durChapterIndex.plus(10))
+                for (i in book.durChapterIndex until downloadToIndex) {
+                    App.db.bookChapterDao().getChapter(book.bookUrl, i)?.let { chapter ->
+                        if (!BookHelp.hasContent(book, chapter)) {
+                            var addToCache = false
+                            while (!addToCache) {
+                                if (CacheBook.downloadCount() < 5) {
+                                    CacheBook.download(webBook, book, chapter)
+                                    addToCache = true
+                                } else {
+                                    delay(1000)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

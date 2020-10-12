@@ -54,6 +54,14 @@ object CacheBook {
         }
     }
 
+    fun downloadCount(): Int {
+        var count = 0
+        downloadMap.forEach {
+            count += it.value.size
+        }
+        return count
+    }
+
     fun download(
         webBook: WebBook,
         book: Book,
@@ -98,6 +106,9 @@ object CacheBook {
                 }
             }.onFinally {
                 downloadMap[book.bookUrl]?.remove(chapter.index)
+                if (downloadMap[book.bookUrl].isNullOrEmpty()) {
+                    downloadMap.remove(book.bookUrl)
+                }
                 ReadBook.removeLoading(chapter.index)
             }
     }
