@@ -31,7 +31,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 import java.text.Collator
 
 
@@ -52,7 +51,6 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = linkedSetOf<String>()
-    private val searchRequestCode = 69
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ll_history.setBackgroundColor(backgroundColor)
@@ -61,6 +59,11 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         initOtherView()
         initLiveData()
         receiptIntent(intent)
+    }
+
+    override fun onNewIntent(data: Intent?) {
+        super.onNewIntent(data)
+        receiptIntent(data)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -198,13 +201,8 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        receiptIntent(data)
-    }
-
-    private fun receiptIntent(data: Intent? = null) {
-        data?.getStringExtra("key")?.let {
+    private fun receiptIntent(intent: Intent? = null) {
+        intent?.getStringExtra("key")?.let {
             search_view.setQuery(it, true)
         } ?: let {
             search_view.requestFocus()
@@ -321,8 +319,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
     override fun showBookInfo(name: String, author: String) {
         viewModel.getSearchBook(name, author) { searchBook ->
             searchBook?.let {
-                startActivityForResult<BookInfoActivity>(
-                    searchRequestCode,
+                startActivity<BookInfoActivity>(
                     Pair("name", it.name),
                     Pair("author", it.author)
                 )
@@ -334,8 +331,7 @@ class SearchActivity : VMBaseActivity<SearchViewModel>(R.layout.activity_book_se
      * 显示书籍详情
      */
     override fun showBookInfo(book: Book) {
-        startActivityForResult<BookInfoActivity>(
-            searchRequestCode,
+        startActivity<BookInfoActivity>(
             Pair("name", book.name),
             Pair("author", book.author)
         )

@@ -32,6 +32,7 @@ import io.legado.app.ui.book.chapterlist.ChapterListActivity
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
@@ -238,12 +239,10 @@ class BookInfoActivity :
             }
         }
         tv_author.onClick {
-            setResult(RESULT_OK, Intent().putExtra("key", viewModel.bookData.value?.author))
-            finish()
+            startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.author))
         }
         tv_name.onClick {
-            setResult(RESULT_OK, Intent().putExtra("key", viewModel.bookData.value?.name))
-            finish()
+            startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.name))
         }
     }
 
