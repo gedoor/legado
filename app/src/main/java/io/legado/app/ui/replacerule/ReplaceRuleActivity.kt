@@ -43,7 +43,8 @@ import org.jetbrains.anko.toast
 import java.io.File
 
 
-class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
+class ReplaceRuleActivity :
+    VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule, false),
     SearchView.OnQueryTextListener,
     PopupMenu.OnMenuItemClickListener,
     FileChooserDialog.CallBack,
