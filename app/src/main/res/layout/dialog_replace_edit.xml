@@ -59,8 +59,7 @@
                 <io.legado.app.ui.widget.text.EditText
                     android:id="@+id/et_replace_rule"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="6" />
+                    android:layout_height="wrap_content" />
             </io.legado.app.ui.widget.text.TextInputLayout>
 
             <io.legado.app.lib.theme.view.ATECheckBox
@@ -78,8 +77,7 @@
                 <io.legado.app.ui.widget.text.EditText
                     android:id="@+id/et_replace_to"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="6" />
+                    android:layout_height="wrap_content" />
             </io.legado.app.ui.widget.text.TextInputLayout>
 
             <io.legado.app.ui.widget.text.TextInputLayout
@@ -91,8 +89,7 @@
                 <io.legado.app.ui.widget.text.EditText
                     android:id="@+id/et_scope"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="6" />
+                    android:layout_height="wrap_content" />
             </io.legado.app.ui.widget.text.TextInputLayout>
 
         </LinearLayout>
