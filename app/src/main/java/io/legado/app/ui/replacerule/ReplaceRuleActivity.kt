@@ -42,9 +42,11 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.File
 
-
+/**
+ * 替换规则管理
+ */
 class ReplaceRuleActivity :
-    VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule, false),
+    VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
     SearchView.OnQueryTextListener,
     PopupMenu.OnMenuItemClickListener,
     FileChooserDialog.CallBack,

@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentLayout="@layout/view_search"
-        app:fitStatusBar="false"
         app:title="@string/replace_purify" />
 
     <androidx.recyclerview.widget.RecyclerView

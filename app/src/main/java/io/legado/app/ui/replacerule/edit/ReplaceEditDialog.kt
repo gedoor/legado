@@ -23,6 +23,9 @@ import io.legado.app.utils.toast
 import kotlinx.android.synthetic.main.dialog_replace_edit.*
 import org.jetbrains.anko.sdk27.listeners.onFocusChange
 
+/**
+ * 编辑替换规则
+ */
 class ReplaceEditDialog : BaseDialogFragment(),
     Toolbar.OnMenuItemClickListener,
     KeyboardToolPop.CallBack {
@@ -92,8 +95,7 @@ class ReplaceEditDialog : BaseDialogFragment(),
                 val rule = getReplaceRule()
                 if (!rule.isValid()){
                     toast(R.string.replace_rule_invalid)
-                }
-                else{
+                } else{
                     viewModel.save(rule) {
                         callBack?.onReplaceRuleSave()
                         dismiss()
