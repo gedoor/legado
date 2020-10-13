@@ -38,7 +38,6 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
-import io.legado.app.ui.book.chapterlist.ChapterListActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
@@ -49,9 +48,10 @@ import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.login.SourceLogin
-import io.legado.app.ui.replacerule.ReplaceRuleActivity
-import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
+import io.legado.app.ui.replace.ReplaceRuleActivity
+import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_read.*
@@ -78,7 +78,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     ReadBook.CallBack,
     AutoReadDialog.CallBack,
     TocRegexDialog.CallBack,
-    ReplaceEditDialog.CallBack,
     ColorPickerDialogListener {
     private val requestCodeChapterList = 568
     private val requestCodeEditSource = 111
@@ -487,8 +486,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 ReadBook.bookSource?.bookSourceUrl?.let {
                     scopes.add(it)
                 }
-                ReplaceEditDialog.show(
-                    supportFragmentManager,
+                ReplaceEditActivity.show(
+                    this,
                     pattern = selectedText,
                     scope = scopes.joinToString(";")
                 )
@@ -696,7 +695,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     /**
      * 替换规则变化
      */
-    override fun onReplaceRuleSave() {
+    private fun onReplaceRuleSave() {
         Coroutine.async {
             BookHelp.upReplaceRules()
             ReadBook.loadContent(resetPageOffset = false)
@@ -917,6 +916,9 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
         observeEvent<String>(PreferKey.showBrightnessView) {
             read_menu.upBrightnessState()
+        }
+        observeEvent<String>(EventBus.REPLACE_RULE_SAVE) {
+            onReplaceRuleSave()
         }
     }
 

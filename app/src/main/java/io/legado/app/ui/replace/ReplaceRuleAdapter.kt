@@ -1,4 +1,4 @@
-package io.legado.app.ui.replacerule
+package io.legado.app.ui.replace
 
 import android.content.Context
 import android.os.Bundle

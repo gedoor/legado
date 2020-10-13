@@ -1,7 +1,7 @@
-package io.legado.app.ui.replacerule.edit
+package io.legado.app.ui.replace.edit
 
 import android.app.Application
-import android.os.Bundle
+import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
@@ -11,18 +11,18 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
 
     val replaceRuleData = MutableLiveData<ReplaceRule>()
 
-    fun initData(bundle: Bundle) {
+    fun initData(intent: Intent) {
         execute {
             replaceRuleData.value ?: let {
-                val id = bundle.getLong("id")
+                val id = intent.getLongExtra("id", -1)
                 if (id > 0) {
                     App.db.replaceRuleDao().findById(id)?.let {
                         replaceRuleData.postValue(it)
                     }
                 } else {
-                    val pattern = bundle.getString("pattern") ?: ""
-                    val isRegex = bundle.getBoolean("isRegex")
-                    val scope = bundle.getString("scope")
+                    val pattern = intent.getStringExtra("pattern") ?: ""
+                    val isRegex = intent.getBooleanExtra("isRegex", false)
+                    val scope = intent.getStringExtra("scope")
                     val rule = ReplaceRule(
                         name = pattern,
                         pattern = pattern,

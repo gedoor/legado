@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.chapterlist
+package io.legado.app.ui.book.toc
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK

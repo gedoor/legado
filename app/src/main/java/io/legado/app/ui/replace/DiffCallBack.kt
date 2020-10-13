@@ -1,4 +1,4 @@
-package io.legado.app.ui.replacerule
+package io.legado.app.ui.replace
 
 import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil

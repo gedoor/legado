@@ -181,6 +181,12 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <!-- 书源编辑 -->
+        <activity
+            android:name=".ui.replace.edit.ReplaceEditActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <!-- 配置界面 -->
         <activity
             android:name=".ui.config.ConfigActivity"
@@ -207,7 +213,7 @@
             android:launchMode="singleTop" />
         <!-- 替换规则界面 -->
         <activity
-            android:name=".ui.replacerule.ReplaceRuleActivity"
+            android:name=".ui.replace.ReplaceRuleActivity"
             android:launchMode="singleTop">
         </activity>
         <!-- 书籍管理 -->
@@ -220,7 +226,7 @@
             android:launchMode="singleTop" />
         <!-- 目录 -->
         <activity
-            android:name=".ui.book.chapterlist.ChapterListActivity"
+            android:name=".ui.book.toc.ChapterListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
         <activity

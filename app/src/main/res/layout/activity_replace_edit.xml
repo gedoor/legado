@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tool_bar"
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_menu"
-        android:theme="?attr/actionBarStyle"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:title="@string/replace_rule_edit"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:contentInsetStartWithNavigation="0dp"
+        app:displayHomeAsUp="true"
+        app:fitStatusBar="false"
+        app:title="@string/replace_rule_edit" />
 
     <ScrollView
         android:layout_width="match_parent"

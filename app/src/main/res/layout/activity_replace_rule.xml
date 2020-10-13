@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.replacerule.ReplaceRuleActivity">
+    tools:context=".ui.replace.ReplaceRuleActivity">
 
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
