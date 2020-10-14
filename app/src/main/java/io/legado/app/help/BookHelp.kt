@@ -322,11 +322,10 @@ object BookHelp {
         }
         val contents = arrayListOf<String>()
         c.split("\n").forEach {
-            val str = it.replace("^\\s+".toRegex(), "")
-                .replace("\r", "")
+            val str = it.replace("^[\\n\\s\\r]+".toRegex(), "")
             if (contents.isEmpty()) {
                 contents.add(title)
-                if (str != title && it.isNotEmpty()) {
+                if (str != title && str.isNotEmpty()) {
                     contents.add("${ReadBookConfig.paragraphIndent}$str")
                 }
             } else if (str.isNotEmpty()) {
