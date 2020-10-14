@@ -32,7 +32,9 @@ import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
 import kotlin.math.max
 
-
+/**
+ * 书架界面
+ */
 class BooksFragment : BaseFragment(R.layout.fragment_books),
     BaseBooksAdapter.CallBack {
 

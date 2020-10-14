@@ -29,7 +29,9 @@ import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import java.text.Collator
 
-
+/**
+ * 发现界面
+ */
 class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_book),
     ExploreAdapter.CallBack {
     override val viewModel: ExploreViewModel
@@ -44,7 +46,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
-        tv_empty_msg.text = "当前没有发现源,关注公众号[开源阅读]添加带发现的书源!"
+        tv_empty_msg.setText(R.string.explore_empty)
         initSearchView()
         initRecyclerView()
         initGroupData()
