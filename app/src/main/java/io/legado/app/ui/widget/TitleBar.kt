@@ -138,23 +138,24 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             }
         }
 
-        if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
-            topPadding = context.statusBarHeight
+        if (!isInEditMode) {
+            if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
+                topPadding = context.statusBarHeight
+            }
+
+            if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
+                bottomPadding = context.navigationBarHeight
+            }
+
+            backgroundColor = context.primaryColor
+
+            stateListAnimator = null
+            elevation = if (AppConfig.elevation < 0) {
+                context.elevation
+            } else {
+                AppConfig.elevation.toFloat()
+            }
         }
-
-        if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
-            bottomPadding = context.navigationBarHeight
-        }
-
-        backgroundColor = context.primaryColor
-
-        stateListAnimator = null
-        elevation = if (AppConfig.elevation < 0) {
-            context.elevation
-        } else {
-            AppConfig.elevation.toFloat()
-        }
-
         a.recycle()
     }
 

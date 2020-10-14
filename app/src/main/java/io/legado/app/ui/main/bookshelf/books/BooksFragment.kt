@@ -29,7 +29,6 @@ import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_books.*
-import kotlinx.android.synthetic.main.view_empty.*
 import org.jetbrains.anko.startActivity
 import kotlin.math.max
 
@@ -110,7 +109,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, { list ->
-            vw_empty.isGone = list.isNotEmpty()
+            tv_empty_msg.isGone = list.isNotEmpty()
             val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                 1 -> list.sortedByDescending { it.latestChapterTime }
                 2 -> list.sortedBy { it.name }

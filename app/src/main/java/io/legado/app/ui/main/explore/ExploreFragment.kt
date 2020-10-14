@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isGone
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +44,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
+        tv_empty_msg.text = "当前没有发现源,关注公众号[开源阅读]添加带发现的书源!"
         initSearchView()
         initRecyclerView()
         initGroupData()
@@ -111,6 +113,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
             App.db.bookSourceDao().liveExplore("%$key%")
         }
         liveExplore?.observe(viewLifecycleOwner, {
+            tv_empty_msg.isGone = it.isNotEmpty()
             val diffResult = DiffUtil
                 .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it)
