@@ -2,7 +2,6 @@ package io.legado.app.ui.about
 
 import android.content.Context
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -33,7 +32,6 @@ class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
 
     private fun initView() {
         tv_book_name.setText(R.string.all_read_time)
-        recycler_view.layoutManager = LinearLayoutManager(this)
         adapter = RecordAdapter(this)
         recycler_view.adapter = adapter
         iv_remove.onClick {
