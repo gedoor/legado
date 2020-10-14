@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:paddingTop="2dp"
     android:paddingRight="10dp"
-    android:paddingLeft="10dp">
+    android:paddingLeft="10dp"
+    android:paddingBottom="4dp">
 
     <io.legado.app.ui.widget.ShadowLayout
         android:id="@+id/bg_cover"
@@ -62,7 +63,6 @@
         android:layout_height="wrap_content"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:paddingBottom="4dp"
         android:includeFontPadding="false"
         android:gravity="top|center_horizontal"
         android:lines="2"
