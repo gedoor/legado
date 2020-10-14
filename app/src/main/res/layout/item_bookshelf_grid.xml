@@ -4,46 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="2dp"
-    android:paddingRight="10dp"
-    android:paddingLeft="10dp"
+    android:paddingTop="8dp"
+    android:paddingRight="8dp"
+    android:paddingLeft="8dp"
     android:paddingBottom="4dp">
 
-    <io.legado.app.ui.widget.ShadowLayout
-        android:id="@+id/bg_cover"
+    <io.legado.app.ui.widget.image.CoverImageView
+        android:id="@+id/iv_cover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        tools:ignore="UnusedAttribute"
+        android:layout_margin="8dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/image_cover_default"
+        android:transitionName="img_cover"
         app:layout_constraintTop_toTopOf="parent"
-        app:shadowColor="#16000000"
-        app:shadowShape="rectangle"
-        app:shadowDx="1dp"
-        app:shadowDy="3dp"
-        app:shadowRadius="4dp"
-        app:shadowSide="all">
-
-        <io.legado.app.ui.widget.image.CoverImageView
-            android:id="@+id/iv_cover"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:src="@drawable/image_cover_default"
-            android:transitionName="img_cover"
-            tools:ignore="UnusedAttribute" />
-
-    </io.legado.app.ui.widget.ShadowLayout>
+        tools:ignore="UnusedAttribute" />
 
     <io.legado.app.ui.widget.text.BadgeView
         android:id="@+id/bv_unread"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:layout_margin="5dp"
         android:includeFontPadding="false"
-        app:layout_constraintTop_toTopOf="@+id/bg_cover"
-        app:layout_constraintRight_toRightOf="@+id/bg_cover"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         tools:ignore="RtlHardcoded" />
 
     <io.legado.app.ui.widget.anima.RotateLoading
@@ -52,9 +36,10 @@
         android:layout_height="22dp"
         android:layout_gravity="right"
         android:visibility="invisible"
-        app:layout_constraintTop_toTopOf="@+id/bg_cover"
-        app:layout_constraintRight_toRightOf="@+id/bg_cover"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:loading_width="2dp"
+        app:hide_mode="invisible"
         tools:ignore="RtlHardcoded" />
 
     <TextView
@@ -70,9 +55,9 @@
         android:text="@string/book_name"
         android:textColor="@color/primaryText"
         android:textSize="12sp"
-        app:layout_constraintLeft_toLeftOf="@+id/bg_cover"
-        app:layout_constraintRight_toRightOf="@+id/bg_cover"
-        app:layout_constraintTop_toBottomOf="@+id/bg_cover"
+        app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
+        app:layout_constraintRight_toRightOf="@+id/iv_cover"
+        app:layout_constraintTop_toBottomOf="@+id/iv_cover"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

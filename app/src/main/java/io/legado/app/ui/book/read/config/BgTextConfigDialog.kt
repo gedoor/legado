@@ -177,7 +177,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 postEvent(EventBus.UP_CONFIG, true)
                 dismiss()
             } else {
-                toast("数量以是最少,不能删除.")
+                toast("数量已是最少,不能删除.")
             }
         }
     }
