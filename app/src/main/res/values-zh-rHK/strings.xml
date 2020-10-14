@@ -45,7 +45,7 @@
     <string name="recent_reading">最近閲讀</string>
     <string name="last_read">最後閲讀</string>
     <string name="update_log">更新日誌</string>
-    <string name="bookshelf_empty">書架還空着，快去添加吧！</string>
+    <string name="bookshelf_empty">書架還空著，先去搜索書籍或從發現裏添加吧！\n如果初次使用請先關註公眾號[開源閱讀]獲取書源！</string>
     <string name="action_search">搜尋</string>
     <string name="action_download">下載</string>
     <string name="layout_list">列表</string>
