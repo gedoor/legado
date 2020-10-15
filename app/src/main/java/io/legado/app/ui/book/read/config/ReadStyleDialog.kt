@@ -247,7 +247,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         ) {
             holder.itemView.apply {
                 iv_style.setTextColor(item.curTextColor())
-                iv_style.setImageDrawable(item.bgDrawable(100, 150))
+                iv_style.setImageDrawable(item.curBgDrawable(100, 150))
                 if (ReadBookConfig.styleSelect == holder.layoutPosition) {
                     iv_style.borderColor = accentColor
                     iv_style.setTextBold(true)

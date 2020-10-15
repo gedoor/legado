@@ -93,7 +93,7 @@ object ReadBookConfig {
         val dm = resources.displayMetrics
         val width = dm.widthPixels
         val height = dm.heightPixels
-        bg = durConfig.bgDrawable(width, height).apply {
+        bg = durConfig.curBgDrawable(width, height).apply {
             if (this is BitmapDrawable) {
                 bgMeanColor = BitmapUtils.getMeanColor(bitmap)
             } else if (this is ColorDrawable) {
@@ -413,22 +413,6 @@ object ReadBookConfig {
         var hideHeader: Boolean = true,
         var hideFooter: Boolean = false
     ) : Parcelable {
-        fun setCurBg(bgType: Int, bg: String) {
-            when {
-                AppConfig.isEInkMode -> {
-                    bgTypeEInk = bgType
-                    bgStrEInk = bg
-                }
-                AppConfig.isNightTheme -> {
-                    bgTypeNight = bgType
-                    bgStrNight = bg
-                }
-                else -> {
-                    this.bgType = bgType
-                    bgStr = bg
-                }
-            }
-        }
 
         fun setCurTextColor(color: Int) {
             when {
@@ -439,7 +423,15 @@ object ReadBookConfig {
             ChapterProvider.upStyle()
         }
 
-        fun setStatusIconDark(isDark: Boolean) {
+        fun curTextColor(): Int {
+            return when {
+                AppConfig.isEInkMode -> Color.parseColor(textColorEInk)
+                AppConfig.isNightTheme -> Color.parseColor(textColorNight)
+                else -> Color.parseColor(textColor)
+            }
+        }
+
+        fun setCurStatusIconDark(isDark: Boolean) {
             when {
                 AppConfig.isEInkMode -> darkStatusIconEInk = isDark
                 AppConfig.isNightTheme -> darkStatusIconNight = isDark
@@ -447,7 +439,7 @@ object ReadBookConfig {
             }
         }
 
-        fun statusIconDark(): Boolean {
+        fun curStatusIconDark(): Boolean {
             return when {
                 AppConfig.isEInkMode -> darkStatusIconEInk
                 AppConfig.isNightTheme -> darkStatusIconNight
@@ -469,11 +461,20 @@ object ReadBookConfig {
             }
         }
 
-        fun curTextColor(): Int {
-            return when {
-                AppConfig.isEInkMode -> Color.parseColor(textColorEInk)
-                AppConfig.isNightTheme -> Color.parseColor(textColorNight)
-                else -> Color.parseColor(textColor)
+        fun setCurBg(bgType: Int, bg: String) {
+            when {
+                AppConfig.isEInkMode -> {
+                    bgTypeEInk = bgType
+                    bgStrEInk = bg
+                }
+                AppConfig.isNightTheme -> {
+                    bgTypeNight = bgType
+                    bgStrNight = bg
+                }
+                else -> {
+                    this.bgType = bgType
+                    bgStr = bg
+                }
             }
         }
 
@@ -493,7 +494,7 @@ object ReadBookConfig {
             }
         }
 
-        fun bgDrawable(width: Int, height: Int): Drawable {
+        fun curBgDrawable(width: Int, height: Int): Drawable {
             var bgDrawable: Drawable? = null
             val resources = App.INSTANCE.resources
             try {

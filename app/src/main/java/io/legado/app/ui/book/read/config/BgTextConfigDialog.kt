@@ -108,7 +108,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
 
     @SuppressLint("InflateParams")
     private fun initData() = with(ReadBookConfig.durConfig) {
-        sw_dark_status_icon.isChecked = statusIconDark()
+        sw_dark_status_icon.isChecked = curStatusIconDark()
         adapter = BgAdapter(requireContext())
         recycler_view.adapter = adapter
         val headerView = LayoutInflater.from(requireContext())
@@ -127,7 +127,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
     private fun initEvent() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
-                setStatusIconDark(isChecked)
+                setCurStatusIconDark(isChecked)
                 (activity as? ReadBookActivity)?.upSystemUiVisibility()
             }
         }
