@@ -741,11 +741,11 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override fun onColorSelected(dialogId: Int, color: Int) = with(ReadBookConfig.durConfig) {
         when (dialogId) {
             TEXT_COLOR -> {
-                setTextColor(color)
+                setCurTextColor(color)
                 postEvent(EventBus.UP_CONFIG, false)
             }
             BG_COLOR -> {
-                setBg(0, "#${color.hexString}")
+                setCurBg(0, "#${color.hexString}")
                 ReadBookConfig.upBg()
                 postEvent(EventBus.UP_CONFIG, false)
             }

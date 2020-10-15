@@ -42,7 +42,7 @@ object ReadBookConfig {
 
     var bg: Drawable? = null
     var bgMeanColor: Int = 0
-    val textColor: Int get() = durConfig.textColor()
+    val textColor: Int get() = durConfig.curTextColor()
 
     init {
         initConfigs()
@@ -168,9 +168,9 @@ object ReadBookConfig {
     val config get() = if (shareLayout) shareConfig else durConfig
 
     var pageAnim: Int
-        get() = config.pageAnim()
+        get() = config.curPageAnim()
         set(value) {
-            config.setPageAnim(value)
+            config.setCurPageAnim(value)
             isScroll = pageAnim == 3
         }
 
@@ -365,20 +365,20 @@ object ReadBookConfig {
     @Keep
     @Parcelize
     class Config(
-        private var bgStr: String = "#EEEEEE",//白天背景
-        private var bgStrNight: String = "#000000",//夜间背景
-        private var bgStrEInk: String = "#FFFFFF",
-        private var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片
-        private var bgTypeNight: Int = 0,//夜间背景类型
-        private var bgTypeEInk: Int = 0,
-        private var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
-        private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
-        private var darkStatusIconEInk: Boolean = true,
-        private var textColor: String = "#3E3D3B",//白天文字颜色
-        private var textColorNight: String = "#ADADAD",//夜间文字颜色
-        private var textColorEInk: String = "#000000",
-        private var pageAnim: Int = 0,
-        private var pageAnimEInk: Int = 3,
+        var bgStr: String = "#EEEEEE",//白天背景
+        var bgStrNight: String = "#000000",//夜间背景
+        var bgStrEInk: String = "#FFFFFF",
+        var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片
+        var bgTypeNight: Int = 0,//夜间背景类型
+        var bgTypeEInk: Int = 0,
+        var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
+        var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
+        var darkStatusIconEInk: Boolean = true,
+        var textColor: String = "#3E3D3B",//白天文字颜色
+        var textColorNight: String = "#ADADAD",//夜间文字颜色
+        var textColorEInk: String = "#000000",
+        var pageAnim: Int = 0,
+        var pageAnimEInk: Int = 3,
         var textFont: String = "",//字体
         var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
         var textSize: Int = 20,//文字大小
@@ -413,7 +413,7 @@ object ReadBookConfig {
         var hideHeader: Boolean = true,
         var hideFooter: Boolean = false
     ) : Parcelable {
-        fun setBg(bgType: Int, bg: String) {
+        fun setCurBg(bgType: Int, bg: String) {
             when {
                 AppConfig.isEInkMode -> {
                     bgTypeEInk = bgType
@@ -430,7 +430,7 @@ object ReadBookConfig {
             }
         }
 
-        fun setTextColor(color: Int) {
+        fun setCurTextColor(color: Int) {
             when {
                 AppConfig.isEInkMode -> textColorEInk = "#${color.hexString}"
                 AppConfig.isNightTheme -> textColorNight = "#${color.hexString}"
@@ -455,21 +455,21 @@ object ReadBookConfig {
             }
         }
 
-        fun setPageAnim(anim: Int) {
+        fun setCurPageAnim(anim: Int) {
             when {
                 AppConfig.isEInkMode -> pageAnimEInk = anim
                 else -> pageAnim = anim
             }
         }
 
-        fun pageAnim(): Int {
+        fun curPageAnim(): Int {
             return when {
                 AppConfig.isEInkMode -> pageAnimEInk
                 else -> pageAnim
             }
         }
 
-        fun textColor(): Int {
+        fun curTextColor(): Int {
             return when {
                 AppConfig.isEInkMode -> Color.parseColor(textColorEInk)
                 AppConfig.isNightTheme -> Color.parseColor(textColorNight)
@@ -477,7 +477,7 @@ object ReadBookConfig {
             }
         }
 
-        fun bgStr(): String {
+        fun curBgStr(): String {
             return when {
                 AppConfig.isEInkMode -> bgStrEInk
                 AppConfig.isNightTheme -> bgStrNight
@@ -485,7 +485,7 @@ object ReadBookConfig {
             }
         }
 
-        fun bgType(): Int {
+        fun curBgType(): Int {
             return when {
                 AppConfig.isEInkMode -> bgTypeEInk
                 AppConfig.isNightTheme -> bgTypeNight
@@ -497,14 +497,14 @@ object ReadBookConfig {
             var bgDrawable: Drawable? = null
             val resources = App.INSTANCE.resources
             try {
-                bgDrawable = when (bgType()) {
-                    0 -> ColorDrawable(Color.parseColor(bgStr()))
+                bgDrawable = when (curBgType()) {
+                    0 -> ColorDrawable(Color.parseColor(curBgStr()))
                     1 -> {
                         BitmapDrawable(
                             resources,
                             BitmapUtils.decodeAssetsBitmap(
                                 App.INSTANCE,
-                                "bg" + File.separator + bgStr(),
+                                "bg" + File.separator + curBgStr(),
                                 width,
                                 height
                             )
@@ -512,7 +512,7 @@ object ReadBookConfig {
                     }
                     else -> BitmapDrawable(
                         resources,
-                        BitmapUtils.decodeBitmap(bgStr(), width, height)
+                        BitmapUtils.decodeBitmap(curBgStr(), width, height)
                     )
                 }
             } catch (e: Exception) {
