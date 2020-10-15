@@ -174,7 +174,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         dragSelectTouchHelper.attachToRecyclerView(recycler_view)
         // When this page is opened, it is in selection mode
         dragSelectTouchHelper.activeSlideSelect()
-
         // Note: need judge selection first, so add ItemTouchHelper after it.
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }

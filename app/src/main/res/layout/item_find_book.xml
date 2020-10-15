@@ -24,7 +24,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/primaryText" />
+            android:textColor="@color/primaryText"
+            tools:text="起点中文" />
 
         <io.legado.app.ui.widget.anima.RotateLoading
             android:id="@+id/rotate_loading"

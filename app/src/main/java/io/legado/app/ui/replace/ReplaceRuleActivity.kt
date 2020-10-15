@@ -1,4 +1,4 @@
-package io.legado.app.ui.replacerule
+package io.legado.app.ui.replace
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -28,7 +28,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.filechooser.FileChooserDialog
 import io.legado.app.ui.filechooser.FilePicker
-import io.legado.app.ui.replacerule.edit.ReplaceEditDialog
+import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
@@ -42,8 +42,11 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.File
 
-
-class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
+/**
+ * 替换规则管理
+ */
+class ReplaceRuleActivity :
+    VMBaseActivity<ReplaceRuleViewModel>(R.layout.activity_replace_rule),
     SearchView.OnQueryTextListener,
     PopupMenu.OnMenuItemClickListener,
     FileChooserDialog.CallBack,
@@ -166,7 +169,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add_replace_rule ->
-                ReplaceEditDialog().show(supportFragmentManager, "replaceNew")
+                ReplaceEditActivity.show(this)
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
 
@@ -303,7 +306,7 @@ class ReplaceRuleActivity : VMBaseActivity<ReplaceRuleViewModel>(R.layout.activi
 
     override fun edit(rule: ReplaceRule) {
         setResult(Activity.RESULT_OK)
-        ReplaceEditDialog.show(supportFragmentManager, rule.id)
+        ReplaceEditActivity.show(this, rule.id)
     }
 
     override fun toTop(rule: ReplaceRule) {

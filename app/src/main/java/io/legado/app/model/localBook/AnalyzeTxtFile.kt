@@ -261,6 +261,8 @@ class AnalyzeTxtFile {
             bookStream.seek(bookChapter.start!!)
             bookStream.read(content)
             return String(content, book.fileCharset())
+                .substringAfter(bookChapter.title)
+                .replace("^[\\n\\s]+".toRegex(), "　　")
         }
 
         private fun getBookFile(book: Book): File {

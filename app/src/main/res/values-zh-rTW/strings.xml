@@ -45,7 +45,7 @@
     <string name="recent_reading">最近閱讀</string>
     <string name="last_read">最後閱讀</string>
     <string name="update_log">更新日誌</string>
-    <string name="bookshelf_empty">書架還空著，先去添加吧！</string>
+    <string name="bookshelf_empty">書架還空著，先去搜索書籍或從發現裏添加吧！\n如果初次使用請先關註公眾號[開源閱讀]獲取書源！</string>
     <string name="action_search">搜尋</string>
     <string name="action_download">下載</string>
     <string name="layout_list">列表</string>
@@ -767,5 +767,7 @@
     <string name="share_selected_source">分享選中書源</string>
     <string name="sort_by_lastUppdateTime">時間排序</string>
     <string name="search_content">全文搜尋</string>
+    <string name="rss_source_empty">关注公众号[开源阅读]获取订阅源!</string>
+    <string name="explore_empty">当前没有发现源,关注公众号[开源阅读]添加带发现的书源!</string>
 
 </resources>

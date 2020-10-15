@@ -2,6 +2,7 @@ package io.legado.app.ui.main.bookshelf.books
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isGone
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -23,12 +24,17 @@ import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_books.*
 import org.jetbrains.anko.startActivity
 import kotlin.math.max
 
-
+/**
+ * 书架界面
+ */
 class BooksFragment : BaseFragment(R.layout.fragment_books),
     BaseBooksAdapter.CallBack {
 
@@ -55,6 +61,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
         }
+        tv_empty_msg.setText(R.string.bookshelf_empty)
         initRecyclerView()
         upRecyclerData()
     }
@@ -104,6 +111,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, { list ->
+            tv_empty_msg.isGone = list.isNotEmpty()
             val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                 1 -> list.sortedByDescending { it.latestChapterTime }
                 2 -> list.sortedBy { it.name }

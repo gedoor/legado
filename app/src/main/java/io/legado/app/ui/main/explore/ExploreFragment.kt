@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isGone
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +29,9 @@ import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import java.text.Collator
 
-
+/**
+ * 发现界面
+ */
 class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_book),
     ExploreAdapter.CallBack {
     override val viewModel: ExploreViewModel
@@ -43,6 +46,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
+        tv_empty_msg.setText(R.string.explore_empty)
         initSearchView()
         initRecyclerView()
         initGroupData()
@@ -111,6 +115,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
             App.db.bookSourceDao().liveExplore("%$key%")
         }
         liveExplore?.observe(viewLifecycleOwner, {
+            tv_empty_msg.isGone = it.isNotEmpty()
             val diffResult = DiffUtil
                 .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it)

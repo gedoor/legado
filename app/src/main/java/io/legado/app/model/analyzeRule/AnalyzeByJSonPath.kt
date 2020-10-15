@@ -36,9 +36,9 @@ class AnalyzeByJSonPath {
         if (rules.size == 1) {
             if (!rule.contains("{$.")) {
                 ctx?.let {
-                    try {
+                    result = try {
                         val ob = it.read<Any>(rule)
-                        result = if (ob is List<*>) {
+                        if (ob is List<*>) {
                             val builder = StringBuilder()
                             for (o in ob) {
                                 builder.append(o).append("\n")
@@ -48,8 +48,8 @@ class AnalyzeByJSonPath {
                             ob.toString()
                         }
                     } catch (ignored: Exception) {
+                        rule
                     }
-
                 }
                 return result
             } else {
@@ -108,8 +108,8 @@ class AnalyzeByJSonPath {
                         result.add(obj.toString())
                     }
                 } catch (ignored: Exception) {
+                    result.add(rule)
                 }
-
                 return result
             } else {
                 val matcher = jsonRulePattern.matcher(rule)

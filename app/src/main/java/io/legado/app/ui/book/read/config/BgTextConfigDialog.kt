@@ -177,7 +177,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 postEvent(EventBus.UP_CONFIG, true)
                 dismiss()
             } else {
-                toast("数量以是最少,不能删除.")
+                toast("数量已是最少,不能删除.")
             }
         }
     }
@@ -333,7 +333,10 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 val bgName = FileUtils.getName(config.bgStr())
                 val bgPath = FileUtils.getPath(requireContext().externalFilesDir, "bg", bgName)
                 if (!FileUtils.exist(bgPath)) {
-                    FileUtils.getFile(configDir, bgName).copyTo(File(bgPath))
+                    val bgFile = FileUtils.getFile(configDir, bgName)
+                    if (bgFile.exists()) {
+                        bgFile.copyTo(File(bgPath))
+                    }
                 }
             }
             ReadBookConfig.durConfig = config
