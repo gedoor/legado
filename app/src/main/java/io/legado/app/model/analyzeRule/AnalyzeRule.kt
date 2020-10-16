@@ -461,7 +461,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                         mode = Mode.Regex
                     }
                     splitRegex(tmp)
-                } else if (mode != Mode.Js && mode != Mode.Json && mode != Mode.Regex
+                } else if (mode != Mode.Js && mode != Mode.Regex
                     && evalMatcher.start() == 0
                 ) {
                     mode = Mode.Regex

@@ -10,13 +10,12 @@ import java.util.regex.Pattern
 
 @Keep
 class AnalyzeByJSonPath {
-    private var ctx: ReadContext? = null
+    private lateinit var ctx: ReadContext
 
     fun parse(json: Any): AnalyzeByJSonPath {
-        ctx = if (json is String) {
-            JsonPath.parse(json)
-        } else {
-            JsonPath.parse(json)
+        ctx = when (json) {
+            is String -> JsonPath.parse(json)
+            else -> JsonPath.parse(json)
         }
         return this
     }
@@ -35,9 +34,9 @@ class AnalyzeByJSonPath {
         }
         if (rules.size == 1) {
             if (!rule.contains("{$.")) {
-                ctx?.let {
-                    result = try {
-                        val ob = it.read<Any>(rule)
+                try {
+                    val ob = ctx.read<Any>(rule)
+                    result =
                         if (ob is List<*>) {
                             val builder = StringBuilder()
                             for (o in ob) {
@@ -47,9 +46,7 @@ class AnalyzeByJSonPath {
                         } else {
                             ob.toString()
                         }
-                    } catch (ignored: Exception) {
-                        rule
-                    }
+                } catch (ignored: Exception) {
                 }
                 return result
             } else {
@@ -100,7 +97,7 @@ class AnalyzeByJSonPath {
         if (rules.size == 1) {
             if (!rule.contains("{$.")) {
                 try {
-                    val obj = ctx!!.read<Any>(rule) ?: return result
+                    val obj = ctx.read<Any>(rule) ?: return result
                     if (obj is List<*>) {
                         for (o in obj)
                             result.add(o.toString())
@@ -108,7 +105,6 @@ class AnalyzeByJSonPath {
                         result.add(obj.toString())
                     }
                 } catch (ignored: Exception) {
-                    result.add(rule)
                 }
                 return result
             } else {
@@ -152,7 +148,7 @@ class AnalyzeByJSonPath {
     }
 
     internal fun getObject(rule: String): Any {
-        return ctx!!.read(rule)
+        return ctx.read(rule)
     }
 
     internal fun getList(rule: String): ArrayList<Any>? {
@@ -175,7 +171,7 @@ class AnalyzeByJSonPath {
             }
         }
         if (rules.size == 1) {
-            ctx?.let {
+            ctx.let {
                 try {
                     return it.read<ArrayList<Any>>(rules[0])
                 } catch (e: Exception) {

@@ -12,28 +12,15 @@ import java.util.*
 
 @Keep
 class AnalyzeByXPath {
-    private var jxDocument: JXDocument? = null
-    private var jxNode: JXNode? = null
+    private lateinit var jxNode: Any
 
     fun parse(doc: Any): AnalyzeByXPath {
-        if (doc is JXNode) {
-            jxNode = doc
-            if (jxNode?.isElement == false) {
-                jxDocument = strToJXDocument(doc.toString())
-                jxNode = null
-            }
-        } else if (doc is Document) {
-            jxDocument = JXDocument.create(doc)
-            jxNode = null
-        } else if (doc is Element) {
-            jxDocument = JXDocument.create(Elements(doc))
-            jxNode = null
-        } else if (doc is Elements) {
-            jxDocument = JXDocument.create(doc)
-            jxNode = null
-        } else {
-            jxDocument = strToJXDocument(doc.toString())
-            jxNode = null
+        jxNode = when (doc) {
+            is JXNode -> if (doc.isElement) doc else strToJXDocument(doc.toString())
+            is Document -> JXDocument.create(doc)
+            is Element -> JXDocument.create(Elements(doc))
+            is Elements -> JXDocument.create(doc)
+            else -> strToJXDocument(doc.toString())
         }
         return this
     }
@@ -47,6 +34,15 @@ class AnalyzeByXPath {
             html1 = String.format("<table>%s</table>", html1)
         }
         return JXDocument.create(html1)
+    }
+
+    private fun getResult(xPath: String): List<JXNode>? {
+        val node = jxNode
+        return if (node is JXNode) {
+            node.sel(xPath)
+        } else {
+            (node as JXDocument).selN(xPath)
+        }
     }
 
     internal fun getElements(xPath: String): List<JXNode>? {
@@ -71,7 +67,7 @@ class AnalyzeByXPath {
             }
         }
         if (rules.size == 1) {
-            return jxNode?.sel(rules[0]) ?: jxDocument?.selN(rules[0])
+            return getResult(rules[0])
         } else {
             val results = ArrayList<List<JXNode>>()
             for (rl in rules) {
@@ -121,8 +117,7 @@ class AnalyzeByXPath {
             }
         }
         if (rules.size == 1) {
-            val jxNodes = jxNode?.sel(xPath) ?: jxDocument?.selN(xPath)
-            jxNodes?.map {
+            getResult(xPath)?.map {
                 result.add(it.asString())
             }
             return result
@@ -167,9 +162,8 @@ class AnalyzeByXPath {
             elementsType = "|"
         }
         if (rules.size == 1) {
-            val jxNodes = jxNode?.sel(rule) ?: jxDocument?.selN(rule)
-            jxNodes?.let {
-                return TextUtils.join("\n", jxNodes)
+            getResult(rule)?.let {
+                return TextUtils.join("\n", it)
             }
             return null
         } else {

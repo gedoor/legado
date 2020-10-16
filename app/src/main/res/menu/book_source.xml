@@ -49,7 +49,7 @@
                         <item
                             android:id="@+id/menu_sort_time"
                             android:checkable="true"
-                            android:title="@string/sort_by_lastUppdateTime" />
+                            android:title="@string/sort_by_lastUpdateTime" />
                     </group>
 
                 </menu>

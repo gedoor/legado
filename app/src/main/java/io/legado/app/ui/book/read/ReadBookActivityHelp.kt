@@ -59,7 +59,7 @@ object ReadBookActivityHelp {
         }
         window.decorView.systemUiVisibility = flag
         if (toolBarHide) {
-            ATH.setLightStatusBar(window, ReadBookConfig.durConfig.statusIconDark())
+            ATH.setLightStatusBar(window, ReadBookConfig.durConfig.curStatusIconDark())
         } else {
             ATH.setLightStatusBarAuto(
                 window,
