@@ -39,7 +39,6 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.startActivity
 
 
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
@@ -132,7 +131,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        context?.startActivity<SearchActivity>(Pair("key", query))
+        startActivity<SearchActivity>(Pair("key", query))
         return false
     }
 
