@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.ATH
@@ -44,7 +43,6 @@ class BookSourceDebugActivity :
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(recycler_view)
         adapter = BookSourceDebugAdapter(this)
-        recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.adapter = adapter
         rotate_loading.loadingColor = accentColor
     }
