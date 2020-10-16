@@ -22,7 +22,7 @@ class AnalyzeByJSoup {
         val validKeys = arrayOf("class", "id", "tag", "text", "children")
     }
 
-    private var element: Element? = null
+    private lateinit var element: Element
 
     fun parse(doc: Any): AnalyzeByJSoup {
         element = if (doc is Element) {
@@ -83,7 +83,7 @@ class AnalyzeByJSoup {
         //拆分规则
         val sourceRule = SourceRule(ruleStr)
         if (isEmpty(sourceRule.elementsRule)) {
-            textS.add(element?.data() ?: "")
+            textS.add(element.data() ?: "")
         } else {
             val elementsType: String
             val ruleStrS: Array<String>
@@ -107,7 +107,7 @@ class AnalyzeByJSoup {
                 temp = if (sourceRule.isCss) {
                     val lastIndex = ruleStrX.lastIndexOf('@')
                     getResultLast(
-                        element!!.select(ruleStrX.substring(0, lastIndex)),
+                        element.select(ruleStrX.substring(0, lastIndex)),
                         ruleStrX.substring(lastIndex + 1)
                     )
                 } else {
