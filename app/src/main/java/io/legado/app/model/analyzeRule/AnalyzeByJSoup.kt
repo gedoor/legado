@@ -25,16 +25,10 @@ class AnalyzeByJSoup {
     private lateinit var element: Element
 
     fun parse(doc: Any): AnalyzeByJSoup {
-        element = if (doc is Element) {
-            doc
-        } else if (doc is JXNode) {
-            if (doc.isElement) {
-                doc.asElement()
-            } else {
-                Jsoup.parse(doc.value().toString())
-            }
-        } else {
-            Jsoup.parse(doc.toString())
+        element = when (doc) {
+            is Element -> doc
+            is JXNode -> if (doc.isElement) doc.asElement() else Jsoup.parse(doc.toString())
+            else -> Jsoup.parse(doc.toString())
         }
         return this
     }
