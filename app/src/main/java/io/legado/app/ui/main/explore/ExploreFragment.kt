@@ -114,7 +114,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
             App.db.bookSourceDao().liveExplore("%$key%")
         }
         liveExplore?.observe(viewLifecycleOwner, {
-            tv_empty_msg.isGone = it.isNotEmpty()
+            tv_empty_msg.isGone = it.isNotEmpty() || search_view.query.isNotEmpty()
             val diffResult = DiffUtil
                 .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it)
