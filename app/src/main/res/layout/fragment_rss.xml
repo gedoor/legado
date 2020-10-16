@@ -31,6 +31,7 @@
         android:layout_margin="16dp"
         android:gravity="center"
         android:visibility="gone"
+        android:text="@string/rss_source_empty"
         app:layout_constraintTop_toBottomOf="@+id/title_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

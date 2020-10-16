@@ -25,6 +25,7 @@
         android:gravity="center"
         android:layout_gravity="center"
         android:visibility="gone"
+        android:text="@string/bookshelf_empty"
         tools:text="TextView" />
 
 </FrameLayout>

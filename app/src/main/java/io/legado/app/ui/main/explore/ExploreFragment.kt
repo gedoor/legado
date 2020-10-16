@@ -46,7 +46,6 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
-        tv_empty_msg.setText(R.string.explore_empty)
         initSearchView()
         initRecyclerView()
         initGroupData()
