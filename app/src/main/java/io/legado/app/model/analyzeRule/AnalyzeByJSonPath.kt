@@ -13,10 +13,9 @@ class AnalyzeByJSonPath {
     private lateinit var ctx: ReadContext
 
     fun parse(json: Any): AnalyzeByJSonPath {
-        ctx = if (json is String) {
-            JsonPath.parse(json)
-        } else {
-            JsonPath.parse(json)
+        ctx = when (json) {
+            is String -> JsonPath.parse(json)
+            else -> JsonPath.parse(json)
         }
         return this
     }
