@@ -157,8 +157,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeTo(newBook: Book) {
         execute {
+            var oldTocSize: Int = newBook.totalChapterNum
             ReadBook.upMsg(null)
-            ReadBook.book?.changeTo(newBook)
+            ReadBook.book?.let {
+                oldTocSize = it.totalChapterNum
+                it.changeTo(newBook)
+            }
             ReadBook.book = newBook
             App.db.bookSourceDao().getBookSource(newBook.origin)?.let {
                 ReadBook.webBook = WebBook(it)
@@ -171,11 +175,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
             if (newBook.tocUrl.isEmpty()) {
                 loadBookInfo(newBook) {
-                    upChangeDurChapterIndex(newBook, it)
+                    upChangeDurChapterIndex(newBook, oldTocSize, it)
                 }
             } else {
                 loadChapterList(newBook) {
-                    upChangeDurChapterIndex(newBook, it)
+                    upChangeDurChapterIndex(newBook, oldTocSize, it)
                 }
             }
         }
@@ -208,11 +212,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun upChangeDurChapterIndex(book: Book, chapters: List<BookChapter>) {
+    private fun upChangeDurChapterIndex(book: Book, oldTocSize: Int, chapters: List<BookChapter>) {
         execute {
-            ReadBook.durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
-                book.durChapterTitle,
+            ReadBook.durChapterIndex = BookHelp.getDurChapter(
                 book.durChapterIndex,
+                oldTocSize,
+                book.durChapterTitle,
                 chapters
             )
             book.durChapterIndex = ReadBook.durChapterIndex
