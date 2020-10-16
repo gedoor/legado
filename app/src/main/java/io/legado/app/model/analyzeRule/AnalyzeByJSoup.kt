@@ -18,6 +18,10 @@ import java.util.*
  */
 @Keep
 class AnalyzeByJSoup {
+    companion object {
+        val validKeys = arrayOf("class", "id", "tag", "text", "children")
+    }
+
     private var element: Element? = null
 
     fun parse(doc: Any): AnalyzeByJSoup {
@@ -232,18 +236,18 @@ class AnalyzeByJSoup {
                     elements.addAll(es)
                 }
             } else {
-                val rulePcx = rule.splitNotBlank("!")
-                val rulePc =
-                    rulePcx[0].trim { it <= ' ' }.splitNotBlank(">")
-                val rules =
-                    rulePc[0].trim { it <= ' ' }.splitNotBlank(".")
+                val rulePcx = rule.split("!")
+                val rulePc = rulePcx[0].trim { it <= ' ' }.split(">")
+                val rules = rulePc[0].trim { it <= ' ' }.split(".")
                 var filterRules: Array<String>? = null
                 var needFilterElements = rulePc.size > 1 && !isEmpty(rulePc[1].trim { it <= ' ' })
                 if (needFilterElements) {
-                    filterRules = rulePc[1].trim { it <= ' ' }.splitNotBlank(".")
+                    filterRules = rulePc[1].trim { it <= ' ' }.split(".").toTypedArray()
                     filterRules[0] = filterRules[0].trim { it <= ' ' }
-                    val validKeys = listOf("class", "id", "tag", "text")
-                    if (filterRules.size < 2 || !validKeys.contains(filterRules[0]) || isEmpty(filterRules[1].trim { it <= ' ' })) {
+                    if (filterRules.size < 2
+                        || !validKeys.contains(filterRules[0])
+                        || filterRules[1].trim { it <= ' ' }.isEmpty()
+                    ) {
                         needFilterElements = false
                     }
                     filterRules[1] = filterRules[1].trim { it <= ' ' }
