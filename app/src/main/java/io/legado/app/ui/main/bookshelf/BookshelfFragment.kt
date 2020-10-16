@@ -51,6 +51,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         get() = getViewModel(BookshelfViewModel::class.java)
     private val activityViewModel: MainViewModel
         get() = getViewModelOfActivity(MainViewModel::class.java)
+    private lateinit var adapter: FragmentStatePagerAdapter
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private var noGroupLiveData: LiveData<Int>? = null
     private val bookGroups = mutableListOf<BookGroup>()
@@ -104,7 +105,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         tab_layout.setSelectedTabIndicatorColor(requireContext().accentColor)
         tab_layout.setupWithViewPager(view_pager_bookshelf)
         view_pager_bookshelf.offscreenPageLimit = 1
-        view_pager_bookshelf.adapter = TabFragmentPageAdapter(childFragmentManager)
+        adapter = TabFragmentPageAdapter(childFragmentManager)
+        view_pager_bookshelf.adapter = adapter
     }
 
     private fun initBookGroupData() {
@@ -112,39 +114,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
         bookGroupLiveData?.observe(viewLifecycleOwner, {
             viewModel.checkGroup(it)
-            launch {
-                synchronized(this) {
-                    tab_layout.removeOnTabSelectedListener(this@BookshelfFragment)
-                }
-                var noGroupSize = 0
-                withContext(IO) {
-                    if (AppConfig.bookGroupNoneShow) {
-                        noGroupSize = App.db.bookDao().noGroupSize
-                    }
-                }
-                synchronized(this@BookshelfFragment) {
-                    bookGroups.clear()
-                    if (AppConfig.bookGroupAllShow) {
-                        bookGroups.add(AppConst.bookGroupAll)
-                    }
-                    if (AppConfig.bookGroupLocalShow) {
-                        bookGroups.add(AppConst.bookGroupLocal)
-                    }
-                    if (AppConfig.bookGroupAudioShow) {
-                        bookGroups.add(AppConst.bookGroupAudio)
-                    }
-                    showGroupNone = if (noGroupSize > 0 && it.isNotEmpty()) {
-                        bookGroups.add(AppConst.bookGroupNone)
-                        true
-                    } else {
-                        false
-                    }
-                    bookGroups.addAll(it)
-                    view_pager_bookshelf.adapter?.notifyDataSetChanged()
-                    tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
-                    tab_layout.addOnTabSelectedListener(this@BookshelfFragment)
-                }
-            }
+            bookGroups.clear()
+            bookGroups.addAll(it)
+            upGroup()
         })
         noGroupLiveData?.removeObservers(viewLifecycleOwner)
         noGroupLiveData = App.db.bookDao().observeNoGroupSize()
@@ -197,9 +169,17 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 if (AppConfig.bookGroupAllShow) {
                     bookGroups.add(0, AppConst.bookGroupAll)
                 }
-                view_pager_bookshelf.adapter?.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
+                selectLastTab()
             }
         }
+    }
+
+    @Synchronized
+    private fun selectLastTab() {
+        tab_layout.removeOnTabSelectedListener(this)
+        tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
+        tab_layout.addOnTabSelectedListener(this)
     }
 
     @SuppressLint("InflateParams")
@@ -252,14 +232,12 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             }.show().applyTint()
     }
 
-    override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+    override fun onTabReselected(tab: TabLayout.Tab) = Unit
 
-    override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
+    override fun onTabUnselected(tab: TabLayout.Tab) = Unit
 
-    override fun onTabSelected(tab: TabLayout.Tab?) {
-        tab?.position?.let {
-            putPrefInt(PreferKey.saveTabPosition, it)
-        }
+    override fun onTabSelected(tab: TabLayout.Tab) {
+        putPrefInt(PreferKey.saveTabPosition, tab.position)
     }
 
     fun gotoTop() {
