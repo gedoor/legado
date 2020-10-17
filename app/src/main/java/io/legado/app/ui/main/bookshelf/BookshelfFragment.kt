@@ -13,7 +13,6 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.alert
@@ -201,12 +200,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     fun gotoTop() {
         fragmentMap[selectedGroup?.groupId]?.gotoTop()
-    }
-
-    override fun observeLiveBus() {
-        observeEvent<List<BookGroup>>(EventBus.UP_BOOK_GROUP) {
-            upGroup(it)
-        }
     }
 
     private inner class TabFragmentPageAdapter(fm: FragmentManager) :

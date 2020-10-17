@@ -4,7 +4,6 @@ object EventBus {
     const val MEDIA_BUTTON = "mediaButton"
     const val RECREATE = "RECREATE"
     const val UP_BOOK = "upBookToc"
-    const val UP_BOOK_GROUP = "upBookGroup"
     const val ALOUD_STATE = "aloud_state"
     const val TTS_PROGRESS = "ttsStart"
     const val TTS_DS = "ttsDs"
