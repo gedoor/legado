@@ -109,7 +109,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     private fun initData() {
-        App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, {
+        App.db.bookGroupDao().liveDataSelect().observe(viewLifecycleOwner, {
             adapter.setItems(it)
         })
     }
