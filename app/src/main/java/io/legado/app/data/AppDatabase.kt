@@ -45,7 +45,30 @@ abstract class AppDatabase: RoomDatabase() {
 
         private val dbCallback = object : Callback() {
             override fun onOpen(db: SupportSQLiteDatabase) {
-
+                db.execSQL(
+                    """
+                    insert into book_groups(groupId, groupName, 'order') select -1, '全部', -10 
+                    where not exists (select * from book_groups where groupId = -1)
+                """
+                )
+                db.execSQL(
+                    """
+                    insert into book_groups(groupId, groupName, 'order') select -2, '本地', -9 
+                    where not exists (select * from book_groups where groupId = -2)
+                """
+                )
+                db.execSQL(
+                    """
+                    insert into book_groups(groupId, groupName, 'order') select -3, '音频', -8
+                    where not exists (select * from book_groups where groupId = -3)
+                """
+                )
+                db.execSQL(
+                    """
+                    insert into book_groups(groupId, groupName, 'order') select -4, '未分组', -7
+                    where not exists (select * from book_groups where groupId = -4)
+                """
+                )
             }
         }
 

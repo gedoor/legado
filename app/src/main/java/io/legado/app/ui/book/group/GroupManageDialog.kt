@@ -195,14 +195,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
 
         override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-            if (srcPosition < 4 || targetPosition < 4) {
-                return true
-            }
-            Collections.swap(
-                getItems(),
-                srcPosition - getHeaderCount(),
-                targetPosition - getHeaderCount()
-            )
+            Collections.swap(getItems(), srcPosition, targetPosition)
             notifyItemMoved(srcPosition, targetPosition)
             isMoved = true
             return true
