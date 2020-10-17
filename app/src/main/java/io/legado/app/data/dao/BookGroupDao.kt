@@ -22,7 +22,7 @@ interface BookGroupDao {
     @Query("SELECT * FROM book_groups where groupId >= 0 ORDER BY `order`")
     fun liveDataSelect(): LiveData<List<BookGroup>>
 
-    @get:Query("SELECT sum(groupId) FROM book_groups")
+    @get:Query("SELECT sum(groupId) FROM book_groups where groupId >= 0")
     val idsSum: Long
 
     @get:Query("SELECT MAX(`order`) FROM book_groups")
