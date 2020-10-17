@@ -17,7 +17,7 @@ import io.legado.app.data.entities.*
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class],
-    version = 20,
+    version = 21,
     exportSchema = true
 )
 abstract class AppDatabase: RoomDatabase() {
@@ -38,7 +38,8 @@ abstract class AppDatabase: RoomDatabase() {
                     migration_15_17,
                     migration_17_18,
                     migration_18_19,
-                    migration_19_20
+                    migration_19_20,
+                    migration_20_21
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -143,9 +144,15 @@ abstract class AppDatabase: RoomDatabase() {
                 database.execSQL("ALTER TABLE readRecordNew RENAME TO readRecord")
             }
         }
-        private val migration_19_20 = object: Migration(19, 20) {
+        private val migration_19_20 = object : Migration(19, 20) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE book_sources ADD bookSourceComment TEXT")
+            }
+        }
+
+        private val migration_20_21 = object : Migration(20, 21) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE book_groups ADD show INTEGER NOT NULL DEFAULT 1")
             }
         }
     }

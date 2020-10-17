@@ -11,5 +11,6 @@ data class BookGroup(
     @PrimaryKey
     val groupId: Long = 0b1,
     var groupName: String,
-    var order: Int = 0
+    var order: Int = 0,
+    var show: Boolean = true
 ) : Parcelable

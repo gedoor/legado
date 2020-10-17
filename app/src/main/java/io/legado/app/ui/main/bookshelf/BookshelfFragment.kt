@@ -105,7 +105,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     private fun initBookGroupData() {
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
-        bookGroupLiveData = App.db.bookGroupDao().liveDataAll()
+        bookGroupLiveData = App.db.bookGroupDao().liveDataShow()
         bookGroupLiveData?.observe(viewLifecycleOwner, {
             viewModel.checkGroup(it)
             upGroup(it)

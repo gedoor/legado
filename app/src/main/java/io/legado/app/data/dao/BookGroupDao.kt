@@ -16,6 +16,9 @@ interface BookGroupDao {
     @Query("SELECT * FROM book_groups ORDER BY `order`")
     fun liveDataAll(): LiveData<List<BookGroup>>
 
+    @Query("SELECT * FROM book_groups where show > 0 ORDER BY `order`")
+    fun liveDataShow(): LiveData<List<BookGroup>>
+
     @Query("SELECT * FROM book_groups where groupId >= 0 ORDER BY `order`")
     fun liveDataSelect(): LiveData<List<BookGroup>>
 

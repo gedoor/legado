@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -184,6 +185,9 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             holder.itemView.apply {
                 setBackgroundColor(context.backgroundColor)
                 tv_group.text = item.groupName
+                sw_show.isChecked = item.show
+                tv_del.isGone = item.groupId < 0
+                sw_show.isGone = item.groupId >= 0
             }
         }
 
@@ -191,6 +195,13 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             holder.itemView.apply {
                 tv_edit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
                 tv_del.onClick { getItem(holder.layoutPosition)?.let { deleteGroup(it) } }
+                sw_show.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (buttonView.isPressed) {
+                        getItem(holder.layoutPosition)?.let {
+                            viewModel.upGroup(it.copy(show = isChecked))
+                        }
+                    }
+                }
             }
         }
 
