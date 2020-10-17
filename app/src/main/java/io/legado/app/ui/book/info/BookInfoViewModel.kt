@@ -119,13 +119,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun loadGroup(groupId: Long, success: ((groupNames: String?) -> Unit)) {
         execute {
-            val groupNames = arrayListOf<String>()
-            App.db.bookGroupDao().all.forEach {
-                if (groupId and it.groupId > 0) {
-                    groupNames.add(it.groupName)
-                }
-            }
-            groupNames.joinToString(",")
+            App.db.bookGroupDao().getGroupNames(groupId).joinToString(",")
         }.onSuccess {
             success.invoke(it)
         }
