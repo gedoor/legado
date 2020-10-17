@@ -20,7 +20,6 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
@@ -41,7 +40,6 @@ import kotlin.collections.ArrayList
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: GroupViewModel
     private lateinit var adapter: GroupAdapter
-    private val callBack: CallBack? get() = parentFragment as? CallBack
 
     override fun onStart() {
         super.onStart()
@@ -62,67 +60,41 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         tool_bar.setBackgroundColor(primaryColor)
         tool_bar.title = getString(R.string.group_manage)
+        initView()
         initData()
         initMenu()
     }
 
-    private fun initData() {
+    private fun initView() {
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
+        val itemTouchCallback = ItemTouchCallback(adapter)
+        itemTouchCallback.isCanDrag = true
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
         tv_ok.setTextColor(requireContext().accentColor)
         tv_ok.visible()
         tv_ok.onClick { dismiss() }
+    }
+
+    private fun initData() {
         App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, {
             val diffResult =
                 DiffUtil.calculateDiff(GroupDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it, diffResult)
         })
-        val itemTouchCallback = ItemTouchCallback()
-        itemTouchCallback.onItemTouchCallbackListener = adapter
-        itemTouchCallback.isCanDrag = true
-        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
     private fun initMenu() {
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.inflateMenu(R.menu.book_group_manage)
-        tool_bar.menu.let {
-            it.applyTint(requireContext())
-            it.findItem(R.id.menu_group_all)
-                .isChecked = AppConfig.bookGroupAllShow
-            it.findItem(R.id.menu_group_local)
-                .isChecked = AppConfig.bookGroupLocalShow
-            it.findItem(R.id.menu_group_audio)
-                .isChecked = AppConfig.bookGroupAudioShow
-            it.findItem(R.id.menu_group_none)
-                .isChecked = AppConfig.bookGroupNoneShow
-        }
+        tool_bar.menu.applyTint(requireContext())
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> addGroup()
-            R.id.menu_group_all -> {
-                item.isChecked = !item.isChecked
-                AppConfig.bookGroupAllShow = item.isChecked
-                callBack?.upGroup()
-            }
-            R.id.menu_group_local -> {
-                item.isChecked = !item.isChecked
-                AppConfig.bookGroupLocalShow = item.isChecked
-                callBack?.upGroup()
-            }
-            R.id.menu_group_audio -> {
-                item.isChecked = !item.isChecked
-                AppConfig.bookGroupAudioShow = item.isChecked
-                callBack?.upGroup()
-            }
-            R.id.menu_group_none -> {
-                item.isChecked = !item.isChecked
-                AppConfig.bookGroupNoneShow = item.isChecked
-            }
         }
         return true
     }
@@ -204,7 +176,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private inner class GroupAdapter(context: Context) :
         SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage),
-        ItemTouchCallback.OnItemTouchCallbackListener {
+        ItemTouchCallback.Callback {
 
         private var isMoved = false
 
@@ -223,7 +195,14 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
 
         override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-            Collections.swap(getItems(), srcPosition, targetPosition)
+            if (srcPosition < 4 || targetPosition < 4) {
+                return true
+            }
+            Collections.swap(
+                getItems(),
+                srcPosition - getHeaderCount(),
+                targetPosition - getHeaderCount()
+            )
             notifyItemMoved(srcPosition, targetPosition)
             isMoved = true
             return true
@@ -240,7 +219,4 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
     }
 
-    interface CallBack {
-        fun upGroup()
-    }
 }

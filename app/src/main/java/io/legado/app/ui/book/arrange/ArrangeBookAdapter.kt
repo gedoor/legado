@@ -19,7 +19,7 @@ import java.util.*
 
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book),
-    ItemTouchCallback.OnItemTouchCallbackListener {
+    ItemTouchCallback.Callback {
     val groupRequestCode = 12
     private val selectedBooks: HashSet<Book> = hashSetOf()
     var actionItem: Book? = null

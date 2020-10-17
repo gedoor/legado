@@ -40,9 +40,16 @@ abstract class AppDatabase: RoomDatabase() {
                     migration_19_20
                 )
                 .allowMainThreadQueries()
+                .addCallback(dbCallback)
                 .build()
-        
-        private val migration_10_11 = object: Migration(10, 11) {
+
+        private val dbCallback = object : Callback() {
+            override fun onOpen(db: SupportSQLiteDatabase) {
+
+            }
+        }
+
+        private val migration_10_11 = object : Migration(10, 11) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE txtTocRules")
                 database.execSQL(

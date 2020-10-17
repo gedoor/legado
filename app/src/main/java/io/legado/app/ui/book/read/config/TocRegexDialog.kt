@@ -81,8 +81,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
-        val itemTouchCallback = ItemTouchCallback()
-        itemTouchCallback.onItemTouchCallbackListener = adapter
+        val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
         tv_cancel.onClick {
@@ -199,7 +198,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     inner class TocRegexAdapter(context: Context) :
         SimpleRecyclerAdapter<TxtTocRule>(context, R.layout.item_toc_regex),
-        ItemTouchCallback.OnItemTouchCallbackListener {
+        ItemTouchCallback.Callback {
 
         override fun convert(holder: ItemViewHolder, item: TxtTocRule, payloads: MutableList<Any>) {
             holder.itemView.apply {

@@ -93,13 +93,11 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tool_bar.inflateMenu(R.menu.book_group_manage)
         tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
-        tool_bar.menu.setGroupVisible(R.id.menu_groups, false)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
-        val itemTouchCallback = ItemTouchCallback()
-        itemTouchCallback.onItemTouchCallbackListener = adapter
+        val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
         tv_cancel.onClick { dismiss() }
@@ -166,7 +164,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private inner class GroupAdapter(context: Context) :
         SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_select),
-        ItemTouchCallback.OnItemTouchCallbackListener {
+        ItemTouchCallback.Callback {
 
         private var isMoved: Boolean = false
 

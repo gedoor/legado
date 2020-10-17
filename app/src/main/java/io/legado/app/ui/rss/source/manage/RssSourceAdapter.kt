@@ -19,7 +19,7 @@ import java.util.*
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss_source),
-    ItemTouchCallback.OnItemTouchCallbackListener {
+    ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<RssSource>()
 

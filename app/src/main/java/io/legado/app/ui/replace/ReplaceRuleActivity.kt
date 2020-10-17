@@ -87,8 +87,7 @@ class ReplaceRuleActivity :
         adapter = ReplaceRuleAdapter(this, this)
         recycler_view.adapter = adapter
         recycler_view.addItemDecoration(VerticalDivider(this))
-        val itemTouchCallback = ItemTouchCallback()
-        itemTouchCallback.onItemTouchCallbackListener = adapter
+        val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         val dragSelectTouchHelper: DragSelectTouchHelper =
             DragSelectTouchHelper(adapter.initDragSelectTouchHelperCallback()).setSlideArea(16, 50)

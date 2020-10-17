@@ -69,8 +69,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         recycler_view.addItemDecoration(VerticalDivider(this))
         adapter = ArrangeBookAdapter(this, this)
         recycler_view.adapter = adapter
-        val itemTouchCallback = ItemTouchCallback()
-        itemTouchCallback.onItemTouchCallbackListener = adapter
+        val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = getPrefInt(PreferKey.bookshelfSort) == 3
         val dragSelectTouchHelper: DragSelectTouchHelper =
             DragSelectTouchHelper(adapter.initDragSelectTouchHelperCallback()).setSlideArea(16, 50)
