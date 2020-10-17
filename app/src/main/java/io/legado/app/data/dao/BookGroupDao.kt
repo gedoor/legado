@@ -31,6 +31,9 @@ interface BookGroupDao {
     @get:Query("SELECT * FROM book_groups ORDER BY `order`")
     val all: List<BookGroup>
 
+    @Query("update book_groups set show = 1 where groupId = :groupId")
+    fun enableGroup(groupId: Long)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookGroup: BookGroup)
 

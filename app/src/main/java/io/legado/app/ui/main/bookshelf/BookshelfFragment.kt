@@ -12,6 +12,7 @@ import com.google.android.material.tabs.TabLayout
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
@@ -123,10 +124,14 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     @Synchronized
     private fun upGroup(data: List<BookGroup>) {
-        bookGroups.clear()
-        bookGroups.addAll(data)
-        adapter.notifyDataSetChanged()
-        selectLastTab()
+        if (data.isEmpty()) {
+            App.db.bookGroupDao().enableGroup(AppConst.bookGroupAllId)
+        } else {
+            bookGroups.clear()
+            bookGroups.addAll(data)
+            adapter.notifyDataSetChanged()
+            selectLastTab()
+        }
     }
 
     @Synchronized

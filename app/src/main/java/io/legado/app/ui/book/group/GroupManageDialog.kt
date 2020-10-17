@@ -164,13 +164,16 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return true
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+            return oldItem.groupId == newItem.groupId
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldItems[oldItemPosition]
             val newItem = newItems[newItemPosition]
             return oldItem.groupName == newItem.groupName
+                    && oldItem.show == newItem.show
         }
 
     }
