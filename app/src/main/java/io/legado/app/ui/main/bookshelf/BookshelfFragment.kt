@@ -232,9 +232,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val fragment = super.instantiateItem(container, position) as BooksFragment
             val group = bookGroups[position]
-            if (!fragmentMap.containsKey(group.groupId)) {
-                fragmentMap[group.groupId] = fragment
-            }
+            fragmentMap[group.groupId] = fragment
             return fragment
         }
 
