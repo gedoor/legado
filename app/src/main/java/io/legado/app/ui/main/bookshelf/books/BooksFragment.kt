@@ -102,10 +102,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private fun upRecyclerData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData = when (groupId) {
-            AppConst.bookGroupAll.groupId -> App.db.bookDao().observeAll()
-            AppConst.bookGroupLocal.groupId -> App.db.bookDao().observeLocal()
-            AppConst.bookGroupAudio.groupId -> App.db.bookDao().observeAudio()
-            AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
+            AppConst.bookGroupAllId -> App.db.bookDao().observeAll()
+            AppConst.bookGroupLocalId -> App.db.bookDao().observeLocal()
+            AppConst.bookGroupAudioId -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupNoneId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, { list ->
