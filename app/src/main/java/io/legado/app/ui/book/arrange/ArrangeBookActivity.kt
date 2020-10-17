@@ -133,26 +133,6 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         when (item.itemId) {
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(supportFragmentManager, "groupManage")
-            R.id.menu_no_group -> {
-                title_bar.subtitle = getString(R.string.no_group)
-                groupId = AppConst.bookGroupNoneId
-                initBookData()
-            }
-            R.id.menu_all -> {
-                title_bar.subtitle = item.title
-                groupId = AppConst.bookGroupAllId
-                initBookData()
-            }
-            R.id.menu_local -> {
-                title_bar.subtitle = item.title
-                groupId = AppConst.bookGroupLocalId
-                initBookData()
-            }
-            R.id.menu_audio -> {
-                title_bar.subtitle = item.title
-                groupId = AppConst.bookGroupAudioId
-                initBookData()
-            }
             else -> if (item.groupId == R.id.menu_group) {
                 title_bar.subtitle = item.title
                 groupId = App.db.bookGroupDao().getByName(item.title.toString())?.groupId ?: 0

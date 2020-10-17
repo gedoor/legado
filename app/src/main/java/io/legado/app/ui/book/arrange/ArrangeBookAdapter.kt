@@ -112,7 +112,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     private fun getGroupList(groupId: Long): List<String> {
         val groupNames = arrayListOf<String>()
         callBack.groupList.forEach {
-            if (it.groupId and groupId > 0) {
+            if (it.groupId > 0 && it.groupId and groupId > 0) {
                 groupNames.add(it.groupName)
             }
         }
