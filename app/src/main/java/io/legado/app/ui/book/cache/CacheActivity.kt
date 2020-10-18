@@ -57,7 +57,7 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.download, menu)
+        menuInflater.inflate(R.menu.book_cache, menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 

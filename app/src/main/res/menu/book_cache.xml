@@ -14,7 +14,11 @@
         android:id="@+id/menu_book_group"
         android:title="@string/group"
         android:icon="@drawable/ic_groups"
-        app:showAsAction="always" />
+        app:showAsAction="always">
+
+        <menu />
+
+    </item>
 
     <item
         android:id="@+id/menu_log"
