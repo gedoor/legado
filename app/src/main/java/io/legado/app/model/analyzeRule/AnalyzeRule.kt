@@ -20,7 +20,7 @@ import kotlin.collections.HashMap
  * 统一解析接口
  */
 @Keep
-@Suppress("unused")
+@Suppress("unused", "RegExpRedundantEscape")
 class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     var chapter: BookChapter? = null
     private var content: Any? = null

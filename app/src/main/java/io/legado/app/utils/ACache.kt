@@ -22,7 +22,7 @@ import kotlin.math.min
 /**
  * 本地缓存
  */
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int) {
 
     companion object {
@@ -543,6 +543,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
             return null
         }
 
+        @Suppress("SameParameterValue")
         private fun indexOf(data: ByteArray, c: Char): Int {
             for (i in data.indices) {
                 if (data[i] == c.toByte()) {
