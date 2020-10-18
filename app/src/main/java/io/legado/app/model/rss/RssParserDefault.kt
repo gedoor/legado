@@ -8,10 +8,10 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.io.IOException
 import java.io.StringReader
 
-object RssParser {
+object RssParserDefault {
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun parseXML(sortName: String, xml: String, sourceUrl: String): Result {
+    fun parseXML(sortName: String, xml: String, sourceUrl: String): RssResult {
 
         val articleList = mutableListOf<RssArticle>()
         var currentArticle = RssArticle()
@@ -105,7 +105,7 @@ object RssParser {
             Debug.log(sourceUrl, "┌获取文章链接")
             Debug.log(sourceUrl, "└${it.link}")
         }
-        return Result(articleList, null)
+        return RssResult(articleList, null)
     }
 
     /**

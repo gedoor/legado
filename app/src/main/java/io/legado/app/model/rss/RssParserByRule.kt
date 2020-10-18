@@ -14,7 +14,12 @@ import java.util.*
 object RssParserByRule {
 
     @Throws(Exception::class)
-    fun parseXML(sortName: String, sortUrl: String, body: String?, rssSource: RssSource): Result {
+    fun parseXML(
+        sortName: String,
+        sortUrl: String,
+        body: String?,
+        rssSource: RssSource
+    ): RssResult {
         val sourceUrl = rssSource.sourceUrl
         var nextUrl: String? = null
         if (body.isNullOrBlank()) {
@@ -29,7 +34,7 @@ object RssParserByRule {
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
             Debug.log(sourceUrl, "⇒列表规则为空, 使用默认规则解析")
-            return RssParser.parseXML(sortName, body, sourceUrl)
+            return RssParserDefault.parseXML(sortName, body, sourceUrl)
         } else {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
@@ -72,7 +77,7 @@ object RssParserByRule {
             if (reverse) {
                 articleList.reverse()
             }
-            return Result(articleList, nextUrl)
+            return RssResult(articleList, nextUrl)
         }
     }
 
