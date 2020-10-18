@@ -23,6 +23,7 @@ import io.legado.app.utils.ColorUtils
 /**
  * @author afollestad, plusCubed
  */
+@Suppress("MemberVisibilityCanBePrivate")
 object TintHelper {
 
     @SuppressLint("PrivateResource")
@@ -37,7 +38,10 @@ object TintHelper {
         )
     }
 
-    private fun getDisabledColorStateList(@ColorInt normal: Int, @ColorInt disabled: Int): ColorStateList {
+    private fun getDisabledColorStateList(
+        @ColorInt normal: Int,
+        @ColorInt disabled: Int
+    ): ColorStateList {
         return ColorStateList(
             arrayOf(
                 intArrayOf(-android.R.attr.state_enabled),
@@ -61,48 +65,52 @@ object TintHelper {
         )
 
         val sl: ColorStateList
-        if (view is Button) {
-            sl = getDisabledColorStateList(color, disabled)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view.getBackground() is RippleDrawable) {
-                val rd = view.getBackground() as RippleDrawable
-                rd.setColor(ColorStateList.valueOf(rippleColor))
-            }
+        when (view) {
+            is Button -> {
+                sl = getDisabledColorStateList(color, disabled)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view.getBackground() is RippleDrawable) {
+                    val rd = view.getBackground() as RippleDrawable
+                    rd.setColor(ColorStateList.valueOf(rippleColor))
+                }
 
-            // Disabled text color state for buttons, may get overridden later by ATE tags
-            view.setTextColor(
-                getDisabledColorStateList(
-                    textColor,
-                    ContextCompat.getColor(
-                        view.getContext(),
-                        if (useDarkTheme) R.color.ate_button_text_disabled_dark else R.color.ate_button_text_disabled_light
+                // Disabled text color state for buttons, may get overridden later by ATE tags
+                view.setTextColor(
+                    getDisabledColorStateList(
+                        textColor,
+                        ContextCompat.getColor(
+                            view.getContext(),
+                            if (useDarkTheme) R.color.ate_button_text_disabled_dark else R.color.ate_button_text_disabled_light
+                        )
                     )
                 )
-            )
-        } else if (view is FloatingActionButton) {
-            // FloatingActionButton doesn't support disabled state?
-            sl = ColorStateList(
-                arrayOf(
-                    intArrayOf(-android.R.attr.state_pressed),
-                    intArrayOf(android.R.attr.state_pressed)
-                ), intArrayOf(color, pressed)
-            )
+            }
+            is FloatingActionButton -> {
+                // FloatingActionButton doesn't support disabled state?
+                sl = ColorStateList(
+                    arrayOf(
+                        intArrayOf(-android.R.attr.state_pressed),
+                        intArrayOf(android.R.attr.state_pressed)
+                    ), intArrayOf(color, pressed)
+                )
 
-            view.rippleColor = rippleColor
-            view.backgroundTintList = sl
-            if (view.drawable != null)
-                view.setImageDrawable(createTintedDrawable(view.drawable, textColor))
-            return
-        } else {
-            sl = ColorStateList(
-                arrayOf(
-                    intArrayOf(-android.R.attr.state_enabled),
-                    intArrayOf(android.R.attr.state_enabled),
-                    intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed),
-                    intArrayOf(android.R.attr.state_enabled, android.R.attr.state_activated),
-                    intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked)
-                ),
-                intArrayOf(disabled, color, pressed, activated, activated)
-            )
+                view.rippleColor = rippleColor
+                view.backgroundTintList = sl
+                if (view.drawable != null)
+                    view.setImageDrawable(createTintedDrawable(view.drawable, textColor))
+                return
+            }
+            else -> {
+                sl = ColorStateList(
+                    arrayOf(
+                        intArrayOf(-android.R.attr.state_enabled),
+                        intArrayOf(android.R.attr.state_enabled),
+                        intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed),
+                        intArrayOf(android.R.attr.state_enabled, android.R.attr.state_activated),
+                        intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked)
+                    ),
+                    intArrayOf(disabled, color, pressed, activated, activated)
+                )
+            }
         }
 
         var drawable: Drawable? = view.background
@@ -386,7 +394,11 @@ object TintHelper {
         return createTintedDrawable(from, sl)
     }
 
-    fun setTint(switchView: Switch, @ColorInt color: Int, useDarker: Boolean) {
+    fun setTint(
+        @SuppressLint("UseSwitchCompatOrMaterialCode") switchView: Switch,
+        @ColorInt color: Int,
+        useDarker: Boolean
+    ) {
         if (switchView.trackDrawable != null) {
             switchView.trackDrawable = modifySwitchDrawable(
                 switchView.context,

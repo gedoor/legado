@@ -100,7 +100,7 @@ object ImportOldData {
         return bookSources.size
     }
 
-    fun importOldReplaceRule(json: String): Int {
+    private fun importOldReplaceRule(json: String): Int {
         val rules = OldReplace.jsonToReplaceRules(json)
         App.db.replaceRuleDao().insert(*rules.toTypedArray())
         return rules.size

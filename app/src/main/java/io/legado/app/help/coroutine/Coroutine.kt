@@ -5,6 +5,7 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
+@Suppress("unused")
 class Coroutine<T>(
     val scope: CoroutineScope,
     context: CoroutineContext = Dispatchers.IO,

@@ -15,6 +15,7 @@ import java.util.*
  *
  * 通用的adapter 可添加header，footer，以及不同类型item
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
     RecyclerView.Adapter<ItemViewHolder>() {
 

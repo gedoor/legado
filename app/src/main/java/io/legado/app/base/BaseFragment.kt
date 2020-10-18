@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
     CoroutineScope {
     lateinit var job: Job

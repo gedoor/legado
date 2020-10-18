@@ -8,23 +8,23 @@ package io.legado.app.ui.filechooser.utils;
  */
 public class FilePickerIcon {
 
-    public static byte[] getFILE() {
+    public static byte[] getFile() {
         return FILE;
     }
 
-    public static byte[] getFOLDER() {
+    public static byte[] getFolder() {
         return FOLDER;
     }
 
-    public static byte[] getHOME() {
+    public static byte[] getHome() {
         return HOME;
     }
 
-    public static byte[] getUPDIR() {
+    public static byte[] getUpDir() {
         return UPDIR;
     }
 
-    public static byte[] getARROW() {
+    public static byte[] getArrow() {
         return ARROW;
     }
 

@@ -2,8 +2,7 @@ package io.legado.app.help
 
 import android.text.TextUtils
 
-import java.util.Arrays
-
+@Suppress("unused")
 class EventMessage {
 
     var what: Int?=null

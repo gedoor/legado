@@ -11,6 +11,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.toast
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("unused")
 open class BaseViewModel(application: Application) : AndroidViewModel(application),
     CoroutineScope by MainScope(),
     AnkoLogger {

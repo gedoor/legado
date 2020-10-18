@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.help.http
 
 import android.text.TextUtils

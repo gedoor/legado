@@ -10,6 +10,7 @@ import androidx.annotation.ColorInt
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
+@Suppress("unused")
 object ViewUtils {
 
     fun removeOnGlobalLayoutListener(v: View, listener: ViewTreeObserver.OnGlobalLayoutListener) {

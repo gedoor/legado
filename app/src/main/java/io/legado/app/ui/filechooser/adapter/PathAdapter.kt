@@ -17,7 +17,7 @@ class PathAdapter(context: Context, val callBack: CallBack) :
     private val paths = LinkedList<String>()
     @Suppress("DEPRECATION")
     private val sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
-    private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getARROW())
+    private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getArrow())
 
     fun getPath(position: Int): String {
         val tmp = StringBuilder("$sdCardDirectory/")

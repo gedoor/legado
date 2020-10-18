@@ -12,6 +12,7 @@ import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import javax.net.ssl.*
 
+@Suppress("unused")
 object SSLHelper {
 
     /**
