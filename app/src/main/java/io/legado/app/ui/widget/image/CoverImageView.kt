@@ -16,7 +16,10 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.getPrefString
 
-
+/**
+ * 封面
+ */
+@Suppress("unused")
 class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     internal var width: Float = 0.toFloat()
     internal var height: Float = 0.toFloat()
@@ -171,6 +174,7 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             upDefaultCover()
         }
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         fun upDefaultCover() {
             val path = App.INSTANCE.getPrefString(PreferKey.defaultCover)
             var dw = Drawable.createFromPath(path)
