@@ -107,7 +107,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        hint = "分组名称"
+                        setHint(R.string.group_name)
                     }
                 }
             }
@@ -129,7 +129,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        hint = "分组名称"
+                        setHint(R.string.group_name)
                         setText(bookGroup.groupName)
                     }
                 }
@@ -187,7 +187,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
             holder.itemView.apply {
                 setBackgroundColor(context.backgroundColor)
-                tv_group.text = item.groupName
+                tv_group.text = item.getManageName(context)
                 sw_show.isChecked = item.show
                 tv_del.isGone = item.groupId < 0
                 sw_show.isGone = item.groupId >= 0

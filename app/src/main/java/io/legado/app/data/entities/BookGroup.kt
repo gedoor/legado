@@ -18,12 +18,12 @@ data class BookGroup(
     var show: Boolean = true
 ) : Parcelable {
 
-    fun getDefaultName(context: Context): String {
+    fun getManageName(context: Context): String {
         return when (groupId) {
-            AppConst.bookGroupAllId -> context.getString(R.string.all)
-            AppConst.bookGroupAudioId -> context.getString(R.string.audio)
-            AppConst.bookGroupLocalId -> context.getString(R.string.local)
-            AppConst.bookGroupNoneId -> context.getString(R.string.no_group)
+            AppConst.bookGroupAllId -> "$groupName(${context.getString(R.string.all)})"
+            AppConst.bookGroupAudioId -> "$groupName(${context.getString(R.string.audio)})"
+            AppConst.bookGroupLocalId -> "$groupName(${context.getString(R.string.local)})"
+            AppConst.bookGroupNoneId -> "$groupName(${context.getString(R.string.no_group)})"
             else -> groupName
         }
     }
