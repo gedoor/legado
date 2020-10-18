@@ -7,6 +7,7 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class FastScrollRecyclerView : RecyclerView {
 
     private lateinit var mFastScroller: FastScroller

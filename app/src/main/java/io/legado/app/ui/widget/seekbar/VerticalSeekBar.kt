@@ -16,6 +16,7 @@ import io.legado.app.lib.theme.ThemeStore
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
+@Suppress("SameParameterValue")
 class VerticalSeekBar : AppCompatSeekBar {
 
     private var mIsDragging: Boolean = false

@@ -33,9 +33,11 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
+@Suppress("SameParameterValue")
 class FastScroller : LinearLayout {
     @ColorInt
     private var mBubbleColor: Int = 0
+
     @ColorInt
     private var mHandleColor: Int = 0
     private var mBubbleHeight: Int = 0

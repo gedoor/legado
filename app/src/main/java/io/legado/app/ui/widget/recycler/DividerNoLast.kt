@@ -14,6 +14,7 @@ import kotlin.math.roundToInt
 /**
  * 不画最后一条分隔线
  */
+@Suppress("MemberVisibilityCanBePrivate", "RedundantRequireNotNullCall", "unused")
 class DividerNoLast(context: Context, orientation: Int) :
     RecyclerView.ItemDecoration() {
 

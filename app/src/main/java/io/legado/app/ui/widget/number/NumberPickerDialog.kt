@@ -48,7 +48,7 @@ class NumberPickerDialog(context: Context) {
                 listener?.invoke()
             }
         }
-        return this;
+        return this
     }
 
     fun show(callBack: ((value: Int) -> Unit)?) {

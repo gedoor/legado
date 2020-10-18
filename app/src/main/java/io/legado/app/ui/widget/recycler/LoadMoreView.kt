@@ -9,6 +9,7 @@ import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_load_more.view.*
 
+@Suppress("unused")
 class LoadMoreView(context: Context) : FrameLayout(context) {
 
     var hasMore = true
