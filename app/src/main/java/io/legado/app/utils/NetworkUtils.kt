@@ -8,7 +8,7 @@ import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object NetworkUtils {
     fun getUrl(response: Response<*>): String {
         val networkResponse = response.raw().networkResponse()

@@ -24,6 +24,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 
+@Suppress("UNUSED_PARAMETER", "unused", "MemberVisibilityCanBePrivate")
 @SuppressLint("AppCompatCustomView")
 class PhotoView : ImageView {
     val MIN_ROTATE = 35
@@ -197,6 +198,7 @@ class PhotoView : ImageView {
         MAX_ANIM_FROM_WAITE = wait
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun setImageResource(resId: Int) {
         var drawable: Drawable? = null
         try {
@@ -832,7 +834,7 @@ class PhotoView : ImageView {
 
     }
 
-    private inner class Transform internal constructor() : Runnable {
+    private inner class Transform : Runnable {
         var isRunning = false
         var mTranslateScroller: OverScroller
         var mFlingScroller: OverScroller
@@ -1230,7 +1232,7 @@ class PhotoView : ImageView {
             val scale = if (scaleX > scaleY) scaleX else scaleY
             mAnimMatrix.postRotate(mDegrees, mScaleCenter.x, mScaleCenter.y)
             mAnimMatrix.mapRect(mImgRect, mBaseRect)
-            mDegrees = mDegrees % 360
+            mDegrees %= 360
             mTranslate.withTranslate(
                 0,
                 0,

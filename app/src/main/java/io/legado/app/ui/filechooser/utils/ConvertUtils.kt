@@ -17,6 +17,7 @@ import java.text.DecimalFormat
  * @author 李玉江[QQ:1023694760]
  * @since 2014-4-18
  */
+@Suppress("MemberVisibilityCanBePrivate")
 object ConvertUtils {
     const val GB: Long = 1073741824
     const val MB: Long = 1048576

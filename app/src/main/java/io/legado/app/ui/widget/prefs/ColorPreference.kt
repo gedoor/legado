@@ -16,6 +16,7 @@ import com.jaredrummler.android.colorpicker.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.ColorUtils
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class ColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
     ColorPickerDialogListener {
 

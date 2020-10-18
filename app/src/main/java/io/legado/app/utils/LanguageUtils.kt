@@ -72,14 +72,6 @@ object LanguageUtils {
             @Suppress("DEPRECATION")
             locale = context.resources.configuration.locale
         }
-        /*
-        Log.d("h11128", "displayName " + locale.displayName)
-        Log.d("h11128", "displayCountry " + locale.displayCountry)
-        Log.d("h11128", "displayLanguage " + locale.displayLanguage)
-        Log.d("h11128", "Language " + locale.language)
-        Log.d("h11128", "Country " + locale.country)
-
-         */
         return locale
 
     }

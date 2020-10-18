@@ -119,13 +119,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun loadGroup(groupId: Long, success: ((groupNames: String?) -> Unit)) {
         execute {
-            val groupNames = arrayListOf<String>()
-            App.db.bookGroupDao().all.forEach {
-                if (groupId and it.groupId > 0) {
-                    groupNames.add(it.groupName)
-                }
-            }
-            groupNames.joinToString(",")
+            App.db.bookGroupDao().getGroupNames(groupId).joinToString(",")
         }.onSuccess {
             success.invoke(it)
         }
@@ -133,23 +127,36 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeTo(newBook: Book) {
         execute {
+            var oldTocSize: Int = newBook.totalChapterNum
             if (inBookshelf) {
-                bookData.value?.changeTo(newBook)
+                bookData.value?.let {
+                    oldTocSize = it.totalChapterNum
+                    it.changeTo(newBook)
+                }
             }
             bookData.postValue(newBook)
             if (newBook.tocUrl.isEmpty()) {
-                loadBookInfo(newBook, false) { upChangeDurChapterIndex(newBook, it) }
+                loadBookInfo(newBook, false) {
+                    upChangeDurChapterIndex(newBook, oldTocSize, it)
+                }
             } else {
-                loadChapter(newBook) { upChangeDurChapterIndex(newBook, it) }
+                loadChapter(newBook) {
+                    upChangeDurChapterIndex(newBook, oldTocSize, it)
+                }
             }
         }
     }
 
-    private fun upChangeDurChapterIndex(book: Book, chapters: List<BookChapter>) {
+    private fun upChangeDurChapterIndex(
+        book: Book,
+        oldTocSize: Int,
+        chapters: List<BookChapter>
+    ) {
         execute {
-            book.durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
-                book.durChapterTitle,
+            book.durChapterIndex = BookHelp.getDurChapter(
                 book.durChapterIndex,
+                oldTocSize,
+                book.durChapterTitle,
                 chapters
             )
             book.durChapterTitle = chapters[book.durChapterIndex].title

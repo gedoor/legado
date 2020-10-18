@@ -178,48 +178,23 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private inner class TabFragmentPageAdapter(fm: FragmentManager) :
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-        val bookshelfFragment: Fragment
-            get() {
-                if (!fragmentMap.containsKey(0)) {
-                    fragmentMap[0] = BookshelfFragment()
-                }
-                return fragmentMap.getValue(0)
+        private fun getId(position: Int): Int {
+            return when (position) {
+                2 -> if (AppConfig.isShowRSS) 2 else 3
+                else -> position
             }
-
-        val exploreFragment: Fragment
-            get() {
-                if (!fragmentMap.containsKey(1)) {
-                    fragmentMap[1] = ExploreFragment()
-                }
-                return fragmentMap.getValue(1)
-            }
-
-        val rssFragment: Fragment
-            get() {
-                if (!fragmentMap.containsKey(2)) {
-                    fragmentMap[2] = RssFragment()
-                }
-                return fragmentMap.getValue(2)
-            }
-
-        val myFragment: Fragment
-            get() {
-                if (!fragmentMap.containsKey(3)) {
-                    fragmentMap[3] = MyFragment()
-                }
-                return fragmentMap.getValue(3)
-            }
+        }
 
         override fun getItemPosition(`object`: Any): Int {
             return POSITION_NONE
         }
 
         override fun getItem(position: Int): Fragment {
-            return when (position) {
-                0 -> bookshelfFragment
-                1 -> exploreFragment
-                2 -> if (AppConfig.isShowRSS) rssFragment else myFragment
-                else -> myFragment
+            return when (getId(position)) {
+                0 -> BookshelfFragment()
+                1 -> ExploreFragment()
+                2 -> RssFragment()
+                else -> MyFragment()
             }
         }
 
@@ -229,13 +204,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val fragment = super.instantiateItem(container, position) as Fragment
-            val id = when (position) {
-                2 -> if (AppConfig.isShowRSS) 2 else 3
-                else -> position
-            }
-            if (!fragmentMap.containsKey(id)) {
-                fragmentMap[id] = fragment
-            }
+            fragmentMap[getId(position)] = fragment
             return fragment
         }
 

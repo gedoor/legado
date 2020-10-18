@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +21,6 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
@@ -41,7 +41,6 @@ import kotlin.collections.ArrayList
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: GroupViewModel
     private lateinit var adapter: GroupAdapter
-    private val callBack: CallBack? get() = parentFragment as? CallBack
 
     override fun onStart() {
         super.onStart()
@@ -62,67 +61,41 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         tool_bar.setBackgroundColor(primaryColor)
         tool_bar.title = getString(R.string.group_manage)
+        initView()
         initData()
         initMenu()
     }
 
-    private fun initData() {
+    private fun initView() {
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
+        val itemTouchCallback = ItemTouchCallback(adapter)
+        itemTouchCallback.isCanDrag = true
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
         tv_ok.setTextColor(requireContext().accentColor)
         tv_ok.visible()
         tv_ok.onClick { dismiss() }
+    }
+
+    private fun initData() {
         App.db.bookGroupDao().liveDataAll().observe(viewLifecycleOwner, {
             val diffResult =
                 DiffUtil.calculateDiff(GroupDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it, diffResult)
         })
-        val itemTouchCallback = ItemTouchCallback()
-        itemTouchCallback.onItemTouchCallbackListener = adapter
-        itemTouchCallback.isCanDrag = true
-        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
     }
 
     private fun initMenu() {
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.inflateMenu(R.menu.book_group_manage)
-        tool_bar.menu.let {
-            it.applyTint(requireContext())
-            it.findItem(R.id.menu_group_all)
-                .isChecked = AppConfig.bookGroupAllShow
-            it.findItem(R.id.menu_group_local)
-                .isChecked = AppConfig.bookGroupLocalShow
-            it.findItem(R.id.menu_group_audio)
-                .isChecked = AppConfig.bookGroupAudioShow
-            it.findItem(R.id.menu_group_none)
-                .isChecked = AppConfig.bookGroupNoneShow
-        }
+        tool_bar.menu.applyTint(requireContext())
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> addGroup()
-            R.id.menu_group_all -> {
-                item.isChecked = !item.isChecked
-                AppConfig.bookGroupAllShow = item.isChecked
-                callBack?.upGroup()
-            }
-            R.id.menu_group_local -> {
-                item.isChecked = !item.isChecked
-                AppConfig.bookGroupLocalShow = item.isChecked
-                callBack?.upGroup()
-            }
-            R.id.menu_group_audio -> {
-                item.isChecked = !item.isChecked
-                AppConfig.bookGroupAudioShow = item.isChecked
-                callBack?.upGroup()
-            }
-            R.id.menu_group_none -> {
-                item.isChecked = !item.isChecked
-                AppConfig.bookGroupNoneShow = item.isChecked
-            }
         }
         return true
     }
@@ -134,7 +107,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        hint = "分组名称"
+                        setHint(R.string.group_name)
                     }
                 }
             }
@@ -156,7 +129,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view.apply {
-                        hint = "分组名称"
+                        setHint(R.string.group_name)
                         setText(bookGroup.groupName)
                     }
                 }
@@ -191,27 +164,33 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return true
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+            return oldItem.groupId == newItem.groupId
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldItems[oldItemPosition]
             val newItem = newItems[newItemPosition]
             return oldItem.groupName == newItem.groupName
+                    && oldItem.show == newItem.show
         }
 
     }
 
     private inner class GroupAdapter(context: Context) :
         SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage),
-        ItemTouchCallback.OnItemTouchCallbackListener {
+        ItemTouchCallback.Callback {
 
         private var isMoved = false
 
         override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
             holder.itemView.apply {
                 setBackgroundColor(context.backgroundColor)
-                tv_group.text = item.groupName
+                tv_group.text = item.getManageName(context)
+                sw_show.isChecked = item.show
+                tv_del.isGone = item.groupId < 0
+                sw_show.isGone = item.groupId >= 0
             }
         }
 
@@ -219,6 +198,13 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             holder.itemView.apply {
                 tv_edit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
                 tv_del.onClick { getItem(holder.layoutPosition)?.let { deleteGroup(it) } }
+                sw_show.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (buttonView.isPressed) {
+                        getItem(holder.layoutPosition)?.let {
+                            viewModel.upGroup(it.copy(show = isChecked))
+                        }
+                    }
+                }
             }
         }
 
@@ -240,7 +226,4 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
     }
 
-    interface CallBack {
-        fun upGroup()
-    }
 }

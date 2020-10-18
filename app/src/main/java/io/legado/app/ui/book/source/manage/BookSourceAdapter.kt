@@ -14,7 +14,7 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
-import io.legado.app.ui.widget.recycler.ItemTouchCallback.OnItemTouchCallbackListener
+import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_book_source.view.*
@@ -23,7 +23,7 @@ import java.util.*
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource>(context, R.layout.item_book_source),
-    OnItemTouchCallbackListener {
+    Callback {
 
     private val selected = linkedSetOf<BookSource>()
 

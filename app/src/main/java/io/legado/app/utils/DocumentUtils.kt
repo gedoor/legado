@@ -8,6 +8,7 @@ import androidx.documentfile.provider.DocumentFile
 import java.util.*
 
 
+@Suppress("MemberVisibilityCanBePrivate")
 object DocumentUtils {
 
     fun exists(root: DocumentFile, fileName: String, vararg subDirs: String): Boolean {

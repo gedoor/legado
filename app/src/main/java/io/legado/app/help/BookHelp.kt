@@ -15,10 +15,15 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import org.apache.commons.text.similarity.JaccardSimilarity
+import net.ricecode.similarity.JaroWinklerStrategy
+import net.ricecode.similarity.StringSimilarityServiceImpl
 import org.jetbrains.anko.toast
 import java.io.File
 import java.util.concurrent.CopyOnWriteArraySet
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 
 object BookHelp {
@@ -202,54 +207,88 @@ object BookHelp {
     }
 
     /**
-     * 找到相似度最高的章节
+     * 根据目录名获取当前章节
      */
-    fun getDurChapterIndexByChapterTitle(
-        title: String?,
-        index: Int,
-        chapters: List<BookChapter>,
+    fun getDurChapter(
+        oldDurChapterIndex: Int,
+        oldChapterListSize: Int,
+        oldDurChapterName: String?,
+        newChapterList: List<BookChapter>
     ): Int {
-        if (title.isNullOrEmpty()) {
-            return min(index, chapters.lastIndex)
-        }
-        if (chapters.size > index && title == chapters[index].title) {
-            return index
-        }
-
+        if (oldChapterListSize == 0) return 0
+        val oldChapterNum = getChapterNum(oldDurChapterName)
+        val oldName = getPureChapterName(oldDurChapterName)
+        val newChapterSize = newChapterList.size
+        val min = max(
+            0,
+            min(
+                oldDurChapterIndex,
+                oldDurChapterIndex - oldChapterListSize + newChapterSize
+            ) - 10
+        )
+        val max = min(
+            newChapterSize - 1,
+            max(
+                oldDurChapterIndex,
+                oldDurChapterIndex - oldChapterListSize + newChapterSize
+            ) + 10
+        )
+        var nameSim = 0.0
         var newIndex = 0
-        val jSimilarity = JaccardSimilarity()
-        var similarity = if (chapters.size > index) {
-            jSimilarity.apply(title, chapters[index].title)
-        } else 0.0
-        if (similarity == 1.0) {
-            return index
-        } else {
-            for (i in 1..50) {
-                if (index - i in chapters.indices) {
-                    jSimilarity.apply(title, chapters[index - i].title).let {
-                        if (it > similarity) {
-                            similarity = it
-                            newIndex = index - i
-                            if (similarity == 1.0) {
-                                return newIndex
-                            }
-                        }
-                    }
-                }
-                if (index + i in chapters.indices) {
-                    jSimilarity.apply(title, chapters[index + i].title).let {
-                        if (it > similarity) {
-                            similarity = it
-                            newIndex = index + i
-                            if (similarity == 1.0) {
-                                return newIndex
-                            }
-                        }
-                    }
+        var newNum = 0
+        if (oldName.isNotEmpty()) {
+            val service = StringSimilarityServiceImpl(JaroWinklerStrategy())
+            for (i in min..max) {
+                val newName = getPureChapterName(newChapterList[i].title)
+                val temp = service.score(oldName, newName)
+                if (temp > nameSim) {
+                    nameSim = temp
+                    newIndex = i
                 }
             }
         }
-        return newIndex
+        if (nameSim < 0.96 && oldChapterNum > 0) {
+            for (i in min..max) {
+                val temp = getChapterNum(newChapterList[i].title)
+                if (temp == oldChapterNum) {
+                    newNum = temp
+                    newIndex = i
+                    break
+                } else if (abs(temp - oldChapterNum) < abs(newNum - oldChapterNum)) {
+                    newNum = temp
+                    newIndex = i
+                }
+            }
+        }
+        return if (nameSim > 0.96 || abs(newNum - oldChapterNum) < 1) {
+            newIndex
+        } else {
+            min(max(0, newChapterList.size - 1), oldDurChapterIndex)
+        }
+    }
+
+    private val chapterNamePattern =
+        Pattern.compile("^(.*?第([\\d零〇一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟０-９\\s]+)[章节篇回集])[、，。　：:.\\s]*")
+
+    private fun getChapterNum(chapterName: String?): Int {
+        if (chapterName != null) {
+            val matcher: Matcher = chapterNamePattern.matcher(chapterName)
+            if (matcher.find()) {
+                return StringUtils.stringToInt(matcher.group(2))
+            }
+        }
+        return -1
+    }
+
+    private fun getPureChapterName(chapterName: String?): String {
+        // 所有非字母数字中日韩文字 CJK区+扩展A-F区
+        return if (chapterName == null) "" else StringUtils.fullToHalf(chapterName)
+            .replace("\\s".toRegex(), "")
+            .replace("^第.*?章|[(\\[][^()\\[\\]]{2,}[)\\]]$".toRegex(), "")
+            .replace(
+                "[^\\w\\u4E00-\\u9FEF〇\\u3400-\\u4DBF\\u20000-\\u2A6DF\\u2A700-\\u2EBEF]".toRegex(),
+                ""
+            )
     }
 
     private var bookName: String? = null

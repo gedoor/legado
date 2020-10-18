@@ -89,7 +89,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
 
     fun changeTo(book1: Book) {
         execute {
+            var oldTocSize: Int = book1.totalChapterNum
             AudioPlay.book?.let {
+                oldTocSize = it.totalChapterNum
                 book1.order = it.order
                 App.db.bookDao().delete(it)
             }
@@ -99,18 +101,23 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 AudioPlay.webBook = WebBook(it)
             }
             if (book1.tocUrl.isEmpty()) {
-                loadBookInfo(book1) { upChangeDurChapterIndex(book1, it) }
+                loadBookInfo(book1) { upChangeDurChapterIndex(book1, oldTocSize, it) }
             } else {
-                loadChapterList(book1) { upChangeDurChapterIndex(book1, it) }
+                loadChapterList(book1) { upChangeDurChapterIndex(book1, oldTocSize, it) }
             }
         }
     }
 
-    private fun upChangeDurChapterIndex(book: Book, chapters: List<BookChapter>) {
+    private fun upChangeDurChapterIndex(
+        book: Book,
+        oldTocSize: Int,
+        chapters: List<BookChapter>
+    ) {
         execute {
-            AudioPlay.durChapterIndex = BookHelp.getDurChapterIndexByChapterTitle(
-                book.durChapterTitle,
+            AudioPlay.durChapterIndex = BookHelp.getDurChapter(
                 book.durChapterIndex,
+                oldTocSize,
+                book.durChapterTitle,
                 chapters
             )
             book.durChapterIndex = AudioPlay.durChapterIndex

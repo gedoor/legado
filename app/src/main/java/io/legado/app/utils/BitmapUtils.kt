@@ -16,7 +16,7 @@ import java.io.IOException
 import kotlin.math.*
 
 
-@Suppress("unused", "WeakerAccess")
+@Suppress("unused", "WeakerAccess", "MemberVisibilityCanBePrivate")
 object BitmapUtils {
 
     /**

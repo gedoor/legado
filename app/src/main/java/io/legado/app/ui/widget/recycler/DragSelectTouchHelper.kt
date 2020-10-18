@@ -51,7 +51,7 @@ import kotlin.math.min
  *  |                   | ----------------------------------------------> |                       |
  *  +-------------------+                                                 +-----------------------+
  */
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class DragSelectTouchHelper(
     /**
      * Developer callback which controls the behavior of DragSelectTouchHelper.

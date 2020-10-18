@@ -11,7 +11,6 @@ import android.widget.SeekBar
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
@@ -193,7 +192,6 @@ class ReadMenu : FrameLayout {
         fabNightTheme.onClick {
             AppConfig.isNightTheme = !AppConfig.isNightTheme
             App.INSTANCE.applyDayNight()
-            postEvent(EventBus.RECREATE, "")
         }
 
         //上一章

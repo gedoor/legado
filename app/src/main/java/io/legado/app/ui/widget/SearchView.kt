@@ -1,5 +1,6 @@
 package io.legado.app.ui.widget
 
+import android.annotation.SuppressLint
 import android.app.SearchableInfo
 import android.content.Context
 import android.graphics.Canvas
@@ -30,6 +31,7 @@ class SearchView : SearchView {
         defStyleAttr: Int
     ) : super(context, attrs, defStyleAttr)
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onLayout(
         changed: Boolean,
         left: Int,

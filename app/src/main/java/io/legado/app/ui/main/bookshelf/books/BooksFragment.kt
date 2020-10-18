@@ -29,7 +29,6 @@ import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.startActivity
 import kotlinx.android.synthetic.main.fragment_books.*
-import org.jetbrains.anko.startActivity
 import kotlin.math.max
 
 /**
@@ -61,7 +60,6 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
         }
-        tv_empty_msg.setText(R.string.bookshelf_empty)
         initRecyclerView()
         upRecyclerData()
     }
@@ -104,10 +102,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private fun upRecyclerData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData = when (groupId) {
-            AppConst.bookGroupAll.groupId -> App.db.bookDao().observeAll()
-            AppConst.bookGroupLocal.groupId -> App.db.bookDao().observeLocal()
-            AppConst.bookGroupAudio.groupId -> App.db.bookDao().observeAudio()
-            AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
+            AppConst.bookGroupAllId -> App.db.bookDao().observeAll()
+            AppConst.bookGroupLocalId -> App.db.bookDao().observeLocal()
+            AppConst.bookGroupAudioId -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupNoneId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         bookshelfLiveData?.observe(this, { list ->
@@ -139,8 +137,8 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     override fun open(book: Book) {
         when (book.type) {
             BookType.audio ->
-                context?.startActivity<AudioPlayActivity>(Pair("bookUrl", book.bookUrl))
-            else -> context?.startActivity<ReadBookActivity>(
+                startActivity<AudioPlayActivity>(Pair("bookUrl", book.bookUrl))
+            else -> startActivity<ReadBookActivity>(
                 Pair("bookUrl", book.bookUrl),
                 Pair("key", IntentDataHelp.putData(book))
             )

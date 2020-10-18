@@ -24,6 +24,7 @@ import io.legado.app.utils.sp
 import kotlin.math.min
 import kotlin.math.pow
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class CircleImageView(context: Context, attrs: AttributeSet) :
     AppCompatImageView(
         context,

@@ -16,6 +16,7 @@ import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_select_action_bar.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
+@Suppress("unused")
 class SelectActionBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private var callBack: CallBack? = null
     private var selMenu: PopupMenu? = null

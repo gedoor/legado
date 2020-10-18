@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.widget.ImageView
 
 
+@Suppress("MemberVisibilityCanBePrivate")
 class Info(
     rect: RectF,
     img: RectF,

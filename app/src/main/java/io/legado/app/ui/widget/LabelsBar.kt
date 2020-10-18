@@ -7,7 +7,7 @@ import android.widget.TextView
 import io.legado.app.ui.widget.text.AccentBgTextView
 import io.legado.app.utils.dp
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class LabelsBar(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
 
     private val unUsedViews = arrayListOf<TextView>()

@@ -1,9 +1,6 @@
 package io.legado.app.constant
 
 import android.annotation.SuppressLint
-import io.legado.app.App
-import io.legado.app.R
-import io.legado.app.data.entities.BookGroup
 import java.text.SimpleDateFormat
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -47,10 +44,10 @@ object AppConst {
         )
     }
 
-    val bookGroupAll = BookGroup(-1, App.INSTANCE.getString(R.string.all))
-    val bookGroupLocal = BookGroup(-2, App.INSTANCE.getString(R.string.local))
-    val bookGroupAudio = BookGroup(-3, App.INSTANCE.getString(R.string.audio))
-    val bookGroupNone = BookGroup(-4, App.INSTANCE.getString(R.string.no_group))
+    const val bookGroupAllId = -1L
+    const val bookGroupLocalId = -2L
+    const val bookGroupAudioId = -3L
+    const val bookGroupNoneId = -4L
 
     const val notificationIdRead = 1144771
     const val notificationIdAudio = 1144772

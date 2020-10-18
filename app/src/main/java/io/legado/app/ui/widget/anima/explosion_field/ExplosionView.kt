@@ -29,6 +29,7 @@ import android.view.View
 import java.util.*
 
 
+@Suppress("unused")
 class ExplosionView : View {
 
     private var customDuration = ExplosionAnimator.DEFAULT_DURATION
@@ -75,8 +76,8 @@ class ExplosionView : View {
         this.customDuration = customDuration
     }
 
-    fun addActionEvent(ievents: OnAnimatorListener) {
-        this.mZAnimatorListener = ievents
+    fun addActionEvent(iEvents: OnAnimatorListener) {
+        this.mZAnimatorListener = iEvents
     }
 
 

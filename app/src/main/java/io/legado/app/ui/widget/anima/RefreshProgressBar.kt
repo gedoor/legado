@@ -11,6 +11,7 @@ import android.view.View
 
 import io.legado.app.R
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class RefreshProgressBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

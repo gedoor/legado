@@ -57,7 +57,7 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.download, menu)
+        menuInflater.inflate(R.menu.book_cache, menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -95,16 +95,6 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
             R.id.menu_log -> {
                 TextListDialog.show(supportFragmentManager, getString(R.string.log), CacheBook.logs)
             }
-            R.id.menu_no_group -> {
-                title_bar.subtitle = getString(R.string.no_group)
-                groupId = AppConst.bookGroupNone.groupId
-                initBookData()
-            }
-            R.id.menu_all -> {
-                title_bar.subtitle = item.title
-                groupId = AppConst.bookGroupAll.groupId
-                initBookData()
-            }
             else -> if (item.groupId == R.id.menu_group) {
                 title_bar.subtitle = item.title
                 groupId = App.db.bookGroupDao().getByName(item.title.toString())?.groupId ?: 0
@@ -123,8 +113,10 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
     private fun initBookData() {
         booksLiveData?.removeObservers(this)
         booksLiveData = when (groupId) {
-            AppConst.bookGroupAll.groupId -> App.db.bookDao().observeAll()
-            AppConst.bookGroupNone.groupId -> App.db.bookDao().observeNoGroup()
+            AppConst.bookGroupAllId -> App.db.bookDao().observeAll()
+            AppConst.bookGroupLocalId -> App.db.bookDao().observeLocal()
+            AppConst.bookGroupAudioId -> App.db.bookDao().observeAudio()
+            AppConst.bookGroupNoneId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
         }
         booksLiveData?.observe(this, { list ->

@@ -34,7 +34,6 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
-        tv_empty_msg.setText(R.string.rss_source_empty)
         initRecyclerView()
         initData()
     }

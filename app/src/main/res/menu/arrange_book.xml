@@ -14,22 +14,6 @@
                 android:id="@+id/menu_group_manage"
                 android:title="@string/group_manage" />
 
-            <item
-                android:id="@+id/menu_no_group"
-                android:title="@string/no_group" />
-
-            <item
-                android:id="@+id/menu_all"
-                android:title="@string/all" />
-
-            <item
-                android:id="@+id/menu_local"
-                android:title="@string/local" />
-
-            <item
-                android:id="@+id/menu_audio"
-                android:title="@string/audio" />
-
         </menu>
 
     </item>
