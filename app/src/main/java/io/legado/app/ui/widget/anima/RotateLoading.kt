@@ -17,6 +17,7 @@ import io.legado.app.utils.dp
  * RotateLoading
  * Created by Victor on 2015/4/28.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class RotateLoading : View {
 
     private lateinit var mPaint: Paint

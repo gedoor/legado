@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object FileUtils {
 
     fun exists(root: File, vararg subDirFiles: String): Boolean {
@@ -489,11 +489,10 @@ object FileUtils {
      */
     @JvmOverloads
     fun writeText(filepath: String, content: String, charset: String = "utf-8"): Boolean {
-        try {
+        return try {
             writeBytes(filepath, content.toByteArray(charset(charset)))
-            return true
         } catch (e: UnsupportedEncodingException) {
-            return false
+            false
         }
 
     }
@@ -569,15 +568,15 @@ object FileUtils {
      * 获取文件名（不包括扩展名）
      */
     fun getNameExcludeExtension(path: String): String {
-        try {
+        return try {
             var fileName = File(path).name
             val lastIndexOf = fileName.lastIndexOf(".")
             if (lastIndexOf != -1) {
                 fileName = fileName.substring(0, lastIndexOf)
             }
-            return fileName
+            fileName
         } catch (e: Exception) {
-            return ""
+            ""
         }
 
     }

@@ -17,6 +17,7 @@ import io.legado.app.utils.getCompatColor
  *
  * Created by lijiankun on 17/8/11.
  */
+@Suppress("unused")
 class ShadowLayout(
     context: Context,
     attrs: AttributeSet? = null

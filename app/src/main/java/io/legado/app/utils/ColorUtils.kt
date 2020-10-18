@@ -7,7 +7,7 @@ import androidx.annotation.FloatRange
 import java.util.*
 import kotlin.math.*
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object ColorUtils {
 
     fun intToString(intColor: Int): String {
