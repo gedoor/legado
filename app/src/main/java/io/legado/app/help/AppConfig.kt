@@ -97,30 +97,6 @@ object AppConfig {
             App.INSTANCE.putPrefInt(PreferKey.systemTypefaces, value)
         }
 
-    var bookGroupAllShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupAll", true)
-        set(value) {
-            App.INSTANCE.putPrefBoolean("bookGroupAll", value)
-        }
-
-    var bookGroupLocalShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupLocal", false)
-        set(value) {
-            App.INSTANCE.putPrefBoolean("bookGroupLocal", value)
-        }
-
-    var bookGroupAudioShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupAudio", false)
-        set(value) {
-            App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
-        }
-
-    var bookGroupNoneShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupNone", false)
-        set(value) {
-            App.INSTANCE.putPrefBoolean("bookGroupNone", value)
-        }
-
     var elevation: Int
         @SuppressLint("PrivateResource")
         get() = App.INSTANCE.getPrefInt(
