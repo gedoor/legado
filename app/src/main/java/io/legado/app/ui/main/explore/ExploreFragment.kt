@@ -24,7 +24,7 @@ import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
-import kotlinx.android.synthetic.main.fragment_find_book.*
+import kotlinx.android.synthetic.main.fragment_explore.*
 import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.android.synthetic.main.view_title_bar.*
 import java.text.Collator
@@ -32,7 +32,7 @@ import java.text.Collator
 /**
  * 发现界面
  */
-class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_book),
+class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
     ExploreAdapter.CallBack {
     override val viewModel: ExploreViewModel
         get() = getViewModel(ExploreViewModel::class.java)
