@@ -208,8 +208,6 @@ dependencies {
         exclude group: 'xmlpull'
     }
 
-    //E-Ink 有些手机会出现重影
-    //implementation 'fadeapp.widgets:scrollless-recyclerView:1.0.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
