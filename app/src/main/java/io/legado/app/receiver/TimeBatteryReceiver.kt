@@ -25,15 +25,13 @@ class TimeBatteryReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        intent?.action?.let {
-            when (it) {
-                Intent.ACTION_TIME_TICK -> {
-                    postEvent(EventBus.TIME_CHANGED, "")
-                }
-                Intent.ACTION_BATTERY_CHANGED -> {
-                    val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-                    postEvent(EventBus.BATTERY_CHANGED, level)
-                }
+        when (intent?.action) {
+            Intent.ACTION_TIME_TICK -> {
+                postEvent(EventBus.TIME_CHANGED, "")
+            }
+            Intent.ACTION_BATTERY_CHANGED -> {
+                val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+                postEvent(EventBus.BATTERY_CHANGED, level)
             }
         }
     }
