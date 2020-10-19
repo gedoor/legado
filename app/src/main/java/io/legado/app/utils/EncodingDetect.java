@@ -4365,6 +4365,7 @@ class BytesEncodingDetect extends Encoding {
     }
 }
 
+@SuppressWarnings("ALL")
 class Encoding {
     // Supported Encoding Types
     static int GB2312 = 0;
