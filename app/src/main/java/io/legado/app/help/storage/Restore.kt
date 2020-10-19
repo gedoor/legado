@@ -78,7 +78,7 @@ object Restore {
                     for (fileName in Backup.backupFileNames) {
                         if (doc.name == fileName) {
                             DocumentUtils.readText(context, doc.uri)?.let {
-                                FileUtils.createFileIfNotExist(Backup.backupPath + File.separator + fileName)
+                                FileUtils.createFileIfNotExist("${Backup.backupPath}${File.separator}$fileName")
                                     .writeText(it)
                             }
                         }
@@ -91,7 +91,7 @@ object Restore {
                         FileUtils.getFile(file, fileName).let {
                             if (it.exists()) {
                                 it.copyTo(
-                                    FileUtils.createFileIfNotExist(Backup.backupPath + File.separator + fileName),
+                                    FileUtils.createFileIfNotExist("${Backup.backupPath}${File.separator}$fileName"),
                                     true
                                 )
                             }
@@ -156,7 +156,7 @@ object Restore {
         withContext(IO) {
             try {
                 val file =
-                    FileUtils.createFileIfNotExist(path + File.separator + ThemeConfig.configFileName)
+                    FileUtils.createFileIfNotExist("$path${File.separator}${ThemeConfig.configFileName}")
                 if (file.exists()) {
                     FileUtils.deleteFile(ThemeConfig.configFilePath)
                     file.copyTo(File(ThemeConfig.configFilePath))
@@ -168,7 +168,7 @@ object Restore {
             if (!ignoreReadConfig) {
                 try {
                     val file =
-                        FileUtils.createFileIfNotExist(path + File.separator + ReadBookConfig.configFileName)
+                        FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.configFileName}")
                     if (file.exists()) {
                         FileUtils.deleteFile(ReadBookConfig.configFilePath)
                         file.copyTo(File(ReadBookConfig.configFilePath))
@@ -179,7 +179,7 @@ object Restore {
                 }
                 try {
                     val file =
-                        FileUtils.createFileIfNotExist(path + File.separator + ReadBookConfig.shareConfigFileName)
+                        FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.shareConfigFileName}")
                     if (file.exists()) {
                         FileUtils.deleteFile(ReadBookConfig.shareConfigFilePath)
                         file.copyTo(File(ReadBookConfig.shareConfigFilePath))
