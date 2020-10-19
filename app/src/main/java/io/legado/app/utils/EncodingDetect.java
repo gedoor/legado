@@ -35,6 +35,7 @@ import static android.text.TextUtils.isEmpty;
  * @version 1.0
  * @since Create on 2010-01-27 11:19:00
  */
+@SuppressWarnings("ALL")
 public class EncodingDetect {
 
     public static String getHtmlEncode(@NonNull byte[] bytes) {
@@ -117,6 +118,7 @@ public class EncodingDetect {
 
 }
 
+@SuppressWarnings("ALL")
 class BytesEncodingDetect extends Encoding {
     // Frequency tables to hold the GB, Big5, and EUC-TW character
     // frequencies
@@ -271,9 +273,7 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
             // System.err.println(rawtext[i]);
-            if (rawtext[i] >= 0) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 0) {
                 dbchars++;
                 if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xF7
                         && (byte) 0xA1 <= rawtext[i + 1]
@@ -312,9 +312,7 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
             // System.err.println(rawtext[i]);
-            if (rawtext[i] >= 0) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 0) {
                 dbchars++;
                 if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xF7
                         && // Original GB range
@@ -373,9 +371,7 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
             // System.err.println(rawtext[i]);
-            if (rawtext[i] >= 0) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 0) {
                 dbchars++;
                 if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xF7
                         && // Original GB range
@@ -516,9 +512,7 @@ class BytesEncodingDetect extends Encoding {
         // Check to see if characters fit into acceptable ranges
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
-            if (rawtext[i] >= 0) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 0) {
                 dbchars++;
                 if ((byte) 0xA1 <= rawtext[i]
                         && rawtext[i] <= (byte) 0xF9
@@ -560,9 +554,7 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
             // System.err.println(rawtext[i]);
-            if (rawtext[i] >= 128) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 128) {
                 dbchars++;
                 if (0xA1 <= rawtext[i]
                         && rawtext[i] <= 0xF9
@@ -626,9 +618,7 @@ class BytesEncodingDetect extends Encoding {
         // and have expected frequency of use
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
-            if (rawtext[i] >= 0) { // in ASCII range
-                // asciichars++;
-            } else { // high bit set
+            if (rawtext[i] < 0) { // high bit set
                 dbchars++;
                 if (i + 3 < rawtextlen && (byte) 0x8E == rawtext[i]
                         && (byte) 0xA1 <= rawtext[i + 1]
@@ -846,9 +836,7 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
             // System.err.println(rawtext[i]);
-            if (rawtext[i] >= 0) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 0) {
                 dbchars++;
                 if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xFE
                         && (byte) 0xA1 <= rawtext[i + 1]
@@ -886,9 +874,7 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
             // System.err.println(rawtext[i]);
-            if (rawtext[i] >= 0) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 0) {
                 dbchars++;
                 if ((byte) 0x81 <= rawtext[i]
                         && rawtext[i] <= (byte) 0xFE
@@ -945,9 +931,7 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
             // System.err.println(rawtext[i]);
-            if (rawtext[i] >= 0) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 0) {
                 dbchars++;
                 if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xFE
                         && (byte) 0xA1 <= rawtext[i + 1]
@@ -997,9 +981,7 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen - 1; i++) {
             // System.err.println(rawtext[i]);
-            if (rawtext[i] >= 0) {
-                // asciichars++;
-            } else {
+            if (rawtext[i] < 0) {
                 dbchars++;
                 if (i + 1 < rawtext.length
                         && (((byte) 0x81 <= rawtext[i] && rawtext[i] <= (byte) 0x9F) || ((byte) 0xE0 <= rawtext[i] && rawtext[i] <= (byte) 0xEF))
