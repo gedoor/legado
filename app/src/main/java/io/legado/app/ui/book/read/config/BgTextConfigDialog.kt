@@ -119,7 +119,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         headerView.iv_bg.setImageResource(R.drawable.ic_image)
         headerView.iv_bg.setColorFilter(primaryTextColor)
         headerView.onClick { selectImage() }
-        requireContext().assets.list("bg/")?.let {
+        requireContext().assets.list("bg${File.separator}")?.let {
             adapter.setItems(it.toList())
         }
     }
@@ -194,7 +194,10 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
 
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
-                ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
+                ImageLoader.load(
+                    context,
+                    context.assets.open("bg${File.separator}$item").readBytes()
+                )
                     .centerCrop()
                     .into(iv_bg)
                 tv_name.setTextColor(secondaryTextColor)
