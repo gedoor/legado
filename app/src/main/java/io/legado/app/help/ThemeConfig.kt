@@ -13,10 +13,7 @@ import java.io.File
 object ThemeConfig {
     const val configFileName = "themeConfig.json"
     val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, configFileName)
-    private val defaultConfigs by lazy {
-        val json = String(App.INSTANCE.assets.open(configFileName).readBytes())
-        GSON.fromJsonArray<Config>(json)!!
-    }
+
     val configList = arrayListOf<Config>()
 
     init {
@@ -24,7 +21,7 @@ object ThemeConfig {
     }
 
     fun upConfig() {
-        (getConfigs() ?: defaultConfigs).let {
+        (getConfigs() ?: DefaultData.defaultThemeConfigs).let {
             configList.clear()
             configList.addAll(it)
         }

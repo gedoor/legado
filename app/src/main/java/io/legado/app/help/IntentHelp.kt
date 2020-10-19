@@ -7,6 +7,7 @@ import android.os.Bundle
 import io.legado.app.R
 import org.jetbrains.anko.toast
 
+@Suppress("unused")
 object IntentHelp {
 
 

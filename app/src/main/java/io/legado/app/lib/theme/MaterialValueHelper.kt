@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.lib.theme
 
 import android.annotation.SuppressLint

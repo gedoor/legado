@@ -112,7 +112,7 @@ object HttpHelper {
         proxy: String? = null
     ): Retrofit {
         val r = Regex("(http|socks4|socks5)://(.*):(\\d{2,5})(@.*@.*)?")
-        val ms = proxy?.let { r.findAll(it) };
+        val ms = proxy?.let { r.findAll(it) }
         val group = ms?.first()
         var type = "direct"     //直接连接
         var host = "127.0.0.1"  //代理服务器hostname
@@ -135,9 +135,9 @@ object HttpHelper {
         val builder = client.newBuilder()
         if (type != "direct" && host != "") {
             if (type == "http") {
-                builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(host, port)));
+                builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(host, port)))
             } else {
-                builder.proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress(host, port)));
+                builder.proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress(host, port)))
             }
             if (username != "" && password != "") {
                 builder.proxyAuthenticator { _, response -> //设置代理服务器账号密码

@@ -1,5 +1,6 @@
 package io.legado.app.help.permission
 
+@Suppress("unused")
 object Permissions {
 
     const val READ_CALENDAR = "android.permission.READ_CALENDAR"

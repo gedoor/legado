@@ -7,6 +7,7 @@ import io.legado.app.base.adapter.animations.*
 /**
  * Created by Invincible on 2017/12/15.
  */
+@Suppress("unused")
 class ItemAnimation private constructor() {
 
     var itemAnimEnabled = false

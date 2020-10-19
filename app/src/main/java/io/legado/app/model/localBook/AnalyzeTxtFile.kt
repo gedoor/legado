@@ -5,6 +5,7 @@ import io.legado.app.App
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.help.DefaultData
 import io.legado.app.utils.*
 import java.io.File
 import java.io.RandomAccessFile
@@ -281,24 +282,17 @@ class AnalyzeTxtFile {
         }
 
         private fun getTocRules(): List<TxtTocRule> {
-            val rules = App.db.txtTocRule().enabled
+            var rules = App.db.txtTocRule().enabled
             if (rules.isEmpty()) {
-                return getDefaultEnabledRules()
+                rules = DefaultData.defaultTxtTocRules.apply {
+                    App.db.txtTocRule().insert(*this.toTypedArray())
+                }.filter {
+                    it.enable
+                }
             }
             return rules
         }
 
-        fun getDefaultEnabledRules(): List<TxtTocRule> {
-            App.INSTANCE.assets.open("txtTocRule.json").readBytes().let { byteArray ->
-                GSON.fromJsonArray<TxtTocRule>(String(byteArray))?.let { txtTocRules ->
-                    App.db.txtTocRule().insert(*txtTocRules.toTypedArray())
-                    return txtTocRules.filter {
-                        it.enable
-                    }
-                }
-            }
-            return emptyList()
-        }
     }
 
 }

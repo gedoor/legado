@@ -23,10 +23,10 @@ class FileAdapter(context: Context, val callBack: CallBack) :
     private var rootPath: String? = null
     var currentPath: String? = null
         private set
-    private val homeIcon = ConvertUtils.toDrawable(FilePickerIcon.getHOME())
-    private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUPDIR())
-    private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFOLDER())
-    private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFILE())
+    private val homeIcon = ConvertUtils.toDrawable(FilePickerIcon.getHome())
+    private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())
+    private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())
+    private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())
     private val primaryTextColor = context.getPrimaryTextColor(!AppConfig.isNightTheme)
     private val disabledTextColor = context.getPrimaryDisabledTextColor(!AppConfig.isNightTheme)
 

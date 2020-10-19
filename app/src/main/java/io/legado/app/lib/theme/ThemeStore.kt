@@ -16,6 +16,7 @@ import io.legado.app.utils.ColorUtils
 /**
  * @author Aidan Follestad (afollestad), Karim Abou Zeid (kabouzeid)
  */
+@Suppress("unused")
 class ThemeStore @SuppressLint("CommitPrefEdits")
 private constructor(private val mContext: Context) : ThemeStoreInterface {
     private val mEditor: SharedPreferences.Editor

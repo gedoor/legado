@@ -9,7 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.DefaultValueHelp
+import io.legado.app.help.DefaultData
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
 import io.legado.app.model.webBook.WebBook
@@ -162,7 +162,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         execute {
             FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
             if (App.db.httpTTSDao().count == 0) {
-                DefaultValueHelp.initHttpTTS()
+                DefaultData.defaultHttpTTS.let {
+                    App.db.httpTTSDao().insert(*it.toTypedArray())
+                }
             }
         }
     }

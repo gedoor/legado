@@ -30,6 +30,7 @@ import org.jetbrains.anko.backgroundColor
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object ATH {
 
     @SuppressLint("CommitPrefEdits")

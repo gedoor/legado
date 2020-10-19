@@ -32,7 +32,7 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     private fun init() {
         Coroutine.async {
-            //清楚过期数据
+            //清除过期数据
             App.db.searchBookDao()
                 .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
             //初始化简繁转换引擎

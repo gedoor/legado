@@ -49,12 +49,10 @@ abstract class AppDatabase: RoomDatabase() {
         private val dbCallback = object : Callback() {
 
             override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
                 db.setLocale(Locale.CHINESE)
             }
 
             override fun onOpen(db: SupportSQLiteDatabase) {
-                db.setLocale(Locale.CHINESE)
                 db.execSQL(
                     """
                     insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupAllId}, '全部', -10, 1

@@ -144,7 +144,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
                 }
             }
             if (!scope.isActive) return
-            searchBooks.sortWith(Comparator { o1, o2 ->
+            searchBooks.sortWith { o1, o2 ->
                 if (o1.name == searchKey && o2.name != searchKey) {
                     1
                 } else if (o1.name != searchKey && o2.name == searchKey) {
@@ -168,7 +168,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
                 } else {
                     0
                 }
-            })
+            }
             if (!scope.isActive) return
             searchBooks = copyDataS
             upAdapter()

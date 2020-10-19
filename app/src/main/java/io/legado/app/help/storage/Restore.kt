@@ -13,10 +13,7 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
-import io.legado.app.help.AppConfig
-import io.legado.app.help.LauncherIconHelp
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.ThemeConfig
+import io.legado.app.help.*
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
@@ -81,7 +78,7 @@ object Restore {
                     for (fileName in Backup.backupFileNames) {
                         if (doc.name == fileName) {
                             DocumentUtils.readText(context, doc.uri)?.let {
-                                FileUtils.createFileIfNotExist(Backup.backupPath + File.separator + fileName)
+                                FileUtils.createFileIfNotExist("${Backup.backupPath}${File.separator}$fileName")
                                     .writeText(it)
                             }
                         }
@@ -94,7 +91,7 @@ object Restore {
                         FileUtils.getFile(file, fileName).let {
                             if (it.exists()) {
                                 it.copyTo(
-                                    FileUtils.createFileIfNotExist(Backup.backupPath + File.separator + fileName),
+                                    FileUtils.createFileIfNotExist("${Backup.backupPath}${File.separator}$fileName"),
                                     true
                                 )
                             }
@@ -132,8 +129,11 @@ object Restore {
             fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
                 App.db.replaceRuleDao().insert(*it.toTypedArray())
             }
-            fileToListT<TxtTocRule>(path, "txtTocRule.json")?.let {
+            fileToListT<TxtTocRule>(path, DefaultData.txtTocRuleFileName)?.let {
                 App.db.txtTocRule().insert(*it.toTypedArray())
+            }
+            fileToListT<HttpTTS>(path, DefaultData.httpTtsFileName)?.let {
+                App.db.httpTTSDao().insert(*it.toTypedArray())
             }
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
                 it.forEach { readRecord ->
@@ -149,9 +149,6 @@ object Restore {
                     }
                 }
             }
-            fileToListT<HttpTTS>(path, "httpTTS.json")?.let {
-                App.db.httpTTSDao().insert(*it.toTypedArray())
-            }
         }
     }
 
@@ -159,7 +156,7 @@ object Restore {
         withContext(IO) {
             try {
                 val file =
-                    FileUtils.createFileIfNotExist(path + File.separator + ThemeConfig.configFileName)
+                    FileUtils.createFileIfNotExist("$path${File.separator}${ThemeConfig.configFileName}")
                 if (file.exists()) {
                     FileUtils.deleteFile(ThemeConfig.configFilePath)
                     file.copyTo(File(ThemeConfig.configFilePath))
@@ -171,7 +168,7 @@ object Restore {
             if (!ignoreReadConfig) {
                 try {
                     val file =
-                        FileUtils.createFileIfNotExist(path + File.separator + ReadBookConfig.configFileName)
+                        FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.configFileName}")
                     if (file.exists()) {
                         FileUtils.deleteFile(ReadBookConfig.configFilePath)
                         file.copyTo(File(ReadBookConfig.configFilePath))
@@ -182,7 +179,7 @@ object Restore {
                 }
                 try {
                     val file =
-                        FileUtils.createFileIfNotExist(path + File.separator + ReadBookConfig.shareConfigFileName)
+                        FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.shareConfigFileName}")
                     if (file.exists()) {
                         FileUtils.deleteFile(ReadBookConfig.shareConfigFilePath)
                         file.copyTo(File(ReadBookConfig.shareConfigFilePath))

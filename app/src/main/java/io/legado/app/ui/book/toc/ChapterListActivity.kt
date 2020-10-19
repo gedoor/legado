@@ -65,7 +65,7 @@ class ChapterListActivity : VMBaseActivity<ChapterListViewModel>(R.layout.activi
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    private inner class TabFragmentPageAdapter internal constructor(fm: FragmentManager) :
+    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
         FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getItem(position: Int): Fragment {
             return when (position) {

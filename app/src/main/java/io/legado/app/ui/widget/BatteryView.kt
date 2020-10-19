@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.utils.dp
+import java.io.File
 
 class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
     private val batteryPaint = Paint()
@@ -22,7 +23,7 @@ class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(co
         batteryPaint.strokeWidth = 1.dp.toFloat()
         batteryPaint.isAntiAlias = true
         batteryPaint.color = paint.color
-        typeface = Typeface.createFromAsset(context.assets, "number.ttf")
+        typeface = Typeface.createFromAsset(context.assets, "font${File.separator}number.ttf")
     }
 
     fun setColor(@ColorInt color: Int) {

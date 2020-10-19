@@ -8,6 +8,7 @@ import io.legado.app.utils.splitNotBlank
 import java.util.*
 import java.util.regex.Pattern
 
+@Suppress("RegExpRedundantEscape")
 @Keep
 class AnalyzeByJSonPath {
     private lateinit var ctx: ReadContext

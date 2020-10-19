@@ -8,6 +8,7 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.io.IOException
 import java.io.StringReader
 
+@Suppress("unused")
 object RssParserDefault {
 
     @Throws(XmlPullParserException::class, IOException::class)

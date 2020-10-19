@@ -1,5 +1,6 @@
 package io.legado.app.help.coroutine
 
+@Suppress("unused")
 class CompositeCoroutine : CoroutineContainer {
 
     private var resources: HashSet<Coroutine<*>>? = null

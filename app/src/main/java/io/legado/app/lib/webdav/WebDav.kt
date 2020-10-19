@@ -14,6 +14,7 @@ import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 
+@Suppress("unused")
 class WebDav(urlStr: String) {
     companion object {
         // 指定返回哪些属性
@@ -60,9 +61,9 @@ class WebDav(urlStr: String) {
             return field
         }
 
-    fun getPath() = url.toString()
+    val path get() = url.toString()
 
-    fun getHost() = url.host
+    val host: String? get() = url.host
 
     /**
      * 填充文件信息。实例化WebDAVFile对象时，并没有将远程文件的信息填充到实例中。需要手动填充！

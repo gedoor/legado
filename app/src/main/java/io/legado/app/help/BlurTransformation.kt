@@ -28,7 +28,7 @@ class BlurTransformation(context: Context, private val radius: Int) : CenterCrop
         //图片缩小1/2
         val width = (min(outWidth, transform.width) / 2f).roundToInt()
         val height = (min(outHeight, transform.height) / 2f).roundToInt()
-        val blurredBitmap = Bitmap.createScaledBitmap(transform, width, height, false);
+        val blurredBitmap = Bitmap.createScaledBitmap(transform, width, height, false)
         // Allocate memory for Renderscript to work with
         //分配用于渲染脚本的内存
         val input = Allocation.createFromBitmap(

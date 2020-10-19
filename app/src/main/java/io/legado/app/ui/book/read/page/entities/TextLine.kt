@@ -4,6 +4,7 @@ import android.text.TextPaint
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ChapterProvider.textHeight
 
+@Suppress("unused")
 data class TextLine(
     var text: String = "",
     val textChars: ArrayList<TextChar> = arrayListOf(),
