@@ -196,20 +196,20 @@ class AnalyzeByJSoup {
 
     private fun filterElements(elements: Elements, rules: Array<String>?): Elements {
         if (rules == null || rules.size < 2) return elements
-        val selectedEls = Elements()
-        for (ele in elements) {
+        val result = Elements()
+        for (element in elements) {
             var isOk = false
             when (rules[0]) {
-                "class" -> isOk = ele.getElementsByClass(rules[1]).size > 0
-                "id" -> isOk = ele.getElementById(rules[1]) != null
-                "tag" -> isOk = ele.getElementsByTag(rules[1]).size > 0
-                "text" -> isOk = ele.getElementsContainingOwnText(rules[1]).size > 0
+                "class" -> isOk = element.getElementsByClass(rules[1]).size > 0
+                "id" -> isOk = element.getElementById(rules[1]) != null
+                "tag" -> isOk = element.getElementsByTag(rules[1]).size > 0
+                "text" -> isOk = element.getElementsContainingOwnText(rules[1]).size > 0
             }
             if (isOk) {
-                selectedEls.add(ele)
+                result.add(element)
             }
         }
-        return selectedEls
+        return result
     }
 
     /**
