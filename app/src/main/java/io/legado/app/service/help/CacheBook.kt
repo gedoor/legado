@@ -77,23 +77,16 @@ object CacheBook {
         downloadMap[book.bookUrl]?.add(chapter.index)
         webBook.getContent(book, chapter)
             .onSuccess(IO) { content ->
+                if (content.isNotBlank()) {
+                    BookHelp.saveContent(book, chapter, content)
+                }
                 if (ReadBook.book?.bookUrl == book.bookUrl) {
-                    if (content.isEmpty()) {
-                        ReadBook.contentLoadFinish(
-                            book,
-                            chapter,
-                            App.INSTANCE.getString(R.string.content_empty),
-                            resetPageOffset = resetPageOffset
-                        )
-                    } else {
-                        BookHelp.saveContent(book, chapter, content)
-                        ReadBook.contentLoadFinish(
-                            book,
-                            chapter,
-                            content,
-                            resetPageOffset = resetPageOffset
-                        )
-                    }
+                    ReadBook.contentLoadFinish(
+                        book,
+                        chapter,
+                        content.ifBlank { App.INSTANCE.getString(R.string.content_empty) },
+                        resetPageOffset = resetPageOffset
+                    )
                 }
             }.onError {
                 if (ReadBook.book?.bookUrl == book.bookUrl) {
