@@ -24,6 +24,7 @@ import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_http_tts_edit.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
@@ -125,6 +126,9 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                     App.db.httpTTSDao().insert(httpTTS)
                     ReadAloud.upReadAloudClass()
                 }
+            }
+            neutralButton(R.string.help) {
+                TextDialog.show(childFragmentManager, "")
             }
         }.show().applyTint()
     }

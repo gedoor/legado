@@ -4,8 +4,8 @@ import android.app.Application
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.help.DefaultData
 import io.legado.app.help.http.HttpHelper
-import io.legado.app.model.localBook.AnalyzeTxtFile
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 
@@ -23,7 +23,9 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
     fun importDefault() {
         execute {
             App.db.txtTocRule().deleteDefault()
-            AnalyzeTxtFile.getDefaultEnabledRules()
+            DefaultData.defaultTxtTocRules.let {
+                App.db.txtTocRule().insert(*it.toTypedArray())
+            }
         }
     }
 

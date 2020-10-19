@@ -13,10 +13,7 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
-import io.legado.app.help.AppConfig
-import io.legado.app.help.LauncherIconHelp
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.ThemeConfig
+import io.legado.app.help.*
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
@@ -132,8 +129,11 @@ object Restore {
             fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
                 App.db.replaceRuleDao().insert(*it.toTypedArray())
             }
-            fileToListT<TxtTocRule>(path, "txtTocRule.json")?.let {
+            fileToListT<TxtTocRule>(path, DefaultData.txtTocRuleFileName)?.let {
                 App.db.txtTocRule().insert(*it.toTypedArray())
+            }
+            fileToListT<HttpTTS>(path, DefaultData.httpTtsFileName)?.let {
+                App.db.httpTTSDao().insert(*it.toTypedArray())
             }
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
                 it.forEach { readRecord ->
@@ -148,9 +148,6 @@ object Restore {
                         }
                     }
                 }
-            }
-            fileToListT<HttpTTS>(path, "httpTTS.json")?.let {
-                App.db.httpTTSDao().insert(*it.toTypedArray())
             }
         }
     }
