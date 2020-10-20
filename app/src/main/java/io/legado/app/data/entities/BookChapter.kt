@@ -50,7 +50,12 @@ data class BookChapter(
 
     override fun hashCode() = url.hashCode()
 
-    override fun equals(other: Any?) = if (other is BookChapter) other.url == url else false
+    override fun equals(other: Any?): Boolean {
+        if (other is BookChapter) {
+            return other.url == url
+        }
+        return false
+    }
 
 }
 
