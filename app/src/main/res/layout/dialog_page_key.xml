@@ -26,7 +26,6 @@
             android:id="@+id/et_prev"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
             android:singleLine="true" />
 
     </io.legado.app.ui.widget.text.TextInputLayout>
@@ -41,7 +40,6 @@
             android:id="@+id/et_next"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
             android:singleLine="true" />
 
     </io.legado.app.ui.widget.text.TextInputLayout>
