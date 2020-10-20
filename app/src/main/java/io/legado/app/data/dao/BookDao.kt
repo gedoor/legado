@@ -18,7 +18,7 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE origin = '${BookType.local}'")
     fun observeLocal(): LiveData<List<Book>>
 
-    @Query("select * from books where ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0 and type != ${BookType.audio} and origin != '${BookType.local}'")
+    @Query("select * from books where type != ${BookType.audio} and origin != '${BookType.local}' and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0")
     fun observeNoGroup(): LiveData<List<Book>>
 
     @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}'")
