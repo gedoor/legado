@@ -28,4 +28,18 @@ data class BookGroup(
         }
     }
 
+    override fun hashCode(): Int {
+        return groupId.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is BookGroup) {
+            return other.groupId == groupId
+                    && other.groupName == groupName
+                    && other.order == order
+                    && other.show == show
+        }
+        return false
+    }
+
 }
