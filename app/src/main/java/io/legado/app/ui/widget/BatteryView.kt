@@ -12,7 +12,10 @@ import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.utils.dp
 import java.io.File
 
-class BatteryView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
+class BatteryView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppCompatTextView(context, attrs) {
     private val batteryPaint = Paint()
     private val outFrame = Rect()
     private val polar = Rect()
