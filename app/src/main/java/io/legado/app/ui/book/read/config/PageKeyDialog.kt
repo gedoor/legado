@@ -36,6 +36,7 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
                 } else {
                     editableText.append(",").append(keyCode.toString())
                 }
+                return true
             } else if (et_next.hasFocus()) {
                 val editableText = et_next.editableText
                 if (editableText.isEmpty() or editableText.endsWith(",")) {
@@ -43,6 +44,7 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
                 } else {
                     editableText.append(",").append(keyCode.toString())
                 }
+                return true
             }
         }
         return super.onKeyDown(keyCode, event)
