@@ -28,7 +28,7 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode != KeyEvent.KEYCODE_BACK) {
+        if (keyCode != KeyEvent.KEYCODE_BACK && keyCode != KeyEvent.KEYCODE_DEL) {
             if (et_prev.hasFocus()) {
                 val editableText = et_prev.editableText
                 if (editableText.isEmpty() or editableText.endsWith(",")) {
