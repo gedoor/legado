@@ -18,9 +18,13 @@ import io.legado.app.utils.dp
  * Created by Victor on 2015/4/28.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class RotateLoading : View {
+class RotateLoading @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
-    private lateinit var mPaint: Paint
+    private var mPaint: Paint
 
     private var loadingRectF: RectF? = null
     private var shadowRectF: RectF? = null
@@ -55,19 +59,7 @@ class RotateLoading : View {
 
     private val hidden = Runnable { this.stopInternal() }
 
-    constructor(context: Context) : super(context) {
-        initView(context, null)
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        initView(context, attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        initView(context, attrs)
-    }
-
-    private fun initView(context: Context, attrs: AttributeSet?) {
+    init {
         loadingColor = context.accentColor
         thisWidth = DEFAULT_WIDTH.dp
         shadowPosition = DEFAULT_SHADOW_POSITION.dp
