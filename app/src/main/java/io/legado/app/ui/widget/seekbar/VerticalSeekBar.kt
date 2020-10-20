@@ -17,15 +17,7 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
 @Suppress("SameParameterValue")
-class VerticalSeekBar @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = androidx.appcompat.R.attr.seekBarStyle
-) : AppCompatSeekBar(
-    context,
-    attrs,
-    defStyleAttr
-) {
+class VerticalSeekBar : AppCompatSeekBar {
 
     private var mIsDragging: Boolean = false
     private var mThumb: Drawable? = null
@@ -62,13 +54,38 @@ class VerticalSeekBar @JvmOverloads constructor(
             }
         }
 
-    init {
+    constructor(context: Context) : super(context) {
+        initialize(context, null, 0, 0)
+    }
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        initialize(context, attrs, 0, 0)
+    }
+
+    constructor(
+        context: Context,
+        attrs: AttributeSet,
+        defStyle: Int
+    ) : super(context, attrs, defStyle) {
+        initialize(context, attrs, defStyle, 0)
+    }
+
+    private fun initialize(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) {
         ATH.setTint(this, ThemeStore.accentColor(context))
         ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR)
 
         if (attrs != null) {
-            val a =
-                context.obtainStyledAttributes(attrs, R.styleable.VerticalSeekBar, defStyleAttr, 0)
+            val a = context.obtainStyledAttributes(
+                attrs,
+                R.styleable.VerticalSeekBar,
+                defStyleAttr,
+                defStyleRes
+            )
             val rotationAngle = a.getInteger(R.styleable.VerticalSeekBar_seekBarRotation, 0)
             if (isValidRotationAngle(rotationAngle)) {
                 mRotationAngle = rotationAngle
