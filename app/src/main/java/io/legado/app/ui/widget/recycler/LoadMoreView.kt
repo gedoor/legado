@@ -32,7 +32,13 @@ class LoadMoreView(context: Context) : FrameLayout(context) {
     fun stopLoad() {
         rotate_loading.hide()
     }
-
+    
+    fun hasMore() {
+        hasMore = true
+        tv_text.invisible()
+        rotate_loading.show()
+    }
+    
     fun noMore(msg: String? = null) {
         hasMore = false
         rotate_loading.hide()
