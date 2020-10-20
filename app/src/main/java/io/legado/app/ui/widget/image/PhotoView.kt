@@ -16,6 +16,7 @@ import android.view.animation.Interpolator
 import android.widget.ImageView
 import android.widget.OverScroller
 import android.widget.Scroller
+import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.ui.widget.image.photo.Info
 import io.legado.app.ui.widget.image.photo.OnRotateListener
@@ -23,10 +24,12 @@ import io.legado.app.ui.widget.image.photo.RotateGestureDetector
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-
-@Suppress("UNUSED_PARAMETER", "unused", "MemberVisibilityCanBePrivate")
-@SuppressLint("AppCompatCustomView")
-class PhotoView : ImageView {
+@Suppress("UNUSED_PARAMETER", "unused", "MemberVisibilityCanBePrivate", "PropertyName")
+class PhotoView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : AppCompatImageView(context, attrs, defStyleAttr) {
     val MIN_ROTATE = 35
     val ANIMA_DURING = 340
     val MAX_SCALE = 2.5f
@@ -45,9 +48,9 @@ class PhotoView : ImageView {
     private val mSynthesisMatrix: Matrix = Matrix()
     private val mTmpMatrix: Matrix = Matrix()
 
-    private var mRotateDetector: RotateGestureDetector? = null
-    private var mDetector: GestureDetector? = null
-    private var mScaleDetector: ScaleGestureDetector? = null
+    private val mRotateDetector: RotateGestureDetector
+    private val mDetector: GestureDetector
+    private val mScaleDetector: ScaleGestureDetector
     private var mClickListener: OnClickListener? = null
 
     private var mScaleType: ScaleType? = null
@@ -100,23 +103,11 @@ class PhotoView : ImageView {
 
     private var mLongClick: OnLongClickListener? = null
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
+    private val mRotateListener = RotateListener()
+    private val mGestureListener = GestureListener()
+    private val mScaleListener = ScaleGestureListener()
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init()
-    }
-
-    private fun init() {
+    init {
         super.setScaleType(ScaleType.MATRIX)
         if (mScaleType == null) mScaleType = ScaleType.CENTER_INSIDE
         mRotateDetector = RotateGestureDetector(mRotateListener)
@@ -484,11 +475,11 @@ class PhotoView : ImageView {
         return if (isEnable) {
             val action = event.actionMasked
             if (event.pointerCount >= 2) hasMultiTouch = true
-            mDetector!!.onTouchEvent(event)
+            mDetector.onTouchEvent(event)
             if (isRotateEnable) {
-                mRotateDetector!!.onTouchEvent(event)
+                mRotateDetector.onTouchEvent(event)
             }
-            mScaleDetector!!.onTouchEvent(event)
+            mScaleDetector.onTouchEvent(event)
             if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) onUp()
             true
         } else {
@@ -566,49 +557,6 @@ class PhotoView : ImageView {
         return abs(rect.left.roundToInt() - (mWidgetRect.width() - rect.width()) / 2) < 1
     }
 
-    private val mRotateListener: OnRotateListener = object :
-        OnRotateListener {
-        override fun onRotate(
-            degrees: Float,
-            focusX: Float,
-            focusY: Float
-        ) {
-            mRotateFlag += degrees
-            if (canRotate) {
-                mDegrees += degrees
-                mAnimMatrix.postRotate(degrees, focusX, focusY)
-            } else {
-                if (abs(mRotateFlag) >= mMinRotate) {
-                    canRotate = true
-                    mRotateFlag = 0f
-                }
-            }
-        }
-    }
-
-    private val mScaleListener: OnScaleGestureListener = object : OnScaleGestureListener {
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            val scaleFactor = detector.scaleFactor
-            if (java.lang.Float.isNaN(scaleFactor) || java.lang.Float.isInfinite(scaleFactor)) return false
-            mScale *= scaleFactor
-            //mScaleCenter.set(detector.getFocusX(), detector.getFocusY());
-            mAnimMatrix.postScale(
-                scaleFactor,
-                scaleFactor,
-                detector.focusX,
-                detector.focusY
-            )
-            executeTranslate()
-            return true
-        }
-
-        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-            return true
-        }
-
-        override fun onScaleEnd(detector: ScaleGestureDetector) {}
-    }
-
     private fun resistanceScrollByX(
         overScroll: Float,
         detalX: Float
@@ -651,147 +599,6 @@ class PhotoView : ImageView {
     private val mClickRunnable = Runnable {
         mClickListener?.onClick(this)
     }
-
-    private val mGestureListener: GestureDetector.OnGestureListener =
-        object : SimpleOnGestureListener() {
-            override fun onLongPress(e: MotionEvent) {
-                mLongClick?.onLongClick(this@PhotoView)
-            }
-
-            override fun onDown(e: MotionEvent): Boolean {
-                hasOverTranslate = false
-                hasMultiTouch = false
-                canRotate = false
-                removeCallbacks(mClickRunnable)
-                return false
-            }
-
-            override fun onFling(
-                e1: MotionEvent,
-                e2: MotionEvent,
-                velocityX: Float,
-                velocityY: Float
-            ): Boolean {
-                if (hasMultiTouch) return false
-                if (!imgLargeWidth && !imgLargeHeight) return false
-                if (mTranslate.isRunning) return false
-                var vx = velocityX
-                var vy = velocityY
-                if (mImgRect.left.roundToInt() >= mWidgetRect.left
-                    || mImgRect.right.roundToInt() <= mWidgetRect.right
-                ) {
-                    vx = 0f
-                }
-                if (mImgRect.top.roundToInt() >= mWidgetRect.top
-                    || mImgRect.bottom.roundToInt() <= mWidgetRect.bottom
-                ) {
-                    vy = 0f
-                }
-                if (canRotate || mDegrees % 90 != 0f) {
-                    var toDegrees = (mDegrees / 90).toInt() * 90.toFloat()
-                    val remainder = mDegrees % 90
-                    if (remainder > 45) toDegrees += 90f else if (remainder < -45) toDegrees -= 90f
-                    mTranslate.withRotate(mDegrees.toInt(), toDegrees.toInt())
-                    mDegrees = toDegrees
-                }
-                doTranslateReset(mImgRect)
-                mTranslate.withFling(vx, vy)
-                mTranslate.start()
-                // onUp(e2);
-                return super.onFling(e1, e2, velocityX, velocityY)
-            }
-
-            override fun onScroll(
-                e1: MotionEvent,
-                e2: MotionEvent,
-                distanceX: Float,
-                distanceY: Float
-            ): Boolean {
-                var x = distanceX
-                var y = distanceY
-                if (mTranslate.isRunning) {
-                    mTranslate.stop()
-                }
-                if (canScrollHorizontallySelf(x)) {
-                    if (x < 0 && mImgRect.left - x > mWidgetRect.left)
-                        x = mImgRect.left
-                    if (x > 0 && mImgRect.right - x < mWidgetRect.right)
-                        x = mImgRect.right - mWidgetRect.right
-                    mAnimMatrix.postTranslate(-x, 0f)
-                    mTranslateX -= x.toInt()
-                } else if (imgLargeWidth || hasMultiTouch || hasOverTranslate) {
-                    checkRect()
-                    if (!hasMultiTouch) {
-                        if (x < 0 && mImgRect.left - x > mCommonRect.left) x =
-                            resistanceScrollByX(mImgRect.left - mCommonRect.left, x)
-                        if (x > 0 && mImgRect.right - x < mCommonRect.right) x =
-                            resistanceScrollByX(mImgRect.right - mCommonRect.right, x)
-                    }
-                    mTranslateX -= x.toInt()
-                    mAnimMatrix.postTranslate(-x, 0f)
-                    hasOverTranslate = true
-                }
-                if (canScrollVerticallySelf(y)) {
-                    if (y < 0 && mImgRect.top - y > mWidgetRect.top) y =
-                        mImgRect.top
-                    if (y > 0 && mImgRect.bottom - y < mWidgetRect.bottom) y =
-                        mImgRect.bottom - mWidgetRect.bottom
-                    mAnimMatrix.postTranslate(0f, -y)
-                    mTranslateY -= y.toInt()
-                } else if (imgLargeHeight || hasOverTranslate || hasMultiTouch) {
-                    checkRect()
-                    if (!hasMultiTouch) {
-                        if (y < 0 && mImgRect.top - y > mCommonRect.top) y =
-                            resistanceScrollByY(mImgRect.top - mCommonRect.top, y)
-                        if (y > 0 && mImgRect.bottom - y < mCommonRect.bottom) y =
-                            resistanceScrollByY(mImgRect.bottom - mCommonRect.bottom, y)
-                    }
-                    mAnimMatrix.postTranslate(0f, -y)
-                    mTranslateY -= y.toInt()
-                    hasOverTranslate = true
-                }
-                executeTranslate()
-                return true
-            }
-
-            override fun onSingleTapUp(e: MotionEvent): Boolean {
-                postDelayed(mClickRunnable, 250)
-                return false
-            }
-
-            override fun onDoubleTap(e: MotionEvent): Boolean {
-                mTranslate.stop()
-                val from: Float
-                val to: Float
-                val imgCx = mImgRect.left + mImgRect.width() / 2
-                val imgCy = mImgRect.top + mImgRect.height() / 2
-                mScaleCenter[imgCx] = imgCy
-                mRotateCenter[imgCx] = imgCy
-                mTranslateX = 0
-                mTranslateY = 0
-                if (isZoonUp) {
-                    from = mScale
-                    to = 1f
-                } else {
-                    from = mScale
-                    to = mMaxScale
-                    mScaleCenter[e.x] = e.y
-                }
-                mTmpMatrix.reset()
-                mTmpMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top)
-                mTmpMatrix.postTranslate(mRotateCenter.x, mRotateCenter.y)
-                mTmpMatrix.postTranslate(-mHalfBaseRectWidth, -mHalfBaseRectHeight)
-                mTmpMatrix.postRotate(mDegrees, mRotateCenter.x, mRotateCenter.y)
-                mTmpMatrix.postScale(to, to, mScaleCenter.x, mScaleCenter.y)
-                mTmpMatrix.postTranslate(mTranslateX.toFloat(), mTranslateY.toFloat())
-                mTmpMatrix.mapRect(mTmpRect, mBaseRect)
-                doTranslateReset(mTmpRect)
-                isZoonUp = !isZoonUp
-                mTranslate.withScale(from, to)
-                mTranslate.start()
-                return false
-            }
-        }
 
     fun canScrollHorizontallySelf(direction: Float): Boolean {
         if (mImgRect.width() <= mWidgetRect.width())
@@ -1268,4 +1075,185 @@ class PhotoView : ImageView {
         executeTranslate()
     }
 
+    inner class RotateListener : OnRotateListener {
+        override fun onRotate(
+            degrees: Float,
+            focusX: Float,
+            focusY: Float
+        ) {
+            mRotateFlag += degrees
+            if (canRotate) {
+                mDegrees += degrees
+                mAnimMatrix.postRotate(degrees, focusX, focusY)
+            } else {
+                if (abs(mRotateFlag) >= mMinRotate) {
+                    canRotate = true
+                    mRotateFlag = 0f
+                }
+            }
+        }
+    }
+
+    inner class GestureListener : SimpleOnGestureListener() {
+        override fun onLongPress(e: MotionEvent) {
+            mLongClick?.onLongClick(this@PhotoView)
+        }
+
+        override fun onDown(e: MotionEvent): Boolean {
+            hasOverTranslate = false
+            hasMultiTouch = false
+            canRotate = false
+            removeCallbacks(mClickRunnable)
+            return false
+        }
+
+        override fun onFling(
+            e1: MotionEvent,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            if (hasMultiTouch) return false
+            if (!imgLargeWidth && !imgLargeHeight) return false
+            if (mTranslate.isRunning) return false
+            var vx = velocityX
+            var vy = velocityY
+            if (mImgRect.left.roundToInt() >= mWidgetRect.left
+                || mImgRect.right.roundToInt() <= mWidgetRect.right
+            ) {
+                vx = 0f
+            }
+            if (mImgRect.top.roundToInt() >= mWidgetRect.top
+                || mImgRect.bottom.roundToInt() <= mWidgetRect.bottom
+            ) {
+                vy = 0f
+            }
+            if (canRotate || mDegrees % 90 != 0f) {
+                var toDegrees = (mDegrees / 90).toInt() * 90.toFloat()
+                val remainder = mDegrees % 90
+                if (remainder > 45) toDegrees += 90f else if (remainder < -45) toDegrees -= 90f
+                mTranslate.withRotate(mDegrees.toInt(), toDegrees.toInt())
+                mDegrees = toDegrees
+            }
+            doTranslateReset(mImgRect)
+            mTranslate.withFling(vx, vy)
+            mTranslate.start()
+            // onUp(e2);
+            return super.onFling(e1, e2, velocityX, velocityY)
+        }
+
+        override fun onScroll(
+            e1: MotionEvent,
+            e2: MotionEvent,
+            distanceX: Float,
+            distanceY: Float
+        ): Boolean {
+            var x = distanceX
+            var y = distanceY
+            if (mTranslate.isRunning) {
+                mTranslate.stop()
+            }
+            if (canScrollHorizontallySelf(x)) {
+                if (x < 0 && mImgRect.left - x > mWidgetRect.left)
+                    x = mImgRect.left
+                if (x > 0 && mImgRect.right - x < mWidgetRect.right)
+                    x = mImgRect.right - mWidgetRect.right
+                mAnimMatrix.postTranslate(-x, 0f)
+                mTranslateX -= x.toInt()
+            } else if (imgLargeWidth || hasMultiTouch || hasOverTranslate) {
+                checkRect()
+                if (!hasMultiTouch) {
+                    if (x < 0 && mImgRect.left - x > mCommonRect.left) x =
+                        resistanceScrollByX(mImgRect.left - mCommonRect.left, x)
+                    if (x > 0 && mImgRect.right - x < mCommonRect.right) x =
+                        resistanceScrollByX(mImgRect.right - mCommonRect.right, x)
+                }
+                mTranslateX -= x.toInt()
+                mAnimMatrix.postTranslate(-x, 0f)
+                hasOverTranslate = true
+            }
+            if (canScrollVerticallySelf(y)) {
+                if (y < 0 && mImgRect.top - y > mWidgetRect.top) y =
+                    mImgRect.top
+                if (y > 0 && mImgRect.bottom - y < mWidgetRect.bottom) y =
+                    mImgRect.bottom - mWidgetRect.bottom
+                mAnimMatrix.postTranslate(0f, -y)
+                mTranslateY -= y.toInt()
+            } else if (imgLargeHeight || hasOverTranslate || hasMultiTouch) {
+                checkRect()
+                if (!hasMultiTouch) {
+                    if (y < 0 && mImgRect.top - y > mCommonRect.top) y =
+                        resistanceScrollByY(mImgRect.top - mCommonRect.top, y)
+                    if (y > 0 && mImgRect.bottom - y < mCommonRect.bottom) y =
+                        resistanceScrollByY(mImgRect.bottom - mCommonRect.bottom, y)
+                }
+                mAnimMatrix.postTranslate(0f, -y)
+                mTranslateY -= y.toInt()
+                hasOverTranslate = true
+            }
+            executeTranslate()
+            return true
+        }
+
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            postDelayed(mClickRunnable, 250)
+            return false
+        }
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            mTranslate.stop()
+            val from: Float
+            val to: Float
+            val imgCx = mImgRect.left + mImgRect.width() / 2
+            val imgCy = mImgRect.top + mImgRect.height() / 2
+            mScaleCenter[imgCx] = imgCy
+            mRotateCenter[imgCx] = imgCy
+            mTranslateX = 0
+            mTranslateY = 0
+            if (isZoonUp) {
+                from = mScale
+                to = 1f
+            } else {
+                from = mScale
+                to = mMaxScale
+                mScaleCenter[e.x] = e.y
+            }
+            mTmpMatrix.reset()
+            mTmpMatrix.postTranslate(-mBaseRect.left, -mBaseRect.top)
+            mTmpMatrix.postTranslate(mRotateCenter.x, mRotateCenter.y)
+            mTmpMatrix.postTranslate(-mHalfBaseRectWidth, -mHalfBaseRectHeight)
+            mTmpMatrix.postRotate(mDegrees, mRotateCenter.x, mRotateCenter.y)
+            mTmpMatrix.postScale(to, to, mScaleCenter.x, mScaleCenter.y)
+            mTmpMatrix.postTranslate(mTranslateX.toFloat(), mTranslateY.toFloat())
+            mTmpMatrix.mapRect(mTmpRect, mBaseRect)
+            doTranslateReset(mTmpRect)
+            isZoonUp = !isZoonUp
+            mTranslate.withScale(from, to)
+            mTranslate.start()
+            return false
+        }
+    }
+
+    inner class ScaleGestureListener : OnScaleGestureListener {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val scaleFactor = detector.scaleFactor
+            if (java.lang.Float.isNaN(scaleFactor) || java.lang.Float.isInfinite(scaleFactor)) return false
+            mScale *= scaleFactor
+            //mScaleCenter.set(detector.getFocusX(), detector.getFocusY());
+            mAnimMatrix.postScale(
+                scaleFactor,
+                scaleFactor,
+                detector.focusX,
+                detector.focusY
+            )
+            executeTranslate()
+            return true
+        }
+
+        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+            return true
+        }
+
+        override fun onScaleEnd(detector: ScaleGestureDetector) {}
+    }
 }

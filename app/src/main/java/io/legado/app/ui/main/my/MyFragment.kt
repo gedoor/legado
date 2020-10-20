@@ -29,12 +29,8 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.prefs.NameListPreference
 import io.legado.app.ui.widget.prefs.PreferenceCategory
 import io.legado.app.ui.widget.prefs.SwitchPreference
-import io.legado.app.utils.LogUtils
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.observeEventSticky
-import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import org.jetbrains.anko.startActivity
 
 class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.CallBack {
 
@@ -138,20 +134,20 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FileChooserDialog.
 
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
             when (preference?.key) {
-                "bookSourceManage" -> context?.startActivity<BookSourceActivity>()
-                "replaceManage" -> context?.startActivity<ReplaceRuleActivity>()
-                "setting" -> context?.startActivity<ConfigActivity>(
+                "bookSourceManage" -> startActivity<BookSourceActivity>()
+                "replaceManage" -> startActivity<ReplaceRuleActivity>()
+                "setting" -> startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_CONFIG)
                 )
-                "web_dav_setting" -> context?.startActivity<ConfigActivity>(
+                "web_dav_setting" -> startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_WEB_DAV_CONFIG)
                 )
-                "theme_setting" -> context?.startActivity<ConfigActivity>(
+                "theme_setting" -> startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_THEME_CONFIG)
                 )
-                "readRecord" -> context?.startActivity<ReadRecordActivity>()
-                "donate" -> context?.startActivity<DonateActivity>()
-                "about" -> context?.startActivity<AboutActivity>()
+                "readRecord" -> startActivity<ReadRecordActivity>()
+                "donate" -> startActivity<DonateActivity>()
+                "about" -> startActivity<AboutActivity>()
             }
             return super.onPreferenceTreeClick(preference)
         }

@@ -107,19 +107,20 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
             AppConst.bookGroupAudioId -> App.db.bookDao().observeAudio()
             AppConst.bookGroupNoneId -> App.db.bookDao().observeNoGroup()
             else -> App.db.bookDao().observeByGroup(groupId)
-        }
-        bookshelfLiveData?.observe(this, { list ->
-            tv_empty_msg.isGone = list.isNotEmpty()
-            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
-                1 -> list.sortedByDescending { it.latestChapterTime }
-                2 -> list.sortedBy { it.name }
-                3 -> list.sortedBy { it.order }
-                else -> list.sortedByDescending { it.durChapterTime }
+        }.apply {
+            observe(viewLifecycleOwner) { list ->
+                tv_empty_msg.isGone = list.isNotEmpty()
+                val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                    1 -> list.sortedByDescending { it.latestChapterTime }
+                    2 -> list.sortedBy { it.name }
+                    3 -> list.sortedBy { it.order }
+                    else -> list.sortedByDescending { it.durChapterTime }
+                }
+                val diffResult = DiffUtil
+                    .calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), books))
+                booksAdapter.setItems(books, diffResult)
             }
-            val diffResult = DiffUtil
-                .calculateDiff(BooksDiffCallBack(booksAdapter.getItems(), books))
-            booksAdapter.setItems(books, diffResult)
-        })
+        }
     }
 
     fun getBooks(): List<Book> {

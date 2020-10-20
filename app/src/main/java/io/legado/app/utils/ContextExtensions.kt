@@ -156,6 +156,16 @@ fun Context.getClipText(): String? {
     return null
 }
 
+fun Context.sendMail(mail: String) {
+    try {
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.data = Uri.parse("mailto:$mail")
+        startActivity(intent)
+    } catch (e: Exception) {
+        toast(e.localizedMessage ?: "Error")
+    }
+}
+
 /**
  * 系统是否暗色主题
  */

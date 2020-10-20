@@ -21,37 +21,30 @@ import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class ReadMenu : FrameLayout {
+/**
+ * 阅读界面菜单
+ */
+class ReadMenu @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
     var cnaShowMenu: Boolean = false
-    private var callBack: CallBack? = null
+    private val callBack: CallBack? get() = activity as? CallBack
     private lateinit var menuTopIn: Animation
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
     private lateinit var menuBottomOut: Animation
-    private val bgColor: Int
-    private val textColor: Int
-    private var bottomBackgroundList: ColorStateList
+    private val bgColor: Int = context.bottomBackground
+    private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
+    private val bottomBackgroundList: ColorStateList = Selector.colorBuild()
+        .setDefaultColor(bgColor)
+        .setPressedColor(ColorUtils.darkenColor(bgColor))
+        .create()
     private var onMenuOutEnd: (() -> Unit)? = null
     val showBrightnessView get() = context.getPrefBoolean(PreferKey.showBrightnessView, true)
 
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
-
     init {
-        callBack = activity as? CallBack
-        bgColor = context.bottomBackground
-        textColor = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
-        bottomBackgroundList = Selector.colorBuild()
-            .setDefaultColor(bgColor)
-            .setPressedColor(ColorUtils.darkenColor(bgColor))
-            .create()
         inflate(context, R.layout.view_read_menu, this)
         if (AppConfig.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
@@ -254,9 +247,7 @@ class ReadMenu : FrameLayout {
                 }
             }
 
-            override fun onAnimationRepeat(animation: Animation) {
-
-            }
+            override fun onAnimationRepeat(animation: Animation) = Unit
         })
 
         //隐藏菜单
@@ -277,9 +268,7 @@ class ReadMenu : FrameLayout {
                 callBack?.upSystemUiVisibility()
             }
 
-            override fun onAnimationRepeat(animation: Animation) {
-
-            }
+            override fun onAnimationRepeat(animation: Animation) = Unit
         })
     }
 

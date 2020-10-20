@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read.config
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -14,10 +13,7 @@ import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.EventBus
-import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.permission.Permissions
@@ -53,8 +49,8 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
     private val requestCodeImport = 132
     private val configFileName = "readConfig.zip"
     private lateinit var adapter: BgAdapter
-    var primaryTextColor = 0
-    var secondaryTextColor = 0
+    private var primaryTextColor = 0
+    private var secondaryTextColor = 0
 
     override fun onStart() {
         super.onStart()
@@ -109,7 +105,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
     @SuppressLint("InflateParams")
     private fun initData() = with(ReadBookConfig.durConfig) {
         sw_dark_status_icon.isChecked = curStatusIconDark()
-        adapter = BgAdapter(requireContext())
+        adapter = BgAdapter(requireContext(), secondaryTextColor)
         recycler_view.adapter = adapter
         val headerView = LayoutInflater.from(requireContext())
             .inflate(R.layout.item_bg_image, recycler_view, false)
@@ -119,7 +115,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         headerView.iv_bg.setImageResource(R.drawable.ic_image)
         headerView.iv_bg.setColorFilter(primaryTextColor)
         headerView.onClick { selectImage() }
-        requireContext().assets.list("bg/")?.let {
+        requireContext().assets.list("bg${File.separator}")?.let {
             adapter.setItems(it.toList())
         }
     }
@@ -187,32 +183,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "image/*"
         startActivityForResult(intent, requestCodeBg)
-    }
-
-    inner class BgAdapter(context: Context) :
-        SimpleRecyclerAdapter<String>(context, R.layout.item_bg_image) {
-
-        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-            with(holder.itemView) {
-                ImageLoader.load(context, context.assets.open("bg/$item").readBytes())
-                    .centerCrop()
-                    .into(iv_bg)
-                tv_name.setTextColor(secondaryTextColor)
-                tv_name.text = item.substringBeforeLast(".")
-            }
-        }
-
-        override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.apply {
-                this.onClick {
-                    getItemByLayoutPosition(holder.layoutPosition)?.let {
-                        ReadBookConfig.durConfig.setCurBg(1, it)
-                        ReadBookConfig.upBg()
-                        postEvent(EventBus.UP_CONFIG, false)
-                    }
-                }
-            }
-        }
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
