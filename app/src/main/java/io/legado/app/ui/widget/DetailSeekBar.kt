@@ -13,7 +13,10 @@ import io.legado.app.utils.progressAdd
 import kotlinx.android.synthetic.main.view_detail_seek_bar.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class DetailSeekBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs),
+class DetailSeekBar @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : FrameLayout(context, attrs),
     SeekBar.OnSeekBarChangeListener {
     private val isBottomBackground: Boolean
     var valueFormat: ((progress: Int) -> String)? = null

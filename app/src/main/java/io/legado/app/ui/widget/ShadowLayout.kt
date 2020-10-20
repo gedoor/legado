@@ -14,11 +14,10 @@ import io.legado.app.utils.getCompatColor
 /**
  * ShadowLayout.java
  *
- *
  * Created by lijiankun on 17/8/11.
  */
 @Suppress("unused")
-class ShadowLayout(
+class ShadowLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : RelativeLayout(context, attrs) {
