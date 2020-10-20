@@ -26,10 +26,7 @@ import kotlin.math.pow
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class CircleImageView(context: Context, attrs: AttributeSet) :
-    AppCompatImageView(
-        context,
-        attrs
-    ) {
+    AppCompatImageView(context, attrs) {
 
     private val mDrawableRect = RectF()
     private val mBorderRect = RectF()

@@ -20,7 +20,15 @@ import io.legado.app.utils.getPrefString
  * 封面
  */
 @Suppress("unused")
-class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
+class CoverImageView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : androidx.appcompat.widget.AppCompatImageView(
+    context,
+    attrs,
+    defStyleAttr
+) {
     internal var width: Float = 0.toFloat()
     internal var height: Float = 0.toFloat()
     private var nameHeight = 0f
@@ -44,16 +52,6 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     private var name: String? = null
     private var author: String? = null
     private var loadFailed = false
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
