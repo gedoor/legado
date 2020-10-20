@@ -11,7 +11,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -307,17 +306,13 @@ object BookHelp {
     private var replaceRules: List<ReplaceRule> = arrayListOf()
 
     @Synchronized
-    suspend fun upReplaceRules() {
-        withContext(IO) {
-            synchronized(this) {
-                val o = bookOrigin
-                bookName?.let {
-                    replaceRules = if (o.isNullOrEmpty()) {
-                        App.db.replaceRuleDao().findEnabledByScope(it)
-                    } else {
-                        App.db.replaceRuleDao().findEnabledByScope(it, o)
-                    }
-                }
+    fun upReplaceRules() {
+        val o = bookOrigin
+        bookName?.let {
+            replaceRules = if (o.isNullOrEmpty()) {
+                App.db.replaceRuleDao().findEnabledByScope(it)
+            } else {
+                App.db.replaceRuleDao().findEnabledByScope(it, o)
             }
         }
     }
