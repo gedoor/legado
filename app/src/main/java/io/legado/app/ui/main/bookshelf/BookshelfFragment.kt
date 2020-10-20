@@ -105,11 +105,12 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     private fun initBookGroupData() {
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
-        bookGroupLiveData = App.db.bookGroupDao().liveDataShow()
-        bookGroupLiveData?.observe(viewLifecycleOwner, {
-            viewModel.checkGroup(it)
-            upGroup(it)
-        })
+        bookGroupLiveData = App.db.bookGroupDao().liveDataShow().apply {
+            observe(viewLifecycleOwner) {
+                viewModel.checkGroup(it)
+                upGroup(it)
+            }
+        }
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -126,10 +127,12 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         if (data.isEmpty()) {
             App.db.bookGroupDao().enableGroup(AppConst.bookGroupAllId)
         } else {
-            bookGroups.clear()
-            bookGroups.addAll(data)
-            adapter.notifyDataSetChanged()
-            selectLastTab()
+            if (data != bookGroups) {
+                bookGroups.clear()
+                bookGroups.addAll(data)
+                adapter.notifyDataSetChanged()
+                selectLastTab()
+            }
         }
     }
 
