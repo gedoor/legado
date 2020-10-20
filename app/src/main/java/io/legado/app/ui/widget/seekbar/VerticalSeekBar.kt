@@ -20,11 +20,11 @@ import java.lang.reflect.Method
 class VerticalSeekBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyle: Int = 0
+    defStyleAttr: Int = androidx.appcompat.R.attr.seekBarStyle
 ) : AppCompatSeekBar(
     context,
     attrs,
-    defStyle
+    defStyleAttr
 ) {
 
     private var mIsDragging: Boolean = false
@@ -67,7 +67,8 @@ class VerticalSeekBar @JvmOverloads constructor(
         ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR)
 
         if (attrs != null) {
-            val a = context.obtainStyledAttributes(attrs, R.styleable.VerticalSeekBar, defStyle, 0)
+            val a =
+                context.obtainStyledAttributes(attrs, R.styleable.VerticalSeekBar, defStyleAttr, 0)
             val rotationAngle = a.getInteger(R.styleable.VerticalSeekBar_seekBarRotation, 0)
             if (isValidRotationAngle(rotationAngle)) {
                 mRotationAngle = rotationAngle

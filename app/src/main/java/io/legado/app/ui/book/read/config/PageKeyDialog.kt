@@ -6,10 +6,9 @@ import android.view.KeyEvent
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getPrefString
 import io.legado.app.utils.hideSoftInput
-import io.legado.app.utils.putPrefInt
-import io.legado.app.utils.removePref
+import io.legado.app.utils.putPrefString
 import kotlinx.android.synthetic.main.dialog_page_key.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -19,21 +18,11 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
     init {
         setContentView(R.layout.dialog_page_key)
         content_view.setBackgroundColor(context.backgroundColor)
-        et_prev.setText(context.getPrefInt(PreferKey.prevKey).toString())
-        et_next.setText(context.getPrefInt(PreferKey.nextKey).toString())
+        et_prev.setText(context.getPrefString(PreferKey.prevKeys))
+        et_next.setText(context.getPrefString(PreferKey.nextKeys))
         tv_ok.onClick {
-            val prevKey = et_prev.text?.toString()
-            if (prevKey.isNullOrEmpty()) {
-                context.removePref(PreferKey.prevKey)
-            } else {
-                context.putPrefInt(PreferKey.prevKey, prevKey.toInt())
-            }
-            val nextKey = et_next.text?.toString()
-            if (nextKey.isNullOrEmpty()) {
-                context.removePref(PreferKey.nextKey)
-            } else {
-                context.putPrefInt(PreferKey.nextKey, nextKey.toInt())
-            }
+            context.putPrefString(PreferKey.prevKeys, et_prev.text?.toString())
+            context.putPrefString(PreferKey.nextKeys, et_next.text?.toString())
             dismiss()
         }
     }
@@ -41,11 +30,20 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode != KeyEvent.KEYCODE_BACK) {
             if (et_prev.hasFocus()) {
-                et_prev.setText(keyCode.toString())
+                val editableText = et_prev.editableText
+                if (editableText.isEmpty() or editableText.endsWith(",")) {
+                    editableText.append(keyCode.toString())
+                } else {
+                    editableText.append(",").append(keyCode.toString())
+                }
             } else if (et_next.hasFocus()) {
-                et_next.setText(keyCode.toString())
+                val editableText = et_next.editableText
+                if (editableText.isEmpty() or editableText.endsWith(",")) {
+                    editableText.append(keyCode.toString())
+                } else {
+                    editableText.append(",").append(keyCode.toString())
+                }
             }
-            return true
         }
         return super.onKeyDown(keyCode, event)
     }
