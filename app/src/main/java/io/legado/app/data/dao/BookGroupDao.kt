@@ -2,7 +2,6 @@ package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookGroup
 
 @Dao
@@ -17,16 +16,7 @@ interface BookGroupDao {
     @Query("SELECT * FROM book_groups ORDER BY `order`")
     fun liveDataAll(): LiveData<List<BookGroup>>
 
-    @Query(
-        """
-        SELECT * FROM book_groups where groupId >= 0 
-        or (groupId = -4 and show > 0 and (select count(bookUrl) from books where ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0 and type != ${BookType.audio} and origin != '${BookType.local}') > 0)
-        or (groupId = -3 and show > 0 and (select count(bookUrl) from books where type = ${BookType.audio}) > 0)
-        or (groupId = -2 and show > 0 and (select count(bookUrl) from books where origin = '${BookType.local}') > 0)
-        or (groupId = -1 and show > 0)
-        ORDER BY `order`
-    """
-    )
+    @Query("SELECT * FROM book_groups where groupId >= 0 or (groupId < 0 and show > 0) ORDER BY `order`")
     fun liveDataShow(): LiveData<List<BookGroup>>
 
     @Query("SELECT * FROM book_groups where groupId >= 0 ORDER BY `order`")
