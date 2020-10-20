@@ -55,11 +55,11 @@ class VerticalSeekBar : AppCompatSeekBar {
         }
 
     constructor(context: Context) : super(context) {
-        initialize(context, null, 0, 0)
+        initialize(context, null, 0)
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        initialize(context, attrs, 0, 0)
+        initialize(context, attrs, 0)
     }
 
     constructor(
@@ -67,14 +67,13 @@ class VerticalSeekBar : AppCompatSeekBar {
         attrs: AttributeSet,
         defStyle: Int
     ) : super(context, attrs, defStyle) {
-        initialize(context, attrs, defStyle, 0)
+        initialize(context, attrs, defStyle)
     }
 
     private fun initialize(
         context: Context,
         attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
+        defStyleAttr: Int
     ) {
         ATH.setTint(this, ThemeStore.accentColor(context))
         ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR)
@@ -84,7 +83,7 @@ class VerticalSeekBar : AppCompatSeekBar {
                 attrs,
                 R.styleable.VerticalSeekBar,
                 defStyleAttr,
-                defStyleRes
+                0
             )
             val rotationAngle = a.getInteger(R.styleable.VerticalSeekBar_seekBarRotation, 0)
             if (isValidRotationAngle(rotationAngle)) {
