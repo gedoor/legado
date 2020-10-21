@@ -188,9 +188,9 @@ class AnalyzeUrl(
                         GSON.fromJsonObject<Map<String, String>>(headers)
                             ?.let { headerMap.putAll(it) }
                     }
-                    headerMap[UA_NAME] ?: let {
-                        headerMap[UA_NAME] = userAgent
-                    }
+                }
+                headerMap[UA_NAME] ?: let {
+                    headerMap[UA_NAME] = userAgent
                 }
                 option.charset?.let { charset = it }
                 option.body?.let {
