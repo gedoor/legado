@@ -18,9 +18,8 @@ import io.legado.app.R
 
 class SearchView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : SearchView(context, attrs, defStyleAttr) {
+    attrs: AttributeSet? = null
+) : SearchView(context, attrs) {
     private var mSearchHintIcon: Drawable? = null
     private var textView: TextView? = null
 

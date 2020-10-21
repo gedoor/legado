@@ -20,9 +20,8 @@ import io.legado.app.utils.dp
 @Suppress("MemberVisibilityCanBePrivate")
 class RotateLoading @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+    attrs: AttributeSet? = null
+) : View(context, attrs) {
 
     private var mPaint: Paint
 

@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget.recycler
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -10,7 +11,7 @@ import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.view_load_more.view.*
 
 @Suppress("unused")
-class LoadMoreView(context: Context) : FrameLayout(context) {
+class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
 
     var hasMore = true
         private set
