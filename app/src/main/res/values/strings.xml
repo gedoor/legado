@@ -775,5 +775,6 @@
     <string name="search_content">Search content</string>
     <string name="rss_source_empty">关注公众号[开源阅读]获取订阅源!</string>
     <string name="explore_empty">当前没有发现源,关注公众号[开源阅读]添加带发现的书源!</string>
+    <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
 
 </resources>
