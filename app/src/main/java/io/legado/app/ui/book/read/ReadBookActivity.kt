@@ -314,13 +314,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when {
-            getPrefString(PreferKey.prevKeys)?.contains(keyCode.toString()) == true -> {
+            ReadBookActivityHelp.isPrevKey(this, keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
                     page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.PREV)
                     return true
                 }
             }
-            getPrefString(PreferKey.nextKeys)?.contains(keyCode.toString()) == true -> {
+            ReadBookActivityHelp.isNextKey(this, keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
                     page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
                     return true
