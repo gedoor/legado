@@ -19,9 +19,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 @Suppress("unused")
 class AutoCompleteTextView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AppCompatAutoCompleteTextView(context, attrs, defStyleAttr) {
+    attrs: AttributeSet? = null
+) : AppCompatAutoCompleteTextView(context, attrs) {
 
     var delCallBack: ((value: String) -> Unit)? = null
 
