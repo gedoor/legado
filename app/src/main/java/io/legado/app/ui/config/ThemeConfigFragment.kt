@@ -203,7 +203,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     private fun upTheme(isNightTheme: Boolean) {
         if (AppConfig.isNightTheme == isNightTheme) {
             listView.post {
-                App.INSTANCE.applyTheme()
+                ThemeConfig.applyTheme(requireContext())
                 recreateActivities()
             }
         }
