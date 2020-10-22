@@ -26,9 +26,8 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
  */
 class ReadMenu @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+    attrs: AttributeSet? = null
+) : FrameLayout(context, attrs) {
     var cnaShowMenu: Boolean = false
     private val callBack: CallBack? get() = activity as? CallBack
     private lateinit var menuTopIn: Animation

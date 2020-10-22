@@ -40,9 +40,9 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
         loadMoreView.startLoad()
         loadMoreView.setOnClickListener {
             if (!isLoading) {
-                isLoading = true
                 loadMoreView.hasMore()
                 scrollToBottom()
+                isLoading = true
             }
         }
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
