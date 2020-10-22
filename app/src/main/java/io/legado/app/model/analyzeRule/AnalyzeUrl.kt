@@ -281,7 +281,7 @@ class AnalyzeUrl(
     fun getResponse(tag: String): Call<String> {
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
-            headerMap["Cookie"] = cookie
+            headerMap["Cookie"] += ";${cookie}"
         }
         return when {
             method == RequestMethod.POST -> {
@@ -324,7 +324,7 @@ class AnalyzeUrl(
         }
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
-            headerMap["Cookie"] = cookie
+            headerMap["Cookie"] += ";${cookie}"
         }
         val res = when {
             method == RequestMethod.POST -> {
@@ -356,7 +356,7 @@ class AnalyzeUrl(
         if (tag != null) {
             val cookie = CookieStore.getCookie(tag)
             if (cookie.isNotEmpty()) {
-                headerMap["Cookie"] = cookie
+                headerMap["Cookie"] += ";${cookie}"
             }
         }
         val response = when {
