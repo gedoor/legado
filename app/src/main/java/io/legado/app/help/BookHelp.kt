@@ -101,7 +101,7 @@ object BookHelp {
         downloadImages.add(src)
         val analyzeUrl = AnalyzeUrl(src)
         try {
-            analyzeUrl.getImageBytes(book.origin)?.let {
+            analyzeUrl.getResponseBytes(book.origin)?.let {
                 FileUtils.createFileIfNotExist(
                     downloadDir,
                     cacheFolderName,

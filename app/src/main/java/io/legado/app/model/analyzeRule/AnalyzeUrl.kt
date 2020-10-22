@@ -352,18 +352,6 @@ class AnalyzeUrl(
         return Res(NetworkUtils.getUrl(res), res.body())
     }
 
-    fun getImageBytes(tag: String): ByteArray? {
-        val cookie = CookieStore.getCookie(tag)
-        if (cookie.isNotEmpty()) {
-            headerMap["Cookie"] += cookie
-        }
-        return if (fieldMap.isEmpty()) {
-            HttpHelper.getBytes(url, mapOf(), headerMap)
-        } else {
-            HttpHelper.getBytes(url, fieldMap, headerMap)
-        }
-    }
-
     suspend fun getResponseBytes(tag: String? = null): ByteArray? {
         if (tag != null) {
             val cookie = CookieStore.getCookie(tag)
