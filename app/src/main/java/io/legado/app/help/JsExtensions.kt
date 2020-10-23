@@ -123,8 +123,14 @@ interface JsExtensions {
      /**
       *js实现读取cookie
       */
-     fun getCookie(tag: String): String {
-        return CookieStore.getCookie(tag)
+     fun getCookie(tag: String, key: String? = null): String {
+        val cookie = CookieStore.getCookie(tag)
+        val cookieMap = CookieStore.cookieToMap(cookie)
+        return if (key != null) {
+            cookieMap.get(key) ?: ""
+        } else {
+            cookie
+        }
      }
 
     /**

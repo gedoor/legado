@@ -43,7 +43,7 @@ object CookieStore : CookiePersistor {
         App.db.cookieDao().delete(NetworkUtils.getSubDomain(url))
     }
 
-    private fun cookieToMap(cookie: String): MutableMap<String, String> {
+    fun cookieToMap(cookie: String): MutableMap<String, String> {
         val cookieMap = mutableMapOf<String, String>()
         if (cookie.isBlank()) {
             return cookieMap
