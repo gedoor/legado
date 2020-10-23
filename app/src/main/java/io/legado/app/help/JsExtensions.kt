@@ -4,6 +4,7 @@ import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.help.http.SSLHelper
+import io.legado.app.help.http.CookieStore
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import org.jsoup.Connection
@@ -118,6 +119,13 @@ interface JsExtensions {
             .method(Connection.Method.POST)
             .execute()
     }
+
+     /**
+      *js实现读取cookie
+      */
+     fun getCookie(tag: String): String {
+        return CookieStore.getCookie(tag)
+     }
 
     /**
      * js实现解码,不能删
