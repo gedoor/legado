@@ -355,16 +355,6 @@ object BookHelp {
                 }
             }
         }
-        try {
-            when (AppConfig.chineseConverterType) {
-                1 -> c = HanLP.convertToSimplifiedChinese(c)
-                2 -> c = HanLP.convertToTraditionalChinese(c)
-            }
-        } catch (e: Exception) {
-            withContext(Main) {
-                App.INSTANCE.toast("简繁转换出错")
-            }
-        }
         val contents = arrayListOf<String>()
         c.split("\n").forEach {
             val str = it.replace("^[\\n\\s\\r]+".toRegex(), "")
@@ -375,6 +365,16 @@ object BookHelp {
                 }
             } else if (str.isNotEmpty()) {
                 contents.add("${ReadBookConfig.paragraphIndent}$str")
+            }
+        }
+        try {
+            when (AppConfig.chineseConverterType) {
+                1 -> c = HanLP.convertToSimplifiedChinese(c)
+                2 -> c = HanLP.convertToTraditionalChinese(c)
+            }
+        } catch (e: Exception) {
+            withContext(Main) {
+                App.INSTANCE.toast("简繁转换出错")
             }
         }
         return contents
