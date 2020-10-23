@@ -63,7 +63,7 @@ object CookieStore : CookiePersistor {
         return cookieMap
     }
 
-    private fun mapToCookie(cookieMap: Map<String, String>?): String? {
+    fun mapToCookie(cookieMap: Map<String, String>?): String? {
         if (cookieMap == null || cookieMap.isEmpty()) {
             return null
         }
