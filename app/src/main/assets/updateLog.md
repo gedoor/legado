@@ -7,6 +7,7 @@
 * 修复选择错误的bug
 * 修复长图最后一张不能滚动的bug
 * js添加java.getCookie(sourceUrl)来获取登录后的cookie by [AndyBernie](https://github.com/AndyBernie)
+* 修复简繁转换没有处理标题
 
 **2020/10/21**
 * 默认分组无书籍时自动隐藏
