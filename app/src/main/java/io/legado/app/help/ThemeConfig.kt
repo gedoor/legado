@@ -15,16 +15,16 @@ object ThemeConfig {
     const val configFileName = "themeConfig.json"
     val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, configFileName)
 
-    val configList = arrayListOf<Config>()
-
-    init {
-        upConfig()
+    val configList: ArrayList<Config> by lazy {
+        val cList = getConfigs() ?: DefaultData.defaultThemeConfigs
+        ArrayList(cList)
     }
 
     fun upConfig() {
-        (getConfigs() ?: DefaultData.defaultThemeConfigs).let {
-            configList.clear()
-            configList.addAll(it)
+        getConfigs()?.let {
+            it.forEach { config ->
+                addConfig(config)
+            }
         }
     }
 
