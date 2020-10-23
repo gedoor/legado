@@ -324,7 +324,8 @@ object BookHelp {
         content: String,
         enableReplace: Boolean,
     ): List<String> {
-        var c = content
+        var title1 = title
+        var content1 = content
         if (enableReplace) {
             synchronized(this) {
                 if (bookName != name || bookOrigin != origin) {
@@ -341,10 +342,10 @@ object BookHelp {
                 item.pattern.let {
                     if (it.isNotEmpty()) {
                         try {
-                            c = if (item.isRegex) {
-                                c.replace(it.toRegex(), item.replacement)
+                            content1 = if (item.isRegex) {
+                                content1.replace(it.toRegex(), item.replacement)
                             } else {
-                                c.replace(it, item.replacement)
+                                content1.replace(it, item.replacement)
                             }
                         } catch (e: Exception) {
                             withContext(Main) {
@@ -355,26 +356,32 @@ object BookHelp {
                 }
             }
         }
-        val contents = arrayListOf<String>()
-        c.split("\n").forEach {
-            val str = it.replace("^[\\n\\s\\r]+".toRegex(), "")
-            if (contents.isEmpty()) {
-                contents.add(title)
-                if (str != title && str.isNotEmpty()) {
-                    contents.add("${ReadBookConfig.paragraphIndent}$str")
-                }
-            } else if (str.isNotEmpty()) {
-                contents.add("${ReadBookConfig.paragraphIndent}$str")
-            }
-        }
         try {
             when (AppConfig.chineseConverterType) {
-                1 -> c = HanLP.convertToSimplifiedChinese(c)
-                2 -> c = HanLP.convertToTraditionalChinese(c)
+                1 -> {
+                    title1 = HanLP.convertToSimplifiedChinese(title1)
+                    content1 = HanLP.convertToSimplifiedChinese(content1)
+                }
+                2 -> {
+                    title1 = HanLP.convertToTraditionalChinese(title1)
+                    content1 = HanLP.convertToTraditionalChinese(content1)
+                }
             }
         } catch (e: Exception) {
             withContext(Main) {
                 App.INSTANCE.toast("简繁转换出错")
+            }
+        }
+        val contents = arrayListOf<String>()
+        content1.split("\n").forEach {
+            val str = it.replace("^[\\n\\s\\r]+".toRegex(), "")
+            if (contents.isEmpty()) {
+                contents.add(title1)
+                if (str != title1 && str.isNotEmpty()) {
+                    contents.add("${ReadBookConfig.paragraphIndent}$str")
+                }
+            } else if (str.isNotEmpty()) {
+                contents.add("${ReadBookConfig.paragraphIndent}$str")
             }
         }
         return contents
