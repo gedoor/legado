@@ -7,6 +7,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.*
 import java.io.File
 
@@ -14,16 +15,16 @@ object ThemeConfig {
     const val configFileName = "themeConfig.json"
     val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, configFileName)
 
-    val configList = arrayListOf<Config>()
-
-    init {
-        upConfig()
+    val configList: ArrayList<Config> by lazy {
+        val cList = getConfigs() ?: DefaultData.defaultThemeConfigs
+        ArrayList(cList)
     }
 
     fun upConfig() {
-        (getConfigs() ?: DefaultData.defaultThemeConfigs).let {
-            configList.clear()
-            configList.addAll(it)
+        getConfigs()?.let {
+            it.forEach { config ->
+                addConfig(config)
+            }
         }
     }
 
@@ -135,6 +136,65 @@ object ThemeConfig {
             bottomBackground = "#${bBackground.hexString}"
         )
         addConfig(config)
+    }
+
+    /**
+     * 更新主题
+     */
+    fun applyTheme(context: Context) = with(context) {
+        when {
+            AppConfig.isEInkMode -> {
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(Color.WHITE)
+                    .accentColor(Color.BLACK)
+                    .backgroundColor(Color.WHITE)
+                    .bottomBackground(Color.WHITE)
+                    .apply()
+            }
+            AppConfig.isNightTheme -> {
+                val primary =
+                    getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
+                val accent =
+                    getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
+                var background =
+                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
+                if (ColorUtils.isColorLight(background)) {
+                    background = getCompatColor(R.color.md_grey_900)
+                    putPrefInt(PreferKey.cNBackground, background)
+                }
+                val bBackground =
+                    getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
+                    .accentColor(ColorUtils.withAlpha(accent, 1f))
+                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
+                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
+                    .apply()
+            }
+            else -> {
+                val primary =
+                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))
+                val accent =
+                    getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
+                var background =
+                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                if (!ColorUtils.isColorLight(background)) {
+                    background = getCompatColor(R.color.md_grey_100)
+                    putPrefInt(PreferKey.cBackground, background)
+                }
+                val bBackground =
+                    getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                ThemeStore.editTheme(this)
+                    .coloredNavigationBar(true)
+                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
+                    .accentColor(ColorUtils.withAlpha(accent, 1f))
+                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
+                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
+                    .apply()
+            }
+        }
     }
 
     @Keep

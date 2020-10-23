@@ -22,12 +22,10 @@ import io.legado.app.utils.getPrefString
 @Suppress("unused")
 class CoverImageView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    attrs: AttributeSet? = null
 ) : androidx.appcompat.widget.AppCompatImageView(
     context,
-    attrs,
-    defStyleAttr
+    attrs
 ) {
     internal var width: Float = 0.toFloat()
     internal var height: Float = 0.toFloat()

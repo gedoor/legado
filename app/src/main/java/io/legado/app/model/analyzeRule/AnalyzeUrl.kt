@@ -188,9 +188,9 @@ class AnalyzeUrl(
                         GSON.fromJsonObject<Map<String, String>>(headers)
                             ?.let { headerMap.putAll(it) }
                     }
-                    headerMap[UA_NAME] ?: let {
-                        headerMap[UA_NAME] = userAgent
-                    }
+                }
+                headerMap[UA_NAME] ?: let {
+                    headerMap[UA_NAME] = userAgent
                 }
                 option.charset?.let { charset = it }
                 option.body?.let {
@@ -281,7 +281,7 @@ class AnalyzeUrl(
     fun getResponse(tag: String): Call<String> {
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
-            headerMap["Cookie"] = cookie
+            headerMap["Cookie"] += ";${cookie}"
         }
         return when {
             method == RequestMethod.POST -> {
@@ -324,7 +324,7 @@ class AnalyzeUrl(
         }
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
-            headerMap["Cookie"] = cookie
+            headerMap["Cookie"] += ";${cookie}"
         }
         val res = when {
             method == RequestMethod.POST -> {
@@ -352,23 +352,11 @@ class AnalyzeUrl(
         return Res(NetworkUtils.getUrl(res), res.body())
     }
 
-    fun getImageBytes(tag: String): ByteArray? {
-        val cookie = CookieStore.getCookie(tag)
-        if (cookie.isNotEmpty()) {
-            headerMap["Cookie"] += cookie
-        }
-        return if (fieldMap.isEmpty()) {
-            HttpHelper.getBytes(url, mapOf(), headerMap)
-        } else {
-            HttpHelper.getBytes(url, fieldMap, headerMap)
-        }
-    }
-
     suspend fun getResponseBytes(tag: String? = null): ByteArray? {
         if (tag != null) {
             val cookie = CookieStore.getCookie(tag)
             if (cookie.isNotEmpty()) {
-                headerMap["Cookie"] = cookie
+                headerMap["Cookie"] += ";${cookie}"
             }
         }
         val response = when {

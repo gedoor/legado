@@ -4,10 +4,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
@@ -16,14 +14,10 @@ import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.AppDatabase
-import io.legado.app.help.ActivityHelp
-import io.legado.app.help.AppConfig
-import io.legado.app.help.CrashHandler
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.utils.*
+import io.legado.app.help.*
+import io.legado.app.utils.LanguageUtils
+import io.legado.app.utils.postEvent
 
 @Suppress("DEPRECATION")
 class App : MultiDexApplication() {
@@ -72,68 +66,9 @@ class App : MultiDexApplication() {
         }
     }
 
-    /**
-     * 更新主题
-     */
-    fun applyTheme() {
-        when {
-            AppConfig.isEInkMode -> {
-                ThemeStore.editTheme(this)
-                    .coloredNavigationBar(true)
-                    .primaryColor(Color.WHITE)
-                    .accentColor(Color.BLACK)
-                    .backgroundColor(Color.WHITE)
-                    .bottomBackground(Color.WHITE)
-                    .apply()
-            }
-            AppConfig.isNightTheme -> {
-                val primary =
-                    getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
-                val accent =
-                    getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
-                var background =
-                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
-                if (ColorUtils.isColorLight(background)) {
-                    background = getCompatColor(R.color.md_grey_900)
-                    putPrefInt(PreferKey.cNBackground, background)
-                }
-                val bBackground =
-                    getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
-                ThemeStore.editTheme(this)
-                    .coloredNavigationBar(true)
-                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
-                    .accentColor(ColorUtils.withAlpha(accent, 1f))
-                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
-                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
-                    .apply()
-            }
-            else -> {
-                val primary =
-                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))
-                val accent =
-                    getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
-                var background =
-                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
-                if (!ColorUtils.isColorLight(background)) {
-                    background = getCompatColor(R.color.md_grey_100)
-                    putPrefInt(PreferKey.cBackground, background)
-                }
-                val bBackground =
-                    getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
-                ThemeStore.editTheme(this)
-                    .coloredNavigationBar(true)
-                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
-                    .accentColor(ColorUtils.withAlpha(accent, 1f))
-                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
-                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
-                    .apply()
-            }
-        }
-    }
-
     fun applyDayNight() {
         ReadBookConfig.upBg()
-        applyTheme()
+        ThemeConfig.applyTheme(this)
         initNightMode()
         postEvent(EventBus.RECREATE, "")
     }

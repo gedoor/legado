@@ -177,7 +177,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
 
     @SuppressLint("InflateParams")
     private fun saveThemeAlert(key: String) {
-        alert("主题名称") {
+        alert(R.string.theme_name) {
             var editText: AutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
@@ -203,7 +203,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     private fun upTheme(isNightTheme: Boolean) {
         if (AppConfig.isNightTheme == isNightTheme) {
             listView.post {
-                App.INSTANCE.applyTheme()
+                ThemeConfig.applyTheme(requireContext())
                 recreateActivities()
             }
         }

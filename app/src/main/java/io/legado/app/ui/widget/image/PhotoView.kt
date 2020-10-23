@@ -27,9 +27,8 @@ import kotlin.math.roundToInt
 @Suppress("UNUSED_PARAMETER", "unused", "MemberVisibilityCanBePrivate", "PropertyName")
 class PhotoView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AppCompatImageView(context, attrs, defStyleAttr) {
+    attrs: AttributeSet? = null
+) : AppCompatImageView(context, attrs) {
     val MIN_ROTATE = 35
     val ANIMA_DURING = 340
     val MAX_SCALE = 2.5f

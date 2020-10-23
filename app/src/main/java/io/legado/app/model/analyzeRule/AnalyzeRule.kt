@@ -649,16 +649,12 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      * 章节数转数字
      */
     fun toNumChapter(s: String?): String? {
-        if (s == null) {
-            return null
+        s ?: return null
+        val matcher = titleNumPattern.matcher(s)
+        if (matcher.find()) {
+            return "${matcher.group(1)}${StringUtils.stringToInt(matcher.group(2))}${matcher.group(3)}"
         }
-        val pattern = Pattern.compile("(第)(.+?)(章)")
-        val matcher = pattern.matcher(s)
-        return if (matcher.find()) {
-            matcher.group(1)!! + StringUtils.stringToInt(matcher.group(2)) + matcher.group(3)
-        } else {
-            s
-        }
+        return s
     }
 
     companion object {
@@ -667,6 +663,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         private val evalPattern =
             Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
+        private val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
     }
 
 }

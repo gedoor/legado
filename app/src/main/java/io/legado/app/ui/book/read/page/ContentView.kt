@@ -33,9 +33,11 @@ class ContentView(context: Context) : FrameLayout(context) {
     private var tvBookName: BatteryView? = null
 
     val headerHeight: Int
-        get() = if (ReadBookConfig.hideStatusBar) {
-            if (ll_header.isGone) 0 else ll_header.height
-        } else context.statusBarHeight
+        get() {
+            val h1 = if (ReadBookConfig.hideStatusBar) 0 else context.statusBarHeight
+            val h2 = if (ll_header.isGone) 0 else ll_header.height
+            return h1 + h2
+        }
 
     init {
         //设置背景防止切换背景时文字重叠

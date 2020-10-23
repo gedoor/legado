@@ -15,14 +15,11 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-open class InertiaScrollTextView : AppCompatTextView {
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr)
-
+@Suppress("unused")
+open class InertiaScrollTextView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppCompatTextView(context, attrs) {
 
     private val scrollStateIdle = 0
     private val scrollStateDragging = 1
@@ -218,7 +215,7 @@ open class InertiaScrollTextView : AppCompatTextView {
             }
         }
 
-        internal fun postOnAnimation() {
+        fun postOnAnimation() {
             if (mEatRunOnAnimationRequest) {
                 mReSchedulePostAnimationCallback = true
             } else {

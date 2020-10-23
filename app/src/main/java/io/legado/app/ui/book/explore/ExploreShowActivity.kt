@@ -38,6 +38,13 @@ class ExploreShowActivity : VMBaseActivity<ExploreShowViewModel>(R.layout.activi
         loadMoreView = LoadMoreView(this)
         adapter.addFooterView(loadMoreView)
         loadMoreView.startLoad()
+        loadMoreView.setOnClickListener {
+            if (!isLoading) {
+                loadMoreView.hasMore()
+                scrollToBottom()
+                isLoading = true
+            }
+        }
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

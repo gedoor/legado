@@ -12,9 +12,8 @@ import kotlin.math.max
 
 class FilletImageView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AppCompatImageView(context, attrs, defStyleAttr) {
+    attrs: AttributeSet? = null
+) : AppCompatImageView(context, attrs) {
     internal var width: Float = 0.toFloat()
     internal var height: Float = 0.toFloat()
     private var leftTopRadius: Int = 0

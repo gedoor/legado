@@ -24,11 +24,11 @@ import io.legado.app.utils.visible
 /**
  * Created by milad heydari on 5/6/2016.
  */
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class BadgeView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyle: Int = android.R.attr.textViewStyle
-) : AppCompatTextView(context, attrs, defStyle) {
+    attrs: AttributeSet? = null
+) : AppCompatTextView(context, attrs) {
 
     var isHideOnNull = true
         set(hideOnNull) {

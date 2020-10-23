@@ -13,6 +13,7 @@ import android.view.WindowManager
 import android.widget.EditText
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
@@ -24,6 +25,7 @@ import io.legado.app.service.help.CacheBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getPrefString
 import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_download_choice.view.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
@@ -185,5 +187,15 @@ object ReadBookActivityHelp {
             }
             cancelButton()
         }.show().applyTint()
+    }
+
+    fun isPrevKey(context: Context, keyCode: Int): Boolean {
+        val prevKeysStr = context.getPrefString(PreferKey.prevKeys)
+        return prevKeysStr?.split(",")?.contains(keyCode.toString()) ?: false
+    }
+
+    fun isNextKey(context: Context, keyCode: Int): Boolean {
+        val nextKeysStr = context.getPrefString(PreferKey.nextKeys)
+        return nextKeysStr?.split(",")?.contains(keyCode.toString()) ?: false
     }
 }
