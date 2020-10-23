@@ -6,7 +6,11 @@
 **2020/10/23**
 * 修复选择错误的bug
 * 修复长图最后一张不能滚动的bug
-* js添加java.getCookie(sourceUrl:String, key:String ?=null)来获取登录后的cookie by [AndyBernie](https://github.com/AndyBernie)
+* js添加java.getCookie(sourceUrl:String, key:String? = null)来获取登录后的cookie by [AndyBernie](https://github.com/AndyBernie)
+```
+java.getCookie("http://baidu.com", null) => userid=1234;pwd=adbcd
+java.getCookie("http://baidu.com", "userid") => 1234
+```
 * 修复简繁转换没有处理标题
 
 **2020/10/21**
