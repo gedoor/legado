@@ -45,7 +45,7 @@ interface BookDao {
     @get:Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
     val noGroupSize: Int
 
-    @Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups) & `group` = :groupId")
+    @Query("select count(bookUrl) from books where `group` = :groupId")
     fun groupCount(groupId: Long): Int
 
     @get:Query("SELECT count(*) FROM books where origin = '${BookType.local}'")
