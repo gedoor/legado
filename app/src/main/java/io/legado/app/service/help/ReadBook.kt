@@ -378,13 +378,7 @@ object ReadBook {
                     2 -> HanLP.convertToTraditionalChinese(chapter.title)
                     else -> chapter.title
                 }
-                val contents = BookHelp.disposeContent(
-                    chapter.title,
-                    book.name,
-                    webBook?.bookSource?.bookSourceUrl,
-                    content,
-                    book.getUseReplaceRule()
-                )
+                val contents = BookHelp.disposeContent(book, chapter.title, content)
                 when (chapter.index) {
                     durChapterIndex -> {
                         curTextChapter =

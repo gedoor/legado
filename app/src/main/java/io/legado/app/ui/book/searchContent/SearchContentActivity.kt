@@ -177,13 +177,7 @@ class SearchContentActivity :
                             2 -> HanLP.convertToTraditionalChinese(chapter.title)
                             else -> chapter.title
                         }
-                        replaceContents = BookHelp.disposeContent(
-                            chapter.title,
-                            book.name,
-                            book.bookUrl,
-                            bookContent,
-                            book.getUseReplaceRule()
-                        )
+                        replaceContents = BookHelp.disposeContent(book, chapter.title, bookContent)
                     }
                     job.await()
                     while (replaceContents == null) {

@@ -318,23 +318,24 @@ object BookHelp {
     }
 
     suspend fun disposeContent(
+        book: Book,
         title: String,
-        name: String,
-        origin: String?,
         content: String,
-        enableReplace: Boolean,
     ): List<String> {
         var title1 = title
         var content1 = content
-        if (enableReplace) {
+        if (book.getReSegment()) {
+            content1 = ContentHelp.reSegment(content1, title1)
+        }
+        if (book.getUseReplaceRule()) {
             synchronized(this) {
-                if (bookName != name || bookOrigin != origin) {
-                    bookName = name
-                    bookOrigin = origin
-                    replaceRules = if (origin.isNullOrEmpty()) {
-                        App.db.replaceRuleDao().findEnabledByScope(name)
+                if (bookName != book.name || bookOrigin != book.origin) {
+                    bookName = book.name
+                    bookOrigin = book.origin
+                    replaceRules = if (bookOrigin.isNullOrEmpty()) {
+                        App.db.replaceRuleDao().findEnabledByScope(bookName!!)
                     } else {
-                        App.db.replaceRuleDao().findEnabledByScope(name, origin)
+                        App.db.replaceRuleDao().findEnabledByScope(bookName!!, bookOrigin!!)
                     }
                 }
             }
