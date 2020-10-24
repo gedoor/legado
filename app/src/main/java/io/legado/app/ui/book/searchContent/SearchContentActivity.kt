@@ -167,8 +167,8 @@ class SearchContentActivity :
         var replaceContents: List<String>? = null
         var totalContents: String
         if (chapter != null) {
-            viewModel.book?.let { bookSource ->
-                val bookContent = BookHelp.getContent(bookSource, chapter)
+            viewModel.book?.let { book ->
+                val bookContent = BookHelp.getContent(book, chapter)
                 if (bookContent != null) {
                     //搜索替换后的正文
                     val job = async(Dispatchers.IO) {
@@ -179,10 +179,10 @@ class SearchContentActivity :
                         }
                         replaceContents = BookHelp.disposeContent(
                             chapter.title,
-                            bookSource.name,
-                            bookSource.bookUrl,
+                            book.name,
+                            book.bookUrl,
                             bookContent,
-                            bookSource.useReplaceRule
+                            book.getUseReplaceRule()
                         )
                     }
                     job.await()

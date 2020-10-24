@@ -1,10 +1,7 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
@@ -19,6 +16,7 @@ import java.nio.charset.Charset
 import kotlin.math.max
 
 @Parcelize
+@TypeConverters(Book.Converters::class)
 @Entity(
     tableName = "books",
     indices = [Index(value = ["name", "author"], unique = true)]
@@ -53,8 +51,8 @@ data class Book(
     var canUpdate: Boolean = true,              // 刷新书架时更新书籍信息
     var order: Int = 0,                         // 手动排序
     var originOrder: Int = 0,                   //书源排序
-    var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,         // 正文使用净化替换规则
-    var variable: String? = null                // 自定义书籍变量信息(用于书源规则检索书籍信息)
+    var variable: String? = null,               // 自定义书籍变量信息(用于书源规则检索书籍信息)
+    var readConfig: ReadConfig? = null
 ): Parcelable, BaseBook {
     
     fun isLocalBook(): Boolean {
@@ -105,21 +103,36 @@ data class Book(
     override var tocHtml: String? = null
     
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
-    
+
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
-    
+
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
-    
+
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
-    
+
     fun fileCharset(): Charset {
         return charset(charset ?: "UTF-8")
     }
-    
+
+    fun rConfig(): ReadConfig {
+        if (readConfig == null) {
+            readConfig = ReadConfig()
+        }
+        return readConfig!!
+    }
+
+    fun setUseReplaceRule(useReplaceRule: Boolean) {
+        rConfig().useReplaceRule = useReplaceRule
+    }
+
+    fun getUseReplaceRule(): Boolean {
+        return rConfig().useReplaceRule
+    }
+
     fun getFolderName(): String {
         return name.replace(AppPattern.fileNameRegex, "") + MD5Utils.md5Encode16(bookUrl)
     }
-    
+
     fun toSearchBook() = SearchBook(
         name = name,
         author = author,
@@ -147,7 +160,7 @@ data class Book(
         newBook.customIntro = customIntro
         newBook.customTag = customTag
         newBook.canUpdate = canUpdate
-        newBook.useReplaceRule = useReplaceRule
+        newBook.readConfig = readConfig
         delete()
         App.db.bookDao().insert(newBook)
     }
@@ -172,5 +185,21 @@ data class Book(
                 coverUrl = oldBook.getDisplayCover()
             }
         }
+    }
+
+    @Parcelize
+    data class ReadConfig(
+        var pageAnim: Int = -1,
+        var reSegment: Boolean = false,
+        var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,         // 正文使用净化替换规则
+    ) : Parcelable
+
+    class Converters {
+
+        @TypeConverter
+        fun readConfigToString(config: ReadConfig?): String = GSON.toJson(config)
+
+        @TypeConverter
+        fun stringToReadConfig(json: String?) = GSON.fromJsonObject<ReadConfig>(json)
     }
 }

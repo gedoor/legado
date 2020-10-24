@@ -229,7 +229,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                         R.id.menu_group_login ->
                             item.isVisible = !ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
                         else -> if (item.itemId == R.id.menu_enable_replace) {
-                            item.isChecked = book.useReplaceRule
+                            item.isChecked = book.getUseReplaceRule()
                         }
                     }
                 }
@@ -263,8 +263,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 loadChapterList(it)
             }
             R.id.menu_enable_replace -> ReadBook.book?.let {
-                it.useReplaceRule = !it.useReplaceRule
-                menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.useReplaceRule
+                it.setUseReplaceRule(!it.getUseReplaceRule())
+                menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.getUseReplaceRule()
                 onReplaceRuleSave()
             }
             R.id.menu_book_info -> ReadBook.book?.let {

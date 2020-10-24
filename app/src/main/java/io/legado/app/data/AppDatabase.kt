@@ -18,15 +18,31 @@ import java.util.*
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class],
-    version = 21,
+    version = 22,
     exportSchema = true
 )
-abstract class AppDatabase: RoomDatabase() {
-    
+abstract class AppDatabase : RoomDatabase() {
+
+    abstract fun bookDao(): BookDao
+    abstract fun bookGroupDao(): BookGroupDao
+    abstract fun bookSourceDao(): BookSourceDao
+    abstract fun bookChapterDao(): BookChapterDao
+    abstract fun replaceRuleDao(): ReplaceRuleDao
+    abstract fun searchBookDao(): SearchBookDao
+    abstract fun searchKeywordDao(): SearchKeywordDao
+    abstract fun rssSourceDao(): RssSourceDao
+    abstract fun bookmarkDao(): BookmarkDao
+    abstract fun rssArticleDao(): RssArticleDao
+    abstract fun rssStarDao(): RssStarDao
+    abstract fun cookieDao(): CookieDao
+    abstract fun txtTocRule(): TxtTocRuleDao
+    abstract fun readRecordDao(): ReadRecordDao
+    abstract fun httpTTSDao(): HttpTTSDao
+
     companion object {
-        
+
         private const val DATABASE_NAME = "legado.db"
-        
+
         fun createDatabase(context: Context) =
             Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
@@ -40,7 +56,8 @@ abstract class AppDatabase: RoomDatabase() {
                     migration_17_18,
                     migration_18_19,
                     migration_19_20,
-                    migration_20_21
+                    migration_20_21,
+                    migration_21_22
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -54,28 +71,20 @@ abstract class AppDatabase: RoomDatabase() {
 
             override fun onOpen(db: SupportSQLiteDatabase) {
                 db.execSQL(
-                    """
-                    insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupAllId}, '全部', -10, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAllId})
-                """
+                    """insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupAllId}, '全部', -10, 1
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAllId})"""
                 )
                 db.execSQL(
-                    """
-                    insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupLocalId}, '本地', -9, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalId})
-                """
+                    """insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupLocalId}, '本地', -9, 1
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalId})"""
                 )
                 db.execSQL(
-                    """
-                    insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupAudioId}, '音频', -8, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAudioId})
-                """
+                    """insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupAudioId}, '音频', -8, 1
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAudioId})"""
                 )
                 db.execSQL(
-                    """
-                    insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupNoneId}, '未分组', -7, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupNoneId})
-                """
+                    """insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupNoneId}, '未分组', -7, 1
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupNoneId})"""
                 )
             }
         }
@@ -84,67 +93,66 @@ abstract class AppDatabase: RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE txtTocRules")
                 database.execSQL(
-                    """
-                    CREATE TABLE txtTocRules(id INTEGER NOT NULL, 
+                    """CREATE TABLE txtTocRules(id INTEGER NOT NULL, 
                     name TEXT NOT NULL, rule TEXT NOT NULL, serialNumber INTEGER NOT NULL, 
-                    enable INTEGER NOT NULL, PRIMARY KEY (id))
-                    """
+                    enable INTEGER NOT NULL, PRIMARY KEY (id))"""
                 )
             }
         }
-        
-        private val migration_11_12 = object: Migration(11, 12) {
+
+        private val migration_11_12 = object : Migration(11, 12) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE rssSources ADD style TEXT ")
             }
         }
-        
-        private val migration_12_13 = object: Migration(12, 13) {
+
+        private val migration_12_13 = object : Migration(12, 13) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE rssSources ADD articleStyle INTEGER NOT NULL DEFAULT 0 ")
             }
         }
-        
-        private val migration_13_14 = object: Migration(13, 14) {
+
+        private val migration_13_14 = object : Migration(13, 14) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    """
-                    CREATE TABLE IF NOT EXISTS `books_new` (`bookUrl` TEXT NOT NULL, `tocUrl` TEXT NOT NULL, `origin` TEXT NOT NULL, `originName` TEXT NOT NULL, 
-                    `name` TEXT NOT NULL, `author` TEXT NOT NULL, `kind` TEXT, `customTag` TEXT, `coverUrl` TEXT, `customCoverUrl` TEXT, `intro` TEXT,
-                    `customIntro` TEXT, `charset` TEXT, `type` INTEGER NOT NULL, `group` INTEGER NOT NULL, `latestChapterTitle` TEXT, `latestChapterTime` INTEGER NOT NULL,
-                    `lastCheckTime` INTEGER NOT NULL, `lastCheckCount` INTEGER NOT NULL, `totalChapterNum` INTEGER NOT NULL, `durChapterTitle` TEXT, 
+                    """CREATE TABLE IF NOT EXISTS `books_new` (`bookUrl` TEXT NOT NULL, `tocUrl` TEXT NOT NULL, `origin` TEXT NOT NULL, `originName` TEXT NOT NULL, 
+                    `name` TEXT NOT NULL, `author` TEXT NOT NULL, `kind` TEXT, `customTag` TEXT, `coverUrl` TEXT, `customCoverUrl` TEXT, `intro` TEXT, 
+                    `customIntro` TEXT, `charset` TEXT, `type` INTEGER NOT NULL, `group` INTEGER NOT NULL, `latestChapterTitle` TEXT, `latestChapterTime` 
+                    INTEGER NOT NULL, `lastCheckTime` INTEGER NOT NULL, `lastCheckCount` INTEGER NOT NULL, `totalChapterNum` INTEGER NOT NULL, `durChapterTitle` TEXT, 
                     `durChapterIndex` INTEGER NOT NULL, `durChapterPos` INTEGER NOT NULL, `durChapterTime` INTEGER NOT NULL, `wordCount` TEXT, `canUpdate` INTEGER NOT NULL, 
-                    `order` INTEGER NOT NULL, `originOrder` INTEGER NOT NULL, `useReplaceRule` INTEGER NOT NULL, `variable` TEXT, PRIMARY KEY(`bookUrl`))
-                    """
+                    `order` INTEGER NOT NULL, `originOrder` INTEGER NOT NULL, `useReplaceRule` INTEGER NOT NULL, `variable` TEXT, PRIMARY KEY(`bookUrl`))"""
                 )
-                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_books_name_author` ON `books_new` (`name`, `author`) ")
                 database.execSQL("INSERT INTO books_new select * from books ")
                 database.execSQL("DROP TABLE books")
                 database.execSQL("ALTER TABLE books_new RENAME TO books")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_books_name_author` ON `books` (`name`, `author`) ")
             }
         }
-        
-        private val migration_14_15 = object: Migration(14, 15) {
+
+        private val migration_14_15 = object : Migration(14, 15) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE bookmarks ADD bookAuthor TEXT NOT NULL DEFAULT ''")
             }
         }
-        
-        private val migration_15_17 = object: Migration(15, 17) {
+
+        private val migration_15_17 = object : Migration(15, 17) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `readRecord` (`bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`bookName`))")
             }
         }
-        
-        private val migration_17_18 = object: Migration(17, 18) {
+
+        private val migration_17_18 = object : Migration(17, 18) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `httpTTS` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))")
             }
         }
-        
-        private val migration_18_19 = object: Migration(18, 19) {
+
+        private val migration_18_19 = object : Migration(18, 19) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `readRecordNew` (`androidId` TEXT NOT NULL, `bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`androidId`, `bookName`))")
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS `readRecordNew` (`androidId` TEXT NOT NULL, `bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, 
+                    PRIMARY KEY(`androidId`, `bookName`))"""
+                )
                 database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${App.androidId}' as androidId, bookName, readTime from readRecord")
                 database.execSQL("DROP TABLE readRecord")
                 database.execSQL("ALTER TABLE readRecordNew RENAME TO readRecord")
@@ -161,21 +169,30 @@ abstract class AppDatabase: RoomDatabase() {
                 database.execSQL("ALTER TABLE book_groups ADD show INTEGER NOT NULL DEFAULT 1")
             }
         }
+
+        private val migration_21_22 = object : Migration(21, 22) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS `books_new` (`bookUrl` TEXT NOT NULL, `tocUrl` TEXT NOT NULL, `origin` TEXT NOT NULL, 
+                    `originName` TEXT NOT NULL, `name` TEXT NOT NULL, `author` TEXT NOT NULL, `kind` TEXT, `customTag` TEXT, 
+                    `coverUrl` TEXT, `customCoverUrl` TEXT, `intro` TEXT, `customIntro` TEXT, `charset` TEXT, `type` INTEGER NOT NULL, 
+                    `group` INTEGER NOT NULL, `latestChapterTitle` TEXT, `latestChapterTime` INTEGER NOT NULL, `lastCheckTime` INTEGER NOT NULL, 
+                    `lastCheckCount` INTEGER NOT NULL, `totalChapterNum` INTEGER NOT NULL, `durChapterTitle` TEXT, `durChapterIndex` INTEGER NOT NULL, 
+                    `durChapterPos` INTEGER NOT NULL, `durChapterTime` INTEGER NOT NULL, `wordCount` TEXT, `canUpdate` INTEGER NOT NULL, 
+                    `order` INTEGER NOT NULL, `originOrder` INTEGER NOT NULL, `variable` TEXT, `readConfig` TEXT, PRIMARY KEY(`bookUrl`))"""
+                )
+                database.execSQL(
+                    """INSERT INTO books_new select `bookUrl`, `tocUrl`, `origin`, `originName`, `name`, `author`, `kind`, `customTag`, `coverUrl`, 
+                    `customCoverUrl`, `intro`, `customIntro`, `charset`, `type`, `group`, `latestChapterTitle`, `latestChapterTime`, `lastCheckTime`, `lastCheckCount`,
+                    `totalChapterNum`, `durChapterTitle`, `durChapterIndex`, `durChapterPos`, `durChapterTime`, `wordCount`, `canUpdate`, `order`,
+                    `originOrder`, `variable`, null
+                    from books"""
+                )
+                database.execSQL("DROP TABLE books")
+                database.execSQL("ALTER TABLE books_new RENAME TO books")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_books_name_author` ON `books` (`name`, `author`) ")
+            }
+        }
     }
-    
-    abstract fun bookDao(): BookDao
-    abstract fun bookGroupDao(): BookGroupDao
-    abstract fun bookSourceDao(): BookSourceDao
-    abstract fun bookChapterDao(): BookChapterDao
-    abstract fun replaceRuleDao(): ReplaceRuleDao
-    abstract fun searchBookDao(): SearchBookDao
-    abstract fun searchKeywordDao(): SearchKeywordDao
-    abstract fun rssSourceDao(): RssSourceDao
-    abstract fun bookmarkDao(): BookmarkDao
-    abstract fun rssArticleDao(): RssArticleDao
-    abstract fun rssStarDao(): RssStarDao
-    abstract fun cookieDao(): CookieDao
-    abstract fun txtTocRule(): TxtTocRuleDao
-    abstract fun readRecordDao(): ReadRecordDao
-    abstract fun httpTTSDao(): HttpTTSDao
+
 }

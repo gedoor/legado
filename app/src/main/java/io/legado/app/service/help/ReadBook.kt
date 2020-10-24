@@ -381,7 +381,7 @@ object ReadBook {
                     book.name,
                     webBook?.bookSource?.bookSourceUrl,
                     content,
-                    book.useReplaceRule
+                    book.getUseReplaceRule()
                 )
                 when (chapter.index) {
                     durChapterIndex -> {
