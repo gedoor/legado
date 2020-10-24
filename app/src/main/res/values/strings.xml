@@ -779,5 +779,6 @@
     <string name="theme_name">主题名称</string>
     <string name="auto_clear_expired">自动清除过期搜索数据</string>
     <string name="auto_clear_expired_summary">超过一天的搜索数据</string>
+    <string name="re_segment">重新分段</string>
 
 </resources>

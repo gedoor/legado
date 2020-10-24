@@ -17,6 +17,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
 import io.legado.app.utils.*
@@ -138,6 +139,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             TipConfigDialog().show(childFragmentManager, "tipConfigDialog")
         }
         rg_page_anim.onCheckedChange { _, checkedId ->
+            ReadBook.book?.setPageAnim(-1)
             ReadBookConfig.pageAnim = rg_page_anim.getIndexById(checkedId)
             callBack?.page_view?.upPageAnim()
         }
@@ -216,10 +218,12 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun upView() {
-        ReadBookConfig.let {
-            if (it.pageAnim >= 0 && it.pageAnim < rg_page_anim.childCount) {
-                rg_page_anim.check(rg_page_anim[it.pageAnim].id)
+        ReadBook.pageAnim().let {
+            if (it >= 0 && it < rg_page_anim.childCount) {
+                rg_page_anim.check(rg_page_anim[it].id)
             }
+        }
+        ReadBookConfig.let {
             dsb_text_size.progress = it.textSize - 5
             dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50
             dsb_line_size.progress = it.lineSpacingExtra

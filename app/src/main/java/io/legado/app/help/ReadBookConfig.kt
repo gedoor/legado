@@ -96,7 +96,6 @@ object ReadBookConfig {
                 bgMeanColor = color
             }
         }
-        isScroll = pageAnim == 3
     }
 
     fun save() {
@@ -154,7 +153,6 @@ object ReadBookConfig {
                 App.INSTANCE.putPrefBoolean(PreferKey.shareLayout, value)
             }
         }
-    var isScroll = pageAnim == 3
     val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
     val textFullJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textFullJustify, true)
     val textBottomJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textBottomJustify, true)
@@ -167,7 +165,6 @@ object ReadBookConfig {
         get() = config.curPageAnim()
         set(value) {
             config.setCurPageAnim(value)
-            isScroll = pageAnim == 3
         }
 
     var textFont: String

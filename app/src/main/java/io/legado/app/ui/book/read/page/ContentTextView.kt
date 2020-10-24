@@ -86,7 +86,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         textPage.textLines.forEach { textLine ->
             draw(canvas, textLine, relativeOffset)
         }
-        if (!ReadBookConfig.isScroll) return
+        if (!callBack.isScroll) return
         //滚动翻页
         if (!pageFactory.hasNext()) return
         val nextPage = relativePage(1)
@@ -215,7 +215,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             relativeOffset = relativeOffset(relativePos)
             if (relativePos > 0) {
                 //滚动翻页
-                if (!ReadBookConfig.isScroll) return
+                if (!callBack.isScroll) return
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
             val page = relativePage(relativePos)
@@ -252,7 +252,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             relativeOffset = relativeOffset(relativePos)
             if (relativePos > 0) {
                 //滚动翻页
-                if (!ReadBookConfig.isScroll) return
+                if (!callBack.isScroll) return
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
@@ -295,7 +295,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             relativeOffset = relativeOffset(relativePos)
             if (relativePos > 0) {
                 //滚动翻页
-                if (!ReadBookConfig.isScroll) return
+                if (!callBack.isScroll) return
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
             Log.e("y", "$y")
@@ -358,7 +358,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     private fun upSelectChars() {
-        val last = if (ReadBookConfig.isScroll) 2 else 0
+        val last = if (callBack.isScroll) 2 else 0
         for (relativePos in 0..last) {
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
@@ -397,7 +397,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun cancelSelect() {
-        val last = if (ReadBookConfig.isScroll) 2 else 0
+        val last = if (callBack.isScroll) 2 else 0
         for (relativePos in 0..last) {
             relativePage(relativePos).textLines.forEach { textLine ->
                 textLine.textChars.forEach {
@@ -499,5 +499,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val headerHeight: Int
         val pageFactory: TextPageFactory
         val scope: CoroutineScope
+        val isScroll: Boolean
     }
 }

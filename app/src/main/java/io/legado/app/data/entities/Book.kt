@@ -114,7 +114,7 @@ data class Book(
         return charset(charset ?: "UTF-8")
     }
 
-    fun rConfig(): ReadConfig {
+    private fun config(): ReadConfig {
         if (readConfig == null) {
             readConfig = ReadConfig()
         }
@@ -122,11 +122,27 @@ data class Book(
     }
 
     fun setUseReplaceRule(useReplaceRule: Boolean) {
-        rConfig().useReplaceRule = useReplaceRule
+        config().useReplaceRule = useReplaceRule
     }
 
     fun getUseReplaceRule(): Boolean {
-        return rConfig().useReplaceRule
+        return config().useReplaceRule
+    }
+
+    fun getReSegment(): Boolean {
+        return config().reSegment
+    }
+
+    fun setReSegment(reSegment: Boolean) {
+        config().reSegment = reSegment
+    }
+
+    fun getPageAnim(): Int {
+        return config().pageAnim
+    }
+
+    fun setPageAnim(pageAnim: Int) {
+        config().pageAnim = pageAnim
     }
 
     fun getFolderName(): String {

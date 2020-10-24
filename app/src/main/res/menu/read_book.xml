@@ -71,11 +71,25 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_page_anim"
+        android:icon="@drawable/ic_auto_page"
+        android:title="@string/page_anim"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_enable_replace"
         android:icon="@drawable/ic_find_replace"
         android:title="@string/replace_rule_title"
         android:checkable="true"
         android:checked="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_re_segment"
+        android:icon="@drawable/ic_toc"
+        android:title="@string/re_segment"
+        android:checkable="true"
+        android:checked="false"
         app:showAsAction="never" />
 
     <item

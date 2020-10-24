@@ -14,73 +14,71 @@ object ContentHelp {
      * @param chapterName 标题
      * @return
      */
-    fun lightNovelParagraph2(content: String, chapterName: String): String {
+    fun reSegment(content: String, chapterName: String): String {
         var content1 = content
-        if (true) {
-            val content2: String
-            val chapterNameLength = chapterName.trim { it <= ' ' }.length
-            content2 = if (chapterNameLength > 1) {
-                val regexp =
-                    chapterName.trim { it <= ' ' }.replace("\\s+".toRegex(), "(\\\\s*)")
-                //            质量较低的页面，章节内可能重复出现章节标题
-                if (chapterNameLength > 5) content1.replace(regexp.toRegex(), "")
-                    .trim { it <= ' ' } else content1.replaceFirst(
-                    "^\\s*" + regexp.toRegex(),
-                    ""
-                ).trim { it <= ' ' }
-            } else {
-                content1
-            }
-            var p = content2
-                .replace("&quot;".toRegex(), "“")
-                .replace("[:：]['\"‘”“]+".toRegex(), "：“")
-                .replace("[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
-                .split("\n(\\s*)".toRegex()).toTypedArray()
-
-            //初始化StringBuffer的长度,在原content的长度基础上做冗余
-            var buffer = StringBuffer((content1.length * 1.15).toInt())
-            //          章节的文本格式为章节标题-空行-首段，所以处理段落时需要略过第一行文本。
-            buffer.append(" ")
-            if (chapterName.trim { it <= ' ' } != p[0].trim { it <= ' ' }) {
-                // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
-                buffer.append(p[0].replace("[\u3000\\s]+".toRegex(), ""))
-            }
-
-            //如果原文存在分段错误，需要把段落重新黏合
-            for (i in 1 until p.size) {
-                if (match(MARK_SENTENCES_END, buffer[buffer.length - 1])) buffer.append("\n")
-                //            段落开头以外的地方不应该有空格
-                // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
-                buffer.append(p[i].replace("[\u3000\\s]".toRegex(), ""))
-            }
-            //     预分段预处理
-            //         ”“处理为”\n“。
-            //         ”。“处理为”。\n“。不考虑“？”  “！”的情况。
-            // ”。xxx处理为 ”。\n xxx
-            p = buffer.toString()
-                .replace("[\"”“]+[\\s]*[\"”“]+".toRegex(), "”\n“")
-                .replace("[\"”“]+(？。！?!~)[\"”“]+".toRegex(), "”$1\n“")
-                .replace("[\"”“]+(？。！?!~)([^\"”“])".toRegex(), "”$1\n$2")
-                .replace(
-                    "([问说喊唱叫骂道着答])[\\.。]".toRegex(),
-                    "$1。\n"
-                ) //                .replaceAll("([\\.。\\!！?？])([^\"”“]+)[:：][\"”“]", "$1\n$2：“")
-                .split("\n".toRegex()).toTypedArray()
-            buffer = StringBuffer((content1.length * 1.15).toInt())
-            for (s in p) {
-                buffer.append("\n")
-                buffer.append(
-                    findNewLines(s)
-                )
-            }
-            buffer = reduceLength(buffer)
-            content1 = ("$chapterName\n\n" + buffer.toString() //         处理章节头部空格和换行
-                .replaceFirst("^\\s+".toRegex(), "")
-                .replace("\\s*[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
-                .replace("[:：][”“\"\\s]+".toRegex(), "：“")
-                .replace("\n[\"“”]([^\n\"“”]+)([,:，：][\"”“])([^\n\"“”]+)".toRegex(), "\n$1：“$3")
-                .replace("\n(\\s*)".toRegex(), "\n"))
+        val content2: String
+        val chapterNameLength = chapterName.trim { it <= ' ' }.length
+        content2 = if (chapterNameLength > 1) {
+            val regexp =
+                chapterName.trim { it <= ' ' }.replace("\\s+".toRegex(), "(\\\\s*)")
+            //            质量较低的页面，章节内可能重复出现章节标题
+            if (chapterNameLength > 5) content1.replace(regexp.toRegex(), "")
+                .trim { it <= ' ' } else content1.replaceFirst(
+                "^\\s*" + regexp.toRegex(),
+                ""
+            ).trim { it <= ' ' }
+        } else {
+            content1
         }
+        var p = content2
+            .replace("&quot;".toRegex(), "“")
+            .replace("[:：]['\"‘”“]+".toRegex(), "：“")
+            .replace("[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
+            .split("\n(\\s*)".toRegex()).toTypedArray()
+
+        //初始化StringBuffer的长度,在原content的长度基础上做冗余
+        var buffer = StringBuffer((content1.length * 1.15).toInt())
+        //          章节的文本格式为章节标题-空行-首段，所以处理段落时需要略过第一行文本。
+        buffer.append(" ")
+        if (chapterName.trim { it <= ' ' } != p[0].trim { it <= ' ' }) {
+            // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
+            buffer.append(p[0].replace("[\u3000\\s]+".toRegex(), ""))
+        }
+
+        //如果原文存在分段错误，需要把段落重新黏合
+        for (i in 1 until p.size) {
+            if (match(MARK_SENTENCES_END, buffer[buffer.length - 1])) buffer.append("\n")
+            //            段落开头以外的地方不应该有空格
+            // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
+            buffer.append(p[i].replace("[\u3000\\s]".toRegex(), ""))
+        }
+        //     预分段预处理
+        //         ”“处理为”\n“。
+        //         ”。“处理为”。\n“。不考虑“？”  “！”的情况。
+        // ”。xxx处理为 ”。\n xxx
+        p = buffer.toString()
+            .replace("[\"”“]+[\\s]*[\"”“]+".toRegex(), "”\n“")
+            .replace("[\"”“]+(？。！?!~)[\"”“]+".toRegex(), "”$1\n“")
+            .replace("[\"”“]+(？。！?!~)([^\"”“])".toRegex(), "”$1\n$2")
+            .replace(
+                "([问说喊唱叫骂道着答])[\\.。]".toRegex(),
+                "$1。\n"
+            ) //                .replaceAll("([\\.。\\!！?？])([^\"”“]+)[:：][\"”“]", "$1\n$2：“")
+            .split("\n".toRegex()).toTypedArray()
+        buffer = StringBuffer((content1.length * 1.15).toInt())
+        for (s in p) {
+            buffer.append("\n")
+            buffer.append(
+                findNewLines(s)
+            )
+        }
+        buffer = reduceLength(buffer)
+        content1 = ("$chapterName\n\n" + buffer.toString() //         处理章节头部空格和换行
+            .replaceFirst("^\\s+".toRegex(), "")
+            .replace("\\s*[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
+            .replace("[:：][”“\"\\s]+".toRegex(), "：“")
+            .replace("\n[\"“”]([^\n\"“”]+)([,:，：][\"”“])([^\n\"“”]+)".toRegex(), "\n$1：“$3")
+            .replace("\n(\\s*)".toRegex(), "\n"))
         return content1
     }
 

@@ -29,7 +29,13 @@ class PageView(context: Context, attrs: AttributeSet) :
     val callBack: CallBack get() = activity as CallBack
     var pageFactory: TextPageFactory = TextPageFactory(this)
     var pageDelegate: PageDelegate? = null
-
+        private set(value) {
+            field?.onDestroy()
+            field = null
+            field = value
+            upContent()
+        }
+    var isScroll = ReadBook.pageAnim() == 3
     var prevPage: ContentView = ContentView(context)
     var curPage: ContentView = ContentView(context)
     var nextPage: ContentView = ContentView(context)
@@ -304,20 +310,28 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     fun upPageAnim() {
-        pageDelegate?.onDestroy()
-        pageDelegate = null
-        pageDelegate = when (ReadBookConfig.pageAnim) {
-            0 -> CoverPageDelegate(this)
-            1 -> SlidePageDelegate(this)
-            2 -> SimulationPageDelegate(this)
-            3 -> ScrollPageDelegate(this)
-            else -> NoAnimPageDelegate(this)
+        isScroll = ReadBook.pageAnim() == 3
+        when (ReadBook.pageAnim()) {
+            0 -> if (pageDelegate !is CoverPageDelegate) {
+                pageDelegate = CoverPageDelegate(this)
+            }
+            1 -> if (pageDelegate !is SlidePageDelegate) {
+                pageDelegate = SlidePageDelegate(this)
+            }
+            2 -> if (pageDelegate !is SimulationPageDelegate) {
+                pageDelegate = SimulationPageDelegate(this)
+            }
+            3 -> if (pageDelegate !is ScrollPageDelegate) {
+                pageDelegate = ScrollPageDelegate(this)
+            }
+            else -> if (pageDelegate !is NoAnimPageDelegate) {
+                pageDelegate = NoAnimPageDelegate(this)
+            }
         }
-        upContent()
     }
 
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
-        if (ReadBookConfig.isScroll && !callBack.isAutoPage) {
+        if (isScroll && !callBack.isAutoPage) {
             curPage.setContent(pageFactory.currentPage, resetPageOffset)
         } else {
             curPage.resetPageOffset()

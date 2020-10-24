@@ -42,3 +42,17 @@ fun Context.selector(
         show().applyTint()
     }
 }
+
+fun Context.selector(
+    titleSource: Int? = null,
+    items: List<CharSequence>,
+    onClick: (DialogInterface, Int) -> Unit
+) {
+    with(AndroidAlertBuilder(this)) {
+        if (titleSource != null) {
+            this.title = getString(titleSource)
+        }
+        items(items, onClick)
+        show().applyTint()
+    }
+}
