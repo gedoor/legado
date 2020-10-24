@@ -3,8 +3,8 @@ package io.legado.app.help
 import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
-import io.legado.app.help.http.SSLHelper
 import io.legado.app.help.http.CookieStore
+import io.legado.app.help.http.SSLHelper
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import org.jsoup.Connection
@@ -127,7 +127,7 @@ interface JsExtensions {
         val cookie = CookieStore.getCookie(tag)
         val cookieMap = CookieStore.cookieToMap(cookie)
         return if (key != null) {
-            cookieMap.get(key) ?: ""
+            cookieMap[key] ?: ""
         } else {
             cookie
         }

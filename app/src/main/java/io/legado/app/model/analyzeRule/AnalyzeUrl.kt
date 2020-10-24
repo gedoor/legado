@@ -282,7 +282,7 @@ class AnalyzeUrl(
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
             val cookieMap = CookieStore.cookieToMap(cookie)
-            val customCookieMap = CookieStore.cookieToMap(headerMap.get("Cookie") ?: "")
+            val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
             cookieMap.putAll(customCookieMap)
             val newCookie = CookieStore.mapToCookie(cookieMap)
             newCookie?.let {
@@ -321,7 +321,7 @@ class AnalyzeUrl(
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
             val cookieMap = CookieStore.cookieToMap(cookie)
-            val customCookieMap = CookieStore.cookieToMap(headerMap.get("Cookie") ?: "")
+            val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
             cookieMap.putAll(customCookieMap)
             val newCookie = CookieStore.mapToCookie(cookieMap)
             newCookie?.let {
@@ -369,7 +369,7 @@ class AnalyzeUrl(
             val cookie = CookieStore.getCookie(tag)
             if (cookie.isNotEmpty()) {
                 val cookieMap = CookieStore.cookieToMap(cookie)
-                val customCookieMap = CookieStore.cookieToMap(headerMap.get("Cookie") ?: "")
+                val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
                 cookieMap.putAll(customCookieMap)
                 val newCookie = CookieStore.mapToCookie(cookieMap)
                 newCookie?.let {
