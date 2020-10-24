@@ -6,6 +6,7 @@ import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.SyncBookProgress
@@ -33,8 +34,10 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
     private fun init() {
         Coroutine.async {
             //清除过期数据
-            App.db.searchBookDao()
-                .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+            if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
+                App.db.searchBookDao()
+                    .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+            }
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
                 1 -> HanLP.convertToSimplifiedChinese("初始化")

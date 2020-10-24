@@ -771,5 +771,7 @@
     <string name="explore_empty">当前没有发现源,关注公众号[开源阅读]添加带发现的书源!</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">主题名称</string>
+    <string name="auto_clear_expired">自动清除过期搜索数据</string>
+    <string name="auto_clear_expired_summary">超过一天的搜索数据</string>
 
 </resources>

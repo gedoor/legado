@@ -58,17 +58,18 @@
             android:summary="@string/replace_enable_default_s"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.Preference
-            android:key="threadCount"
-            android:title="@string/threads_num_title"
-            app:iconSpaceReserved="false" />
-
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="mediaButtonOnExit"
             android:title="@string/media_button_on_exit_title"
             android:summary="@string/media_button_on_exit_summary"
             app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="autoClearExpired"
+            android:title="@string/auto_clear_expired"
+            android:summary="@string/auto_clear_expired_summary" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="webPort"
@@ -79,6 +80,11 @@
             android:key="cleanCache"
             android:title="@string/clear_cache"
             android:summary="@string/clear_cache_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="threadCount"
+            android:title="@string/threads_num_title"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
