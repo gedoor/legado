@@ -12,6 +12,8 @@ java.getCookie("http://baidu.com", null) => userid=1234;pwd=adbcd
 java.getCookie("http://baidu.com", "userid") => 1234
 ```
 * 修复简繁转换没有处理标题
+* 每本书可以单独设置翻页动画,在菜单里
+* 添加重新分段功能,针对每本书,在菜单里,分段代码来自[tumuyan](https://github.com/tumuyan)
 
 **2020/10/21**
 * 默认分组无书籍时自动隐藏
