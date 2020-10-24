@@ -189,9 +189,6 @@ class AnalyzeUrl(
                             ?.let { headerMap.putAll(it) }
                     }
                 }
-                headerMap[UA_NAME] ?: let {
-                    headerMap[UA_NAME] = userAgent
-                }
                 option.charset?.let { charset = it }
                 option.body?.let {
                     body = if (it is String) it else GSON.toJson(it)
@@ -205,6 +202,9 @@ class AnalyzeUrl(
                     evalJS(it)
                 }
             }
+        }
+        headerMap[UA_NAME] ?: let {
+            headerMap[UA_NAME] = userAgent
         }
         when (method) {
             RequestMethod.GET -> {
