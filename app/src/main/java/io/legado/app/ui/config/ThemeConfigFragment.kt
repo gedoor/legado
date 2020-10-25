@@ -161,8 +161,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 .setMinValue(0)
                 .setValue(AppConfig.elevation)
                 .setCustomButton((R.string.btn_default_s)) {
-                    AppConfig.elevation =
-                        App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
+                    AppConfig.elevation = AppConfig.sysElevation
                     recreateActivities()
                 }
                 .show {

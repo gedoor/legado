@@ -67,6 +67,7 @@ class App : MultiDexApplication() {
     }
 
     fun applyDayNight() {
+        AppConfig.upEInkMode()
         ReadBookConfig.upBg()
         ThemeConfig.applyTheme(this)
         initNightMode()

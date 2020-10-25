@@ -204,8 +204,7 @@ object Restore {
                     }
                 }
                 edit.apply()
-                AppConfig.replaceEnableDefault =
-                    App.INSTANCE.getPrefBoolean(PreferKey.replaceEnableDefault, true)
+                AppConfig.upConfig()
             }
             ReadBookConfig.apply {
                 styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)

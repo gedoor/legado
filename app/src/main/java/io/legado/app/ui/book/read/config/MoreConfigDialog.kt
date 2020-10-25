@@ -12,6 +12,7 @@ import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.bottomBackground
@@ -116,6 +117,9 @@ class MoreConfigDialog : DialogFragment() {
                 }
                 PreferKey.showBrightnessView -> {
                     postEvent(PreferKey.showBrightnessView, "")
+                }
+                PreferKey.clickAllNext -> {
+                    AppConfig.upClickAllNext()
                 }
             }
         }
