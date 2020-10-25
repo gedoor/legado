@@ -235,6 +235,7 @@
             android:name=".ui.book.toc.ChapterListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
+        <!-- 正文搜索 -->
         <activity
             android:name=".ui.book.searchContent.SearchContentActivity"
             android:launchMode="singleTop"
