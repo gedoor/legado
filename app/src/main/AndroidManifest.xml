@@ -198,32 +198,38 @@
         <!-- 关于界面 -->
         <activity
             android:name=".ui.about.AboutActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="behind" />
         <!-- 捐赠界面 -->
         <activity
             android:name=".ui.about.DonateActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="behind" />
         <!-- 书源管理 -->
         <activity
             android:name=".ui.book.source.manage.BookSourceActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:screenOrientation="behind" />
         <!-- 订阅源管理 -->
         <activity
             android:name=".ui.rss.source.manage.RssSourceActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:screenOrientation="behind" />
         <!-- 替换规则界面 -->
         <activity
             android:name=".ui.replace.ReplaceRuleActivity"
-            android:launchMode="singleTop">
-        </activity>
+            android:launchMode="singleTop"
+            android:screenOrientation="behind" />
         <!-- 书籍管理 -->
         <activity
             android:name=".ui.book.arrange.ArrangeBookActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:screenOrientation="behind" />
         <!-- 书源调试 -->
         <activity
             android:name=".ui.book.source.debug.BookSourceDebugActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:screenOrientation="behind" />
         <!-- 目录 -->
         <activity
             android:name=".ui.book.toc.ChapterListActivity"
@@ -343,8 +349,8 @@
         <!-- 打开文件 -->
         <activity
             android:name=".ui.association.FileAssociationActivity"
-            android:theme="@style/AppTheme.Transparent"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -371,6 +377,7 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
         <provider
             android:name=".api.ReaderProvider"
             android:authorities="${applicationId}.readerProvider"
