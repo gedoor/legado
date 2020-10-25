@@ -154,6 +154,7 @@ object ReadBookConfig {
             }
         }
     val clickTurnPage get() = App.INSTANCE.getPrefBoolean(PreferKey.clickTurnPage, true)
+    val clickAllNext get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
     val textFullJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textFullJustify, true)
     val textBottomJustify get() = App.INSTANCE.getPrefBoolean(PreferKey.textBottomJustify, true)
     var hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)

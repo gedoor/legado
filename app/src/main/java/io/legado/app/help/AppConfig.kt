@@ -10,9 +10,8 @@ import io.legado.app.utils.*
 @Suppress("MemberVisibilityCanBePrivate")
 object AppConfig {
     var isEInkMode: Boolean = false
-    var clickAllNext: Boolean = false
-    var isGooglePlay: Boolean
-    var isCoolApk: Boolean
+    val isGooglePlay: Boolean
+    val isCoolApk: Boolean
     var replaceEnableDefault: Boolean = true
     val sysElevation = App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
 
@@ -24,7 +23,6 @@ object AppConfig {
 
     fun upConfig() {
         upEInkMode()
-        upClickAllNext()
         upReplaceEnableDefault()
     }
 
@@ -102,10 +100,6 @@ object AppConfig {
         set(value) {
             App.INSTANCE.putPrefInt(PreferKey.ttsSpeechRate, value)
         }
-
-    fun upClickAllNext() {
-        clickAllNext = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
-    }
 
     var chineseConverterType: Int
         get() = App.INSTANCE.getPrefInt(PreferKey.chineseConverterType)

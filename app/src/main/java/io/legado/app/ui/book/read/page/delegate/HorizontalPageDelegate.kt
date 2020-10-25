@@ -118,7 +118,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         abortAnim()
         if (!hasNext()) return
         setDirection(Direction.NEXT)
-        pageView.setTouchPoint(viewWidth.toFloat(), 0f)
+        pageView.setTouchPoint(viewWidth.toFloat(), 0f, false)
         onAnimStart(animationSpeed)
     }
 
