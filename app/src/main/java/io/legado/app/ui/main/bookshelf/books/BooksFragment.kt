@@ -135,6 +135,10 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }
     }
 
+    fun getBooksCount(): Int {
+        return booksAdapter.getActualItemCount()
+    }
+
     override fun open(book: Book) {
         when (book.type) {
             BookType.audio ->

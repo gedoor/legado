@@ -193,7 +193,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             }.show().applyTint()
     }
 
-    override fun onTabReselected(tab: TabLayout.Tab) = Unit
+    override fun onTabReselected(tab: TabLayout.Tab) {
+        fragmentMap[selectedGroup?.groupId]?.let {
+            toast("${selectedGroup?.groupName}(${it.getBooksCount()})")
+        }
+    }
 
     override fun onTabUnselected(tab: TabLayout.Tab) = Unit
 
