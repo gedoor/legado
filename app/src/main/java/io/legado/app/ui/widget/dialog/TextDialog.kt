@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.noties.markwon.Markwon
+import io.noties.markwon.image.glide.GlideImagesPlugin
 import kotlinx.android.synthetic.main.dialog_text_view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ru.noties.markwon.Markwon
 
 
 class TextDialog : BaseDialogFragment() {
@@ -63,11 +64,10 @@ class TextDialog : BaseDialogFragment() {
             val content = it.getString("content") ?: ""
             when (it.getInt("mode")) {
                 MD -> text_view.post {
-                    Markwon.create(requireContext())
-                        .setMarkdown(
-                            text_view,
-                            content
-                        )
+                    Markwon.builder(requireContext())
+                        .usePlugin(GlideImagesPlugin.create(requireContext()))
+                        .build()
+                        .setMarkdown(text_view, content)
                 }
                 else -> text_view.text = content
             }
