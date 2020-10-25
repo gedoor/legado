@@ -120,9 +120,11 @@ object AppConfig {
             App.INSTANCE.putPrefInt(PreferKey.barElevation, value)
         }
 
-    val autoChangeSource: Boolean get() = App.INSTANCE.getPrefBoolean("autoChangeSource", true)
+    val autoChangeSource: Boolean
+        get() = App.INSTANCE.getPrefBoolean(PreferKey.autoChangeSource, true)
 
-    val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
+    val readBodyToLh: Boolean
+        get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
 
     fun upReplaceEnableDefault() {
         replaceEnableDefault =
