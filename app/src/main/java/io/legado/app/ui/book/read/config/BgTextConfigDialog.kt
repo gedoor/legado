@@ -115,7 +115,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
         headerView.iv_bg.setImageResource(R.drawable.ic_image)
         headerView.iv_bg.setColorFilter(primaryTextColor)
         headerView.onClick { selectImage() }
-        requireContext().assets.list("bg${File.separator}")?.let {
+        requireContext().assets.list("bg")?.let {
             adapter.setItems(it.toList())
         }
     }
