@@ -2,6 +2,7 @@ package io.legado.app.base
 
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.Menu
@@ -34,7 +35,7 @@ abstract class BaseActivity(
 
     val isInMultiWindow: Boolean
         get() {
-            return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 isInMultiWindowMode
             } else {
                 false
@@ -63,7 +64,7 @@ abstract class BaseActivity(
         setupSystemBar()
         super.onCreate(savedInstanceState)
         setContentView(layoutID)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
         }
