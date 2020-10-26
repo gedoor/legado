@@ -121,6 +121,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(item)
+                R.id.menu_bottom -> callBack.toBottom(item)
                 R.id.menu_del -> callBack.delete(item)
             }
             true
@@ -187,6 +188,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         fun delete(rule: ReplaceRule)
         fun edit(rule: ReplaceRule)
         fun toTop(rule: ReplaceRule)
+        fun toBottom(rule: ReplaceRule)
         fun upOrder()
         fun upCountView()
     }

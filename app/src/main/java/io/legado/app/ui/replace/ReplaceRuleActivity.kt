@@ -294,27 +294,32 @@ class ReplaceRuleActivity :
     }
 
     override fun update(vararg rule: ReplaceRule) {
-        setResult(Activity.RESULT_OK)
+        setResult(RESULT_OK)
         viewModel.update(*rule)
     }
 
     override fun delete(rule: ReplaceRule) {
-        setResult(Activity.RESULT_OK)
+        setResult(RESULT_OK)
         viewModel.delete(rule)
     }
 
     override fun edit(rule: ReplaceRule) {
-        setResult(Activity.RESULT_OK)
+        setResult(RESULT_OK)
         ReplaceEditActivity.show(this, rule.id)
     }
 
     override fun toTop(rule: ReplaceRule) {
-        setResult(Activity.RESULT_OK)
+        setResult(RESULT_OK)
         viewModel.toTop(rule)
     }
 
+    override fun toBottom(rule: ReplaceRule) {
+        setResult(RESULT_OK)
+        viewModel.toBottom(rule)
+    }
+
     override fun upOrder() {
-        setResult(Activity.RESULT_OK)
+        setResult(RESULT_OK)
         viewModel.upOrder()
     }
 }

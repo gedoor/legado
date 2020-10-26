@@ -34,6 +34,13 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    fun toBottom(rule: ReplaceRule) {
+        execute {
+            rule.order = App.db.replaceRuleDao().maxOrder + 1
+            App.db.replaceRuleDao().update(rule)
+        }
+    }
+
     fun upOrder() {
         execute {
             val rules = App.db.replaceRuleDao().all
