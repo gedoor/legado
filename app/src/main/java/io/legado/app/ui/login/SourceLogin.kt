@@ -55,7 +55,9 @@ class SourceLogin : BaseActivity(R.layout.activity_source_login) {
                 super.onPageFinished(view, url)
             }
         }
-        web_view.loadUrl(loginUrl)
+        loginUrl?.let {
+            web_view.loadUrl(it)
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -69,7 +71,9 @@ class SourceLogin : BaseActivity(R.layout.activity_source_login) {
                 if (!checking) {
                     checking = true
                     title_bar.snackbar(R.string.check_host_cookie)
-                    web_view.loadUrl(sourceUrl)
+                    loginUrl?.let {
+                        web_view.loadUrl(it)
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package io.legado.app.ui.association
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -169,6 +170,7 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
             tool_bar.inflateMenu(R.menu.import_source)
         }
 
+        @SuppressLint("InflateParams")
         override fun onMenuItemClick(item: MenuItem): Boolean {
             when (item.itemId) {
                 R.id.menu_new_group -> {

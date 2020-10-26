@@ -3,7 +3,6 @@ package io.legado.app.ui.book.toc
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -102,10 +101,8 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
                 }
                 yesButton {
                     editText?.text?.toString()?.let { editContent ->
-                        AsyncTask.execute {
-                            bookmark.content = editContent
-                            App.db.bookmarkDao().update(bookmark)
-                        }
+                        bookmark.content = editContent
+                        App.db.bookmarkDao().update(bookmark)
                     }
                 }
                 noButton()

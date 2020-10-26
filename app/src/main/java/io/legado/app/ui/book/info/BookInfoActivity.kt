@@ -114,8 +114,8 @@ class BookInfoActivity :
         return super.onCompatOptionsItemSelected(item)
     }
 
-    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
-        menu?.findItem(R.id.menu_can_update)?.isChecked =
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_can_update)?.isChecked =
             viewModel.bookData.value?.canUpdate ?: true
         return super.onMenuOpened(featureId, menu)
     }

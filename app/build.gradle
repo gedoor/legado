@@ -18,7 +18,7 @@ def version = "3." + releaseTime()
 def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     signingConfigs {
         if (project.hasProperty("RELEASE_STORE_FILE")) {
             myConfig {
@@ -34,7 +34,7 @@ android {
     defaultConfig {
         applicationId "io.legado.app"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -26,6 +26,7 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import io.legado.app.R
 import org.jetbrains.anko.internals.AnkoInternals.NO_GETTER
 import kotlin.DeprecationLevel.ERROR
 
@@ -111,7 +112,7 @@ inline fun AlertBuilder<*>.cancelButton(noinline handler: ((dialog: DialogInterf
     negativeButton(android.R.string.cancel, handler)
 
 inline fun AlertBuilder<*>.yesButton(noinline handler: ((dialog: DialogInterface) -> Unit)? = null) =
-    positiveButton(android.R.string.yes, handler)
+    positiveButton(R.string.yes, handler)
 
 inline fun AlertBuilder<*>.noButton(noinline handler: ((dialog: DialogInterface) -> Unit)? = null) =
-    negativeButton(android.R.string.no, handler)
+    negativeButton(R.string.no, handler)

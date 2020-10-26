@@ -2,6 +2,7 @@ package io.legado.app.ui.book.search
 
 import android.app.Application
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
@@ -15,7 +16,7 @@ import kotlinx.coroutines.isActive
 
 class SearchViewModel(application: Application) : BaseViewModel(application),
     SearchBookModel.CallBack {
-    val handler = Handler()
+    val handler = Handler(Looper.getMainLooper())
     private val searchBookModel = SearchBookModel(this, this)
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchBookLiveData = MutableLiveData<List<SearchBook>>()

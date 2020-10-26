@@ -1,6 +1,7 @@
 package io.legado.app.help.permission
 
 import android.os.Handler
+import android.os.Looper
 import java.util.*
 
 internal object RequestManager : OnPermissionsResultCallback {
@@ -8,7 +9,7 @@ internal object RequestManager : OnPermissionsResultCallback {
     private var requests: Stack<Request>? = null
     private var request: Request? = null
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
 
     private val requestRunnable = Runnable {
         request?.start()
