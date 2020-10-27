@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.read.config
 
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import android.widget.SeekBar
 import io.legado.app.R
@@ -20,10 +19,6 @@ class AutoReadDialog : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.let {
-            it.windowManager?.defaultDisplay?.getMetrics(dm)
-        }
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)

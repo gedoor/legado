@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
@@ -54,10 +53,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.let {
-            it.windowManager?.defaultDisplay?.getMetrics(dm)
-        }
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)

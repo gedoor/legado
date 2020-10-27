@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.config
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.core.view.get
 import io.legado.app.R
@@ -36,10 +35,6 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.let {
-            it.windowManager?.defaultDisplay?.getMetrics(dm)
-        }
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)

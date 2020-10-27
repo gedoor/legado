@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.read.config
 
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +18,6 @@ class TipConfigDialog : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.let {
-            it.windowManager?.defaultDisplay?.getMetrics(dm)
-        }
         dialog?.window
             ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }

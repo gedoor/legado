@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.config
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
@@ -25,10 +24,6 @@ class MoreConfigDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.let {
-            it.windowManager?.defaultDisplay?.getMetrics(dm)
-        }
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
