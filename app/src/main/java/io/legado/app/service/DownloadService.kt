@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
@@ -28,7 +29,7 @@ class DownloadService : BaseService() {
 
     private val downloads = hashMapOf<Long, String>()
     private val completeDownloads = hashSetOf<Long>()
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val runnable = Runnable {
         checkDownloadState()
     }

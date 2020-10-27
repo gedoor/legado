@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import androidx.core.app.NotificationCompat
 import io.legado.app.App
 import io.legado.app.R
@@ -32,7 +33,7 @@ class CacheBookService : BaseService() {
     private var searchPool =
         Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private var runnable: Runnable = Runnable { upDownload() }
     private val bookMap = ConcurrentHashMap<String, Book>()
     private val webBookMap = ConcurrentHashMap<String, WebBook>()

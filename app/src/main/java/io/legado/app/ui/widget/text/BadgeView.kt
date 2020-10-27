@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams
-import android.widget.TabWidget
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
@@ -184,16 +183,6 @@ class BadgeView @JvmOverloads constructor(
 
     fun decrementBadgeCount(decrement: Int) {
         incrementBadgeCount(-decrement)
-    }
-
-    /**
-     * Attach the BadgeView to the TabWidget
-     * @param target the TabWidget to attach the BadgeView
-     * @param tabIndex index of the tab
-     */
-    fun setTargetView(target: TabWidget, tabIndex: Int) {
-        val tabView = target.getChildTabViewAt(tabIndex)
-        setTargetView(tabView)
     }
 
     /**

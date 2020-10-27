@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Handler
+import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
@@ -40,7 +41,7 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
-    internal val handler = Handler()
+    internal val handler = Handler(Looper.getMainLooper())
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequest? = null
     private var broadcastReceiver: BroadcastReceiver? = null

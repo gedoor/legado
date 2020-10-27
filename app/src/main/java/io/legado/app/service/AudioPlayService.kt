@@ -12,6 +12,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
@@ -50,7 +51,7 @@ class AudioPlayService : BaseService(),
         var timeMinute: Int = 0
     }
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequest? = null
     private var title: String = ""

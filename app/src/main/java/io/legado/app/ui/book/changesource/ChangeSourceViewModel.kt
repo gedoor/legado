@@ -3,6 +3,7 @@ package io.legado.app.ui.book.changesource
 import android.app.Application
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
@@ -27,7 +28,7 @@ import kotlin.math.min
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
-    val handler = Handler()
+    val handler = Handler(Looper.getMainLooper())
     val searchStateData = MutableLiveData<Boolean>()
     val searchBooksLiveData = MutableLiveData<List<SearchBook>>()
     var name: String = ""
