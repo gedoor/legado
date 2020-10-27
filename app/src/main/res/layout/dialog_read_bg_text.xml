@@ -9,6 +9,38 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/style_name"
+            android:textColor="@color/primaryText"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:textColor="@color/secondaryText"
+            tools:text="文字" />
+
+        <ImageView
+            android:id="@+id/iv_edit"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_edit"
+            app:tint="@color/secondaryText"
+            android:contentDescription="@string/edit" />
+
+    </LinearLayout>
+
     <io.legado.app.lib.theme.view.ATESwitch
         android:id="@+id/sw_dark_status_icon"
         android:layout_width="match_parent"

@@ -359,6 +359,7 @@ object ReadBookConfig {
     @Keep
     @Parcelize
     class Config(
+        var name: String = "",
         var bgStr: String = "#EEEEEE",//白天背景
         var bgStrNight: String = "#000000",//夜间背景
         var bgStrEInk: String = "#FFFFFF",

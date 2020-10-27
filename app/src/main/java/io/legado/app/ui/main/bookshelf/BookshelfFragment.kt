@@ -176,18 +176,17 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     @SuppressLint("InflateParams")
     private fun addBookByUrl() {
-        requireContext()
-            .alert(titleResource = R.string.add_book_url) {
-                var editText: AutoCompleteTextView? = null
-                customView {
-                    layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                        editText = edit_view
-                    }
+        alert(titleResource = R.string.add_book_url) {
+            var editText: AutoCompleteTextView? = null
+            customView {
+                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                    editText = edit_view
                 }
-                okButton {
-                    editText?.text?.toString()?.let {
-                        viewModel.addBookByUrl(it)
-                    }
+            }
+            okButton {
+                editText?.text?.toString()?.let {
+                    viewModel.addBookByUrl(it)
+                }
                 }
                 noButton { }
             }.show().applyTint()

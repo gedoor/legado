@@ -165,7 +165,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
 
     @SuppressLint("InflateParams")
     private fun showTitleConfig() = ReadBookConfig.apply {
-        requireContext().alert(R.string.title) {
+        alert(R.string.title) {
             val rootView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.dialog_title_config, null).apply {
                     rg_title_mode.checkByIndex(titleMode)

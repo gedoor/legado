@@ -73,7 +73,7 @@ class AboutFragment : PreferenceFragmentCompat() {
     }
 
     private fun showQqGroups() {
-        alert(title = R.string.join_qq_group) {
+        alert(titleResource = R.string.join_qq_group) {
             val names = arrayListOf<String>()
             qqGroups.forEach {
                 names.add(it.key)

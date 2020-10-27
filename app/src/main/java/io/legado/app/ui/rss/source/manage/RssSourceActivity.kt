@@ -171,14 +171,17 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             }
 
             override fun onClickMainAction() {
-                this@RssSourceActivity
-                    .alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-                        okButton { viewModel.delSelection(adapter.getSelection()) }
-                        noButton { }
-                    }
-                    .show().applyTint()
+                delSourceDialog()
             }
         })
+    }
+
+    private fun delSourceDialog() {
+        alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
+            okButton { viewModel.delSelection(adapter.getSelection()) }
+            noButton { }
+        }
+            .show().applyTint()
     }
 
     private fun upGroupMenu() {

@@ -48,10 +48,10 @@ fun Context.alert(
 }
 
 inline fun Fragment.alert(
-    title: Int? = null,
+    titleResource: Int? = null,
     message: Int? = null,
     noinline init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-) = requireActivity().alert(title, message, init)
+) = requireActivity().alert(titleResource, message, init)
 
 fun Context.alert(
     titleResource: Int? = null,

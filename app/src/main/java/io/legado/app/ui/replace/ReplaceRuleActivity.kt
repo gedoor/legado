@@ -125,14 +125,17 @@ class ReplaceRuleActivity :
             }
 
             override fun onClickMainAction() {
-                this@ReplaceRuleActivity
-                    .alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-                        okButton { viewModel.delSelection(adapter.getSelection()) }
-                        noButton { }
-                    }
-                    .show().applyTint()
+                delSourceDialog()
             }
         })
+    }
+
+    private fun delSourceDialog() {
+        alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
+            okButton { viewModel.delSelection(adapter.getSelection()) }
+            noButton { }
+        }
+            .show().applyTint()
     }
 
     private fun observeReplaceRuleData(key: String? = null) {

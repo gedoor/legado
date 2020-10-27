@@ -87,7 +87,7 @@ class FontSelectDialog : BaseDialogFragment(),
         when (item?.itemId) {
             R.id.menu_default -> {
                 val requireContext = requireContext()
-                requireContext.alert(titleResource = R.string.system_typeface) {
+                alert(titleResource = R.string.system_typeface) {
                     items(
                         requireContext.resources.getStringArray(R.array.system_typefaces).toList()
                     ) { _, i ->
