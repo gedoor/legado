@@ -245,6 +245,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             payloads: MutableList<Any>
         ) {
             holder.itemView.apply {
+                iv_style.setText(item.name.ifBlank { "文字" })
                 iv_style.setTextColor(item.curTextColor())
                 iv_style.setImageDrawable(item.curBgDrawable(100, 150))
                 if (ReadBookConfig.styleSelect == holder.layoutPosition) {

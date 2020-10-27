@@ -120,6 +120,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                 var editText: AutoCompleteTextView? = null
                 customView {
                     layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                        edit_view.setText(ReadBookConfig.durConfig.name)
                         editText = edit_view
                     }
                 }
@@ -130,7 +131,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FileChooserDialog.CallBack {
                     }
                 }
                 cancelButton()
-            }
+            }.show().applyTint()
         }
         sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
