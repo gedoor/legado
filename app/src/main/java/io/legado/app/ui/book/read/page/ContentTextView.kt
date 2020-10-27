@@ -22,6 +22,7 @@ import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.CoroutineScope
+import kotlin.math.min
 
 /**
  * 阅读内容界面
@@ -181,7 +182,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             && pageOffset < 0
             && pageOffset + textPage.height < ChapterProvider.visibleHeight
         ) {
-            pageOffset = 0f
+            val offset = ChapterProvider.visibleHeight - textPage.height
+            pageOffset = min(0f, offset)
         } else if (pageOffset > 0) {
             pageFactory.moveToPrev(false)
             textPage = pageFactory.currentPage
