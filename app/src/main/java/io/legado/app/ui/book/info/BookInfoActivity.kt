@@ -90,6 +90,13 @@ class BookInfoActivity :
                     toast(R.string.after_add_bookshelf)
                 }
             }
+            R.id.menu_share_it -> {
+                viewModel.bookData.value?.let {
+                    val bookJson = GSON.toJson(it)
+                    val shareStr = "${it.bookUrl}#$bookJson"
+                    shareWithQr(it.name, shareStr)
+                }
+            }
             R.id.menu_refresh -> {
                 upLoading(true)
                 viewModel.bookData.value?.let {
