@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -26,6 +25,7 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getSize
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.activity_translucence.*
@@ -122,8 +122,7 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
 
         override fun onStart() {
             super.onStart()
-            val dm = DisplayMetrics()
-            activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+            val dm = requireActivity().getSize()
             dialog?.window?.setLayout(
                 (dm.widthPixels * 0.9).toInt(),
                 ViewGroup.LayoutParams.WRAP_CONTENT

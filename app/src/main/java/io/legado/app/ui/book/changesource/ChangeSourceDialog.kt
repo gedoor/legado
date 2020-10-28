@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.changesource
 
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -19,10 +18,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
 
@@ -51,8 +47,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        val dm = requireActivity().getSize()
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 

@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.changecover
 
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +14,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getSize
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.dialog_change_source.*
 
@@ -44,8 +44,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        val dm = requireActivity().getSize()
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 

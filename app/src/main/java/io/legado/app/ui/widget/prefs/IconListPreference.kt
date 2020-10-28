@@ -5,7 +5,6 @@ import android.content.ContextWrapper
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +19,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.getCompatDrawable
+import io.legado.app.utils.getSize
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_icon_preference.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -120,8 +120,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
         override fun onStart() {
             super.onStart()
-            val dm = DisplayMetrics()
-            activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+            val dm = requireActivity().getSize()
             dialog?.window?.setLayout(
                 (dm.widthPixels * 0.8).toInt(),
                 ViewGroup.LayoutParams.WRAP_CONTENT
