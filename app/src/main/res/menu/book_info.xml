@@ -9,6 +9,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_share_it"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_refresh"
         android:title="@string/refresh"
         app:showAsAction="never" />
