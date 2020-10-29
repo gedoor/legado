@@ -324,9 +324,6 @@ object BookHelp {
     ): List<String> {
         var title1 = title
         var content1 = content
-        if (book.getReSegment()) {
-            content1 = ContentHelp.reSegment(content1, title1)
-        }
         if (book.getUseReplaceRule()) {
             synchronized(this) {
                 if (bookName != book.name || bookOrigin != book.origin) {
@@ -356,6 +353,9 @@ object BookHelp {
                     }
                 }
             }
+        }
+        if (book.getReSegment()) {
+            content1 = ContentHelp.reSegment(content1, title1)
         }
         try {
             when (AppConfig.chineseConverterType) {
