@@ -1,6 +1,7 @@
 package io.legado.app.ui.filepicker
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import io.legado.app.R
@@ -22,8 +23,10 @@ object FilePicker {
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
-        val selectList =
-            activity.resources.getStringArray(R.array.select_folder).toMutableList()
+        val selectList = arrayListOf(activity.getString(R.string.sys_folder_picker))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            selectList.add(activity.getString(R.string.app_folder_picker))
+        }
         otherActions?.let {
             selectList.addAll(otherActions)
         }
@@ -39,14 +42,20 @@ object FilePicker {
                             activity.toast(e.localizedMessage ?: "ERROR")
                         }
                     }
-                    1 -> checkPermissions(activity) {
-                        FilePickerDialog.show(
-                            activity.supportFragmentManager,
-                            requestCode,
-                            mode = FilePickerDialog.DIRECTORY
-                        )
+                    else -> {
+                        val selectText = selectList[index]
+                        if (selectText == activity.getString(R.string.app_folder_picker)) {
+                            checkPermissions(activity) {
+                                FilePickerDialog.show(
+                                    activity.supportFragmentManager,
+                                    requestCode,
+                                    mode = FilePickerDialog.DIRECTORY
+                                )
+                            }
+                        } else {
+                            otherFun?.invoke(selectText)
+                        }
                     }
-                    else -> otherFun?.invoke(selectList[index])
                 }
             }
         }.show().applyTint()
@@ -59,8 +68,10 @@ object FilePicker {
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
-        val selectList =
-            fragment.resources.getStringArray(R.array.select_folder).toMutableList()
+        val selectList = arrayListOf(fragment.getString(R.string.sys_folder_picker))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            selectList.add(fragment.getString(R.string.app_folder_picker))
+        }
         otherActions?.let {
             selectList.addAll(otherActions)
         }
@@ -76,14 +87,20 @@ object FilePicker {
                             fragment.toast(e.localizedMessage ?: "ERROR")
                         }
                     }
-                    1 -> checkPermissions(fragment) {
-                        FilePickerDialog.show(
-                            fragment.childFragmentManager,
-                            requestCode,
-                            mode = FilePickerDialog.DIRECTORY
-                        )
+                    else -> {
+                        val selectText = selectList[index]
+                        if (selectText == fragment.getString(R.string.app_folder_picker)) {
+                            checkPermissions(fragment) {
+                                FilePickerDialog.show(
+                                    fragment.childFragmentManager,
+                                    requestCode,
+                                    mode = FilePickerDialog.DIRECTORY
+                                )
+                            }
+                        } else {
+                            otherFun?.invoke(selectText)
+                        }
                     }
-                    else -> otherFun?.invoke(selectList[index])
                 }
             }
         }.show().applyTint()
@@ -97,8 +114,10 @@ object FilePicker {
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
-        val selectList =
-            activity.resources.getStringArray(R.array.select_folder).toMutableList()
+        val selectList = arrayListOf(activity.getString(R.string.sys_file_picker))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            selectList.add(activity.getString(R.string.app_file_picker))
+        }
         otherActions?.let {
             selectList.addAll(otherActions)
         }
@@ -126,7 +145,21 @@ object FilePicker {
                             allowExtensions = allowExtensions
                         )
                     }
-                    else -> otherFun?.invoke(selectList[index])
+                    else -> {
+                        val selectText = selectList[index]
+                        if (selectText == activity.getString(R.string.app_file_picker)) {
+                            checkPermissions(activity) {
+                                FilePickerDialog.show(
+                                    activity.supportFragmentManager,
+                                    requestCode,
+                                    mode = FilePickerDialog.FILE,
+                                    allowExtensions = allowExtensions
+                                )
+                            }
+                        } else {
+                            otherFun?.invoke(selectText)
+                        }
+                    }
                 }
             }
         }.show().applyTint()
@@ -140,8 +173,10 @@ object FilePicker {
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
-        val selectList =
-            fragment.resources.getStringArray(R.array.select_folder).toMutableList()
+        val selectList = arrayListOf(fragment.getString(R.string.sys_file_picker))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            selectList.add(fragment.getString(R.string.app_file_picker))
+        }
         otherActions?.let {
             selectList.addAll(otherActions)
         }
@@ -161,15 +196,21 @@ object FilePicker {
                             fragment.toast(e.localizedMessage ?: "ERROR")
                         }
                     }
-                    1 -> checkPermissions(fragment) {
-                        FilePickerDialog.show(
-                            fragment.childFragmentManager,
-                            requestCode,
-                            mode = FilePickerDialog.FILE,
-                            allowExtensions = allowExtensions
-                        )
+                    else -> {
+                        val selectText = selectList[index]
+                        if (selectText == fragment.getString(R.string.app_file_picker)) {
+                            checkPermissions(fragment) {
+                                FilePickerDialog.show(
+                                    fragment.childFragmentManager,
+                                    requestCode,
+                                    mode = FilePickerDialog.FILE,
+                                    allowExtensions = allowExtensions
+                                )
+                            }
+                        } else {
+                            otherFun?.invoke(selectText)
+                        }
                     }
-                    else -> otherFun?.invoke(selectList[index])
                 }
             }
         }.show().applyTint()

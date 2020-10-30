@@ -618,7 +618,8 @@
     <string name="service_start">正在啟動服務\n具體信息查看通知欄</string>
     <string name="default_path">默認路徑</string>
     <string name="sys_folder_picker">系統文件夾選擇器</string>
-    <string name="app_folder_picker">自帶選擇器\n(Android10 以上因權限限制可能無法使用)</string>
+    <string name="app_folder_picker">自帶文件夾選擇器</string>
+    <string name="app_file_picker">自帶文件選擇器</string>
     <string name="a10_permission_toast">Android10 以上因權限限制可能無法讀寫文件</string>
     <string name="add_to_text_context_menu_s">長按文字在操作菜單中顯示閲讀·搜索</string>
     <string name="add_to_text_context_menu_t">文字操作顯示搜索</string>

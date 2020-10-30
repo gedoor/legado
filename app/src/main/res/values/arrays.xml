@@ -47,11 +47,6 @@
 		<item>Always</item>
 	</string-array>
 
-	<string-array name="select_folder">
-		<item>@string/sys_folder_picker</item>
-		<item>@string/app_folder_picker</item>
-	</string-array>
-
 	<string-array name="screen_direction_title">
 		<item>@string/screen_unspecified</item>
 		<item>@string/screen_portrait</item>

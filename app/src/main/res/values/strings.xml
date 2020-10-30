@@ -628,7 +628,8 @@
     <string name="service_start">Starting service\nChecking notification bar for details</string>
     <string name="default_path">Default path</string>
     <string name="sys_folder_picker">System folder picker</string>
-    <string name="app_folder_picker">App folder picker\n(Android 10+ May not be available due to permission restrictions)</string>
+    <string name="app_folder_picker">App folder picker</string>
+    <string name="app_file_picker">App file picker</string>
     <string name="a10_permission_toast">Android 10+ unable to read and write file due to permission restrictions</string>
     <string name="add_to_text_context_menu_s">Long tap to display Legado·Search in the operation menu</string>
     <string name="add_to_text_context_menu_t">Text operation display Search</string>
