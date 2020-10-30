@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
@@ -119,36 +119,32 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     private fun upRootDoc() {
-        AppConfig.importBookPath?.let {
-            if (it.isContentPath()) {
-                val rootUri = Uri.parse(it)
-                rootDoc = DocumentFile.fromTreeUri(this, rootUri)
-                subDocs.clear()
-            } else {
-                rootDoc = null
-                subDocs.clear()
-                path = it
-            }
-        } ?: let {
-            // 没有权限就显示一个授权提示和按钮
-            if (PermissionsCompat.check(this, *Permissions.Group.STORAGE)) {
-                hint_per.visibility = View.GONE
-            } else {
-                hint_per.visibility = View.VISIBLE
-                tv_request_per.onClick {
+        AppConfig.importBookPath?.let { lastPath ->
+            when {
+                lastPath.isContentPath() -> {
+                    val rootUri = Uri.parse(lastPath)
+                    rootDoc = DocumentFile.fromTreeUri(this, rootUri)
+                    subDocs.clear()
+                    upPath()
+                }
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                    FilePicker.selectFolder(this, requestCodeSelectFolder)
+                }
+                lastPath.isNotBlank() -> {
                     PermissionsCompat.Builder(this)
                         .addPermissions(*Permissions.Group.STORAGE)
                         .rationale(R.string.tip_perm_request_storage)
                         .onGranted {
-                            hint_per.visibility = View.GONE
-                            initData()
-                            upRootDoc()
+                            rootDoc = null
+                            subDocs.clear()
+                            path = lastPath
+                            upPath()
                         }
                         .request()
                 }
+                else -> FilePicker.selectFolder(this, requestCodeSelectFolder)
             }
         }
-        upPath()
     }
 
     @SuppressLint("SetTextI18n")
@@ -183,6 +179,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 }
             }
         } ?: let {
+            if (path.isBlank()) return
             tv_path.text = path.replace(sdPath, "SD")
             val docList = arrayListOf<DocItem>()
             File(path).listFiles()?.forEach {
