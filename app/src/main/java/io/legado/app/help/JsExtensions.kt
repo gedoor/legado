@@ -175,6 +175,14 @@ interface JsExtensions {
         }
     }
 
+    fun encodeURI(str: String, enc: String): String {
+        return try {
+            URLEncoder.encode(str, enc)
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
     fun htmlFormat(str: String): String {
         return str.htmlFormat()
     }
