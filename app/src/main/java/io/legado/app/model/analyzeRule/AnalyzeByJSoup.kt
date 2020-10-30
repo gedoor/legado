@@ -255,7 +255,7 @@ class AnalyzeByJSoup {
                     }
                     "class" -> {
                         var elementsByClass = temp.getElementsByClass(rules[1])
-                        if (rules.size == 3) {
+                        if (rules.size == 3 && rules[2].isNotEmpty()) {
                             val index = Integer.parseInt(rules[2])
                             if (index < 0) {
                                 elements.add(elementsByClass[elementsByClass.size + index])
@@ -270,7 +270,7 @@ class AnalyzeByJSoup {
                     }
                     "tag" -> {
                         var elementsByTag = temp.getElementsByTag(rules[1])
-                        if (rules.size == 3) {
+                        if (rules.size == 3 && rules[2].isNotEmpty()) {
                             val index = Integer.parseInt(rules[2])
                             if (index < 0) {
                                 elements.add(elementsByTag[elementsByTag.size + index])
@@ -285,7 +285,7 @@ class AnalyzeByJSoup {
                     }
                     "id" -> {
                         var elementsById = Collector.collect(Evaluator.Id(rules[1]), temp)
-                        if (rules.size == 3) {
+                        if (rules.size == 3 && rules[2].isNotEmpty()) {
                             val index = Integer.parseInt(rules[2])
                             if (index < 0) {
                                 elements.add(elementsById[elementsById.size + index])
