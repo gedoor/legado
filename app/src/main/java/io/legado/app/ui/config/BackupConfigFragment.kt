@@ -15,13 +15,13 @@ import io.legado.app.help.storage.Restore
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.filechooser.FileChooserDialog
+import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
 
 class BackupConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener,
-    FileChooserDialog.CallBack {
+    FilePickerDialog.CallBack {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_backup)

@@ -19,8 +19,8 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.help.BookHelp
 import io.legado.app.service.help.CacheBook
-import io.legado.app.ui.filechooser.FileChooserDialog
-import io.legado.app.ui.filechooser.FilePicker
+import io.legado.app.ui.filepicker.FilePicker
+import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.widget.dialog.TextListDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_download.*
@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 
 class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download),
-    FileChooserDialog.CallBack,
+    FilePickerDialog.CallBack,
     CacheAdapter.CallBack {
     private val exportRequestCode = 32
     private val exportBookPathKey = "exportBookPath"

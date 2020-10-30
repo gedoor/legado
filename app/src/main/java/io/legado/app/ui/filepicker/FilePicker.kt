@@ -1,4 +1,4 @@
-package io.legado.app.ui.filechooser
+package io.legado.app.ui.filepicker
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -22,12 +22,12 @@ object FilePicker {
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
+        val selectList =
+            activity.resources.getStringArray(R.array.select_folder).toMutableList()
+        otherActions?.let {
+            selectList.addAll(otherActions)
+        }
         activity.alert(title = title) {
-            val selectList =
-                activity.resources.getStringArray(R.array.select_folder).toMutableList()
-            otherActions?.let {
-                selectList.addAll(otherActions)
-            }
             items(selectList) { _, index ->
                 when (index) {
                     0 -> {
@@ -40,10 +40,10 @@ object FilePicker {
                         }
                     }
                     1 -> checkPermissions(activity) {
-                        FileChooserDialog.show(
+                        FilePickerDialog.show(
                             activity.supportFragmentManager,
                             requestCode,
-                            mode = FileChooserDialog.DIRECTORY
+                            mode = FilePickerDialog.DIRECTORY
                         )
                     }
                     else -> otherFun?.invoke(selectList[index])
@@ -59,35 +59,34 @@ object FilePicker {
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
-        fragment.requireContext()
-            .alert(title = title) {
-                val selectList =
-                    fragment.resources.getStringArray(R.array.select_folder).toMutableList()
-                otherActions?.let {
-                    selectList.addAll(otherActions)
-                }
-                items(selectList) { _, index ->
-                    when (index) {
-                        0 -> {
-                            try {
-                                val intent = createSelectDirIntent()
-                                fragment.startActivityForResult(intent, requestCode)
-                            } catch (e: java.lang.Exception) {
-                                e.printStackTrace()
-                                fragment.toast(e.localizedMessage ?: "ERROR")
-                            }
+        val selectList =
+            fragment.resources.getStringArray(R.array.select_folder).toMutableList()
+        otherActions?.let {
+            selectList.addAll(otherActions)
+        }
+        fragment.alert(title = title) {
+            items(selectList) { _, index ->
+                when (index) {
+                    0 -> {
+                        try {
+                            val intent = createSelectDirIntent()
+                            fragment.startActivityForResult(intent, requestCode)
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                            fragment.toast(e.localizedMessage ?: "ERROR")
                         }
-                        1 -> checkPermissions(fragment) {
-                            FileChooserDialog.show(
-                                fragment.childFragmentManager,
-                                requestCode,
-                                mode = FileChooserDialog.DIRECTORY
-                            )
-                        }
-                        else -> otherFun?.invoke(selectList[index])
                     }
+                    1 -> checkPermissions(fragment) {
+                        FilePickerDialog.show(
+                            fragment.childFragmentManager,
+                            requestCode,
+                            mode = FilePickerDialog.DIRECTORY
+                        )
+                    }
+                    else -> otherFun?.invoke(selectList[index])
                 }
-            }.show().applyTint()
+            }
+        }.show().applyTint()
     }
 
     fun selectFile(
@@ -98,12 +97,12 @@ object FilePicker {
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
+        val selectList =
+            activity.resources.getStringArray(R.array.select_folder).toMutableList()
+        otherActions?.let {
+            selectList.addAll(otherActions)
+        }
         activity.alert(title = title) {
-            val selectList =
-                activity.resources.getStringArray(R.array.select_folder).toMutableList()
-            otherActions?.let {
-                selectList.addAll(otherActions)
-            }
             items(selectList) { _, index ->
                 when (index) {
                     0 -> {
@@ -120,10 +119,10 @@ object FilePicker {
                         }
                     }
                     1 -> checkPermissions(activity) {
-                        FileChooserDialog.show(
+                        FilePickerDialog.show(
                             activity.supportFragmentManager,
                             requestCode,
-                            mode = FileChooserDialog.FILE,
+                            mode = FilePickerDialog.FILE,
                             allowExtensions = allowExtensions
                         )
                     }
@@ -141,40 +140,39 @@ object FilePicker {
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
-        fragment.requireContext()
-            .alert(title = title) {
-                val selectList =
-                    fragment.resources.getStringArray(R.array.select_folder).toMutableList()
-                otherActions?.let {
-                    selectList.addAll(otherActions)
-                }
-                items(selectList) { _, index ->
-                    when (index) {
-                        0 -> {
-                            try {
-                                val intent = createSelectFileIntent()
-                                intent.putExtra(
-                                    Intent.EXTRA_MIME_TYPES,
-                                    typesOfExtensions(allowExtensions)
-                                )
-                                fragment.startActivityForResult(intent, requestCode)
-                            } catch (e: java.lang.Exception) {
-                                e.printStackTrace()
-                                fragment.toast(e.localizedMessage ?: "ERROR")
-                            }
-                        }
-                        1 -> checkPermissions(fragment) {
-                            FileChooserDialog.show(
-                                fragment.childFragmentManager,
-                                requestCode,
-                                mode = FileChooserDialog.FILE,
-                                allowExtensions = allowExtensions
+        val selectList =
+            fragment.resources.getStringArray(R.array.select_folder).toMutableList()
+        otherActions?.let {
+            selectList.addAll(otherActions)
+        }
+        fragment.alert(title = title) {
+            items(selectList) { _, index ->
+                when (index) {
+                    0 -> {
+                        try {
+                            val intent = createSelectFileIntent()
+                            intent.putExtra(
+                                Intent.EXTRA_MIME_TYPES,
+                                typesOfExtensions(allowExtensions)
                             )
+                            fragment.startActivityForResult(intent, requestCode)
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                            fragment.toast(e.localizedMessage ?: "ERROR")
                         }
-                        else -> otherFun?.invoke(selectList[index])
                     }
+                    1 -> checkPermissions(fragment) {
+                        FilePickerDialog.show(
+                            fragment.childFragmentManager,
+                            requestCode,
+                            mode = FilePickerDialog.FILE,
+                            allowExtensions = allowExtensions
+                        )
+                    }
+                    else -> otherFun?.invoke(selectList[index])
                 }
-            }.show().applyTint()
+            }
+        }.show().applyTint()
     }
 
     private fun createSelectFileIntent(): Intent {

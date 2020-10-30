@@ -31,8 +31,8 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.association.ImportBookSourceActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.filechooser.FileChooserDialog
-import io.legado.app.ui.filechooser.FilePicker
+import io.legado.app.ui.filepicker.FilePicker
+import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
@@ -52,7 +52,7 @@ import java.text.Collator
 class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity_book_source),
     PopupMenu.OnMenuItemClickListener,
     BookSourceAdapter.CallBack,
-    FileChooserDialog.CallBack,
+    FilePickerDialog.CallBack,
     SearchView.OnQueryTextListener {
     override val viewModel: BookSourceViewModel
         get() = getViewModel(BookSourceViewModel::class.java)

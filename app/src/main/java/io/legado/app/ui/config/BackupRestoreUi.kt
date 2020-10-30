@@ -16,7 +16,7 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.ImportOldData
 import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
-import io.legado.app.ui.filechooser.FilePicker
+import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentPath
 import io.legado.app.utils.longToast

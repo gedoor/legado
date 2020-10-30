@@ -1,12 +1,12 @@
-package io.legado.app.ui.filechooser.adapter
+package io.legado.app.ui.filepicker.adapter
 
 import android.content.Context
 import android.os.Environment
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import io.legado.app.ui.filechooser.utils.ConvertUtils
-import io.legado.app.ui.filechooser.utils.FilePickerIcon
+import io.legado.app.ui.filepicker.utils.ConvertUtils
+import io.legado.app.ui.filepicker.utils.FilePickerIcon
 import kotlinx.android.synthetic.main.item_path_filepicker.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*

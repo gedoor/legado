@@ -1,4 +1,4 @@
-package io.legado.app.ui.filechooser.entity
+package io.legado.app.ui.filepicker.entity
 
 import android.graphics.drawable.Drawable
 

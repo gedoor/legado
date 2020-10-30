@@ -1,4 +1,4 @@
-package io.legado.app.ui.filechooser
+package io.legado.app.ui.filepicker
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,14 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.ui.filechooser.adapter.FileAdapter
-import io.legado.app.ui.filechooser.adapter.PathAdapter
+import io.legado.app.ui.filepicker.adapter.FileAdapter
+import io.legado.app.ui.filepicker.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_file_chooser.*
 
 
-class FileChooserDialog : DialogFragment(),
+class FilePickerDialog : DialogFragment(),
     Toolbar.OnMenuItemClickListener,
     FileAdapter.CallBack,
     PathAdapter.CallBack {
@@ -41,7 +41,7 @@ class FileChooserDialog : DialogFragment(),
             allowExtensions: Array<String>? = null,
             menus: Array<String>? = null
         ) {
-            FileChooserDialog().apply {
+            FilePickerDialog().apply {
                 val bundle = Bundle()
                 bundle.putInt("mode", mode)
                 bundle.putInt("requestCode", requestCode)

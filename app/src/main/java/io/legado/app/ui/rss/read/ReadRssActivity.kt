@@ -16,8 +16,8 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.Download
-import io.legado.app.ui.filechooser.FileChooserDialog
-import io.legado.app.ui.filechooser.FilePicker
+import io.legado.app.ui.filepicker.FilePicker
+import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_rss_read.*
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ import org.jsoup.Jsoup
 
 
 class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_read, false),
-    FileChooserDialog.CallBack,
+    FilePickerDialog.CallBack,
     ReadRssViewModel.CallBack {
 
     override val viewModel: ReadRssViewModel

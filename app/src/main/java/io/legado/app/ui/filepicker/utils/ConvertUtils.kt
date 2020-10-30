@@ -1,4 +1,4 @@
-package io.legado.app.ui.filechooser.utils
+package io.legado.app.ui.filepicker.utils
 
 import android.content.res.Resources
 import android.graphics.Bitmap
