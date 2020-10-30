@@ -226,12 +226,12 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             requestCodeSelectFolder -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let {
+                data?.data?.let { uri ->
                     contentResolver.takePersistableUriPermission(
-                        it,
+                        uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-                    AppConfig.importBookPath = it.toString()
+                    AppConfig.importBookPath = uri.toString()
                     upRootDoc()
                 }
             }
