@@ -49,7 +49,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             fileRoot.path = rootPath ?: path
             data.add(fileRoot)
         }
-        if (callBack.isShowUpDir && path != "/") {
+        if (callBack.isShowUpDir && path != PathAdapter.sdCardDirectory) {
             //添加“返回上一级目录”
             val fileParent = FileItem()
             fileParent.isDirectory = true

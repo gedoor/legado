@@ -15,8 +15,6 @@ import java.util.*
 class PathAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<String>(context, R.layout.item_path_filepicker) {
     private val paths = LinkedList<String>()
-    @Suppress("DEPRECATION")
-    private val sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
     private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getArrow())
 
     fun getPath(position: Int): String {
@@ -37,7 +35,7 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         paths.clear()
         if (path1 != "/" && path1 != "") {
             val subDirs = path1.substring(path1.indexOf("/") + 1)
-                .split("/".toRegex())
+                .split("/")
                 .dropLastWhile { it.isEmpty() }
                 .toTypedArray()
             Collections.addAll(paths, *subDirs)
@@ -65,5 +63,8 @@ class PathAdapter(context: Context, val callBack: CallBack) :
 
     companion object {
         private const val ROOT_HINT = "SD"
+
+        @Suppress("DEPRECATION")
+        val sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
     }
 }
