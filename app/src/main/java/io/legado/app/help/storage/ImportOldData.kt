@@ -7,76 +7,80 @@ import io.legado.app.App
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.isContentPath
 import org.jetbrains.anko.toast
 import java.io.File
 
 object ImportOldData {
 
-    fun import(context: Context, file: File) {
-        try {// 导入书架
-            val shelfFile =
-                FileUtils.createFileIfNotExist(file, "myBookShelf.json")
-            val json = shelfFile.readText()
-            val importCount = importOldBookshelf(json)
-            context.toast("成功导入书籍${importCount}")
-        } catch (e: Exception) {
-            context.toast("导入书籍失败\n${e.localizedMessage}")
-        }
-
-        try {// Book source
-            val sourceFile =
-                FileUtils.getFile(file, "myBookSource.json")
-            val json = sourceFile.readText()
-            val importCount = importOldSource(json)
-            context.toast("成功导入书源${importCount}")
-        } catch (e: Exception) {
-            context.toast("导入源失败\n${e.localizedMessage}")
-        }
-
-        try {// Replace rules
-            val ruleFile = FileUtils.getFile(file, "myBookReplaceRule.json")
-            if (ruleFile.exists()) {
-                val json = ruleFile.readText()
-                val importCount = importOldReplaceRule(json)
-                context.toast("成功导入替换规则${importCount}")
-            } else {
-                context.toast("未找到替换规则")
+    fun importUri(context: Context, uri: Uri) {
+        if (uri.isContentPath()) {
+            DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach {
+                when (it.name) {
+                    "myBookShelf.json" ->
+                        try {
+                            DocumentUtils.readText(context, it.uri)?.let { json ->
+                                val importCount = importOldBookshelf(json)
+                                context.toast("成功导入书籍${importCount}")
+                            }
+                        } catch (e: java.lang.Exception) {
+                            context.toast("导入书籍失败\n${e.localizedMessage}")
+                        }
+                    "myBookSource.json" ->
+                        try {
+                            DocumentUtils.readText(context, it.uri)?.let { json ->
+                                val importCount = importOldSource(json)
+                                context.toast("成功导入书源${importCount}")
+                            }
+                        } catch (e: Exception) {
+                            context.toast("导入源失败\n${e.localizedMessage}")
+                        }
+                    "myBookReplaceRule.json" ->
+                        try {
+                            DocumentUtils.readText(context, it.uri)?.let { json ->
+                                val importCount = importOldReplaceRule(json)
+                                context.toast("成功导入替换规则${importCount}")
+                            }
+                        } catch (e: Exception) {
+                            context.toast("导入替换规则失败\n${e.localizedMessage}")
+                        }
+                }
             }
-        } catch (e: Exception) {
-            context.toast("导入替换规则失败\n${e.localizedMessage}")
-        }
-    }
+        } else {
+            uri.path?.let {
+                val file = File(it)
+                try {// 导入书架
+                    val shelfFile =
+                        FileUtils.createFileIfNotExist(file, "myBookShelf.json")
+                    val json = shelfFile.readText()
+                    val importCount = importOldBookshelf(json)
+                    context.toast("成功导入书籍${importCount}")
+                } catch (e: Exception) {
+                    context.toast("导入书籍失败\n${e.localizedMessage}")
+                }
 
-    fun importUri(uri: Uri) {
-        DocumentFile.fromTreeUri(App.INSTANCE, uri)?.listFiles()?.forEach {
-            when (it.name) {
-                "myBookShelf.json" ->
-                    try {
-                        DocumentUtils.readText(App.INSTANCE, it.uri)?.let { json ->
-                            val importCount = importOldBookshelf(json)
-                            App.INSTANCE.toast("成功导入书籍${importCount}")
-                        }
-                    } catch (e: java.lang.Exception) {
-                        App.INSTANCE.toast("导入书籍失败\n${e.localizedMessage}")
+                try {// Book source
+                    val sourceFile =
+                        FileUtils.getFile(file, "myBookSource.json")
+                    val json = sourceFile.readText()
+                    val importCount = importOldSource(json)
+                    context.toast("成功导入书源${importCount}")
+                } catch (e: Exception) {
+                    context.toast("导入源失败\n${e.localizedMessage}")
+                }
+
+                try {// Replace rules
+                    val ruleFile = FileUtils.getFile(file, "myBookReplaceRule.json")
+                    if (ruleFile.exists()) {
+                        val json = ruleFile.readText()
+                        val importCount = importOldReplaceRule(json)
+                        context.toast("成功导入替换规则${importCount}")
+                    } else {
+                        context.toast("未找到替换规则")
                     }
-                "myBookSource.json" ->
-                    try {
-                        DocumentUtils.readText(App.INSTANCE, it.uri)?.let { json ->
-                            val importCount = importOldSource(json)
-                            App.INSTANCE.toast("成功导入书源${importCount}")
-                        }
-                    } catch (e: Exception) {
-                        App.INSTANCE.toast("导入源失败\n${e.localizedMessage}")
-                    }
-                "myBookReplaceRule.json" ->
-                    try {
-                        DocumentUtils.readText(App.INSTANCE, it.uri)?.let { json ->
-                            val importCount = importOldReplaceRule(json)
-                            App.INSTANCE.toast("成功导入替换规则${importCount}")
-                        }
-                    } catch (e: Exception) {
-                        App.INSTANCE.toast("导入替换规则失败\n${e.localizedMessage}")
-                    }
+                } catch (e: Exception) {
+                    context.toast("导入替换规则失败\n${e.localizedMessage}")
+                }
             }
         }
     }

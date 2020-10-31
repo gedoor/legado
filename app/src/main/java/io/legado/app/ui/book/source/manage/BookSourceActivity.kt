@@ -457,18 +457,6 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         viewModel.bottomSource(bookSource)
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        when (requestCode) {
-            exportRequestCode -> viewModel.exportSelection(
-                adapter.getSelection(),
-                File(currentPath)
-            )
-            importRequestCode -> {
-                startActivity<ImportBookSourceActivity>(Pair("filePath", currentPath))
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {

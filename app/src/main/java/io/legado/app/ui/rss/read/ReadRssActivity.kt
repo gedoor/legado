@@ -294,20 +294,12 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
         }
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        when (requestCode) {
-            savePathRequestCode -> {
-                ACache.get(this).put(imagePathKey, currentPath)
-                viewModel.saveImage(webPic, currentPath)
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             savePathRequestCode -> data?.data?.let {
-                onFilePicked(requestCode, it.toString())
+                ACache.get(this).put(imagePathKey, it.toString())
+                viewModel.saveImage(webPic, it.toString())
             }
         }
     }

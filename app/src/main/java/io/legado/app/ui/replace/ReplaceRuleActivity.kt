@@ -244,18 +244,6 @@ class ReplaceRuleActivity :
         return false
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        when (requestCode) {
-            importRequestCode -> {
-                startActivity<ImportReplaceRuleActivity>("filePath" to currentPath)
-            }
-            exportRequestCode -> viewModel.exportSelection(
-                adapter.getSelection(),
-                File(currentPath)
-            )
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {

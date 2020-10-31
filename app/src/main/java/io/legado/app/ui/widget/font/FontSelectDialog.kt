@@ -204,34 +204,29 @@ class FontSelectDialog : BaseDialogFragment(),
         }
     }
 
-    /**
-     * 字体文件夹
-     */
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        when (requestCode) {
-            fontFolderRequestCode -> {
-                putPrefString(PreferKey.fontFolder, currentPath)
-                loadFontFilesByPermission(currentPath)
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             fontFolderRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
-                    putPrefString(PreferKey.fontFolder, uri.toString())
-                    val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-                    if (doc != null) {
-                        context?.contentResolver?.takePersistableUriPermission(
-                            uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        )
-                        loadFontFiles(doc)
+                    if (uri.toString().isContentPath()) {
+                        putPrefString(PreferKey.fontFolder, uri.toString())
+                        val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+                        if (doc != null) {
+                            context?.contentResolver?.takePersistableUriPermission(
+                                uri,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            )
+                            loadFontFiles(doc)
+                        } else {
+                            RealPathUtil.getPath(requireContext(), uri)?.let {
+                                loadFontFilesByPermission(it)
+                            }
+                        }
                     } else {
-                        RealPathUtil.getPath(requireContext(), uri)?.let {
-                            loadFontFilesByPermission(it)
+                        uri.path?.let { path ->
+                            putPrefString(PreferKey.fontFolder, path)
+                            loadFontFilesByPermission(path)
                         }
                     }
                 }

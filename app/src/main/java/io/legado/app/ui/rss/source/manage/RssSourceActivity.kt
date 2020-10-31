@@ -245,18 +245,6 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         }.show().applyTint()
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        when (requestCode) {
-            importRequestCode -> {
-                startActivity<ImportRssSourceActivity>("filePath" to currentPath)
-            }
-            exportRequestCode -> viewModel.exportSelection(
-                adapter.getSelection(),
-                File(currentPath)
-            )
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {

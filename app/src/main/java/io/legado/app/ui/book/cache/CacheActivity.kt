@@ -202,26 +202,24 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
         }
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        when (requestCode) {
-            exportRequestCode -> {
-                ACache.get(this@CacheActivity).put(exportBookPathKey, currentPath)
-                startExport(currentPath)
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             exportRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    contentResolver.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    ACache.get(this@CacheActivity).put(exportBookPathKey, uri.toString())
-                    startExport(uri.toString())
+                    if (uri.isContentPath()) {
+                        contentResolver.takePersistableUriPermission(
+                            uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        )
+                        ACache.get(this@CacheActivity).put(exportBookPathKey, uri.toString())
+                        startExport(uri.toString())
+                    } else {
+                        uri.path?.let { path ->
+                            ACache.get(this@CacheActivity).put(exportBookPathKey, path)
+                            startExport(path)
+                        }
+                    }
                 }
             }
 

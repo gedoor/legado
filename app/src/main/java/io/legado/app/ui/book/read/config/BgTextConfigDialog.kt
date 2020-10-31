@@ -369,13 +369,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         }
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        when (requestCode) {
-            requestCodeImport -> importConfig(Uri.fromFile(File(currentPath)))
-            requestCodeExport -> exportConfig(Uri.fromFile(File(currentPath)))
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {

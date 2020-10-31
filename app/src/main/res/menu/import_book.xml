@@ -8,4 +8,9 @@
         android:icon="@drawable/ic_folder_open"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/menu_scan_folder"
+        android:title="@string/scan_folder"
+        app:showAsAction="never" />
+
 </menu>

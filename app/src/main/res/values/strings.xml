@@ -783,5 +783,6 @@
     <string name="re_segment">重新分段</string>
     <string name="style_name">样式名称:</string>
     <string name="empty_msg_import_book">点击右上角文件夹图标,选择文件夹</string>
+    <string name="scan_folder">智能扫描</string>
 
 </resources>
