@@ -10,8 +10,6 @@ import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.toast
-import org.jetbrains.anko.toast
 
 @Suppress("unused")
 object FilePicker {
@@ -39,7 +37,13 @@ object FilePicker {
                             activity.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
-                            activity.toast(e.localizedMessage ?: "ERROR")
+                            checkPermissions(activity) {
+                                FilePickerDialog.show(
+                                    activity.supportFragmentManager,
+                                    requestCode,
+                                    mode = FilePickerDialog.DIRECTORY
+                                )
+                            }
                         }
                     }
                     else -> {
@@ -84,7 +88,13 @@ object FilePicker {
                             fragment.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
-                            fragment.toast(e.localizedMessage ?: "ERROR")
+                            checkPermissions(fragment) {
+                                FilePickerDialog.show(
+                                    fragment.childFragmentManager,
+                                    requestCode,
+                                    mode = FilePickerDialog.DIRECTORY
+                                )
+                            }
                         }
                     }
                     else -> {
@@ -134,16 +144,15 @@ object FilePicker {
                             activity.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
-                            activity.toast(e.localizedMessage ?: "ERROR")
+                            checkPermissions(activity) {
+                                FilePickerDialog.show(
+                                    activity.supportFragmentManager,
+                                    requestCode,
+                                    mode = FilePickerDialog.FILE,
+                                    allowExtensions = allowExtensions
+                                )
+                            }
                         }
-                    }
-                    1 -> checkPermissions(activity) {
-                        FilePickerDialog.show(
-                            activity.supportFragmentManager,
-                            requestCode,
-                            mode = FilePickerDialog.FILE,
-                            allowExtensions = allowExtensions
-                        )
                     }
                     else -> {
                         val selectText = selectList[index]
@@ -193,7 +202,14 @@ object FilePicker {
                             fragment.startActivityForResult(intent, requestCode)
                         } catch (e: java.lang.Exception) {
                             e.printStackTrace()
-                            fragment.toast(e.localizedMessage ?: "ERROR")
+                            checkPermissions(fragment) {
+                                FilePickerDialog.show(
+                                    fragment.childFragmentManager,
+                                    requestCode,
+                                    mode = FilePickerDialog.FILE,
+                                    allowExtensions = allowExtensions
+                                )
+                            }
                         }
                     }
                     else -> {
