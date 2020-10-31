@@ -122,12 +122,14 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         val lastPath = AppConfig.importBookPath
         when {
             lastPath.isNullOrEmpty() -> {
+                tv_empty_msg.visible()
                 FilePicker.selectFolder(this, requestCodeSelectFolder)
             }
             lastPath.isContentPath() -> {
                 val rootUri = Uri.parse(lastPath)
                 rootDoc = DocumentFile.fromTreeUri(this, rootUri)
                 if (rootDoc == null) {
+                    tv_empty_msg.visible()
                     FilePicker.selectFolder(this, requestCodeSelectFolder)
                 } else {
                     subDocs.clear()
@@ -135,18 +137,22 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 }
             }
             Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
+                tv_empty_msg.visible()
                 FilePicker.selectFolder(this, requestCodeSelectFolder)
             }
-            else -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted {
-                    rootDoc = null
-                    subDocs.clear()
-                    path = lastPath
-                    upPath()
-                }
-                .request()
+            else -> {
+                tv_empty_msg.visible()
+                PermissionsCompat.Builder(this)
+                    .addPermissions(*Permissions.Group.STORAGE)
+                    .rationale(R.string.tip_perm_request_storage)
+                    .onGranted {
+                        rootDoc = null
+                        subDocs.clear()
+                        path = lastPath
+                        upPath()
+                    }
+                    .request()
+            }
         }
     }
 
@@ -154,6 +160,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     @Synchronized
     private fun upPath() {
         rootDoc?.let { rootDoc ->
+            tv_empty_msg.gone()
             var path = rootDoc.name.toString() + File.separator
             var lastDoc = rootDoc
             for (doc in subDocs) {
@@ -183,6 +190,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             }
         } ?: let {
             if (path.isBlank()) return
+            tv_empty_msg.gone()
             tv_path.text = path.replace(sdPath, "SD")
             val docList = arrayListOf<DocItem>()
             File(path).listFiles()?.forEach {

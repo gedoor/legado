@@ -65,6 +65,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <TextView
+            android:id="@+id/tv_empty_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text="@string/empty_msg_import_book"
+            tools:text="TextView" />
+
     </FrameLayout>
 
     <io.legado.app.ui.widget.SelectActionBar
