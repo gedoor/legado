@@ -119,31 +119,30 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     private fun upRootDoc() {
-        AppConfig.importBookPath?.let { lastPath ->
-            when {
-                lastPath.isContentPath() -> {
-                    val rootUri = Uri.parse(lastPath)
-                    rootDoc = DocumentFile.fromTreeUri(this, rootUri)
+        val lastPath = AppConfig.importBookPath
+        when {
+            lastPath.isNullOrEmpty() -> {
+                FilePicker.selectFolder(this, requestCodeSelectFolder)
+            }
+            lastPath.isContentPath() -> {
+                val rootUri = Uri.parse(lastPath)
+                rootDoc = DocumentFile.fromTreeUri(this, rootUri)
+                subDocs.clear()
+                upPath()
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                FilePicker.selectFolder(this, requestCodeSelectFolder)
+            }
+            else -> PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted {
+                    rootDoc = null
                     subDocs.clear()
+                    path = lastPath
                     upPath()
                 }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                    FilePicker.selectFolder(this, requestCodeSelectFolder)
-                }
-                lastPath.isNotBlank() -> {
-                    PermissionsCompat.Builder(this)
-                        .addPermissions(*Permissions.Group.STORAGE)
-                        .rationale(R.string.tip_perm_request_storage)
-                        .onGranted {
-                            rootDoc = null
-                            subDocs.clear()
-                            path = lastPath
-                            upPath()
-                        }
-                        .request()
-                }
-                else -> FilePicker.selectFolder(this, requestCodeSelectFolder)
-            }
+                .request()
         }
     }
 
