@@ -130,7 +130,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 subDocs.clear()
                 upPath()
             }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+            Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
                 FilePicker.selectFolder(this, requestCodeSelectFolder)
             }
             else -> PermissionsCompat.Builder(this)
