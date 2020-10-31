@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.local
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -33,7 +32,9 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
 import java.util.*
 
-
+/**
+ * 导入本地书籍界面
+ */
 class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity_import_book),
     FilePickerDialog.CallBack,
     PopupMenu.OnMenuItemClickListener,
@@ -53,7 +54,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         initView()
         initEvent()
         initData()
-        upRootDoc()
+        initRootDoc()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -118,7 +119,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         })
     }
 
-    private fun upRootDoc() {
+    private fun initRootDoc() {
         val lastPath = AppConfig.importBookPath
         when {
             lastPath.isNullOrEmpty() -> {
@@ -156,79 +157,83 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         }
     }
 
-    @SuppressLint("SetTextI18n")
     @Synchronized
     private fun upPath() {
-        rootDoc?.let { rootDoc ->
-            tv_empty_msg.gone()
-            var path = rootDoc.name.toString() + File.separator
-            var lastDoc = rootDoc
-            for (doc in subDocs) {
-                lastDoc = doc
-                path = path + doc.name + File.separator
-            }
-            tv_path.text = path
-            adapter.selectedUris.clear()
-            adapter.clearItems()
-            launch(IO) {
-                val docList = DocumentUtils.listFiles(this@ImportBookActivity, lastDoc.uri)
-                for (i in docList.lastIndex downTo 0) {
-                    val item = docList[i]
-                    if (item.name.startsWith(".")) {
-                        docList.removeAt(i)
-                    } else if (!item.isDir
-                        && !item.name.endsWith(".txt", true)
-                        && !item.name.endsWith(".epub", true)
-                    ) {
-                        docList.removeAt(i)
-                    }
-                }
-                docList.sortWith(compareBy({ !it.isDir }, { it.name }))
-                withContext(Main) {
-                    adapter.setData(docList)
-                }
-            }
-        } ?: let {
-            if (path.isBlank()) return
-            tv_empty_msg.gone()
-            tv_path.text = path.replace(sdPath, "SD")
-            val docList = arrayListOf<DocItem>()
-            File(path).listFiles()?.forEach {
-                if (it.isDirectory) {
-                    if (!it.name.startsWith("."))
-                        docList.add(
-                            DocItem(
-                                it.name,
-                                DocumentsContract.Document.MIME_TYPE_DIR,
-                                it.length(),
-                                Date(it.lastModified()),
-                                Uri.parse(it.absolutePath)
-                            )
-                        )
-                } else if (it.name.endsWith(".txt", true)
-                    || it.name.endsWith(".epub", true)
+        rootDoc?.let {
+            upDocs(it)
+        } ?: upFiles()
+    }
+
+    private fun upDocs(rootDoc: DocumentFile) {
+        tv_empty_msg.gone()
+        var path = rootDoc.name.toString() + File.separator
+        var lastDoc = rootDoc
+        for (doc in subDocs) {
+            lastDoc = doc
+            path = path + doc.name + File.separator
+        }
+        tv_path.text = path
+        adapter.selectedUris.clear()
+        adapter.clearItems()
+        launch(IO) {
+            val docList = DocumentUtils.listFiles(this@ImportBookActivity, lastDoc.uri)
+            for (i in docList.lastIndex downTo 0) {
+                val item = docList[i]
+                if (item.name.startsWith(".")) {
+                    docList.removeAt(i)
+                } else if (!item.isDir
+                    && !item.name.endsWith(".txt", true)
+                    && !item.name.endsWith(".epub", true)
                 ) {
+                    docList.removeAt(i)
+                }
+            }
+            docList.sortWith(compareBy({ !it.isDir }, { it.name }))
+            withContext(Main) {
+                adapter.setData(docList)
+            }
+        }
+    }
+
+    private fun upFiles() {
+        tv_empty_msg.gone()
+        tv_path.text = path.replace(sdPath, "SD")
+        val docList = arrayListOf<DocItem>()
+        File(path).listFiles()?.forEach {
+            if (it.isDirectory) {
+                if (!it.name.startsWith("."))
                     docList.add(
                         DocItem(
                             it.name,
-                            it.extension,
+                            DocumentsContract.Document.MIME_TYPE_DIR,
                             it.length(),
                             Date(it.lastModified()),
                             Uri.parse(it.absolutePath)
                         )
                     )
-                }
+            } else if (it.name.endsWith(".txt", true)
+                || it.name.endsWith(".epub", true)
+            ) {
+                docList.add(
+                    DocItem(
+                        it.name,
+                        it.extension,
+                        it.length(),
+                        Date(it.lastModified()),
+                        Uri.parse(it.absolutePath)
+                    )
+                )
             }
-            docList.sortWith(compareBy({ !it.isDir }, { it.name }))
-            adapter.setData(docList)
         }
+        docList.sortWith(compareBy({ !it.isDir }, { it.name }))
+        adapter.setData(docList)
     }
 
     override fun onFilePicked(requestCode: Int, currentPath: String) {
         when (requestCode) {
             requestCodeSelectFolder -> {
                 AppConfig.importBookPath = currentPath
-                upRootDoc()
+                initRootDoc()
             }
         }
     }
@@ -243,7 +248,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                     AppConfig.importBookPath = uri.toString()
-                    upRootDoc()
+                    initRootDoc()
                 }
             }
         }
