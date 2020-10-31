@@ -24,7 +24,7 @@ object FilePicker {
         otherFun: ((action: String) -> Unit)? = null
     ) {
         val selectList = arrayListOf(activity.getString(R.string.sys_folder_picker))
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             selectList.add(activity.getString(R.string.app_folder_picker))
         }
         otherActions?.let {
@@ -69,7 +69,7 @@ object FilePicker {
         otherFun: ((action: String) -> Unit)? = null
     ) {
         val selectList = arrayListOf(fragment.getString(R.string.sys_folder_picker))
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             selectList.add(fragment.getString(R.string.app_folder_picker))
         }
         otherActions?.let {
@@ -115,7 +115,7 @@ object FilePicker {
         otherFun: ((action: String) -> Unit)? = null
     ) {
         val selectList = arrayListOf(activity.getString(R.string.sys_file_picker))
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             selectList.add(activity.getString(R.string.app_file_picker))
         }
         otherActions?.let {
@@ -174,7 +174,7 @@ object FilePicker {
         otherFun: ((action: String) -> Unit)? = null
     ) {
         val selectList = arrayListOf(fragment.getString(R.string.sys_file_picker))
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             selectList.add(fragment.getString(R.string.app_file_picker))
         }
         otherActions?.let {
