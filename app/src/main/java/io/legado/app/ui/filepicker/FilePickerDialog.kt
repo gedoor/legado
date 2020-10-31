@@ -149,11 +149,7 @@ class FilePickerDialog : DialogFragment(),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_ok -> fileAdapter.currentPath?.let {
-                val data = Intent().setData(Uri.fromFile(File(it)))
-                (parentFragment as? CallBack)
-                    ?.onActivityResult(requestCode, Activity.RESULT_OK, data)
-                (activity as? CallBack)
-                    ?.onActivityResult(requestCode, Activity.RESULT_OK, data)
+                setData(it)
                 dismiss()
             }
             else -> item?.title?.let {
@@ -176,11 +172,7 @@ class FilePickerDialog : DialogFragment(),
                 } else if (allowExtensions == null ||
                     allowExtensions?.contains(FileUtils.getExtension(path)) == true
                 ) {
-                    val data = Intent().setData(Uri.fromFile(File(path)))
-                    (parentFragment as? CallBack)
-                        ?.onActivityResult(requestCode, Activity.RESULT_OK, data)
-                    (activity as? CallBack)
-                        ?.onActivityResult(requestCode, Activity.RESULT_OK, data)
+                    setData(path)
                     dismiss()
                 } else {
                     toast("不能打开此文件")
@@ -213,6 +205,14 @@ class FilePickerDialog : DialogFragment(),
         } else {
             tv_empty.gone()
         }
+    }
+
+    private fun setData(path: String) {
+        val data = Intent().setData(Uri.fromFile(File(path)))
+        (parentFragment as? CallBack)
+            ?.onActivityResult(requestCode, Activity.RESULT_OK, data)
+        (activity as? CallBack)
+            ?.onActivityResult(requestCode, Activity.RESULT_OK, data)
     }
 
     interface CallBack {
