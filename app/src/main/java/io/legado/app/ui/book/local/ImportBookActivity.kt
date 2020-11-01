@@ -39,6 +39,7 @@ import java.util.*
 class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity_import_book),
     FilePickerDialog.CallBack,
     PopupMenu.OnMenuItemClickListener,
+    SelectActionBar.CallBack,
     ImportBookAdapter.CallBack {
     private val requestCodeSelectFolder = 342
     private var rootDoc: DocumentFile? = null
@@ -75,10 +76,24 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         when (item?.itemId) {
             R.id.menu_del_selection ->
                 viewModel.deleteDoc(adapter.selectedUris) {
-                    upPath()
+                    adapter.removeSelection()
                 }
         }
         return false
+    }
+
+    override fun selectAll(selectAll: Boolean) {
+        adapter.selectAll(selectAll)
+    }
+
+    override fun revertSelection() {
+        adapter.revertSelection()
+    }
+
+    override fun onClickMainAction() {
+        viewModel.addToBookshelf(adapter.selectedUris) {
+            adapter.notifyDataSetChanged()
+        }
     }
 
     private fun initView() {
@@ -89,22 +104,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         select_action_bar.setMainActionText(R.string.add_to_shelf)
         select_action_bar.inflateMenu(R.menu.import_book_sel)
         select_action_bar.setOnMenuItemClickListener(this)
-        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
-            override fun selectAll(selectAll: Boolean) {
-                adapter.selectAll(selectAll)
-            }
-
-            override fun revertSelection() {
-                adapter.revertSelection()
-            }
-
-            override fun onClickMainAction() {
-                viewModel.addToBookshelf(adapter.selectedUris) {
-                    upPath()
-                }
-            }
-        })
-
+        select_action_bar.setCallBack(this)
     }
 
     private fun initEvent() {
@@ -210,7 +210,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                             DocumentsContract.Document.MIME_TYPE_DIR,
                             it.length(),
                             Date(it.lastModified()),
-                            Uri.parse(it.absolutePath)
+                            Uri.fromFile(it)
                         )
                     )
             } else if (it.name.endsWith(".txt", true)
@@ -222,7 +222,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                         it.extension,
                         it.length(),
                         Date(it.lastModified()),
-                        Uri.parse(it.absolutePath)
+                        Uri.fromFile(it)
                     )
                 )
             }

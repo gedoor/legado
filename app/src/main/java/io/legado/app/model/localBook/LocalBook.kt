@@ -28,9 +28,11 @@ object LocalBook {
         }
     }
 
-    fun importFile(path: String): Book {
-        val fileName = if (path.isContentPath()) {
-            val doc = DocumentFile.fromSingleUri(App.INSTANCE, Uri.parse(path))
+    fun importFile(uri: Uri): Book {
+        val path: String
+        val fileName = if (uri.isContentPath()) {
+            path = uri.toString()
+            val doc = DocumentFile.fromSingleUri(App.INSTANCE, uri)
             doc?.let {
                 val bookFile = FileUtils.getFile(AnalyzeTxtFile.cacheFolder, it.name!!)
                 if (!bookFile.exists()) {
@@ -42,6 +44,7 @@ object LocalBook {
             }
             doc?.name!!
         } else {
+            path = uri.path!!
             File(path).name
         }
         val str = fileName.substringBeforeLast(".")

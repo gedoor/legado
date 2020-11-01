@@ -48,6 +48,7 @@ import java.util.*
 class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
     PopupMenu.OnMenuItemClickListener,
     FilePickerDialog.CallBack,
+    SelectActionBar.CallBack,
     RssSourceAdapter.CallBack {
 
     override val viewModel: RssSourceViewModel
@@ -153,27 +154,27 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         })
     }
 
+    override fun selectAll(selectAll: Boolean) {
+        if (selectAll) {
+            adapter.selectAll()
+        } else {
+            adapter.revertSelection()
+        }
+    }
+
+    override fun revertSelection() {
+        adapter.revertSelection()
+    }
+
+    override fun onClickMainAction() {
+        delSourceDialog()
+    }
+
     private fun initViewEvent() {
         select_action_bar.setMainActionText(R.string.delete)
         select_action_bar.inflateMenu(R.menu.rss_source_sel)
         select_action_bar.setOnMenuItemClickListener(this)
-        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
-            override fun selectAll(selectAll: Boolean) {
-                if (selectAll) {
-                    adapter.selectAll()
-                } else {
-                    adapter.revertSelection()
-                }
-            }
-
-            override fun revertSelection() {
-                adapter.revertSelection()
-            }
-
-            override fun onClickMainAction() {
-                delSourceDialog()
-            }
-        })
+        select_action_bar.setCallBack(this)
     }
 
     private fun delSourceDialog() {

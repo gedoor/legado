@@ -46,9 +46,9 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                     }
                     if (scheme.isEmpty()) {
                         val book = if (uri.scheme == "content") {
-                            LocalBook.importFile(uri.toString())
+                            LocalBook.importFile(uri)
                         } else {
-                            LocalBook.importFile(uri.path.toString())
+                            LocalBook.importFile(uri)
                         }
                         val intent = Intent(context, ReadBookActivity::class.java)
                         intent.putExtra("bookUrl", book.bookUrl)

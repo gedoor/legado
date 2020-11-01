@@ -66,6 +66,14 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         callBack.upCountView()
     }
 
+    fun removeSelection() {
+        for (i in getItems().lastIndex downTo 0) {
+            if (getItem(i)?.uri.toString() in selectedUris) {
+                removeItem(i)
+            }
+        }
+    }
+
     override fun convert(holder: ItemViewHolder, item: DocItem, payloads: MutableList<Any>) {
         holder.itemView.apply {
             if (payloads.isEmpty()) {
