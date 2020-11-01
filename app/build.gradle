@@ -165,7 +165,8 @@ dependencies {
 
     //规则相关
     implementation 'org.jsoup:jsoup:1.13.1'
-    implementation 'cn.wanghaomiao:JsoupXpath:2.4.2'
+    //noinspection GradleDependency
+    implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
     //JS rhino
