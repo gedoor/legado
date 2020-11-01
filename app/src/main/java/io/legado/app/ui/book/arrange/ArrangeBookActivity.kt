@@ -32,7 +32,9 @@ import kotlinx.android.synthetic.main.activity_arrange_book.*
 
 class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activity_arrange_book),
     PopupMenu.OnMenuItemClickListener,
-    ArrangeBookAdapter.CallBack, GroupSelectDialog.CallBack {
+    SelectActionBar.CallBack,
+    ArrangeBookAdapter.CallBack,
+    GroupSelectDialog.CallBack {
     override val viewModel: ArrangeBookViewModel
         get() = getViewModel(ArrangeBookViewModel::class.java)
     override val groupList: ArrayList<BookGroup> = arrayListOf()
@@ -63,6 +65,18 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         return super.onPrepareOptionsMenu(menu)
     }
 
+    override fun selectAll(selectAll: Boolean) {
+        adapter.selectAll(selectAll)
+    }
+
+    override fun revertSelection() {
+        adapter.revertSelection()
+    }
+
+    override fun onClickMainAction() {
+        selectGroup(groupRequestCode, 0)
+    }
+
     private fun initView() {
         ATH.applyEdgeEffectColor(recycler_view)
         recycler_view.layoutManager = LinearLayoutManager(this)
@@ -81,19 +95,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
         select_action_bar.setMainActionText(R.string.move_to_group)
         select_action_bar.inflateMenu(R.menu.arrange_book_sel)
         select_action_bar.setOnMenuItemClickListener(this)
-        select_action_bar.setCallBack(object : SelectActionBar.CallBack {
-            override fun selectAll(selectAll: Boolean) {
-                adapter.selectAll(selectAll)
-            }
-
-            override fun revertSelection() {
-                adapter.revertSelection()
-            }
-
-            override fun onClickMainAction() {
-                selectGroup(groupRequestCode, 0)
-            }
-        })
+        select_action_bar.setCallBack(this)
     }
 
     private fun initGroupData() {
