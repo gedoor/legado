@@ -7,6 +7,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.DocItem
 import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.isContentPath
 import java.io.File
 import java.util.*
 
@@ -26,7 +27,14 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     fun deleteDoc(uriList: HashSet<String>, finally: () -> Unit) {
         execute {
             uriList.forEach {
-                DocumentFile.fromSingleUri(context, Uri.parse(it))?.delete()
+                val uri = Uri.parse(it)
+                if (uri.isContentPath()) {
+                    DocumentFile.fromSingleUri(context, uri)?.delete()
+                } else {
+                    uri.path?.let { path ->
+                        File(path).delete()
+                    }
+                }
             }
         }.onFinally {
             finally.invoke()
