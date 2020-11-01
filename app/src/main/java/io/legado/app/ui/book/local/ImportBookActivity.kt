@@ -299,7 +299,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         if (uri.toString().isContentPath()) {
             subDocs.add(DocumentFile.fromSingleUri(this, uri)!!)
         } else {
-            path = uri.toString()
+            path = uri.path.toString()
         }
         upPath()
     }
