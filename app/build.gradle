@@ -165,14 +165,13 @@ dependencies {
 
     //规则相关
     implementation 'org.jsoup:jsoup:1.13.1'
-    implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
+    implementation 'cn.wanghaomiao:JsoupXpath:2.4.2'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
     //JS rhino
     implementation 'com.github.gedoor:rhino-android:1.4'
 
     //网络
-    //noinspection GradleDependency
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
 
