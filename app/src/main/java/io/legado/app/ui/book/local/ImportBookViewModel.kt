@@ -33,12 +33,17 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun scanDoc(documentFile: DocumentFile, find: (docItem: DocItem) -> Unit) {
+    fun scanDoc(
+        documentFile: DocumentFile,
+        isRoot: Boolean,
+        find: (docItem: DocItem) -> Unit,
+        finally: (() -> Unit)? = null
+    ) {
         val docList = DocumentUtils.listFiles(context, documentFile.uri)
         docList.forEach { docItem ->
             if (docItem.isDir) {
                 DocumentFile.fromSingleUri(context, docItem.uri)?.let {
-                    scanDoc(it, find)
+                    scanDoc(it, false, find)
                 }
             } else if (docItem.name.endsWith(".txt", true)
                 || docItem.name.endsWith(".epub", true)
@@ -46,12 +51,20 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                 find(docItem)
             }
         }
+        if (isRoot) {
+            finally?.invoke()
+        }
     }
 
-    fun scanFile(file: File, find: (docItem: DocItem) -> Unit) {
+    fun scanFile(
+        file: File,
+        isRoot: Boolean,
+        find: (docItem: DocItem) -> Unit,
+        finally: (() -> Unit)? = null
+    ) {
         file.listFiles()?.forEach {
             if (it.isDirectory) {
-                scanFile(it, find)
+                scanFile(it, false, find)
             } else if (it.name.endsWith(".txt", true)
                 || it.name.endsWith(".epub", true)
             ) {
@@ -65,6 +78,9 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                     )
                 )
             }
+        }
+        if (isRoot) {
+            finally?.invoke()
         }
     }
 

@@ -235,29 +235,39 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
      * 扫描当前文件夹
      */
     private fun scanFolder() {
-        launch(IO) {
-            rootDoc?.let { doc ->
-                adapter.clearItems()
-                val lastDoc = subDocs.lastOrNull() ?: doc
-                viewModel.scanDoc(lastDoc) {
+        rootDoc?.let { doc ->
+            adapter.clearItems()
+            val lastDoc = subDocs.lastOrNull() ?: doc
+            refresh_progress_bar.isAutoLoading = true
+            launch(IO) {
+                viewModel.scanDoc(lastDoc, true, find) {
                     launch {
-                        adapter.addItem(it)
+                        refresh_progress_bar.isAutoLoading = false
                     }
                 }
-            } ?: let {
-                val lastPath = AppConfig.importBookPath
-                if (lastPath.isNullOrEmpty()) {
-                    toast(R.string.empty_msg_import_book)
-                } else {
-                    adapter.clearItems()
-                    val file = File(path)
-                    viewModel.scanFile(file) {
+            }
+        } ?: let {
+            val lastPath = AppConfig.importBookPath
+            if (lastPath.isNullOrEmpty()) {
+                toast(R.string.empty_msg_import_book)
+            } else {
+                adapter.clearItems()
+                val file = File(path)
+                refresh_progress_bar.isAutoLoading = true
+                launch(IO) {
+                    viewModel.scanFile(file, true, find) {
                         launch {
-                            adapter.addItem(it)
+                            refresh_progress_bar.isAutoLoading = false
                         }
                     }
                 }
             }
+        }
+    }
+
+    private val find: (docItem: DocItem) -> Unit = {
+        launch {
+            adapter.addItem(it)
         }
     }
 
