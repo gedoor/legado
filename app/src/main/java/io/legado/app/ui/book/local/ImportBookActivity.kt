@@ -235,21 +235,27 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
      * 扫描当前文件夹
      */
     private fun scanFolder() {
-        rootDoc?.let { doc ->
-            adapter.clearItems()
-            val lastDoc = subDocs.lastOrNull() ?: doc
-            viewModel.scanDoc(lastDoc) {
-                adapter.addItem(it)
-            }
-        } ?: let {
-            val lastPath = AppConfig.importBookPath
-            if (lastPath.isNullOrEmpty()) {
-                toast(R.string.empty_msg_import_book)
-            } else {
+        launch(IO) {
+            rootDoc?.let { doc ->
                 adapter.clearItems()
-                val file = File(path)
-                viewModel.scanFile(file) {
-                    adapter.addItem(it)
+                val lastDoc = subDocs.lastOrNull() ?: doc
+                viewModel.scanDoc(lastDoc) {
+                    launch {
+                        adapter.addItem(it)
+                    }
+                }
+            } ?: let {
+                val lastPath = AppConfig.importBookPath
+                if (lastPath.isNullOrEmpty()) {
+                    toast(R.string.empty_msg_import_book)
+                } else {
+                    adapter.clearItems()
+                    val file = File(path)
+                    viewModel.scanFile(file) {
+                        launch {
+                            adapter.addItem(it)
+                        }
+                    }
                 }
             }
         }
