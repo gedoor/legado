@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.observe
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.App
 import io.legado.app.R
@@ -57,11 +56,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         setSupportToolbar(toolbar)
         initView()
         initBookGroupData()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adapter.notifyDataSetChanged()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -218,14 +212,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getPageTitle(position: Int): CharSequence? {
-            val group = bookGroups[position]
-            return "${group.groupName} • ${when (group.groupId) {
-                AppConst.bookGroupAllId -> "${App.db.bookDao().allBookCount}"
-                AppConst.bookGroupLocalId -> "${App.db.bookDao().localBookCount}"
-                AppConst.bookGroupAudioId -> "${App.db.bookDao().audioBookCount}"
-                AppConst.bookGroupNoneId -> "${App.db.bookDao().noneBookCount}"
-                else -> "${App.db.bookDao().groupCount(group.groupId)}"
-            }}"
+            return bookGroups[position].groupName
         }
 
         override fun getItemPosition(`object`: Any): Int {
