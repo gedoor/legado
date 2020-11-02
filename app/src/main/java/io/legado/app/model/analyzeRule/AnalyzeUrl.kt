@@ -52,6 +52,7 @@ class AnalyzeUrl(
     var url: String = ""
     val headerMap = HashMap<String, String>()
     var body: String? = null
+    var type: String? = null
     private lateinit var urlHasQuery: String
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
@@ -60,7 +61,6 @@ class AnalyzeUrl(
     private var method = RequestMethod.GET
     private val splitUrlRegex = Regex(",\\s*(?=\\{)")
     private var proxy: String? = null
-    private var type: String? = null
 
     init {
         baseUrl = baseUrl.split(splitUrlRegex, 1)[0]
