@@ -57,7 +57,7 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
     init {
         try {
             val epubReader = EpubReader()
-            val inputStream = if (book.bookUrl.isContentPath()) {
+            val inputStream = if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
                 App.INSTANCE.contentResolver.openInputStream(uri)
             } else {

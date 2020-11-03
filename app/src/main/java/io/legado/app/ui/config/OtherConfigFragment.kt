@@ -186,7 +186,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
     }
 
     private fun setCoverFromUri(uri: Uri) {
-        if (uri.toString().isContentPath()) {
+        if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
             doc?.name?.let {
                 var file = requireContext().externalFilesDir

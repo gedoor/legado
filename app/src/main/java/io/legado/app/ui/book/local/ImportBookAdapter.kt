@@ -84,7 +84,8 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     ll_brief.gone()
                     cb_select.isChecked = false
                 } else {
-                    val path = if (item.uri.isContentPath()) item.uri.toString() else item.uri.path
+                    val path =
+                        if (item.uri.isContentScheme()) item.uri.toString() else item.uri.path
                     if (bookPaths.contains(path)) {
                         iv_icon.setImageResource(R.drawable.ic_book_has)
                         iv_icon.visible()

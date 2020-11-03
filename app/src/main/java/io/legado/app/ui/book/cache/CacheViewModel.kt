@@ -20,7 +20,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     fun export(path: String, book: Book, finally: (msg: String) -> Unit) {
         execute {
-            if (path.isContentPath()) {
+            if (path.isContentScheme()) {
                 val uri = Uri.parse(path)
                 DocumentFile.fromTreeUri(context, uri)?.let {
                     export(it, book)

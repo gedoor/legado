@@ -381,13 +381,13 @@ object ChapterProvider {
         typeface = try {
             val fontPath = ReadBookConfig.textFont
             when {
-                fontPath.isContentPath() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                fontPath.isContentScheme() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
                     val fd = App.INSTANCE.contentResolver
                         .openFileDescriptor(Uri.parse(fontPath), "r")!!
                         .fileDescriptor
                     Typeface.Builder(fd).build()
                 }
-                fontPath.isContentPath() -> {
+                fontPath.isContentScheme() -> {
                     Typeface.createFromFile(RealPathUtil.getPath(App.INSTANCE, Uri.parse(fontPath)))
                 }
                 fontPath.isNotEmpty() -> Typeface.createFromFile(fontPath)

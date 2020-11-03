@@ -18,7 +18,7 @@ import io.legado.app.help.storage.Restore
 import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.utils.getPrefString
-import io.legado.app.utils.isContentPath
+import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.longToast
 import io.legado.app.utils.toast
 import kotlinx.coroutines.Dispatchers.Main
@@ -35,7 +35,7 @@ object BackupRestoreUi {
         if (backupPath.isNullOrEmpty()) {
             selectBackupFolder(fragment, backupSelectRequestCode)
         } else {
-            if (backupPath.isContentPath()) {
+            if (backupPath.isContentScheme()) {
                 val uri = Uri.parse(backupPath)
                 val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
                 if (doc?.canWrite() == true) {
@@ -82,7 +82,7 @@ object BackupRestoreUi {
             fragment.longToast("WebDavError:${it.localizedMessage}\n将从本地备份恢复。")
             val backupPath = fragment.getPrefString(PreferKey.backupPath)
             if (backupPath?.isNotEmpty() == true) {
-                if (backupPath.isContentPath()) {
+                if (backupPath.isContentScheme()) {
                     val uri = Uri.parse(backupPath)
                     val doc = DocumentFile.fromTreeUri(fragment.requireContext(), uri)
                     if (doc?.canWrite() == true) {
@@ -125,7 +125,7 @@ object BackupRestoreUi {
         when (requestCode) {
             backupSelectRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
-                    if (uri.isContentPath()) {
+                    if (uri.isContentScheme()) {
                         App.INSTANCE.contentResolver.takePersistableUriPermission(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -151,7 +151,7 @@ object BackupRestoreUi {
             }
             restoreSelectRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
-                    if (uri.isContentPath()) {
+                    if (uri.isContentScheme()) {
                         App.INSTANCE.contentResolver.takePersistableUriPermission(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -173,7 +173,7 @@ object BackupRestoreUi {
             }
             selectFolderRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
-                    if (uri.isContentPath()) {
+                    if (uri.isContentScheme()) {
                         App.INSTANCE.contentResolver.takePersistableUriPermission(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION

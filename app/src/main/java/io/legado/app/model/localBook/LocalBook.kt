@@ -37,7 +37,7 @@ object LocalBook {
 
     fun importFile(uri: Uri): Book {
         val path: String
-        val fileName = if (uri.isContentPath()) {
+        val fileName = if (uri.isContentScheme()) {
             path = uri.toString()
             val doc = DocumentFile.fromSingleUri(App.INSTANCE, uri)
             doc?.let {
@@ -94,7 +94,7 @@ object LocalBook {
             }
 
             if (deleteOriginal) {
-                if (book.bookUrl.isContentPath()) {
+                if (book.bookUrl.isContentScheme()) {
                     val uri = Uri.parse(book.bookUrl)
                     DocumentFile.fromSingleUri(App.INSTANCE, uri)?.delete()
                 } else {

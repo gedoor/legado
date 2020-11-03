@@ -7,14 +7,14 @@ import io.legado.app.App
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isContentPath
+import io.legado.app.utils.isContentScheme
 import org.jetbrains.anko.toast
 import java.io.File
 
 object ImportOldData {
 
     fun importUri(context: Context, uri: Uri) {
-        if (uri.isContentPath()) {
+        if (uri.isContentScheme()) {
             DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach {
                 when (it.name) {
                     "myBookShelf.json" ->

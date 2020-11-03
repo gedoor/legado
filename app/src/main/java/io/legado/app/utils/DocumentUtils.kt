@@ -139,7 +139,7 @@ data class DocItem(
         DocumentsContract.Document.MIME_TYPE_DIR == attr
     }
 
-    val isContentPath get() = uri.toString().isContentPath()
+    val isContentPath get() = uri.isContentScheme()
 }
 
 @Throws(Exception::class)

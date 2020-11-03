@@ -68,7 +68,7 @@ class FontSelectDialog : BaseDialogFragment(),
         if (fontPath.isNullOrEmpty()) {
             openFolder()
         } else {
-            if (fontPath.isContentPath()) {
+            if (fontPath.isContentScheme()) {
                 val doc = DocumentFile.fromTreeUri(requireContext(), Uri.parse(fontPath))
                 if (doc?.canRead() == true) {
                     loadFontFiles(doc)
@@ -209,7 +209,7 @@ class FontSelectDialog : BaseDialogFragment(),
         when (requestCode) {
             fontFolderRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
-                    if (uri.toString().isContentPath()) {
+                    if (uri.toString().isContentScheme()) {
                         putPrefString(PreferKey.fontFolder, uri.toString())
                         val doc = DocumentFile.fromTreeUri(requireContext(), uri)
                         if (doc != null) {

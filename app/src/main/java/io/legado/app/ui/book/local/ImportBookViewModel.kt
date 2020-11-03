@@ -7,7 +7,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.DocItem
 import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.isContentPath
+import io.legado.app.utils.isContentScheme
 import java.io.File
 import java.util.*
 
@@ -28,7 +28,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         execute {
             uriList.forEach {
                 val uri = Uri.parse(it)
-                if (uri.isContentPath()) {
+                if (uri.isContentScheme()) {
                     DocumentFile.fromSingleUri(context, uri)?.delete()
                 } else {
                     uri.path?.let { path ->

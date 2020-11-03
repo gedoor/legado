@@ -10,7 +10,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.OldReplace
 import io.legado.app.utils.isAbsUrl
-import io.legado.app.utils.isContentPath
+import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.readText
 import java.io.File
 
@@ -22,7 +22,7 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
 
     fun importFromFilePath(path: String) {
         execute {
-            val content = if (path.isContentPath()) {
+            val content = if (path.isContentScheme()) {
                 //在前面被解码了，如果不进行编码，中文会无法识别
                 val newPath = Uri.encode(path, ":/.")
                 DocumentFile.fromSingleUri(context, Uri.parse(newPath))?.readText(context)

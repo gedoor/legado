@@ -268,7 +268,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             }
             exportRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
-                    if (uri.toString().isContentPath()) {
+                    if (uri.isContentScheme()) {
                         DocumentFile.fromTreeUri(this, uri)?.let {
                             viewModel.exportSelection(adapter.getSelection(), it)
                         }

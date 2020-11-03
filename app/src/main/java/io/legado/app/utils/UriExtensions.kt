@@ -4,11 +4,11 @@ import android.content.Context
 import android.net.Uri
 import java.io.File
 
-fun Uri.isContentPath() = this.toString().isContentPath()
+fun Uri.isContentScheme() = this.scheme == "content"
 
 @Throws(Exception::class)
 fun Uri.readBytes(context: Context): ByteArray? {
-    if (this.toString().isContentPath()) {
+    if (this.toString().isContentScheme()) {
         return DocumentUtils.readBytes(context, this)
     } else {
         val path = RealPathUtil.getPath(context, this)
@@ -32,7 +32,7 @@ fun Uri.writeBytes(
     context: Context,
     byteArray: ByteArray
 ): Boolean {
-    if (this.toString().isContentPath()) {
+    if (this.toString().isContentScheme()) {
         return DocumentUtils.writeBytes(context, byteArray, this)
     } else {
         val path = RealPathUtil.getPath(context, this)
