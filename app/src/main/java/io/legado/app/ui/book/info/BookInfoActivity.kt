@@ -106,6 +106,9 @@ class BookInfoActivity :
                     viewModel.loadBookInfo(it, false)
                 }
             }
+            R.id.menu_copy_url -> viewModel.bookData.value?.bookUrl?.let {
+                sendToClip(it)
+            } ?: toast(R.string.no_book)
             R.id.menu_can_update -> {
                 if (viewModel.inBookshelf) {
                     viewModel.bookData.value?.let {
