@@ -15,11 +15,11 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<DocItem>(context, R.layout.item_import_book) {
     var selectedUris = hashSetOf<String>()
     var checkableCount = 0
-    private var bookshelf = arrayListOf<String>()
+    private var bookPaths = arrayListOf<String>()
 
     fun upBookHas(uriList: List<String>) {
-        bookshelf.clear()
-        bookshelf.addAll(uriList)
+        bookPaths.clear()
+        bookPaths.addAll(uriList)
         notifyDataSetChanged()
         upCheckableCount()
     }
@@ -32,7 +32,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     private fun upCheckableCount() {
         checkableCount = 0
         getItems().forEach {
-            if (!it.isDir && !bookshelf.contains(it.uri.toString())) {
+            if (!it.isDir && !bookPaths.contains(it.uri.toString())) {
                 checkableCount++
             }
         }
@@ -42,7 +42,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     fun selectAll(selectAll: Boolean) {
         if (selectAll) {
             getItems().forEach {
-                if (!it.isDir && !bookshelf.contains(it.uri.toString())) {
+                if (!it.isDir && !bookPaths.contains(it.uri.toString())) {
                     selectedUris.add(it.uri.toString())
                 }
             }
@@ -84,7 +84,8 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     ll_brief.gone()
                     cb_select.isChecked = false
                 } else {
-                    if (bookshelf.contains(item.uri.toString())) {
+                    val path = if (item.uri.isContentPath()) item.uri.toString() else item.uri.path
+                    if (bookPaths.contains(path)) {
                         iv_icon.setImageResource(R.drawable.ic_book_has)
                         iv_icon.visible()
                         cb_select.invisible()
@@ -110,7 +111,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
             getItem(holder.layoutPosition)?.let {
                 if (it.isDir) {
                     callBack.nextDoc(it.uri)
-                } else if (!bookshelf.contains(it.uri.toString())) {
+                } else if (!bookPaths.contains(it.uri.toString())) {
                     if (!selectedUris.contains(it.uri.toString())) {
                         selectedUris.add(it.uri.toString())
                     } else {

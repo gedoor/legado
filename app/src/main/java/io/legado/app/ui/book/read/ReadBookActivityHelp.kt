@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.os.AsyncTask
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +16,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
@@ -149,7 +149,7 @@ object ReadBookActivityHelp {
             }
             yesButton {
                 editText?.text?.toString()?.let { editContent ->
-                    AsyncTask.execute {
+                    Coroutine.async {
                         val bookmark = Bookmark(
                             bookUrl = book.bookUrl,
                             bookName = book.name,
