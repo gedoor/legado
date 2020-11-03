@@ -11,6 +11,13 @@ import java.io.File
 
 
 object LocalBook {
+    private const val folderName = "bookTxt"
+    val cacheFolder: File by lazy {
+        val rootFile = App.INSTANCE.getExternalFilesDir(null)
+            ?: App.INSTANCE.externalCacheDir
+            ?: App.INSTANCE.cacheDir
+        FileUtils.createFolderIfNotExist(rootFile, folderName)
+    }
 
     fun getChapterList(book: Book): ArrayList<BookChapter> {
         return if (book.isEpub()) {
@@ -34,7 +41,7 @@ object LocalBook {
             path = uri.toString()
             val doc = DocumentFile.fromSingleUri(App.INSTANCE, uri)
             doc?.let {
-                val bookFile = FileUtils.getFile(AnalyzeTxtFile.cacheFolder, it.name!!)
+                val bookFile = FileUtils.getFile(cacheFolder, it.name!!)
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
                     doc.readBytes(App.INSTANCE)?.let { bytes ->
@@ -82,7 +89,7 @@ object LocalBook {
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
         kotlin.runCatching {
             if (book.isLocalTxt()) {
-                val bookFile = FileUtils.getFile(AnalyzeTxtFile.cacheFolder, book.originName)
+                val bookFile = FileUtils.getFile(cacheFolder, book.originName)
                 bookFile.delete()
             }
 

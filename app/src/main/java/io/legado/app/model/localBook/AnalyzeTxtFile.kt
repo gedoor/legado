@@ -239,7 +239,7 @@ class AnalyzeTxtFile {
     }
 
     companion object {
-        private const val folderName = "bookTxt"
+
         private const val BLANK: Byte = 0x0a
 
         //默认从文件中获取数据的长度
@@ -247,12 +247,6 @@ class AnalyzeTxtFile {
 
         //没有标题的时候，每个章节的最大长度
         private const val MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024
-        val cacheFolder: File by lazy {
-            val rootFile = App.INSTANCE.getExternalFilesDir(null)
-                ?: App.INSTANCE.externalCacheDir
-                ?: App.INSTANCE.cacheDir
-            FileUtils.createFolderIfNotExist(rootFile, folderName)
-        }
 
         fun getContent(book: Book, bookChapter: BookChapter): String {
             val bookFile = getBookFile(book)
@@ -269,7 +263,7 @@ class AnalyzeTxtFile {
         private fun getBookFile(book: Book): File {
             if (book.bookUrl.isContentPath()) {
                 val uri = Uri.parse(book.bookUrl)
-                val bookFile = FileUtils.getFile(cacheFolder, book.originName)
+                val bookFile = FileUtils.getFile(LocalBook.cacheFolder, book.originName)
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
                     DocumentUtils.readBytes(App.INSTANCE, uri)?.let {

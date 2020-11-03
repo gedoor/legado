@@ -14,6 +14,7 @@ import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import java.nio.charset.Charset
 import kotlin.math.max
+import kotlin.math.min
 
 @Parcelize
 @TypeConverters(Book.Converters::class)
@@ -53,55 +54,55 @@ data class Book(
     var originOrder: Int = 0,                   //书源排序
     var variable: String? = null,               // 自定义书籍变量信息(用于书源规则检索书籍信息)
     var readConfig: ReadConfig? = null
-): Parcelable, BaseBook {
-    
+) : Parcelable, BaseBook {
+
     fun isLocalBook(): Boolean {
         return origin == BookType.local
     }
-    
+
     fun isLocalTxt(): Boolean {
         return isLocalBook() && originName.endsWith(".txt", true)
     }
-    
+
     fun isEpub(): Boolean {
         return originName.endsWith(".epub", true)
     }
-    
+
     fun isOnLineTxt(): Boolean {
         return !isLocalBook() && type == 0
     }
-    
+
     override fun equals(other: Any?): Boolean {
         if (other is Book) {
             return other.bookUrl == bookUrl
         }
         return false
     }
-    
+
     override fun hashCode(): Int {
         return bookUrl.hashCode()
     }
-    
+
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     override val variableMap by lazy {
         GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
     }
-    
+
     override fun putVariable(key: String, value: String) {
         variableMap[key] = value
         variable = GSON.toJson(variableMap)
     }
-    
+
     @Ignore
     @IgnoredOnParcel
     override var infoHtml: String? = null
-    
+
     @Ignore
     @IgnoredOnParcel
     override var tocHtml: String? = null
-    
+
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
 
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
@@ -146,7 +147,10 @@ data class Book(
     }
 
     fun getFolderName(): String {
-        return name.replace(AppPattern.fileNameRegex, "") + MD5Utils.md5Encode16(bookUrl)
+        //防止书名过长,只取9位
+        var folderName = name.replace(AppPattern.fileNameRegex, "")
+        folderName = folderName.substring(0, min(9, folderName.length))
+        return folderName + MD5Utils.md5Encode16(bookUrl)
     }
 
     fun toSearchBook() = SearchBook(
@@ -168,7 +172,7 @@ data class Book(
         this.infoHtml = this@Book.infoHtml
         this.tocHtml = this@Book.tocHtml
     }
-    
+
     fun changeTo(newBook: Book) {
         newBook.group = group
         newBook.order = order
