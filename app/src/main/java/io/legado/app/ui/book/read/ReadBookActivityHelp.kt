@@ -38,7 +38,7 @@ object ReadBookActivityHelp {
      * 更新状态栏,导航栏
      */
     fun upSystemUiVisibility(
-        window: Window,
+        activity: Activity,
         isInMultiWindow: Boolean,
         toolBarHide: Boolean = true
     ) {
@@ -59,13 +59,13 @@ object ReadBookActivityHelp {
                 flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             }
         }
-        window.decorView.systemUiVisibility = flag
+        activity.window.decorView.systemUiVisibility = flag
         if (toolBarHide) {
-            ATH.setLightStatusBar(window, ReadBookConfig.durConfig.curStatusIconDark())
+            ATH.setLightStatusBar(activity, ReadBookConfig.durConfig.curStatusIconDark())
         } else {
             ATH.setLightStatusBarAuto(
-                window,
-                ThemeStore.statusBarColor(App.INSTANCE, AppConfig.isTransparentStatusBar)
+                activity,
+                ThemeStore.statusBarColor(activity, AppConfig.isTransparentStatusBar)
             )
         }
     }

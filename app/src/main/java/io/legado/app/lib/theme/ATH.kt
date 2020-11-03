@@ -9,7 +9,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-import android.view.Window
+import android.view.WindowInsetsController
 import android.widget.EdgeEffect
 import android.widget.ScrollView
 import androidx.annotation.ColorInt
@@ -43,11 +43,8 @@ object ATH {
 
     fun setStatusBarColorAuto(activity: Activity, fullScreen: Boolean) {
         val isTransparentStatusBar = AppConfig.isTransparentStatusBar
-        setStatusBarColor(
-            activity,
-            ThemeStore.statusBarColor(activity, isTransparentStatusBar),
-            isTransparentStatusBar, fullScreen
-        )
+        val statusBarColor = ThemeStore.statusBarColor(activity, isTransparentStatusBar)
+        setStatusBarColor(activity, statusBarColor, isTransparentStatusBar, fullScreen)
     }
 
     fun setStatusBarColor(
@@ -65,16 +62,34 @@ object ATH {
         } else {
             activity.window.statusBarColor = color
         }
-        setLightStatusBarAuto(activity.window, color)
+        setLightStatusBarAuto(activity, color)
     }
 
-    fun setLightStatusBarAuto(window: Window, bgColor: Int) {
-        setLightStatusBar(window, ColorUtils.isColorLight(bgColor))
+    fun setLightStatusBarAuto(activity: Activity, bgColor: Int) {
+        setLightStatusBar(activity, ColorUtils.isColorLight(bgColor))
     }
 
-    fun setLightStatusBar(window: Window, enabled: Boolean) {
+    fun setLightStatusBar(activity: Activity, enabled: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.window.insetsController?.let {
+                if (enabled) {
+                    it.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    )
+                } else {
+                    it.setSystemBarsAppearance(0, 0)
+                }
+            }
+        } else {
+            setLightStatusBarO(activity, enabled)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setLightStatusBarO(activity: Activity, enabled: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val decorView = window.decorView
+            val decorView = activity.window.decorView
             val systemUiVisibility = decorView.systemUiVisibility
             if (enabled) {
                 decorView.systemUiVisibility =
@@ -86,7 +101,35 @@ object ATH {
         }
     }
 
+    fun setNavigationBarColorAuto(
+        activity: Activity,
+        color: Int = ThemeStore.navigationBarColor(activity)
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            activity.window.navigationBarColor = color
+            setLightNavigationBar(activity, ColorUtils.isColorLight(color))
+        }
+    }
+
     fun setLightNavigationBar(activity: Activity, enabled: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.window.insetsController?.let {
+                if (enabled) {
+                    it.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                } else {
+                    it.setSystemBarsAppearance(0, 0)
+                }
+            }
+        } else {
+            setLightNavigationBarO(activity, enabled)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setLightNavigationBarO(activity: Activity, enabled: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val decorView = activity.window.decorView
             var systemUiVisibility = decorView.systemUiVisibility
@@ -96,16 +139,6 @@ object ATH {
                 systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
             }
             decorView.systemUiVisibility = systemUiVisibility
-        }
-    }
-
-    fun setNavigationBarColorAuto(
-        activity: Activity,
-        color: Int = ThemeStore.navigationBarColor(activity)
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.window.navigationBarColor = color
-            setLightNavigationBar(activity, ColorUtils.isColorLight(color))
         }
     }
 
