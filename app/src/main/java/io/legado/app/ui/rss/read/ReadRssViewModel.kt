@@ -17,11 +17,11 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
 import io.legado.app.help.http.HttpHelper
-import io.legado.app.model.rss.Rss
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.rss.Rss
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isContentPath
+import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -111,7 +111,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         execute {
             val fileName = "${AppConst.fileNameFormat.format(Date(System.currentTimeMillis()))}.jpg"
             webData2bitmap(webPic)?.let { biteArray ->
-                if (path.isContentPath()) {
+                if (path.isContentScheme()) {
                     val uri = Uri.parse(path)
                     DocumentFile.fromTreeUri(context, uri)?.let { doc ->
                         DocumentUtils.createFileIfNotExist(doc, fileName)

@@ -92,7 +92,7 @@ object Backup {
                     edit.commit()
                 }
                 WebDavHelp.backUpWebDav(backupPath)
-                if (path.isContentPath()) {
+                if (path.isContentScheme()) {
                     copyBackup(context, Uri.parse(path), isAuto)
                 } else {
                     if (path.isEmpty()) {

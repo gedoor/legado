@@ -107,7 +107,7 @@ class BookInfoEditActivity :
     }
 
     private fun coverChangeTo(uri: Uri) {
-        if (uri.toString().isContentPath()) {
+        if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(this, uri)
             doc?.name?.let {
                 var file = this.externalFilesDir

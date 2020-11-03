@@ -73,7 +73,7 @@ object Restore {
 
     suspend fun restore(context: Context, path: String) {
         withContext(IO) {
-            if (path.isContentPath()) {
+            if (path.isContentScheme()) {
                 DocumentFile.fromTreeUri(context, Uri.parse(path))?.listFiles()?.forEach { doc ->
                     for (fileName in Backup.backupFileNames) {
                         if (doc.name == fileName) {

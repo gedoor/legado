@@ -207,7 +207,7 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
         when (requestCode) {
             exportRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    if (uri.isContentPath()) {
+                    if (uri.isContentScheme()) {
                         contentResolver.takePersistableUriPermission(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION

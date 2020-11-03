@@ -11,10 +11,10 @@ val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
-fun String?.isContentPath(): Boolean = this?.startsWith("content://") == true
+fun String?.isContentScheme(): Boolean = this?.startsWith("content://") == true
 
 fun String.parseToUri(): Uri {
-    return if (isContentPath()) {
+    return if (isContentScheme()) {
         Uri.parse(this)
     } else {
         Uri.fromFile(File(this))

@@ -26,7 +26,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
 
     fun importSourceFromFilePath(path: String) {
         execute {
-            val content = if (path.isContentPath()) {
+            val content = if (path.isContentScheme()) {
                 //在前面被解码了，如果不进行编码，中文会无法识别
                 val newPath = Uri.encode(path, ":/.")
                 DocumentFile.fromSingleUri(context, Uri.parse(newPath))?.readText(context)

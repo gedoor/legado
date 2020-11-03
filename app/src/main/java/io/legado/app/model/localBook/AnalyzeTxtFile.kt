@@ -261,7 +261,7 @@ class AnalyzeTxtFile {
         }
 
         private fun getBookFile(book: Book): File {
-            if (book.bookUrl.isContentPath()) {
+            if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
                 val bookFile = FileUtils.getFile(LocalBook.cacheFolder, book.originName)
                 if (!bookFile.exists()) {
