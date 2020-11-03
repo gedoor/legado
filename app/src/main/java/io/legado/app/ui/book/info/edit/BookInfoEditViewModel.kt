@@ -25,7 +25,7 @@ class BookInfoEditViewModel(application: Application) : BaseViewModel(applicatio
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book
             }
-            App.db.bookDao().insert(book)
+            App.db.bookDao().update(book)
         }.onSuccess {
             success?.invoke()
         }
