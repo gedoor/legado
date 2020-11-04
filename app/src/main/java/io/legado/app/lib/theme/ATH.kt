@@ -45,9 +45,8 @@ object ATH {
     fun fullScreen(activity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             activity.window.setDecorFitsSystemWindows(true)
-        } else {
-            fullScreenO(activity)
         }
+        fullScreenO(activity)
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
     }
 

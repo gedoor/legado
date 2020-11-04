@@ -5,10 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Build
-import android.view.LayoutInflater
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.EditText
 import io.legado.app.App
 import io.legado.app.R
@@ -42,6 +39,38 @@ object ReadBookActivityHelp {
         isInMultiWindow: Boolean,
         toolBarHide: Boolean = true
     ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.window.insetsController?.let {
+                if (toolBarHide) {
+                    if (ReadBookConfig.hideStatusBar) {
+                        it.hide(WindowInsets.Type.statusBars())
+                    }
+                    if (ReadBookConfig.hideNavigationBar) {
+                        it.hide(WindowInsets.Type.navigationBars())
+                    }
+                } else {
+                    it.show(WindowInsets.Type.statusBars())
+                    it.show(WindowInsets.Type.navigationBars())
+                }
+            }
+        }
+        upSystemUiVisibilityO(activity, isInMultiWindow, toolBarHide)
+        if (toolBarHide) {
+            ATH.setLightStatusBar(activity, ReadBookConfig.durConfig.curStatusIconDark())
+        } else {
+            ATH.setLightStatusBarAuto(
+                activity,
+                ThemeStore.statusBarColor(activity, AppConfig.isTransparentStatusBar)
+            )
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun upSystemUiVisibilityO(
+        activity: Activity,
+        isInMultiWindow: Boolean,
+        toolBarHide: Boolean = true
+    ) {
         var flag = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_IMMERSIVE
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
@@ -60,14 +89,6 @@ object ReadBookActivityHelp {
             }
         }
         activity.window.decorView.systemUiVisibility = flag
-        if (toolBarHide) {
-            ATH.setLightStatusBar(activity, ReadBookConfig.durConfig.curStatusIconDark())
-        } else {
-            ATH.setLightStatusBarAuto(
-                activity,
-                ThemeStore.statusBarColor(activity, AppConfig.isTransparentStatusBar)
-            )
-        }
     }
 
     /**
