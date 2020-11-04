@@ -78,7 +78,10 @@ object ATH {
                         WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
                     )
                 } else {
-                    it.setSystemBarsAppearance(0, 0)
+                    it.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    )
                 }
             }
         } else {
@@ -120,7 +123,10 @@ object ATH {
                         WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
                     )
                 } else {
-                    it.setSystemBarsAppearance(0, 0)
+                    it.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
                 }
             }
         } else {
