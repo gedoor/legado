@@ -162,10 +162,16 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         execute {
             FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
             if (App.db.httpTTSDao().count == 0) {
-                DefaultData.defaultHttpTTS.let {
+                DefaultData.httpTTS.let {
                     App.db.httpTTSDao().insert(*it.toTypedArray())
                 }
             }
+        }
+    }
+
+    fun upVersion() {
+        execute {
+            DefaultData.importDefaultTocRules()
         }
     }
 }

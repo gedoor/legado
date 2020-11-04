@@ -106,6 +106,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
                 val log = String(assets.open("updateLog.md").readBytes())
                 TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
             }
+            viewModel.upVersion()
         }
     }
 
