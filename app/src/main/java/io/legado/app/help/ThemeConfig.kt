@@ -16,7 +16,7 @@ object ThemeConfig {
     val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, configFileName)
 
     val configList: ArrayList<Config> by lazy {
-        val cList = getConfigs() ?: DefaultData.defaultThemeConfigs
+        val cList = getConfigs() ?: DefaultData.themeConfigs
         ArrayList(cList)
     }
 

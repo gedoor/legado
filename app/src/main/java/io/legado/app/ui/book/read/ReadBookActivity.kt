@@ -832,7 +832,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                                         positions[1] + 1,
                                         positions[4]
                                     )
-                                    //todo: consider change page, jump to scroll position
+                                    //consider change page, jump to scroll position
                                     -1 -> page_view.curPage.selectEndMoveIndex(1, 0, positions[4])
                                 }
                                 page_view.isTextSelected = true

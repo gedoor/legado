@@ -12,7 +12,7 @@ object DefaultData {
     const val httpTtsFileName = "httpTTS.json"
     const val txtTocRuleFileName = "txtTocRule.json"
 
-    val defaultHttpTTS by lazy {
+    val httpTTS by lazy {
         val json =
             String(
                 App.INSTANCE.assets.open("defaultData${File.separator}$httpTtsFileName")
@@ -21,7 +21,7 @@ object DefaultData {
         GSON.fromJsonArray<HttpTTS>(json)!!
     }
 
-    val defaultReadConfigs by lazy {
+    val readConfigs by lazy {
         val json = String(
             App.INSTANCE.assets.open("defaultData${File.separator}${ReadBookConfig.configFileName}")
                 .readBytes()
@@ -29,7 +29,7 @@ object DefaultData {
         GSON.fromJsonArray<ReadBookConfig.Config>(json)!!
     }
 
-    val defaultTxtTocRules by lazy {
+    val txtTocRules by lazy {
         val json = String(
             App.INSTANCE.assets.open("defaultData${File.separator}$txtTocRuleFileName")
                 .readBytes()
@@ -37,11 +37,18 @@ object DefaultData {
         GSON.fromJsonArray<TxtTocRule>(json)!!
     }
 
-    val defaultThemeConfigs by lazy {
+    val themeConfigs by lazy {
         val json = String(
             App.INSTANCE.assets.open("defaultData${File.separator}${ThemeConfig.configFileName}")
                 .readBytes()
         )
         GSON.fromJsonArray<ThemeConfig.Config>(json)!!
+    }
+
+    fun importDefaultTocRules() {
+        App.db.txtTocRule().deleteDefault()
+        txtTocRules.let {
+            App.db.txtTocRule().insert(*it.toTypedArray())
+        }
     }
 }

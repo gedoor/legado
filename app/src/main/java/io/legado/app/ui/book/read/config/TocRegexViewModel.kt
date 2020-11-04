@@ -22,10 +22,7 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
 
     fun importDefault() {
         execute {
-            App.db.txtTocRule().deleteDefault()
-            DefaultData.defaultTxtTocRules.let {
-                App.db.txtTocRule().insert(*it.toTypedArray())
-            }
+            DefaultData.importDefaultTocRules()
         }
     }
 

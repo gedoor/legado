@@ -13,7 +13,7 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
 
     fun importDefault() {
         execute {
-            DefaultData.defaultHttpTTS.let {
+            DefaultData.httpTTS.let {
                 App.db.httpTTSDao().insert(*it.toTypedArray())
             }
         }
