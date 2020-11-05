@@ -103,9 +103,8 @@ object ATH {
                     )
                 }
             }
-        } else {
-            setLightStatusBarO(activity, enabled)
         }
+        setLightStatusBarO(activity, enabled)
     }
 
     @Suppress("DEPRECATION")
@@ -148,9 +147,8 @@ object ATH {
                     )
                 }
             }
-        } else {
-            setLightNavigationBarO(activity, enabled)
         }
+        setLightNavigationBarO(activity, enabled)
     }
 
     @Suppress("DEPRECATION")
