@@ -14,20 +14,17 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
         execute {
             val id = intent.getLongExtra("id", -1)
             if (id > 0) {
-                App.db.replaceRuleDao().findById(id)?.let {
-                    replaceRule = it
-                }
+                replaceRule = App.db.replaceRuleDao().findById(id)
             } else {
                 val pattern = intent.getStringExtra("pattern") ?: ""
                 val isRegex = intent.getBooleanExtra("isRegex", false)
                 val scope = intent.getStringExtra("scope")
-                val rule = ReplaceRule(
+                replaceRule = ReplaceRule(
                     name = pattern,
                     pattern = pattern,
                     isRegex = isRegex,
                     scope = scope
                 )
-                replaceRule = rule
             }
         }.onFinally {
             replaceRule?.let {
