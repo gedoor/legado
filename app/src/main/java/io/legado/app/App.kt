@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -47,7 +46,7 @@ class App : MultiDexApplication() {
             versionCode = it.versionCode
             versionName = it.versionName
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
+        createNotificationChannels()
         applyDayNight()
         LiveEventBus
             .config()
@@ -87,8 +86,8 @@ class App : MultiDexApplication() {
     /**
      * 创建通知ID
      */
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createChannelId() {
+    private fun createNotificationChannels() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         (getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.let {
             val downloadChannel = NotificationChannel(
                 channelIdDownload,
