@@ -62,11 +62,28 @@
                     android:layout_height="wrap_content" />
             </io.legado.app.ui.widget.text.TextInputLayout>
 
-            <io.legado.app.lib.theme.view.ATECheckBox
-                android:id="@+id/cb_use_regex"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/use_regex" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <io.legado.app.lib.theme.view.ATECheckBox
+                    android:id="@+id/cb_use_regex"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/use_regex" />
+
+                <ImageView
+                    android:id="@+id/iv_help"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_help"
+                    app:tint="@color/secondaryText"
+                    android:contentDescription="@string/help" />
+
+            </LinearLayout>
 
             <io.legado.app.ui.widget.text.TextInputLayout
                 android:id="@+id/til_replace_to"
