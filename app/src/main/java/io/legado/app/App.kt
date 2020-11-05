@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -47,7 +46,7 @@ class App : MultiDexApplication() {
             versionCode = it.versionCode
             versionName = it.versionName
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannelId()
+        createNotificationChannels()
         applyDayNight()
         LiveEventBus
             .config()
@@ -87,41 +86,38 @@ class App : MultiDexApplication() {
     /**
      * 创建通知ID
      */
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createChannelId() {
+    private fun createNotificationChannels() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         (getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.let {
-            //用唯一的ID创建渠道对象
             val downloadChannel = NotificationChannel(
                 channelIdDownload,
                 getString(R.string.action_download),
                 NotificationManager.IMPORTANCE_LOW
-            )
-            //初始化channel
-            downloadChannel.enableLights(false)
-            downloadChannel.enableVibration(false)
-            downloadChannel.setSound(null, null)
+            ).apply {
+                enableLights(false)
+                enableVibration(false)
+                setSound(null, null)
+            }
 
-            //用唯一的ID创建渠道对象
             val readAloudChannel = NotificationChannel(
                 channelIdReadAloud,
                 getString(R.string.read_aloud),
                 NotificationManager.IMPORTANCE_LOW
-            )
-            //初始化channel
-            readAloudChannel.enableLights(false)
-            readAloudChannel.enableVibration(false)
-            readAloudChannel.setSound(null, null)
+            ).apply {
+                enableLights(false)
+                enableVibration(false)
+                setSound(null, null)
+            }
 
-            //用唯一的ID创建渠道对象
             val webChannel = NotificationChannel(
                 channelIdWeb,
                 getString(R.string.web_service),
                 NotificationManager.IMPORTANCE_LOW
-            )
-            //初始化channel
-            webChannel.enableLights(false)
-            webChannel.enableVibration(false)
-            webChannel.setSound(null, null)
+            ).apply {
+                enableLights(false)
+                enableVibration(false)
+                setSound(null, null)
+            }
 
             //向notification manager 提交channel
             it.createNotificationChannels(listOf(downloadChannel, readAloudChannel, webChannel))
