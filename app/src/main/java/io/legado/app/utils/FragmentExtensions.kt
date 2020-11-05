@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.utils
 
 import android.app.Activity
@@ -13,7 +15,9 @@ import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.internals.AnkoInternals
 
-fun Fragment.isOnline() = requireContext().connectivityManager.activeNetworkInfo?.isConnected == true
+@Suppress("DEPRECATION")
+fun Fragment.isOnline() =
+    requireContext().connectivityManager.activeNetworkInfo?.isConnected == true
 
 fun Fragment.getPrefBoolean(key: String, defValue: Boolean = false) =
     requireContext().defaultSharedPreferences.getBoolean(key, defValue)
@@ -39,7 +43,10 @@ fun Fragment.getPrefString(key: String, defValue: String? = null) =
 fun Fragment.putPrefString(key: String, value: String) =
     requireContext().defaultSharedPreferences.edit { putString(key, value) }
 
-fun Fragment.getPrefStringSet(key: String, defValue: MutableSet<String>? = null) =
+fun Fragment.getPrefStringSet(
+    key: String,
+    defValue: MutableSet<String>? = null
+): MutableSet<String>? =
     requireContext().defaultSharedPreferences.getStringSet(key, defValue)
 
 fun Fragment.putPrefStringSet(key: String, value: MutableSet<String>) =
@@ -50,23 +57,23 @@ fun Fragment.removePref(key: String) =
 
 fun Fragment.getCompatColor(@ColorRes id: Int): Int = requireContext().getCompatColor(id)
 
-fun Fragment.getCompatDrawable(@DrawableRes id: Int): Drawable? = requireContext().getCompatDrawable(id)
+fun Fragment.getCompatDrawable(@DrawableRes id: Int): Drawable? =
+    requireContext().getCompatDrawable(id)
 
-fun Fragment.getCompatColorStateList(@ColorRes id: Int): ColorStateList? = requireContext().getCompatColorStateList(id)
-
-val Fragment.isNightTheme: Boolean
-    get() = getPrefBoolean("isNightTheme")
-
-val Fragment.isTransparentStatusBar: Boolean
-    get() = getPrefBoolean("transparentStatusBar")
-
+fun Fragment.getCompatColorStateList(@ColorRes id: Int): ColorStateList? =
+    requireContext().getCompatColorStateList(id)
 
 inline fun <reified T : Activity> Fragment.startActivity(vararg params: Pair<String, Any?>) =
     AnkoInternals.internalStartActivity(requireActivity(), T::class.java, params)
 
-
-inline fun <reified T : Activity> Fragment.startActivityForResult(requestCode: Int, vararg params: Pair<String, Any?>) =
-    startActivityForResult(AnkoInternals.createIntent(requireActivity(), T::class.java, params), requestCode)
+inline fun <reified T : Activity> Fragment.startActivityForResult(
+    requestCode: Int,
+    vararg params: Pair<String, Any?>
+) =
+    startActivityForResult(
+        AnkoInternals.createIntent(requireActivity(), T::class.java, params),
+        requestCode
+    )
 
 inline fun <reified T : Service> Fragment.startService(vararg params: Pair<String, Any?>) =
     AnkoInternals.internalStartService(requireActivity(), T::class.java, params)

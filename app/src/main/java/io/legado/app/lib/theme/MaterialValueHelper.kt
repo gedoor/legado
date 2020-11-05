@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.lib.theme
 
 import android.annotation.SuppressLint
@@ -6,6 +8,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.legado.app.R
+import io.legado.app.utils.ColorUtils
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -54,6 +57,9 @@ val Context.accentColor: Int
 val Context.backgroundColor: Int
     get() = ThemeStore.backgroundColor(this)
 
+val Context.bottomBackground: Int
+    get() = ThemeStore.bottomBackground(this)
+
 val Context.primaryTextColor: Int
     get() = getPrimaryTextColor(isDarkTheme)
 
@@ -77,6 +83,9 @@ val Fragment.accentColor: Int
 
 val Fragment.backgroundColor: Int
     get() = ThemeStore.backgroundColor(requireContext())
+
+val Fragment.bottomBackground: Int
+    get() = ThemeStore.bottomBackground(requireContext())
 
 val Fragment.primaryTextColor: Int
     get() = requireContext().getPrimaryTextColor(isDarkTheme)
@@ -102,3 +111,6 @@ val Context.isDarkTheme: Boolean
 
 val Fragment.isDarkTheme: Boolean
     get() = requireContext().isDarkTheme
+
+val Context.elevation: Float
+    get() = ThemeStore.elevation(this)

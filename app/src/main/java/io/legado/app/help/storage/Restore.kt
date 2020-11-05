@@ -1,28 +1,68 @@
 package io.legado.app.help.storage
 
 import android.content.Context
-import android.util.Log
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.App
-import io.legado.app.constant.AppConst
-import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookSource
-import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.data.entities.RssSource
-import io.legado.app.help.FileHelp
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.storage.Backup.defaultPath
+import io.legado.app.BuildConfig
+import io.legado.app.R
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
+import io.legado.app.data.entities.*
+import io.legado.app.help.*
+import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
 import java.io.File
 
 object Restore {
+    private val ignoreConfigPath = FileUtils.getPath(App.INSTANCE.filesDir, "restoreIgnore.json")
+    val ignoreConfig: HashMap<String, Boolean> by lazy {
+        val file = FileUtils.createFileIfNotExist(ignoreConfigPath)
+        val json = file.readText()
+        GSON.fromJsonObject<HashMap<String, Boolean>>(json) ?: hashMapOf()
+    }
+
+    //忽略key
+    val ignoreKeys = arrayOf(
+        "readConfig",
+        PreferKey.themeMode,
+        PreferKey.bookshelfLayout,
+        PreferKey.showRss,
+        PreferKey.threadCount
+    )
+
+    //忽略标题
+    val ignoreTitle = arrayOf(
+        App.INSTANCE.getString(R.string.read_config),
+        App.INSTANCE.getString(R.string.theme_mode),
+        App.INSTANCE.getString(R.string.bookshelf_layout),
+        App.INSTANCE.getString(R.string.show_rss),
+        App.INSTANCE.getString(R.string.thread_count)
+    )
+
+    //默认忽略keys
+    private val ignorePrefKeys = arrayOf(
+        PreferKey.versionCode,
+        PreferKey.defaultCover
+    )
+    private val readPrefKeys = arrayOf(
+        PreferKey.readStyleSelect,
+        PreferKey.shareLayout,
+        PreferKey.hideStatusBar,
+        PreferKey.hideNavigationBar,
+        PreferKey.autoReadSpeed
+    )
+
     val jsonPath: ParseContext by lazy {
         JsonPath.using(
             Configuration.builder()
@@ -31,176 +71,199 @@ object Restore {
         )
     }
 
-    fun restore(path: String = defaultPath) {
-        doAsync {
-            try {
-                val file = FileHelp.getFile(path + File.separator + "bookshelf.json")
-                val json = file.readText()
-                GSON.fromJsonArray<Book>(json)?.let {
-                    App.db.bookDao().insert(*it.toTypedArray())
+    suspend fun restore(context: Context, path: String) {
+        withContext(IO) {
+            if (path.isContentScheme()) {
+                DocumentFile.fromTreeUri(context, Uri.parse(path))?.listFiles()?.forEach { doc ->
+                    for (fileName in Backup.backupFileNames) {
+                        if (doc.name == fileName) {
+                            DocumentUtils.readText(context, doc.uri)?.let {
+                                FileUtils.createFileIfNotExist("${Backup.backupPath}${File.separator}$fileName")
+                                    .writeText(it)
+                            }
+                        }
+                    }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            try {
-                val file = FileHelp.getFile(path + File.separator + "bookSource.json")
-                val json = file.readText()
-                GSON.fromJsonArray<BookSource>(json)?.let {
-                    App.db.bookSourceDao().insert(*it.toTypedArray())
+            } else {
+                try {
+                    val file = File(path)
+                    for (fileName in Backup.backupFileNames) {
+                        FileUtils.getFile(file, fileName).let {
+                            if (it.exists()) {
+                                it.copyTo(
+                                    FileUtils.createFileIfNotExist("${Backup.backupPath}${File.separator}$fileName"),
+                                    true
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
-            try {
-                val file = FileHelp.getFile(path + File.separator + "rssSource.json")
-                val json = file.readText()
-                GSON.fromJsonArray<RssSource>(json)?.let {
-                    App.db.rssSourceDao().insert(*it.toTypedArray())
+        }
+        restoreDatabase()
+        restoreConfig()
+    }
+
+    suspend fun restoreDatabase(path: String = Backup.backupPath) {
+        withContext(IO) {
+            fileToListT<Book>(path, "bookshelf.json")?.let {
+                App.db.bookDao().insert(*it.toTypedArray())
+            }
+            fileToListT<Bookmark>(path, "bookmark.json")?.let {
+                App.db.bookmarkDao().insert(*it.toTypedArray())
+            }
+            fileToListT<BookGroup>(path, "bookGroup.json")?.let {
+                App.db.bookGroupDao().insert(*it.toTypedArray())
+            }
+            fileToListT<BookSource>(path, "bookSource.json")?.let {
+                App.db.bookSourceDao().insert(*it.toTypedArray())
+            }
+            fileToListT<RssSource>(path, "rssSource.json")?.let {
+                App.db.rssSourceDao().insert(*it.toTypedArray())
+            }
+            fileToListT<RssStar>(path, "rssStar.json")?.let {
+                App.db.rssStarDao().insert(*it.toTypedArray())
+            }
+            fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
+                App.db.replaceRuleDao().insert(*it.toTypedArray())
+            }
+            fileToListT<TxtTocRule>(path, DefaultData.txtTocRuleFileName)?.let {
+                App.db.txtTocRule().insert(*it.toTypedArray())
+            }
+            fileToListT<HttpTTS>(path, DefaultData.httpTtsFileName)?.let {
+                App.db.httpTTSDao().insert(*it.toTypedArray())
+            }
+            fileToListT<ReadRecord>(path, "readRecord.json")?.let {
+                it.forEach { readRecord ->
+                    //判断是不是本机记录
+                    if (readRecord.androidId != App.androidId) {
+                        App.db.readRecordDao().insert(readRecord)
+                    } else {
+                        val time = App.db.readRecordDao()
+                            .getReadTime(readRecord.androidId, readRecord.bookName)
+                        if (time == null || time < readRecord.readTime) {
+                            App.db.readRecordDao().insert(readRecord)
+                        }
+                    }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
-            try {
-                val file = FileHelp.getFile(path + File.separator + "replaceRule.json")
-                val json = file.readText()
-                GSON.fromJsonArray<ReplaceRule>(json)?.let {
-                    App.db.replaceRuleDao().insert(*it.toTypedArray())
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            try {
-                val file =
-                    FileHelp.getFile(path + File.separator + ReadBookConfig.readConfigFileName)
-                val configFile =
-                    File(App.INSTANCE.filesDir.absolutePath + File.separator + ReadBookConfig.readConfigFileName)
-                if (file.exists()) {
-                    file.copyTo(configFile, true)
-                    ReadBookConfig.upConfig()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            Preferences.getSharedPreferences(App.INSTANCE, path, "config")?.all?.map {
-                val edit = App.INSTANCE.defaultSharedPreferences.edit()
-                when (val value = it.value) {
-                    is Int -> edit.putInt(it.key, value)
-                    is Boolean -> edit.putBoolean(it.key, value)
-                    is Long -> edit.putLong(it.key, value)
-                    is Float -> edit.putFloat(it.key, value)
-                    is String -> edit.putString(it.key, value)
-                    else -> Unit
-                }
-                edit.commit()
-            }
-            uiThread { App.INSTANCE.toast("恢复完成") }
         }
     }
 
-    fun importYueDuData(context: Context) {
-        val file = File(FileUtils.getSdCardPath(), "YueDu")
-
-        // 导入书架
-        val shelfFile = File(file, "myBookShelf.json")
-        val books = mutableListOf<Book>()
-        if (shelfFile.exists()) try {
-            doAsync {
-                val items: List<Map<String, Any>> = jsonPath.parse(shelfFile.readText()).read("$")
-                val existingBooks = App.db.bookDao().allBookUrls.toSet()
-                for (item in items) {
-                    val jsonItem = jsonPath.parse(item)
-                    val book = Book()
-                    book.bookUrl = jsonItem.readString("$.noteUrl") ?: ""
-                    if (book.bookUrl.isBlank()) continue
-                    book.name = jsonItem.readString("$.bookInfoBean.name") ?: ""
-                    if (book.bookUrl in existingBooks) {
-                        Log.d(AppConst.APP_TAG, "Found existing book: ${book.name}")
-                        continue
-                    }
-                    book.origin = jsonItem.readString("$.tag") ?: ""
-                    book.originName = jsonItem.readString("$.bookInfoBean.origin") ?: ""
-                    book.author = jsonItem.readString("$.bookInfoBean.author") ?: ""
-                    book.type =
-                        if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
-                    book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.bookUrl
-                    book.coverUrl = jsonItem.readString("$.bookInfoBean.coverUrl")
-                    book.customCoverUrl = jsonItem.readString("$.customCoverPath")
-                    book.lastCheckTime = jsonItem.readLong("$.bookInfoBean.finalRefreshData") ?: 0
-                    book.canUpdate = jsonItem.readBool("$.allowUpdate") == true
-                    book.totalChapterNum = jsonItem.readInt("$.chapterListSize") ?: 0
-                    book.durChapterIndex = jsonItem.readInt("$.durChapter") ?: 0
-                    book.durChapterTitle = jsonItem.readString("$.durChapterName")
-                    book.durChapterPos = jsonItem.readInt("$.durChapterPage") ?: 0
-                    book.durChapterTime = jsonItem.readLong("$.finalDate") ?: 0
-                    book.group = jsonItem.readInt("$.group") ?: 0
-                    book.intro = jsonItem.readString("$.bookInfoBean.introduce")
-                    book.latestChapterTitle = jsonItem.readString("$.lastChapterName")
-                    book.lastCheckCount = jsonItem.readInt("$.newChapters") ?: 0
-                    book.order = jsonItem.readInt("$.serialNumber") ?: 0
-                    book.useReplaceRule = jsonItem.readBool("$.useReplaceRule") == true
-                    book.variable = jsonItem.readString("$.variable")
-                    books.add(book)
-                    Log.d(AppConst.APP_TAG, "Added ${book.name}")
+    suspend fun restoreConfig(path: String = Backup.backupPath) {
+        withContext(IO) {
+            try {
+                val file =
+                    FileUtils.createFileIfNotExist("$path${File.separator}${ThemeConfig.configFileName}")
+                if (file.exists()) {
+                    FileUtils.deleteFile(ThemeConfig.configFilePath)
+                    file.copyTo(File(ThemeConfig.configFilePath))
+                    ThemeConfig.upConfig()
                 }
-                App.db.bookDao().insert(*books.toTypedArray())
-                val count = books.size
-
-                uiThread {
-                    context.toast(if (count > 0) "成功地导入 $count 本新书和音频" else "没有发现新书或音频")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            if (!ignoreReadConfig) {
+                try {
+                    val file =
+                        FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.configFileName}")
+                    if (file.exists()) {
+                        FileUtils.deleteFile(ReadBookConfig.configFilePath)
+                        file.copyTo(File(ReadBookConfig.configFilePath))
+                        ReadBookConfig.initConfigs()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                try {
+                    val file =
+                        FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.shareConfigFileName}")
+                    if (file.exists()) {
+                        FileUtils.deleteFile(ReadBookConfig.shareConfigFilePath)
+                        file.copyTo(File(ReadBookConfig.shareConfigFilePath))
+                        ReadBookConfig.initShareConfig()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
-        } catch (e: Exception) {
-            Log.e(AppConst.APP_TAG, "Failed to import book shelf.", e)
-            context.toast("Unable to import books:\n${e.localizedMessage}")
+            Preferences.getSharedPreferences(App.INSTANCE, path, "config")?.all?.let { map ->
+                val edit = App.INSTANCE.defaultSharedPreferences.edit()
+                map.forEach {
+                    if (keyIsNotIgnore(it.key)) {
+                        when (val value = it.value) {
+                            is Int -> edit.putInt(it.key, value)
+                            is Boolean -> edit.putBoolean(it.key, value)
+                            is Long -> edit.putLong(it.key, value)
+                            is Float -> edit.putFloat(it.key, value)
+                            is String -> edit.putString(it.key, value)
+                            else -> Unit
+                        }
+                    }
+                }
+                edit.apply()
+                AppConfig.upConfig()
+            }
+            ReadBookConfig.apply {
+                styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
+                shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
+                hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
+                hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
+                autoReadSpeed = App.INSTANCE.getPrefInt(PreferKey.autoReadSpeed, 46)
+            }
+            ChapterProvider.upStyle()
+            ReadBook.loadContent(resetPageOffset = false)
         }
-
-        // Book source
-        val sourceFile = File(file, "myBookSource.json")
-        val bookSources = mutableListOf<BookSource>()
-        if (sourceFile.exists()) try {
-            doAsync {
-                val items: List<Map<String, Any>> = jsonPath.parse(sourceFile.readText()).read("$")
-                for (item in items) {
-                    val jsonItem = jsonPath.parse(item)
-                    OldRule.jsonToBookSource(jsonItem.jsonString())?.let {
-                        bookSources.add(it)
-                    }
-                }
-                App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+        withContext(Main) {
+            App.INSTANCE.toast(R.string.restore_success)
+            if (!BuildConfig.DEBUG) {
+                LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }
+            LanguageUtils.setConfiguration(App.INSTANCE)
+            App.INSTANCE.applyDayNight()
+            postEvent(EventBus.SHOW_RSS, "")
+        }
+    }
+
+    private fun keyIsNotIgnore(key: String): Boolean {
+        return when {
+            ignorePrefKeys.contains(key) -> false
+            readPrefKeys.contains(key) && ignoreReadConfig -> false
+            PreferKey.themeMode == key && ignoreThemeMode -> false
+            PreferKey.bookshelfLayout == key && ignoreBookshelfLayout -> false
+            PreferKey.showRss == key && ignoreShowRss -> false
+            PreferKey.threadCount == key && ignoreThreadCount -> false
+            else -> true
+        }
+    }
+
+    private val ignoreReadConfig: Boolean
+        get() = ignoreConfig["readConfig"] == true
+    private val ignoreThemeMode: Boolean
+        get() = ignoreConfig[PreferKey.themeMode] == true
+    private val ignoreBookshelfLayout: Boolean
+        get() = ignoreConfig[PreferKey.bookshelfLayout] == true
+    private val ignoreShowRss: Boolean
+        get() = ignoreConfig[PreferKey.showRss] == true
+    private val ignoreThreadCount: Boolean
+        get() = ignoreConfig[PreferKey.threadCount] == true
+
+    fun saveIgnoreConfig() {
+        val json = GSON.toJson(ignoreConfig)
+        FileUtils.createFileIfNotExist(ignoreConfigPath).writeText(json)
+    }
+
+    private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
+        try {
+            val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
+            val json = file.readText()
+            return GSON.fromJsonArray(json)
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
-        // Replace rules
-        val ruleFile = File(file, "myBookReplaceRule.json")
-        val replaceRules = mutableListOf<ReplaceRule>()
-        if (ruleFile.exists()) try {
-            doAsync {
-                val items: List<Map<String, Any>> = jsonPath.parse(ruleFile.readText()).read("$")
-                val existingRules = App.db.replaceRuleDao().all.map { it.pattern }.toSet()
-                for ((index: Int, item: Map<String, Any>) in items.withIndex()) {
-                    val jsonItem = jsonPath.parse(item)
-                    val rule = ReplaceRule()
-                    rule.id = jsonItem.readLong("$.id") ?: System.currentTimeMillis().plus(index)
-                    rule.pattern = jsonItem.readString("$.regex") ?: ""
-                    if (rule.pattern.isEmpty() || rule.pattern in existingRules) continue
-                    rule.name = jsonItem.readString("$.replaceSummary") ?: ""
-                    rule.replacement = jsonItem.readString("$.replacement") ?: ""
-                    rule.isRegex = jsonItem.readBool("$.isRegex") == true
-                    rule.scope = jsonItem.readString("$.useTo")
-                    rule.isEnabled = jsonItem.readBool("$.enable") == true
-                    rule.order = jsonItem.readInt("$.serialNumber") ?: index
-                    replaceRules.add(rule)
-                }
-                App.db.replaceRuleDao().insert(*replaceRules.toTypedArray())
-                val count = replaceRules.size
-                uiThread {
-                    context.toast(if (count > 0) "成功地导入 $count 条净化替换规则" else "没有发现新的净化替换规则")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(AppConst.APP_TAG, e.localizedMessage)
-        }
+        return null
     }
+
 }

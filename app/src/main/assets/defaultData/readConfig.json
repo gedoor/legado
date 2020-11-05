@@ -1,0 +1,52 @@
+[
+  {
+    "bgStr": "#FFFFFF",
+    "bgStrNight": "#000000",
+    "textColor": "#000000",
+    "textColorNight": "#FFFFFF",
+    "bgType": 0,
+    "bgTypeNight": 0,
+    "darkStatusIcon": true,
+    "darkStatusIconNight": false
+  },
+  {
+    "bgStr": "#DDC090",
+    "bgStrNight": "#3C3F43",
+    "textColor": "#3E3422",
+    "textColorNight": "#DCDFE1",
+    "bgType": 0,
+    "bgTypeNight": 0,
+    "darkStatusIcon": true,
+    "darkStatusIconNight": false
+  },
+  {
+    "bgStr": "#C2D8AA",
+    "bgStrNight": "#3C3F43",
+    "textColor": "#596C44",
+    "textColorNight": "#88C16F",
+    "bgType": 0,
+    "bgTypeNight": 0,
+    "darkStatusIcon": false,
+    "darkStatusIconNight": false
+  },
+  {
+    "bgStr": "#DBB8E2",
+    "bgStrNight": "#3C3F43",
+    "textColor": "#68516C",
+    "textColorNight": "#F6AEAE",
+    "bgType": 0,
+    "bgTypeNight": 0,
+    "darkStatusIcon": false,
+    "darkStatusIconNight": false
+  },
+  {
+    "bgStr": "#ABCEE0",
+    "bgStrNight": "#3C3F43",
+    "textColor": "#3D4C54",
+    "textColorNight": "#90BFF5",
+    "bgType": 0,
+    "bgTypeNight": 0,
+    "darkStatusIcon": false,
+    "darkStatusIconNight": false
+  }
+]

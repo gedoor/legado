@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.legado.app.lib.theme.view.ATETextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.legado.app.ui.widget.text.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/textInputLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="3dp">
 
-    <io.legado.app.lib.theme.view.ATEEditText
+    <io.legado.app.ui.widget.text.EditText
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-</io.legado.app.lib.theme.view.ATETextInputLayout>
+</io.legado.app.ui.widget.text.TextInputLayout>

@@ -1,5 +1,6 @@
 package io.legado.app.help.permission
 
+@Suppress("unused")
 object Permissions {
 
     const val READ_CALENDAR = "android.permission.READ_CALENDAR"
@@ -36,9 +37,11 @@ object Permissions {
     const val WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE"
 
     object Group {
-        val CALENDAR = arrayOf(READ_CALENDAR, WRITE_CALENDAR)
+        val STORAGE = arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE)
 
         val CAMERA = arrayOf(Permissions.CAMERA)
+
+        val CALENDAR = arrayOf(READ_CALENDAR, WRITE_CALENDAR)
 
         val CONTACTS = arrayOf(READ_CONTACTS, WRITE_CONTACTS, GET_ACCOUNTS)
 
@@ -65,8 +68,5 @@ object Permissions {
             RECEIVE_WAP_PUSH,
             RECEIVE_MMS
         )
-
-        val STORAGE = arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE)
     }
-
 }

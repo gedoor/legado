@@ -1,19 +1,28 @@
 package io.legado.app.model.rss
 
+import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
+import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
-import retrofit2.Response
+import io.legado.app.utils.NetworkUtils
+import java.util.*
 
+@Keep
 object RssParserByRule {
 
     @Throws(Exception::class)
-    fun parseXML(response: Response<String>, rssSource: RssSource): MutableList<RssArticle> {
-
-        val xml = response.body()
-        if (xml.isNullOrBlank()) {
+    fun parseXML(
+        sortName: String,
+        sortUrl: String,
+        body: String?,
+        rssSource: RssSource
+    ): RssResult {
+        val sourceUrl = rssSource.sourceUrl
+        var nextUrl: String? = null
+        if (body.isNullOrBlank()) {
             throw Exception(
                 App.INSTANCE.getString(
                     R.string.error_get_web_content,
@@ -21,70 +30,90 @@ object RssParserByRule {
                 )
             )
         }
+        Debug.log(sourceUrl, "≡获取成功:$sourceUrl")
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
-            return RssParser.parseXML(xml, rssSource.sourceUrl)
+            Debug.log(sourceUrl, "⇒列表规则为空, 使用默认规则解析")
+            return RssParserDefault.parseXML(sortName, body, sourceUrl)
         } else {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule()
-            analyzeRule.setContent(xml, rssSource.sourceUrl)
-            var reverse = true
+            analyzeRule.setContent(body, sortUrl)
+            var reverse = false
             if (ruleArticles.startsWith("-")) {
-                reverse = false
+                reverse = true
                 ruleArticles = ruleArticles.substring(1)
             }
+            Debug.log(sourceUrl, "┌获取列表")
             val collections = analyzeRule.getElements(ruleArticles)
-            val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle ?: "")
-            val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate ?: "")
-            val ruleCategories = analyzeRule.splitSourceRule(rssSource.ruleCategories ?: "")
-            val ruleDescription = analyzeRule.splitSourceRule(rssSource.ruleDescription ?: "")
-            val ruleImage = analyzeRule.splitSourceRule(rssSource.ruleImage ?: "")
-            val ruleLink = analyzeRule.splitSourceRule(rssSource.ruleLink ?: "")
+            Debug.log(sourceUrl, "└列表大小:${collections.size}")
+            if (!rssSource.ruleNextPage.isNullOrEmpty()) {
+                Debug.log(sourceUrl, "┌获取下一页链接")
+                if (rssSource.ruleNextPage!!.toUpperCase(Locale.getDefault()) == "PAGE") {
+                    nextUrl = sortUrl
+                } else {
+                    nextUrl = analyzeRule.getString(rssSource.ruleNextPage)
+                    if (nextUrl.isNotEmpty()) {
+                        nextUrl = NetworkUtils.getAbsoluteURL(sortUrl, nextUrl)
+                    }
+                }
+                Debug.log(sourceUrl, "└$nextUrl")
+            }
+            val ruleTitle = analyzeRule.splitSourceRule(rssSource.ruleTitle)
+            val rulePubDate = analyzeRule.splitSourceRule(rssSource.rulePubDate)
+            val ruleDescription = analyzeRule.splitSourceRule(rssSource.ruleDescription)
+            val ruleImage = analyzeRule.splitSourceRule(rssSource.ruleImage)
+            val ruleLink = analyzeRule.splitSourceRule(rssSource.ruleLink)
             for ((index, item) in collections.withIndex()) {
                 getItem(
-                    item,
-                    analyzeRule,
-                    index == 0,
-                    ruleTitle,
-                    rulePubDate,
-                    ruleCategories,
-                    ruleDescription,
-                    ruleImage,
-                    ruleLink
+                    sourceUrl, item, analyzeRule, index == 0,
+                    ruleTitle, rulePubDate, ruleDescription, ruleImage, ruleLink
                 )?.let {
-                    it.origin = rssSource.sourceUrl
+                    it.sort = sortName
+                    it.origin = sourceUrl
                     articleList.add(it)
                 }
             }
             if (reverse) {
                 articleList.reverse()
             }
-            for ((index: Int, item: RssArticle) in articleList.withIndex()) {
-                item.order = System.currentTimeMillis() + index
-            }
-            return articleList
+            return RssResult(articleList, nextUrl)
         }
     }
 
     private fun getItem(
+        sourceUrl: String,
         item: Any,
         analyzeRule: AnalyzeRule,
-        printLog: Boolean,
+        log: Boolean,
         ruleTitle: List<AnalyzeRule.SourceRule>,
         rulePubDate: List<AnalyzeRule.SourceRule>,
-        ruleCategories: List<AnalyzeRule.SourceRule>,
         ruleDescription: List<AnalyzeRule.SourceRule>,
         ruleImage: List<AnalyzeRule.SourceRule>,
         ruleLink: List<AnalyzeRule.SourceRule>
     ): RssArticle? {
         val rssArticle = RssArticle()
         analyzeRule.setContent(item)
+        Debug.log(sourceUrl, "┌获取标题", log)
         rssArticle.title = analyzeRule.getString(ruleTitle)
+        Debug.log(sourceUrl, "└${rssArticle.title}", log)
+        Debug.log(sourceUrl, "┌获取时间", log)
         rssArticle.pubDate = analyzeRule.getString(rulePubDate)
-        rssArticle.categories = analyzeRule.getString(ruleCategories)
-        rssArticle.description = analyzeRule.getString(ruleDescription)
+        Debug.log(sourceUrl, "└${rssArticle.pubDate}", log)
+        Debug.log(sourceUrl, "┌获取描述", log)
+        if (ruleDescription.isNullOrEmpty()) {
+            rssArticle.description = null
+            Debug.log(sourceUrl, "└描述规则为空，将会解析内容页", log)
+        } else {
+            rssArticle.description = analyzeRule.getString(ruleDescription)
+            Debug.log(sourceUrl, "└${rssArticle.description}", log)
+        }
+        Debug.log(sourceUrl, "┌获取图片url", log)
         rssArticle.image = analyzeRule.getString(ruleImage, true)
-        rssArticle.link = analyzeRule.getString(ruleLink)
+        Debug.log(sourceUrl, "└${rssArticle.image}", log)
+        Debug.log(sourceUrl, "┌获取文章链接", log)
+        rssArticle.link = NetworkUtils.getAbsoluteURL(sourceUrl, analyzeRule.getString(ruleLink))!!
+        Debug.log(sourceUrl, "└${rssArticle.link}", log)
         if (rssArticle.title.isBlank()) {
             return null
         }

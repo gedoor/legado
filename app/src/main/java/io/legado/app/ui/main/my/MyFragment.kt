@@ -1,40 +1,46 @@
 package io.legado.app.ui.main.my
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.WebDavHelp
+import io.legado.app.base.BasePreferenceFragment
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
+import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
+import io.legado.app.ui.about.ReadRecordActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
+import io.legado.app.ui.config.BackupRestoreUi
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
-import io.legado.app.ui.replacerule.ReplaceRuleActivity
-import io.legado.app.utils.LogUtils
-import io.legado.app.utils.startActivity
+import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.replace.ReplaceRuleActivity
+import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.ui.widget.prefs.NameListPreference
+import io.legado.app.ui.widget.prefs.PreferenceCategory
+import io.legado.app.ui.widget.prefs.SwitchPreference
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_title_bar.*
-import org.jetbrains.anko.startActivity
 
-class MyFragment : BaseFragment(R.layout.fragment_my_config) {
+class MyFragment : BaseFragment(R.layout.fragment_my_config), FilePickerDialog.CallBack {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(toolbar)
         val fragmentTag = "prefFragment"
         var preferenceFragment = childFragmentManager.findFragmentByTag(fragmentTag)
         if (preferenceFragment == null) preferenceFragment = PreferenceFragment()
-        childFragmentManager.beginTransaction().replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
+        childFragmentManager.beginTransaction()
+            .replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -43,25 +49,52 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         when (item.itemId) {
-            R.id.menu_help -> startActivity<AboutActivity>()
-            R.id.menu_backup -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { Backup.backup() }
-                .request()
-            R.id.menu_restore -> PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted { WebDavHelp.showRestoreDialog(requireContext()) }
-                .request()
+            R.id.menu_help -> {
+                val text = String(requireContext().assets.open("help/help.md").readBytes())
+                TextDialog.show(childFragmentManager, text, TextDialog.MD)
+            }
         }
     }
 
-    class PreferenceFragment : PreferenceFragmentCompat(),
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
+    }
+
+    /**
+     * 配置
+     */
+    class PreferenceFragment : BasePreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            if (WebService.isRun) {
+                putPrefBoolean(PreferKey.webService, true)
+            } else {
+                putPrefBoolean(PreferKey.webService, false)
+            }
             addPreferencesFromResource(R.xml.pref_main)
+            val webServicePre = findPreference<SwitchPreference>(PreferKey.webService)
+            observeEventSticky<String>(EventBus.WEB_SERVICE) {
+                webServicePre?.let {
+                    it.isChecked = WebService.isRun
+                    it.summary = if (WebService.isRun) {
+                        WebService.hostAddress
+                    } else {
+                        getString(R.string.web_service_desc)
+                    }
+                }
+            }
+            findPreference<NameListPreference>(PreferKey.themeMode)?.let {
+                it.setOnPreferenceChangeListener { _, _ ->
+                    view?.post { App.INSTANCE.applyDayNight() }
+                    true
+                }
+            }
+            if (AppConfig.isGooglePlay) {
+                findPreference<PreferenceCategory>("aboutCategory")
+                    ?.removePreference(findPreference("donate"))
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,27 +117,33 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             key: String?
         ) {
             when (key) {
-                "isNightTheme" -> App.INSTANCE.applyDayNight()
+                PreferKey.webService -> {
+                    if (requireContext().getPrefBoolean("webService")) {
+                        WebService.start(requireContext())
+                    } else {
+                        WebService.stop(requireContext())
+                    }
+                }
                 "recordLog" -> LogUtils.upLevel()
-                "downloadPath" -> BookHelp.upDownloadPath()
             }
         }
 
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
             when (preference?.key) {
-                "bookSourceManage" -> context?.startActivity<BookSourceActivity>()
-                "replaceManage" -> context?.startActivity<ReplaceRuleActivity>()
-                "setting" -> context?.startActivity<ConfigActivity>(
+                "bookSourceManage" -> startActivity<BookSourceActivity>()
+                "replaceManage" -> startActivity<ReplaceRuleActivity>()
+                "setting" -> startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_CONFIG)
                 )
-                "web_dav_setting" -> context?.startActivity<ConfigActivity>(
+                "web_dav_setting" -> startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_WEB_DAV_CONFIG)
                 )
-                "theme_setting" -> context?.startActivity<ConfigActivity>(
+                "theme_setting" -> startActivity<ConfigActivity>(
                     Pair("configType", ConfigViewModel.TYPE_THEME_CONFIG)
                 )
-                "donate" -> context?.startActivity<DonateActivity>()
-                "about" -> context?.startActivity<AboutActivity>()
+                "readRecord" -> startActivity<ReadRecordActivity>()
+                "donate" -> startActivity<DonateActivity>()
+                "about" -> startActivity<AboutActivity>()
             }
             return super.onPreferenceTreeClick(preference)
         }

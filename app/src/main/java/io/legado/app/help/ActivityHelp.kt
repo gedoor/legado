@@ -1,21 +1,29 @@
 package io.legado.app.help
 
 import android.app.Activity
+import android.app.Application
+import android.os.Bundle
+import io.legado.app.utils.LanguageUtils
 import java.lang.ref.WeakReference
 import java.util.*
 
 /**
  * Activity管理器,管理项目中Activity的状态
  */
-object ActivityHelp {
+@Suppress("unused")
+object ActivityHelp : Application.ActivityLifecycleCallbacks {
 
     private val activities: MutableList<WeakReference<Activity>> = arrayListOf()
+
+    fun size(): Int {
+        return activities.size
+    }
 
     /**
      * 判断指定Activity是否存在
      */
     fun isExist(activityClass: Class<*>): Boolean {
-        for (item in activities) {
+        activities.forEach { item ->
             if (item.get()?.javaClass == activityClass) {
                 return true
             }
@@ -59,7 +67,7 @@ object ActivityHelp {
      * 关闭指定 activity
      */
     fun finishActivity(vararg activities: Activity) {
-        for (activity in activities) {
+        activities.forEach { activity ->
             activity.finish()
         }
     }
@@ -77,9 +85,35 @@ object ActivityHelp {
                 }
             }
         }
-        for (activityWeakReference in waitFinish) {
-            activityWeakReference.get()?.finish()
+        waitFinish.forEach {
+            it.get()?.finish()
         }
     }
 
+    override fun onActivityPaused(activity: Activity) {
+    }
+
+    override fun onActivityResumed(activity: Activity) {
+    }
+
+    override fun onActivityStarted(activity: Activity) {
+
+    }
+
+    override fun onActivityDestroyed(activity: Activity) {
+        remove(activity)
+    }
+
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+    }
+
+    override fun onActivityStopped(activity: Activity) {
+    }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        add(activity)
+        if (!LanguageUtils.isSameWithSetting(activity)){
+            LanguageUtils.setConfiguration(activity)
+        }
+    }
 }

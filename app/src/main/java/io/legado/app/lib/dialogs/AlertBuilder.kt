@@ -24,10 +24,9 @@ import android.content.DialogInterface
 import android.graphics.drawable.Drawable
 import android.view.KeyEvent
 import android.view.View
-import android.view.ViewManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import org.jetbrains.anko.UI
+import io.legado.app.R
 import org.jetbrains.anko.internals.AnkoInternals.NO_GETTER
 import kotlin.DeprecationLevel.ERROR
 
@@ -77,7 +76,22 @@ interface AlertBuilder<out D : DialogInterface> {
     fun onKeyPressed(handler: (dialog: DialogInterface, keyCode: Int, e: KeyEvent) -> Boolean)
 
     fun items(items: List<CharSequence>, onItemSelected: (dialog: DialogInterface, index: Int) -> Unit)
-    fun <T> items(items: List<T>, onItemSelected: (dialog: DialogInterface, item: T, index: Int) -> Unit)
+    fun <T> items(
+        items: List<T>,
+        onItemSelected: (dialog: DialogInterface, item: T, index: Int) -> Unit
+    )
+
+    fun multiChoiceItems(
+        items: Array<String>,
+        checkedItems: BooleanArray,
+        onClick: (dialog: DialogInterface, which: Int, isChecked: Boolean) -> Unit
+    )
+
+    fun singleChoiceItems(
+        items: Array<String>,
+        checkedItem: Int = 0,
+        onClick: ((dialog: DialogInterface, which: Int) -> Unit)? = null
+    )
 
     fun build(): D
     fun show(): D
@@ -98,7 +112,7 @@ inline fun AlertBuilder<*>.cancelButton(noinline handler: ((dialog: DialogInterf
     negativeButton(android.R.string.cancel, handler)
 
 inline fun AlertBuilder<*>.yesButton(noinline handler: ((dialog: DialogInterface) -> Unit)? = null) =
-    positiveButton(android.R.string.yes, handler)
+    positiveButton(R.string.yes, handler)
 
 inline fun AlertBuilder<*>.noButton(noinline handler: ((dialog: DialogInterface) -> Unit)? = null) =
-    negativeButton(android.R.string.no, handler)
+    negativeButton(R.string.no, handler)

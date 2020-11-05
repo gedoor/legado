@@ -10,15 +10,20 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.dp
 
 /**
  * RotateLoading
  * Created by Victor on 2015/4/28.
  */
-class RotateLoading : View {
+@Suppress("MemberVisibilityCanBePrivate")
+class RotateLoading @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : View(context, attrs) {
 
-    private lateinit var mPaint: Paint
+    private var mPaint: Paint
 
     private var loadingRectF: RectF? = null
     private var shadowRectF: RectF? = null
@@ -33,6 +38,8 @@ class RotateLoading : View {
     private var changeBigger = true
 
     private var shadowPosition: Int = 0
+
+    var hideMode = GONE
 
     var isStarted = false
         private set
@@ -51,33 +58,26 @@ class RotateLoading : View {
 
     private val hidden = Runnable { this.stopInternal() }
 
-    constructor(context: Context) : super(context) {
-        initView(context, null)
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        initView(context, attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        initView(context, attrs)
-    }
-
-    private fun initView(context: Context, attrs: AttributeSet?) {
-        loadingColor = Color.WHITE
+    init {
+        loadingColor = context.accentColor
         thisWidth = DEFAULT_WIDTH.dp
         shadowPosition = DEFAULT_SHADOW_POSITION.dp
         speedOfDegree = DEFAULT_SPEED_OF_DEGREE
 
         if (null != attrs) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.RotateLoading)
-            loadingColor = typedArray.getColor(R.styleable.RotateLoading_loading_color, Color.WHITE)
+            loadingColor =
+                typedArray.getColor(R.styleable.RotateLoading_loading_color, loadingColor)
             thisWidth = typedArray.getDimensionPixelSize(
                 R.styleable.RotateLoading_loading_width,
                 DEFAULT_WIDTH.dp
             )
             shadowPosition = typedArray.getInt(R.styleable.RotateLoading_shadow_position, DEFAULT_SHADOW_POSITION)
             speedOfDegree = typedArray.getInt(R.styleable.RotateLoading_loading_speed, DEFAULT_SPEED_OF_DEGREE)
+            hideMode = when (typedArray.getInt(R.styleable.RotateLoading_hide_mode, 2)) {
+                1 -> INVISIBLE
+                else -> GONE
+            }
             typedArray.recycle()
         }
         speedOfArc = (speedOfDegree / 4).toFloat()
@@ -179,12 +179,11 @@ class RotateLoading : View {
     fun hide() {
         removeCallbacks(shown)
         removeCallbacks(hidden)
-        post(hidden)
+        stopInternal()
     }
 
     private fun startInternal() {
         startAnimator()
-
         isStarted = true
         invalidate()
     }
@@ -209,7 +208,7 @@ class RotateLoading : View {
     private fun stopAnimator() {
         animate().cancel()
         isStarted = false
-        visibility = GONE
+        this.visibility = hideMode
     }
 
     companion object {

@@ -1,51 +1,79 @@
 package io.legado.app.ui.book.read
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.WindowManager
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.constant.Bus
-import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.buttonDisabledColor
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
+import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.theme.*
+import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.view_read_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
-class ReadMenu : FrameLayout {
+/**
+ * 阅读界面菜单
+ */
+class ReadMenu @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : FrameLayout(context, attrs) {
     var cnaShowMenu: Boolean = false
-    private var callBack: CallBack? = null
+    private val callBack: CallBack? get() = activity as? CallBack
     private lateinit var menuTopIn: Animation
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
     private lateinit var menuBottomOut: Animation
+    private val bgColor: Int = context.bottomBackground
+    private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
+    private val bottomBackgroundList: ColorStateList = Selector.colorBuild()
+        .setDefaultColor(bgColor)
+        .setPressedColor(ColorUtils.darkenColor(bgColor))
+        .create()
     private var onMenuOutEnd: (() -> Unit)? = null
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+    val showBrightnessView get() = context.getPrefBoolean(PreferKey.showBrightnessView, true)
 
     init {
-        callBack = activity as? CallBack
         inflate(context, R.layout.view_read_menu, this)
-        if (context.isNightTheme) {
+        if (AppConfig.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
         } else {
             fabNightTheme.setImageResource(R.drawable.ic_brightness)
         }
         initAnimation()
+        val brightnessBackground = GradientDrawable()
+        brightnessBackground.cornerRadius = 5F.dp
+        brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
+        ll_brightness.background = brightnessBackground
+        ll_bottom_bg.setBackgroundColor(bgColor)
+        fabSearch.backgroundTintList = bottomBackgroundList
+        fabSearch.setColorFilter(textColor)
+        fabAutoPage.backgroundTintList = bottomBackgroundList
+        fabAutoPage.setColorFilter(textColor)
+        fabReplaceRule.backgroundTintList = bottomBackgroundList
+        fabReplaceRule.setColorFilter(textColor)
+        fabNightTheme.backgroundTintList = bottomBackgroundList
+        fabNightTheme.setColorFilter(textColor)
+        tv_pre.setTextColor(textColor)
+        tv_next.setTextColor(textColor)
+        iv_catalog.setColorFilter(textColor)
+        tv_catalog.setTextColor(textColor)
+        iv_read_aloud.setColorFilter(textColor)
+        tv_read_aloud.setTextColor(textColor)
+        iv_font.setColorFilter(textColor)
+        tv_font.setTextColor(textColor)
+        iv_setting.setColorFilter(textColor)
+        tv_setting.setTextColor(textColor)
         vw_bg.onClick { }
         vwNavigationBar.onClick { }
         seek_brightness.progress = context.getPrefInt("brightness", 100)
@@ -53,7 +81,7 @@ class ReadMenu : FrameLayout {
         bindEvent()
     }
 
-    private fun upBrightnessState() {
+    fun upBrightnessState() {
         if (brightnessAuto()) {
             iv_brightness_auto.setColorFilter(context.accentColor)
             seek_brightness.isEnabled = false
@@ -96,7 +124,7 @@ class ReadMenu : FrameLayout {
     }
 
     private fun brightnessAuto(): Boolean {
-        return context.getPrefBoolean("brightnessAuto", true)
+        return context.getPrefBoolean("brightnessAuto", true) || !showBrightnessView
     }
 
     private fun bindEvent() {
@@ -131,27 +159,38 @@ class ReadMenu : FrameLayout {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                callBack?.skipToPage(seekBar.progress)
+                ReadBook.skipToPage(seekBar.progress)
             }
         })
 
+        //搜索
+        fabSearch.onClick {
+            runMenuOut {
+                callBack?.openSearchActivity(null)
+            }
+        }
+
         //自动翻页
-        fabAutoPage.onClick { callBack?.autoPage() }
+        fabAutoPage.onClick {
+            runMenuOut {
+                callBack?.autoPage()
+            }
+        }
 
         //替换
         fabReplaceRule.onClick { callBack?.openReplaceRule() }
 
         //夜间模式
         fabNightTheme.onClick {
-            context.putPrefBoolean("isNightTheme", !context.isNightTheme)
+            AppConfig.isNightTheme = !AppConfig.isNightTheme
             App.INSTANCE.applyDayNight()
         }
 
         //上一章
-        tv_pre.onClick { callBack?.moveToPrevChapter(upContent = true, last = false) }
+        tv_pre.onClick { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
 
         //下一章
-        tv_next.onClick { callBack?.moveToNextChapter(true) }
+        tv_next.onClick { ReadBook.moveToNextChapter(true) }
 
         //目录
         ll_catalog.onClick {
@@ -163,7 +202,7 @@ class ReadMenu : FrameLayout {
         //朗读
         ll_read_aloud.onClick {
             runMenuOut {
-                postEvent(Bus.READ_ALOUD_BUTTON, true)
+                callBack?.onClickReadAloud()
             }
         }
         ll_read_aloud.onLongClick {
@@ -186,32 +225,34 @@ class ReadMenu : FrameLayout {
     }
 
     private fun initAnimation() {
-        menuTopIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_in)
-        menuBottomIn = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_in)
+        //显示菜单
+        menuTopIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_top_in)
+        menuBottomIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 callBack?.upSystemUiVisibility()
+                ll_brightness.visible(showBrightnessView)
             }
 
             override fun onAnimationEnd(animation: Animation) {
                 vw_menu_bg.onClick { runMenuOut() }
                 vwNavigationBar.layoutParams = vwNavigationBar.layoutParams.apply {
                     height =
-                        if (context.getPrefBoolean("hideNavigationBar")
-                            && Help.isNavigationBarExist(activity)
-                        ) context.getNavigationBarHeight()
+                        if (ReadBookConfig.hideNavigationBar
+                            && SystemUtils.isNavigationBarExist(activity)
+                        )
+                            context.navigationBarHeight
                         else 0
                 }
             }
 
-            override fun onAnimationRepeat(animation: Animation) {
-
-            }
+            override fun onAnimationRepeat(animation: Animation) = Unit
         })
 
         //隐藏菜单
-        menuTopOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_top_out)
-        menuBottomOut = AnimationUtils.loadAnimation(context, R.anim.anim_readbook_bottom_out)
+        menuTopOut = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_top_out)
+        menuBottomOut =
+            AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_out)
         menuTopOut.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 vw_menu_bg.setOnClickListener(null)
@@ -226,9 +267,7 @@ class ReadMenu : FrameLayout {
                 callBack?.upSystemUiVisibility()
             }
 
-            override fun onAnimationRepeat(animation: Animation) {
-
-            }
+            override fun onAnimationRepeat(animation: Animation) = Unit
         })
     }
 
@@ -240,19 +279,19 @@ class ReadMenu : FrameLayout {
             fabAutoPage.setImageResource(R.drawable.ic_auto_page)
             fabAutoPage.contentDescription = context.getString(R.string.auto_next_page)
         }
+        fabAutoPage.setColorFilter(textColor)
     }
 
     interface CallBack {
         fun autoPage()
-        fun skipToPage(page: Int)
-        fun moveToPrevChapter(upContent: Boolean, last: Boolean): Boolean
-        fun moveToNextChapter(upContent: Boolean): Boolean
         fun openReplaceRule()
         fun openChapterList()
+        fun openSearchActivity(searchWord: String?)
         fun showReadStyle()
         fun showMoreSetting()
         fun showReadAloudDialog()
         fun upSystemUiVisibility()
+        fun onClickReadAloud()
     }
 
 }

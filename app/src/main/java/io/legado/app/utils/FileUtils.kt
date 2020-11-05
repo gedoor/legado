@@ -1,217 +1,774 @@
 package io.legado.app.utils
 
-import android.content.ContentUris
-import android.content.Context
-import android.net.Uri
 import android.os.Environment
-import android.os.storage.StorageManager
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.util.Log
-import androidx.core.content.ContextCompat
-import java.io.File
-import java.io.IOException
-import java.lang.reflect.Array
+import android.webkit.MimeTypeMap
+import androidx.annotation.IntDef
+import io.legado.app.App
+import io.legado.app.ui.filepicker.utils.ConvertUtils
+import java.io.*
+import java.nio.charset.Charset
+import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
-
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object FileUtils {
 
-    fun getFileByPath(filePath: String): File? {
-        return if (filePath.isBlank()) null else File(filePath)
+    fun exists(root: File, vararg subDirFiles: String): Boolean {
+        return getFile(root, *subDirFiles).exists()
+    }
+
+    fun createFileIfNotExist(root: File, vararg subDirFiles: String): File {
+        val filePath = getPath(root, *subDirFiles)
+        return createFileIfNotExist(filePath)
+    }
+
+    fun createFolderIfNotExist(root: File, vararg subDirs: String): File {
+        val filePath = getPath(root, *subDirs)
+        return createFolderIfNotExist(filePath)
+    }
+
+    fun createFolderIfNotExist(filePath: String): File {
+        val file = File(filePath)
+        //如果文件夹不存在，就创建它
+        if (!file.exists()) {
+            file.mkdirs()
+        }
+        return file
+    }
+
+    @Synchronized
+    fun createFileIfNotExist(filePath: String): File {
+        val file = File(filePath)
+        try {
+            if (!file.exists()) {
+                //创建父类文件夹
+                file.parent?.let {
+                    createFolderIfNotExist(it)
+                }
+                //创建文件
+                file.createNewFile()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return file
+    }
+
+    fun createFileWithReplace(filePath: String) : File{
+        val file = File(filePath)
+        if (!file.exists()) {
+            //创建父类文件夹
+            file.parent?.let {
+                createFolderIfNotExist(it)
+            }
+            //创建文件
+            file.createNewFile()
+        }
+        else{
+            file.delete()
+            file.createNewFile()
+        }
+        return file
+    }
+
+    fun getFile(root: File, vararg subDirFiles: String): File {
+        val filePath = getPath(root, *subDirFiles)
+        return File(filePath)
+    }
+
+    fun getPath(root: File, vararg subDirFiles: String): String {
+        val path = StringBuilder(root.absolutePath)
+        subDirFiles.forEach {
+            if (it.isNotEmpty()) {
+                path.append(File.separator).append(it)
+            }
+        }
+        return path.toString()
+    }
+
+    //递归删除文件夹下的数据
+    @Synchronized
+    fun deleteFile(filePath: String) {
+        val file = File(filePath)
+        if (!file.exists()) return
+
+        if (file.isDirectory) {
+            val files = file.listFiles()
+            files?.forEach { subFile ->
+                val path = subFile.path
+                deleteFile(path)
+            }
+        }
+        //删除文件
+        file.delete()
+    }
+
+    fun getCachePath(): String {
+        return App.INSTANCE.externalCacheDir?.absolutePath
+            ?: App.INSTANCE.cacheDir.absolutePath
     }
 
     fun getSdCardPath(): String {
+        @Suppress("DEPRECATION")
         var sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
-
         try {
             sdCardDirectory = File(sdCardDirectory).canonicalPath
         } catch (ioe: IOException) {
             ioe.printStackTrace()
         }
-
         return sdCardDirectory
     }
 
-    fun getStorageData(pContext: Context): ArrayList<String>? {
+    const val BY_NAME_ASC = 0
+    const val BY_NAME_DESC = 1
+    const val BY_TIME_ASC = 2
+    const val BY_TIME_DESC = 3
+    const val BY_SIZE_ASC = 4
+    const val BY_SIZE_DESC = 5
+    const val BY_EXTENSION_ASC = 6
+    const val BY_EXTENSION_DESC = 7
 
-        val storageManager = pContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+    @IntDef(value = [BY_NAME_ASC, BY_NAME_DESC, BY_TIME_ASC, BY_TIME_DESC, BY_SIZE_ASC, BY_SIZE_DESC, BY_EXTENSION_ASC, BY_EXTENSION_DESC])
+    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    annotation class SortType
 
-        try {
-            val getVolumeList = storageManager.javaClass.getMethod("getVolumeList")
-
-            val storageVolumeClazz = Class.forName("android.os.storage.StorageVolume")
-            val getPath = storageVolumeClazz.getMethod("getPath")
-
-            val invokeVolumeList = getVolumeList.invoke(storageManager)
-            val length = Array.getLength(invokeVolumeList)
-
-            val list = ArrayList<String>()
-            for (i in 0 until length) {
-                val storageValume = Array.get(invokeVolumeList, i)//得到StorageVolume对象
-                val path = getPath.invoke(storageValume) as String
-
-                list.add(path)
-            }
-            return list
-        } catch (e: Exception) {
-            e.printStackTrace()
+    /**
+     * 将目录分隔符统一为平台默认的分隔符，并为目录结尾添加分隔符
+     */
+    fun separator(path: String): String {
+        var path1 = path
+        val separator = File.separator
+        path1 = path1.replace("\\", separator)
+        if (!path1.endsWith(separator)) {
+            path1 += separator
         }
-
-        return null
+        return path1
     }
 
+    fun closeSilently(c: Closeable?) {
+        if (c == null) {
+            return
+        }
+        try {
+            c.close()
+        } catch (ignored: IOException) {
+        }
 
-    fun getExtSdCardPaths(con: Context): ArrayList<String> {
-        val paths = ArrayList<String>()
-        val files = ContextCompat.getExternalFilesDirs(con, "external")
-        val firstFile = files[0]
+    }
+
+    /**
+     * 列出指定目录下的所有子目录
+     */
+    @JvmOverloads
+    fun listDirs(
+        startDirPath: String,
+        excludeDirs: Array<String>? = null, @SortType sortType: Int = BY_NAME_ASC
+    ): Array<File?> {
+        var excludeDirs1 = excludeDirs
+        val dirList = ArrayList<File>()
+        val startDir = File(startDirPath)
+        if (!startDir.isDirectory) {
+            return arrayOfNulls(0)
+        }
+        val dirs = startDir.listFiles(FileFilter { f ->
+            if (f == null) {
+                return@FileFilter false
+            }
+            f.isDirectory
+        })
+            ?: return arrayOfNulls(0)
+        if (excludeDirs1 == null) {
+            excludeDirs1 = arrayOf()
+        }
+        for (dir in dirs) {
+            val file = dir.absoluteFile
+            if (!excludeDirs1.contentDeepToString().contains(file.name)) {
+                dirList.add(file)
+            }
+        }
+        when (sortType) {
+            BY_NAME_ASC -> Collections.sort(dirList, SortByName())
+            BY_NAME_DESC -> {
+                Collections.sort(dirList, SortByName())
+                dirList.reverse()
+            }
+            BY_TIME_ASC -> Collections.sort(dirList, SortByTime())
+            BY_TIME_DESC -> {
+                Collections.sort(dirList, SortByTime())
+                dirList.reverse()
+            }
+            BY_SIZE_ASC -> Collections.sort(dirList, SortBySize())
+            BY_SIZE_DESC -> {
+                Collections.sort(dirList, SortBySize())
+                dirList.reverse()
+            }
+            BY_EXTENSION_ASC -> Collections.sort(dirList, SortByExtension())
+            BY_EXTENSION_DESC -> {
+                Collections.sort(dirList, SortByExtension())
+                dirList.reverse()
+            }
+        }
+        return dirList.toTypedArray()
+    }
+
+    /**
+     * 列出指定目录下的所有子目录及所有文件
+     */
+    @JvmOverloads
+    fun listDirsAndFiles(
+        startDirPath: String,
+        allowExtensions: Array<String>? = null
+    ): Array<File?>? {
+        val dirs: Array<File?>?
+        val files: Array<File?>? = if (allowExtensions == null) {
+            listFiles(startDirPath)
+        } else {
+            listFiles(startDirPath, allowExtensions)
+        }
+        val dirsAndFiles: Array<File?>
+        dirs = listDirs(startDirPath)
+        if (files == null) {
+            return null
+        }
+        dirsAndFiles = arrayOfNulls(dirs.size + files.size)
+        System.arraycopy(dirs, 0, dirsAndFiles, 0, dirs.size)
+        System.arraycopy(files, 0, dirsAndFiles, dirs.size, files.size)
+        return dirsAndFiles
+    }
+
+    /**
+     * 列出指定目录下的所有文件
+     */
+    @JvmOverloads
+    fun listFiles(
+        startDirPath: String,
+        filterPattern: Pattern? = null, @SortType sortType: Int = BY_NAME_ASC
+    ): Array<File?> {
+        val fileList = ArrayList<File>()
+        val f = File(startDirPath)
+        if (!f.isDirectory) {
+            return arrayOfNulls(0)
+        }
+        val files = f.listFiles(FileFilter { file ->
+            if (file == null) {
+                return@FileFilter false
+            }
+            if (file.isDirectory) {
+                return@FileFilter false
+            }
+
+            filterPattern?.matcher(file.name)?.find() ?: true
+        })
+            ?: return arrayOfNulls(0)
         for (file in files) {
-            if (file != null && file != firstFile) {
-                val index = file.absolutePath.lastIndexOf("/Android/data")
-                if (index < 0) {
-                    Log.w("", "Unexpected external file dir: " + file.absolutePath)
-                } else {
-                    var path = file.absolutePath.substring(0, index)
-                    try {
-                        path = File(path).canonicalPath
-                    } catch (e: IOException) {
-                        // Keep non-canonical path.
-                    }
-
-                    paths.add(path)
-                }
+            fileList.add(file.absoluteFile)
+        }
+        when (sortType) {
+            BY_NAME_ASC -> Collections.sort(fileList, SortByName())
+            BY_NAME_DESC -> {
+                Collections.sort(fileList, SortByName())
+                fileList.reverse()
+            }
+            BY_TIME_ASC -> Collections.sort(fileList, SortByTime())
+            BY_TIME_DESC -> {
+                Collections.sort(fileList, SortByTime())
+                fileList.reverse()
+            }
+            BY_SIZE_ASC -> Collections.sort(fileList, SortBySize())
+            BY_SIZE_DESC -> {
+                Collections.sort(fileList, SortBySize())
+                fileList.reverse()
+            }
+            BY_EXTENSION_ASC -> Collections.sort(fileList, SortByExtension())
+            BY_EXTENSION_DESC -> {
+                Collections.sort(fileList, SortByExtension())
+                fileList.reverse()
             }
         }
-        return paths
+        return fileList.toTypedArray()
     }
 
-    fun getPath(context: Context, uri: Uri): String? {
-        // DocumentProvider
-        if (DocumentsContract.isDocumentUri(context, uri)) {
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val type = split[0]
-
-                if ("primary".equals(type, ignoreCase = true)) {
-                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
-                }
-
-            } else if (isDownloadsDocument(uri)) {
-                val id = DocumentsContract.getDocumentId(uri)
-                val split = id.split(":").dropLastWhile { it.isEmpty() }.toTypedArray()
-                val type = split[0]
-                if ("raw".equals(
-                        type,
-                        ignoreCase = true
-                    )
-                ) { //处理某些机型（比如Goole Pixel ）ID是raw:/storage/emulated/0/Download/c20f8664da05ab6b4644913048ea8c83.mp4
-                    return split[1]
-                }
-
-                val contentUri = ContentUris.withAppendedId(
-                    Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
-                )
-
-                return getDataColumn(context, contentUri, null, null)
-            } else if (isMediaDocument(uri)) {
-                val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val type = split[0]
-
-                var contentUri: Uri? = null
-                if ("image" == type) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                } else if ("video" == type) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                } else if ("audio" == type) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-                }
-
-                val selection = "_id=?"
-                val selectionArgs = arrayOf(split[1])
-
-                return getDataColumn(context, contentUri, selection, selectionArgs)
-            }// MediaProvider
-            // DownloadsProvider
-        } else if ("content".equals(uri.scheme!!, ignoreCase = true)) {
-
-            // Return the remote address
-            return if (isGooglePhotosUri(uri)) uri.lastPathSegment else getDataColumn(
-                context,
-                uri,
-                null,
-                null
-            )
-
-        } else if ("file".equals(uri.scheme!!, ignoreCase = true)) {
-            return uri.path
-        }// File
-        // MediaStore (and general)
-
-        return null
+    /**
+     * 列出指定目录下的所有文件
+     */
+    fun listFiles(startDirPath: String, allowExtensions: Array<String>?): Array<File?>? {
+        val file = File(startDirPath)
+        return file.listFiles { _, name ->
+            //返回当前目录所有以某些扩展名结尾的文件
+            val extension = getExtension(name)
+            allowExtensions?.contentDeepToString()?.contains(extension) == true
+                    || allowExtensions == null
+        }
     }
 
-    fun getDataColumn(
-        context: Context, uri: Uri?, selection: String?,
-        selectionArgs: kotlin.Array<String>?
-    ): String? {
+    /**
+     * 列出指定目录下的所有文件
+     */
+    fun listFiles(startDirPath: String, allowExtension: String?): Array<File?>? {
+        return if (allowExtension == null)
+            listFiles(startDirPath, allowExtension = null)
+        else
+            listFiles(startDirPath, arrayOf(allowExtension))
+    }
 
-        val column = "_data"
-        val projection = arrayOf(column)
+    /**
+     * 判断文件或目录是否存在
+     */
+    fun exist(path: String): Boolean {
+        val file = File(path)
+        return file.exists()
+    }
 
+    /**
+     * 删除文件或目录
+     */
+    @JvmOverloads
+    fun delete(file: File, deleteRootDir: Boolean = false): Boolean {
+        var result = false
+        if (file.isFile) {
+            //是文件
+            result = deleteResolveEBUSY(file)
+        } else {
+            //是目录
+            val files = file.listFiles() ?: return false
+            if (files.isEmpty()) {
+                result = deleteRootDir && deleteResolveEBUSY(file)
+            } else {
+                for (f in files) {
+                    delete(f, deleteRootDir)
+                    result = deleteResolveEBUSY(f)
+                }
+            }
+            if (deleteRootDir) {
+                result = deleteResolveEBUSY(file)
+            }
+        }
+        return result
+    }
+
+    /**
+     * bug: open failed: EBUSY (Device or resource busy)
+     * fix: http://stackoverflow.com/questions/11539657/open-failed-ebusy-device-or-resource-busy
+     */
+    private fun deleteResolveEBUSY(file: File): Boolean {
+        // Before you delete a Directory or File: rename it!
+        val to = File(file.absolutePath + System.currentTimeMillis())
+
+        file.renameTo(to)
+        return to.delete()
+    }
+
+    /**
+     * 删除文件或目录
+     */
+    @JvmOverloads
+    fun delete(path: String, deleteRootDir: Boolean = false): Boolean {
+        val file = File(path)
+
+        return if (file.exists()) {
+            delete(file, deleteRootDir)
+        } else false
+    }
+
+    /**
+     * 复制文件为另一个文件，或复制某目录下的所有文件及目录到另一个目录下
+     */
+    fun copy(src: String, tar: String): Boolean {
+        val srcFile = File(src)
+        return srcFile.exists() && copy(srcFile, File(tar))
+    }
+
+    /**
+     * 复制文件或目录
+     */
+    fun copy(src: File, tar: File): Boolean {
         try {
-            context.contentResolver.query(
-                uri!!,
-                projection,
-                selection,
-                selectionArgs,
-                null
-            )?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val index = cursor.getColumnIndexOrThrow(column)
-                    return cursor.getString(index)
+            if (src.isFile) {
+                val `is` = FileInputStream(src)
+                val op = FileOutputStream(tar)
+                val bis = BufferedInputStream(`is`)
+                val bos = BufferedOutputStream(op)
+                val bt = ByteArray(1024 * 8)
+                while (true) {
+                    val len = bis.read(bt)
+                    if (len == -1) {
+                        break
+                    } else {
+                        bos.write(bt, 0, len)
+                    }
+                }
+                bis.close()
+                bos.close()
+            } else if (src.isDirectory) {
+                tar.mkdirs()
+                src.listFiles()?.forEach { file ->
+                    copy(file.absoluteFile, File(tar.absoluteFile, file.name))
                 }
             }
+            return true
         } catch (e: Exception) {
-            e.printStackTrace()
+            return false
         }
 
-        return null
     }
 
     /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is ExternalStorageProvider.
+     * 移动文件或目录
      */
-    fun isExternalStorageDocument(uri: Uri): Boolean {
-        return "com.android.externalstorage.documents" == uri.authority
+    fun move(src: String, tar: String): Boolean {
+        return move(File(src), File(tar))
     }
 
     /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is DownloadsProvider.
+     * 移动文件或目录
      */
-    fun isDownloadsDocument(uri: Uri): Boolean {
-        return "com.android.providers.downloads.documents" == uri.authority
+    fun move(src: File, tar: File): Boolean {
+        return rename(src, tar)
     }
 
     /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is MediaProvider.
+     * 文件重命名
      */
-    fun isMediaDocument(uri: Uri): Boolean {
-        return "com.android.providers.media.documents" == uri.authority
+    fun rename(oldPath: String, newPath: String): Boolean {
+        return rename(File(oldPath), File(newPath))
     }
 
     /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is Google Photos.
+     * 文件重命名
      */
-    fun isGooglePhotosUri(uri: Uri): Boolean {
-        return "com.google.android.apps.photos.content" == uri.authority
+    fun rename(src: File, tar: File): Boolean {
+        return src.renameTo(tar)
     }
 
+    /**
+     * 读取文本文件, 失败将返回空串
+     */
+    @JvmOverloads
+    fun readText(filepath: String, charset: String = "utf-8"): String {
+        try {
+            val data = readBytes(filepath)
+            if (data != null) {
+                return String(data, Charset.forName(charset)).trim { it <= ' ' }
+            }
+        } catch (ignored: UnsupportedEncodingException) {
+        }
+
+        return ""
+    }
+
+    /**
+     * 读取文件内容, 失败将返回空串
+     */
+    fun readBytes(filepath: String): ByteArray? {
+        var fis: FileInputStream? = null
+        try {
+            fis = FileInputStream(filepath)
+            val baos = ByteArrayOutputStream()
+            val buffer = ByteArray(1024)
+            while (true) {
+                val len = fis.read(buffer, 0, buffer.size)
+                if (len == -1) {
+                    break
+                } else {
+                    baos.write(buffer, 0, len)
+                }
+            }
+            val data = baos.toByteArray()
+            baos.close()
+            return data
+        } catch (e: IOException) {
+            return null
+        } finally {
+            closeSilently(fis)
+        }
+    }
+
+    /**
+     * 保存文本内容
+     */
+    @JvmOverloads
+    fun writeText(filepath: String, content: String, charset: String = "utf-8"): Boolean {
+        return try {
+            writeBytes(filepath, content.toByteArray(charset(charset)))
+        } catch (e: UnsupportedEncodingException) {
+            false
+        }
+
+    }
+
+    /**
+     * 保存文件内容
+     */
+    fun writeBytes(filepath: String, data: ByteArray): Boolean {
+        val file = File(filepath)
+        var fos: FileOutputStream? = null
+        return try {
+            if (!file.exists()) {
+                file.parentFile?.mkdirs()
+                file.createNewFile()
+            }
+            fos = FileOutputStream(filepath)
+            fos.write(data)
+            true
+        } catch (e: IOException) {
+            false
+        } finally {
+            closeSilently(fos)
+        }
+    }
+
+    /**
+     * 追加文本内容
+     */
+    fun appendText(path: String, content: String): Boolean {
+        val file = File(path)
+        var writer: FileWriter? = null
+        return try {
+            if (!file.exists()) {
+
+                file.createNewFile()
+            }
+            writer = FileWriter(file, true)
+            writer.write(content)
+            true
+        } catch (e: IOException) {
+            false
+        } finally {
+            closeSilently(writer)
+        }
+    }
+
+    /**
+     * 获取文件大小
+     */
+    fun getLength(path: String): Long {
+        val file = File(path)
+        return if (!file.isFile || !file.exists()) {
+            0
+        } else file.length()
+    }
+
+    /**
+     * 获取文件或网址的名称（包括后缀）
+     */
+    fun getName(pathOrUrl: String?): String {
+        if (pathOrUrl == null) {
+            return ""
+        }
+        val pos = pathOrUrl.lastIndexOf('/')
+        return if (0 <= pos) {
+            pathOrUrl.substring(pos + 1)
+        } else {
+            System.currentTimeMillis().toString() + "." + getExtension(pathOrUrl)
+        }
+    }
+
+    /**
+     * 获取文件名（不包括扩展名）
+     */
+    fun getNameExcludeExtension(path: String): String {
+        return try {
+            var fileName = File(path).name
+            val lastIndexOf = fileName.lastIndexOf(".")
+            if (lastIndexOf != -1) {
+                fileName = fileName.substring(0, lastIndexOf)
+            }
+            fileName
+        } catch (e: Exception) {
+            ""
+        }
+
+    }
+
+    /**
+     * 获取格式化后的文件大小
+     */
+    fun getSize(path: String): String {
+        val fileSize = getLength(path)
+        return ConvertUtils.toFileSizeString(fileSize)
+    }
+
+    /**
+     * 获取文件后缀,不包括“.”
+     */
+    fun getExtension(pathOrUrl: String): String {
+        val dotPos = pathOrUrl.lastIndexOf('.')
+        return if (0 <= dotPos) {
+            pathOrUrl.substring(dotPos + 1)
+        } else {
+            "ext"
+        }
+    }
+
+    /**
+     * 获取文件的MIME类型
+     */
+    fun getMimeType(pathOrUrl: String): String {
+        val ext = getExtension(pathOrUrl)
+        val map = MimeTypeMap.getSingleton()
+        return map.getMimeTypeFromExtension(ext) ?: "*/*"
+    }
+
+    /**
+     * 获取格式化后的文件/目录创建或最后修改时间
+     */
+    @JvmOverloads
+    fun getDateTime(path: String, format: String = "yyyy年MM月dd日HH:mm"): String {
+        val file = File(path)
+        return getDateTime(file, format)
+    }
+
+    /**
+     * 获取格式化后的文件/目录创建或最后修改时间
+     */
+    fun getDateTime(file: File, format: String): String {
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = file.lastModified()
+        return SimpleDateFormat(format, Locale.PRC).format(cal.time)
+    }
+
+    /**
+     * 比较两个文件的最后修改时间
+     */
+    fun compareLastModified(path1: String, path2: String): Int {
+        val stamp1 = File(path1).lastModified()
+        val stamp2 = File(path2).lastModified()
+        return when {
+            stamp1 > stamp2 -> {
+                1
+            }
+            stamp1 < stamp2 -> {
+                -1
+            }
+            else -> {
+                0
+            }
+        }
+    }
+
+    /**
+     * 创建多级别的目录
+     */
+    fun makeDirs(path: String): Boolean {
+        return makeDirs(File(path))
+    }
+
+    /**
+     * 创建多级别的目录
+     */
+    fun makeDirs(file: File): Boolean {
+        return file.mkdirs()
+    }
+
+    class SortByExtension : Comparator<File> {
+
+        override fun compare(f1: File?, f2: File?): Int {
+            return if (f1 == null || f2 == null) {
+                if (f1 == null) {
+                    -1
+                } else {
+                    1
+                }
+            } else {
+                if (f1.isDirectory && f2.isFile) {
+                    -1
+                } else if (f1.isFile && f2.isDirectory) {
+                    1
+                } else {
+                    f1.name.compareTo(f2.name, ignoreCase = true)
+                }
+            }
+        }
+
+    }
+
+    class SortByName : Comparator<File> {
+        private var caseSensitive: Boolean = false
+
+        constructor(caseSensitive: Boolean) {
+            this.caseSensitive = caseSensitive
+        }
+
+        constructor() {
+            this.caseSensitive = false
+        }
+
+        override fun compare(f1: File?, f2: File?): Int {
+            if (f1 == null || f2 == null) {
+                return if (f1 == null) {
+                    -1
+                } else {
+                    1
+                }
+            } else {
+                return if (f1.isDirectory && f2.isFile) {
+                    -1
+                } else if (f1.isFile && f2.isDirectory) {
+                    1
+                } else {
+                    val s1 = f1.name
+                    val s2 = f2.name
+                    if (caseSensitive) {
+                        s1.compareTo(s2)
+                    } else {
+                        s1.compareTo(s2, ignoreCase = true)
+                    }
+                }
+            }
+        }
+
+    }
+
+    class SortBySize : Comparator<File> {
+
+        override fun compare(f1: File?, f2: File?): Int {
+            return if (f1 == null || f2 == null) {
+                if (f1 == null) {
+                    -1
+                } else {
+                    1
+                }
+            } else {
+                if (f1.isDirectory && f2.isFile) {
+                    -1
+                } else if (f1.isFile && f2.isDirectory) {
+                    1
+                } else {
+                    if (f1.length() < f2.length()) {
+                        -1
+                    } else {
+                        1
+                    }
+                }
+            }
+        }
+
+    }
+
+    class SortByTime : Comparator<File> {
+
+        override fun compare(f1: File?, f2: File?): Int {
+            return if (f1 == null || f2 == null) {
+                if (f1 == null) {
+                    -1
+                } else {
+                    1
+                }
+            } else {
+                if (f1.isDirectory && f2.isFile) {
+                    -1
+                } else if (f1.isFile && f2.isDirectory) {
+                    1
+                } else {
+                    if (f1.lastModified() > f2.lastModified()) {
+                        -1
+                    } else {
+                        1
+                    }
+                }
+            }
+        }
+
+    }
 }

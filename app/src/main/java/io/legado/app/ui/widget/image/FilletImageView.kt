@@ -10,7 +10,10 @@ import io.legado.app.R
 import io.legado.app.utils.dp
 import kotlin.math.max
 
-class FilletImageView : AppCompatImageView {
+class FilletImageView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppCompatImageView(context, attrs) {
     internal var width: Float = 0.toFloat()
     internal var height: Float = 0.toFloat()
     private var leftTopRadius: Int = 0
@@ -18,26 +21,29 @@ class FilletImageView : AppCompatImageView {
     private var rightBottomRadius: Int = 0
     private var leftBottomRadius: Int = 0
 
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context, attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context, attrs)
-    }
-
-    private fun init(context: Context, attrs: AttributeSet) {
+    init {
         // 读取配置
         val array = context.obtainStyledAttributes(attrs, R.styleable.FilletImageView)
         val defaultRadius = 5.dp
-        val radius = array.getDimensionPixelOffset(R.styleable.FilletImageView_radius, defaultRadius)
-        leftTopRadius = array.getDimensionPixelOffset(R.styleable.FilletImageView_left_top_radius, defaultRadius)
-        rightTopRadius = array.getDimensionPixelOffset(R.styleable.FilletImageView_right_top_radius, defaultRadius)
+        val radius =
+            array.getDimensionPixelOffset(R.styleable.FilletImageView_radius, defaultRadius)
+        leftTopRadius = array.getDimensionPixelOffset(
+            R.styleable.FilletImageView_left_top_radius,
+            defaultRadius
+        )
+        rightTopRadius = array.getDimensionPixelOffset(
+            R.styleable.FilletImageView_right_top_radius,
+            defaultRadius
+        )
         rightBottomRadius =
-            array.getDimensionPixelOffset(R.styleable.FilletImageView_right_bottom_radius, defaultRadius)
-        leftBottomRadius = array.getDimensionPixelOffset(R.styleable.FilletImageView_left_bottom_radius, defaultRadius)
+            array.getDimensionPixelOffset(
+                R.styleable.FilletImageView_right_bottom_radius,
+                defaultRadius
+            )
+        leftBottomRadius = array.getDimensionPixelOffset(
+            R.styleable.FilletImageView_left_bottom_radius,
+            defaultRadius
+        )
 
         //如果四个角的值没有设置，那么就使用通用的radius的值。
         if (defaultRadius == leftTopRadius) {
@@ -53,7 +59,6 @@ class FilletImageView : AppCompatImageView {
             leftBottomRadius = radius
         }
         array.recycle()
-
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {

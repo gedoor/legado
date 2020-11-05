@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
@@ -12,14 +13,12 @@ import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
 import io.legado.app.App
 import java.io.IOException
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.min
-import kotlin.math.sqrt
+import kotlin.math.*
 
 
-@Suppress("unused", "WeakerAccess")
+@Suppress("unused", "WeakerAccess", "MemberVisibilityCanBePrivate")
 object BitmapUtils {
+
     /**
      * 从path中获取图片信息,在通过BitmapFactory.decodeFile(String path)方法将突破转成Bitmap时，
      * 遇到大一些的图片，我们经常会遇到OOM(Out Of Memory)的问题。所以用到了我们上面提到的BitmapFactory.Options这个类。
@@ -53,15 +52,11 @@ object BitmapUtils {
      * @param path 图片路径
      * @return
      */
-
     fun decodeBitmap(path: String): Bitmap {
         val opts = BitmapFactory.Options()
-
         opts.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, opts)
-
         opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
-
         opts.inJustDecodeBounds = false
 
         return BitmapFactory.decodeFile(path, opts)
@@ -121,8 +116,12 @@ object BitmapUtils {
      * @throws IOException
      */
     @Throws(IOException::class)
-    fun decodeBitmap(context: Context, fileNameInAssets: String, width: Int, height: Int): Bitmap? {
-
+    fun decodeAssetsBitmap(
+        context: Context,
+        fileNameInAssets: String,
+        width: Int,
+        height: Int
+    ): Bitmap? {
         var inputStream = context.assets.open(fileNameInAssets)
         val op = BitmapFactory.Options()
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
@@ -147,7 +146,7 @@ object BitmapUtils {
 
     //图片不被压缩
     fun convertViewToBitmap(view: View, bitmapWidth: Int, bitmapHeight: Int): Bitmap {
-        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Config.ARGB_8888)
         view.draw(Canvas(bitmap))
         return bitmap
     }
@@ -168,11 +167,8 @@ object BitmapUtils {
         minSideLength: Int,
         maxNumOfPixels: Int
     ): Int {
-
         val initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels)
-
         var roundedSize: Int
-
         if (initialSize <= 8) {
             roundedSize = 1
             while (roundedSize < initialSize) {
@@ -181,7 +177,6 @@ object BitmapUtils {
         } else {
             roundedSize = (initialSize + 7) / 8 * 8
         }
-
         return roundedSize
     }
 
@@ -195,27 +190,34 @@ object BitmapUtils {
         val w = options.outWidth.toDouble()
         val h = options.outHeight.toDouble()
 
-        val lowerBound = if (maxNumOfPixels == -1)
-            1
-        else
-            ceil(sqrt(w * h / maxNumOfPixels)).toInt()
+        val lowerBound = when (maxNumOfPixels) {
+            -1 -> 1
+            else -> ceil(sqrt(w * h / maxNumOfPixels)).toInt()
+        }
 
-        val upperBound = if (minSideLength == -1) 128 else min(
-            floor(w / minSideLength),
-            floor(h / minSideLength)
-        ).toInt()
+        val upperBound = when (minSideLength) {
+            -1 -> 128
+            else -> min(
+                floor(w / minSideLength),
+                floor(h / minSideLength)
+            ).toInt()
+        }
 
         if (upperBound < lowerBound) {
             // return the larger one when there is no overlapping zone.
             return lowerBound
         }
 
-        return if (maxNumOfPixels == -1 && minSideLength == -1) {
-            1
-        } else if (minSideLength == -1) {
-            lowerBound
-        } else {
-            upperBound
+        return when {
+            maxNumOfPixels == -1 && minSideLength == -1 -> {
+                1
+            }
+            minSideLength == -1 -> {
+                lowerBound
+            }
+            else -> {
+                upperBound
+            }
         }
     }
 
@@ -250,6 +252,34 @@ object BitmapUtils {
         output.copyTo(blurredBitmap)
 
         return blurredBitmap
+    }
+
+    fun getMeanColor(bitmap: Bitmap): Int {
+        val width: Int = bitmap.width
+        val height: Int = bitmap.height
+        var pixel: Int
+        var pixelSumRed = 0
+        var pixelSumBlue = 0
+        var pixelSumGreen = 0
+        for (i in 0..99) {
+            for (j in 70..99) {
+                pixel = bitmap.getPixel(
+                    (i * width / 100.toFloat()).roundToInt(),
+                    (j * height / 100.toFloat()).roundToInt()
+                )
+                pixelSumRed += Color.red(pixel)
+                pixelSumGreen += Color.green(pixel)
+                pixelSumBlue += Color.blue(pixel)
+            }
+        }
+        val averagePixelRed = pixelSumRed / 3000
+        val averagePixelBlue = pixelSumBlue / 3000
+        val averagePixelGreen = pixelSumGreen / 3000
+        return Color.rgb(
+            averagePixelRed + 3,
+            averagePixelGreen + 3,
+            averagePixelBlue + 3
+        )
     }
 
 }

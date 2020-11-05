@@ -5,8 +5,9 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
+@Suppress("unused")
 class Coroutine<T>(
-    scope: CoroutineScope,
+    val scope: CoroutineScope,
     context: CoroutineContext = Dispatchers.IO,
     block: suspend CoroutineScope.() -> T
 ) {
@@ -28,9 +29,10 @@ class Coroutine<T>(
     private val job: Job
 
     private var start: VoidCallback? = null
-    private var success: Callback<T?>? = null
+    private var success: Callback<T>? = null
     private var error: Callback<Throwable>? = null
     private var finally: VoidCallback? = null
+    private var cancel: VoidCallback? = null
 
     private var timeMillis: Long? = null
     private var errorReturn: Result<T>? = null
@@ -45,7 +47,7 @@ class Coroutine<T>(
         get() = job.isCompleted
 
     init {
-        this.job = executeInternal(scope, context, block)
+        this.job = executeInternal(context, block)
     }
 
     fun timeout(timeMillis: () -> Long): Coroutine<T> {
@@ -78,7 +80,7 @@ class Coroutine<T>(
 
     fun onSuccess(
         context: CoroutineContext? = null,
-        block: suspend CoroutineScope.(T?) -> Unit
+        block: suspend CoroutineScope.(T) -> Unit
     ): Coroutine<T> {
         this.success = Callback(context, block)
         return this@Coroutine
@@ -100,9 +102,28 @@ class Coroutine<T>(
         return this@Coroutine
     }
 
+    fun onCancel(
+        context: CoroutineContext? = null,
+        block: suspend CoroutineScope.() -> Unit
+    ): Coroutine<T> {
+        this.cancel = VoidCallback(context, block)
+        return this@Coroutine
+    }
+
     //取消当前任务
     fun cancel(cause: CancellationException? = null) {
         job.cancel(cause)
+        cancel?.let {
+            MainScope().launch {
+                if (null == it.context) {
+                    it.block.invoke(scope)
+                } else {
+                    withContext(scope.coroutineContext.plus(it.context)) {
+                        it.block.invoke(this)
+                    }
+                }
+            }
+        }
     }
 
     fun invokeOnCompletion(handler: CompletionHandler): DisposableHandle {
@@ -110,7 +131,6 @@ class Coroutine<T>(
     }
 
     private fun executeInternal(
-        scope: CoroutineScope,
         context: CoroutineContext,
         block: suspend CoroutineScope.() -> T
     ): Job {
@@ -118,21 +138,27 @@ class Coroutine<T>(
             try {
                 start?.let { dispatchVoidCallback(this, it) }
                 val value = executeBlock(scope, context, timeMillis ?: 0L, block)
-                success?.let { dispatchCallback(this, value, it) }
+                if (isActive) {
+                    success?.let { dispatchCallback(this, value, it) }
+                }
             } catch (e: Throwable) {
                 if (BuildConfig.DEBUG) {
                     e.printStackTrace()
                 }
                 val consume: Boolean = errorReturn?.value?.let { value ->
-                    success?.let { dispatchCallback(this, value, it) }
+                    if (isActive) {
+                        success?.let { dispatchCallback(this, value, it) }
+                    }
                     true
                 } ?: false
 
-                if (!consume) {
+                if (!consume && isActive) {
                     error?.let { dispatchCallback(this, e, it) }
                 }
             } finally {
-                finally?.let { dispatchVoidCallback(this, it) }
+                if (isActive) {
+                    finally?.let { dispatchVoidCallback(this, it) }
+                }
             }
         }
     }
@@ -152,6 +178,7 @@ class Coroutine<T>(
         value: R,
         callback: Callback<R>
     ) {
+        if (!scope.isActive) return
         if (null == callback.context) {
             callback.block.invoke(scope, value)
         } else {
@@ -166,7 +193,7 @@ class Coroutine<T>(
         context: CoroutineContext,
         timeMillis: Long,
         noinline block: suspend CoroutineScope.() -> T
-    ): T? {
+    ): T {
         return withContext(scope.coroutineContext.plus(context)) {
             if (timeMillis > 0L) withTimeout(timeMillis) {
                 block()

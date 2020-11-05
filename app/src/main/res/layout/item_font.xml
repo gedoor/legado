@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:padding="5dp"
-        android:textColor="@color/tv_text_default" />
+        android:textColor="@color/primaryText" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_checked"
@@ -22,6 +22,6 @@
         android:layout_height="24dp"
         android:src="@drawable/ic_check"
         android:visibility="invisible"
-        app:tint="@color/tv_text_default" />
+        app:tint="@color/primaryText" />
 
 </LinearLayout>

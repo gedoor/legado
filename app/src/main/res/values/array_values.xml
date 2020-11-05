@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="icons">
+        <item>ic_launcher</item>
+        <item>launcher1</item>
+        <item>launcher2</item>
+        <item>launcher3</item>
+        <item>launcher4</item>
+        <item>launcher5</item>
+        <item>launcher6</item>
+    </string-array>
+
+    <string-array name="screen_time_out_value">
+        <item>0</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="theme_mode_v">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="screen_direction_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="language_value">
+        <item>auto</item>
+        <item>zh</item>
+        <item>tw</item>
+        <item>en</item>
+    </string-array>
+
+</resources>

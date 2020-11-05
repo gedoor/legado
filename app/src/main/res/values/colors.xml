@@ -1,33 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/md_light_blue_600</color>
-    <color name="colorPrimaryDark">@color/md_light_blue_700</color>
-    <color name="colorAccent">@color/md_pink_800</color>
+    <color name="primary">@color/md_light_blue_600</color>
+    <color name="primaryDark">@color/md_light_blue_700</color>
+    <color name="accent">@color/md_pink_800</color>
     <color name="divider">#66666666</color>
+
+    <color name="lightBlue_color">#FF578FCC</color>
 
     <color name="error">#eb4333</color>
     <color name="success">#439b53</color>
 
     <color name="night_mask">#00000000</color>
 
-    <color name="background">@color/md_grey_100</color>
-    <color name="background_card">#dedede</color>
-    <color name="background_menu">#fcfcfc</color>
+    <color name="background">@color/md_grey_50</color>
+    <color name="background_card">@color/md_grey_100</color>
+    <color name="background_menu">@color/md_grey_200</color>
+    <color name="background_prefs">#7fffffff</color>
     <color name="transparent">#00000000</color>
 
+    <color name="transparent10">#10000000</color>
     <color name="transparent30">#30000000</color>
+    <color name="transparent50">#50000000</color>
 
     <color name="highlight">#d3321b</color>
 
-    <color name="btn_bg_press">#80ACACAC</color>
-    <color name="btn_bg_press_2">#80858585</color>
-    <color name="btn_bg_press_tp">#802C2C2C</color>
+    <color name="btn_bg_press">#63ACACAC</color>
+    <color name="btn_bg_press_2">#63858585</color>
+    <color name="btn_bg_press_tp">#632C2C2C</color>
 
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#adadad</color>
 
-    <color name="tv_text_default">#0E0E0E</color>
-    <color name="tv_text_secondary">#2C2C2C</color>
+    <color name="primaryText">#de000000</color>
+    <color name="secondaryText">#8a000000</color>
     <color name="tv_text_summary">#8A2C2C2C</color>
     <color name="tv_text_book_detail">#dfdfdf</color>
     <color name="menu_color_default">#383838</color>

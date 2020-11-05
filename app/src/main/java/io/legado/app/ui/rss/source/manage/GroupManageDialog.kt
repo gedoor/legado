@@ -3,43 +3,39 @@ package io.legado.app.ui.rss.source.manage
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.constant.AppPattern
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getViewModelOfActivity
-import io.legado.app.utils.requestInputMethod
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_group_manage.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
+class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: RssSourceViewModel
     private lateinit var adapter: GroupAdapter
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+        val dm = requireActivity().getSize()
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 
@@ -52,26 +48,23 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initData()
-    }
-
-    private fun initData() {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        tool_bar.setBackgroundColor(primaryColor)
         tool_bar.title = getString(R.string.group_manage)
         tool_bar.inflateMenu(R.menu.group_manage)
-        tool_bar.menu.applyTint(requireContext(), false)
+        tool_bar.menu.applyTint(requireContext())
         tool_bar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(
-            DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
-        )
+        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
         recycler_view.adapter = adapter
-        App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, Observer {
+        tv_ok.setTextColor(requireContext().accentColor)
+        tv_ok.visible()
+        tv_ok.onClick { dismiss() }
+        App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
-                groups.addAll(group.splitNotBlank(",", ";"))
+                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             adapter.setItems(groups.toList())
         })
@@ -131,8 +124,22 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
             with(holder.itemView) {
                 tv_group.text = item
-                tv_edit.onClick { editGroup(item) }
-                tv_del.onClick { viewModel.delGroup(item) }
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder) {
+            holder.itemView.apply {
+                tv_edit.onClick {
+                    getItem(holder.layoutPosition)?.let {
+                        editGroup(it)
+                    }
+                }
+
+                tv_del.onClick {
+                    getItem(holder.layoutPosition)?.let {
+                        viewModel.delGroup(it)
+                    }
+                }
             }
         }
     }

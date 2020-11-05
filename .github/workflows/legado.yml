@@ -1,0 +1,57 @@
+name: Android CI
+
+on: 
+  release:
+    types: [published]
+  push:
+    branches: 
+      - master
+#    tags:
+#      - '3.*'
+#  pull_request:
+#    branches:
+#      - master
+#  watch:
+#    types: [started]
+#  schedule:
+#    - cron: '0 4 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: clear 18PlusList.txt
+      run: |
+        echo "清空18PlusList.txt"
+        echo "">$GITHUB_WORKSPACE/app/src/main/assets/18PlusList.txt
+    - name: release apk sign
+      run: |
+        echo "给apk增加签名"
+        cp $GITHUB_WORKSPACE/.github/workflows/legado.jks $GITHUB_WORKSPACE/app/legado.jks
+        sed '$a\RELEASE_STORE_FILE=./legado.jks'          $GITHUB_WORKSPACE/gradle.properties -i 
+        sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
+        sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
+        sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
+    - name: apk live together
+      run: |
+        echo "设置apk共存"
+        sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
+        sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
+    - name: build with gradle
+      run: |
+        echo "开始进行release构建"
+        chmod +x gradlew
+        ./gradlew assembleAppRelease
+    - name : upload apk
+      uses: actions/upload-artifact@master
+      if: always()
+      with:
+        name: legado apk
+        path: ${{ github.workspace }}/app/build/outputs/apk/app/release

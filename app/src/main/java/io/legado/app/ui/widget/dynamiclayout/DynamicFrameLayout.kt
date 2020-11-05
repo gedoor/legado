@@ -12,7 +12,11 @@ import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
 import kotlinx.android.synthetic.main.view_dynamic.view.*
 
-class DynamicFrameLayout(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), ViewSwitcher {
+@Suppress("unused")
+class DynamicFrameLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : FrameLayout(context, attrs), ViewSwitcher {
 
     private var errorView: View? = null
     private var errorImage: AppCompatImageView? = null

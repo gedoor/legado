@@ -12,7 +12,8 @@
         android:id="@+id/text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:singleLine="true" />
 
     <ImageView
         android:id="@+id/iv_delete"

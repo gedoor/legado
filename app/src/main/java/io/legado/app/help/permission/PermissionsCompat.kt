@@ -3,13 +3,26 @@ package io.legado.app.help.permission
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import java.util.*
 
+@Suppress("unused")
 class PermissionsCompat private constructor() {
 
     private var request: Request? = null
 
     fun request() {
         RequestManager.pushRequest(request)
+    }
+
+    companion object {
+        // 检查权限, 如果已经拥有返回 true
+        fun check(activity: AppCompatActivity, vararg permissions: String): Boolean {
+            val request = Request(activity)
+            val pers = ArrayList<String>()
+            pers.addAll(listOf(*permissions))
+            val data = request.getDeniedPermissions(pers.toTypedArray())
+            return data == null
+        }
     }
 
     class Builder {

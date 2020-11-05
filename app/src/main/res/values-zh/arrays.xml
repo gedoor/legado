@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="book_type">
+        <item>@string/book_type_text</item>
+        <item>@string/book_type_audio</item>
+    </string-array>
+
+    <string-array name="indent">
+        <item>@string/indent_0</item>
+        <item>@string/indent_1</item>
+        <item>@string/indent_2</item>
+        <item>@string/indent_3</item>
+        <item>@string/indent_4</item>
+    </string-array>
+
+    <string-array name="text_suffix">
+        <item>.txt</item>
+        <item>.json</item>
+        <item>.xml</item>
+    </string-array>
+
+    <string-array name="convert_s">
+        <item>@string/jf_convert_o</item>
+        <item>@string/jf_convert_j</item>
+        <item>@string/jf_convert_f</item>
+    </string-array>
+
+    <string-array name="theme_mode">
+        <item>跟随系统</item>
+        <item>亮色主题</item>
+        <item>暗色主题</item>
+        <item>E-Ink(墨水屏)</item>
+    </string-array>
+
+    <string-array name="NavBarColors">
+        <item>自动</item>
+        <item>黑色</item>
+        <item>白色</item>
+        <item>跟随背景</item>
+    </string-array>
+
+    <string-array name="screen_time_out">
+        <item>默认</item>
+        <item>1分钟</item>
+        <item>2分钟</item>
+        <item>3分钟</item>
+        <item>常亮</item>
+    </string-array>
+
+    <string-array name="screen_direction_title">
+        <item>@string/screen_unspecified</item>
+        <item>@string/screen_portrait</item>
+        <item>@string/screen_landscape</item>
+        <item>@string/screen_sensor</item>
+    </string-array>
+
+    <string-array name="icon_names">
+        <item>iconMain</item>
+        <item>icon1</item>
+        <item>icon2</item>
+        <item>icon3</item>
+        <item>icon4</item>
+        <item>icon5</item>
+        <item>icon6</item>
+    </string-array>
+
+    <string-array name="chinese_mode">
+        <item>关闭</item>
+        <item>繁体转简体</item>
+        <item>简体转繁体</item>
+    </string-array>
+
+    <string-array name="system_typefaces">
+        <item>系统默认字体</item>
+        <item>系统衬线字体</item>
+        <item>系统等宽字体</item>
+    </string-array>
+
+    <string-array name="read_tip">
+        <item>无</item>
+        <item>标题</item>
+        <item>时间</item>
+        <item>电量</item>
+        <item>页数</item>
+        <item>进度</item>
+        <item>页数及进度</item>
+        <item>书名</item>
+    </string-array>
+
+    <string-array name="text_font_weight">
+        <item>正常</item>
+        <item>粗体</item>
+        <item>细体</item>
+    </string-array>
+
+    <string-array name="language">
+        <item>跟随系统</item>
+        <item>简体中文</item>
+        <item>繁体中文</item>
+        <item>英文</item>
+    </string-array>
+
+</resources>

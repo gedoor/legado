@@ -9,13 +9,16 @@ import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.utils.ColorUtils
 
 /**
  * @author Aidan Follestad (afollestad), Karim Abou Zeid (kabouzeid)
  */
+@Suppress("unused")
 class ThemeStore @SuppressLint("CommitPrefEdits")
-private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeStoreInterface {
+private constructor(private val mContext: Context) : ThemeStoreInterface {
     private val mEditor: SharedPreferences.Editor
 
     init {
@@ -147,6 +150,11 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         return this
     }
 
+    override fun bottomBackground(color: Int): ThemeStore {
+        mEditor.putInt(ThemeStorePrefKeys.KEY_BOTTOM_BACKGROUND, color)
+        return this
+    }
+
     override fun coloredStatusBar(colored: Boolean): ThemeStore {
         mEditor.putBoolean(ThemeStorePrefKeys.KEY_APPLY_PRIMARYDARK_STATUSBAR, colored)
         return this
@@ -180,7 +188,10 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
 
         @CheckResult
         internal fun prefs(context: Context): SharedPreferences {
-            return context.getSharedPreferences(ThemeStorePrefKeys.CONFIG_PREFS_KEY_DEFAULT, Context.MODE_PRIVATE)
+            return context.getSharedPreferences(
+                ThemeStorePrefKeys.CONFIG_PREFS_KEY_DEFAULT,
+                Context.MODE_PRIVATE
+            )
         }
 
         fun markChanged(context: Context) {
@@ -189,7 +200,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
 
         @CheckResult
         @ColorInt
-        fun primaryColor(context: Context): Int {
+        fun primaryColor(context: Context = App.INSTANCE): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_PRIMARY_COLOR,
                 ATHUtils.resolveColor(context, R.attr.colorPrimary, Color.parseColor("#455A64"))
@@ -207,7 +218,7 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
 
         @CheckResult
         @ColorInt
-        fun accentColor(context: Context): Int {
+        fun accentColor(context: Context = App.INSTANCE): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_ACCENT_COLOR,
                 ATHUtils.resolveColor(context, R.attr.colorAccent, Color.parseColor("#263238"))
@@ -220,9 +231,15 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
             return if (!coloredStatusBar(context)) {
                 Color.BLACK
             } else if (transparent) {
-                prefs(context).getInt(ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR, primaryColor(context))
+                prefs(context).getInt(
+                    ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR,
+                    primaryColor(context)
+                )
             } else {
-                prefs(context).getInt(ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR, primaryColorDark(context))
+                prefs(context).getInt(
+                    ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR,
+                    primaryColorDark(context)
+                )
             }
         }
 
@@ -231,7 +248,10 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
         fun navigationBarColor(context: Context): Int {
             return if (!coloredNavigationBar(context)) {
                 Color.BLACK
-            } else prefs(context).getInt(ThemeStorePrefKeys.KEY_NAVIGATION_BAR_COLOR, primaryColor(context))
+            } else prefs(context).getInt(
+                ThemeStorePrefKeys.KEY_NAVIGATION_BAR_COLOR,
+                bottomBackground(context)
+            )
         }
 
         @CheckResult
@@ -272,16 +292,41 @@ private constructor(private val mContext: Context) : ThemeStorePrefKeys, ThemeSt
 
         @CheckResult
         @ColorInt
-        fun backgroundColor(context: Context): Int {
+        fun backgroundColor(context: Context = App.INSTANCE): Int {
             return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_BACKGROUND_COLOR,
                 ATHUtils.resolveColor(context, android.R.attr.colorBackground)
             )
         }
 
+        @SuppressLint("PrivateResource")
+        @CheckResult
+        fun elevation(context: Context): Float {
+            return prefs(context).getFloat(
+                ThemeStorePrefKeys.KEY_ELEVATION,
+                ATHUtils.resolveFloat(
+                    context,
+                    android.R.attr.elevation,
+                    context.resources.getDimension(R.dimen.design_appbar_elevation)
+                )
+            )
+        }
+
+        @CheckResult
+        @ColorInt
+        fun bottomBackground(context: Context = App.INSTANCE): Int {
+            return prefs(context).getInt(
+                ThemeStorePrefKeys.KEY_BOTTOM_BACKGROUND,
+                ATHUtils.resolveColor(context, android.R.attr.colorBackground)
+            )
+        }
+
         @CheckResult
         fun coloredStatusBar(context: Context): Boolean {
-            return prefs(context).getBoolean(ThemeStorePrefKeys.KEY_APPLY_PRIMARYDARK_STATUSBAR, true)
+            return prefs(context).getBoolean(
+                ThemeStorePrefKeys.KEY_APPLY_PRIMARYDARK_STATUSBAR,
+                true
+            )
         }
 
         @CheckResult

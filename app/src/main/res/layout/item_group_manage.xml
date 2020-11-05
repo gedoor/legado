@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@color/background"
     android:padding="8dp"
+    android:gravity="center_vertical"
     android:orientation="horizontal">
 
     <TextView
@@ -27,5 +28,11 @@
         android:background="?attr/selectableItemBackground"
         android:padding="8dp"
         android:text="@string/delete" />
+
+    <io.legado.app.lib.theme.view.ATESwitch
+        android:id="@+id/sw_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
 </LinearLayout>

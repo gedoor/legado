@@ -1,16 +1,19 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
-import android.text.TextUtils
 import android.text.TextUtils.isEmpty
+import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.abs
+import kotlin.math.log10
+import kotlin.math.pow
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object StringUtils {
-    private val TAG = "StringUtils"
     private const val HOUR_OF_DAY = 24
     private const val DAY_OF_YESTERDAY = 2
     private const val TIME_UNIT = 60
@@ -42,20 +45,23 @@ object StringUtils {
     //将时间转换成日期
     fun dateConvert(time: Long, pattern: String): String {
         val date = Date(time)
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern)
+
+        @SuppressLint("SimpleDateFormat")
+        val format = SimpleDateFormat(pattern)
         return format.format(date)
     }
 
     //将日期转换成昨天、今天、明天
     fun dateConvert(source: String, pattern: String): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern)
+        @SuppressLint("SimpleDateFormat")
+        val format = SimpleDateFormat(pattern)
         val calendar = Calendar.getInstance()
         try {
-            val date = format.parse(source)
+            val date = format.parse(source) ?: return ""
             val curTime = calendar.timeInMillis
             calendar.time = date
             //将MISC 转换成 sec
-            val difSec = Math.abs((curTime - date.time) / 1000)
+            val difSec = abs((curTime - date.time) / 1000)
             val difMin = difSec / 60
             val difHour = difMin / 60
             val difDate = difHour / 60
@@ -63,13 +69,18 @@ object StringUtils {
             //如果没有时间
             if (oldHour == 0) {
                 //比日期:昨天今天和明天
-                if (difDate == 0L) {
-                    return "今天"
-                } else if (difDate < DAY_OF_YESTERDAY) {
-                    return "昨天"
-                } else {
-                    @SuppressLint("SimpleDateFormat") val convertFormat = SimpleDateFormat("yyyy-MM-dd")
-                    return convertFormat.format(date)
+                return when {
+                    difDate == 0L -> {
+                        "今天"
+                    }
+                    difDate < DAY_OF_YESTERDAY -> {
+                        "昨天"
+                    }
+                    else -> {
+                        @SuppressLint("SimpleDateFormat")
+                        val convertFormat = SimpleDateFormat("yyyy-MM-dd")
+                        convertFormat.format(date)
+                    }
                 }
             }
 
@@ -79,7 +90,8 @@ object StringUtils {
                 difHour < HOUR_OF_DAY -> difHour.toString() + "小时前"
                 difDate < DAY_OF_YESTERDAY -> "昨天"
                 else -> {
-                    @SuppressLint("SimpleDateFormat") val convertFormat = SimpleDateFormat("yyyy-MM-dd")
+                    @SuppressLint("SimpleDateFormat")
+                    val convertFormat = SimpleDateFormat("yyyy-MM-dd")
                     convertFormat.format(date)
                 }
             }
@@ -88,6 +100,19 @@ object StringUtils {
         }
 
         return ""
+    }
+
+    fun toSize(length: Long): String {
+        if (length <= 0) return "0"
+        val units = arrayOf("b", "kb", "M", "G", "T")
+        //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
+        //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
+        val digitGroups =
+            (log10(length.toDouble()) / log10(1024.0)).toInt()
+        //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
+        //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
+        return DecimalFormat("#,##0.##")
+            .format(length / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
 
     @SuppressLint("DefaultLocale")
@@ -153,26 +178,31 @@ object StringUtils {
         try {
             for (i in cn.indices) {
                 val tmpNum = ChnMap[cn[i]]!!
-                if (tmpNum == 100000000) {
-                    result += tmp
-                    result *= tmpNum
-                    billion = billion * 100000000 + result
-                    result = 0
-                    tmp = 0
-                } else if (tmpNum == 10000) {
-                    result += tmp
-                    result *= tmpNum
-                    tmp = 0
-                } else if (tmpNum >= 10) {
-                    if (tmp == 0)
-                        tmp = 1
-                    result += tmpNum * tmp
-                    tmp = 0
-                } else {
-                    tmp = if (i >= 2 && i == cn.size - 1 && ChnMap[cn[i - 1]]!! > 10)
-                        tmpNum * ChnMap[cn[i - 1]]!! / 10
-                    else
-                        tmp * 10 + tmpNum
+                when {
+                    tmpNum == 100000000 -> {
+                        result += tmp
+                        result *= tmpNum
+                        billion = billion * 100000000 + result
+                        result = 0
+                        tmp = 0
+                    }
+                    tmpNum == 10000 -> {
+                        result += tmp
+                        result *= tmpNum
+                        tmp = 0
+                    }
+                    tmpNum >= 10 -> {
+                        if (tmp == 0)
+                            tmp = 1
+                        result += tmpNum * tmp
+                        tmp = 0
+                    }
+                    else -> {
+                        tmp = if (i >= 2 && i == cn.size - 1 && ChnMap[cn[i - 1]]!! > 10)
+                            tmpNum * ChnMap[cn[i - 1]]!! / 10
+                        else
+                            tmp * 10 + tmpNum
+                    }
                 }
             }
             result += tmp + billion
@@ -185,7 +215,7 @@ object StringUtils {
 
     fun stringToInt(str: String?): Int {
         if (str != null) {
-            val num = fullToHalf(str).replace("\\s".toRegex(), "")
+            val num = fullToHalf(str).replace("\\s+".toRegex(), "")
             return try {
                 Integer.parseInt(num)
             } catch (e: Exception) {
@@ -197,15 +227,33 @@ object StringUtils {
     }
 
     fun isContainNumber(company: String): Boolean {
-        val p = Pattern.compile("[0-9]")
+        val p = Pattern.compile("[0-9]+")
         val m = p.matcher(company)
         return m.find()
     }
 
     fun isNumeric(str: String): Boolean {
-        val pattern = Pattern.compile("[0-9]*")
+        val pattern = Pattern.compile("[0-9]+")
         val isNum = pattern.matcher(str)
         return isNum.matches()
+    }
+
+    fun wordCountFormat(wc: String?): String {
+        if (wc == null) return ""
+        var wordsS = ""
+        if (isNumeric(wc)) {
+            val words: Int = wc.toInt()
+            if (words > 0) {
+                wordsS = words.toString() + "字"
+                if (words > 10000) {
+                    val df = DecimalFormat("#.#")
+                    wordsS = df.format(words * 1.0f / 10000f.toDouble()) + "万字"
+                }
+            }
+        } else {
+            wordsS = wc
+        }
+        return wordsS
     }
 
     // 移除字符串首尾空字符的高效方法(利用ASCII值判断,包括全角空格)
@@ -238,18 +286,37 @@ object StringUtils {
         val m = p.matcher(data)
         val buf = StringBuffer(data.length)
         while (m.find()) {
-            val ch = Integer.parseInt(m.group(1), 16).toChar().toString()
+            val ch = Integer.parseInt(m.group(1)!!, 16).toChar().toString()
             m.appendReplacement(buf, Matcher.quoteReplacement(ch))
         }
         m.appendTail(buf)
         return buf.toString()
     }
 
-    fun formatHtml(html: String): String {
-        return if (TextUtils.isEmpty(html)) "" else html.replace("(?i)<(br[\\s/]*|/*p.*?|/*div.*?)>".toRegex(), "\n")// 替换特定标签为换行符
-                .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
-                .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
-                .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
-                .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
+    fun byteToHexString(bytes: ByteArray?): String {
+        if (bytes == null) return ""
+        val sb = StringBuilder(bytes.size * 2)
+        for (b in bytes) {
+            val hex = 0xff and b.toInt()
+            if (hex < 16) {
+                sb.append('0')
+            }
+            sb.append(Integer.toHexString(hex))
+        }
+        return sb.toString()
+    }
+   
+    fun hexStringToByte(hexString: String): ByteArray? {
+        val hexStr = hexString.replace(" ", "")
+        val len = hexStr.length
+        val bytes = ByteArray(len / 2)
+        var i = 0
+        while (i < len) {
+            // 两位一组，表示一个字节,把这样表示的16进制字符串，还原成一个字节
+            bytes[i / 2] = ((Character.digit(hexString[i], 16) shl 4) +
+                    Character.digit(hexString[i + 1], 16)).toByte()
+            i += 2
+        }
+        return bytes
     }
 }

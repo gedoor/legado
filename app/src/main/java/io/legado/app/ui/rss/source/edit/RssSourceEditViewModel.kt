@@ -1,22 +1,21 @@
 package io.legado.app.ui.rss.source.edit
 
 import android.app.Application
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getClipText
+import kotlinx.coroutines.Dispatchers
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
-    val sourceLiveData: MutableLiveData<RssSource> = MutableLiveData()
+    var rssSource: RssSource? = null
     private var oldSourceUrl: String? = null
 
-    fun initData(intent: Intent) {
+    fun initData(intent: Intent, onFinally: () -> Unit) {
         execute {
             val key = intent.getStringExtra("data")
             var source: RssSource? = null
@@ -25,24 +24,23 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             }
             source?.let {
                 oldSourceUrl = it.sourceUrl
-                sourceLiveData.postValue(it)
-            } ?: let {
-                sourceLiveData.postValue(RssSource().apply {
-                    customOrder = App.db.rssSourceDao().maxOrder + 1
-                })
+                rssSource = it
             }
+        }.onFinally {
+            onFinally()
         }
     }
 
-    fun save(rssSource: RssSource, success: (() -> Unit)) {
+    fun save(source: RssSource, success: (() -> Unit)) {
         execute {
             oldSourceUrl?.let {
-                if (oldSourceUrl != rssSource.sourceUrl) {
+                if (oldSourceUrl != source.sourceUrl) {
                     App.db.rssSourceDao().delete(it)
                 }
             }
-            oldSourceUrl = rssSource.sourceUrl
-            App.db.rssSourceDao().insert(rssSource)
+            oldSourceUrl = source.sourceUrl
+            App.db.rssSourceDao().insert(source)
+            rssSource = source
         }.onSuccess {
             success()
         }.onError {
@@ -51,17 +49,33 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }
     }
 
-    fun pasteSource() {
-        execute {
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-            clipboard?.primaryClip?.let {
-                if (it.itemCount > 0) {
-                    val json = it.getItemAt(0).text.toString()
-                    GSON.fromJsonObject<RssSource>(json)?.let { source ->
-                        sourceLiveData.postValue(source)
-                    } ?: toast("格式不对")
-                }
+    fun pasteSource(onSuccess: (source: RssSource) -> Unit) {
+        execute(context = Dispatchers.Main) {
+            var source: RssSource? = null
+            context.getClipText()?.let { json ->
+                source = GSON.fromJsonObject<RssSource>(json)
+            }
+            source
+        }.onError {
+            toast(it.localizedMessage)
+        }.onSuccess {
+            if (it != null) {
+                onSuccess(it)
+            } else {
+                toast("格式不对")
             }
         }
     }
+
+    fun importSource(text: String, finally: (source: RssSource) -> Unit) {
+        execute {
+            val text1 = text.trim()
+            GSON.fromJsonObject<RssSource>(text1)?.let {
+                finally.invoke(it)
+            }
+        }.onError {
+            toast(it.localizedMessage ?: "Error")
+        }
+    }
+
 }

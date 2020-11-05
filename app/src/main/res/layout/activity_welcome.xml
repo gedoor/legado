@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal">
+
+    <View
+        android:id="@+id/vw_title_line"
+        android:layout_width="6dp"
+        android:layout_height="0dp"
+        android:background="@color/accent"
+        app:layout_constraintTop_toTopOf="@+id/tv_title"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+        app:layout_constraintLeft_toLeftOf="@id/iv_book" />
+
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="1"
+        android:text="阅读"
+        android:textSize="49sp"
+        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintRight_toLeftOf="@+id/tv_sub_title"
+        app:layout_constraintLeft_toRightOf="@+id/vw_title_line"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/iv_book"
+        tools:ignore="HardcodedText" />
+
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:id="@+id/tv_sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:ems="1"
+        android:text="享受美好时光"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="@+id/tv_title"
+        app:layout_constraintLeft_toRightOf="@id/tv_title"
+        app:layout_constraintRight_toRightOf="@id/iv_book"
+        tools:ignore="HardcodedText" />
 
     <ImageView
-        android:id="@+id/iv_bg"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:src="@drawable/image_welcome"
+        android:id="@+id/iv_book"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/icon_read_book"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/welcome" />
+        android:contentDescription="@string/welcome"
+        app:layout_constraintBottom_toTopOf="@+id/tv_gzh"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
-</LinearLayout>
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:id="@+id/tv_gzh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关注公众号[开源阅读]\n看文章点广告支持作者"
+        android:layout_marginBottom="32dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="HardcodedText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

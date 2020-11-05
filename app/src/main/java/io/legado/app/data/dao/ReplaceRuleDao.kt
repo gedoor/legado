@@ -32,24 +32,21 @@ interface ReplaceRuleDao {
     @Query("SELECT * FROM replace_rules WHERE id in (:ids)")
     fun findByIds(vararg ids: Long): List<ReplaceRule>
 
-    @Query("update replace_rules set isEnabled = 1 where id in (:ids)")
-    fun enableSection(vararg ids: Long)
-
-    @Query("update replace_rules set isEnabled = 0 where id in (:ids)")
-    fun disableSection(vararg ids: Long)
-
-    @Query("delete from replace_rules where id in (:ids)")
-    fun delSection(vararg ids: Long)
-
     @Query(
-        """SELECT * FROM replace_rules WHERE isEnabled = 1 
-        AND (scope LIKE '%' || :scope || '%' or scope = null or scope = '')"""
+        """
+        SELECT * FROM replace_rules WHERE isEnabled = 1 
+        AND (scope LIKE '%' || :scope || '%' or scope is null or scope = '')
+        order by sortOrder
+        """
     )
     fun findEnabledByScope(scope: String): List<ReplaceRule>
 
     @Query(
-        """SELECT * FROM replace_rules WHERE isEnabled = 1 
-        AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope = null or scope = '')"""
+        """
+        SELECT * FROM replace_rules WHERE isEnabled = 1 
+        AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
+        order by sortOrder
+        """
     )
     fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
 

@@ -3,6 +3,7 @@ package io.legado.app.utils
 import android.util.Base64
 import java.nio.charset.StandardCharsets
 
+@Suppress("unused")
 object EncoderUtils {
 
     fun escape(src: String): String {
@@ -33,7 +34,7 @@ object EncoderUtils {
         }
     }
 
-    fun base64Encode(str: String): String? {
-        return Base64.encodeToString(str.toByteArray(), Base64.DEFAULT)
+    fun base64Encode(str: String, flags: Int = Base64.NO_WRAP): String? {
+        return Base64.encodeToString(str.toByteArray(), flags)
     }
 }

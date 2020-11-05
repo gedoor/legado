@@ -1,112 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="tts_speech_per">
-        <item>普通女声</item>
-        <item>普通男声</item>
-        <item>度逍遥</item>
-        <item>百度丫丫</item>
-        <item>百度骚男</item>
-        <item>百度暖女</item>
-        <item>百度评书</item>
-        <item>百度主持</item>
-    </string-array>
+	<string-array name="book_type">
+		<item>@string/book_type_text</item>
+		<item>@string/book_type_audio</item>
+	</string-array>
 
-    <string-array name="tts_speech_per_value">
-        <item>0</item>
-        <item>1</item>
-        <item>3</item>
-        <item>4</item>
-        <item>11</item>
-        <item>5</item>
-        <item>6</item>
-        <item>9</item>
-    </string-array>
+	<string-array name="indent">
+		<item>@string/indent_0</item>
+		<item>@string/indent_1</item>
+		<item>@string/indent_2</item>
+		<item>@string/indent_3</item>
+		<item>@string/indent_4</item>
+	</string-array>
 
-    <string-array name="bookshelf_layout">
-        <item>@string/layout_list</item>
-        <item>@string/layout_grid3</item>
-        <item>@string/layout_grid4</item>
-    </string-array>
+	<string-array name="text_suffix">
+		<item>.txt</item>
+		<item>.json</item>
+		<item>.xml</item>
+	</string-array>
 
-    <string-array name="indent">
-        <item>@string/indent_0</item>
-        <item>@string/indent_1</item>
-        <item>@string/indent_2</item>
-        <item>@string/indent_3</item>
-        <item>@string/indent_4</item>
-    </string-array>
+	<string-array name="convert_s">
+		<item>@string/jf_convert_o</item>
+		<item>@string/jf_convert_j</item>
+		<item>@string/jf_convert_f</item>
+	</string-array>
 
-    <string-array name="text_suffix">
-        <item>.txt</item>
-        <item>.json</item>
-        <item>.xml</item>
-    </string-array>
+	<string-array name="theme_mode">
+		<item>Follow system</item>
+		<item>Bright mode</item>
+		<item>Dark mode</item>
+		<item>E-Ink mode</item>
+	</string-array>
 
-    <string-array name="convert_s">
-        <item>@string/jf_convert_o</item>
-        <item>@string/jf_convert_j</item>
-        <item>@string/jf_convert_f</item>
-    </string-array>
+	<string-array name="NavBarColors">
+		<item>Auto</item>
+		<item>Black</item>
+		<item>White</item>
+		<item>Following</item>
+	</string-array>
 
-    <string-array name="NavBarColors">
-        <item>自动</item>
-        <item>黑色</item>
-        <item>白色</item>
-        <item>跟随背景</item>
-    </string-array>
+	<string-array name="screen_time_out">
+		<item>Default</item>
+		<item>1 min</item>
+		<item>2 min</item>
+		<item>3 min</item>
+		<item>Always</item>
+	</string-array>
 
-    <string-array name="screen_time_out">
-        <item>默认</item>
-        <item>1分钟</item>
-        <item>2分钟</item>
-        <item>3分钟</item>
-        <item>常亮</item>
-    </string-array>
+	<string-array name="screen_direction_title">
+		<item>@string/screen_unspecified</item>
+		<item>@string/screen_portrait</item>
+		<item>@string/screen_landscape</item>
+		<item>@string/screen_sensor</item>
+	</string-array>
 
-    <integer-array name="screen_time_out_value">
-        <item>0</item>
-        <item>60</item>
-        <item>120</item>
-        <item>180</item>
-        <item>-1</item>
-    </integer-array>
+	<string-array name="icon_names">
+		<item>iconMain</item>
+		<item>icon1</item>
+		<item>icon2</item>
+		<item>icon3</item>
+		<item>icon4</item>
+		<item>icon5</item>
+		<item>icon6</item>
+	</string-array>
 
-    <string-array name="screen_direction_list_title">
-        <item>@string/screen_unspecified</item>
-        <item>@string/screen_portrait</item>
-        <item>@string/screen_landscape</item>
-        <item>@string/screen_sensor</item>
-    </string-array>
+	<string-array name="chinese_mode">
+		<item>Off</item>
+		<item>Traditional to Simplified</item>
+		<item>Simplified to Traditional</item>
+	</string-array>
 
-    <string-array name="bookshelf_px_title">
-        <item>@string/bookshelf_px_0</item>
-        <item>@string/bookshelf_px_1</item>
-        <item>@string/bookshelf_px_2</item>
-    </string-array>
+	<string-array name="system_typefaces">
+		<item>Default font</item>
+		<item>Serif font</item>
+		<item>Monospaced font</item>
+	</string-array>
 
-    <string-array name="bookshelf_px_value">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
+	<string-array name="read_tip">
+		<item>Blank</item>
+		<item>Heading</item>
+		<item>Time</item>
+		<item>Battery</item>
+		<item>Pages</item>
+		<item>Progress</item>
+		<item>Pages and progress</item>
+		<item>Book name</item>
+	</string-array>
 
-    <declare-styleable name="Battery">
-        <attr name="batteryOrientation">
-            <enum name="horizontal" value="0" />
-            <enum name="vertical" value="1" />
-        </attr>
-        <attr name="batteryColor" format="color" />
-        <attr name="batteryPower" format="integer" />
-    </declare-styleable>
+	<string-array name="text_font_weight">
+		<item>Normal</item>
+		<item>Bold</item>
+		<item>Light</item>
+	</string-array>
 
-    <string-array name="icon_names">
-        <item>icon1</item>
-        <item>icon2</item>
-    </string-array>
-
-    <string-array name="icons">
-        <item>@string/icon_main</item>
-        <item>@string/icon_book</item>
-    </string-array>
+	<string-array name="language">
+		<item>Auto</item>
+		<item>Simplified_Chinese</item>
+		<item>Traditional_Chinese</item>
+		<item>English</item>
+	</string-array>
 
 </resources>

@@ -1,0 +1,32 @@
+#更新fork
+name: update fork
+
+on: 
+  schedule:
+    - cron: '0 16 * * *' #设置定时任务
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.repository.owner.id == github.event.sender.id && github.actor != 'gedoor' }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Install git
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install git
+    - name: Set env
+      run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "github-actions"
+    - name: Update fork
+      run: |
+        git remote add upstream https://github.com/gedoor/legado.git
+        git remote -v
+        git fetch upstream
+        git checkout master
+        git merge upstream/master
+        git push origin master

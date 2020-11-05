@@ -9,28 +9,24 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import io.legado.app.service.TTSReadAloudService
-import java.io.File
-import java.io.FileOutputStream
+import io.legado.app.utils.FileUtils
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * 异常管理类
  */
 @Suppress("DEPRECATION")
-class CrashHandler : Thread.UncaughtExceptionHandler {
+class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
     private val tag = this.javaClass.simpleName
+
     /**
      * 系统默认UncaughtExceptionHandler
      */
     private var mDefaultHandler: Thread.UncaughtExceptionHandler? = null
-
-    /**
-     * context
-     */
-    private var mContext: Context? = null
 
     /**
      * 存储异常和参数信息
@@ -43,8 +39,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
     @SuppressLint("SimpleDateFormat")
     private val format = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
 
-    fun init(context: Context) {
-        mContext = context
+    init {
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         //设置该CrashHandler为系统默认的
         Thread.setDefaultUncaughtExceptionHandler(this)
@@ -65,14 +60,14 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
     private fun handleException(ex: Throwable?) {
         if (ex == null) return
         //收集设备参数信息
-        collectDeviceInfo(mContext!!)
+        collectDeviceInfo(context)
         //添加自定义信息
         addCustomInfo()
         kotlin.runCatching {
             //使用Toast来显示异常信息
             Handler(Looper.getMainLooper()).post {
                 Toast.makeText(
-                    mContext,
+                    context,
                     ex.message,
                     Toast.LENGTH_LONG
                 ).show()
@@ -103,7 +98,9 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
         kotlin.runCatching {
             for (field in fields) {
                 field.isAccessible = true
-                paramsMap[field.name] = field.get(null).toString()
+                field.get(null)?.toString()?.let {
+                    paramsMap[field.name] = it
+                }
             }
         }
     }
@@ -139,14 +136,15 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
             val timestamp = System.currentTimeMillis()
             val time = format.format(Date())
             val fileName = "crash-$time-$timestamp.log"
-            val path = mContext?.externalCacheDir?.toString() + "/crash/"
-            val dir = File(path)
-            if (!dir.exists()) {
-                dir.mkdirs()
+            context.externalCacheDir?.let { rootFile ->
+                FileUtils.getFile(rootFile, "crash").listFiles()?.forEach {
+                    if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)) {
+                        it.delete()
+                    }
+                }
+                FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
+                    .writeText(sb.toString())
             }
-            val fos = FileOutputStream(path + fileName)
-            fos.write(sb.toString().toByteArray())
-            fos.close()
         }
     }
 

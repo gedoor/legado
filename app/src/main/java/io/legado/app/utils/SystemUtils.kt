@@ -8,8 +8,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
+import android.view.View
+import android.view.ViewGroup
 
+
+@Suppress("unused")
 object SystemUtils {
+
+    private const val NAVIGATION = "navigationBarBackground"
 
     fun getScreenOffTime(context: Context): Int {
         var screenOffTime = 0
@@ -41,5 +47,27 @@ object SystemUtils {
             }
 
         }
+    }
+
+    /**
+     * 返回NavigationBar是否存在
+     * 该方法需要在View完全被绘制出来之后调用，否则判断不了
+     * 在比如 onWindowFocusChanged（）方法中可以得到正确的结果
+     */
+    fun isNavigationBarExist(activity: Activity?): Boolean {
+        activity?.let {
+            val vp = it.window.decorView as? ViewGroup
+            if (vp != null) {
+                for (i in 0 until vp.childCount) {
+                    vp.getChildAt(i).context.packageName
+                    if (vp.getChildAt(i).id != View.NO_ID
+                        && NAVIGATION == activity.resources.getResourceEntryName(vp.getChildAt(i).id)
+                    ) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     }
 }

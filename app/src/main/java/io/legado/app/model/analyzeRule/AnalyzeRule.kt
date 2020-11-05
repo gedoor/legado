@@ -3,23 +3,26 @@ package io.legado.app.model.analyzeRule
 import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
-import io.legado.app.constant.Pattern.JS_PATTERN
+import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
+import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.JsExtensions
 import io.legado.app.utils.*
+import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
 import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
 import kotlin.collections.HashMap
 
-
 /**
  * Created by REFGD.
  * 统一解析接口
  */
 @Keep
-@Suppress("unused")
-class AnalyzeRule(private var book: BaseBook? = null) {
+@Suppress("unused", "RegExpRedundantEscape")
+class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
+    var chapter: BookChapter? = null
     private var content: Any? = null
     private var baseUrl: String? = null
     private var isJSON: Boolean = false
@@ -32,10 +35,6 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     private var objectChangedXP = false
     private var objectChangedJS = false
     private var objectChangedJP = false
-
-    fun setBook(book: BaseBook) {
-        this.book = book
-    }
 
     @Throws(Exception::class)
     @JvmOverloads
@@ -109,18 +108,21 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      */
     @Throws(Exception::class)
     @JvmOverloads
-    fun getStringList(rule: String, isUrl: Boolean = false): List<String>? {
-        if (TextUtils.isEmpty(rule)) return null
+    fun getStringList(rule: String?, isUrl: Boolean = false): List<String>? {
+        if (rule.isNullOrEmpty()) return null
         val ruleList = splitSourceRule(rule)
         return getStringList(ruleList, isUrl)
     }
 
     @Throws(Exception::class)
-    fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean): List<String>? {
+    fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
         var result: Any? = null
-        content?.let { o ->
-            if (ruleList.isNotEmpty()) {
-                if (ruleList.isNotEmpty()) result = o
+        val content = this.content
+        if (content != null && ruleList.isNotEmpty()) {
+            result = content
+            if (content is NativeObject) {
+                result = content[ruleList[0].rule]?.toString()
+            } else {
                 for (sourceRule in ruleList) {
                     putRule(sourceRule.putMap)
                     sourceRule.makeUpRule(result)
@@ -147,9 +149,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 }
             }
         }
-        if (result == null) return ArrayList()
+        if (result == null) return null
         if (result is String) {
-            result = listOf((result as String).htmlFormat().split("\n"))
+            result = (result as String).split("\n")
         }
         if (isUrl) {
             val urlList = ArrayList<String>()
@@ -171,13 +173,8 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * 获取文本
      */
     @Throws(Exception::class)
-    fun getString(rule: String): String? {
-        return getString(rule, false)
-    }
-
-    @Throws(Exception::class)
-    fun getString(ruleStr: String, isUrl: Boolean): String? {
-        if (TextUtils.isEmpty(ruleStr)) return null
+    fun getString(ruleStr: String?, isUrl: Boolean = false): String {
+        if (TextUtils.isEmpty(ruleStr)) return ""
         val ruleList = splitSourceRule(ruleStr)
         return getString(ruleList, isUrl)
     }
@@ -196,7 +193,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     putRule(sourceRule.putMap)
                     sourceRule.makeUpRule(result)
                     result?.let {
-                        if (sourceRule.rule.isNotBlank()) {
+                        if (sourceRule.rule.isNotBlank() || sourceRule.replaceRegex.isEmpty()) {
                             result = when (sourceRule.mode) {
                                 Mode.Js -> evalJS(sourceRule.rule, it)
                                 Mode.Json -> getAnalyzeByJSonPath(it).getString(sourceRule.rule)
@@ -209,7 +206,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                                 else -> sourceRule.rule
                             }
                         }
-                        if (sourceRule.replaceRegex.isNotEmpty()) {
+                        if ((result != null) && sourceRule.replaceRegex.isNotEmpty()) {
                             result = replaceRegex(result.toString(), sourceRule)
                         }
                     }
@@ -217,10 +214,15 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             }
         }
         if (result == null) result = ""
-        if (isUrl) {
-            return NetworkUtils.getAbsoluteURL(baseUrl, result.toString()) ?: ""
+        val str = try {
+            Entities.unescape(result.toString())
+        } catch (e: Exception) {
+            result.toString()
         }
-        return result.toString()
+        if (isUrl) {
+            return NetworkUtils.getAbsoluteURL(baseUrl, str) ?: ""
+        }
+        return str
     }
 
     /**
@@ -235,6 +237,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             if (ruleList.isNotEmpty()) result = o
             for (sourceRule in ruleList) {
                 putRule(sourceRule.putMap)
+                sourceRule.makeUpRule(result)
                 result?.let {
                     result = when (sourceRule.mode) {
                         Mode.Regex -> AnalyzeByRegex.getElement(
@@ -297,9 +300,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     @Throws(Exception::class)
     private fun putRule(map: Map<String, String>) {
         for ((key, value) in map) {
-            getString(value)?.let {
-                book?.putVariable(key, it)
-            }
+            put(key, getString(value))
         }
     }
 
@@ -328,7 +329,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 val pattern = Pattern.compile(rule.replaceRegex)
                 val matcher = pattern.matcher(vResult)
                 if (matcher.find()) {
-                    matcher.group(0).replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
+                    matcher.group(0)!!.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
                 } else {
                     ""
                 }
@@ -343,13 +344,16 @@ class AnalyzeRule(private var book: BaseBook? = null) {
      * 分解规则生成规则列表
      */
     @Throws(Exception::class)
-    fun splitSourceRule(ruleStr: String, mode: Mode = Mode.Default): List<SourceRule> {
+    fun splitSourceRule(ruleStr: String?, mode: Mode = Mode.Default): List<SourceRule> {
         var vRuleStr = ruleStr
         val ruleList = ArrayList<SourceRule>()
-        if (TextUtils.isEmpty(vRuleStr)) return ruleList
+        if (vRuleStr.isNullOrEmpty()) return ruleList
         //检测Mode
         var mMode: Mode = mode
         when {
+            vRuleStr.startsWith("@@") -> {
+                vRuleStr = vRuleStr.substring(2)
+            }
             vRuleStr.startsWith("@XPath:", true) -> {
                 mMode = Mode.XPath
                 vRuleStr = vRuleStr.substring(7)
@@ -372,8 +376,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         val jsMatcher = JS_PATTERN.matcher(vRuleStr)
         while (jsMatcher.find()) {
             if (jsMatcher.start() > start) {
-                tmp = vRuleStr.substring(start, jsMatcher.start()).replace("\n", "")
-                    .trim { it <= ' ' }
+                tmp = vRuleStr.substring(start, jsMatcher.start()).trim { it <= ' ' }
                 if (!TextUtils.isEmpty(tmp)) {
                     ruleList.add(SourceRule(tmp, mMode))
                 }
@@ -382,7 +385,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
             start = jsMatcher.end()
         }
         if (vRuleStr.length > start) {
-            tmp = vRuleStr.substring(start).replace("\n", "").trim { it <= ' ' }
+            tmp = vRuleStr.substring(start).trim { it <= ' ' }
             if (!TextUtils.isEmpty(tmp)) {
                 ruleList.add(SourceRule(tmp, mMode))
             }
@@ -393,7 +396,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     /**
      * 规则类
      */
-    inner class SourceRule internal constructor(ruleStr: String, mainMode: Mode) {
+    inner class SourceRule internal constructor(ruleStr: String, mainMode: Mode = Mode.Default) {
         internal var mode: Mode
         internal var rule: String
         internal var replaceRegex = ""
@@ -402,6 +405,9 @@ class AnalyzeRule(private var book: BaseBook? = null) {
         internal val putMap = HashMap<String, String>()
         private val ruleParam = ArrayList<String>()
         private val ruleType = ArrayList<Int>()
+        private val getRuleType = -2
+        private val jsRuleType = -1
+        private val defaultRuleType = 0
 
         init {
             this.mode = mainMode
@@ -413,6 +419,14 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 }
             } else {
                 when {
+                    ruleStr.startsWith("@CSS:", true) -> {
+                        mode = Mode.Default
+                        rule = ruleStr
+                    }
+                    ruleStr.startsWith("@@") -> {
+                        mode = Mode.Default
+                        rule = ruleStr.substring(2)
+                    }
                     ruleStr.startsWith("@XPath:", true) -> {
                         mode = Mode.XPath
                         rule = ruleStr.substring(7)
@@ -432,61 +446,79 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                     else -> rule = ruleStr
                 }
             }
-            //分离正则表达式
-            val ruleStrS =
-                rule.trim { it <= ' ' }.split("##")
-            rule = ruleStrS[0]
-            if (ruleStrS.size > 1) {
-                replaceRegex = ruleStrS[1]
-            }
-            if (ruleStrS.size > 2) {
-                replacement = ruleStrS[2]
-            }
-            if (ruleStrS.size > 3) {
-                replaceFirst = true
-            }
             //分离put
             rule = splitPutRule(rule, putMap)
-            //@get,{{ }},$1, 拆分
+            //@get,{{ }}, 拆分
             var start = 0
             var tmp: String
             val evalMatcher = evalPattern.matcher(rule)
             while (evalMatcher.find()) {
                 if (evalMatcher.start() > start) {
                     tmp = rule.substring(start, evalMatcher.start())
-                    ruleType.add(0)
-                    ruleParam.add(tmp)
+                    if (mode != Mode.Js && mode != Mode.Regex
+                        && start == 0 && !tmp.contains("##")
+                    ) {
+                        mode = Mode.Regex
+                    }
+                    splitRegex(tmp)
+                } else if (mode != Mode.Js && mode != Mode.Regex
+                    && evalMatcher.start() == 0
+                ) {
+                    mode = Mode.Regex
                 }
                 tmp = evalMatcher.group()
                 when {
-                    tmp.startsWith("$") -> {
-                        ruleType.add(tmp.substring(1).toInt())
-                        ruleParam.add(tmp)
-                    }
                     tmp.startsWith("@get:", true) -> {
-                        ruleType.add(-2)
+                        ruleType.add(getRuleType)
                         ruleParam.add(tmp.substring(6, tmp.lastIndex))
                     }
                     tmp.startsWith("{{") -> {
-                        ruleType.add(-1)
+                        ruleType.add(jsRuleType)
                         ruleParam.add(tmp.substring(2, tmp.length - 2))
                     }
                     else -> {
-                        ruleType.add(0)
-                        ruleParam.add(tmp)
+                        splitRegex(tmp)
                     }
                 }
                 start = evalMatcher.end()
             }
             if (rule.length > start) {
                 tmp = rule.substring(start)
-                ruleType.add(0)
+                splitRegex(tmp)
+            }
+        }
+
+        /**
+         * 拆分\$\d{1,2}
+         */
+        private fun splitRegex(ruleStr: String) {
+            var start = 0
+            var tmp: String
+            val ruleStrArray = ruleStr.split("##")
+            val regexMatcher = regexPattern.matcher(ruleStrArray[0])
+            while (regexMatcher.find()) {
+                if (mode != Mode.Js && mode != Mode.Regex) {
+                    mode = Mode.Regex
+                }
+                if (regexMatcher.start() > start) {
+                    tmp = ruleStr.substring(start, regexMatcher.start())
+                    ruleType.add(defaultRuleType)
+                    ruleParam.add(tmp)
+                }
+                tmp = regexMatcher.group()
+                ruleType.add(tmp.substring(1).toInt())
+                ruleParam.add(tmp)
+                start = regexMatcher.end()
+            }
+            if (ruleStr.length > start) {
+                tmp = ruleStr.substring(start)
+                ruleType.add(defaultRuleType)
                 ruleParam.add(tmp)
             }
         }
 
         /**
-         * 替换@get,{{ }},$1,
+         * 替换@get,{{ }}
          */
         fun makeUpRule(result: Any?) {
             val infoVal = StringBuilder()
@@ -495,7 +527,7 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                 while (index-- > 0) {
                     val regType = ruleType[index]
                     when {
-                        regType > 0 -> {
+                        regType > defaultRuleType -> {
                             @Suppress("UNCHECKED_CAST")
                             val resultList = result as? List<String?>
                             if (resultList != null) {
@@ -508,23 +540,55 @@ class AnalyzeRule(private var book: BaseBook? = null) {
                                 infoVal.insert(0, ruleParam[index])
                             }
                         }
-                        regType == -1 -> {
-                            val jsEval: Any = evalJS(ruleParam[index], result)
-                            if (jsEval is String) {
-                                infoVal.insert(0, jsEval)
-                            } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
-                                infoVal.insert(0, String.format("%.0f", jsEval))
+                        regType == jsRuleType -> {
+                            if (isRule(ruleParam[index])) {
+                                getString(arrayListOf(SourceRule(ruleParam[index]))).let {
+                                    infoVal.insert(0, it)
+                                }
                             } else {
-                                infoVal.insert(0, jsEval.toString())
+                                val jsEval: Any? = evalJS(ruleParam[index], result)
+                                when {
+                                    jsEval == null -> Unit
+                                    jsEval is String -> infoVal.insert(0, jsEval)
+                                    jsEval is Double && jsEval % 1.0 == 0.0 -> infoVal.insert(
+                                        0,
+                                        String.format("%.0f", jsEval)
+                                    )
+                                    else -> infoVal.insert(0, jsEval.toString())
+                                }
                             }
                         }
-                        regType == -2 -> {
+                        regType == getRuleType -> {
                             infoVal.insert(0, get(ruleParam[index]))
                         }
                         else -> infoVal.insert(0, ruleParam[index])
                     }
                 }
                 rule = infoVal.toString()
+            }
+            //分离正则表达式
+            val ruleStrS = rule.trim { it <= ' ' }.split("##")
+            rule = ruleStrS[0]
+            if (ruleStrS.size > 1) {
+                replaceRegex = ruleStrS[1]
+            }
+            if (ruleStrS.size > 2) {
+                replacement = ruleStrS[2]
+            }
+            if (ruleStrS.size > 3) {
+                replaceFirst = true
+            }
+        }
+
+        private fun isRule(ruleStr: String): Boolean {
+            return when {
+                ruleStr.startsWith("$.") -> true
+                ruleStr.startsWith("@Json:", true) -> true
+                ruleStr.startsWith("//") -> true
+                ruleStr.startsWith("@XPath:", true) -> true
+                ruleStr.startsWith("@CSS:", true) -> true
+                ruleStr.startsWith("@@") -> true
+                else -> false
             }
         }
     }
@@ -534,34 +598,46 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     fun put(key: String, value: String): String {
-        book?.putVariable(key, value)
+        chapter?.putVariable(key, value)
+            ?: book?.putVariable(key, value)
         return value
     }
 
-    operator fun get(key: String): String {
-        return book?.variableMap?.get(key) ?: ""
+    fun get(key: String): String {
+        when (key) {
+            "bookName" -> book?.let {
+                return it.name
+            }
+            "title" -> chapter?.let {
+                return it.title
+            }
+        }
+        return chapter?.variableMap?.get(key)
+            ?: book?.variableMap?.get(key)
+            ?: ""
     }
 
     /**
      * 执行JS
      */
-    @Throws(Exception::class)
-    private fun evalJS(jsStr: String, result: Any?): Any {
+    private fun evalJS(jsStr: String, result: Any?): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["book"] = book
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
+        bindings["chapter"] = chapter
+        bindings["title"] = chapter?.title
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
     /**
      * js实现跨域访问,不能删
      */
-    fun ajax(urlStr: String): String? {
+    override fun ajax(urlStr: String): String? {
         return try {
-            val analyzeUrl = AnalyzeUrl(urlStr, null, null, null, baseUrl, book)
-            val call = analyzeUrl.getResponse()
+            val analyzeUrl = AnalyzeUrl(urlStr, book = book)
+            val call = analyzeUrl.getResponse(urlStr)
             val response = call.execute()
             response.body()
         } catch (e: Exception) {
@@ -570,47 +646,24 @@ class AnalyzeRule(private var book: BaseBook? = null) {
     }
 
     /**
-     * js实现解码,不能删
-     */
-    fun base64Decode(str: String): String {
-        return EncoderUtils.base64Decode(str)
-    }
-
-    fun base64Encode(str: String): String? {
-        return EncoderUtils.base64Encode(str)
-    }
-
-    fun strToMd5By32(str: String): String? {
-        return MD5Utils.strToMd5By32(str)
-    }
-
-    fun strToMd5By16(str: String): String? {
-        return MD5Utils.strToMd5By16(str)
-    }
-
-    /**
      * 章节数转数字
      */
     fun toNumChapter(s: String?): String? {
-        if (s == null) {
-            return null
+        s ?: return null
+        val matcher = titleNumPattern.matcher(s)
+        if (matcher.find()) {
+            return "${matcher.group(1)}${StringUtils.stringToInt(matcher.group(2))}${matcher.group(3)}"
         }
-        val pattern = Pattern.compile("(第)(.+?)(章)")
-        val matcher = pattern.matcher(s)
-        return if (matcher.find()) {
-            matcher.group(1) + StringUtils.stringToInt(matcher.group(2)) + matcher.group(3)
-        } else {
-            s
-        }
+        return s
     }
 
     companion object {
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
         private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
-        private val evalPattern = Pattern.compile(
-            "@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}|\\$\\d{1,2}",
-            Pattern.CASE_INSENSITIVE
-        )
+        private val evalPattern =
+            Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
+        private val regexPattern = Pattern.compile("\\$\\d{1,2}")
+        private val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
     }
 
 }

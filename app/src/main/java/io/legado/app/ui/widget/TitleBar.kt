@@ -3,28 +3,29 @@ package io.legado.app.ui.widget
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.Toolbar
-import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
-import io.legado.app.lib.theme.DrawableUtils
+import io.legado.app.help.AppConfig
+import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.activity
-import io.legado.app.utils.getNavigationBarHeight
-import io.legado.app.utils.getStatusBarHeight
+import io.legado.app.utils.navigationBarHeight
+import io.legado.app.utils.statusBarHeight
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.topPadding
 
-class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
+@Suppress("unused")
+class TitleBar @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppBarLayout(context, attrs) {
 
     val toolbar: Toolbar
     val menu: Menu
@@ -48,8 +49,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
     private val attachToActivity: Boolean
 
     init {
-        inflate(context, R.layout.view_title_bar, this)
-        toolbar = findViewById(R.id.toolbar)
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.TitleBar,
             R.attr.titleBarStyle, 0
@@ -64,6 +63,12 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             a.getText(R.styleable.TitleBar_navigationContentDescription)
         val titleText = a.getString(R.styleable.TitleBar_title)
         val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
+
+        when (a.getInt(R.styleable.TitleBar_themeMode, 0)) {
+            1 -> inflate(context, R.layout.view_title_bar_dark, this)
+            else -> inflate(context, R.layout.view_title_bar, this)
+        }
+        toolbar = findViewById(R.id.toolbar)
 
         toolbar.apply {
             navigationIcon?.let {
@@ -137,16 +142,24 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             }
         }
 
-        if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
-            topPadding = context.getStatusBarHeight()
+        if (!isInEditMode) {
+            if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
+                topPadding = context.statusBarHeight
+            }
+
+            if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
+                bottomPadding = context.navigationBarHeight
+            }
+
+            backgroundColor = context.primaryColor
+
+            stateListAnimator = null
+            elevation = if (AppConfig.elevation < 0) {
+                context.elevation
+            } else {
+                AppConfig.elevation.toFloat()
+            }
         }
-
-        if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
-            bottomPadding = context.getNavigationBarHeight()
-        }
-
-        backgroundColor = context.primaryColor
-
         a.recycle()
     }
 
@@ -183,6 +196,15 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
         toolbar.setSubtitleTextAppearance(context, resId)
     }
 
+    fun transparent() {
+        elevation = 0f
+        backgroundColor = Color.TRANSPARENT
+    }
+
+    fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, fullScreen: Boolean) {
+        topPadding = if (!isInMultiWindowMode && fullScreen) context.statusBarHeight else 0
+    }
+
     private fun attachToActivity() {
         if (attachToActivity) {
             activity?.let {
@@ -190,50 +212,6 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
                 it.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUp)
             }
         }
-
-        val primaryTextColor = if (isInEditMode) Color.BLACK else context.primaryTextColor
-        DrawableUtils.setTint(toolbar.overflowIcon, primaryTextColor)
-        toolbar.setTitleTextColor(primaryTextColor)
-
-        if (navigationIconTint != null) {
-            wrapDrawableTint(toolbar.navigationIcon, navigationIconTint, navigationIconTintMode)
-        } else {
-            wrapDrawableTint(
-                toolbar.navigationIcon,
-                ColorStateList.valueOf(primaryTextColor),
-                navigationIconTintMode
-            )
-        }
     }
 
-    private fun wrapDrawableTint(drawable: Drawable?, tintList: ColorStateList?, tintMode: Int) {
-        if (drawable == null || tintList == null) return
-        val wrappedDrawable = DrawableCompat.wrap(drawable.mutate())
-        DrawableCompat.setTintList(wrappedDrawable, tintList)
-        DrawableCompat.setTintMode(wrappedDrawable, intToMode(tintMode))
-    }
-
-    private fun intToMode(`val`: Int): PorterDuff.Mode {
-        when (`val`) {
-            0 -> return PorterDuff.Mode.CLEAR
-            1 -> return PorterDuff.Mode.SRC
-            2 -> return PorterDuff.Mode.DST
-            3 -> return PorterDuff.Mode.SRC_OVER
-            4 -> return PorterDuff.Mode.DST_OVER
-            5 -> return PorterDuff.Mode.SRC_IN
-            6 -> return PorterDuff.Mode.DST_IN
-            7 -> return PorterDuff.Mode.SRC_OUT
-            8 -> return PorterDuff.Mode.DST_OUT
-            9 -> return PorterDuff.Mode.SRC_ATOP
-            10 -> return PorterDuff.Mode.DST_ATOP
-            11 -> return PorterDuff.Mode.XOR
-            16 -> return PorterDuff.Mode.DARKEN
-            17 -> return PorterDuff.Mode.LIGHTEN
-            13 -> return PorterDuff.Mode.MULTIPLY
-            14 -> return PorterDuff.Mode.SCREEN
-            12 -> return PorterDuff.Mode.ADD
-            15 -> return PorterDuff.Mode.OVERLAY
-            else -> return PorterDuff.Mode.CLEAR
-        }
-    }
 }

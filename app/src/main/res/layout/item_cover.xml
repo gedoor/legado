@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <io.legado.app.ui.widget.image.CoverImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:contentDescription="@string/img_cover"
+        android:scaleType="centerCrop"
+        android:transitionName="img_cover"
+        tools:ignore="UnusedAttribute" />
+
+    <TextView
+        android:id="@+id/tv_source"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/book_source"
+        android:textColor="@color/primaryText"
+        android:textSize="16sp"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+</LinearLayout>

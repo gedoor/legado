@@ -8,8 +8,8 @@ import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
@@ -17,16 +17,14 @@ import androidx.core.app.NotificationCompat
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.Action
-import io.legado.app.constant.AppConst
-import io.legado.app.constant.Bus
-import io.legado.app.constant.Status
+import io.legado.app.constant.*
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.receiver.MediaButtonReceiver
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.widget.page.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 
@@ -36,31 +34,33 @@ abstract class BaseReadAloudService : BaseService(),
     companion object {
         var isRun = false
         var timeMinute: Int = 0
+        var pause = true
 
+        fun isPlay(): Boolean {
+            return isRun && !pause
+        }
     }
 
-    private val handler = Handler()
+    internal val handler = Handler(Looper.getMainLooper())
     private lateinit var audioManager: AudioManager
-    private lateinit var mFocusRequest: AudioFocusRequest
+    private var mFocusRequest: AudioFocusRequest? = null
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var mediaSessionCompat: MediaSessionCompat? = null
-    var pause = false
-    var title: String = ""
+    private lateinit var mediaSessionCompat: MediaSessionCompat
+    private var title: String = ""
     private var subtitle: String = ""
-    val contentList = arrayListOf<String>()
-    var nowSpeak: Int = 0
-    var readAloudNumber: Int = 0
-    var textChapter: TextChapter? = null
-    var pageIndex = 0
-    private val dsRunnable: Runnable? = Runnable { doDs() }
+    internal val contentList = arrayListOf<String>()
+    internal var nowSpeak: Int = 0
+    internal var readAloudNumber: Int = 0
+    internal var textChapter: TextChapter? = null
+    internal var pageIndex = 0
+    private val dsRunnable: Runnable = Runnable { doDs() }
 
     override fun onCreate() {
         super.onCreate()
         isRun = true
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mFocusRequest = MediaHelp.getFocusRequest(this)
-        }
+        mFocusRequest = MediaHelp.getFocusRequest(this)
+        mediaSessionCompat = MediaSessionCompat(this, "readAloud")
         initMediaSession()
         initBroadcastReceiver()
         upNotification()
@@ -70,16 +70,17 @@ abstract class BaseReadAloudService : BaseService(),
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
+        pause = true
         unregisterReceiver(broadcastReceiver)
-        postEvent(Bus.ALOUD_STATE, Status.STOP)
+        postEvent(EventBus.ALOUD_STATE, Status.STOP)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
-        mediaSessionCompat?.release()
+        mediaSessionCompat.release()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action?.let { action ->
             when (action) {
-                Action.play -> {
+                IntentAction.play -> {
                     title = intent.getStringExtra("title") ?: ""
                     subtitle = intent.getStringExtra("subtitle") ?: ""
                     pageIndex = intent.getIntExtra("pageIndex", 0)
@@ -88,34 +89,39 @@ abstract class BaseReadAloudService : BaseService(),
                         intent.getBooleanExtra("play", true)
                     )
                 }
-                Action.pause -> pauseReadAloud(true)
-                Action.resume -> resumeReadAloud()
-                Action.upTtsSpeechRate -> upSpeechRate(true)
-                Action.prevParagraph -> prevP()
-                Action.nextParagraph -> nextP()
-                Action.addTimer -> addTimer()
-                Action.setTimer -> setTimer(intent.getIntExtra("minute", 0))
+                IntentAction.pause -> pauseReadAloud(true)
+                IntentAction.resume -> resumeReadAloud()
+                IntentAction.upTtsSpeechRate -> upSpeechRate(true)
+                IntentAction.prevParagraph -> prevP()
+                IntentAction.nextParagraph -> nextP()
+                IntentAction.addTimer -> addTimer()
+                IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 else -> stopSelf()
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun newReadAloud(dataKey: String?, play: Boolean) {
+    @CallSuper
+    open fun newReadAloud(dataKey: String?, play: Boolean) {
         dataKey?.let {
-            textChapter = IntentDataHelp.getData(dataKey) as? TextChapter
+            textChapter = IntentDataHelp.getData<TextChapter>(dataKey)
             textChapter?.let { textChapter ->
                 nowSpeak = 0
                 readAloudNumber = textChapter.getReadLength(pageIndex)
                 contentList.clear()
-                if (getPrefBoolean("readAloudByPage")) {
-                    for (index in pageIndex..textChapter.lastIndex()) {
+                if (getPrefBoolean(PreferKey.readAloudByPage)) {
+                    for (index in pageIndex..textChapter.lastIndex) {
                         textChapter.page(index)?.text?.split("\n")?.let {
                             contentList.addAll(it)
                         }
                     }
                 } else {
-                    contentList.addAll(textChapter.getUnRead(pageIndex).split("\n"))
+                    textChapter.getUnRead(pageIndex).split("\n").forEach {
+                        if (it.isNotEmpty()) {
+                            contentList.add(it)
+                        }
+                    }
                 }
                 if (play) play()
             } ?: stopSelf()
@@ -123,22 +129,26 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     open fun play() {
-        postEvent(Bus.ALOUD_STATE, Status.PLAY)
+        pause = false
         upNotification()
+        postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
 
     @CallSuper
     open fun pauseReadAloud(pause: Boolean) {
-        postEvent(Bus.ALOUD_STATE, Status.PAUSE)
-        this.pause = pause
+        BaseReadAloudService.pause = pause
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+        postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
     }
 
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        if (timeMinute > 1) {
+            doDs()
+        }
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)
@@ -157,16 +167,16 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     private fun addTimer() {
-        if (timeMinute == 60) {
+        if (timeMinute == 180) {
             timeMinute = 0
             handler.removeCallbacks(dsRunnable)
         } else {
             timeMinute += 10
-            if (timeMinute > 60) timeMinute = 60
+            if (timeMinute > 180) timeMinute = 180
             handler.removeCallbacks(dsRunnable)
             handler.postDelayed(dsRunnable, 60000)
         }
-        postEvent(Bus.TTS_DS, timeMinute)
+        postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
     }
 
@@ -182,7 +192,7 @@ abstract class BaseReadAloudService : BaseService(),
                 handler.postDelayed(dsRunnable, 60000)
             }
         }
-        postEvent(Bus.TTS_DS, timeMinute)
+        postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
     }
 
@@ -190,24 +200,14 @@ abstract class BaseReadAloudService : BaseService(),
      * @return 音频焦点
      */
     fun requestFocus(): Boolean {
-        val request: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            audioManager.requestAudioFocus(mFocusRequest)
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.requestAudioFocus(
-                this,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN
-            )
-        }
-        return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        return MediaHelp.requestFocus(audioManager, this, mFocusRequest)
     }
 
     /**
      * 更新媒体状态
      */
     private fun upMediaSessionPlaybackState(state: Int) {
-        mediaSessionCompat?.setPlaybackState(
+        mediaSessionCompat.setPlaybackState(
             PlaybackStateCompat.Builder()
                 .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
                 .setState(state, nowSpeak.toLong(), 1f)
@@ -219,13 +219,12 @@ abstract class BaseReadAloudService : BaseService(),
      * 初始化MediaSession, 注册多媒体按钮
      */
     private fun initMediaSession() {
-        mediaSessionCompat = MediaSessionCompat(this, "readAloud")
-        mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
+        mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
             }
         })
-        mediaSessionCompat?.setMediaButtonReceiver(
+        mediaSessionCompat.setMediaButtonReceiver(
             PendingIntent.getBroadcast(
                 this,
                 0,
@@ -238,7 +237,7 @@ abstract class BaseReadAloudService : BaseService(),
                 PendingIntent.FLAG_CANCEL_CURRENT
             )
         )
-        mediaSessionCompat?.isActive = true
+        mediaSessionCompat.isActive = true
     }
 
     /**
@@ -284,7 +283,7 @@ abstract class BaseReadAloudService : BaseService(),
     private fun upNotification() {
         var nTitle: String = when {
             pause -> getString(R.string.read_aloud_pause)
-            timeMinute in 1..60 -> getString(
+            timeMinute in 1..180 -> getString(
                 R.string.read_aloud_timer,
                 timeMinute
             )
@@ -307,35 +306,40 @@ abstract class BaseReadAloudService : BaseService(),
             builder.addAction(
                 R.drawable.ic_play_24dp,
                 getString(R.string.resume),
-                aloudServicePendingIntent(Action.resume)
+                aloudServicePendingIntent(IntentAction.resume)
             )
         } else {
             builder.addAction(
                 R.drawable.ic_pause_24dp,
                 getString(R.string.pause),
-                aloudServicePendingIntent(Action.pause)
+                aloudServicePendingIntent(IntentAction.pause)
             )
         }
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.stop),
-            aloudServicePendingIntent(Action.stop)
+            aloudServicePendingIntent(IntentAction.stop)
         )
         builder.addAction(
             R.drawable.ic_time_add_24dp,
             getString(R.string.set_timer),
-            aloudServicePendingIntent(Action.addTimer)
+            aloudServicePendingIntent(IntentAction.addTimer)
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSessionCompat?.sessionToken)
                 .setShowActionsInCompactView(0, 1, 2)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
-        startForeground(112201, notification)
+        startForeground(AppConst.notificationIdRead, notification)
     }
 
     abstract fun aloudServicePendingIntent(actionStr: String): PendingIntent?
 
+    open fun nextChapter() {
+        ReadBook.upReadStartTime()
+        if (!ReadBook.moveToNextChapter(true)) {
+            stopSelf()
+        }
+    }
 }

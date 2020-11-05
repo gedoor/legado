@@ -32,10 +32,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="|"
+            tools:ignore="HardcodedText,RtlHardcoded" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="WebView:"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText,RtlHardcoded" />
 
         <io.legado.app.lib.theme.view.ATECheckBox
             android:id="@+id/cb_enable_js"

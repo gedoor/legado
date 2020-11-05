@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_select_folder"
+        android:title="@string/select_folder"
+        android:icon="@drawable/ic_folder_open"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_scan_folder"
+        android:title="@string/scan_folder"
+        app:showAsAction="never" />
+
+</menu>

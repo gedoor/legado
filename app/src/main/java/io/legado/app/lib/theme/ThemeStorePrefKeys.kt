@@ -3,8 +3,7 @@ package io.legado.app.lib.theme
 /**
  * @author Aidan Follestad (afollestad), Karim Abou Zeid (kabouzeid)
  */
-internal interface ThemeStorePrefKeys {
-    companion object {
+object ThemeStorePrefKeys {
 
         const val CONFIG_PREFS_KEY_DEFAULT = "app_themes"
         const val IS_CONFIGURED_KEY = "is_configured"
@@ -23,9 +22,11 @@ internal interface ThemeStorePrefKeys {
         const val KEY_TEXT_COLOR_SECONDARY_INVERSE = "text_color_secondary_inverse"
 
         const val KEY_BACKGROUND_COLOR = "backgroundColor"
+        const val KEY_BOTTOM_BACKGROUND = "bottomBackground"
 
         const val KEY_APPLY_PRIMARYDARK_STATUSBAR = "apply_primarydark_statusbar"
         const val KEY_APPLY_PRIMARY_NAVBAR = "apply_primary_navbar"
         const val KEY_AUTO_GENERATE_PRIMARYDARK = "auto_generate_primarydark"
-    }
+
+        const val KEY_ELEVATION = "elevation"
 }

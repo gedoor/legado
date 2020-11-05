@@ -10,18 +10,4 @@
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
 
-    <item
-        android:id="@+id/menu_group_local"
-        android:title="@string/local"
-        android:checkable="true"
-        android:checked="true"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_group_audio"
-        android:title="@string/audio"
-        android:checkable="true"
-        android:checked="true"
-        app:showAsAction="never" />
-
 </menu>

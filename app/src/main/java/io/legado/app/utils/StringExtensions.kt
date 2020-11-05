@@ -1,37 +1,64 @@
+@file:Suppress("unused")
+
 package io.legado.app.utils
 
-// import org.apache.commons.text.StringEscapeUtils
+import android.net.Uri
+import java.io.File
+
+val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
+val imgRegex = "<img[^>]*>".toRegex()
+val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
-fun String?.isAbsUrl() = if (this.isNullOrBlank()) false else this.startsWith("http://", true)
-        || this.startsWith("https://", true)
+fun String?.isContentScheme(): Boolean = this?.startsWith("content://") == true
 
-fun String?.isJson(): Boolean = this?.run {
-    val str = this.trim()
-    when {
-        str.startsWith("{") && str.endsWith("}") -> true
-        str.startsWith("[") && str.endsWith("]") -> true
-        else -> false
+fun String.parseToUri(): Uri {
+    return if (isContentScheme()) {
+        Uri.parse(this)
+    } else {
+        Uri.fromFile(File(this))
     }
-} ?: false
+}
 
-fun String?.isJsonObject(): Boolean = this?.run {
-    val str = this.trim()
-    str.startsWith("{") && str.endsWith("}")
-} ?: false
+fun String?.isAbsUrl() =
+    this?.let {
+        it.startsWith("http://", true)
+                || it.startsWith("https://", true)
+    } ?: false
 
-fun String?.isJsonArray(): Boolean = this?.run {
-    val str = this.trim()
-    str.startsWith("[") && str.endsWith("]")
-} ?: false
+fun String?.isJson(): Boolean =
+    this?.run {
+        val str = this.trim()
+        when {
+            str.startsWith("{") && str.endsWith("}") -> true
+            str.startsWith("[") && str.endsWith("]") -> true
+            else -> false
+        }
+    } ?: false
 
-fun String?.htmlFormat(): String = if (this.isNullOrBlank()) "" else
-    this.replace("(?i)<(br[\\s/]*|/*p\\b.*?|/*div\\b.*?)>".toRegex(), "\n")// 替换特定标签为换行符
-        .replace("<[script>]*.*?>|&nbsp;".toRegex(), "")// 删除script标签对和空格转义符
-        .replace("\\s*\\n+\\s*".toRegex(), "\n　　")// 移除空行,并增加段前缩进2个汉字
-        .replace("^[\\n\\s]+".toRegex(), "　　")//移除开头空行,并增加段前缩进2个汉字
-        .replace("[\\n\\s]+$".toRegex(), "") //移除尾部空行
+fun String?.isJsonObject(): Boolean =
+    this?.run {
+        val str = this.trim()
+        str.startsWith("{") && str.endsWith("}")
+    } ?: false
+
+fun String?.isJsonArray(): Boolean =
+    this?.run {
+        val str = this.trim()
+        str.startsWith("[") && str.endsWith("]")
+    } ?: false
+
+fun String?.htmlFormat(): String {
+    this ?: return ""
+    return this
+        .replace(imgRegex, "\n$0\n")
+        .replace(removeHtmlRegex, "\n")
+        .replace(notImgHtmlRegex, "")
+        .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
+        .replace("^[\\n\\s]+".toRegex(), "　　")
+        .replace("[\\n\\s]+$".toRegex(), "")
+}
 
 fun String.splitNotBlank(vararg delimiter: String): Array<String> = run {
     this.split(*delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
@@ -41,7 +68,19 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
     this.split(regex, limit).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
-fun String.startWithIgnoreCase(start: String): Boolean {
-    return if (this.isBlank()) false else startsWith(start, true)
+/**
+ * 将字符串拆分为单个字符,包含emoji
+ */
+fun String.toStringArray(): Array<String> {
+    var codePointIndex = 0
+    return try {
+        Array(codePointCount(0, length)) {
+            val start = codePointIndex
+            codePointIndex = offsetByCodePoints(start, 1)
+            substring(start, codePointIndex)
+        }
+    } catch (e: Exception) {
+        split("").toTypedArray()
+    }
 }
 

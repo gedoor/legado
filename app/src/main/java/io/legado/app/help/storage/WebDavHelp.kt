@@ -1,46 +1,59 @@
 package io.legado.app.help.storage
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import io.legado.app.App
-import io.legado.app.help.FileHelp
-import io.legado.app.help.ReadBookConfig
+import io.legado.app.R
+import io.legado.app.constant.PreferKey
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.http.HttpAuth
-import io.legado.app.utils.ZipUtils
-import io.legado.app.utils.getPrefString
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.selector
-import org.jetbrains.anko.uiThread
+import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.min
 
 object WebDavHelp {
-    private val zipFilePath = FileHelp.getCachePath() + "/backup" + ".zip"
+    private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
+    private val zipFilePath = "${FileUtils.getCachePath()}${File.separator}backup.zip"
 
-    private fun getWebDavUrl(): String? {
-        var url = App.INSTANCE.getPrefString("web_dav_url")
-        if (url.isNullOrBlank()) return null
-        if (!url.endsWith("/")) url += "/"
-        return url
-    }
+    val rootWebDavUrl: String
+        get() {
+            var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
+            if (url.isNullOrEmpty()) {
+                url = defaultWebDavUrl
+            }
+            if (!url.endsWith("/")) url = "${url}/"
+            if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCreateDir, true)) {
+                url = "${url}legado/"
+            }
+            return url
+        }
 
-    private fun initWebDav(): Boolean {
-        val account = App.INSTANCE.getPrefString("web_dav_account")
-        val password = App.INSTANCE.getPrefString("web_dav_password")
+    fun initWebDav(): Boolean {
+        val account = App.INSTANCE.getPrefString(PreferKey.webDavAccount)
+        val password = App.INSTANCE.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
             HttpAuth.auth = HttpAuth.Auth(account, password)
+            WebDav(rootWebDavUrl).makeAsDir()
             return true
         }
         return false
     }
 
+    @Throws(Exception::class)
     private fun getWebDavFileNames(): ArrayList<String> {
-        val url = getWebDavUrl()
+        val url = rootWebDavUrl
         val names = arrayListOf<String>()
-        if (!url.isNullOrBlank() && initWebDav()) {
-            var files = WebDav(url + "legado/").listFiles()
+        if (initWebDav()) {
+            var files = WebDav(url).listFiles()
             files = files.reversed()
             for (index: Int in 0 until min(10, files.size)) {
                 files[index].displayName?.let {
@@ -51,51 +64,81 @@ object WebDavHelp {
         return names
     }
 
-    fun showRestoreDialog(context: Context) {
-        doAsync {
-            val names = getWebDavFileNames()
-            if (names.isNotEmpty()) {
-                uiThread {
-                    context.selector(title = "选择恢复文件", items = names) { _, index ->
-                        if (index in 0 until names.size) {
-                            restoreWebDav(names[index])
-                        }
+    suspend fun showRestoreDialog(context: Context) {
+        val names = withContext(IO) { getWebDavFileNames() }
+        if (names.isNotEmpty()) {
+            withContext(Main) {
+                context.selector(
+                    title = context.getString(R.string.select_restore_file),
+                    items = names
+                ) { _, index ->
+                    if (index in 0 until names.size) {
+                        restoreWebDav(names[index])
                     }
                 }
-            } else {
-                Restore.restore()
             }
+        } else {
+            throw Exception("Web dav no back up file")
         }
     }
 
     private fun restoreWebDav(name: String) {
-        doAsync {
-            getWebDavUrl()?.let {
-                val file = WebDav(it + "legado/" + name)
-                file.downloadTo(zipFilePath, true)
-                ZipUtils.unzipFile(zipFilePath, Backup.defaultPath)
-                Restore.restore()
+        Coroutine.async {
+            rootWebDavUrl.let {
+                if (name == SyncBookProgress.fileName) {
+                    SyncBookProgress.downloadBookProgress()
+                } else {
+                    val webDav = WebDav(it + name)
+                    webDav.downloadTo(zipFilePath, true)
+                    @Suppress("BlockingMethodInNonBlockingContext")
+                    ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
+                    Restore.restoreDatabase()
+                    Restore.restoreConfig()
+                }
             }
+        }.onError {
+            App.INSTANCE.toast("WebDavError:${it.localizedMessage}")
         }
     }
 
     fun backUpWebDav(path: String) {
-        if (initWebDav()) {
-            val paths = arrayListOf(
-                path + File.separator + "bookshelf.json",
-                path + File.separator + "bookSource.json",
-                path + File.separator + "rssSource.json",
-                path + File.separator + "replaceRule.json",
-                path + File.separator + "config.xml",
-                path + File.separator + ReadBookConfig.readConfigFileName
-            )
-            FileHelp.deleteFile(zipFilePath)
-            if (ZipUtils.zipFiles(paths, zipFilePath)) {
-                WebDav(getWebDavUrl() + "legado").makeAsDir()
-                val putUrl = getWebDavUrl() + "legado/backup" +
-                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                            .format(Date(System.currentTimeMillis())) + ".zip"
-                WebDav(putUrl).upload(zipFilePath)
+        try {
+            if (initWebDav()) {
+                val paths = arrayListOf(*Backup.backupFileNames)
+                for (i in 0 until paths.size) {
+                    paths[i] = path + File.separator + paths[i]
+                }
+                FileUtils.deleteFile(zipFilePath)
+                if (ZipUtils.zipFiles(paths, zipFilePath)) {
+                    val backupDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        .format(Date(System.currentTimeMillis()))
+                    val putUrl = "${rootWebDavUrl}backup${backupDate}.zip"
+                    WebDav(putUrl).upload(zipFilePath)
+                }
+            }
+        } catch (e: Exception) {
+            Handler(Looper.getMainLooper()).post {
+                App.INSTANCE.toast("WebDav\n${e.localizedMessage}")
+            }
+        }
+    }
+    fun exportWebDav(path: String, fileName: String) {
+        try {
+            if (initWebDav()) {
+                // 默认导出到legado文件夹下exports目录
+                val exportsWebDavUrl = rootWebDavUrl + EncoderUtils.escape("exports") + "/"
+                // 在legado文件夹创建exports目录,如果不存在的话
+                WebDav(exportsWebDavUrl).makeAsDir()
+                val file = File("${path}${File.separator}${fileName}")
+                // 如果导出的本地文件存在,开始上传
+                if(file.exists()) {
+                    val putUrl = exportsWebDavUrl + fileName
+                    WebDav(putUrl).upload("${path}${File.separator}${fileName}")
+                }
+            }
+        } catch (e: Exception) {
+            Handler(Looper.getMainLooper()).post {
+                App.INSTANCE.toast("WebDav导出\n${e.localizedMessage}")
             }
         }
     }

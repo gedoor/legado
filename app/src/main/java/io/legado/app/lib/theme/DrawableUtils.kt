@@ -11,6 +11,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
+@Suppress("unused")
 object DrawableUtils {
 
     fun createTransitionDrawable(@ColorInt startColor: Int, @ColorInt endColor: Int): TransitionDrawable {

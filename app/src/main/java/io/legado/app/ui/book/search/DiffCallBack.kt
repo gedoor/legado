@@ -1,30 +1,57 @@
 package io.legado.app.ui.book.search
 
+import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
-import io.legado.app.data.entities.SearchShow
+import io.legado.app.data.entities.SearchBook
 
-class DiffCallBack : DiffUtil.ItemCallback<SearchShow>() {
-    override fun areItemsTheSame(oldItem: SearchShow, newItem: SearchShow): Boolean {
-        return oldItem.name == newItem.name
-                && oldItem.author == newItem.author
+class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems: List<SearchBook>) :
+    DiffUtil.Callback() {
+
+    override fun getNewListSize(): Int {
+        return newItems.size
     }
 
-    override fun areContentsTheSame(oldItem: SearchShow, newItem: SearchShow): Boolean {
-        return oldItem.originCount == newItem.originCount
-                && (oldItem.coverUrl == newItem.coverUrl || !oldItem.coverUrl.isNullOrEmpty())
-                && (oldItem.kind == newItem.kind || !oldItem.kind.isNullOrEmpty())
-                && (oldItem.latestChapterTitle == newItem.latestChapterTitle || !oldItem.kind.isNullOrEmpty())
-                && oldItem.intro?.length ?: 0 > newItem.intro?.length ?: 0
+    override fun getOldListSize(): Int {
+        return oldItems.size
     }
 
-    override fun getChangePayload(oldItem: SearchShow, newItem: SearchShow): Any? {
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldItem = oldItems[oldItemPosition]
+        val newItem = newItems[newItemPosition]
         return when {
-            oldItem.originCount != newItem.originCount -> 1
-            oldItem.coverUrl != newItem.coverUrl -> 2
-            oldItem.kind != newItem.kind -> 3
-            oldItem.latestChapterTitle != newItem.latestChapterTitle -> 4
-            oldItem.intro != newItem.intro -> 5
-            else -> null
+            oldItem.name != newItem.name -> false
+            oldItem.author != newItem.author -> false
+            else -> true
         }
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldItem = oldItems[oldItemPosition]
+        val newItem = newItems[newItemPosition]
+        return when {
+            oldItem.origins.size != newItem.origins.size -> false
+            oldItem.coverUrl != newItem.coverUrl -> false
+            oldItem.kind != newItem.kind -> false
+            oldItem.latestChapterTitle != newItem.latestChapterTitle -> false
+            oldItem.intro != newItem.intro -> false
+            else -> true
+        }
+    }
+
+    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        val payload = Bundle()
+        val newItem = newItems[newItemPosition]
+        val oldItem = oldItems[oldItemPosition]
+        if (oldItem.name != newItem.name) payload.putString("name", newItem.name)
+        if (oldItem.author != newItem.author) payload.putString("author", newItem.author)
+        if (oldItem.origins.size != newItem.origins.size)
+            payload.putInt("origins", newItem.origins.size)
+        if (oldItem.coverUrl != newItem.coverUrl) payload.putString("cover", newItem.coverUrl)
+        if (oldItem.kind != newItem.kind) payload.putString("kind", newItem.kind)
+        if (oldItem.latestChapterTitle != newItem.latestChapterTitle)
+            payload.putString("last", newItem.latestChapterTitle)
+        if (oldItem.intro != newItem.intro) payload.putString("intro", newItem.intro)
+        if (payload.isEmpty) return null
+        return payload
     }
 }

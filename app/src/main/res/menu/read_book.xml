@@ -3,7 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.main.MainActivity">
 
-    <group android:id="@+id/menuOnLine">
+    <item
+        android:id="@+id/menu_add_bookmark"
+        android:icon="@drawable/ic_bookmark"
+        android:title="@string/bookmark_add"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <group android:id="@+id/menu_group_on_line">
         <item
             android:id="@+id/menu_change_source"
             android:icon="@drawable/ic_exchange"
@@ -14,27 +21,33 @@
             android:id="@+id/menu_refresh"
             android:icon="@drawable/ic_refresh_black_24dp"
             android:title="@string/refresh"
-            app:showAsAction="ifRoom" />
+            app:showAsAction="always" />
 
         <item
             android:id="@+id/menu_download"
-            android:icon="@drawable/ic_download_line"
-            android:title="@string/download_offline"
-            app:showAsAction="ifRoom" />
+            android:title="@string/offline_cache"
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/menu_disable_book_source"
-            android:icon="@drawable/ic_cancel"
             android:title="@string/disable_book_source"
             app:showAsAction="never" />
 
     </group>
 
+    <group android:id="@+id/menu_group_login">
+        <item
+            android:id="@+id/menu_login"
+            android:visible="false"
+            android:title="@string/login"
+            app:showAsAction="never" />
+    </group>
+
     <group android:id="@+id/menu_group_text">
         <item
-            android:id="@+id/menu_set_regex"
+            android:id="@+id/menu_toc_regex"
             android:icon="@drawable/ic_exchange"
-            android:title="@string/txt_chapter_regex"
+            android:title="@string/txt_toc_regex"
             android:visible="false"
             app:showAsAction="always" />
     </group>
@@ -45,50 +58,42 @@
             android:id="@+id/menu_set_charset"
             android:icon="@drawable/ic_translate"
             android:title="@string/set_charset"
-            app:showAsAction="ifRoom" />
+            app:showAsAction="always" />
 
     </group>
 
-    <group android:id="@+id/menu_group_show">
-        <item
-            android:id="@+id/menu_add_bookmark"
-            android:icon="@drawable/ic_bookmark"
-            android:title="@string/bookmark_add"
-            app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_copy_text"
+        android:title="@string/copy_text"
+        app:showAsAction="never" />
 
-        <item
-            android:id="@+id/menu_copy_text"
-            android:icon="@drawable/ic_copy"
-            android:title="@string/copy_text"
-            app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_page_anim"
+        android:title="@string/page_anim"
+        app:showAsAction="never" />
 
-        <item
-            android:id="@+id/menu_enable_replace"
-            android:icon="@drawable/ic_find_replace"
-            android:title="@string/replace_rule_title"
-            android:checkable="true"
-            android:checked="true"
-            app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_enable_replace"
+        android:title="@string/replace_rule_title"
+        android:checkable="true"
+        android:checked="true"
+        app:showAsAction="never" />
 
-        <item
-            android:id="@+id/menu_update_chapter_list"
-            android:icon="@drawable/ic_update"
-            android:title="@string/update_chapter"
-            app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_re_segment"
+        android:title="@string/re_segment"
+        android:checkable="true"
+        android:checked="false"
+        app:showAsAction="never" />
 
-        <item
-            android:id="@+id/menu_book_info"
-            android:icon="@drawable/ic_toc"
-            android:title="@string/book_info"
-            app:showAsAction="never" />
-    </group>
+    <item
+        android:id="@+id/menu_update_toc"
+        android:title="@string/update_toc"
+        app:showAsAction="never" />
 
-    <group android:id="@+id/menu_group_login">
-        <item
-            android:id="@+id/menu_login"
-            android:icon="@drawable/ic_toc"
-            android:title="@string/login"
-            app:showAsAction="never" />
-    </group>
+    <item
+        android:id="@+id/menu_book_info"
+        android:title="@string/book_info"
+        app:showAsAction="never" />
 
 </menu>

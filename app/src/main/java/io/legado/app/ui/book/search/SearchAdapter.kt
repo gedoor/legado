@@ -1,13 +1,12 @@
 package io.legado.app.ui.book.search
 
-import android.view.LayoutInflater
+import android.content.Context
+import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.data.entities.SearchShow
-import io.legado.app.help.ImageLoader
+import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.item_bookshelf_list.view.iv_cover
@@ -15,143 +14,98 @@ import kotlinx.android.synthetic.main.item_bookshelf_list.view.tv_name
 import kotlinx.android.synthetic.main.item_search.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class SearchAdapter(val callBack: CallBack) :
-    PagedListAdapter<SearchShow, SearchAdapter.MyViewHolder>(DiffCallBack()) {
+class SearchAdapter(context: Context, val callBack: CallBack) :
+    SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_search) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false))
+    override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
+        val bundle = payloads.getOrNull(0) as? Bundle
+        if (bundle == null) {
+            bind(holder.itemView, item)
+        } else {
+            bindChange(holder.itemView, item, bundle)
+        }
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isEmpty()) {
-            super.onBindViewHolder(holder, position, payloads)
-        } else {
-            getItem(position)?.let {
-                holder.bindChange(it, payloads)
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.apply {
+            onClick {
+                getItem(holder.layoutPosition)?.let {
+                    callBack.showBookInfo(it.name, it.author)
+                }
             }
         }
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        getItem(position)?.let {
-            holder.bind(it, callBack)
-        }
-    }
-
-
-    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        fun bind(searchBook: SearchShow, callBack: CallBack?) = with(itemView) {
+    private fun bind(itemView: View, searchBook: SearchBook) {
+        with(itemView) {
             tv_name.text = searchBook.name
             tv_author.text = context.getString(R.string.author_show, searchBook.author)
-            bv_originCount.setBadgeCount(searchBook.originCount)
-            if (searchBook.latestChapterTitle.isNullOrEmpty()) {
-                tv_lasted.gone()
+            bv_originCount.setBadgeCount(searchBook.origins.size)
+            upLasted(itemView, searchBook.latestChapterTitle)
+            if (searchBook.intro.isNullOrEmpty()) {
+                tv_introduce.text =
+                    context.getString(R.string.intro_show_null)
             } else {
-                tv_lasted.text = context.getString(R.string.lasted_show, searchBook.latestChapterTitle)
-                tv_lasted.visible()
+                tv_introduce.text =
+                    context.getString(R.string.intro_show, searchBook.intro)
             }
-            tv_introduce.text = context.getString(R.string.intro_show, searchBook.intro)
-            val kinds = searchBook.getKindList()
-            if (kinds.isEmpty()) {
-                ll_kind.gone()
-            } else {
-                ll_kind.visible()
-                for (index in 0..2) {
-                    if (kinds.size > index) {
-                        when (index) {
-                            0 -> {
-                                tv_kind.text = kinds[index]
-                                tv_kind.visible()
-                            }
-                            1 -> {
-                                tv_kind_1.text = kinds[index]
-                                tv_kind_1.visible()
-                            }
-                            2 -> {
-                                tv_kind_2.text = kinds[index]
-                                tv_kind_2.visible()
-                            }
-                        }
-                    } else {
-                        when (index) {
-                            0 -> tv_kind.gone()
-                            1 -> tv_kind_1.gone()
-                            2 -> tv_kind_2.gone()
+            upKind(itemView, searchBook.getKindList())
+            iv_cover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
+
+        }
+    }
+
+    private fun bindChange(itemView: View, searchBook: SearchBook, bundle: Bundle) {
+        with(itemView) {
+            bundle.keySet().map {
+                when (it) {
+                    "name" -> tv_name.text = searchBook.name
+                    "author" -> tv_author.text =
+                        context.getString(R.string.author_show, searchBook.author)
+                    "origins" -> bv_originCount.setBadgeCount(searchBook.origins.size)
+                    "last" -> upLasted(itemView, searchBook.latestChapterTitle)
+                    "intro" -> {
+                        if (searchBook.intro.isNullOrEmpty()) {
+                            tv_introduce.text =
+                                context.getString(R.string.intro_show_null)
+                        } else {
+                            tv_introduce.text =
+                                context.getString(R.string.intro_show, searchBook.intro)
                         }
                     }
+                    "kind" -> upKind(itemView, searchBook.getKindList())
+                    "cover" -> iv_cover.load(
+                        searchBook.coverUrl,
+                        searchBook.name,
+                        searchBook.author
+                    )
                 }
-            }
-            searchBook.coverUrl.let {
-                ImageLoader.load(context, it)//Glide自动识别http://和file://
-                    .placeholder(R.drawable.image_cover_default)
-                    .error(R.drawable.image_cover_default)
-                    .centerCrop()
-                    .setAsDrawable(iv_cover)
-            }
-            onClick {
-                callBack?.showBookInfo(searchBook.name, searchBook.author)
             }
         }
+    }
 
-        fun bindChange(searchBook: SearchShow, payloads: MutableList<Any>) =
-            with(itemView) {
-                when (payloads[0]) {
-                    1 -> bv_originCount.setBadgeCount(searchBook.originCount)
-                    2 -> searchBook.coverUrl.let {
-                        ImageLoader.load(context, it)//Glide自动识别http://和file://
-                            .placeholder(R.drawable.image_cover_default)
-                            .error(R.drawable.image_cover_default)
-                            .centerCrop()
-                            .setAsDrawable(iv_cover)
-                    }
-                    3 -> {
-                        val kinds = searchBook.getKindList()
-                        if (kinds.isEmpty()) {
-                            ll_kind.gone()
-                        } else {
-                            ll_kind.visible()
-                            for (index in 0..2) {
-                                if (kinds.size > index) {
-                                    when (index) {
-                                        0 -> {
-                                            tv_kind.text = kinds[index]
-                                            tv_kind.visible()
-                                        }
-                                        1 -> {
-                                            tv_kind_1.text = kinds[index]
-                                            tv_kind_1.visible()
-                                        }
-                                        2 -> {
-                                            tv_kind_2.text = kinds[index]
-                                            tv_kind_2.visible()
-                                        }
-                                    }
-                                } else {
-                                    when (index) {
-                                        0 -> tv_kind.gone()
-                                        1 -> tv_kind_1.gone()
-                                        2 -> tv_kind_2.gone()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    4 -> {
-                        if (searchBook.latestChapterTitle.isNullOrEmpty()) {
-                            tv_lasted.gone()
-                        } else {
-                            tv_lasted.text = context.getString(
-                                R.string.lasted_show,
-                                searchBook.latestChapterTitle
-                            )
-                            tv_lasted.visible()
-                        }
-                    }
-                    5 -> tv_introduce.text =
-                        context.getString(R.string.intro_show, searchBook.intro)
-                }
+    private fun upLasted(itemView: View, latestChapterTitle: String?) {
+        with(itemView) {
+            if (latestChapterTitle.isNullOrEmpty()) {
+                tv_lasted.gone()
+            } else {
+                tv_lasted.text =
+                    context.getString(
+                        R.string.lasted_show,
+                        latestChapterTitle
+                    )
+                tv_lasted.visible()
             }
+        }
+    }
+
+    private fun upKind(itemView: View, kinds: List<String>) = with(itemView) {
+        if (kinds.isEmpty()) {
+            ll_kind.gone()
+        } else {
+            ll_kind.visible()
+            ll_kind.setLabels(kinds)
+        }
     }
 
     interface CallBack {

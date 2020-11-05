@@ -33,9 +33,11 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
+@Suppress("SameParameterValue")
 class FastScroller : LinearLayout {
     @ColorInt
     private var mBubbleColor: Int = 0
+
     @ColorInt
     private var mHandleColor: Int = 0
     private var mBubbleHeight: Int = 0
@@ -173,7 +175,7 @@ class FastScroller : LinearLayout {
      */
     fun setFadeScrollbar(fadeScrollbar: Boolean) {
         mFadeScrollbar = fadeScrollbar
-        mScrollbar.visibility = if (fadeScrollbar) View.GONE else View.VISIBLE
+        mScrollbar.visibility = if (fadeScrollbar) View.INVISIBLE else View.VISIBLE
     }
 
     /**
@@ -191,7 +193,7 @@ class FastScroller : LinearLayout {
      * @param visible True to show scroll track, false to hide
      */
     fun setTrackVisible(visible: Boolean) {
-        mTrackView.visibility = if (visible) View.VISIBLE else View.GONE
+        mTrackView.visibility = if (visible) View.VISIBLE else View.INVISIBLE
     }
 
     /**
@@ -264,7 +266,7 @@ class FastScroller : LinearLayout {
 
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
-        visibility = if (enabled) View.VISIBLE else View.GONE
+        visibility = if (enabled) View.VISIBLE else View.INVISIBLE
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -411,13 +413,13 @@ class FastScroller : LinearLayout {
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         super.onAnimationEnd(animation)
-                        mBubbleView.visibility = View.GONE
+                        mBubbleView.visibility = View.INVISIBLE
                         mBubbleAnimator = null
                     }
 
                     override fun onAnimationCancel(animation: Animator) {
                         super.onAnimationCancel(animation)
-                        mBubbleView.visibility = View.GONE
+                        mBubbleView.visibility = View.INVISIBLE
                         mBubbleAnimator = null
                     }
                 })
@@ -447,13 +449,13 @@ class FastScroller : LinearLayout {
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    mScrollbar.visibility = View.GONE
+                    mScrollbar.visibility = View.INVISIBLE
                     mScrollbarAnimator = null
                 }
 
                 override fun onAnimationCancel(animation: Animator) {
                     super.onAnimationCancel(animation)
-                    mScrollbar.visibility = View.GONE
+                    mScrollbar.visibility = View.INVISIBLE
                     mScrollbarAnimator = null
                 }
             })
@@ -482,18 +484,17 @@ class FastScroller : LinearLayout {
         var showTrack = true
         if (attrs != null) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.FastScroller, 0, 0)
-            if (typedArray != null) {
-                try {
-                    bubbleColor = typedArray.getColor(R.styleable.FastScroller_bubbleColor, bubbleColor)
-                    handleColor = typedArray.getColor(R.styleable.FastScroller_handleColor, handleColor)
-                    trackColor = typedArray.getColor(R.styleable.FastScroller_trackColor, trackColor)
-                    textColor = typedArray.getColor(R.styleable.FastScroller_bubbleTextColor, textColor)
-                    fadeScrollbar = typedArray.getBoolean(R.styleable.FastScroller_fadeScrollbar, fadeScrollbar)
-                    showBubble = typedArray.getBoolean(R.styleable.FastScroller_showBubble, showBubble)
-                    showTrack = typedArray.getBoolean(R.styleable.FastScroller_showTrack, showTrack)
-                } finally {
-                    typedArray.recycle()
-                }
+            try {
+                bubbleColor = typedArray.getColor(R.styleable.FastScroller_bubbleColor, bubbleColor)
+                handleColor = typedArray.getColor(R.styleable.FastScroller_handleColor, handleColor)
+                trackColor = typedArray.getColor(R.styleable.FastScroller_trackColor, trackColor)
+                textColor = typedArray.getColor(R.styleable.FastScroller_bubbleTextColor, textColor)
+                fadeScrollbar =
+                    typedArray.getBoolean(R.styleable.FastScroller_fadeScrollbar, fadeScrollbar)
+                showBubble = typedArray.getBoolean(R.styleable.FastScroller_showBubble, showBubble)
+                showTrack = typedArray.getBoolean(R.styleable.FastScroller_showTrack, showTrack)
+            } finally {
+                typedArray.recycle()
             }
         }
         setTrackColor(trackColor)

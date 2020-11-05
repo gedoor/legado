@@ -21,6 +21,7 @@ package io.legado.app.lib.dialogs
 import android.content.Context
 import android.content.DialogInterface
 import androidx.fragment.app.Fragment
+import io.legado.app.utils.applyTint
 
 inline fun Fragment.selector(
     title: CharSequence? = null,
@@ -38,6 +39,20 @@ fun Context.selector(
             this.title = title
         }
         items(items, onClick)
-        show()
+        show().applyTint()
+    }
+}
+
+fun Context.selector(
+    titleSource: Int? = null,
+    items: List<CharSequence>,
+    onClick: (DialogInterface, Int) -> Unit
+) {
+    with(AndroidAlertBuilder(this)) {
+        if (titleSource != null) {
+            this.title = getString(titleSource)
+        }
+        items(items, onClick)
+        show().applyTint()
     }
 }

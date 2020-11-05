@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="16dp"
+    android:paddingRight="8dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:gravity="center_vertical"
+    android:elevation="2dp"
+    tools:ignore="RtlHardcoded">
+
+    <io.legado.app.lib.theme.view.ATECheckBox
+        android:id="@+id/cb_selected_all"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:text="@string/select_all" />
+
+    <io.legado.app.ui.widget.text.AccentStrokeTextView
+        android:id="@+id/btn_revert_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:gravity="center"
+        android:minWidth="80dp"
+        android:text="@string/revert_selection" />
+
+    <io.legado.app.ui.widget.text.AccentStrokeTextView
+        android:id="@+id/btn_select_action_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:minWidth="80dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/app_name" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu_more"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/more_menu"
+        android:tooltipText="@string/more_menu"
+        android:padding="6dp"
+        android:src="@drawable/ic_more_vert"
+        android:tint="@color/primaryText"
+        android:visibility="gone"
+        tools:ignore="RtlHardcoded,UnusedAttribute" />
+
+</LinearLayout>

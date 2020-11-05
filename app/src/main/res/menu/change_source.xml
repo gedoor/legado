@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_screen"
+        android:title="@string/screen"
+        android:icon="@drawable/ic_screen"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_stop"
+        android:title="@string/stop"
+        android:icon="@drawable/ic_refresh_white_24dp"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_load_toc"
+        android:title="@string/load_toc"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_load_info"
+        android:title="@string/load_info"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+</menu>

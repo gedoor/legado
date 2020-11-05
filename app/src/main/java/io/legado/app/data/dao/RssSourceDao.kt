@@ -10,8 +10,14 @@ interface RssSourceDao {
     @Query("select * from rssSources where sourceUrl = :key")
     fun getByKey(key: String): RssSource?
 
+    @Query("select * from rssSources where sourceUrl in (:sourceUrls)")
+    fun getRssSources(vararg sourceUrls: String):List<RssSource>
+
     @get:Query("SELECT * FROM rssSources")
     val all: List<RssSource>
+
+    @get:Query("select count(sourceUrl) from rssSources")
+    val size: Int
 
     @Query("SELECT * FROM rssSources order by customOrder")
     fun liveAll(): LiveData<List<RssSource>>
@@ -22,23 +28,14 @@ interface RssSourceDao {
     @Query("SELECT * FROM rssSources where enabled = 1 order by customOrder")
     fun liveEnabled(): LiveData<List<RssSource>>
 
-    @Query("select sourceGroup from rssSources where sourceGroup is not null and sourceGroup <> ''")
+    @Query("select sourceGroup from rssSources where trim(sourceGroup) <> ''")
     fun liveGroup(): LiveData<List<String>>
-
-    @Query("update rssSources set enabled = 1 where sourceUrl in (:sourceUrls)")
-    fun enableSection(vararg sourceUrls: String)
-
-    @Query("update rssSources set enabled = 0 where sourceUrl in (:sourceUrls)")
-    fun disableSection(vararg sourceUrls: String)
 
     @get:Query("select min(customOrder) from rssSources")
     val minOrder: Int
 
     @get:Query("select max(customOrder) from rssSources")
     val maxOrder: Int
-
-    @Query("delete from rssSources where sourceUrl in (:sourceUrls)")
-    fun delSection(vararg sourceUrls: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rssSource: RssSource)

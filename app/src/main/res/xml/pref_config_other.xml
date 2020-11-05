@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.legado.app.ui.widget.prefs.NameListPreference
+        android:key="language"
+        android:title="@string/language"
+        android:defaultValue="auto"
+        app:entries="@array/language"
+        app:entryValues="@array/language_value" />
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/main_activity"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pk_auto_refresh"
+            android:summary="@string/ps_auto_refresh"
+            android:title="@string/pt_auto_refresh"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pk_default_read"
+            android:summary="@string/ps_default_read"
+            android:title="@string/pt_default_read"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="showRss"
+            android:title="@string/show_rss"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="defaultCover"
+            android:title="@string/default_cover"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/other_setting"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="replaceEnableDefault"
+            android:title="@string/replace_enable_default_t"
+            android:summary="@string/replace_enable_default_s"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="mediaButtonOnExit"
+            android:title="@string/media_button_on_exit_title"
+            android:summary="@string/media_button_on_exit_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="autoClearExpired"
+            android:title="@string/auto_clear_expired"
+            android:summary="@string/auto_clear_expired_summary" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="webPort"
+            android:title="@string/web_port_title"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="cleanCache"
+            android:title="@string/clear_cache"
+            android:summary="@string/clear_cache_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="threadCount"
+            android:title="@string/threads_num_title"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="process_text"
+            android:summary="@string/add_to_text_context_menu_s"
+            android:title="@string/add_to_text_context_menu_t"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="recordLog"
+            android:title="@string/record_log"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+
+</androidx.preference.PreferenceScreen>

@@ -78,7 +78,11 @@ internal interface ThemeStoreInterface {
 
     fun textColorSecondaryInverseAttr(@AttrRes colorAttr: Int): ThemeStore
 
+    // Background
+
     fun backgroundColor(@ColorInt color: Int): ThemeStore
+
+    fun bottomBackground(@ColorInt color: Int): ThemeStore
 
     // Toggle configurations
 

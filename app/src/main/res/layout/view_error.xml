@@ -20,7 +20,7 @@
         android:id="@+id/btn_error_retry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/accent"
         android:minWidth="96dp"
         android:text="@string/dynamic_click_retry" />
 

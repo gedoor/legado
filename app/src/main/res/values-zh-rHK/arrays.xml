@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_mode">
+        <item>跟隨系統</item>
+        <item>亮色主題</item>
+        <item>暗色主題</item>
+        <item>E-Ink(墨水屏)</item>
+    </string-array>
+
+    <string-array name="NavBarColors">
+        <item>自動</item>
+        <item>黑色</item>
+        <item>白色</item>
+        <item>跟隨背景</item>
+    </string-array>
+
+    <string-array name="screen_time_out">
+        <item>默認</item>
+        <item>1分鐘</item>
+        <item>2分鐘</item>
+        <item>3分鐘</item>
+        <item>常亮</item>
+    </string-array>
+
+    <string-array name="chinese_mode">
+        <item>關閉</item>
+        <item>繁體轉簡體</item>
+        <item>簡體轉繁體</item>
+    </string-array>
+
+    <string-array name="system_typefaces">
+        <item>系統默認字體</item>
+        <item>系統襯線字體</item>
+        <item>系統等寬字體</item>
+    </string-array>
+
+    <string-array name="read_tip">
+        <item>无</item>
+        <item>标题</item>
+        <item>时间</item>
+        <item>电量</item>
+        <item>页数</item>
+        <item>进度</item>
+        <item>页数及进度</item>
+        <item>書名</item>
+    </string-array>
+
+    <string-array name="text_font_weight">
+        <item>正常</item>
+        <item>粗體</item>
+        <item>細體</item>
+    </string-array>
+
+    <string-array name="language">
+        <item>跟随系统</item>
+        <item>简体中文</item>
+        <item>繁体中文</item>
+        <item>英文</item>
+    </string-array>
+
+</resources>

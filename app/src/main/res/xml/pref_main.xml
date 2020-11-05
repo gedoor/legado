@@ -1,67 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:divider="@color/transparent"
+    app:allowDividerAbove="false"
+    app:allowDividerBelow="false">
 
-    <androidx.preference.Preference
+    <io.legado.app.ui.widget.prefs.Preference
         android:key="bookSourceManage"
-        android:title="书源管理"
+        android:title="@string/book_source_manage"
+        android:summary="@string/book_source_manage_desc"
+        android:icon="@drawable/ic_cfg_source"
         app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
+    <io.legado.app.ui.widget.prefs.Preference
         android:key="replaceManage"
-        android:title="替换净化"
+        android:title="@string/replace_purify"
+        android:summary="@string/replace_purify_desc"
+        android:icon="@drawable/ic_cfg_replace"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
-        android:defaultValue="false"
-        android:key="isNightTheme"
-        android:title="暗色主题"
+    <io.legado.app.ui.widget.prefs.NameListPreference
+        android:defaultValue="0"
+        android:entries="@array/theme_mode"
+        android:entryValues="@array/theme_mode_v"
+        android:key="themeMode"
+        android:title="@string/theme_mode"
+        android:summary="@string/theme_mode_desc"
+        android:icon="@drawable/ic_cfg_theme"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATESwitchPreference
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:key="webService"
-        android:title="Web服务"
+        android:title="@string/web_service"
+        android:summary="@string/web_service_desc"
+        android:icon="@drawable/ic_cfg_web"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory
-        android:title="设置"
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/setting"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="web_dav_setting"
-            android:summary="通过WebDav云备份"
-            android:title="云备份设置"
+            android:summary="@string/web_dav_set_import_old"
+            android:title="@string/backup_restore"
+            android:icon="@drawable/ic_cfg_backup"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="theme_setting"
-            android:summary="与界面/颜色相关的一些设置"
-            android:title="主题设置"
+            android:summary="@string/theme_setting_s"
+            android:title="@string/theme_setting"
+            android:icon="@drawable/ic_cfg_theme"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="setting"
-            android:summary="与功能相关的一些设置"
-            android:title="其它设置"
+            android:summary="@string/other_setting_s"
+            android:title="@string/other_setting"
+            android:icon="@drawable/ic_cfg_other"
+            app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
-    <io.legado.app.lib.theme.prefs.ATEPreferenceCategory app:iconSpaceReserved="false">
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/other"
+        android:key="aboutCategory"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="readRecord"
+            android:title="@string/read_record"
+            android:summary="@string/read_record_summary"
+            android:icon="@drawable/ic_history"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="donate"
-            android:summary="您的支持是我更新的动力"
+            android:summary="@string/donate_summary"
             android:title="@string/donate"
+            android:icon="@drawable/ic_cfg_donate"
             app:iconSpaceReserved="false" />
 
-        <androidx.preference.Preference
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="about"
-            android:summary="公众号[开源阅读软件]"
+            android:summary="@string/about_summary"
             android:title="@string/about"
+            android:icon="@drawable/ic_cfg_about"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.lib.theme.prefs.ATEPreferenceCategory>
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

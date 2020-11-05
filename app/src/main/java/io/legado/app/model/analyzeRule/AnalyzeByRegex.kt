@@ -1,8 +1,10 @@
 package io.legado.app.model.analyzeRule
 
+import androidx.annotation.Keep
 import java.util.*
 import java.util.regex.Pattern
 
+@Keep
 object AnalyzeByRegex {
 
     fun getElement(res: String, regs: Array<String>, index: Int = 0): List<String>? {
@@ -16,7 +18,7 @@ object AnalyzeByRegex {
             // 新建容器
             val info = arrayListOf<String>()
             for (groupIndex in 0..resM.groupCount()) {
-                info.add(resM.group(groupIndex))
+                info.add(resM.group(groupIndex)!!)
             }
             info
         } else {
@@ -43,7 +45,7 @@ object AnalyzeByRegex {
                 // 新建容器
                 val info = arrayListOf<String>()
                 for (groupIndex in 0..resM.groupCount()) {
-                    info.add(resM.group(groupIndex))
+                    info.add(resM.group(groupIndex)!!)
                 }
                 books.add(info)
             } while (resM.find())

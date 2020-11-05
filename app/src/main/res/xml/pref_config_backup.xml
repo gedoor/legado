@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/web_dav_set"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.EditTextPreference
+            android:key="web_dav_url"
+            android:title="@string/web_dav_url"
+            android:summary="@string/web_dav_url_s"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.EditTextPreference
+            android:key="web_dav_account"
+            android:title="@string/web_dav_account"
+            android:summary="@string/web_dav_account_s"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.EditTextPreference
+            android:key="web_dav_password"
+            android:title="@string/web_dav_pw"
+            android:summary="@string/web_dav_pw_s"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:key="webDavCreateDir"
+            android:defaultValue="true"
+            android:title="@string/mkdirs"
+            android:summary="@string/mkdirs_description"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:key="webDavCacheBackup"
+            android:defaultValue="false"
+            android:title="@string/webdav_cache_backup"
+            android:summary="@string/webdav_cache_backup_s"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/backup_restore"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="backupUri"
+            android:title="@string/backup_path"
+            android:summary="@string/select_backup_path"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="web_dav_backup"
+            android:title="@string/backup"
+            android:summary="@string/backup_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="web_dav_restore"
+            android:title="@string/restore"
+            android:summary="@string/restore_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="restoreIgnore"
+            android:title="@string/restore_ignore"
+            android:summary="@string/restore_ignore_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="import_old"
+            android:title="@string/menu_import_old_version"
+            android:summary="@string/import_old_summary"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

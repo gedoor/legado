@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="10dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp">
+
+    <io.legado.app.ui.widget.text.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/name">
+
+        <io.legado.app.ui.widget.text.EditText
+            android:id="@+id/tv_rule_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </io.legado.app.ui.widget.text.TextInputLayout>
+
+    <io.legado.app.ui.widget.text.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/regex">
+
+        <io.legado.app.ui.widget.text.EditText
+            android:id="@+id/tv_rule_regex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </io.legado.app.ui.widget.text.TextInputLayout>
+
+</LinearLayout>

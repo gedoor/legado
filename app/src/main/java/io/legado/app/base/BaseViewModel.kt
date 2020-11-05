@@ -11,6 +11,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.toast
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("unused")
 open class BaseViewModel(application: Application) : AndroidViewModel(application),
     CoroutineScope by MainScope(),
     AnkoLogger {
@@ -45,9 +46,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    open fun toast(message: CharSequence) {
+    open fun toast(message: CharSequence?) {
         launch {
-            context.toast(message)
+            context.toast(message ?: toString())
         }
     }
 
@@ -57,9 +58,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    open fun longToast(message: CharSequence) {
+    open fun longToast(message: CharSequence?) {
         launch {
-            context.toast(message)
+            context.toast(message ?: toString())
         }
     }
 }

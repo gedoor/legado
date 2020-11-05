@@ -20,16 +20,15 @@ import android.graphics.*
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import java.util.*
+import kotlin.math.pow
 
 class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rect) :
     ValueAnimator() {
-    private val mPaint: Paint
+    private val mPaint: Paint = Paint()
     private val mParticles: Array<Particle?>
-    private val mBound: Rect
+    private val mBound: Rect = Rect(bound)
 
     init {
-        mPaint = Paint()
-        mBound = Rect(bound)
         val partLen = 15
         mParticles = arrayOfNulls(partLen * partLen)
         val random = Random(System.currentTimeMillis())
@@ -97,24 +96,24 @@ class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rec
 
     override fun start() {
         super.start()
-        mContainer.invalidate(mBound)
+        mContainer.invalidate()
     }
 
     private inner class Particle {
-        internal var alpha: Float = 0.toFloat()
-        internal var color: Int = 0
-        internal var cx: Float = 0.toFloat()
-        internal var cy: Float = 0.toFloat()
-        internal var radius: Float = 0.toFloat()
-        internal var baseCx: Float = 0.toFloat()
-        internal var baseCy: Float = 0.toFloat()
-        internal var baseRadius: Float = 0.toFloat()
-        internal var top: Float = 0.toFloat()
-        internal var bottom: Float = 0.toFloat()
-        internal var mag: Float = 0.toFloat()
-        internal var neg: Float = 0.toFloat()
-        internal var life: Float = 0.toFloat()
-        internal var overflow: Float = 0.toFloat()
+        var alpha: Float = 0.toFloat()
+        var color: Int = 0
+        var cx: Float = 0.toFloat()
+        var cy: Float = 0.toFloat()
+        var radius: Float = 0.toFloat()
+        var baseCx: Float = 0.toFloat()
+        var baseCy: Float = 0.toFloat()
+        var baseRadius: Float = 0.toFloat()
+        var top: Float = 0.toFloat()
+        var bottom: Float = 0.toFloat()
+        var mag: Float = 0.toFloat()
+        var neg: Float = 0.toFloat()
+        var life: Float = 0.toFloat()
+        var overflow: Float = 0.toFloat()
 
 
         fun advance(factor: Float) {
@@ -132,7 +131,7 @@ class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rec
             alpha = 1f - f
             f = bottom * f2
             cx = baseCx + f
-            cy = (baseCy - this.neg * Math.pow(f.toDouble(), 2.0)).toFloat() - f * mag
+            cy = (baseCy - this.neg * f.toDouble().pow(2.0)).toFloat() - f * mag
             radius = V + (baseRadius - V) * f2
         }
     }
@@ -141,7 +140,7 @@ class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rec
 
         internal var DEFAULT_DURATION: Long = 0x400
         private val DEFAULT_INTERPOLATOR = AccelerateInterpolator(0.6f)
-        private val END_VALUE = 1.4f
+        private const val END_VALUE = 1.4f
         private val X = Utils.dp2Px(5).toFloat()
         private val Y = Utils.dp2Px(20).toFloat()
         private val V = Utils.dp2Px(2).toFloat()

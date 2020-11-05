@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -17,25 +15,35 @@
         android:paddingRight="10dp"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
-        android:layout_margin="4dp"
-        android:background="@color/background"
-        android:elevation="3dp"
+        android:background="@drawable/bg_find_book_group"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        tools:ignore="UseCompoundDrawables">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textColor="@color/primaryText"
+            tools:text="起点中文" />
+
+        <io.legado.app.ui.widget.anima.RotateLoading
+            android:id="@+id/rotate_loading"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_marginRight="4dp"
+            app:hide_mode="gone"
+            app:loading_width="1dp"
+            tools:ignore="RtlHardcoded" />
 
         <ImageView
             android:id="@+id/iv_status"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_add"
-            app:tint="@color/tv_text_secondary"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="@color/secondaryText"
             tools:ignore="ContentDescription" />
 
     </LinearLayout>
@@ -43,6 +51,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:layout_gravity="center">
 
         <com.google.android.flexbox.FlexboxLayout
@@ -52,19 +62,12 @@
             android:clipToPadding="false"
             android:overScrollMode="never"
             android:padding="3dp"
+            android:layout_marginTop="8dp"
             android:visibility="gone"
             app:dividerDrawable="@drawable/shape_space_divider"
             app:flexDirection="row"
             app:flexWrap="wrap"
             app:showDivider="middle" />
-
-        <io.legado.app.ui.widget.anima.RotateLoading
-            android:id="@+id/rotate_loading"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:visibility="gone"
-            android:layout_gravity="center"
-            app:loading_width="2dp" />
 
     </FrameLayout>
 

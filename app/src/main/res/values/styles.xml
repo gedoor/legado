@@ -25,9 +25,9 @@
 
     <!-- Base application theme. -->
     <style name="Base.AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/accent</item>
         <item name="actionOverflowMenuStyle">@style/Style.PopupMenu</item>
         <item name="android:itemTextAppearance">@style/Style.MenuItemText</item>
         <item name="android:popupMenuStyle">@style/Style.PopupMenu</item>
@@ -40,7 +40,7 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorAccent">@color/md_grey_100</item>
+        <item name="colorAccent">@color/md_grey_50</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
@@ -50,8 +50,9 @@
 
     <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert"/>
 
-    //**************************************************************System
-    Style******************************************************************************//
+    <style name="Spinner" parent="android:Theme.Holo.Light" />
+
+    //**********System Style******************//
 
     <style name="Style.NavigationView" parent="android:Widget">
         <item name="android:listPreferredItemHeightSmall">44dp</item>
@@ -79,8 +80,11 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
-    //**************************************************************Widget
-    Style******************************************************************************//
+    <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    //*******************Widget Style**********************************//
 
     <style name="Style.Shadow.Top" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>
@@ -124,4 +128,5 @@
     <style name="Style.Text.Second.Normal.Wrap">
         <item name="android:layout_width">wrap_content</item>
     </style>
+
 </resources>

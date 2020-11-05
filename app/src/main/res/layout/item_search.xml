@@ -7,8 +7,8 @@
 
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
-        android:layout_width="70dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="110dp"
         android:layout_margin="8dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnusedAttribute" />
 
-    <io.legado.app.ui.widget.BadgeView
+    <io.legado.app.ui.widget.text.BadgeView
         android:id="@+id/bv_originCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +34,8 @@
         android:layout_margin="8dp"
         android:singleLine="true"
         android:text="@string/app_name"
-        android:textColor="@color/tv_text_default"
+        android:textColor="@color/primaryText"
+        android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/bv_originCount"
         app:layout_constraintStart_toEndOf="@+id/iv_cover"
         app:layout_constraintTop_toTopOf="parent" />
@@ -43,6 +44,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
+        android:layout_marginTop="3dp"
         app:layout_constraintBottom_toBottomOf="@id/iv_cover"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
         app:layout_constraintRight_toRightOf="@id/tv_name"
@@ -55,52 +57,14 @@
             android:ellipsize="end"
             android:lines="1"
             android:text="@string/author"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/primaryText"
             android:textSize="12sp" />
 
-        <LinearLayout
+        <io.legado.app.ui.widget.LabelsBar
             android:id="@+id/ll_kind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
-                android:id="@+id/tv_kind"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="12sp"
-                app:abt_radius="2dp" />
-
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
-                android:id="@+id/tv_kind_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="12sp"
-                app:abt_radius="2dp" />
-
-            <io.legado.app.lib.theme.view.ATEAccentBgTextView
-                android:id="@+id/tv_kind_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:singleLine="true"
-                android:text="@string/app_name"
-                android:textSize="12sp"
-                app:abt_radius="2dp" />
-
-        </LinearLayout>
+            android:orientation="horizontal" />
 
         <TextView
             android:id="@+id/tv_lasted"
@@ -109,16 +73,16 @@
             android:ellipsize="end"
             android:lines="1"
             android:text="@string/last_read"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/primaryText"
             android:textSize="12sp" />
 
-        <TextView
+        <io.legado.app.ui.widget.text.MultilineTextView
             android:id="@+id/tv_introduce"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:ellipsize="end"
             android:text="@string/book_intro"
-            android:textColor="@color/tv_text_default"
+            android:textColor="@color/primaryText"
             android:textSize="12sp" />
 
     </LinearLayout>

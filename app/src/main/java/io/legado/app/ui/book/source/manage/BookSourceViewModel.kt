@@ -2,23 +2,37 @@ package io.legado.app.ui.book.source.manage
 
 import android.app.Application
 import android.text.TextUtils
-import com.jayway.jsonpath.JsonPath
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
-import io.legado.app.data.api.IHttpGetApi
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.http.HttpHelper
-import io.legado.app.help.storage.OldRule
-import io.legado.app.help.storage.Restore.jsonPath
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.writeText
+import org.jetbrains.anko.longToast
 import java.io.File
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
-    fun topSource(bookSource: BookSource) {
+    fun topSource(vararg sources: BookSource) {
         execute {
-            bookSource.customOrder = App.db.bookSourceDao().minOrder - 1
-            App.db.bookSourceDao().insert(bookSource)
+            val minOrder = App.db.bookSourceDao().minOrder - 1
+            sources.forEachIndexed { index, bookSource ->
+                bookSource.customOrder = minOrder - index
+            }
+            App.db.bookSourceDao().update(*sources)
+        }
+    }
+
+    fun bottomSource(vararg sources: BookSource) {
+        execute {
+            val maxOrder = App.db.bookSourceDao().maxOrder + 1
+            sources.forEachIndexed { index, bookSource ->
+                bookSource.customOrder = maxOrder + index
+            }
+            App.db.bookSourceDao().update(*sources)
         }
     }
 
@@ -40,21 +54,112 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun enableSelection(ids: LinkedHashSet<String>) {
+    fun enableSelection(sources: List<BookSource>) {
         execute {
-            App.db.bookSourceDao().enableSection(*ids.toTypedArray())
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = true))
+            }
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
-    fun disableSelection(ids: LinkedHashSet<String>) {
+    fun disableSelection(sources: List<BookSource>) {
         execute {
-            App.db.bookSourceDao().disableSection(*ids.toTypedArray())
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = false))
+            }
+            App.db.bookSourceDao().update(*list.toTypedArray())
         }
     }
 
-    fun delSelection(ids: LinkedHashSet<String>) {
+    fun enableSelectExplore(sources: List<BookSource>) {
         execute {
-            App.db.bookSourceDao().delSection(*ids.toTypedArray())
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabledExplore = true))
+            }
+            App.db.bookSourceDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun disableSelectExplore(sources: List<BookSource>) {
+        execute {
+            val list = arrayListOf<BookSource>()
+            sources.forEach {
+                list.add(it.copy(enabledExplore = false))
+            }
+            App.db.bookSourceDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun selectionAddToGroups(sources: List<BookSource>, groups: String) {
+        execute {
+            val list = arrayListOf<BookSource>()
+            sources.forEach { source ->
+                val newGroupList = arrayListOf<String>()
+                source.bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.forEach {
+                    newGroupList.add(it)
+                }
+                groups.splitNotBlank(",", ";", "，").forEach {
+                    newGroupList.add(it)
+                }
+                val lh = LinkedHashSet(newGroupList)
+                val newGroup = ArrayList(lh).joinToString(separator = ",")
+                list.add(source.copy(bookSourceGroup = newGroup))
+            }
+            App.db.bookSourceDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun selectionRemoveFromGroups(sources: List<BookSource>, groups: String) {
+        execute {
+            val list = arrayListOf<BookSource>()
+            sources.forEach { source ->
+                val newGroupList = arrayListOf<String>()
+                source.bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.forEach {
+                    newGroupList.add(it)
+                }
+                groups.splitNotBlank(",", ";", "，").forEach {
+                    newGroupList.remove(it)
+                }
+                val lh = LinkedHashSet(newGroupList)
+                val newGroup = ArrayList(lh).joinToString(separator = ",")
+                list.add(source.copy(bookSourceGroup = newGroup))
+            }
+            App.db.bookSourceDao().update(*list.toTypedArray())
+        }
+    }
+
+    fun delSelection(sources: List<BookSource>) {
+        execute {
+            App.db.bookSourceDao().delete(*sources.toTypedArray())
+        }
+    }
+
+    fun exportSelection(sources: List<BookSource>, file: File) {
+        execute {
+            val json = GSON.toJson(sources)
+            FileUtils.createFileIfNotExist(file, "exportBookSource.json")
+                .writeText(json)
+        }.onSuccess {
+            context.longToast("成功导出至\n${file.absolutePath}")
+        }.onError {
+            context.longToast("导出失败\n${it.localizedMessage}")
+        }
+    }
+
+    fun exportSelection(sources: List<BookSource>, doc: DocumentFile) {
+        execute {
+            val json = GSON.toJson(sources)
+            doc.findFile("exportBookSource.json")?.delete()
+            doc.createFile("", "exportBookSource.json")
+                ?.writeText(context, json)
+        }.onSuccess {
+            context.longToast("成功导出至\n${doc.uri.path}")
+        }.onError {
+            context.longToast("导出失败\n${it.localizedMessage}")
         }
     }
 
@@ -88,70 +193,11 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             execute {
                 val sources = App.db.bookSourceDao().getByGroup(group)
                 sources.map { source ->
-                    source.bookSourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
-                        it.remove(group)
-                        source.bookSourceGroup = TextUtils.join(",", it)
-                    }
+                    source.removeGroup(group)
                 }
                 App.db.bookSourceDao().update(*sources.toTypedArray())
             }
         }
     }
 
-    fun importSourceFromFilePath(path: String) {
-        execute {
-            val file = File(path)
-            if (file.exists()) {
-                importSource(file.readText())
-            }
-        }
-    }
-
-    fun importSource(text: String) {
-        execute {
-            val text1 = text.trim()
-            if (text1.isJsonObject()) {
-                val json = JsonPath.parse(text1)
-                val urls = json.read<List<String>>("$.sourceUrls")
-                if (!urls.isNullOrEmpty()) {
-                    urls.forEach { importSourceUrl(it) }
-                } else {
-                    OldRule.jsonToBookSource(text1)?.let {
-                        App.db.bookSourceDao().insert(it)
-                    }
-                    toast("成功导入1条")
-                }
-            } else if (text1.isJsonArray()) {
-                val bookSources = mutableListOf<BookSource>()
-                val items: List<Map<String, Any>> = jsonPath.parse(text1).read("$")
-                for (item in items) {
-                    val jsonItem = jsonPath.parse(item)
-                    OldRule.jsonToBookSource(jsonItem.jsonString())?.let {
-                        bookSources.add(it)
-                    }
-                }
-                App.db.bookSourceDao().insert(*bookSources.toTypedArray())
-                toast("成功导入${bookSources.size}条")
-            } else if (text1.isAbsUrl()) {
-                importSourceUrl(text1)
-            } else {
-                toast("格式不对")
-            }
-        }.onError {
-            toast(it.localizedMessage)
-        }
-    }
-
-    private fun importSourceUrl(url: String) {
-        execute {
-            NetworkUtils.getBaseUrl(url)?.let {
-                val response = HttpHelper.getApiService<IHttpGetApi>(it).get(url, mapOf()).execute()
-                response.body()?.let { body ->
-                    importSource(body)
-                }
-            }
-        }.onError {
-            toast(it.localizedMessage)
-        }
-    }
 }

@@ -43,7 +43,7 @@ internal class Request : OnRequestPermissionsResultCallback {
     }
 
     fun addPermissions(vararg permissions: String) {
-        this.permissions?.addAll(Arrays.asList(*permissions))
+        this.permissions?.addAll(listOf(*permissions))
     }
 
     fun setRequestCode(requestCode: Int) {
@@ -102,7 +102,7 @@ internal class Request : OnRequestPermissionsResultCallback {
         deniedCallback = null
     }
 
-    private fun getDeniedPermissions(permissions: Array<String>?): Array<String>? {
+    fun getDeniedPermissions(permissions: Array<String>?): Array<String>? {
         if (permissions != null) {
             val deniedPermissionList = ArrayList<String>()
             for (permission in permissions) {

@@ -2,20 +2,36 @@ package io.legado.app.ui.rss.source.manage
 
 import android.app.Application
 import android.text.TextUtils
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.writeText
+import org.jetbrains.anko.toast
 import java.io.File
 
 class RssSourceViewModel(application: Application) : BaseViewModel(application) {
 
-    fun topSource(rssSource: RssSource) {
+    fun topSource(vararg sources: RssSource) {
         execute {
-            rssSource.customOrder = App.db.rssSourceDao().minOrder - 1
-            App.db.rssSourceDao().insert(rssSource)
+            val minOrder = App.db.rssSourceDao().minOrder - 1
+            sources.forEachIndexed { index, rssSource ->
+                rssSource.customOrder = minOrder - index
+            }
+            App.db.rssSourceDao().update(*sources)
+        }
+    }
+
+    fun bottomSource(vararg sources: RssSource) {
+        execute {
+            val maxOrder = App.db.rssSourceDao().maxOrder + 1
+            sources.forEachIndexed { index, rssSource ->
+                rssSource.customOrder = maxOrder + index
+            }
+            App.db.rssSourceDao().update(*sources)
         }
     }
 
@@ -37,24 +53,56 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun enableSelection(ids: LinkedHashSet<String>) {
+    fun enableSelection(sources: List<RssSource>) {
         execute {
-            App.db.rssSourceDao().enableSection(*ids.toTypedArray())
+            val list = arrayListOf<RssSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = true))
+            }
+            App.db.rssSourceDao().update(*list.toTypedArray())
         }
     }
 
-    fun disableSelection(ids: LinkedHashSet<String>) {
+    fun disableSelection(sources: List<RssSource>) {
         execute {
-            App.db.rssSourceDao().disableSection(*ids.toTypedArray())
+            val list = arrayListOf<RssSource>()
+            sources.forEach {
+                list.add(it.copy(enabled = false))
+            }
+            App.db.rssSourceDao().update(*list.toTypedArray())
         }
     }
 
-    fun delSelection(ids: LinkedHashSet<String>) {
+    fun delSelection(sources: List<RssSource>) {
         execute {
-            App.db.rssSourceDao().delSection(*ids.toTypedArray())
+            App.db.rssSourceDao().delete(*sources.toTypedArray())
         }
     }
 
+    fun exportSelection(sources: List<RssSource>, file: File) {
+        execute {
+            val json = GSON.toJson(sources)
+            FileUtils.createFileIfNotExist(file, "exportRssSource.json")
+                .writeText(json)
+        }.onSuccess {
+            context.toast("成功导出至\n${file.absolutePath}")
+        }.onError {
+            context.toast("导出失败\n${it.localizedMessage}")
+        }
+    }
+
+    fun exportSelection(sources: List<RssSource>, doc: DocumentFile) {
+        execute {
+            val json = GSON.toJson(sources)
+            doc.findFile("exportRssSource.json")?.delete()
+            doc.createFile("", "exportRssSource.json")
+                ?.writeText(context, json)
+        }.onSuccess {
+            context.toast("成功导出至\n${doc.uri.path}")
+        }.onError {
+            context.toast("导出失败\n${it.localizedMessage}")
+        }
+    }
 
     fun addGroup(group: String) {
         execute {
@@ -96,19 +144,4 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-
-    fun importSourceFromFilePath(path: String) {
-        execute {
-            val file = File(path)
-            if (file.exists()) {
-                GSON.fromJsonArray<RssSource>(file.readText())?.let {
-                    App.db.rssSourceDao().insert(*it.toTypedArray())
-                }
-            }
-        }
-    }
-
-    fun importSource(sourceStr: String) {
-
-    }
 }

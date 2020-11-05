@@ -10,9 +10,11 @@ object IntentDataHelp {
         return key
     }
 
-    fun getData(key: String): Any? {
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getData(key: String?): T? {
+        if (key == null) return null
         val data = bigData[key]
         bigData.remove(key)
-        return data
+        return data as? T
     }
 }

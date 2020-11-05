@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,7 +18,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical">
 
         <io.legado.app.lib.theme.view.ATECheckBox
             android:id="@+id/cb_is_enable"
@@ -33,12 +35,20 @@
             android:checked="true"
             android:text="@string/find" />
 
-        <io.legado.app.lib.theme.view.ATECheckBox
-            android:id="@+id/cb_is_audio"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/audio" />
+            android:text="@string/book_type"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="3dp"
+            tools:ignore="RtlHardcoded" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/sp_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/book_type"
+            app:theme="@style/Spinner" />
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout

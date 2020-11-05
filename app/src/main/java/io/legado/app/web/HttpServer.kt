@@ -2,8 +2,8 @@ package io.legado.app.web
 
 import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
-import io.legado.app.web.controller.BookshelfController
-import io.legado.app.web.controller.SourceController
+import io.legado.app.api.controller.BookshelfController
+import io.legado.app.api.controller.SourceController
 import io.legado.app.web.utils.AssetsWeb
 import io.legado.app.web.utils.ReturnData
 import java.util.*
@@ -33,10 +33,10 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     val postData = files["postData"]
 
                     when (uri) {
-                        "/saveSource" -> returnData = SourceController().saveSource(postData)
-                        "/saveSources" -> returnData = SourceController().saveSources(postData)
-                        "/saveBook" -> returnData = BookshelfController().saveBook(postData)
-                        "/deleteSources" -> returnData = SourceController().deleteSources(postData)
+                        "/saveSource" -> returnData = SourceController.saveSource(postData)
+                        "/saveSources" -> returnData = SourceController.saveSources(postData)
+                        "/saveBook" -> returnData = BookshelfController.saveBook(postData)
+                        "/deleteSources" -> returnData = SourceController.deleteSources(postData)
                     }
                 }
 
@@ -44,13 +44,13 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     val parameters = session.parameters
 
                     when (uri) {
-                        "/getSource" -> returnData = SourceController().getSource(parameters)
-                        "/getSources" -> returnData = SourceController().sources
-                        "/getBookshelf" -> returnData = BookshelfController().bookshelf
-                        "/getChapterList" -> returnData =
-                            BookshelfController().getChapterList(parameters)
-                        "/getBookContent" -> returnData =
-                            BookshelfController().getBookContent(parameters)
+                        "/getSource" -> returnData = SourceController.getSource(parameters)
+                        "/getSources" -> returnData = SourceController.sources
+                        "/getBookshelf" -> returnData = BookshelfController.bookshelf
+                        "/getChapterList" ->
+                            returnData = BookshelfController.getChapterList(parameters)
+                        "/getBookContent" ->
+                            returnData = BookshelfController.getBookContent(parameters)
                     }
                 }
             }

@@ -1,6 +1,12 @@
 package io.legado.app.ui.rss.article
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -13,32 +19,65 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.textColorResource
 
 
-class RssArticlesAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<RssArticle>(context, R.layout.item_rss_article) {
+class RssArticlesAdapter(context: Context, layoutId: Int, val callBack: CallBack) :
+    SimpleRecyclerAdapter<RssArticle>(context, layoutId) {
 
+    @SuppressLint("CheckResult")
     override fun convert(holder: ItemViewHolder, item: RssArticle, payloads: MutableList<Any>) {
         with(holder.itemView) {
             tv_title.text = item.title
             tv_pub_date.text = item.pubDate
-            onClick {
-                callBack.readRss(item)
-            }
-            if (item.image.isNullOrBlank()) {
+            if (item.image.isNullOrBlank() && !callBack.isGridLayout) {
                 image_view.gone()
             } else {
-                image_view.visible()
-                ImageLoader.load(context, item.image)
-                    .setAsBitmap(image_view)
+                ImageLoader.load(context, item.image).apply {
+                    if (callBack.isGridLayout) {
+                        placeholder(R.drawable.image_rss_article)
+                    } else {
+                        addListener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                image_view.gone()
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                image_view.visible()
+                                return false
+                            }
+
+                        })
+                    }
+                }.into(image_view)
             }
             if (item.read) {
                 tv_title.textColorResource = R.color.tv_text_summary
             } else {
-                tv_title.textColorResource = R.color.tv_text_default
+                tv_title.textColorResource = R.color.primaryText
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder) {
+        holder.itemView.onClick {
+            getItem(holder.layoutPosition)?.let {
+                callBack.readRss(it)
             }
         }
     }
 
     interface CallBack {
+        val isGridLayout: Boolean
         fun readRss(rssArticle: RssArticle)
     }
 }

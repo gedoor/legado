@@ -22,8 +22,8 @@ import kotlin.math.min
 /**
  * 本地缓存
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int) {
-
 
     companion object {
         const val TIME_HOUR = 60 * 60
@@ -171,7 +171,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @return JSONObject数据
      */
     fun getAsJSONObject(key: String): JSONObject? {
-        val json = getAsString(key)
+        val json = getAsString(key) ?: return null
         return try {
             JSONObject(json)
         } catch (e: Exception) {
@@ -311,17 +311,17 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
     fun getAsObject(key: String): Any? {
         val data = getAsBinary(key)
         if (data != null) {
-            var bais: ByteArrayInputStream? = null
+            var bis: ByteArrayInputStream? = null
             var ois: ObjectInputStream? = null
             try {
-                bais = ByteArrayInputStream(data)
-                ois = ObjectInputStream(bais)
+                bis = ByteArrayInputStream(data)
+                ois = ObjectInputStream(bis)
                 return ois.readObject()
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
                 try {
-                    bais?.close()
+                    bis?.close()
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -543,6 +543,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
             return null
         }
 
+        @Suppress("SameParameterValue")
         private fun indexOf(data: ByteArray, c: Char): Int {
             for (i in data.indices) {
                 if (data[i] == c.toByte()) {
@@ -597,6 +598,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
             val w = drawable.intrinsicWidth
             val h = drawable.intrinsicHeight
             // 取 drawable 的颜色格式
+            @Suppress("DEPRECATION")
             val config = if (drawable.opacity != PixelFormat.OPAQUE)
                 Bitmap.Config.ARGB_8888
             else
