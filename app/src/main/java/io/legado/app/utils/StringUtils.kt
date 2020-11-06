@@ -305,7 +305,7 @@ object StringUtils {
         }
         return sb.toString()
     }
-   
+
     fun hexStringToByte(hexString: String): ByteArray? {
         val hexStr = hexString.replace(" ", "")
         val len = hexStr.length

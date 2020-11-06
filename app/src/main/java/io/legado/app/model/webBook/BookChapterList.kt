@@ -233,7 +233,6 @@ object BookChapterList {
         val elements = analyzeRule.getElements(listRule)
         Debug.log(bookSource.bookSourceUrl, "└列表大小:${elements.size}", log)
         if (elements.isNotEmpty()) {
-            Debug.log(bookSource.bookSourceUrl, "┌获取首章名称", log)
             val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName)
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl)
             val vipRule = analyzeRule.splitSourceRule(tocRule.isVip)
@@ -257,6 +256,7 @@ object BookChapterList {
                     chapterList.add(bookChapter)
                 }
             }
+            Debug.log(bookSource.bookSourceUrl, "┌获取首章名称", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].title}", log)
             Debug.log(bookSource.bookSourceUrl, "┌获取首章链接", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].url}", log)
