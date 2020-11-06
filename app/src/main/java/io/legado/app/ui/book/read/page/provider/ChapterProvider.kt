@@ -102,7 +102,7 @@ object ChapterProvider {
         return TextChapter(
             bookChapter.index,
             bookChapter.title,
-            bookChapter.url,
+            bookChapter.getAbsoluteURL(),
             textPages,
             pageLines,
             pageLengths,

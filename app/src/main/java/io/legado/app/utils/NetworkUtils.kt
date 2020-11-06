@@ -11,9 +11,10 @@ import java.util.regex.Pattern
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object NetworkUtils {
     fun getUrl(response: Response<*>): String {
-        val networkResponse = response.raw().networkResponse()
-        return networkResponse?.request()?.url()?.toString()
-            ?: response.raw().request().url().toString()
+        response.raw().networkResponse()?.let {
+            return it.request().url().toString()
+        }
+        return response.raw().request().url().toString()
     }
 
     private val notNeedEncoding: BitSet by lazy {
