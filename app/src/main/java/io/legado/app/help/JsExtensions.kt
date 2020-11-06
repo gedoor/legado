@@ -46,9 +46,10 @@ interface JsExtensions {
      * js实现文件下载
      */
     fun downloadFile(content: String, url: String): String {
+        val type = AnalyzeUrl(url).type ?: return "type为空，未下载"
         val zipPath = FileUtils.getPath(
             FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-            "${MD5Utils.md5Encode16(url)}.zip"
+            "${MD5Utils.md5Encode16(url)}.${type}"
         )
         FileUtils.deleteFile(zipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
@@ -137,14 +138,18 @@ interface JsExtensions {
      * js实现解码,不能删
      */
     fun base64Decode(str: String): String {
-        return EncoderUtils.base64Decode(str)
+        return EncoderUtils.base64Decode(str, Base64.NO_WRAP)
+    }
+
+    fun base64Decode(str: String, flags: Int): String {
+        return EncoderUtils.base64Decode(str, flags)
     }
 
     fun base64Encode(str: String): String? {
-        return EncoderUtils.base64Encode(str)
+        return EncoderUtils.base64Encode(str, Base64.NO_WRAP)
     }
 
-    fun base64Encode(str: String, flags: Int = Base64.NO_WRAP): String? {
+    fun base64Encode(str: String, flags: Int): String? {
         return EncoderUtils.base64Encode(str, flags)
     }
 
