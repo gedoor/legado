@@ -10,7 +10,7 @@
 * 替换编辑界面添加正则学习教程
 * 去除解析目录时拼接相对url,提升解析速度
 * 自动分段优化 by [tumuyan](https://github.com/tumuyan)
-* web支持图片显示
+* web支持图片显示 by [六月](https://github.com/Celeter)
 
 **2020/11/01**
 * 导入本地添加智能扫描,菜单-智能扫描,扫描当前文件夹包括子文件夹下所有文件
