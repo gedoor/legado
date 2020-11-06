@@ -16,10 +16,12 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.ui.widget.KeyboardToolPop
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.activity_replace_edit.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.toast
 import kotlin.math.abs
 
@@ -58,10 +60,13 @@ class ReplaceEditActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
-        viewModel.replaceRuleData.observe(this, {
+        viewModel.initData(intent) {
             upReplaceView(it)
-        })
-        viewModel.initData(intent)
+        }
+        iv_help.onClick {
+            val mdText = String(assets.open("help/regex.md").readBytes())
+            TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -96,7 +101,7 @@ class ReplaceEditActivity :
     }
 
     private fun getReplaceRule(): ReplaceRule {
-        val replaceRule: ReplaceRule = viewModel.replaceRuleData.value ?: ReplaceRule()
+        val replaceRule: ReplaceRule = viewModel.replaceRule ?: ReplaceRule()
         replaceRule.name = et_name.text.toString()
         replaceRule.group = et_group.text.toString()
         replaceRule.pattern = et_replace_rule.text.toString()

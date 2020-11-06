@@ -10,6 +10,7 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.utils.*
 import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
+import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
@@ -25,6 +26,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     var chapter: BookChapter? = null
     private var content: Any? = null
     private var baseUrl: String? = null
+    private var baseURL: URL? = null
     private var isJSON: Boolean = false
     private var isRegex: Boolean = false
 
@@ -37,15 +39,25 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private var objectChangedJP = false
 
     @Throws(Exception::class)
-    @JvmOverloads
-    fun setContent(content: Any?, baseUrl: String? = this.baseUrl): AnalyzeRule {
+    fun setContent(content: Any?): AnalyzeRule {
         if (content == null) throw AssertionError("Content cannot be null")
         isJSON = content.toString().isJson()
         this.content = content
-        this.baseUrl = baseUrl
         objectChangedXP = true
         objectChangedJS = true
         objectChangedJP = true
+        return this
+    }
+
+    fun setBaseUrl(baseUrl: String?): AnalyzeRule {
+        this.baseUrl = baseUrl
+        baseUrl?.let {
+            try {
+                baseURL = URL(baseUrl.substringBefore(","))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
         return this
     }
 
@@ -157,7 +169,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             val urlList = ArrayList<String>()
             if (result is List<*>) {
                 for (url in result as List<*>) {
-                    val absoluteURL = NetworkUtils.getAbsoluteURL(baseUrl, url.toString())
+                    val absoluteURL = NetworkUtils.getAbsoluteURL(baseURL, url.toString())
                     if (!absoluteURL.isNullOrEmpty() && !urlList.contains(absoluteURL)) {
                         urlList.add(absoluteURL)
                     }
@@ -220,7 +232,11 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             result.toString()
         }
         if (isUrl) {
-            return NetworkUtils.getAbsoluteURL(baseUrl, str) ?: ""
+            return if (str.isBlank()) {
+                baseUrl ?: ""
+            } else {
+                NetworkUtils.getAbsoluteURL(baseURL, str) ?: ""
+            }
         }
         return str
     }
