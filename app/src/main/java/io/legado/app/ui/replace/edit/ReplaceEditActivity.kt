@@ -16,8 +16,8 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.ui.widget.KeyboardToolPop
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.openUrl
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.activity_replace_edit.*
 import org.jetbrains.anko.displayMetrics
@@ -64,7 +64,8 @@ class ReplaceEditActivity :
             upReplaceView(it)
         }
         iv_help.onClick {
-            openUrl("https://www.runoob.com/regexp/regexp-syntax.html")
+            val mdText = String(assets.open("help/regex.md").readBytes())
+            TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
         }
     }
 
