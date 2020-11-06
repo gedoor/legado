@@ -90,6 +90,22 @@ object NetworkUtils {
         return relativeUrl
     }
 
+    /**
+     * 获取绝对地址
+     */
+    fun getAbsoluteURL(baseURL: URL?, relativePath: String): String? {
+        if (baseURL == null) return relativePath
+        var relativeUrl = relativePath
+        try {
+            val parseUrl = URL(baseURL, relativePath)
+            relativeUrl = parseUrl.toString()
+            return relativeUrl
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return relativeUrl
+    }
+
     fun getBaseUrl(url: String?): String? {
         if (url == null || !url.startsWith("http")) return null
         val index = url.indexOf("/", 9)
@@ -98,14 +114,13 @@ object NetworkUtils {
         } else url.substring(0, index)
     }
 
-   fun getSubDomain(url: String?): String {
-        var baseUrl = getBaseUrl(url)
-        if (baseUrl == null) return ""
+    fun getSubDomain(url: String?): String {
+        val baseUrl = getBaseUrl(url) ?: return ""
         return if (baseUrl.indexOf(".") == baseUrl.lastIndexOf(".")) {
-            baseUrl.substring(baseUrl.lastIndexOf("/")+1)
-        } else baseUrl.substring(baseUrl.indexOf(".")+1)
+            baseUrl.substring(baseUrl.lastIndexOf("/") + 1)
+        } else baseUrl.substring(baseUrl.indexOf(".") + 1)
     }
-    
+
     /**
      * Get local Ip address.
      */

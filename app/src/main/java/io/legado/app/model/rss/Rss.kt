@@ -45,10 +45,8 @@ object Rss {
             ).getResponseAwait(rssArticle.origin)
                 .body
             val analyzeRule = AnalyzeRule()
-            analyzeRule.setContent(
-                body,
-                NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link)
-            )
+            analyzeRule.setContent(body)
+                .setBaseUrl(NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link))
             analyzeRule.getString(ruleContent)
         }
     }
