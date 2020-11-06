@@ -259,7 +259,7 @@ object BookChapterList {
             }
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].title}", log)
             Debug.log(bookSource.bookSourceUrl, "┌获取首章链接", log)
-            Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].getAbsoluteURL()}", log)
+            Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].url}", log)
             Debug.log(bookSource.bookSourceUrl, "┌获取首章信息", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].tag}", log)
         }
