@@ -179,31 +179,37 @@ class WebBook(val bookSource: BookSource) {
             Debug.log(sourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
             return bookChapter.url
         }
-        val body =
-            if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
-                book.tocHtml
-            } else {
-                val analyzeUrl = AnalyzeUrl(
-                    ruleUrl = bookChapter.getAbsoluteURL(),
-                    baseUrl = book.tocUrl,
-                    headerMapF = bookSource.getHeaderMap(),
-                    book = book,
-                    chapter = bookChapter
-                )
-                analyzeUrl.getResponseAwait(
-                    bookSource.bookSourceUrl,
-                    jsStr = bookSource.getContentRule().webJs,
-                    sourceRegex = bookSource.getContentRule().sourceRegex
-                ).body
-            }
-        return BookContent.analyzeContent(
-            scope,
-            body,
-            book,
-            bookChapter,
-            bookSource,
-            bookChapter.url,
-            nextChapterUrl
-        )
+        return if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
+            BookContent.analyzeContent(
+                scope,
+                book.tocHtml,
+                book,
+                bookChapter,
+                bookSource,
+                bookChapter.getAbsoluteURL(),
+                nextChapterUrl
+            )
+        } else {
+            val res = AnalyzeUrl(
+                ruleUrl = bookChapter.getAbsoluteURL(),
+                baseUrl = book.tocUrl,
+                headerMapF = bookSource.getHeaderMap(),
+                book = book,
+                chapter = bookChapter
+            ).getResponseAwait(
+                bookSource.bookSourceUrl,
+                jsStr = bookSource.getContentRule().webJs,
+                sourceRegex = bookSource.getContentRule().sourceRegex
+            )
+            BookContent.analyzeContent(
+                scope,
+                res.body,
+                book,
+                bookChapter,
+                bookSource,
+                res.url,
+                nextChapterUrl
+            )
+        }
     }
 }
