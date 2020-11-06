@@ -182,8 +182,6 @@ object ContentHelp {
         val string = StringBuffer(str)
         // 标记string中每个引号的位置.特别的，用引号进行列举时视为只有一对引号。 如：“锅”、“碗”视为“锅、碗”，从而避免误断句。
         val arrayQuote: MutableList<Int> = ArrayList()
-        // 标记忽略的引号
-        val array_ignore_quote: List<Int> = ArrayList()
         //  标记插入换行符的位置，int为插入位置（str的char下标）
         var insN = ArrayList<Int>()
 
