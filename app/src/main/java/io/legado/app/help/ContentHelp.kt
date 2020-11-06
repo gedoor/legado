@@ -185,11 +185,11 @@ object ContentHelp {
         //  标记插入换行符的位置，int为插入位置（str的char下标）
         var insN = ArrayList<Int>()
 
-//      mod[i]标记str的每一段处于引号内还是引号外。范围： str.substring( array_quote.get(i), array_quote.get(i+1) )的状态。
-//      长度：array_quote.size(),但是初始化时未预估占用的长度，用空间换时间
-//      0未知，正数引号内，负数引号外。
-//      如果相邻的两个标记都为+1，那么需要增加1个引号。
-//      引号内不进行断句
+        //mod[i]标记str的每一段处于引号内还是引号外。范围： str.substring( array_quote.get(i), array_quote.get(i+1) )的状态。
+        //长度：array_quote.size(),但是初始化时未预估占用的长度，用空间换时间
+        //0未知，正数引号内，负数引号外。
+        //如果相邻的两个标记都为+1，那么需要增加1个引号。
+        //引号内不进行断句
         val mod = IntArray(str.length)
         var waitClose = false
         for (i in str.indices) {
