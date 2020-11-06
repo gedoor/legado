@@ -25,6 +25,7 @@ object EncoderUtils {
         return tmp.toString()
     }
 
+    @JvmOverloads
     fun base64Decode(str: String, flags: Int = Base64.DEFAULT): String {
         val bytes = Base64.decode(str, flags)
         return try {
@@ -34,6 +35,7 @@ object EncoderUtils {
         }
     }
 
+    @JvmOverloads
     fun base64Encode(str: String, flags: Int = Base64.NO_WRAP): String? {
         return Base64.encodeToString(str.toByteArray(), flags)
     }
