@@ -8,6 +8,9 @@ import io.legado.app.data.entities.SearchKeyword
 @Dao
 interface SearchKeywordDao {
 
+    @get:Query("SELECT * FROM search_keywords")
+    val all: List<SearchKeyword>
+
     @Query("SELECT * FROM search_keywords ORDER BY usage DESC")
     fun liveDataByUsage(): LiveData<List<SearchKeyword>>
 
