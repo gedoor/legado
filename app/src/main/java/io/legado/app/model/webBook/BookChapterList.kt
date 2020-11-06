@@ -244,7 +244,7 @@ object BookChapterList {
                 val bookChapter = BookChapter(bookUrl = book.bookUrl)
                 analyzeRule.chapter = bookChapter
                 bookChapter.title = analyzeRule.getString(nameRule)
-                bookChapter.url = analyzeRule.getString(urlRule, true)
+                bookChapter.url = analyzeRule.getString(urlRule)
                 bookChapter.tag = analyzeRule.getString(update)
                 isVip = analyzeRule.getString(vipRule)
                 if (bookChapter.url.isEmpty()) bookChapter.url = baseUrl
