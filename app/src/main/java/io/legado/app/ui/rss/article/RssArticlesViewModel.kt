@@ -49,6 +49,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                     isLoading = false
                 }
             }.onError {
+                loadFinally.postValue(false)
                 it.printStackTrace()
                 toast(it.localizedMessage)
             }
