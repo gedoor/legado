@@ -22,6 +22,7 @@ import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.activity_replace_edit.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.selector
 import org.jetbrains.anko.toast
 import kotlin.math.abs
 
@@ -64,8 +65,7 @@ class ReplaceEditActivity :
             upReplaceView(it)
         }
         iv_help.onClick {
-            val mdText = String(assets.open("help/regex.md").readBytes())
-            TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
+            showRegexHelp()
         }
     }
 
@@ -128,11 +128,29 @@ class ReplaceEditActivity :
 
     override fun sendText(text: String) {
         if (text == AppConst.keyboardToolChars[0]) {
-            val view = window?.decorView?.findFocus()
-            view?.clearFocus()
+            showHelpDialog()
         } else {
             insertText(text)
         }
+    }
+
+    private fun showHelpDialog() {
+        val items = arrayListOf("替换净化教程", "正则教程")
+        selector(getString(R.string.help), items) { _, index ->
+            when (index) {
+                0 -> showReplaceHelp()
+                1 -> showRegexHelp()
+            }
+        }
+    }
+
+    private fun showReplaceHelp() {
+
+    }
+
+    private fun showRegexHelp() {
+        val mdText = String(assets.open("help/regex.md").readBytes())
+        TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
     }
 
     private fun showKeyboardTopPopupWindow() {

@@ -382,7 +382,7 @@ class BookSourceEditActivity :
         selector(getString(R.string.help), items) { _, index ->
             when (index) {
                 0 -> insertText(AppConst.urlOption)
-                1 -> openUrl(getString(R.string.source_rule_url))
+                1 -> openUrl("https://alanskycn.gitee.io/teachme/Rule/source.html")
                 2 -> showRegexHelp()
             }
         }
