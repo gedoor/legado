@@ -17,8 +17,7 @@ import javax.script.SimpleBindings
 import kotlin.collections.HashMap
 
 /**
- * Created by REFGD.
- * 统一解析接口
+ * 解析规则获取结果
  */
 @Keep
 @Suppress("unused", "RegExpRedundantEscape")
