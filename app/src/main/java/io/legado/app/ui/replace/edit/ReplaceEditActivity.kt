@@ -135,17 +135,12 @@ class ReplaceEditActivity :
     }
 
     private fun showHelpDialog() {
-        val items = arrayListOf("替换净化教程", "正则教程")
+        val items = arrayListOf("正则教程")
         selector(getString(R.string.help), items) { _, index ->
             when (index) {
-                0 -> showReplaceHelp()
-                1 -> showRegexHelp()
+                0 -> showRegexHelp()
             }
         }
-    }
-
-    private fun showReplaceHelp() {
-
     }
 
     private fun showRegexHelp() {

@@ -18,11 +18,9 @@ class BookSourceEditAdapter : RecyclerView.Adapter<BookSourceEditAdapter.MyViewH
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(
-            LayoutInflater.from(
-                parent.context
-            ).inflate(R.layout.item_source_edit, parent, false)
-        )
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_source_edit, parent, false)
+        return MyViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
