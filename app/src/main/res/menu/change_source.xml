@@ -19,14 +19,14 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/menu_load_toc"
-        android:title="@string/load_toc"
+        android:id="@+id/menu_load_info"
+        android:title="@string/load_info"
         android:checkable="true"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_load_info"
-        android:title="@string/load_info"
+        android:id="@+id/menu_load_toc"
+        android:title="@string/load_toc"
         android:checkable="true"
         app:showAsAction="never" />
 
