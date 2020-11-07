@@ -66,16 +66,13 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private fun getAnalyzeByXPath(o: Any): AnalyzeByXPath {
         return if (o != content) {
             AnalyzeByXPath().parse(o)
-        } else getAnalyzeByXPath()
-    }
-
-    private fun getAnalyzeByXPath(): AnalyzeByXPath {
-        if (analyzeByXPath == null || objectChangedXP) {
-            analyzeByXPath = AnalyzeByXPath()
-            analyzeByXPath?.parse(content!!)
-            objectChangedXP = false
+        } else {
+            if (analyzeByXPath == null || objectChangedXP) {
+                analyzeByXPath = AnalyzeByXPath().parse(content!!)
+                objectChangedXP = false
+            }
+            analyzeByXPath!!
         }
-        return analyzeByXPath as AnalyzeByXPath
     }
 
     /**
@@ -84,16 +81,13 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private fun getAnalyzeByJSoup(o: Any): AnalyzeByJSoup {
         return if (o != content) {
             AnalyzeByJSoup().parse(o)
-        } else getAnalyzeByJSoup()
-    }
-
-    private fun getAnalyzeByJSoup(): AnalyzeByJSoup {
-        if (analyzeByJSoup == null || objectChangedJS) {
-            analyzeByJSoup = AnalyzeByJSoup()
-            analyzeByJSoup?.parse(content!!)
-            objectChangedJS = false
+        } else {
+            if (analyzeByJSoup == null || objectChangedJS) {
+                analyzeByJSoup = AnalyzeByJSoup().parse(content!!)
+                objectChangedJS = false
+            }
+            analyzeByJSoup!!
         }
-        return analyzeByJSoup as AnalyzeByJSoup
     }
 
     /**
@@ -102,16 +96,13 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private fun getAnalyzeByJSonPath(o: Any): AnalyzeByJSonPath {
         return if (o != content) {
             AnalyzeByJSonPath().parse(o)
-        } else getAnalyzeByJSonPath()
-    }
-
-    private fun getAnalyzeByJSonPath(): AnalyzeByJSonPath {
-        if (analyzeByJSonPath == null || objectChangedJP) {
-            analyzeByJSonPath = AnalyzeByJSonPath()
-            analyzeByJSonPath?.parse(content!!)
-            objectChangedJP = false
+        } else {
+            if (analyzeByJSonPath == null || objectChangedJP) {
+                analyzeByJSonPath = AnalyzeByJSonPath().parse(content!!)
+                objectChangedJP = false
+            }
+            analyzeByJSonPath!!
         }
-        return analyzeByJSonPath as AnalyzeByJSonPath
     }
 
     /**
@@ -124,6 +115,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         return getStringList(ruleList, isUrl)
     }
 
+    @JvmOverloads
     fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
         var result: Any? = null
         val content = this.content
@@ -181,6 +173,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 获取文本
      */
+    @JvmOverloads
     fun getString(ruleStr: String?, isUrl: Boolean = false): String {
         if (TextUtils.isEmpty(ruleStr)) return ""
         val ruleList = splitSourceRule(ruleStr)
@@ -301,7 +294,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         }
         return ArrayList()
     }
-
 
     /**
      * 保存变量
