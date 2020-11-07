@@ -39,10 +39,11 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private var objectChangedJP = false
 
     @Throws(Exception::class)
-    fun setContent(content: Any?): AnalyzeRule {
+    fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
         if (content == null) throw AssertionError("Content cannot be null")
-        isJSON = content.toString().isJson()
         this.content = content
+        setBaseUrl(baseUrl)
+        isJSON = content.toString().isJson()
         objectChangedXP = true
         objectChangedJS = true
         objectChangedJP = true
@@ -50,8 +51,8 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     }
 
     fun setBaseUrl(baseUrl: String?): AnalyzeRule {
-        this.baseUrl = baseUrl
         baseUrl?.let {
+            this.baseUrl = baseUrl
             try {
                 baseURL = URL(baseUrl.substringBefore(","))
             } catch (e: Exception) {
