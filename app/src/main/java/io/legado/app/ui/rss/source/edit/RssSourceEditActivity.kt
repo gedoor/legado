@@ -136,7 +136,7 @@ class RssSourceEditActivity :
     }
 
     private fun getRssSource(): RssSource {
-        val source = viewModel.rssSource?.copy() ?: RssSource()
+        val source = viewModel.rssSource
         source.enabled = cb_is_enable.isChecked
         source.enableJs = cb_enable_js.isChecked
         source.loadWithBaseUrl = cb_enable_base_url.isChecked

@@ -103,14 +103,14 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     }
 
     override fun observeLiveBus() {
-        viewModel.loadFinally.observe(viewLifecycleOwner, {
+        viewModel.loadFinally.observe(viewLifecycleOwner) {
             refresh_recycler_view.stopLoading()
             if (it) {
                 loadMoreView.startLoad()
             } else {
                 loadMoreView.noMore()
             }
-        })
+        }
     }
 
     override fun readRss(rssArticle: RssArticle) {

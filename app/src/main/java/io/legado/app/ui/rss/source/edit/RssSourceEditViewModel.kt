@@ -8,24 +8,23 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getClipText
+import io.legado.app.utils.msg
 import kotlinx.coroutines.Dispatchers
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
-    var rssSource: RssSource? = null
-    private var oldSourceUrl: String? = null
+    var rssSource: RssSource = RssSource()
+    private var oldSourceUrl: String = ""
 
     fun initData(intent: Intent, onFinally: () -> Unit) {
         execute {
             val key = intent.getStringExtra("data")
-            var source: RssSource? = null
             if (key != null) {
-                source = App.db.rssSourceDao().getByKey(key)
+                App.db.rssSourceDao().getByKey(key)?.let {
+                    rssSource = it
+                }
             }
-            source?.let {
-                oldSourceUrl = it.sourceUrl
-                rssSource = it
-            }
+            oldSourceUrl = rssSource.sourceUrl
         }.onFinally {
             onFinally()
         }
@@ -33,14 +32,11 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
 
     fun save(source: RssSource, success: (() -> Unit)) {
         execute {
-            oldSourceUrl?.let {
-                if (oldSourceUrl != source.sourceUrl) {
-                    App.db.rssSourceDao().delete(it)
-                }
+            if (oldSourceUrl != source.sourceUrl) {
+                App.db.rssSourceDao().delete(oldSourceUrl)
+                oldSourceUrl = source.sourceUrl
             }
-            oldSourceUrl = source.sourceUrl
             App.db.rssSourceDao().insert(source)
-            rssSource = source
         }.onSuccess {
             success()
         }.onError {
@@ -74,7 +70,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
                 finally.invoke(it)
             }
         }.onError {
-            toast(it.localizedMessage ?: "Error")
+            toast(it.msg)
         }
     }
 
