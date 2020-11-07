@@ -29,7 +29,7 @@ object BookInfo {
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         infoRule.init?.let {
-            if (it.isNotEmpty()) {
+            if (it.isNotBlank()) {
                 Debug.log(bookSource.bookSourceUrl, "≡执行详情页初始化规则")
                 analyzeRule.setContent(analyzeRule.getElement(it))
             }

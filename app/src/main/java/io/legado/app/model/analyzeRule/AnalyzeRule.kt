@@ -38,7 +38,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private var objectChangedJS = false
     private var objectChangedJP = false
 
-    @Throws(Exception::class)
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
         if (content == null) throw AssertionError("Content cannot be null")
         this.content = content
@@ -119,7 +118,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 获取文本列表
      */
-    @Throws(Exception::class)
     @JvmOverloads
     fun getStringList(rule: String?, isUrl: Boolean = false): List<String>? {
         if (rule.isNullOrEmpty()) return null
@@ -127,7 +125,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         return getStringList(ruleList, isUrl)
     }
 
-    @Throws(Exception::class)
     fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
         var result: Any? = null
         val content = this.content
@@ -185,14 +182,12 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 获取文本
      */
-    @Throws(Exception::class)
     fun getString(ruleStr: String?, isUrl: Boolean = false): String {
         if (TextUtils.isEmpty(ruleStr)) return ""
         val ruleList = splitSourceRule(ruleStr)
         return getString(ruleList, isUrl)
     }
 
-    @Throws(Exception::class)
     @JvmOverloads
     fun getString(ruleList: List<SourceRule>, isUrl: Boolean = false): String {
         var result: Any? = null
@@ -245,7 +240,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 获取Element
      */
-    @Throws(Exception::class)
     fun getElement(ruleStr: String): Any? {
         if (TextUtils.isEmpty(ruleStr)) return null
         var result: Any? = null
@@ -279,7 +273,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      * 获取列表
      */
     @Suppress("UNCHECKED_CAST")
-    @Throws(Exception::class)
     fun getElements(ruleStr: String): List<Any> {
         var result: Any? = null
         val ruleList = splitSourceRule(ruleStr)
@@ -314,7 +307,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 保存变量
      */
-    @Throws(Exception::class)
     private fun putRule(map: Map<String, String>) {
         for ((key, value) in map) {
             put(key, getString(value))
@@ -324,7 +316,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 分离put规则
      */
-    @Throws(Exception::class)
     private fun splitPutRule(ruleStr: String, putMap: HashMap<String, String>): String {
         var vRuleStr = ruleStr
         val putMatcher = putPattern.matcher(vRuleStr)
@@ -360,7 +351,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 分解规则生成规则列表
      */
-    @Throws(Exception::class)
     fun splitSourceRule(ruleStr: String?, mode: Mode = Mode.Default): List<SourceRule> {
         var vRuleStr = ruleStr
         val ruleList = ArrayList<SourceRule>()
