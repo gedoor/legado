@@ -25,6 +25,7 @@ import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.KeyboardToolPop
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.*
@@ -63,7 +64,7 @@ class BookSourceEditActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> getSource().let { source ->
-                if (!source.equal(viewModel.bookSource ?: BookSource())){
+                if (!source.equal(viewModel.bookSource ?: BookSource())) {
                     source.lastUpdateTime = System.currentTimeMillis()
                 }
                 if (checkSource(source)) {
@@ -81,7 +82,10 @@ class BookSourceEditActivity :
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_share_str -> share(GSON.toJson(getSource()))
-            R.id.menu_share_qr -> shareWithQr(getString(R.string.share_book_source), GSON.toJson(getSource()))
+            R.id.menu_share_qr -> shareWithQr(
+                getString(R.string.share_book_source),
+                GSON.toJson(getSource())
+            )
             R.id.menu_rule_summary -> {
                 try {
                     val intent = Intent(Intent.ACTION_VIEW)
@@ -367,10 +371,26 @@ class BookSourceEditActivity :
 
     override fun sendText(text: String) {
         if (text == AppConst.keyboardToolChars[0]) {
-            insertText(AppConst.urlOption)
+            showHelpDialog()
         } else {
             insertText(text)
         }
+    }
+
+    private fun showHelpDialog() {
+        val items = arrayListOf("插入URL参数", "书源教程", "正则教程")
+        selector(getString(R.string.help), items) { _, index ->
+            when (index) {
+                0 -> insertText(AppConst.urlOption)
+                1 -> openUrl(getString(R.string.source_rule_url))
+                2 -> showRegexHelp()
+            }
+        }
+    }
+
+    private fun showRegexHelp() {
+        val mdText = String(assets.open("help/regex.md").readBytes())
+        TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
     }
 
     private fun showKeyboardTopPopupWindow() {

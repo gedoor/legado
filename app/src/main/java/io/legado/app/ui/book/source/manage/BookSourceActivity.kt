@@ -403,10 +403,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
         }
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
-            snackBar?.let {
-                it.dismiss()
-                snackBar = null
-            }
+            snackBar?.dismiss()
+            snackBar = null
             groups.map { group ->
                 if (group.contains("失效")) {
                     search_view.setQuery("失效", true)
