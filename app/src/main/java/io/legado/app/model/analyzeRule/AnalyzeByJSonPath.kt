@@ -10,16 +10,21 @@ import java.util.regex.Pattern
 
 @Suppress("RegExpRedundantEscape")
 @Keep
-class AnalyzeByJSonPath {
-    private lateinit var ctx: ReadContext
+class AnalyzeByJSonPath(json: Any) {
 
-    fun parse(json: Any): AnalyzeByJSonPath {
-        ctx = when (json) {
-            is String -> JsonPath.parse(json)
-            else -> JsonPath.parse(json)
+    companion object {
+        private val jsonRulePattern = Pattern.compile("(?<=\\{)\\$\\..+?(?=\\})")
+
+        fun parse(json: Any): ReadContext {
+            return when (json) {
+                is ReadContext -> json
+                is String -> JsonPath.parse(json)
+                else -> JsonPath.parse(json)
+            }
         }
-        return this
     }
+
+    private var ctx: ReadContext = parse(json)
 
     fun getString(rule: String): String? {
         if (TextUtils.isEmpty(rule)) return null
@@ -210,7 +215,4 @@ class AnalyzeByJSonPath {
         return result
     }
 
-    companion object {
-        private val jsonRulePattern = Pattern.compile("(?<=\\{)\\$\\..+?(?=\\})")
-    }
 }

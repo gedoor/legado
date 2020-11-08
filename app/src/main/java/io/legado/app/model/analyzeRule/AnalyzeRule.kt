@@ -23,6 +23,8 @@ import kotlin.collections.HashMap
 @Suppress("unused", "RegExpRedundantEscape")
 class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     var chapter: BookChapter? = null
+    var doc: Any? = null
+        private set
     private var content: Any? = null
     private var baseUrl: String? = null
     private var baseURL: URL? = null
@@ -42,6 +44,11 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         this.content = content
         setBaseUrl(baseUrl)
         isJSON = content.toString().isJson()
+        doc = if (isJSON) {
+            AnalyzeByJSonPath.parse(content)
+        } else {
+            AnalyzeByJSoup.parse(content)
+        }
         objectChangedXP = true
         objectChangedJS = true
         objectChangedJP = true
@@ -65,10 +72,10 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun getAnalyzeByXPath(o: Any): AnalyzeByXPath {
         return if (o != content) {
-            AnalyzeByXPath().parse(o)
+            AnalyzeByXPath(o)
         } else {
             if (analyzeByXPath == null || objectChangedXP) {
-                analyzeByXPath = AnalyzeByXPath().parse(content!!)
+                analyzeByXPath = AnalyzeByXPath(content!!)
                 objectChangedXP = false
             }
             analyzeByXPath!!
@@ -80,10 +87,10 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun getAnalyzeByJSoup(o: Any): AnalyzeByJSoup {
         return if (o != content) {
-            AnalyzeByJSoup().parse(o)
+            AnalyzeByJSoup(o)
         } else {
             if (analyzeByJSoup == null || objectChangedJS) {
-                analyzeByJSoup = AnalyzeByJSoup().parse(content!!)
+                analyzeByJSoup = AnalyzeByJSoup(content!!)
                 objectChangedJS = false
             }
             analyzeByJSoup!!
@@ -95,10 +102,10 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun getAnalyzeByJSonPath(o: Any): AnalyzeByJSonPath {
         return if (o != content) {
-            AnalyzeByJSonPath().parse(o)
+            AnalyzeByJSonPath(o)
         } else {
             if (analyzeByJSonPath == null || objectChangedJP) {
-                analyzeByJSonPath = AnalyzeByJSonPath().parse(content!!)
+                analyzeByJSonPath = AnalyzeByJSonPath(content!!)
                 objectChangedJP = false
             }
             analyzeByJSonPath!!
@@ -621,6 +628,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private fun evalJS(jsStr: String, result: Any?): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["doc"] = doc
         bindings["book"] = book
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
