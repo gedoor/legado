@@ -21,7 +21,6 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getSize
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
@@ -40,9 +39,8 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().getSize()
         dialog?.window?.setLayout(
-            (dm.widthPixels * 0.9).toInt(),
+            ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }

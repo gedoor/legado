@@ -14,7 +14,6 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssSource
-import io.legado.app.utils.getSize
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
@@ -33,9 +32,8 @@ class ImportRssSourcesDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().getSize()
         dialog?.window?.setLayout(
-            (dm.widthPixels * 0.9).toInt(),
+            ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
