@@ -14,7 +14,9 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
@@ -22,6 +24,7 @@ import io.legado.app.lib.dialogs.okButton
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
+import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.visible
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
@@ -75,6 +78,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
     private fun initMenu() {
         tool_bar.setOnMenuItemClickListener(this)
         tool_bar.inflateMenu(R.menu.import_source)
+        tool_bar.menu.findItem(R.id.menu_Keep_original_name)?.isChecked = AppConfig.importKeepName
     }
 
     @SuppressLint("InflateParams")
@@ -113,6 +117,10 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 }
                 adapter.notifyDataSetChanged()
             }
+            R.id.menu_Keep_original_name -> {
+                item.isChecked = !item.isChecked
+                putPrefBoolean(PreferKey.importKeepName, item.isChecked)
+            }
         }
         return false
     }
@@ -130,12 +138,11 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
             holder.itemView.apply {
                 cb_source_name.isChecked = viewModel.selectStatus[holder.layoutPosition]
                 cb_source_name.text = item.bookSourceName
-                tv_source_state.text = if (viewModel.sourceCheckState[holder.layoutPosition]) {
+                tv_source_state.text = if (viewModel.checkSources[holder.layoutPosition] != null) {
                     "已存在"
                 } else {
                     "新书源"
                 }
-
             }
         }
 

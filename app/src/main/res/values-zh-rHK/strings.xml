@@ -780,5 +780,6 @@
     <string name="scan_folder">智能扫描</string>
     <string name="copy_url">拷贝URL</string>
     <string name="no_book">没有书籍</string>
+    <string name="keep_original_name">保留原名</string>
 
 </resources>

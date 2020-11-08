@@ -53,6 +53,7 @@ object PreferKey {
     const val showBrightnessView = "showBrightnessView"
     const val autoClearExpired = "autoClearExpired"
     const val autoChangeSource = "autoChangeSource"
+    const val importKeepName = "importKeepName"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

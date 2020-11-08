@@ -22,7 +22,8 @@
 
     <item
         android:id="@+id/menu_Keep_original_name"
-        android:title="保留原名"
+        android:title="@string/keep_original_name"
+        android:checkable="true"
         app:showAsAction="never" />
 
 </menu>

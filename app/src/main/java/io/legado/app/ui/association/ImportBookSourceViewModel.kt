@@ -9,6 +9,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.AppConfig
 import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.OldRule
@@ -22,18 +23,25 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     val successLiveData = MutableLiveData<Int>()
 
     val allSources = arrayListOf<BookSource>()
-    val sourceCheckState = arrayListOf<Boolean>()
+    val checkSources = arrayListOf<BookSource?>()
     val selectStatus = arrayListOf<Boolean>()
 
 
     fun importSelect(finally: () -> Unit) {
         execute {
+            val keepName = AppConfig.importKeepName
             val selectSource = arrayListOf<BookSource>()
             selectStatus.forEachIndexed { index, b ->
                 if (b) {
                     val source = allSources[index]
                     if (groupName != null) {
                         source.bookSourceGroup = groupName
+                    }
+                    if (keepName) {
+                        checkSources[index]?.let {
+                            source.bookSourceName = it.bookSourceName
+                            source.bookSourceGroup = it.bookSourceGroup
+                        }
                     }
                     selectSource.add(source)
                 }
@@ -127,9 +135,9 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = App.db.bookSourceDao().getBookSource(it.bookSourceUrl) != null
-                sourceCheckState.add(has)
-                selectStatus.add(!has)
+                val has = App.db.bookSourceDao().getBookSource(it.bookSourceUrl)
+                checkSources.add(has)
+                selectStatus.add(has == null)
             }
             successLiveData.postValue(allSources.size)
         }
