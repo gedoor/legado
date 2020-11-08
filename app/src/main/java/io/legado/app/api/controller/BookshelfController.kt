@@ -78,7 +78,7 @@ object BookshelfController {
         val book = GSON.fromJsonObject<Book>(postData)
         val returnData = ReturnData()
         if (book != null) {
-            App.db.bookDao().insert(book)
+            App.db.bookDao().update(book)
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book
                 ReadBook.durChapterIndex = book.durChapterIndex

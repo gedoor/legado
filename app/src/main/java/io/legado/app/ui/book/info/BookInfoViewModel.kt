@@ -161,7 +161,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             )
             book.durChapterTitle = chapters[book.durChapterIndex].title
             if (inBookshelf) {
-                App.db.bookDao().insert(book)
+                App.db.bookDao().update(book)
                 App.db.bookChapterDao().insert(*chapters.toTypedArray())
             }
             bookData.postValue(book)
@@ -179,7 +179,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     book.durChapterPos = it.durChapterPos
                     book.durChapterTitle = it.durChapterTitle
                 }
-                App.db.bookDao().insert(book)
+                if (App.db.bookDao().getBook(book.bookUrl) != null) {
+                    App.db.bookDao().update(book)
+                } else {
+                    App.db.bookDao().insert(book)
+                }
                 if (ReadBook.book?.name == book.name && ReadBook.book?.author == book.author) {
                     ReadBook.book = book
                 }
