@@ -9,6 +9,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.*
@@ -23,6 +24,20 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     val sourceCheckState = arrayListOf<Boolean>()
     val selectStatus = arrayListOf<Boolean>()
 
+
+    fun importSelect(finally: () -> Unit) {
+        execute {
+            val selectSource = arrayListOf<RssSource>()
+            selectStatus.forEachIndexed { index, b ->
+                if (b) {
+                    selectSource.add(allSources[index])
+                }
+            }
+            SourceHelp.insertRssSource(*selectSource.toTypedArray())
+        }.onFinally {
+            finally.invoke()
+        }
+    }
 
     fun importSourceFromFilePath(path: String) {
         execute {

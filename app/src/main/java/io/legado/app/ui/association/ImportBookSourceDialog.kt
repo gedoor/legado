@@ -15,7 +15,6 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.SourceHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
@@ -30,14 +29,14 @@ import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_source_import.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-
+/**
+ * 导入书源弹出窗口
+ */
 class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     val viewModel: ImportBookSourceViewModel
-        get() =
-            getViewModelOfActivity(ImportBookSourceViewModel::class.java)
+        get() = getViewModelOfActivity(ImportBookSourceViewModel::class.java)
     lateinit var adapter: SourcesAdapter
-    private var _groupName: String? = null
 
     override fun onStart() {
         super.onStart()
@@ -60,21 +59,18 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         tool_bar.setTitle(R.string.import_book_source)
         initMenu()
         adapter = SourcesAdapter(requireContext())
-        val allSources = viewModel.allSources
-        adapter.sourceCheckState = viewModel.sourceCheckState
-        adapter.selectStatus = viewModel.selectStatus
-
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         recycler_view.adapter = adapter
-        adapter.setItems(allSources)
+        adapter.setItems(viewModel.allSources)
         tv_cancel.visible()
         tv_cancel.onClick {
             dismiss()
         }
         tv_ok.visible()
         tv_ok.onClick {
-            importSelect()
-            dismiss()
+            viewModel.importSelect {
+                dismiss()
+            }
         }
     }
 
@@ -96,25 +92,25 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                     }
                     okButton {
                         editText?.text?.toString()?.let { group ->
-                            _groupName = group
-                            item.title = getString(R.string.diy_edit_source_group_title, _groupName)
+                            viewModel.groupName = group
+                            item.title = getString(R.string.diy_edit_source_group_title, group)
                         }
                     }
                     noButton { }
                 }.show().applyTint()
             }
             R.id.menu_select_all -> {
-                adapter.selectStatus.forEachIndexed { index, b ->
+                viewModel.selectStatus.forEachIndexed { index, b ->
                     if (!b) {
-                        adapter.selectStatus[index] = true
+                        viewModel.selectStatus[index] = true
                     }
                 }
                 adapter.notifyDataSetChanged()
             }
             R.id.menu_un_select_all -> {
-                adapter.selectStatus.forEachIndexed { index, b ->
+                viewModel.selectStatus.forEachIndexed { index, b ->
                     if (b) {
-                        adapter.selectStatus[index] = false
+                        viewModel.selectStatus[index] = false
                     }
                 }
                 adapter.notifyDataSetChanged()
@@ -128,31 +124,15 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         activity?.finish()
     }
 
-    private fun importSelect() {
-        val selectSource = arrayListOf<BookSource>()
-        adapter.selectStatus.forEachIndexed { index, b ->
-            if (_groupName != null) {
-                adapter.getItem(index)!!.bookSourceGroup = _groupName
-            }
-            if (b) {
-                selectSource.add(adapter.getItem(index)!!)
-            }
-        }
-        SourceHelp.insertBookSource(*selectSource.toTypedArray())
-    }
 
-
-    class SourcesAdapter(context: Context) :
+    inner class SourcesAdapter(context: Context) :
         SimpleRecyclerAdapter<BookSource>(context, R.layout.item_source_import) {
-
-        lateinit var sourceCheckState: ArrayList<Boolean>
-        lateinit var selectStatus: ArrayList<Boolean>
 
         override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
             holder.itemView.apply {
-                cb_source_name.isChecked = selectStatus[holder.layoutPosition]
+                cb_source_name.isChecked = viewModel.selectStatus[holder.layoutPosition]
                 cb_source_name.text = item.bookSourceName
-                tv_source_state.text = if (sourceCheckState[holder.layoutPosition]) {
+                tv_source_state.text = if (viewModel.sourceCheckState[holder.layoutPosition]) {
                     "已存在"
                 } else {
                     "新书源"
@@ -165,7 +145,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
             holder.itemView.apply {
                 cb_source_name.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
-                        selectStatus[holder.layoutPosition] = isChecked
+                        viewModel.selectStatus[holder.layoutPosition] = isChecked
                     }
                 }
             }

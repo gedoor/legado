@@ -9,6 +9,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore
@@ -16,13 +17,32 @@ import io.legado.app.utils.*
 import java.io.File
 
 class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
-
+    var groupName: String? = null
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
 
     val allSources = arrayListOf<BookSource>()
     val sourceCheckState = arrayListOf<Boolean>()
     val selectStatus = arrayListOf<Boolean>()
+
+
+    fun importSelect(finally: () -> Unit) {
+        execute {
+            val selectSource = arrayListOf<BookSource>()
+            selectStatus.forEachIndexed { index, b ->
+                if (groupName != null) {
+                    allSources[index].bookSourceGroup = groupName
+                }
+                if (b) {
+                    selectSource.add(allSources[index])
+                }
+            }
+            SourceHelp.insertBookSource(*selectSource.toTypedArray())
+        }.onFinally {
+            finally.invoke()
+        }
+    }
+
 
     fun importSourceFromFilePath(path: String) {
         execute {
