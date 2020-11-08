@@ -23,8 +23,6 @@ import kotlin.collections.HashMap
 @Suppress("unused", "RegExpRedundantEscape")
 class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     var chapter: BookChapter? = null
-    var doc: Any? = null
-        private set
     private var content: Any? = null
     private var baseUrl: String? = null
     private var baseURL: URL? = null
@@ -44,11 +42,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         this.content = content
         setBaseUrl(baseUrl)
         isJSON = content.toString().isJson()
-        doc = if (isJSON) {
-            AnalyzeByJSonPath.parse(content)
-        } else {
-            AnalyzeByJSoup.parse(content)
-        }
         objectChangedXP = true
         objectChangedJS = true
         objectChangedJP = true
@@ -628,7 +621,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private fun evalJS(jsStr: String, result: Any?): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
-        bindings["doc"] = doc
         bindings["book"] = book
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
