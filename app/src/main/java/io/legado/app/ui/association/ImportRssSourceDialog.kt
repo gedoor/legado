@@ -1,5 +1,6 @@
 package io.legado.app.ui.association
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -14,8 +15,15 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssSource
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.customView
+import io.legado.app.lib.dialogs.noButton
+import io.legado.app.lib.dialogs.okButton
+import io.legado.app.ui.widget.text.AutoCompleteTextView
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.visible
+import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_source_import.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -70,8 +78,26 @@ class ImportRssSourcesDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         tool_bar.inflateMenu(R.menu.import_source)
     }
 
+    @SuppressLint("InflateParams")
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_new_group -> {
+                alert(R.string.diy_edit_source_group) {
+                    var editText: AutoCompleteTextView? = null
+                    customView {
+                        layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
+                            editText = edit_view
+                        }
+                    }
+                    okButton {
+                        editText?.text?.toString()?.let { group ->
+                            viewModel.groupName = group
+                            item.title = getString(R.string.diy_edit_source_group_title, group)
+                        }
+                    }
+                    noButton { }
+                }.show().applyTint()
+            }
             R.id.menu_select_all -> {
                 viewModel.selectStatus.forEachIndexed { index, b ->
                     if (!b) {

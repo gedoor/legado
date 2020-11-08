@@ -30,11 +30,12 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
         execute {
             val selectSource = arrayListOf<BookSource>()
             selectStatus.forEachIndexed { index, b ->
-                if (groupName != null) {
-                    allSources[index].bookSourceGroup = groupName
-                }
                 if (b) {
-                    selectSource.add(allSources[index])
+                    val source = allSources[index]
+                    if (groupName != null) {
+                        source.bookSourceGroup = groupName
+                    }
+                    selectSource.add(source)
                 }
             }
             SourceHelp.insertBookSource(*selectSource.toTypedArray())

@@ -16,7 +16,7 @@ import io.legado.app.utils.*
 import java.io.File
 
 class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
-
+    var groupName: String? = null
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
 
@@ -30,7 +30,11 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
             val selectSource = arrayListOf<RssSource>()
             selectStatus.forEachIndexed { index, b ->
                 if (b) {
-                    selectSource.add(allSources[index])
+                    val source = allSources[index]
+                    if (groupName != null) {
+                        source.sourceGroup = groupName
+                    }
+                    selectSource.add(source)
                 }
             }
             SourceHelp.insertRssSource(*selectSource.toTypedArray())
