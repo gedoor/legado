@@ -4,7 +4,7 @@
 * 旧版数据导入教程：先在旧版阅读(2.x)中进行备份，然后在新版阅读(3.x)【我的】->【备份与恢复】，选择【导入旧版本数据】。
 
 **2020/11/08**
-* js参数添加doc,json数据时doc为com.jayway.jsonpath.ReadContext,网页数据doc为org.jsoup.nodes.Element
+*
 
 **2020/11/07**
 * 详情页菜单添加拷贝URL
