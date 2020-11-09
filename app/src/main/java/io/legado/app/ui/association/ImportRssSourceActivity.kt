@@ -79,7 +79,7 @@ class ImportRssSourceActivity : VMBaseActivity<ImportRssSourceViewModel>(
     }
 
     private fun successDialog() {
-        ImportRssSourcesDialog().show(supportFragmentManager, "SourceDialog")
+        ImportRssSourceDialog().show(supportFragmentManager, "SourceDialog")
     }
 
 }

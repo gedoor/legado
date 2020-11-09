@@ -34,7 +34,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 /**
  * 导入rss源弹出窗口
  */
-class ImportRssSourcesDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     val viewModel: ImportRssSourceViewModel
         get() = getViewModelOfActivity(ImportRssSourceViewModel::class.java)
