@@ -1,7 +1,10 @@
 package io.legado.app.ui.book.read
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -22,6 +25,7 @@ import io.legado.app.service.help.CacheBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
@@ -29,19 +33,57 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_download_choice.view.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
+import kotlinx.android.synthetic.main.view_read_menu.*
+import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.startActivityForResult
 
 abstract class ReadBookBaseActivity :
     VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read) {
 
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
-
+    private val requestCodeEditSource = 111
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ReadBook.msg = null
         setOrientation()
         upLayoutInDisplayCutoutMode()
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initView()
+    }
+
+    /**
+     * 初始化View
+     */
+    private fun initView() {
+        tv_chapter_name.onClick {
+            ReadBook.webBook?.let {
+                startActivityForResult<BookSourceEditActivity>(
+                    requestCodeEditSource,
+                    Pair("data", it.bookSource.bookSourceUrl)
+                )
+            }
+        }
+        tv_chapter_url.onClick {
+            runCatching {
+                val url = tv_chapter_url.text.toString()
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(url)
+                startActivity(intent)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                requestCodeEditSource -> viewModel.upBookSource()
+            }
+        }
     }
 
     fun showPaddingConfig() {
@@ -64,7 +106,6 @@ abstract class ReadBookBaseActivity :
             "3" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
         }
     }
-
 
     /**
      * 更新状态栏,导航栏
@@ -139,7 +180,7 @@ abstract class ReadBookBaseActivity :
     /**
      * 适配刘海
      */
-    fun upLayoutInDisplayCutoutMode() {
+    private fun upLayoutInDisplayCutoutMode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && AppConfig.readBodyToLh) {
             window.attributes = window.attributes.apply {
                 layoutInDisplayCutoutMode =

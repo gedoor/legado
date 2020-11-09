@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,9 +22,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.dialogs.alert
@@ -47,7 +44,6 @@ import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.searchContent.SearchContentActivity
-import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replace.ReplaceRuleActivity
@@ -62,7 +58,6 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
@@ -80,7 +75,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
     TocRegexDialog.CallBack,
     ColorPickerDialogListener {
     private val requestCodeChapterList = 568
-    private val requestCodeEditSource = 111
     private val requestCodeReplace = 312
     private val requestCodeSearchResult = 123
     private var menu: Menu? = null
@@ -102,7 +96,11 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        initView()
+        super.onActivityCreated(savedInstanceState)
+        cursor_left.setColorFilter(accentColor)
+        cursor_right.setColorFilter(accentColor)
+        cursor_left.setOnTouchListener(this)
+        cursor_right.setOnTouchListener(this)
         upScreenTimeOut()
         ReadBook.callBack = this
         ReadBook.titleDate.observe(this) {
@@ -157,32 +155,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
             else -> {
                 ATH.setNavigationBarColorAuto(this, Color.BLACK)
-            }
-        }
-    }
-
-    /**
-     * 初始化View
-     */
-    private fun initView() {
-        cursor_left.setColorFilter(accentColor)
-        cursor_right.setColorFilter(accentColor)
-        cursor_left.setOnTouchListener(this)
-        cursor_right.setOnTouchListener(this)
-        tv_chapter_name.onClick {
-            ReadBook.webBook?.let {
-                startActivityForResult<BookSourceEditActivity>(
-                    requestCodeEditSource,
-                    Pair("data", it.bookSource.bookSourceUrl)
-                )
-            }
-        }
-        tv_chapter_url.onClick {
-            runCatching {
-                val url = tv_chapter_url.text.toString()
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(url)
-                startActivity(intent)
             }
         }
     }
@@ -248,7 +220,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             R.id.menu_enable_replace -> ReadBook.book?.let {
                 it.setUseReplaceRule(!it.getUseReplaceRule())
                 menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.getUseReplaceRule()
-                onReplaceRuleSave()
+                viewModel.replaceRuleChanged()
             }
             R.id.menu_re_segment -> ReadBook.book?.let {
                 it.setReSegment(!it.getReSegment())
@@ -690,16 +662,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     /**
-     * 替换规则变化
-     */
-    private fun onReplaceRuleSave() {
-        Coroutine.async {
-            BookHelp.upReplaceRules()
-            ReadBook.loadContent(resetPageOffset = false)
-        }
-    }
-
-    /**
      * 显示阅读样式配置
      */
     override fun showReadStyle() {
@@ -765,7 +727,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                requestCodeEditSource -> viewModel.upBookSource()
                 requestCodeChapterList ->
                     data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
                         if (index != ReadBook.durChapterIndex) {
@@ -821,9 +782,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
                             }
                         }
                     }
-                requestCodeReplace -> onReplaceRuleSave()
+                requestCodeReplace -> viewModel.replaceRuleChanged()
             }
-
         }
     }
 
@@ -915,7 +875,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             read_menu.upBrightnessState()
         }
         observeEvent<String>(EventBus.REPLACE_RULE_SAVE) {
-            onReplaceRuleSave()
+            viewModel.replaceRuleChanged()
         }
     }
 
