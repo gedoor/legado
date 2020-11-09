@@ -102,7 +102,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        upLayoutInDisplayCutoutMode()
         initView()
         upScreenTimeOut()
         ReadBook.callBack = this
