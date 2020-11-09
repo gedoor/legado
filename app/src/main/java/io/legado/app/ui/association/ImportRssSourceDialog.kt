@@ -57,7 +57,7 @@ class ImportRssSourcesDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.title = getString(R.string.import_rss_source)
+        tool_bar.setTitle(R.string.import_rss_source)
         initMenu()
         adapter = SourcesAdapter(requireContext())
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
