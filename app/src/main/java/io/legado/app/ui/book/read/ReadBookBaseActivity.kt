@@ -1,14 +1,14 @@
 package io.legado.app.ui.book.read
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Build
+import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.AppConfig
@@ -20,27 +20,60 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.help.CacheBook
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.config.BgTextConfigDialog
+import io.legado.app.ui.book.read.config.PaddingConfigDialog
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_download_choice.view.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import org.jetbrains.anko.layoutInflater
+
+abstract class ReadBookBaseActivity :
+    VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read) {
+
+    override val viewModel: ReadBookViewModel
+        get() = getViewModel(ReadBookViewModel::class.java)
 
 
-object ReadBookActivityHelp {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        ReadBook.msg = null
+        setOrientation()
+        super.onCreate(savedInstanceState)
+    }
+
+    fun showPaddingConfig() {
+        PaddingConfigDialog().show(supportFragmentManager, "paddingConfig")
+    }
+
+    fun showBgTextConfig() {
+        BgTextConfigDialog().show(supportFragmentManager, "bgTextConfig")
+    }
+
+    /**
+     * 屏幕方向
+     */
+    @SuppressLint("SourceLockedOrientationActivity")
+    fun setOrientation() {
+        when (AppConfig.requestedDirection) {
+            "0" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            "1" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            "2" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            "3" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+        }
+    }
+
 
     /**
      * 更新状态栏,导航栏
      */
     fun upSystemUiVisibility(
-        activity: Activity,
         isInMultiWindow: Boolean,
         toolBarHide: Boolean = true
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activity.window.insetsController?.let {
+            window.insetsController?.let {
                 if (toolBarHide) {
                     if (ReadBookConfig.hideStatusBar) {
                         it.hide(WindowInsets.Type.statusBars())
@@ -54,20 +87,19 @@ object ReadBookActivityHelp {
                 }
             }
         }
-        upSystemUiVisibilityO(activity, isInMultiWindow, toolBarHide)
+        upSystemUiVisibilityO(isInMultiWindow, toolBarHide)
         if (toolBarHide) {
-            ATH.setLightStatusBar(activity, ReadBookConfig.durConfig.curStatusIconDark())
+            ATH.setLightStatusBar(this, ReadBookConfig.durConfig.curStatusIconDark())
         } else {
             ATH.setLightStatusBarAuto(
-                activity,
-                ThemeStore.statusBarColor(activity, AppConfig.isTransparentStatusBar)
+                this,
+                ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
             )
         }
     }
 
     @Suppress("DEPRECATION")
     private fun upSystemUiVisibilityO(
-        activity: Activity,
         isInMultiWindow: Boolean,
         toolBarHide: Boolean = true
     ) {
@@ -88,20 +120,7 @@ object ReadBookActivityHelp {
                 flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             }
         }
-        activity.window.decorView.systemUiVisibility = flag
-    }
-
-    /**
-     * 屏幕方向
-     */
-    @SuppressLint("SourceLockedOrientationActivity")
-    fun setOrientation(activity: Activity) = activity.apply {
-        when (AppConfig.requestedDirection) {
-            "0" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-            "1" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            "2" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            "3" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
-        }
+        window.decorView.systemUiVisibility = flag
     }
 
 
@@ -119,7 +138,7 @@ object ReadBookActivityHelp {
     /**
      * 适配刘海
      */
-    fun upLayoutInDisplayCutoutMode(window: Window) {
+    fun upLayoutInDisplayCutoutMode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && AppConfig.readBodyToLh) {
             window.attributes = window.attributes.apply {
                 layoutInDisplayCutoutMode =
@@ -129,12 +148,13 @@ object ReadBookActivityHelp {
     }
 
     @SuppressLint("InflateParams")
-    fun showDownloadDialog(context: Context) {
+    fun showDownloadDialog() {
         ReadBook.book?.let { book ->
-            context.alert(titleResource = R.string.offline_cache) {
+            alert(titleResource = R.string.offline_cache) {
                 var view: View? = null
                 customView {
-                    LayoutInflater.from(context).inflate(R.layout.dialog_download_choice, null)
+                    LayoutInflater.from(this@ReadBookBaseActivity)
+                        .inflate(R.layout.dialog_download_choice, null)
                         .apply {
                             view = this
                             setBackgroundColor(context.backgroundColor)
@@ -155,10 +175,10 @@ object ReadBookActivityHelp {
     }
 
     @SuppressLint("InflateParams")
-    fun showBookMark(context: Context) = with(context) {
+    fun showBookMark() {
         val book = ReadBook.book ?: return
         val textChapter = ReadBook.curTextChapter ?: return
-        context.alert(title = getString(R.string.bookmark_add)) {
+        alert(title = getString(R.string.bookmark_add)) {
             var editText: EditText? = null
             message = book.name + " • " + textChapter.title
             customView {
@@ -188,7 +208,7 @@ object ReadBookActivityHelp {
     }
 
     @SuppressLint("InflateParams")
-    fun showCharsetConfig(context: Context) = with(context) {
+    fun showCharsetConfig() {
         val charsets =
             arrayListOf("UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "UTF-16LE", "ASCII")
         alert(R.string.set_charset) {
@@ -210,7 +230,7 @@ object ReadBookActivityHelp {
         }.show().applyTint()
     }
 
-    fun showPageAnimConfig(context: Context, success: () -> Unit) = with(context) {
+    fun showPageAnimConfig(success: () -> Unit) {
         val items = arrayListOf<String>()
         items.add(getString(R.string.btn_default_s))
         items.add(getString(R.string.page_anim_cover))
@@ -224,13 +244,13 @@ object ReadBookActivityHelp {
         }
     }
 
-    fun isPrevKey(context: Context, keyCode: Int): Boolean {
-        val prevKeysStr = context.getPrefString(PreferKey.prevKeys)
+    fun isPrevKey(keyCode: Int): Boolean {
+        val prevKeysStr = getPrefString(PreferKey.prevKeys)
         return prevKeysStr?.split(",")?.contains(keyCode.toString()) ?: false
     }
 
-    fun isNextKey(context: Context, keyCode: Int): Boolean {
-        val nextKeysStr = context.getPrefString(PreferKey.nextKeys)
+    fun isNextKey(keyCode: Int): Boolean {
+        val nextKeysStr = getPrefString(PreferKey.nextKeys)
         return nextKeysStr?.split(",")?.contains(keyCode.toString()) ?: false
     }
 }

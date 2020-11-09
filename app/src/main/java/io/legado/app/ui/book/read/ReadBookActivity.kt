@@ -18,7 +18,6 @@ import androidx.core.view.size
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
@@ -68,7 +67,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
-class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read),
+class ReadBookActivity : ReadBookBaseActivity(),
     View.OnTouchListener,
     PageView.CallBack,
     TextActionMenu.CallBack,
@@ -87,15 +86,12 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     private var menu: Menu? = null
     private var textActionMenu: TextActionMenu? = null
 
-    override val viewModel: ReadBookViewModel
-        get() = getViewModel(ReadBookViewModel::class.java)
-
     override val scope: CoroutineScope get() = this
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = page_view.isScroll
     private val mHandler = Handler(Looper.getMainLooper())
     private val keepScreenRunnable: Runnable =
-        Runnable { ReadBookActivityHelp.keepScreenOn(window, false) }
+        Runnable { keepScreenOn(window, false) }
     private val autoPageRunnable: Runnable = Runnable { autoPagePlus() }
     override var autoPageProgress = 0
     override var isAutoPage = false
@@ -105,14 +101,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
     override val pageFactory: TextPageFactory get() = page_view.pageFactory
     override val headerHeight: Int get() = page_view.curPage.headerHeight
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        ReadBook.msg = null
-        ReadBookActivityHelp.setOrientation(this)
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        ReadBookActivityHelp.upLayoutInDisplayCutoutMode(window)
+        upLayoutInDisplayCutoutMode()
         initView()
         upScreenTimeOut()
         ReadBook.callBack = this
@@ -198,14 +188,6 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
         }
     }
 
-    fun showPaddingConfig() {
-        PaddingConfigDialog().show(supportFragmentManager, "paddingConfig")
-    }
-
-    fun showBgTextConfig() {
-        BgTextConfigDialog().show(supportFragmentManager, "bgTextConfig")
-    }
-
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.read_book, menu)
         return super.onCompatCreateOptionsMenu(menu)
@@ -257,8 +239,8 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     viewModel.refreshContent(it)
                 }
             }
-            R.id.menu_download -> ReadBookActivityHelp.showDownloadDialog(this)
-            R.id.menu_add_bookmark -> ReadBookActivityHelp.showBookMark(this)
+            R.id.menu_download -> showDownloadDialog()
+            R.id.menu_add_bookmark -> showBookMark()
             R.id.menu_copy_text ->
                 TextDialog.show(supportFragmentManager, ReadBook.curTextChapter?.getContent())
             R.id.menu_update_toc -> ReadBook.book?.let {
@@ -274,7 +256,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                 menu?.findItem(R.id.menu_re_segment)?.isChecked = it.getReSegment()
                 ReadBook.loadContent(false)
             }
-            R.id.menu_page_anim -> ReadBookActivityHelp.showPageAnimConfig(this) {
+            R.id.menu_page_anim -> showPageAnimConfig {
                 page_view.upPageAnim()
             }
             R.id.menu_book_info -> ReadBook.book?.let {
@@ -293,7 +275,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
                     Pair("loginUrl", it.loginUrl)
                 )
             }
-            R.id.menu_set_charset -> ReadBookActivityHelp.showCharsetConfig(this)
+            R.id.menu_set_charset -> showCharsetConfig()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -324,13 +306,13 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when {
-            ReadBookActivityHelp.isPrevKey(this, keyCode) -> {
+            isPrevKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
                     page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.PREV)
                     return true
                 }
             }
-            ReadBookActivityHelp.isNextKey(this, keyCode) -> {
+            isNextKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
                     page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
                     return true
@@ -736,7 +718,7 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      * 更新状态栏,导航栏
      */
     override fun upSystemUiVisibility() {
-        ReadBookActivityHelp.upSystemUiVisibility(this, isInMultiWindow, !read_menu.isVisible)
+        upSystemUiVisibility(isInMultiWindow, !read_menu.isVisible)
         upNavigationBarColor()
     }
 
@@ -950,16 +932,16 @@ class ReadBookActivity : VMBaseActivity<ReadBookViewModel>(R.layout.activity_boo
      */
     override fun screenOffTimerStart() {
         if (screenTimeOut < 0) {
-            ReadBookActivityHelp.keepScreenOn(window, true)
+            keepScreenOn(window, true)
             return
         }
         val t = screenTimeOut - sysScreenOffTime
         if (t > 0) {
             mHandler.removeCallbacks(keepScreenRunnable)
-            ReadBookActivityHelp.keepScreenOn(window, true)
+            keepScreenOn(window, true)
             mHandler.postDelayed(keepScreenRunnable, screenTimeOut)
         } else {
-            ReadBookActivityHelp.keepScreenOn(window, false)
+            keepScreenOn(window, false)
         }
     }
 }
