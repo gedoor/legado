@@ -130,7 +130,6 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         activity?.finish()
     }
 
-
     inner class SourcesAdapter(context: Context) :
         SimpleRecyclerAdapter<BookSource>(context, R.layout.item_source_import) {
 

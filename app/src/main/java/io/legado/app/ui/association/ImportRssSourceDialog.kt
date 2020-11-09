@@ -37,8 +37,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 class ImportRssSourcesDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     val viewModel: ImportRssSourceViewModel
-        get() =
-            getViewModelOfActivity(ImportRssSourceViewModel::class.java)
+        get() = getViewModelOfActivity(ImportRssSourceViewModel::class.java)
     lateinit var adapter: SourcesAdapter
 
     override fun onStart() {
@@ -156,6 +155,5 @@ class ImportRssSourcesDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
             }
         }
     }
-
 
 }
