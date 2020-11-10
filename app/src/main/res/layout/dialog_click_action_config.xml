@@ -47,7 +47,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/view_top_left"
+            android:id="@+id/tv_top_left"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"
@@ -58,7 +58,7 @@
             tools:text="上一页" />
 
         <TextView
-            android:id="@+id/view_top_center"
+            android:id="@+id/tv_top_center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"
@@ -69,7 +69,7 @@
             tools:text="上一页" />
 
         <TextView
-            android:id="@+id/view_top_right"
+            android:id="@+id/tv_top_right"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"
@@ -88,7 +88,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/view_center_left"
+            android:id="@+id/tv_middle_left"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"
@@ -99,7 +99,7 @@
             tools:text="上一页" />
 
         <TextView
-            android:id="@+id/view_center"
+            android:id="@+id/tv_middle_center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"
@@ -110,7 +110,7 @@
             android:textColor="@color/white" />
 
         <TextView
-            android:id="@+id/view_center_right"
+            android:id="@+id/tv_middle_right"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"
@@ -129,7 +129,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/view_bottom_left"
+            android:id="@+id/tv_bottom_left"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"
@@ -141,7 +141,7 @@
             tools:text="上一页" />
 
         <TextView
-            android:id="@+id/view_bottom_center"
+            android:id="@+id/tv_bottom_center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"
@@ -152,7 +152,7 @@
             tools:text="下一页" />
 
         <TextView
-            android:id="@+id/view_bottom_right"
+            android:id="@+id/tv_bottom_right"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="3dp"

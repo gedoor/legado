@@ -785,5 +785,7 @@
     <string name="keep_original_name">保留原名</string>
     <string name="click_regional_config">点击区域设置</string>
     <string name="colse">关闭</string>
+    <string name="next_page">下一页</string>
+    <string name="prev_page">上一页</string>
 
 </resources>
