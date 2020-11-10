@@ -69,10 +69,10 @@
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
-    <io.legado.app.ui.widget.prefs.SwitchPreference
+    <io.legado.app.ui.widget.prefs.Preference
         android:defaultValue="false"
-        android:title="@string/click_all_next_page"
-        android:key="clickAllNext"
+        android:title="@string/click_regional_config"
+        android:key="clickRegionalConfig"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 

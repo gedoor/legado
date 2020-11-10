@@ -24,6 +24,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.help.CacheBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
+import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.widget.text.AutoCompleteTextView
@@ -92,6 +93,10 @@ abstract class ReadBookBaseActivity :
 
     fun showBgTextConfig() {
         BgTextConfigDialog().show(supportFragmentManager, "bgTextConfig")
+    }
+
+    fun showClickRegionalConfig() {
+        ClickActionConfigDialog().show(supportFragmentManager, "clickActionConfig")
     }
 
     /**

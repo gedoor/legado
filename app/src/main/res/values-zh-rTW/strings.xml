@@ -197,7 +197,6 @@
     <string name="book">書</string>
     <string name="volume_key_page">音量鍵翻頁</string>
     <string name="click_turn_page">點擊翻頁</string>
-    <string name="click_all_next_page">點擊總是翻下一頁</string>
     <string name="page_anim">翻頁動畫</string>
     <string name="keep_light">螢幕超時</string>
     <string name="back">返回</string>
@@ -781,5 +780,6 @@
     <string name="copy_url">拷贝URL</string>
     <string name="no_book">没有书籍</string>
     <string name="keep_original_name">保留原名</string>
+    <string name="click_regional_config">点击区域设置</string>
 
 </resources>

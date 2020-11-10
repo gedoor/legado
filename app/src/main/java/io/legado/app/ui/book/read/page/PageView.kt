@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.service.help.ReadBook
@@ -247,8 +248,8 @@ class PageView(context: Context, attrs: AttributeSet) :
             if (!isAbortAnim) {
                 callBack.clickCenter()
             }
-        } else if (ReadBookConfig.clickTurnPage) {
-            if (startX > width / 2 || ReadBookConfig.clickAllNext) {
+        } else if (AppConfig.clickTurnPage) {
+            if (startX > width / 2) {
                 pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
             } else {
                 pageDelegate?.prevPageByAnim(defaultAnimationSpeed)

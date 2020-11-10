@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="NestedWeights">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_top_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            tools:text="上一页" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_top_center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            tools:text="上一页" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_top_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            tools:text="下一页" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_center_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            tools:text="上一页" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            android:text="@string/menu" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_center_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            tools:text="下一页" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_bottom_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:ignore="NestedWeights"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            tools:text="上一页" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_bottom_center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            tools:text="下一页" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/view_bottom_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            tools:text="下一页" />
+
+    </LinearLayout>
+
+</LinearLayout>

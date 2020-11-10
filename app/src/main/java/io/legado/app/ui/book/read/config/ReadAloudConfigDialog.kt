@@ -117,7 +117,6 @@ class ReadAloudConfigDialog : DialogFragment() {
             when (preference) {
                 is ListPreference -> {
                     val index = preference.findIndexOfValue(value)
-                    // Set the summary to reflect the new value.
                     preference.summary = if (index >= 0) preference.entries[index] else null
                 }
                 else -> {
