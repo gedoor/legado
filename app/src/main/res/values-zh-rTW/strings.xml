@@ -781,5 +781,6 @@
     <string name="no_book">没有书籍</string>
     <string name="keep_original_name">保留原名</string>
     <string name="click_regional_config">点击区域设置</string>
+    <string name="colse">关闭</string>
 
 </resources>
