@@ -72,41 +72,49 @@ class ClickActionConfigDialog : BaseDialogFragment() {
         tv_top_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopLeft, action)
+                initData()
             }
         }
         tv_top_center.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopCenter, action)
+                initData()
             }
         }
         tv_top_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopRight, action)
+                initData()
             }
         }
         tv_middle_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionMiddleLeft, action)
+                initData()
             }
         }
         tv_middle_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionMiddleRight, action)
+                initData()
             }
         }
         tv_bottom_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomLeft, action)
+                initData()
             }
         }
         tv_bottom_center.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomCenter, action)
+                initData()
             }
         }
         tv_bottom_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomRight, action)
+                initData()
             }
         }
     }
