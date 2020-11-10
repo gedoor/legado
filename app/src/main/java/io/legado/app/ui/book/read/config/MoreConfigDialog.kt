@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.config
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
@@ -24,6 +25,7 @@ class MoreConfigDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
+        (activity as ReadBookActivity).bottomDialog++
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
@@ -55,6 +57,11 @@ class MoreConfigDialog : DialogFragment() {
         childFragmentManager.beginTransaction()
             .replace(view.id, preferenceFragment, readPreferTag)
             .commit()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        (activity as ReadBookActivity).bottomDialog--
     }
 
     class ReadPreferenceFragment : BasePreferenceFragment(),

@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
+import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -21,6 +24,7 @@ import io.legado.app.lib.dialogs.*
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.service.help.CacheBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
@@ -32,6 +36,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
+import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_download_choice.view.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import kotlinx.android.synthetic.main.view_read_menu.*
@@ -44,6 +49,7 @@ abstract class ReadBookBaseActivity :
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
     private val requestCodeEditSource = 111
+    var bottomDialog = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ReadBook.msg = null
@@ -170,6 +176,19 @@ abstract class ReadBookBaseActivity :
         window.decorView.systemUiVisibility = flag
     }
 
+    override fun upNavigationBarColor() {
+        when {
+            read_menu == null -> return
+            read_menu.isVisible -> ATH.setNavigationBarColorAuto(this)
+            bottomDialog > 0 -> ATH.setNavigationBarColorAuto(this, bottomBackground)
+            ReadBookConfig.bg is ColorDrawable -> {
+                ATH.setNavigationBarColorAuto(this, ReadBookConfig.bgMeanColor)
+            }
+            else -> {
+                ATH.setNavigationBarColorAuto(this, Color.BLACK)
+            }
+        }
+    }
 
     /**
      * 保持亮屏

@@ -35,6 +35,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
 
     override fun onStart() {
         super.onStart()
+        (activity as ReadBookActivity).bottomDialog++
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
@@ -64,6 +65,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         ReadBookConfig.save()
+        (activity as ReadBookActivity).bottomDialog--
     }
 
     private fun initView() {
