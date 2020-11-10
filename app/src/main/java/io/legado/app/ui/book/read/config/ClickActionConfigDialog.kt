@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.utils.getCompatColor
+import kotlinx.android.synthetic.main.dialog_click_action_config.*
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ClickActionConfigDialog : BaseDialogFragment() {
 
@@ -26,7 +29,10 @@ class ClickActionConfigDialog : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-
+        view.setBackgroundColor(getCompatColor(R.color.translucent))
+        iv_close.onClick {
+            dismiss()
+        }
     }
 
 

@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/translucent"
+    android:padding="3dp"
     android:orientation="vertical"
     tools:ignore="NestedWeights">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="@drawable/shape_translucent_card"
         android:gravity="center_vertical"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
+        android:orientation="horizontal"
+        android:layout_margin="3dp"
         android:paddingLeft="16dp"
+        android:paddingTop="6dp"
         android:paddingRight="16dp"
+        android:paddingBottom="6dp"
         tools:ignore="UseCompoundDrawables">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/click_regional_config" />
+            android:text="@string/click_regional_config"
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/iv_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/colse"
             android:src="@drawable/ic_baseline_close"
-            android:contentDescription="@string/colse" />
+            app:tint="@color/white" />
 
     </LinearLayout>
 
@@ -39,31 +46,37 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_top_left"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
+            android:textColor="@color/white"
             tools:text="上一页" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_top_center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
+            android:textColor="@color/white"
             tools:text="上一页" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_top_right"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
+            android:textColor="@color/white"
             tools:text="下一页" />
 
     </LinearLayout>
@@ -74,31 +87,37 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_center_left"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
+            android:textColor="@color/white"
             tools:text="上一页" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
-            android:text="@string/menu" />
+            android:text="@string/menu"
+            android:textColor="@color/white" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_center_right"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
+            android:textColor="@color/white"
             tools:text="下一页" />
 
     </LinearLayout>
@@ -109,32 +128,38 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_bottom_left"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            tools:ignore="NestedWeights"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
+            android:textColor="@color/white"
+            tools:ignore="NestedWeights"
             tools:text="上一页" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_bottom_center"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
+            android:textColor="@color/white"
             tools:text="下一页" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <TextView
             android:id="@+id/view_bottom_right"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
             android:gravity="center"
+            android:textColor="@color/white"
             tools:text="下一页" />
 
     </LinearLayout>
