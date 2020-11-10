@@ -113,7 +113,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
             getItem(holder.layoutPosition)?.let {
                 if (it.isDir) {
                     callBack.nextDoc(it.uri)
-                } else if (!bookFileNames.contains(it.uri.toString())) {
+                } else if (!bookFileNames.contains(it.name)) {
                     if (!selectedUris.contains(it.uri.toString())) {
                         selectedUris.add(it.uri.toString())
                     } else {
