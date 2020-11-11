@@ -297,6 +297,8 @@ class PageView(context: Context, attrs: AttributeSet) :
             0 -> callBack.showActionMenu()
             1 -> pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
             2 -> pageDelegate?.prevPageByAnim(defaultAnimationSpeed)
+            3 -> ReadBook.moveToNextChapter(true)
+            4 -> ReadBook.moveToPrevChapter(upContent = true, toLast = false)
         }
     }
 

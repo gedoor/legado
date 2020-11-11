@@ -49,6 +49,8 @@ class ClickActionConfigDialog : BaseDialogFragment() {
         actions[0] = getString(R.string.menu)
         actions[1] = getString(R.string.next_page)
         actions[2] = getString(R.string.prev_page)
+        actions[3] = getString(R.string.next_chapter)
+        actions[4] = getString(R.string.previous_chapter)
         initData()
         initViewEvent()
     }
