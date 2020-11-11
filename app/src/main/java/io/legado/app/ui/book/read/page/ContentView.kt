@@ -237,8 +237,8 @@ class ContentView(context: Context) : FrameLayout(context) {
         tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
     }
 
-    fun onScroll(offset: Float) {
-        content_text_view.onScroll(offset)
+    fun scroll(offset: Int) {
+        content_text_view.scroll(offset)
     }
 
     fun upSelectAble(selectAble: Boolean) {

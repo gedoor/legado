@@ -607,14 +607,18 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     private fun autoPagePlus() {
         mHandler.removeCallbacks(autoPageRunnable)
-        autoPageProgress++
-        if (autoPageProgress >= ReadBookConfig.autoReadSpeed * 10) {
-            autoPageProgress = 0
-            page_view.fillPage(PageDelegate.Direction.NEXT)
+        if (page_view.isScroll) {
+            page_view.curPage.scroll(-page_view.height / ReadBookConfig.autoReadSpeed / 50)
         } else {
-            page_view.invalidate()
+            autoPageProgress++
+            if (autoPageProgress >= ReadBookConfig.autoReadSpeed * 50) {
+                autoPageProgress = 0
+                page_view.fillPage(PageDelegate.Direction.NEXT)
+            } else {
+                page_view.invalidate()
+            }
         }
-        mHandler.postDelayed(autoPageRunnable, 100)
+        mHandler.postDelayed(autoPageRunnable, 20)
     }
 
     /**

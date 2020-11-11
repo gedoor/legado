@@ -121,10 +121,10 @@ class PageView(context: Context, attrs: AttributeSet) :
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         pageDelegate?.onDraw(canvas)
-        if (callBack.isAutoPage) {
+        if (callBack.isAutoPage && !isScroll) {
             nextPage.screenshot()?.let {
                 val bottom =
-                    page_view.height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 10)
+                    page_view.height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 50)
                 autoPageRect.set(0, 0, page_view.width, bottom)
                 canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
                 canvas.drawRect(

@@ -44,7 +44,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
-    private var pageOffset = 0f
+    private var pageOffset = 0
 
     init {
         callBack = activity as CallBack
@@ -173,24 +173,24 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     /**
      * 滚动事件
      */
-    fun onScroll(mOffset: Float) {
-        if (mOffset == 0f) return
+    fun scroll(mOffset: Int) {
+        if (mOffset == 0) return
         pageOffset += mOffset
         if (!pageFactory.hasPrev() && pageOffset > 0) {
-            pageOffset = 0f
+            pageOffset = 0
         } else if (!pageFactory.hasNext()
             && pageOffset < 0
             && pageOffset + textPage.height < ChapterProvider.visibleHeight
         ) {
-            val offset = ChapterProvider.visibleHeight - textPage.height
-            pageOffset = min(0f, offset)
+            val offset = (ChapterProvider.visibleHeight - textPage.height).toInt()
+            pageOffset = min(0, offset)
         } else if (pageOffset > 0) {
             pageFactory.moveToPrev(false)
             textPage = pageFactory.currentPage
-            pageOffset -= textPage.height
+            pageOffset -= textPage.height.toInt()
             upView?.invoke(textPage)
         } else if (pageOffset < -textPage.height) {
-            pageOffset += textPage.height
+            pageOffset += textPage.height.toInt()
             pageFactory.moveToNext(false)
             textPage = pageFactory.currentPage
             upView?.invoke(textPage)
@@ -199,7 +199,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun resetPageOffset() {
-        pageOffset = 0f
+        pageOffset = 0
     }
 
     /**
@@ -480,7 +480,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     private fun relativeOffset(relativePos: Int): Float {
         return when (relativePos) {
-            0 -> pageOffset
+            0 -> pageOffset.toFloat()
             1 -> pageOffset + textPage.height
             else -> pageOffset + textPage.height + pageFactory.nextPage.height
         }
