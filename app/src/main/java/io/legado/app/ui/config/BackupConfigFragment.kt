@@ -4,6 +4,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -57,11 +60,28 @@ class BackupConfigFragment : BasePreferenceFragment(),
         super.onViewCreated(view, savedInstanceState)
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         ATH.applyEdgeEffectColor(listView)
+        setHasOptionsMenu(true)
         if (LocalConfig.isFirstOpenBackup) {
-            val text = String(requireContext().assets.open("help/webDavHelp.md").readBytes())
-            TextDialog.show(childFragmentManager, text, TextDialog.MD)
+            showHelp()
             LocalConfig.isFirstOpen = false
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.backup_restore, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_help -> showHelp()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showHelp() {
+        val text = String(requireContext().assets.open("help/webDavHelp.md").readBytes())
+        TextDialog.show(childFragmentManager, text, TextDialog.MD)
     }
 
     override fun onDestroy() {
