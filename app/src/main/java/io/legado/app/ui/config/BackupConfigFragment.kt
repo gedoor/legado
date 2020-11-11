@@ -69,6 +69,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.backup_restore, menu)
+        menu.applyTint(requireContext())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
