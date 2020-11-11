@@ -557,7 +557,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         viewModel.changeTo(book)
     }
 
-    override fun clickCenter() {
+    override fun showActionMenu() {
         when {
             BaseReadAloudService.isRun -> {
                 showReadAloudDialog()

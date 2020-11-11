@@ -72,7 +72,18 @@ class PageView(context: Context, attrs: AttributeSet) :
     private var firstCharIndex: Int = 0
 
     val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
+    private val topLeftRectF = RectF(0F, 0F, width * 0.33f, height * 0.33f)
+    private val topCenterRectF = RectF(width * 0.33f, 0F, width * 0.66f, height * 0.33f)
+    private val topRightRectF = RectF(width * 0.36f, 0F, width.toFloat(), height * 0.33f)
+    private val middleLeftRectF = RectF(0F, height * 0.33f, width * 0.33f, height * 0.66f)
     private val centerRectF = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+    private val middleRightRectF =
+        RectF(width * 0.66f, height * 0.33f, width.toFloat(), height * 0.66f)
+    private val bottomLeftRectF = RectF(0F, height * 0.66f, width * 0.33f, height.toFloat())
+    private val bottomCenterRectF =
+        RectF(width * 0.33f, height * 0.66f, width * 0.66f, height.toFloat())
+    private val bottomRightRectF =
+        RectF(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
     private val autoPageRect by lazy { Rect() }
     private val autoPagePint by lazy {
         Paint().apply {
@@ -91,7 +102,15 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        topLeftRectF.set(0F, 0F, width * 0.33f, height * 0.33f)
+        topCenterRectF.set(width * 0.33f, 0F, width * 0.66f, height * 0.33f)
+        topRightRectF.set(width * 0.36f, 0F, width.toFloat(), height * 0.33f)
+        middleLeftRectF.set(0F, height * 0.33f, width * 0.33f, height * 0.66f)
         centerRectF.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+        middleRightRectF.set(width * 0.66f, height * 0.33f, width.toFloat(), height * 0.66f)
+        bottomLeftRectF.set(0F, height * 0.66f, width * 0.33f, height.toFloat())
+        bottomCenterRectF.set(width * 0.33f, height * 0.66f, width * 0.66f, height.toFloat())
+        bottomRightRectF.set(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
         if (oldw != 0 && oldh != 0) {
@@ -240,22 +259,45 @@ class PageView(context: Context, attrs: AttributeSet) :
      * 单击
      */
     private fun onSingleTapUp(): Boolean {
-        if (isTextSelected) {
-            isTextSelected = false
-            return true
-        }
-        if (centerRectF.contains(startX, startY)) {
-            if (!isAbortAnim) {
-                callBack.clickCenter()
+        when {
+            isTextSelected -> isTextSelected = false
+            centerRectF.contains(startX, startY) -> if (!isAbortAnim) {
+                click(AppConfig.clickActionMiddleCenter)
             }
-        } else if (AppConfig.clickTurnPage) {
-            if (startX > width / 2) {
-                pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
-            } else {
-                pageDelegate?.prevPageByAnim(defaultAnimationSpeed)
+            bottomCenterRectF.contains(startX, startY) -> {
+                click(AppConfig.clickActionBottomCenter)
+            }
+            bottomLeftRectF.contains(startX, startY) -> {
+                click(AppConfig.clickActionBottomLeft)
+            }
+            bottomRightRectF.contains(startX, startY) -> {
+                click(AppConfig.clickActionBottomRight)
+            }
+            middleLeftRectF.contains(startX, startY) -> {
+                click(AppConfig.clickActionMiddleLeft)
+            }
+            middleRightRectF.contains(startX, startY) -> {
+                click(AppConfig.clickActionMiddleRight)
+            }
+            topLeftRectF.contains(startX, startY) -> {
+                click(AppConfig.clickActionTopLeft)
+            }
+            topCenterRectF.contains(startX, startY) -> {
+                click(AppConfig.clickActionTopCenter)
+            }
+            topRightRectF.contains(startX, startY) -> {
+                click(AppConfig.clickActionTopRight)
             }
         }
         return true
+    }
+
+    private fun click(action: Int) {
+        when (action) {
+            0 -> callBack.showActionMenu()
+            1 -> pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
+            2 -> pageDelegate?.prevPageByAnim(defaultAnimationSpeed)
+        }
     }
 
     /**
@@ -409,7 +451,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         val isInitFinish: Boolean
         val isAutoPage: Boolean
         val autoPageProgress: Int
-        fun clickCenter()
+        fun showActionMenu()
         fun screenOffTimerStart()
         fun showTextActionMenu()
     }
