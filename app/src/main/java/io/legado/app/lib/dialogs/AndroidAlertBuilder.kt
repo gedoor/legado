@@ -74,15 +74,28 @@ internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<Ale
         builder.setNegativeButton(buttonTextResource) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun neutralButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun neutralButton(
+        buttonText: String,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setNeutralButton(buttonText) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun neutralButton(buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun neutralButton(
+        buttonTextResource: Int,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setNeutralButton(buttonTextResource) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun items(items: List<CharSequence>, onItemSelected: (dialog: DialogInterface, index: Int) -> Unit) {
+    override fun onDismiss(handler: (dialog: DialogInterface) -> Unit) {
+        builder.setOnDismissListener(handler)
+    }
+
+    override fun items(
+        items: List<CharSequence>,
+        onItemSelected: (dialog: DialogInterface, index: Int) -> Unit
+    ) {
         builder.setItems(Array(items.size) { i -> items[i].toString() }) { dialog, which ->
             onItemSelected(dialog, which)
         }

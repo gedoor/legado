@@ -47,19 +47,34 @@ interface AlertBuilder<out D : DialogInterface> {
         @Deprecated(NO_GETTER, level = ERROR) get
 
     fun positiveButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
-    fun positiveButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
+    fun positiveButton(
+        @StringRes buttonTextResource: Int,
+        onClicked: ((dialog: DialogInterface) -> Unit)? = null
+    )
 
     fun negativeButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
-    fun negativeButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
+    fun negativeButton(
+        @StringRes buttonTextResource: Int,
+        onClicked: ((dialog: DialogInterface) -> Unit)? = null
+    )
 
     fun neutralButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
-    fun neutralButton(@StringRes buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
+    fun neutralButton(
+        @StringRes buttonTextResource: Int,
+        onClicked: ((dialog: DialogInterface) -> Unit)? = null
+    )
 
     fun onCancelled(handler: (dialog: DialogInterface) -> Unit)
 
     fun onKeyPressed(handler: (dialog: DialogInterface, keyCode: Int, e: KeyEvent) -> Boolean)
 
-    fun items(items: List<CharSequence>, onItemSelected: (dialog: DialogInterface, index: Int) -> Unit)
+    fun onDismiss(handler: (dialog: DialogInterface) -> Unit)
+
+    fun items(
+        items: List<CharSequence>,
+        onItemSelected: (dialog: DialogInterface, index: Int) -> Unit
+    )
+
     fun <T> items(
         items: List<T>,
         onItemSelected: (dialog: DialogInterface, item: T, index: Int) -> Unit

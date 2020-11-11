@@ -72,9 +72,10 @@ class ImportRssSourceActivity : VMBaseActivity<ImportRssSourceViewModel>(
     private fun errorDialog(msg: String) {
         alert(getString(R.string.error), msg) {
             okButton { }
-        }.show().setOnDismissListener {
-            finish()
-        }
+            onDismiss {
+                finish()
+            }
+        }.show()
     }
 
     private fun successDialog() {

@@ -75,9 +75,10 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
     private fun errorDialog(msg: String) {
         alert("导入出错", msg) {
             okButton { }
-        }.show().setOnDismissListener {
-            finish()
-        }
+            onDismiss {
+                finish()
+            }
+        }.show()
     }
 
     private fun successDialog(allSource: ArrayList<ReplaceRule>) {
@@ -88,8 +89,9 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
             noButton {
 
             }
-        }.show().setOnDismissListener {
-            finish()
-        }
+            onDismiss {
+                finish()
+            }
+        }.show()
     }
 }
