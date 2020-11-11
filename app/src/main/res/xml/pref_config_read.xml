@@ -69,13 +69,6 @@
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
-    <io.legado.app.ui.widget.prefs.Preference
-        android:defaultValue="false"
-        android:title="@string/click_regional_config"
-        android:key="clickRegionalConfig"
-        app:iconSpaceReserved="false"
-        app:isBottomBackground="true" />
-
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/volume_key_page_on_play"
@@ -101,6 +94,12 @@
         android:defaultValue="true"
         android:title="@string/show_brightness_view"
         android:key="showBrightnessView"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.prefs.Preference
+        android:title="@string/click_regional_config"
+        android:key="clickRegionalConfig"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
