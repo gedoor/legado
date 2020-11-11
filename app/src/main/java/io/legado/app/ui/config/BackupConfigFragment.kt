@@ -63,7 +63,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
         setHasOptionsMenu(true)
         if (LocalConfig.isFirstOpenBackup) {
             showHelp()
-            LocalConfig.isFirstOpen = false
+            LocalConfig.isFirstOpenBackup = false
         }
     }
 

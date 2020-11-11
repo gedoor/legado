@@ -9,7 +9,7 @@ object LocalConfig {
     private val localConfig =
         App.INSTANCE.getSharedPreferences("local", Context.MODE_PRIVATE)
 
-    var isFirstOpen: Boolean
+    var isFirstOpenApp: Boolean
         get() = localConfig.getBoolean("firstOpen", true)
         set(value) {
             localConfig.edit { putBoolean("firstOpen", value) }

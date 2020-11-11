@@ -103,10 +103,10 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private fun upVersion() {
         if (getPrefInt(PreferKey.versionCode) != App.versionCode) {
             putPrefInt(PreferKey.versionCode, App.versionCode)
-            if (LocalConfig.isFirstOpen) {
+            if (LocalConfig.isFirstOpenApp) {
                 val text = String(assets.open("help/appHelp.md").readBytes())
                 TextDialog.show(supportFragmentManager, text, TextDialog.MD)
-                LocalConfig.isFirstOpen = false
+                LocalConfig.isFirstOpenApp = false
             } else if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
                 TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
