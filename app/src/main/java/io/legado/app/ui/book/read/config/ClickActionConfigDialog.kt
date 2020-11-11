@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
@@ -72,49 +73,49 @@ class ClickActionConfigDialog : BaseDialogFragment() {
         tv_top_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopLeft, action)
-                initData()
+                (it as? TextView)?.text = getActionString(action)
             }
         }
         tv_top_center.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopCenter, action)
-                initData()
+                (it as? TextView)?.text = getActionString(action)
             }
         }
         tv_top_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopRight, action)
-                initData()
+                (it as? TextView)?.text = getActionString(action)
             }
         }
         tv_middle_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionMiddleLeft, action)
-                initData()
+                (it as? TextView)?.text = getActionString(action)
             }
         }
         tv_middle_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionMiddleRight, action)
-                initData()
+                (it as? TextView)?.text = getActionString(action)
             }
         }
         tv_bottom_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomLeft, action)
-                initData()
+                (it as? TextView)?.text = getActionString(action)
             }
         }
         tv_bottom_center.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomCenter, action)
-                initData()
+                (it as? TextView)?.text = getActionString(action)
             }
         }
         tv_bottom_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomRight, action)
-                initData()
+                (it as? TextView)?.text = getActionString(action)
             }
         }
     }
