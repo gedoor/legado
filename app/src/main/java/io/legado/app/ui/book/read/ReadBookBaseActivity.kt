@@ -18,6 +18,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.AppConfig
+import io.legado.app.help.LocalConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.*
@@ -60,6 +61,10 @@ abstract class ReadBookBaseActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
+        if (LocalConfig.isFirstRead) {
+            showClickRegionalConfig()
+            LocalConfig.isFirstRead = false
+        }
     }
 
     /**

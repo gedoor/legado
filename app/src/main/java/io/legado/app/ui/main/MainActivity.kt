@@ -17,6 +17,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
+import io.legado.app.help.LocalConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.elevation
@@ -102,7 +103,11 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     private fun upVersion() {
         if (getPrefInt(PreferKey.versionCode) != App.versionCode) {
             putPrefInt(PreferKey.versionCode, App.versionCode)
-            if (!BuildConfig.DEBUG) {
+            if (LocalConfig.isFirstOpen) {
+                val text = String(assets.open("help/help.md").readBytes())
+                TextDialog.show(supportFragmentManager, text, TextDialog.MD)
+                LocalConfig.isFirstOpen = false
+            } else if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
                 TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
             }
