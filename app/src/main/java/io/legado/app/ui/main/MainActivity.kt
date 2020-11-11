@@ -106,7 +106,6 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             if (LocalConfig.isFirstOpenApp) {
                 val text = String(assets.open("help/appHelp.md").readBytes())
                 TextDialog.show(supportFragmentManager, text, TextDialog.MD)
-                LocalConfig.isFirstOpenApp = false
             } else if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
                 TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)

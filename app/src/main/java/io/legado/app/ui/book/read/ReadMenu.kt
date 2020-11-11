@@ -13,6 +13,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
+import io.legado.app.help.LocalConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.service.help.ReadBook
@@ -29,7 +30,7 @@ class ReadMenu @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
     var cnaShowMenu: Boolean = false
-    private val callBack: CallBack? get() = activity as? CallBack
+    private val callBack: CallBack get() = activity as CallBack
     private lateinit var menuTopIn: Animation
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
@@ -166,19 +167,19 @@ class ReadMenu @JvmOverloads constructor(
         //搜索
         fabSearch.onClick {
             runMenuOut {
-                callBack?.openSearchActivity(null)
+                callBack.openSearchActivity(null)
             }
         }
 
         //自动翻页
         fabAutoPage.onClick {
             runMenuOut {
-                callBack?.autoPage()
+                callBack.autoPage()
             }
         }
 
         //替换
-        fabReplaceRule.onClick { callBack?.openReplaceRule() }
+        fabReplaceRule.onClick { callBack.openReplaceRule() }
 
         //夜间模式
         fabNightTheme.onClick {
@@ -195,31 +196,31 @@ class ReadMenu @JvmOverloads constructor(
         //目录
         ll_catalog.onClick {
             runMenuOut {
-                callBack?.openChapterList()
+                callBack.openChapterList()
             }
         }
 
         //朗读
         ll_read_aloud.onClick {
             runMenuOut {
-                callBack?.onClickReadAloud()
+                callBack.onClickReadAloud()
             }
         }
         ll_read_aloud.onLongClick {
-            runMenuOut { callBack?.showReadAloudDialog() }
+            runMenuOut { callBack.showReadAloudDialog() }
             true
         }
         //界面
         ll_font.onClick {
             runMenuOut {
-                callBack?.showReadStyle()
+                callBack.showReadStyle()
             }
         }
 
         //设置
         ll_setting.onClick {
             runMenuOut {
-                callBack?.showMoreSetting()
+                callBack.showMoreSetting()
             }
         }
     }
@@ -230,19 +231,19 @@ class ReadMenu @JvmOverloads constructor(
         menuBottomIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                callBack?.upSystemUiVisibility()
+                callBack.upSystemUiVisibility()
                 ll_brightness.visible(showBrightnessView)
             }
 
             override fun onAnimationEnd(animation: Animation) {
                 vw_menu_bg.onClick { runMenuOut() }
+                val hasNavigationBar = ReadBookConfig.hideNavigationBar
+                        && SystemUtils.isNavigationBarExist(activity)
                 vwNavigationBar.layoutParams = vwNavigationBar.layoutParams.apply {
-                    height =
-                        if (ReadBookConfig.hideNavigationBar
-                            && SystemUtils.isNavigationBarExist(activity)
-                        )
-                            context.navigationBarHeight
-                        else 0
+                    height = if (hasNavigationBar) context.navigationBarHeight else 0
+                }
+                if (LocalConfig.isFirstReadMenuShow) {
+                    callBack.showReadMenuHelp()
                 }
             }
 
@@ -264,7 +265,7 @@ class ReadMenu @JvmOverloads constructor(
                 bottom_menu.invisible()
                 cnaShowMenu = false
                 onMenuOutEnd?.invoke()
-                callBack?.upSystemUiVisibility()
+                callBack.upSystemUiVisibility()
             }
 
             override fun onAnimationRepeat(animation: Animation) = Unit
@@ -292,6 +293,7 @@ class ReadMenu @JvmOverloads constructor(
         fun showReadAloudDialog()
         fun upSystemUiVisibility()
         fun onClickReadAloud()
+        fun showReadMenuHelp()
     }
 
 }

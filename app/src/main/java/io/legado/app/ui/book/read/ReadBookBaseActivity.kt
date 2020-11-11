@@ -63,7 +63,6 @@ abstract class ReadBookBaseActivity :
         initView()
         if (LocalConfig.isFirstRead) {
             showClickRegionalConfig()
-            LocalConfig.isFirstRead = false
         }
     }
 

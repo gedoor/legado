@@ -229,6 +229,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 )
             }
             R.id.menu_set_charset -> showCharsetConfig()
+            R.id.menu_help -> showReadMenuHelp()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -569,6 +570,11 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 read_menu.runMenuIn()
             }
         }
+    }
+
+    override fun showReadMenuHelp() {
+        val text = String(assets.open("help/readMenuHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
     }
 
     /**

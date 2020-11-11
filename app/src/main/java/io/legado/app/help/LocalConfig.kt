@@ -9,22 +9,40 @@ object LocalConfig {
     private val localConfig =
         App.INSTANCE.getSharedPreferences("local", Context.MODE_PRIVATE)
 
-    var isFirstOpenApp: Boolean
-        get() = localConfig.getBoolean("firstOpen", true)
-        set(value) {
-            localConfig.edit { putBoolean("firstOpen", value) }
+    val isFirstOpenApp: Boolean
+        get() {
+            val value = localConfig.getBoolean("firstOpen", true)
+            if (value) {
+                localConfig.edit { putBoolean("firstOpen", false) }
+            }
+            return value
         }
 
-    var isFirstRead: Boolean
-        get() = localConfig.getBoolean("firstRead", true)
-        set(value) {
-            localConfig.edit { putBoolean("firstRead", value) }
+    val isFirstRead: Boolean
+        get() {
+            val value = localConfig.getBoolean("firstRead", true)
+            if (value) {
+                localConfig.edit { putBoolean("firstRead", false) }
+            }
+            return value
         }
 
-    var isFirstOpenBackup: Boolean
-        get() = localConfig.getBoolean("firstBackup", true)
-        set(value) {
-            localConfig.edit { putBoolean("firstBackup", value) }
+    val isFirstOpenBackup: Boolean
+        get() {
+            val value = localConfig.getBoolean("firstBackup", true)
+            if (value) {
+                localConfig.edit { putBoolean("firstBackup", false) }
+            }
+            return value
+        }
+
+    val isFirstReadMenuShow: Boolean
+        get() {
+            val value = localConfig.getBoolean("firstReadMenu", true)
+            if (value) {
+                localConfig.edit { putBoolean("firstReadMenu", false) }
+            }
+            return value
         }
 
 }
