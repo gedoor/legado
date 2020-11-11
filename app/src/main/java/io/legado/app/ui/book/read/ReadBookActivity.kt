@@ -588,6 +588,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 自动翻页
      */
     override fun autoPage() {
+        ReadAloud.stop(this)
         if (isAutoPage) {
             autoPageStop()
         } else {
@@ -679,6 +680,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 朗读按钮
      */
     override fun onClickReadAloud() {
+        autoPageStop()
         when {
             !BaseReadAloudService.isRun -> ReadBook.readAloud()
             BaseReadAloudService.pause -> ReadAloud.resume(this)
