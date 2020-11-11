@@ -19,6 +19,8 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ClickActionConfigDialog : BaseDialogFragment() {
 
+    private val actions = linkedMapOf<Int, String>()
+
     override fun onStart() {
         super.onStart()
         (activity as ReadBookActivity).bottomDialog++
@@ -43,27 +45,23 @@ class ClickActionConfigDialog : BaseDialogFragment() {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         view.setBackgroundColor(getCompatColor(R.color.translucent))
+        actions[-1] = getString(R.string.non_action)
+        actions[0] = getString(R.string.menu)
+        actions[1] = getString(R.string.next_page)
+        actions[2] = getString(R.string.prev_page)
         initData()
         initViewEvent()
     }
 
     private fun initData() = with(AppConfig) {
-        tv_top_left.text = getActionString(clickActionTopLeft)
-        tv_top_center.text = getActionString(clickActionTopCenter)
-        tv_top_right.text = getActionString(clickActionTopRight)
-        tv_middle_left.text = getActionString(clickActionMiddleLeft)
-        tv_middle_right.text = getActionString(clickActionMiddleRight)
-        tv_bottom_left.text = getActionString(clickActionBottomLeft)
-        tv_bottom_center.text = getActionString(clickActionBottomCenter)
-        tv_bottom_right.text = getActionString(clickActionBottomRight)
-    }
-
-    private fun getActionString(action: Int): String {
-        return when (action) {
-            0 -> getString(R.string.menu)
-            2 -> getString(R.string.prev_page)
-            else -> getString(R.string.next_page)
-        }
+        tv_top_left.text = actions[clickActionTopLeft]
+        tv_top_center.text = actions[clickActionTopCenter]
+        tv_top_right.text = actions[clickActionTopRight]
+        tv_middle_left.text = actions[clickActionMiddleLeft]
+        tv_middle_right.text = actions[clickActionMiddleRight]
+        tv_bottom_left.text = actions[clickActionBottomLeft]
+        tv_bottom_center.text = actions[clickActionBottomCenter]
+        tv_bottom_right.text = actions[clickActionBottomRight]
     }
 
     private fun initViewEvent() {
@@ -73,64 +71,59 @@ class ClickActionConfigDialog : BaseDialogFragment() {
         tv_top_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopLeft, action)
-                (it as? TextView)?.text = getActionString(action)
+                (it as? TextView)?.text = actions[action]
             }
         }
         tv_top_center.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopCenter, action)
-                (it as? TextView)?.text = getActionString(action)
+                (it as? TextView)?.text = actions[action]
             }
         }
         tv_top_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTopRight, action)
-                (it as? TextView)?.text = getActionString(action)
+                (it as? TextView)?.text = actions[action]
             }
         }
         tv_middle_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionMiddleLeft, action)
-                (it as? TextView)?.text = getActionString(action)
+                (it as? TextView)?.text = actions[action]
             }
         }
         tv_middle_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionMiddleRight, action)
-                (it as? TextView)?.text = getActionString(action)
+                (it as? TextView)?.text = actions[action]
             }
         }
         tv_bottom_left.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomLeft, action)
-                (it as? TextView)?.text = getActionString(action)
+                (it as? TextView)?.text = actions[action]
             }
         }
         tv_bottom_center.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomCenter, action)
-                (it as? TextView)?.text = getActionString(action)
+                (it as? TextView)?.text = actions[action]
             }
         }
         tv_bottom_right.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBottomRight, action)
-                (it as? TextView)?.text = getActionString(action)
+                (it as? TextView)?.text = actions[action]
             }
         }
     }
 
     private fun selectAction(success: (action: Int) -> Unit) {
-        val actions = arrayListOf(
-            getString(R.string.menu),
-            getString(R.string.next_page),
-            getString(R.string.prev_page)
-        )
         selector(
             getString(R.string.select_action),
-            actions
+            actions.values.toList()
         ) { _, index ->
-            success.invoke(index)
+            success.invoke(actions.keys.toList()[index])
         }
     }
 

@@ -5,7 +5,6 @@ object PreferKey {
     const val language = "language"
     const val themeMode = "themeMode"
     const val hideStatusBar = "hideStatusBar"
-    const val clickTurnPage = "clickTurnPage"
     const val clickActionTopLeft = "clickActionTopLeft"
     const val clickActionTopCenter = "clickActionTopCenter"
     const val clickActionTopRight = "clickActionTopRight"

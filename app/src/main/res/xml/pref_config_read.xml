@@ -63,13 +63,6 @@
         app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
-        android:defaultValue="true"
-        android:title="@string/click_turn_page"
-        android:key="clickTurnPage"
-        app:iconSpaceReserved="false"
-        app:isBottomBackground="true" />
-
-    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:title="@string/volume_key_page_on_play"
         android:key="volumeKeyPageOnPlay"
