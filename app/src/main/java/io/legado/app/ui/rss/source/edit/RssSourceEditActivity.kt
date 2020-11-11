@@ -57,7 +57,7 @@ class RssSourceEditActivity :
                 negativeButton(R.string.no) {
                     super.finish()
                 }
-            }.show().applyTint()
+            }.show()
         } else {
             super.finish()
         }

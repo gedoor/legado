@@ -150,14 +150,14 @@ class AudioPlayActivity :
     override fun finish() {
         AudioPlay.book?.let {
             if (!AudioPlay.inBookshelf) {
-                this.alert(title = getString(R.string.add_to_shelf)) {
+                alert(title = getString(R.string.add_to_shelf)) {
                     message = getString(R.string.check_add_bookshelf, it.name)
                     okButton {
                         AudioPlay.inBookshelf = true
                         setResult(Activity.RESULT_OK)
                     }
                     noButton { viewModel.removeFromBookshelf { super.finish() } }
-                }.show().applyTint()
+                }.show()
             } else {
                 super.finish()
             }

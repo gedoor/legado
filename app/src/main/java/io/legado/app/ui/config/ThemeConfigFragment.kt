@@ -196,7 +196,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
             }
             noButton { }
-        }.show().applyTint()
+        }.show()
     }
 
     private fun upTheme(isNightTheme: Boolean) {

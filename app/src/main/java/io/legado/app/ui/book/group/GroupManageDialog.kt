@@ -114,7 +114,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 }
             }
             noButton()
-        }.show().applyTint().requestInputMethod()
+        }.show().requestInputMethod()
     }
 
     @SuppressLint("InflateParams")
@@ -133,7 +133,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 viewModel.upGroup(bookGroup.copy(groupName = editText?.text?.toString() ?: ""))
             }
             noButton()
-        }.show().applyTint().requestInputMethod()
+        }.show().requestInputMethod()
     }
 
     private fun deleteGroup(bookGroup: BookGroup) {
@@ -142,7 +142,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 viewModel.delGroup(bookGroup)
             }
             noButton()
-        }.show().applyTint()
+        }.show()
     }
 
     private class GroupDiffCallBack(

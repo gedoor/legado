@@ -192,7 +192,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
                     }
                 }
             customView = rootView
-        }.show().applyTint()
+        }.show()
     }
 
     private fun changeBg(index: Int) {

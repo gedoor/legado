@@ -131,7 +131,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 )
                 TextDialog.show(childFragmentManager, helpStr, TextDialog.MD)
             }
-        }.show().applyTint()
+        }.show()
     }
 
     inner class Adapter(context: Context) :

@@ -10,7 +10,6 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.widget.text.StrokeTextView
-import io.legado.app.utils.applyTint
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class TextFontWeightConverter(context: Context, attrs: AttributeSet?) : StrokeTextView(context, attrs) {
@@ -46,7 +45,7 @@ class TextFontWeightConverter(context: Context, attrs: AttributeSet?) : StrokeTe
                 upUi(i)
                 onChanged?.invoke()
             }
-        }.show().applyTint()
+        }.show()
     }
 
     fun onChanged(unit: () -> Unit) {

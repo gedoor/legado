@@ -181,8 +181,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.getSelection()) }
             noButton { }
-        }
-            .show().applyTint()
+        }.show()
     }
 
     private fun upGroupMenu() {
@@ -243,7 +242,7 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
                 }
             }
             cancelButton()
-        }.show().applyTint()
+        }.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -24,7 +24,6 @@ import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_arrange_book.*
@@ -150,7 +149,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
                 alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
                     okButton { viewModel.deleteBook(*adapter.selectedBooks()) }
                     noButton { }
-                }.show().applyTint()
+                }.show()
             R.id.menu_update_enable ->
                 viewModel.upCanUpdate(adapter.selectedBooks(), true)
             R.id.menu_update_disable ->
@@ -210,7 +209,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             okButton {
                 viewModel.deleteBook(book)
             }
-        }.show().applyTint()
+        }.show()
     }
 
 }

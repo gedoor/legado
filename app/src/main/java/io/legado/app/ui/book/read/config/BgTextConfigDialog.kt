@@ -133,7 +133,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                     }
                 }
                 cancelButton()
-            }.show().applyTint()
+            }.show()
         }
         sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
@@ -286,7 +286,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 }
             }
             noButton { }
-        }.show().applyTint()
+        }.show()
     }
 
     private fun importNetConfig(url: String) {

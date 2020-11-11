@@ -139,7 +139,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 }
             }
             noButton()
-        }.show().applyTint().requestInputMethod()
+        }.show().requestInputMethod()
     }
 
     @SuppressLint("InflateParams")
@@ -158,7 +158,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 viewModel.upGroup(bookGroup.copy(groupName = editText?.text?.toString() ?: ""))
             }
             noButton()
-        }.show().applyTint().requestInputMethod()
+        }.show().requestInputMethod()
     }
 
     private inner class GroupAdapter(context: Context) :

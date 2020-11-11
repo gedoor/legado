@@ -171,7 +171,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 }
             }
             noButton()
-        }.show().applyTint()
+        }.show()
     }
 
     @SuppressLint("InflateParams")
@@ -187,9 +187,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 editText?.text?.toString()?.let {
                     viewModel.addBookByUrl(it)
                 }
-                }
-                noButton { }
-            }.show().applyTint()
+            }
+            noButton { }
+        }.show()
     }
 
     override fun onTabReselected(tab: TabLayout.Tab) {

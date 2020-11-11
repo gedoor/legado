@@ -22,7 +22,6 @@ import io.legado.app.lib.dialogs.customView
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
 import io.legado.app.ui.widget.text.AutoCompleteTextView
-import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.visible
@@ -99,7 +98,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                         }
                     }
                     noButton { }
-                }.show().applyTint()
+                }.show()
             }
             R.id.menu_select_all -> {
                 viewModel.selectStatus.forEachIndexed { index, b ->

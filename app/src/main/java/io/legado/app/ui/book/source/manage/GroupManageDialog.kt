@@ -99,7 +99,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 }
             }
             noButton()
-        }.show().applyTint().requestInputMethod()
+        }.show().requestInputMethod()
     }
 
     @SuppressLint("InflateParams")
@@ -118,7 +118,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
                 viewModel.upGroup(group, editText?.text?.toString())
             }
             noButton()
-        }.show().applyTint().requestInputMethod()
+        }.show().requestInputMethod()
     }
 
     private inner class GroupAdapter(context: Context) :

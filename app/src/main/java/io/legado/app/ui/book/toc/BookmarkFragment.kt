@@ -20,7 +20,6 @@ import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.requestInputMethod
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
@@ -109,7 +108,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
                 neutralButton(R.string.delete) {
                     App.db.bookmarkDao().delete(bookmark)
                 }
-            }.show().applyTint().requestInputMethod()
+            }.show().requestInputMethod()
         }
     }
 }

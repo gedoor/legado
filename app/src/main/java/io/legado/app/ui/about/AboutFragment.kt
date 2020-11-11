@@ -11,7 +11,6 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.applyTint
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendMail
 import io.legado.app.utils.sendToClip
@@ -85,7 +84,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
-        }.show().applyTint()
+        }.show()
     }
 
     private fun joinQQGroup(key: String): Boolean {

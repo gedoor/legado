@@ -149,15 +149,17 @@ class OtherConfigFragment : BasePreferenceFragment(),
     }
 
     private fun clearCache() {
-        requireContext().alert(titleResource = R.string.clear_cache,
-            messageResource = R.string.sure_del) {
+        requireContext().alert(
+            titleResource = R.string.clear_cache,
+            messageResource = R.string.sure_del
+        ) {
             okButton {
                 BookHelp.clearCache()
                 FileUtils.deleteFile(requireActivity().cacheDir.absolutePath)
                 toast(R.string.clear_cache_success)
             }
             noButton()
-        }.show().applyTint()
+        }.show()
     }
 
     private fun selectDefaultCover() {

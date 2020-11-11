@@ -33,7 +33,6 @@ import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.widget.text.AutoCompleteTextView
-import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
@@ -240,7 +239,7 @@ abstract class ReadBookBaseActivity :
                     }
                 }
                 noButton()
-            }.show().applyTint()
+            }.show()
         }
     }
 
@@ -274,7 +273,7 @@ abstract class ReadBookBaseActivity :
                 }
             }
             noButton()
-        }.show().applyTint().requestInputMethod()
+        }.show().requestInputMethod()
     }
 
     @SuppressLint("InflateParams")
@@ -297,7 +296,7 @@ abstract class ReadBookBaseActivity :
                 }
             }
             cancelButton()
-        }.show().applyTint()
+        }.show()
     }
 
     fun showPageAnimConfig(success: () -> Unit) {

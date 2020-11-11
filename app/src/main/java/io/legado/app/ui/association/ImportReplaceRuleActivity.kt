@@ -10,7 +10,6 @@ import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.noButton
 import io.legado.app.lib.dialogs.okButton
-import io.legado.app.utils.applyTint
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_translucence.*
 import org.jetbrains.anko.toast
@@ -76,7 +75,7 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
     private fun errorDialog(msg: String) {
         alert("导入出错", msg) {
             okButton { }
-        }.show().applyTint().setOnDismissListener {
+        }.show().setOnDismissListener {
             finish()
         }
     }
@@ -89,7 +88,7 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
             noButton {
 
             }
-        }.show().applyTint().setOnDismissListener {
+        }.show().setOnDismissListener {
             finish()
         }
     }

@@ -261,7 +261,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.getSelection()) }
             noButton { }
-        }.show().applyTint()
+        }.show()
     }
 
     private fun initSelectActionBar() {
@@ -306,7 +306,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 CheckSource.start(this@BookSourceActivity, adapter.getSelection())
             }
             noButton { }
-        }.show().applyTint()
+        }.show()
     }
 
     @SuppressLint("InflateParams")
@@ -327,7 +327,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
             }
             noButton { }
-        }.show().applyTint()
+        }.show()
     }
 
     @SuppressLint("InflateParams")
@@ -348,7 +348,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
             }
             noButton { }
-        }.show().applyTint()
+        }.show()
     }
 
     private fun upGroupMenu() {
@@ -389,7 +389,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
             }
             cancelButton()
-        }.show().applyTint()
+        }.show()
     }
 
     override fun observeLiveBus() {

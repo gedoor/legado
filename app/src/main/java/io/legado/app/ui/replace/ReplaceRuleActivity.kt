@@ -135,8 +135,7 @@ class ReplaceRuleActivity :
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.getSelection()) }
             noButton { }
-        }
-            .show().applyTint()
+        }.show()
     }
 
     private fun observeReplaceRuleData(key: String? = null) {
@@ -233,7 +232,7 @@ class ReplaceRuleActivity :
                 }
             }
             cancelButton()
-        }.show().applyTint()
+        }.show()
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
