@@ -11,11 +11,13 @@ import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.LocalConfig
 import io.legado.app.help.storage.Restore
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefString
 
@@ -55,6 +57,11 @@ class BackupConfigFragment : BasePreferenceFragment(),
         super.onViewCreated(view, savedInstanceState)
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         ATH.applyEdgeEffectColor(listView)
+        if (LocalConfig.isFirstOpenBackup) {
+            val text = String(requireContext().assets.open("help/webDavHelp.md").readBytes())
+            TextDialog.show(childFragmentManager, text, TextDialog.MD)
+            LocalConfig.isFirstOpen = false
+        }
     }
 
     override fun onDestroy() {

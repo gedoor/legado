@@ -20,4 +20,11 @@ object LocalConfig {
         set(value) {
             localConfig.edit { putBoolean("firstRead", value) }
         }
+
+    var isFirstOpenBackup: Boolean
+        get() = localConfig.getBoolean("firstBackup", true)
+        set(value) {
+            localConfig.edit { putBoolean("firstBackup", value) }
+        }
+
 }
