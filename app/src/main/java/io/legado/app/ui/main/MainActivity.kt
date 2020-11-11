@@ -104,7 +104,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
         if (getPrefInt(PreferKey.versionCode) != App.versionCode) {
             putPrefInt(PreferKey.versionCode, App.versionCode)
             if (LocalConfig.isFirstOpen) {
-                val text = String(assets.open("help/help.md").readBytes())
+                val text = String(assets.open("help/appHelp.md").readBytes())
                 TextDialog.show(supportFragmentManager, text, TextDialog.MD)
                 LocalConfig.isFirstOpen = false
             } else if (!BuildConfig.DEBUG) {

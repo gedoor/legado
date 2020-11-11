@@ -206,7 +206,7 @@ class RssSourceEditActivity :
     }
 
     private fun showRegexHelp() {
-        val mdText = String(assets.open("help/regex.md").readBytes())
+        val mdText = String(assets.open("help/regexHelp.md").readBytes())
         TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
     }
 

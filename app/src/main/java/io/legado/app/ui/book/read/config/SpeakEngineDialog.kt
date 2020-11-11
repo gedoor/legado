@@ -29,7 +29,6 @@ import kotlinx.android.synthetic.main.dialog_http_tts_edit.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_http_tts.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
-import java.io.File
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
@@ -128,7 +127,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             }
             neutralButton(R.string.help) {
                 val helpStr = String(
-                    requireContext().assets.open("help${File.separator}httpTts.md").readBytes()
+                    requireContext().assets.open("help/httpTTSHelp.md").readBytes()
                 )
                 TextDialog.show(childFragmentManager, helpStr, TextDialog.MD)
             }
