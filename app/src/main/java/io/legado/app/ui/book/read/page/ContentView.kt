@@ -12,6 +12,7 @@ import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.page.entities.PageData
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
@@ -217,11 +218,12 @@ class ContentView(context: Context) : FrameLayout(context) {
         tvBattery?.setBattery(battery)
     }
 
-    fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
-        setProgress(textPage)
-        if (resetPageOffset)
+    fun setContent(pageData: PageData, resetPageOffset: Boolean = true) {
+        setProgress(pageData.textPage)
+        if (resetPageOffset) {
             resetPageOffset()
-        content_text_view.setContent(textPage)
+        }
+        content_text_view.setContent(pageData)
     }
 
     fun resetPageOffset() {

@@ -376,16 +376,16 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
         if (isScroll && !callBack.isAutoPage) {
-            curPage.setContent(pageFactory.currentPage, resetPageOffset)
+            curPage.setContent(pageFactory.curData, resetPageOffset)
         } else {
             curPage.resetPageOffset()
             when (relativePosition) {
-                -1 -> prevPage.setContent(pageFactory.prevPage)
-                1 -> nextPage.setContent(pageFactory.nextPage)
+                -1 -> prevPage.setContent(pageFactory.prevData)
+                1 -> nextPage.setContent(pageFactory.nextData)
                 else -> {
-                    curPage.setContent(pageFactory.currentPage)
-                    nextPage.setContent(pageFactory.nextPage)
-                    prevPage.setContent(pageFactory.prevPage)
+                    curPage.setContent(pageFactory.curData)
+                    nextPage.setContent(pageFactory.nextData)
+                    prevPage.setContent(pageFactory.prevData)
                 }
             }
         }

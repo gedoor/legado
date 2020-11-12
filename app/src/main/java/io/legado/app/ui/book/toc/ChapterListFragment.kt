@@ -110,7 +110,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) { chapter ->
             viewModel.book?.bookUrl?.let { bookUrl ->
                 if (chapter.bookUrl == bookUrl) {
-                    adapter.cacheFileNames.add(BookHelp.formatChapterName(chapter))
+                    adapter.cacheFileNames.add(chapter.getFileName())
                     adapter.notifyItemChanged(chapter.index, true)
                 }
             }

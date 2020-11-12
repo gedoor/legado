@@ -6,6 +6,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ContentRule
+import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -38,7 +39,7 @@ object BookContent {
             val analyzeRule = AnalyzeRule(book)
             analyzeRule.setContent(body).setBaseUrl(baseUrl)
             analyzeRule.getByteArray(it)?.let { font ->
-
+                BookHelp.saveFont(book, bookChapter, font)
             }
         }
         var contentData = analyzeContent(
@@ -62,16 +63,14 @@ object BookContent {
                     ruleUrl = nextUrl,
                     book = book,
                     headerMapF = bookSource.getHeaderMap()
-                ).getResponseAwait(bookSource.bookSourceUrl)
-                    .body?.let { nextBody ->
-                        contentData =
-                            analyzeContent(
-                                book, nextUrl, nextBody, contentRule, bookChapter, bookSource, false
-                            )
-                        nextUrl =
-                            if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
-                        content.append(contentData.content).append("\n")
-                    }
+                ).getResponseAwait(bookSource.bookSourceUrl).body?.let { nextBody ->
+                    contentData = analyzeContent(
+                        book, nextUrl, nextBody, contentRule, bookChapter, bookSource, false
+                    )
+                    nextUrl =
+                        if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
+                    content.append(contentData.content).append("\n")
+                }
             }
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
         } else if (contentData.nextUrl.size > 1) {
@@ -86,20 +85,12 @@ object BookContent {
                         ruleUrl = item.nextUrl,
                         book = book,
                         headerMapF = bookSource.getHeaderMap()
-                    ).getResponseAwait(bookSource.bookSourceUrl)
-                        .body?.let {
-                            contentData =
-                                analyzeContent(
-                                    book,
-                                    item.nextUrl,
-                                    it,
-                                    contentRule,
-                                    bookChapter,
-                                    bookSource,
-                                    false
-                                )
-                            item.content = contentData.content
-                        }
+                    ).getResponseAwait(bookSource.bookSourceUrl).body?.let {
+                        contentData = analyzeContent(
+                            book, item.nextUrl, it, contentRule, bookChapter, bookSource, false
+                        )
+                        item.content = contentData.content
+                    }
                 }
             }
             for (item in contentDataList) {
@@ -119,6 +110,7 @@ object BookContent {
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")
         Debug.log(bookSource.bookSourceUrl, "└\n$contentStr")
+        BookHelp.saveContent(book, bookChapter, contentStr)
         return contentStr
     }
 

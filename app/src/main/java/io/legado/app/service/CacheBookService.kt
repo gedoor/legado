@@ -20,7 +20,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.isActive
 import org.jetbrains.anko.toast
@@ -197,8 +196,7 @@ class CacheBookService : BaseService() {
                             CacheBook.addLog("getContentError${it.localizedMessage}")
                             updateNotification("getContentError${it.localizedMessage}")
                         }
-                        .onSuccess(IO) { content ->
-                            BookHelp.saveContent(book, bookChapter, content)
+                        .onSuccess {
                             synchronized(this@CacheBookService) {
                                 downloadCount[book.bookUrl]?.increaseSuccess()
                                 downloadCount[book.bookUrl]?.increaseFinished()
@@ -221,7 +219,7 @@ class CacheBookService : BaseService() {
                                     downloadCount.remove(book.bookUrl)
                                 }
                             }
-                        }.onFinally(IO) {
+                        }.onFinally {
                             postDownloading(true)
                         }
                 } else {
