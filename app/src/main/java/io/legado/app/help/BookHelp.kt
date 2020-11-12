@@ -83,7 +83,7 @@ object BookHelp {
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
-    suspend fun saveFont(book: Book, bookChapter: BookChapter, font: ByteArray) {
+    fun saveFont(book: Book, bookChapter: BookChapter, font: ByteArray) {
         FileUtils.createFileIfNotExist(
             downloadDir,
             cacheFolderName,
@@ -93,7 +93,7 @@ object BookHelp {
         ).writeBytes(font)
     }
 
-    suspend fun getFont(book: Book, bookChapter: BookChapter): File? {
+    fun getFontPath(book: Book, bookChapter: BookChapter): String? {
         val fontFile = FileUtils.getFile(
             downloadDir,
             cacheFolderName,
@@ -102,7 +102,7 @@ object BookHelp {
             bookChapter.getFontName()
         )
         if (fontFile.exists()) {
-            return fontFile
+            return fontFile.absolutePath
         }
         return null
     }
