@@ -10,5 +10,6 @@ data class ContentRule(
     var webJs: String? = null,
     var sourceRegex: String? = null,
     var replaceRegex: String? = null,
-    var imageStyle: String? = null  //默认大小居中,FULL最大宽度
+    var imageStyle: String? = null,  //默认大小居中,FULL最大宽度
+    var font: String? = null
 ) : Parcelable
