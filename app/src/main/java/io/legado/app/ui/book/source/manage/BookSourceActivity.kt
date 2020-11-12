@@ -25,6 +25,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
+import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
@@ -35,6 +36,7 @@ import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -75,6 +77,9 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         initLiveDataBookSource()
         initLiveDataGroup()
         initSelectActionBar()
+        if (LocalConfig.isFirstOpenBookSources) {
+            showHelp()
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -154,6 +159,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_disabled_group -> {
                 search_view.setQuery(getString(R.string.disabled), true)
             }
+            R.id.menu_help -> showHelp()
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)
@@ -224,6 +230,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             adapter.setItems(sourceList, diffResult)
             upCountView()
         })
+    }
+
+    private fun showHelp() {
+        val text = String(assets.open("help/bookSourcesHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
     }
 
     private fun sortCheck(sortId: Int) {
