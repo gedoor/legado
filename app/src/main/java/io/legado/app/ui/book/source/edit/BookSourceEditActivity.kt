@@ -233,6 +233,7 @@ class BookSourceEditActivity :
             add(EditEntity("sourceRegex", cr?.sourceRegex, R.string.rule_source_regex))
             add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.rule_replace_regex))
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
+            add(EditEntity("font", cr?.font, R.string.rule_font))
         }
         //发现
         val er = source?.getExploreRule()
@@ -336,6 +337,7 @@ class BookSourceEditActivity :
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value
                 "imageStyle" -> contentRule.imageStyle = it.value
+                "font" -> contentRule.font = it.value
             }
         }
         source.ruleSearch = searchRule
@@ -348,7 +350,7 @@ class BookSourceEditActivity :
 
     private fun checkSource(source: BookSource): Boolean {
         if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
-            toast("书源名称和URL不能为空")
+            toast(R.string.non_null_name_url)
             return false
         }
         return true

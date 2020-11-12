@@ -422,6 +422,7 @@
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
     <string name="rule_replace_regex">替换规则(replaceRegex)</string>
     <string name="rule_image_style">图片样式(imageStyle)</string>
+    <string name="rule_font">字体(font)</string>
 
     <string name="source_icon">图标(sourceIcon)</string>
     <string name="r_articles">列表规则(ruleArticles)</string>
@@ -492,7 +493,7 @@
     <string name="no_book_name">No bookName</string>
     <string name="input_replace_url">Input replacement rule URL</string>
     <string name="get_book_list_success">Search list obtained successfully%d</string>
-    <string name="non_null_source_name_url">Source name and URL cannot be empty</string>
+    <string name="non_null_name_url">name and URL cannot be empty</string>
     <string name="gallery">Gallery</string>
     <string name="get_ali_pay_hb">get AliPay red envelopes</string>
     <string name="non_update_url">No update address</string>

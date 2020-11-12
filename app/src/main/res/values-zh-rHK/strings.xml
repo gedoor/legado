@@ -412,6 +412,7 @@
     <string name="rule_next_content">正文下一頁 URL 規則 (nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
     <string name="rule_source_regex">資源正則 (sourceRegex)</string>
+    <string name="rule_font">字體(font)</string>
 
     <string name="source_icon">圖標 (sourceIcon)</string>
     <string name="r_articles">列表規則 (ruleArticles)</string>
@@ -482,7 +483,7 @@
     <string name="no_book_name">未獲取到書名</string>
     <string name="input_replace_url">輸入替換規則網址</string>
     <string name="get_book_list_success">搜索列表獲取成功%d</string>
-    <string name="non_null_source_name_url">書源名稱和 URL 不能為空</string>
+    <string name="non_null_name_url">名稱和 URL 不能為空</string>
     <string name="gallery">圖庫</string>
     <string name="get_ali_pay_hb">領支付寶紅包</string>
     <string name="non_update_url">沒有獲取到更新地址</string>
