@@ -22,8 +22,6 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity

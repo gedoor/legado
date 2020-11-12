@@ -13,8 +13,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*

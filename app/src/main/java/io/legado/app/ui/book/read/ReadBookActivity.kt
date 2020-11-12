@@ -24,8 +24,6 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService

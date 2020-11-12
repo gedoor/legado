@@ -18,9 +18,6 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.cancelButton
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.widget.dialog.TextDialog

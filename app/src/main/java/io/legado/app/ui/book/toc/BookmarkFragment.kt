@@ -15,9 +15,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.yesButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getViewModelOfActivity

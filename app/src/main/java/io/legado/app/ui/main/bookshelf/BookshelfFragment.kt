@@ -16,9 +16,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.arrange.ArrangeBookActivity

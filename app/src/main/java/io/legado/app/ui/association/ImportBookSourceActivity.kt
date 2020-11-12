@@ -6,7 +6,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.utils.getViewModel
 import kotlinx.android.synthetic.main.activity_translucence.*
 import org.jetbrains.anko.toast

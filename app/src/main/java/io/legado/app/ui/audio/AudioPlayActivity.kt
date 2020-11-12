@@ -20,8 +20,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.book.changesource.ChangeSourceDialog

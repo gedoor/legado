@@ -9,8 +9,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.ReadRecordShow
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import kotlinx.android.synthetic.main.activity_read_record.*
 import kotlinx.android.synthetic.main.item_read_record.*
 import kotlinx.android.synthetic.main.item_read_record.view.*

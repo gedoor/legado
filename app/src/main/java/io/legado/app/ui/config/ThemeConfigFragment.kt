@@ -18,9 +18,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.noButton
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
