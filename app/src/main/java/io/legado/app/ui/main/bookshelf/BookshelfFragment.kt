@@ -142,7 +142,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     @SuppressLint("InflateParams")
     private fun configBookshelf() {
-        requireContext().alert(titleResource = R.string.bookshelf_layout) {
+        alert(titleResource = R.string.bookshelf_layout) {
             val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
             val bookshelfSort = getPrefInt(PreferKey.bookshelfSort)
             val root = LayoutInflater.from(requireContext())
