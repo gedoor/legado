@@ -33,6 +33,14 @@ object BookContent {
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
+        contentRule.font?.let {
+            //todo 获取字体
+            val analyzeRule = AnalyzeRule(book)
+            analyzeRule.setContent(body).setBaseUrl(baseUrl)
+            analyzeRule.getByteArray(it)?.let { font ->
+
+            }
+        }
         var contentData = analyzeContent(
             book, baseUrl, body, contentRule, bookChapter, bookSource
         )
@@ -56,14 +64,14 @@ object BookContent {
                     headerMapF = bookSource.getHeaderMap()
                 ).getResponseAwait(bookSource.bookSourceUrl)
                     .body?.let { nextBody ->
-                    contentData =
-                        analyzeContent(
-                            book, nextUrl, nextBody, contentRule, bookChapter, bookSource, false
-                        )
-                    nextUrl =
-                        if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
-                    content.append(contentData.content).append("\n")
-                }
+                        contentData =
+                            analyzeContent(
+                                book, nextUrl, nextBody, contentRule, bookChapter, bookSource, false
+                            )
+                        nextUrl =
+                            if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
+                        content.append(contentData.content).append("\n")
+                    }
             }
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
         } else if (contentData.nextUrl.size > 1) {
@@ -80,10 +88,16 @@ object BookContent {
                         headerMapF = bookSource.getHeaderMap()
                     ).getResponseAwait(bookSource.bookSourceUrl)
                         .body?.let {
-                        contentData =
-                            analyzeContent(
-                                book, item.nextUrl, it, contentRule, bookChapter, bookSource, false
-                            )
+                            contentData =
+                                analyzeContent(
+                                    book,
+                                    item.nextUrl,
+                                    it,
+                                    contentRule,
+                                    bookChapter,
+                                    bookSource,
+                                    false
+                                )
                             item.content = contentData.content
                         }
                 }

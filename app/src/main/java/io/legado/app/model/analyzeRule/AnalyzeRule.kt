@@ -295,6 +295,34 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         return ArrayList()
     }
 
+    fun getByteArray(ruleStr: String): ByteArray? {
+        if (ruleStr.isEmpty()) return null
+        val ruleList = splitSourceRule(ruleStr)
+        var result: Any? = null
+        content?.let { o ->
+            if (ruleList.isNotEmpty()) result = o
+            for (sourceRule in ruleList) {
+                putRule(sourceRule.putMap)
+                result?.let {
+                    result = when (sourceRule.mode) {
+                        Mode.Regex -> AnalyzeByRegex.getElements(
+                            result.toString(),
+                            sourceRule.rule.splitNotBlank("&&")
+                        )
+                        Mode.Js -> evalJS(sourceRule.rule, result)
+                        Mode.Json -> getAnalyzeByJSonPath(it).getList(sourceRule.rule)
+                        Mode.XPath -> getAnalyzeByXPath(it).getElements(sourceRule.rule)
+                        else -> getAnalyzeByJSoup(it).getElements(sourceRule.rule)
+                    }
+                    if (sourceRule.replaceRegex.isNotEmpty()) {
+                        result = replaceRegex(result.toString(), sourceRule)
+                    }
+                }
+            }
+        }
+        return result as? ByteArray
+    }
+
     /**
      * 保存变量
      */
