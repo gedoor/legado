@@ -84,9 +84,7 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
             okButton {
                 App.db.replaceRuleDao().insert(*allSource.toTypedArray())
             }
-            noButton {
-
-            }
+            noButton()
             onDismiss {
                 finish()
             }

@@ -94,7 +94,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                             item.title = getString(R.string.diy_edit_source_group_title, group)
                         }
                     }
-                    noButton { }
+                    noButton()
                 }.show()
             }
             R.id.menu_select_all -> {

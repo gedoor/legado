@@ -25,7 +25,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
@@ -260,7 +260,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     override fun onClickMainAction() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.getSelection()) }
-            noButton { }
+            noButton()
         }.show()
     }
 
@@ -305,7 +305,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
                 CheckSource.start(this@BookSourceActivity, adapter.getSelection())
             }
-            noButton { }
+            noButton()
         }.show()
     }
 
@@ -326,7 +326,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-            noButton { }
+            noButton()
         }.show()
     }
 
@@ -347,7 +347,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-            noButton { }
+            noButton()
         }.show()
     }
 

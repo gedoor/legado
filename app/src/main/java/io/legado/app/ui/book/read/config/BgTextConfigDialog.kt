@@ -17,7 +17,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
@@ -285,7 +285,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                     importNetConfig(url)
                 }
             }
-            noButton { }
+            noButton()
         }.show()
     }
 

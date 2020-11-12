@@ -146,7 +146,7 @@ class ArrangeBookActivity : VMBaseActivity<ArrangeBookViewModel>(R.layout.activi
             R.id.menu_del_selection ->
                 alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
                     okButton { viewModel.deleteBook(*adapter.selectedBooks()) }
-                    noButton { }
+                    noButton()
                 }.show()
             R.id.menu_update_enable ->
                 viewModel.upCanUpdate(adapter.selectedBooks(), true)

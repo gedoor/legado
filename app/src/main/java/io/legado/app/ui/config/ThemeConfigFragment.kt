@@ -192,7 +192,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     }
                 }
             }
-            noButton { }
+            noButton()
         }.show()
     }
 

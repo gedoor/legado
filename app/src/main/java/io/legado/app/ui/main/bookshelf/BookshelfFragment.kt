@@ -185,7 +185,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     viewModel.addBookByUrl(it)
                 }
             }
-            noButton { }
+            noButton()
         }.show()
     }
 
