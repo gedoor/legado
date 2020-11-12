@@ -121,10 +121,10 @@ interface JsExtensions {
             .execute()
     }
 
-     /**
-      *js实现读取cookie
-      */
-     fun getCookie(tag: String, key: String? = null): String {
+    /**
+     *js实现读取cookie
+     */
+    fun getCookie(tag: String, key: String? = null): String {
         val cookie = CookieStore.getCookie(tag)
         val cookieMap = CookieStore.cookieToMap(cookie)
         return if (key != null) {
@@ -132,7 +132,7 @@ interface JsExtensions {
         } else {
             cookie
         }
-     }
+    }
 
     /**
      * js实现解码,不能删
@@ -191,4 +191,13 @@ interface JsExtensions {
     fun htmlFormat(str: String): String {
         return str.htmlFormat()
     }
+
+    fun base64DecodeToByteArray(str: String): ByteArray {
+        return Base64.decode(str, Base64.DEFAULT)
+    }
+
+    fun base64DecodeToByteArray(str: String, flags: Int): ByteArray {
+        return Base64.decode(str, flags)
+    }
+
 }
