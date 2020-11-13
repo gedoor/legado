@@ -72,19 +72,18 @@ class PageView(context: Context, attrs: AttributeSet) :
     private var firstCharIndex: Int = 0
 
     val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
-    private val topLeftRectF = RectF(0F, 0F, width * 0.33f, height * 0.33f)
-    private val topCenterRectF = RectF(width * 0.33f, 0F, width * 0.66f, height * 0.33f)
-    private val topRightRectF = RectF(width * 0.36f, 0F, width.toFloat(), height * 0.33f)
-    private val middleLeftRectF = RectF(0F, height * 0.33f, width * 0.33f, height * 0.66f)
-    private val centerRectF = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-    private val middleRightRectF =
-        RectF(width * 0.66f, height * 0.33f, width.toFloat(), height * 0.66f)
-    private val bottomLeftRectF = RectF(0F, height * 0.66f, width * 0.33f, height.toFloat())
-    private val bottomCenterRectF =
-        RectF(width * 0.33f, height * 0.66f, width * 0.66f, height.toFloat())
-    private val bottomRightRectF =
-        RectF(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
-    private val autoPageRect by lazy { Rect() }
+    private val tlRectF = RectF(10F, 10F, width * 0.33f, height * 0.33f)
+    private val tcRectF = RectF(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
+    private val trRectF = RectF(width * 0.36f, 10F, width - 10f, height * 0.33f)
+    private val mlRectF = RectF(10F, height * 0.33f, width * 0.33f, height * 0.66f)
+    private val mcRectF = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+    private val mrRectF = RectF(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
+    private val blRectF = RectF(10F, height * 0.66f, width * 0.33f, height - 10f)
+    private val bcRectF = RectF(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
+    private val brRectF = RectF(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
+    private val autoPageRect by lazy {
+        Rect()
+    }
     private val autoPagePint by lazy {
         Paint().apply {
             color = context.accentColor
@@ -102,15 +101,15 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        topLeftRectF.set(0F, 0F, width * 0.33f, height * 0.33f)
-        topCenterRectF.set(width * 0.33f, 0F, width * 0.66f, height * 0.33f)
-        topRightRectF.set(width * 0.36f, 0F, width.toFloat(), height * 0.33f)
-        middleLeftRectF.set(0F, height * 0.33f, width * 0.33f, height * 0.66f)
-        centerRectF.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-        middleRightRectF.set(width * 0.66f, height * 0.33f, width.toFloat(), height * 0.66f)
-        bottomLeftRectF.set(0F, height * 0.66f, width * 0.33f, height.toFloat())
-        bottomCenterRectF.set(width * 0.33f, height * 0.66f, width * 0.66f, height.toFloat())
-        bottomRightRectF.set(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
+        tlRectF.set(10F, 10F, width * 0.33f, height * 0.33f)
+        tcRectF.set(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
+        trRectF.set(width * 0.36f, 10F, width - 10f, height * 0.33f)
+        mlRectF.set(10F, height * 0.33f, width * 0.33f, height * 0.66f)
+        mcRectF.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+        mrRectF.set(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
+        blRectF.set(10F, height * 0.66f, width * 0.33f, height - 10f)
+        bcRectF.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
+        brRectF.set(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
         if (oldw != 0 && oldh != 0) {
@@ -261,31 +260,31 @@ class PageView(context: Context, attrs: AttributeSet) :
     private fun onSingleTapUp(): Boolean {
         when {
             isTextSelected -> isTextSelected = false
-            centerRectF.contains(startX, startY) -> if (!isAbortAnim) {
+            mcRectF.contains(startX, startY) -> if (!isAbortAnim) {
                 click(AppConfig.clickActionMiddleCenter)
             }
-            bottomCenterRectF.contains(startX, startY) -> {
+            bcRectF.contains(startX, startY) -> {
                 click(AppConfig.clickActionBottomCenter)
             }
-            bottomLeftRectF.contains(startX, startY) -> {
+            blRectF.contains(startX, startY) -> {
                 click(AppConfig.clickActionBottomLeft)
             }
-            bottomRightRectF.contains(startX, startY) -> {
+            brRectF.contains(startX, startY) -> {
                 click(AppConfig.clickActionBottomRight)
             }
-            middleLeftRectF.contains(startX, startY) -> {
+            mlRectF.contains(startX, startY) -> {
                 click(AppConfig.clickActionMiddleLeft)
             }
-            middleRightRectF.contains(startX, startY) -> {
+            mrRectF.contains(startX, startY) -> {
                 click(AppConfig.clickActionMiddleRight)
             }
-            topLeftRectF.contains(startX, startY) -> {
+            tlRectF.contains(startX, startY) -> {
                 click(AppConfig.clickActionTopLeft)
             }
-            topCenterRectF.contains(startX, startY) -> {
+            tcRectF.contains(startX, startY) -> {
                 click(AppConfig.clickActionTopCenter)
             }
-            topRightRectF.contains(startX, startY) -> {
+            trRectF.contains(startX, startY) -> {
                 click(AppConfig.clickActionTopRight)
             }
         }
