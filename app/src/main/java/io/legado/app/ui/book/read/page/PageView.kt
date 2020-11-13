@@ -257,7 +257,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     /**
      * 单击
      */
-    private fun onSingleTapUp(): Boolean {
+    private fun onSingleTapUp() {
         when {
             isTextSelected -> isTextSelected = false
             mcRect.contains(startX, startY) -> if (!isAbortAnim) {
@@ -288,7 +288,6 @@ class PageView(context: Context, attrs: AttributeSet) :
                 click(AppConfig.clickActionTopRight)
             }
         }
-        return true
     }
 
     private fun click(action: Int) {
