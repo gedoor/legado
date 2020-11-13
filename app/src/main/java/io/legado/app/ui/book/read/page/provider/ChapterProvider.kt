@@ -111,7 +111,9 @@ object ChapterProvider {
             textPages,
             pageLines,
             pageLengths,
-            chapterSize
+            chapterSize,
+            paint.first,
+            paint.second
         )
     }
 
