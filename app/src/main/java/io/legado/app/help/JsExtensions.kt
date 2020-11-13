@@ -192,11 +192,17 @@ interface JsExtensions {
         return str.htmlFormat()
     }
 
-    fun base64DecodeToByteArray(str: String): ByteArray {
+    fun base64DecodeToByteArray(str: String?): ByteArray? {
+        if (str.isNullOrBlank()) {
+            return null
+        }
         return Base64.decode(str, Base64.DEFAULT)
     }
 
-    fun base64DecodeToByteArray(str: String, flags: Int): ByteArray {
+    fun base64DecodeToByteArray(str: String?, flags: Int): ByteArray? {
+        if (str.isNullOrBlank()) {
+            return null
+        }
         return Base64.decode(str, flags)
     }
 
