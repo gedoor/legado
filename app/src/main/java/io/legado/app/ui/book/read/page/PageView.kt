@@ -72,15 +72,15 @@ class PageView(context: Context, attrs: AttributeSet) :
     private var firstCharIndex: Int = 0
 
     val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
-    private val tlRectF = RectF(10F, 10F, width * 0.33f, height * 0.33f)
-    private val tcRectF = RectF(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
-    private val trRectF = RectF(width * 0.36f, 10F, width - 10f, height * 0.33f)
-    private val mlRectF = RectF(10F, height * 0.33f, width * 0.33f, height * 0.66f)
-    private val mcRectF = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-    private val mrRectF = RectF(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
-    private val blRectF = RectF(10F, height * 0.66f, width * 0.33f, height - 10f)
-    private val bcRectF = RectF(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
-    private val brRectF = RectF(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
+    private val tlRect = RectF(10F, 10F, width * 0.33f, height * 0.33f)
+    private val tcRect = RectF(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
+    private val trRect = RectF(width * 0.36f, 10F, width - 10f, height * 0.33f)
+    private val mlRect = RectF(10F, height * 0.33f, width * 0.33f, height * 0.66f)
+    private val mcRect = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+    private val mrRect = RectF(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
+    private val blRect = RectF(10F, height * 0.66f, width * 0.33f, height - 10f)
+    private val bcRect = RectF(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
+    private val brRect = RectF(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
     private val autoPageRect by lazy {
         Rect()
     }
@@ -101,15 +101,15 @@ class PageView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        tlRectF.set(10F, 10F, width * 0.33f, height * 0.33f)
-        tcRectF.set(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
-        trRectF.set(width * 0.36f, 10F, width - 10f, height * 0.33f)
-        mlRectF.set(10F, height * 0.33f, width * 0.33f, height * 0.66f)
-        mcRectF.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-        mrRectF.set(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
-        blRectF.set(10F, height * 0.66f, width * 0.33f, height - 10f)
-        bcRectF.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
-        brRectF.set(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
+        tlRect.set(10F, 10F, width * 0.33f, height * 0.33f)
+        tcRect.set(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
+        trRect.set(width * 0.36f, 10F, width - 10f, height * 0.33f)
+        mlRect.set(10F, height * 0.33f, width * 0.33f, height * 0.66f)
+        mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+        mrRect.set(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
+        blRect.set(10F, height * 0.66f, width * 0.33f, height - 10f)
+        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
+        brRect.set(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
         if (oldw != 0 && oldh != 0) {
@@ -260,31 +260,31 @@ class PageView(context: Context, attrs: AttributeSet) :
     private fun onSingleTapUp(): Boolean {
         when {
             isTextSelected -> isTextSelected = false
-            mcRectF.contains(startX, startY) -> if (!isAbortAnim) {
+            mcRect.contains(startX, startY) -> if (!isAbortAnim) {
                 click(AppConfig.clickActionMiddleCenter)
             }
-            bcRectF.contains(startX, startY) -> {
+            bcRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionBottomCenter)
             }
-            blRectF.contains(startX, startY) -> {
+            blRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionBottomLeft)
             }
-            brRectF.contains(startX, startY) -> {
+            brRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionBottomRight)
             }
-            mlRectF.contains(startX, startY) -> {
+            mlRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionMiddleLeft)
             }
-            mrRectF.contains(startX, startY) -> {
+            mrRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionMiddleRight)
             }
-            tlRectF.contains(startX, startY) -> {
+            tlRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionTopLeft)
             }
-            tcRectF.contains(startX, startY) -> {
+            tcRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionTopCenter)
             }
-            trRectF.contains(startX, startY) -> {
+            trRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionTopRight)
             }
         }
