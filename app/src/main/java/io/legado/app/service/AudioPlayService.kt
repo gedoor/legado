@@ -24,7 +24,6 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -284,23 +283,25 @@ class AudioPlayService : BaseService(),
     }
 
     private fun loadContent(chapter: BookChapter) {
-        AudioPlay.book?.let { book ->
-            AudioPlay.webBook?.getContent(book, chapter, scope = this)
-                ?.onSuccess(IO) { content ->
+        val book = AudioPlay.book
+        val webBook = AudioPlay.webBook
+        if (book != null && webBook != null) {
+            webBook.getContent(book, chapter, scope = this@AudioPlayService)
+                .onSuccess { content ->
+                    removeLoading(chapter.index)
                     if (content.isEmpty()) {
                         withContext(Main) {
                             toast("未获取到资源链接")
                         }
-                        removeLoading(chapter.index)
                     } else {
-                        BookHelp.saveContent(book, chapter, content)
                         contentLoadFinish(chapter, content)
-                        removeLoading(chapter.index)
                     }
-                }?.onError {
+                }.onError {
                     contentLoadFinish(chapter, it.localizedMessage ?: toString())
                     removeLoading(chapter.index)
                 }
+        } else {
+            toast("book or source is null")
         }
     }
 

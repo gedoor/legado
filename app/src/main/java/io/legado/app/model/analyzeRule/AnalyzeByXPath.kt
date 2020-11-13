@@ -11,18 +11,17 @@ import org.seimicrawler.xpath.JXNode
 import java.util.*
 
 @Keep
-class AnalyzeByXPath {
-    private lateinit var jxNode: Any
+class AnalyzeByXPath(doc: Any) {
+    private var jxNode: Any = parse(doc)
 
-    fun parse(doc: Any): AnalyzeByXPath {
-        jxNode = when (doc) {
+    private fun parse(doc: Any): Any {
+        return when (doc) {
             is JXNode -> if (doc.isElement) doc else strToJXDocument(doc.toString())
             is Document -> JXDocument.create(doc)
             is Element -> JXDocument.create(Elements(doc))
             is Elements -> JXDocument.create(doc)
             else -> strToJXDocument(doc.toString())
         }
-        return this
     }
 
     private fun strToJXDocument(html: String): JXDocument {

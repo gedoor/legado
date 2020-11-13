@@ -65,17 +65,14 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun getAnalyzeByXPath(o: Any): AnalyzeByXPath {
         return if (o != content) {
-            AnalyzeByXPath().parse(o)
-        } else getAnalyzeByXPath()
-    }
-
-    private fun getAnalyzeByXPath(): AnalyzeByXPath {
-        if (analyzeByXPath == null || objectChangedXP) {
-            analyzeByXPath = AnalyzeByXPath()
-            analyzeByXPath?.parse(content!!)
-            objectChangedXP = false
+            AnalyzeByXPath(o)
+        } else {
+            if (analyzeByXPath == null || objectChangedXP) {
+                analyzeByXPath = AnalyzeByXPath(content!!)
+                objectChangedXP = false
+            }
+            analyzeByXPath!!
         }
-        return analyzeByXPath as AnalyzeByXPath
     }
 
     /**
@@ -83,17 +80,14 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun getAnalyzeByJSoup(o: Any): AnalyzeByJSoup {
         return if (o != content) {
-            AnalyzeByJSoup().parse(o)
-        } else getAnalyzeByJSoup()
-    }
-
-    private fun getAnalyzeByJSoup(): AnalyzeByJSoup {
-        if (analyzeByJSoup == null || objectChangedJS) {
-            analyzeByJSoup = AnalyzeByJSoup()
-            analyzeByJSoup?.parse(content!!)
-            objectChangedJS = false
+            AnalyzeByJSoup(o)
+        } else {
+            if (analyzeByJSoup == null || objectChangedJS) {
+                analyzeByJSoup = AnalyzeByJSoup(content!!)
+                objectChangedJS = false
+            }
+            analyzeByJSoup!!
         }
-        return analyzeByJSoup as AnalyzeByJSoup
     }
 
     /**
@@ -101,17 +95,14 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
      */
     private fun getAnalyzeByJSonPath(o: Any): AnalyzeByJSonPath {
         return if (o != content) {
-            AnalyzeByJSonPath().parse(o)
-        } else getAnalyzeByJSonPath()
-    }
-
-    private fun getAnalyzeByJSonPath(): AnalyzeByJSonPath {
-        if (analyzeByJSonPath == null || objectChangedJP) {
-            analyzeByJSonPath = AnalyzeByJSonPath()
-            analyzeByJSonPath?.parse(content!!)
-            objectChangedJP = false
+            AnalyzeByJSonPath(o)
+        } else {
+            if (analyzeByJSonPath == null || objectChangedJP) {
+                analyzeByJSonPath = AnalyzeByJSonPath(content!!)
+                objectChangedJP = false
+            }
+            analyzeByJSonPath!!
         }
-        return analyzeByJSonPath as AnalyzeByJSonPath
     }
 
     /**
@@ -124,6 +115,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         return getStringList(ruleList, isUrl)
     }
 
+    @JvmOverloads
     fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
         var result: Any? = null
         val content = this.content
@@ -181,6 +173,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 获取文本
      */
+    @JvmOverloads
     fun getString(ruleStr: String?, isUrl: Boolean = false): String {
         if (TextUtils.isEmpty(ruleStr)) return ""
         val ruleList = splitSourceRule(ruleStr)
@@ -302,6 +295,33 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         return ArrayList()
     }
 
+    fun getByteArray(ruleStr: String): ByteArray? {
+        if (ruleStr.isEmpty()) return null
+        val ruleList = splitSourceRule(ruleStr)
+        var result: Any? = null
+        content?.let { o ->
+            if (ruleList.isNotEmpty()) result = o
+            for (sourceRule in ruleList) {
+                putRule(sourceRule.putMap)
+                result?.let {
+                    result = when (sourceRule.mode) {
+                        Mode.Regex -> AnalyzeByRegex.getElements(
+                            result.toString(),
+                            sourceRule.rule.splitNotBlank("&&")
+                        )
+                        Mode.Js -> evalJS(sourceRule.rule, result)
+                        Mode.Json -> getAnalyzeByJSonPath(it).getList(sourceRule.rule)
+                        Mode.XPath -> getAnalyzeByXPath(it).getElements(sourceRule.rule)
+                        else -> getAnalyzeByJSoup(it).getElements(sourceRule.rule)
+                    }
+                    if (sourceRule.replaceRegex.isNotEmpty()) {
+                        result = replaceRegex(result.toString(), sourceRule)
+                    }
+                }
+            }
+        }
+        return result as? ByteArray
+    }
 
     /**
      * 保存变量

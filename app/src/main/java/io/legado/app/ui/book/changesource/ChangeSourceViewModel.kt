@@ -157,7 +157,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         webBook.getBookInfo(book, this)
             .onSuccess {
                 if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
-                    loadChapter(webBook, book)
+                    loadBookToc(webBook, book)
                 } else {
                     //从详情页里获取最新章节
                     book.latestChapterTitle = it.latestChapterTitle
@@ -169,7 +169,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             }
     }
 
-    private fun loadChapter(webBook: WebBook, book: Book) {
+    private fun loadBookToc(webBook: WebBook, book: Book) {
         webBook.getChapterList(book, this)
             .onSuccess(IO) { chapters ->
                 if (chapters.isNotEmpty()) {

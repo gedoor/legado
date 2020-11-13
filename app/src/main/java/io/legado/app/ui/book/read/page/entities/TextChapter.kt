@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.page.entities
 
+import android.text.TextPaint
 import kotlin.math.min
 
 data class TextChapter(
@@ -9,7 +10,9 @@ data class TextChapter(
     val pages: List<TextPage>,
     val pageLines: List<Int>,
     val pageLengths: List<Int>,
-    val chaptersSize: Int
+    val chaptersSize: Int,
+    var titlePaint: TextPaint? = null,
+    var contentPaint: TextPaint? = null
 ) {
     fun page(index: Int): TextPage? {
         return pages.getOrNull(index)

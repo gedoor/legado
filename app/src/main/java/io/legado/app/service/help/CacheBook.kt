@@ -7,11 +7,9 @@ import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.BookHelp
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.msg
-import kotlinx.coroutines.Dispatchers.IO
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -76,10 +74,7 @@ object CacheBook {
         }
         downloadMap[book.bookUrl]?.add(chapter.index)
         webBook.getContent(book, chapter)
-            .onSuccess(IO) { content ->
-                if (content.isNotBlank()) {
-                    BookHelp.saveContent(book, chapter, content)
-                }
+            .onSuccess { content ->
                 if (ReadBook.book?.bookUrl == book.bookUrl) {
                     ReadBook.contentLoadFinish(
                         book,

@@ -18,9 +18,6 @@ import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.cancelButton
-import io.legado.app.lib.dialogs.customView
-import io.legado.app.lib.dialogs.okButton
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -29,7 +26,6 @@ import kotlinx.android.synthetic.main.dialog_http_tts_edit.view.*
 import kotlinx.android.synthetic.main.dialog_recycler_view.*
 import kotlinx.android.synthetic.main.item_http_tts.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
-import java.io.File
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
@@ -128,11 +124,11 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             }
             neutralButton(R.string.help) {
                 val helpStr = String(
-                    requireContext().assets.open("help${File.separator}httpTts.md").readBytes()
+                    requireContext().assets.open("help/httpTTSHelp.md").readBytes()
                 )
                 TextDialog.show(childFragmentManager, helpStr, TextDialog.MD)
             }
-        }.show().applyTint()
+        }.show()
     }
 
     inner class Adapter(context: Context) :

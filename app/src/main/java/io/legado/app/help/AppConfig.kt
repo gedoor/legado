@@ -134,5 +134,19 @@ object AppConfig {
     val changeSourceLoadInfo get() = App.INSTANCE.getPrefBoolean(PreferKey.changeSourceLoadToc)
 
     val changeSourceLoadToc get() = App.INSTANCE.getPrefBoolean(PreferKey.changeSourceLoadToc)
+
+    val importKeepName get() = App.INSTANCE.getPrefBoolean(PreferKey.importKeepName)
+
+    val clickActionTopLeft get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTopLeft, 2)
+    val clickActionTopCenter get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTopCenter, 2)
+    val clickActionTopRight get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTopRight, 1)
+    val clickActionMiddleLeft get() = App.INSTANCE.getPrefInt(PreferKey.clickActionMiddleLeft, 2)
+    val clickActionMiddleCenter
+        get() = App.INSTANCE.getPrefInt(PreferKey.clickActionMiddleCenter, 0)
+    val clickActionMiddleRight get() = App.INSTANCE.getPrefInt(PreferKey.clickActionMiddleRight, 1)
+    val clickActionBottomLeft get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBottomLeft, 2)
+    val clickActionBottomCenter
+        get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBottomCenter, 1)
+    val clickActionBottomRight get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBottomRight, 1)
 }
 

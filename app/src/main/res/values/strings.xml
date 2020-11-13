@@ -200,7 +200,6 @@
     <string name="book">Book</string>
     <string name="volume_key_page">Volume keys to turn page</string>
     <string name="click_turn_page">Tap screen to turn page</string>
-    <string name="click_all_next_page">Tap screen always to next page</string>
     <string name="page_anim">Flip animation</string>
     <string name="keep_light">Keep screen awake</string>
     <string name="back">Back</string>
@@ -423,6 +422,7 @@
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
     <string name="rule_replace_regex">替换规则(replaceRegex)</string>
     <string name="rule_image_style">图片样式(imageStyle)</string>
+    <string name="rule_font">字体(font)</string>
 
     <string name="source_icon">图标(sourceIcon)</string>
     <string name="r_articles">列表规则(ruleArticles)</string>
@@ -493,7 +493,7 @@
     <string name="no_book_name">No bookName</string>
     <string name="input_replace_url">Input replacement rule URL</string>
     <string name="get_book_list_success">Search list obtained successfully%d</string>
-    <string name="non_null_source_name_url">Source name and URL cannot be empty</string>
+    <string name="non_null_name_url">name and URL cannot be empty</string>
     <string name="gallery">Gallery</string>
     <string name="get_ali_pay_hb">get AliPay red envelopes</string>
     <string name="non_update_url">No update address</string>
@@ -786,5 +786,11 @@
     <string name="scan_folder">智能扫描</string>
     <string name="copy_url">拷贝URL</string>
     <string name="no_book">没有书籍</string>
+    <string name="keep_original_name">保留原名</string>
+    <string name="click_regional_config">点击区域设置</string>
+    <string name="colse">关闭</string>
+    <string name="next_page">下一页</string>
+    <string name="prev_page">上一页</string>
+    <string name="non_action">无操作</string>
 
 </resources>

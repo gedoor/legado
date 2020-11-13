@@ -161,7 +161,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             )
             book.durChapterTitle = chapters[book.durChapterIndex].title
             if (inBookshelf) {
-                App.db.bookDao().insert(book)
+                App.db.bookDao().update(book)
                 App.db.bookChapterDao().insert(*chapters.toTypedArray())
             }
             bookData.postValue(book)

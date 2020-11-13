@@ -1,7 +1,6 @@
 package io.legado.app.utils
 
 import android.util.Base64
-import java.nio.charset.StandardCharsets
 
 @Suppress("unused")
 object EncoderUtils {
@@ -28,11 +27,7 @@ object EncoderUtils {
     @JvmOverloads
     fun base64Decode(str: String, flags: Int = Base64.DEFAULT): String {
         val bytes = Base64.decode(str, flags)
-        return try {
-            String(bytes, StandardCharsets.UTF_8)
-        } catch (e: Exception) {
-            String(bytes)
-        }
+        return String(bytes)
     }
 
     @JvmOverloads

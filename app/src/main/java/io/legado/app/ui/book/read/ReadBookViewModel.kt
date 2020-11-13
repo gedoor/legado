@@ -271,6 +271,16 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 替换规则变化
+     */
+    fun replaceRuleChanged() {
+        execute {
+            BookHelp.upReplaceRules()
+            ReadBook.loadContent(resetPageOffset = false)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         if (BaseReadAloudService.pause) {

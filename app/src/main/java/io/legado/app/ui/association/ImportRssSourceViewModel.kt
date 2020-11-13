@@ -9,20 +9,47 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.AppConfig
+import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.*
 import java.io.File
 
 class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
-
+    var groupName: String? = null
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
 
     val allSources = arrayListOf<RssSource>()
-    val sourceCheckState = arrayListOf<Boolean>()
+    val checkSources = arrayListOf<RssSource?>()
     val selectStatus = arrayListOf<Boolean>()
 
+
+    fun importSelect(finally: () -> Unit) {
+        execute {
+            val keepName = AppConfig.importKeepName
+            val selectSource = arrayListOf<RssSource>()
+            selectStatus.forEachIndexed { index, b ->
+                if (b) {
+                    val source = allSources[index]
+                    if (groupName != null) {
+                        source.sourceGroup = groupName
+                    }
+                    if (keepName) {
+                        checkSources[index]?.let {
+                            source.sourceName = it.sourceName
+                            source.sourceGroup = it.sourceGroup
+                        }
+                    }
+                    selectSource.add(source)
+                }
+            }
+            SourceHelp.insertRssSource(*selectSource.toTypedArray())
+        }.onFinally {
+            finally.invoke()
+        }
+    }
 
     fun importSourceFromFilePath(path: String) {
         execute {
@@ -101,9 +128,9 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = App.db.rssSourceDao().getByKey(it.sourceUrl) != null
-                sourceCheckState.add(has)
-                selectStatus.add(!has)
+                val has = App.db.rssSourceDao().getByKey(it.sourceUrl)
+                checkSources.add(has)
+                selectStatus.add(has == null)
             }
             successLiveData.postValue(allSources.size)
         }

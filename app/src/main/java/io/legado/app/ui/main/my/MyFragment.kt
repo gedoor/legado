@@ -50,7 +50,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FilePickerDialog.C
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         when (item.itemId) {
             R.id.menu_help -> {
-                val text = String(requireContext().assets.open("help/help.md").readBytes())
+                val text = String(requireContext().assets.open("help/appHelp.md").readBytes())
                 TextDialog.show(childFragmentManager, text, TextDialog.MD)
             }
         }

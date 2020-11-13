@@ -151,7 +151,7 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
                 val chapterCaches = hashSetOf<String>()
                 val cacheNames = BookHelp.getChapterFiles(book)
                 App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
-                    if (cacheNames.contains(BookHelp.formatChapterName(chapter))) {
+                    if (cacheNames.contains(chapter.getFileName())) {
                         chapterCaches.add(chapter.url)
                     }
                 }

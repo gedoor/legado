@@ -12,9 +12,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.service.help.ReadBook
-import io.legado.app.ui.book.read.page.entities.TextChar
-import io.legado.app.ui.book.read.page.entities.TextLine
-import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.entities.*
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.widget.dialog.PhotoDialog
@@ -40,19 +38,21 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val visibleRect = RectF()
     private val selectStart = arrayOf(0, 0, 0)
     private val selectEnd = arrayOf(0, 0, 0)
+    private var textChapter: TextChapter? = null
     private var textPage: TextPage = TextPage()
 
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
-    private var pageOffset = 0f
+    private var pageOffset = 0
 
     init {
         callBack = activity as CallBack
         contentDescription = textPage.text
     }
 
-    fun setContent(textPage: TextPage) {
-        this.textPage = textPage
+    fun setContent(pageData: PageData) {
+        this.textChapter = pageData.textChapter
+        this.textPage = pageData.textPage
         contentDescription = textPage.text
         invalidate()
     }
@@ -139,7 +139,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         isTitle: Boolean,
         isReadAloud: Boolean,
     ) {
-        val textPaint = if (isTitle) ChapterProvider.titlePaint else ChapterProvider.contentPaint
+        val textPaint = if (isTitle) {
+            textChapter?.titlePaint ?: ChapterProvider.titlePaint
+        } else {
+            textChapter?.contentPaint ?: ChapterProvider.contentPaint
+        }
         textPaint.color =
             if (isReadAloud) context.accentColor else ReadBookConfig.textColor
         textChars.forEach {
@@ -173,33 +177,33 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     /**
      * 滚动事件
      */
-    fun onScroll(mOffset: Float) {
-        if (mOffset == 0f) return
+    fun scroll(mOffset: Int) {
+        if (mOffset == 0) return
         pageOffset += mOffset
         if (!pageFactory.hasPrev() && pageOffset > 0) {
-            pageOffset = 0f
+            pageOffset = 0
         } else if (!pageFactory.hasNext()
             && pageOffset < 0
             && pageOffset + textPage.height < ChapterProvider.visibleHeight
         ) {
-            val offset = ChapterProvider.visibleHeight - textPage.height
-            pageOffset = min(0f, offset)
+            val offset = (ChapterProvider.visibleHeight - textPage.height).toInt()
+            pageOffset = min(0, offset)
         } else if (pageOffset > 0) {
             pageFactory.moveToPrev(false)
-            textPage = pageFactory.currentPage
-            pageOffset -= textPage.height
+            textPage = pageFactory.curData.textPage
+            pageOffset -= textPage.height.toInt()
             upView?.invoke(textPage)
         } else if (pageOffset < -textPage.height) {
-            pageOffset += textPage.height
+            pageOffset += textPage.height.toInt()
             pageFactory.moveToNext(false)
-            textPage = pageFactory.currentPage
+            textPage = pageFactory.curData.textPage
             upView?.invoke(textPage)
         }
         invalidate()
     }
 
     fun resetPageOffset() {
-        pageOffset = 0f
+        pageOffset = 0
     }
 
     /**
@@ -480,17 +484,17 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     private fun relativeOffset(relativePos: Int): Float {
         return when (relativePos) {
-            0 -> pageOffset
+            0 -> pageOffset.toFloat()
             1 -> pageOffset + textPage.height
-            else -> pageOffset + textPage.height + pageFactory.nextPage.height
+            else -> pageOffset + textPage.height + pageFactory.nextData.textPage.height
         }
     }
 
     private fun relativePage(relativePos: Int): TextPage {
         return when (relativePos) {
             0 -> textPage
-            1 -> pageFactory.nextPage
-            else -> pageFactory.nextPagePlus
+            1 -> pageFactory.nextData.textPage
+            else -> pageFactory.nextPlusData.textPage
         }
     }
 

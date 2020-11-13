@@ -17,21 +17,21 @@ import java.util.*
  * 书源规则解析
  */
 @Keep
-class AnalyzeByJSoup {
+class AnalyzeByJSoup(doc: Any) {
     companion object {
         val validKeys = arrayOf("class", "id", "tag", "text", "children")
-    }
 
-    private lateinit var element: Element
-
-    fun parse(doc: Any): AnalyzeByJSoup {
-        element = when (doc) {
-            is Element -> doc
-            is JXNode -> if (doc.isElement) doc.asElement() else Jsoup.parse(doc.toString())
-            else -> Jsoup.parse(doc.toString())
+        fun parse(doc: Any): Element {
+            return when (doc) {
+                is Element -> doc
+                is JXNode -> if (doc.isElement) doc.asElement() else Jsoup.parse(doc.toString())
+                else -> Jsoup.parse(doc.toString())
+            }
         }
-        return this
+
     }
+
+    private var element: Element = parse(doc)
 
     /**
      * 获取列表

@@ -6,7 +6,6 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.visible
@@ -22,8 +21,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
         with(holder.itemView) {
             val isDur = callback.durChapterIndex() == item.index
-            val cached = callback.isLocalBook
-                    || cacheFileNames.contains(BookHelp.formatChapterName(item))
+            val cached = callback.isLocalBook || cacheFileNames.contains(item.getFileName())
             if (payloads.isEmpty()) {
                 if (isDur) {
                     tv_chapter_name.setTextColor(context.accentColor)

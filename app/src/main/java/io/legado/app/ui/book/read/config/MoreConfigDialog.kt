@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.config
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
@@ -14,7 +15,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.ui.book.read.ReadBookActivityHelp
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.dp
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
@@ -24,6 +25,7 @@ class MoreConfigDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
+        (activity as ReadBookActivity).bottomDialog++
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
@@ -55,6 +57,11 @@ class MoreConfigDialog : DialogFragment() {
         childFragmentManager.beginTransaction()
             .replace(view.id, preferenceFragment, readPreferTag)
             .commit()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        (activity as ReadBookActivity).bottomDialog--
     }
 
     class ReadPreferenceFragment : BasePreferenceFragment(),
@@ -101,9 +108,7 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.keepLight -> postEvent(key, true)
                 PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
                 getString(R.string.pk_requested_direction) -> {
-                    activity?.let {
-                        ReadBookActivityHelp.setOrientation(it)
-                    }
+                    (activity as? ReadBookActivity)?.setOrientation()
                 }
                 PreferKey.textFullJustify,
                 PreferKey.textBottomJustify -> {
@@ -118,6 +123,9 @@ class MoreConfigDialog : DialogFragment() {
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
             when (preference?.key) {
                 "customPageKey" -> PageKeyDialog(requireContext()).show()
+                "clickRegionalConfig" -> {
+                    (activity as? ReadBookActivity)?.showClickRegionalConfig()
+                }
             }
             return super.onPreferenceTreeClick(preference)
         }

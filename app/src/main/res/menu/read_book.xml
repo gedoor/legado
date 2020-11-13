@@ -96,4 +96,9 @@
         android:title="@string/book_info"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_help"
+        android:title="@string/help"
+        app:showAsAction="never" />
+
 </menu>

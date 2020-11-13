@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/translucent"
+    android:padding="3dp"
+    android:orientation="vertical"
+    tools:ignore="NestedWeights">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_translucent_card"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_margin="3dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="6dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="6dp"
+        tools:ignore="UseCompoundDrawables">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/click_regional_config"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/colse"
+            android:src="@drawable/ic_baseline_close"
+            app:tint="@color/white" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_top_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:textColor="@color/white"
+            tools:text="上一页" />
+
+        <TextView
+            android:id="@+id/tv_top_center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:textColor="@color/white"
+            tools:text="上一页" />
+
+        <TextView
+            android:id="@+id/tv_top_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:textColor="@color/white"
+            tools:text="下一页" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_middle_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:textColor="@color/white"
+            tools:text="上一页" />
+
+        <TextView
+            android:id="@+id/tv_middle_center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:text="@string/menu"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_middle_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:textColor="@color/white"
+            tools:text="下一页" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_bottom_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:textColor="@color/white"
+            tools:ignore="NestedWeights"
+            tools:text="上一页" />
+
+        <TextView
+            android:id="@+id/tv_bottom_center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:textColor="@color/white"
+            tools:text="下一页" />
+
+        <TextView
+            android:id="@+id/tv_bottom_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_translucent_card"
+            android:gravity="center"
+            android:textColor="@color/white"
+            tools:text="下一页" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -9,6 +9,7 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 
+@Suppress("unused")
 open class StrokeTextView(context: Context, attrs: AttributeSet?) :
     AppCompatTextView(context, attrs) {
 
@@ -40,7 +41,7 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
                     .setSelectedStrokeColor(context.getCompatColor(R.color.accent))
                     .setPressedBgColor(context.getCompatColor(R.color.transparent30))
                     .create()
-                this.setTextColor(
+                setTextColor(
                     Selector.colorBuild()
                         .setDefaultColor(context.getCompatColor(R.color.secondaryText))
                         .setSelectedColor(context.getCompatColor(R.color.accent))
@@ -58,7 +59,7 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
                     .setSelectedStrokeColor(context.accentColor)
                     .setPressedBgColor(context.getCompatColor(R.color.transparent30))
                     .create()
-                this.setTextColor(
+                setTextColor(
                     Selector.colorBuild()
                         .setDefaultColor(context.getPrimaryTextColor(isLight))
                         .setSelectedColor(context.accentColor)
@@ -75,7 +76,7 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
                     .setSelectedStrokeColor(ThemeStore.accentColor(context))
                     .setPressedBgColor(context.getCompatColor(R.color.transparent30))
                     .create()
-                this.setTextColor(
+                setTextColor(
                     Selector.colorBuild()
                         .setDefaultColor(ThemeStore.textColorSecondary(context))
                         .setSelectedColor(ThemeStore.accentColor(context))

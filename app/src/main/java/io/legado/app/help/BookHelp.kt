@@ -31,14 +31,6 @@ object BookHelp {
     private val downloadDir: File = App.INSTANCE.externalFilesDir
     private val downloadImages = CopyOnWriteArraySet<String>()
 
-    fun formatChapterName(bookChapter: BookChapter): String {
-        return String.format(
-            "%05d-%s.nb",
-            bookChapter.index,
-            MD5Utils.md5Encode16(bookChapter.title)
-        )
-    }
-
     fun clearCache() {
         FileUtils.deleteFile(
             FileUtils.getPath(downloadDir, cacheFolderName)
@@ -75,7 +67,7 @@ object BookHelp {
             downloadDir,
             cacheFolderName,
             book.getFolderName(),
-            formatChapterName(bookChapter),
+            bookChapter.getFileName(),
         ).writeText(content)
         //保存图片
         content.split("\n").forEach {
@@ -89,6 +81,30 @@ object BookHelp {
             }
         }
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
+    }
+
+    fun saveFont(book: Book, bookChapter: BookChapter, font: ByteArray) {
+        FileUtils.createFileIfNotExist(
+            downloadDir,
+            cacheFolderName,
+            book.getFolderName(),
+            "font",
+            bookChapter.getFontName()
+        ).writeBytes(font)
+    }
+
+    fun getFontPath(book: Book, bookChapter: BookChapter): String? {
+        val fontFile = FileUtils.getFile(
+            downloadDir,
+            cacheFolderName,
+            book.getFolderName(),
+            "font",
+            bookChapter.getFontName()
+        )
+        if (fontFile.exists()) {
+            return fontFile.absolutePath
+        }
+        return null
     }
 
     suspend fun saveImage(book: Book, src: String) {
@@ -158,7 +174,7 @@ object BookHelp {
                 downloadDir,
                 cacheFolderName,
                 book.getFolderName(),
-                formatChapterName(bookChapter)
+                bookChapter.getFileName()
             )
         }
     }
@@ -171,7 +187,7 @@ object BookHelp {
                 downloadDir,
                 cacheFolderName,
                 book.getFolderName(),
-                formatChapterName(bookChapter)
+                bookChapter.getFileName()
             )
             if (file.exists()) {
                 return file.readText()
@@ -188,7 +204,7 @@ object BookHelp {
                 downloadDir,
                 cacheFolderName,
                 book.getFolderName(),
-                formatChapterName(bookChapter)
+                bookChapter.getFileName()
             ).delete()
         }
     }

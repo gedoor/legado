@@ -20,4 +20,10 @@
         android:title="@string/un_select_all"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_Keep_original_name"
+        android:title="@string/keep_original_name"
+        android:checkable="true"
+        app:showAsAction="never" />
+
 </menu>

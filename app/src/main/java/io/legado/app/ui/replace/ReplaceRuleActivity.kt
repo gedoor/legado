@@ -22,7 +22,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.association.ImportReplaceRuleActivity
@@ -134,9 +134,8 @@ class ReplaceRuleActivity :
     private fun delSourceDialog() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.getSelection()) }
-            noButton { }
-        }
-            .show().applyTint()
+            noButton()
+        }.show()
     }
 
     private fun observeReplaceRuleData(key: String? = null) {
@@ -233,7 +232,7 @@ class ReplaceRuleActivity :
                 }
             }
             cancelButton()
-        }.show().applyTint()
+        }.show()
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {

@@ -16,6 +16,9 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.Download
+import io.legado.app.ui.association.ImportBookSourceActivity
+import io.legado.app.ui.association.ImportReplaceRuleActivity
+import io.legado.app.ui.association.ImportRssSourceActivity
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.utils.*
@@ -107,11 +110,39 @@ class ReadRssActivity : VMBaseActivity<ReadRssViewModel>(R.layout.activity_rss_r
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
-                if (request?.url?.scheme == "http" || request?.url?.scheme == "https") {
-                    return false
-                }
-                request?.url?.let {
-                    openUrl(it)
+                request?.let {
+                    if (it.url.scheme == "http" || it.url.scheme == "https") {
+                        return false
+                    } else if (it.url.scheme == "yuedu") {
+                        when (it.url.host) {
+                            "booksource" -> {
+                                val intent = Intent(
+                                    this@ReadRssActivity,
+                                    ImportBookSourceActivity::class.java
+                                )
+                                intent.data = it.url
+                                startActivity(intent)
+                            }
+                            "rsssource" -> {
+                                val intent = Intent(
+                                    this@ReadRssActivity,
+                                    ImportRssSourceActivity::class.java
+                                )
+                                intent.data = it.url
+                                startActivity(intent)
+                            }
+                            "replace" -> {
+                                val intent = Intent(
+                                    this@ReadRssActivity,
+                                    ImportReplaceRuleActivity::class.java
+                                )
+                                intent.data = it.url
+                                startActivity(intent)
+                            }
+                        }
+                        return true
+                    }
+                    openUrl(it.url)
                 }
                 return true
             }

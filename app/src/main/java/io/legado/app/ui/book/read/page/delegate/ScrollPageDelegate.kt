@@ -41,7 +41,7 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
     }
 
     override fun onScroll() {
-        curPage.onScroll(touchY - lastY)
+        curPage.scroll((touchY - lastY).toInt())
     }
 
     override fun onDraw(canvas: Canvas) {

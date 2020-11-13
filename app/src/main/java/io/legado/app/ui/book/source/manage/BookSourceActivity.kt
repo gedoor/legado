@@ -25,7 +25,8 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.lib.dialogs.*
+import io.legado.app.help.LocalConfig
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
@@ -35,6 +36,7 @@ import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -75,6 +77,9 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         initLiveDataBookSource()
         initLiveDataGroup()
         initSelectActionBar()
+        if (LocalConfig.isFirstOpenBookSources) {
+            showHelp()
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -154,6 +159,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             R.id.menu_disabled_group -> {
                 search_view.setQuery(getString(R.string.disabled), true)
             }
+            R.id.menu_help -> showHelp()
         }
         if (item.groupId == R.id.source_group) {
             search_view.setQuery(item.title, true)
@@ -226,6 +232,11 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         })
     }
 
+    private fun showHelp() {
+        val text = String(assets.open("help/bookSourcesHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
+    }
+
     private fun sortCheck(sortId: Int) {
         if (sort == sortId) {
             sortAscending += 1
@@ -260,8 +271,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
     override fun onClickMainAction() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.getSelection()) }
-            noButton { }
-        }.show().applyTint()
+            noButton()
+        }.show()
     }
 
     private fun initSelectActionBar() {
@@ -305,8 +316,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
                 CheckSource.start(this@BookSourceActivity, adapter.getSelection())
             }
-            noButton { }
-        }.show().applyTint()
+            noButton()
+        }.show()
     }
 
     @SuppressLint("InflateParams")
@@ -326,8 +337,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-            noButton { }
-        }.show().applyTint()
+            noButton()
+        }.show()
     }
 
     @SuppressLint("InflateParams")
@@ -347,8 +358,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-            noButton { }
-        }.show().applyTint()
+            noButton()
+        }.show()
     }
 
     private fun upGroupMenu() {
@@ -389,7 +400,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 }
             }
             cancelButton()
-        }.show().applyTint()
+        }.show()
     }
 
     override fun observeLiveBus() {
@@ -403,10 +414,8 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
             }
         }
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
-            snackBar?.let {
-                it.dismiss()
-                snackBar = null
-            }
+            snackBar?.dismiss()
+            snackBar = null
             groups.map { group ->
                 if (group.contains("失效")) {
                     search_view.setQuery("失效", true)

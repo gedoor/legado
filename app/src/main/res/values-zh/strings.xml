@@ -199,7 +199,6 @@
     <string name="book">书</string>
     <string name="volume_key_page">音量键翻页</string>
     <string name="click_turn_page">点击翻页</string>
-    <string name="click_all_next_page">点击总是翻下一页</string>
     <string name="page_anim">翻页动画</string>
     <string name="keep_light">屏幕超时</string>
     <string name="back">返回</string>
@@ -419,6 +418,7 @@
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
+    <string name="rule_font">字体(font)</string>
 
     <string name="source_icon">图标(sourceIcon)</string>
     <string name="r_articles">列表规则(ruleArticles)</string>
@@ -490,7 +490,7 @@
     <string name="no_book_name">未获取到书名</string>
     <string name="input_replace_url">输入替换规则网址</string>
     <string name="get_book_list_success">搜索列表获取成功%d</string>
-    <string name="non_null_source_name_url">书源名称和URL不能为空</string>
+    <string name="non_null_name_url">名称和URL不能为空</string>
     <string name="gallery">图库</string>
     <string name="get_ali_pay_hb">领支付宝红包</string>
     <string name="non_update_url">没有获取到更新地址</string>
@@ -783,5 +783,11 @@
     <string name="scan_folder">智能扫描</string>
     <string name="copy_url">拷贝URL</string>
     <string name="no_book">没有书籍</string>
+    <string name="keep_original_name">保留原名</string>
+    <string name="click_regional_config">点击区域设置</string>
+    <string name="colse">关闭</string>
+    <string name="next_page">下一页</string>
+    <string name="prev_page">上一页</string>
+    <string name="non_action">无操作</string>
 
 </resources>
