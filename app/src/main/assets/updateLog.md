@@ -3,6 +3,14 @@
 * 关注合作公众号 **[小说拾遗]()** 获取好看的小说。
 * 旧版数据导入教程：先在旧版阅读(2.x)中进行备份，然后在新版阅读(3.x)【我的】->【备份与恢复】，选择【导入旧版本数据】。
 
+**2020/11/13**
+* 正文规则添加字体规则,返回ByteArray
+* js添加方法:
+```
+base64DecodeToByteArray(str: String?): ByteArray?
+base64DecodeToByteArray(str: String?, flags: Int): ByteArray?
+```
+
 **2020/11/08**
 * 优化书源,订阅源导入,添加保持原名选项
 * 优化使用体验,初次使用是自动弹出帮助文档
