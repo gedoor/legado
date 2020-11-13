@@ -282,10 +282,12 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    private fun loadContent(chapter: BookChapter) = AudioPlay.apply {
-        book?.let { book ->
-            webBook?.getContent(book, chapter, scope = this@AudioPlayService)
-                ?.onSuccess { content ->
+    private fun loadContent(chapter: BookChapter) {
+        val book = AudioPlay.book
+        val webBook = AudioPlay.webBook
+        if (book != null && webBook != null) {
+            webBook.getContent(book, chapter, scope = this@AudioPlayService)
+                .onSuccess { content ->
                     removeLoading(chapter.index)
                     if (content.isEmpty()) {
                         withContext(Main) {
@@ -294,10 +296,12 @@ class AudioPlayService : BaseService(),
                     } else {
                         contentLoadFinish(chapter, content)
                     }
-                }?.onError {
+                }.onError {
                     contentLoadFinish(chapter, it.localizedMessage ?: toString())
                     removeLoading(chapter.index)
                 }
+        } else {
+            toast("book or source is null")
         }
     }
 
