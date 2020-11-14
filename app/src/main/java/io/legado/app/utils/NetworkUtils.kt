@@ -10,6 +10,7 @@ import java.util.regex.Pattern
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object NetworkUtils {
+
     fun getUrl(response: Response<*>): String {
         response.raw().networkResponse()?.let {
             return it.request().url().toString()
