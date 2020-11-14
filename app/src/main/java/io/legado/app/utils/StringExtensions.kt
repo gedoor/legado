@@ -23,8 +23,7 @@ fun String.parseToUri(): Uri {
 
 fun String?.isAbsUrl() =
     this?.let {
-        it.startsWith("http://", true)
-                || it.startsWith("https://", true)
+        it.startsWith("http://", true) || it.startsWith("https://", true)
     } ?: false
 
 fun String?.isJson(): Boolean =
