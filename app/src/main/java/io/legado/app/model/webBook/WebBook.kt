@@ -144,9 +144,10 @@ class WebBook(val bookSource: BookSource) {
                 ).getResponseAwait(bookSource.bookSourceUrl)
                 BookChapterList.analyzeChapterList(
                     this,
-                    book, res.body,
+                    book,
+                    res.body,
                     bookSource,
-                    res.url
+                    book.tocUrl
                 )
             }
 
@@ -211,7 +212,7 @@ class WebBook(val bookSource: BookSource) {
                 book,
                 bookChapter,
                 bookSource,
-                res.url,
+                bookChapter.getAbsoluteURL(),
                 nextChapterUrl
             )
         }
