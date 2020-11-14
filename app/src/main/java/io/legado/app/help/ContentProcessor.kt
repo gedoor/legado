@@ -31,18 +31,16 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
         var content1 = content
         if (book.getUseReplaceRule()) {
             replaceRules.forEach { item ->
-                item.pattern.let {
-                    if (it.isNotEmpty()) {
-                        try {
-                            content1 = if (item.isRegex) {
-                                content1.replace(it.toRegex(), item.replacement)
-                            } else {
-                                content1.replace(it, item.replacement)
-                            }
-                        } catch (e: Exception) {
-                            withContext(Dispatchers.Main) {
-                                App.INSTANCE.toast("${item.name}替换出错")
-                            }
+                if (item.pattern.isNotEmpty()) {
+                    try {
+                        content1 = if (item.isRegex) {
+                            content1.replace(item.pattern.toRegex(), item.replacement)
+                        } else {
+                            content1.replace(item.pattern, item.replacement)
+                        }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            App.INSTANCE.toast("${item.name}替换出错")
                         }
                     }
                 }
