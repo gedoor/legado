@@ -1,22 +1,17 @@
 package io.legado.app.help
 
-import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import net.ricecode.similarity.JaroWinklerStrategy
 import net.ricecode.similarity.StringSimilarityServiceImpl
-import org.jetbrains.anko.toast
 import java.io.File
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.regex.Matcher
@@ -317,90 +312,4 @@ object BookHelp {
             .replace(regexOther, "")
     }
 
-    private var bookName: String? = null
-    private var bookOrigin: String? = null
-    private var replaceRules: List<ReplaceRule> = arrayListOf()
-
-    @Synchronized
-    fun upReplaceRules() {
-        val o = bookOrigin
-        bookName?.let {
-            replaceRules = if (o.isNullOrEmpty()) {
-                App.db.replaceRuleDao().findEnabledByScope(it)
-            } else {
-                App.db.replaceRuleDao().findEnabledByScope(it, o)
-            }
-        }
-    }
-
-    suspend fun disposeContent(
-        book: Book,
-        title: String,
-        content: String,
-    ): List<String> {
-        var title1 = title
-        var content1 = content
-        if (book.getUseReplaceRule()) {
-            synchronized(this) {
-                if (bookName != book.name || bookOrigin != book.origin) {
-                    bookName = book.name
-                    bookOrigin = book.origin
-                    replaceRules = if (bookOrigin.isNullOrEmpty()) {
-                        App.db.replaceRuleDao().findEnabledByScope(bookName!!)
-                    } else {
-                        App.db.replaceRuleDao().findEnabledByScope(bookName!!, bookOrigin!!)
-                    }
-                }
-            }
-            replaceRules.forEach { item ->
-                item.pattern.let {
-                    if (it.isNotEmpty()) {
-                        try {
-                            content1 = if (item.isRegex) {
-                                content1.replace(it.toRegex(), item.replacement)
-                            } else {
-                                content1.replace(it, item.replacement)
-                            }
-                        } catch (e: Exception) {
-                            withContext(Main) {
-                                App.INSTANCE.toast("${item.name}替换出错")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (book.getReSegment()) {
-            content1 = ContentHelp.reSegment(content1, title1)
-        }
-        try {
-            when (AppConfig.chineseConverterType) {
-                1 -> {
-                    title1 = HanLP.convertToSimplifiedChinese(title1)
-                    content1 = HanLP.convertToSimplifiedChinese(content1)
-                }
-                2 -> {
-                    title1 = HanLP.convertToTraditionalChinese(title1)
-                    content1 = HanLP.convertToTraditionalChinese(content1)
-                }
-            }
-        } catch (e: Exception) {
-            withContext(Main) {
-                App.INSTANCE.toast("简繁转换出错")
-            }
-        }
-        val contents = arrayListOf<String>()
-        content1.split("\n").forEach {
-            val str = it.replace("^[\\n\\s\\r]+".toRegex(), "")
-            if (contents.isEmpty()) {
-                contents.add(title1)
-                if (str != title1 && str.isNotEmpty()) {
-                    contents.add("${ReadBookConfig.paragraphIndent}$str")
-                }
-            } else if (str.isNotEmpty()) {
-                contents.add("${ReadBookConfig.paragraphIndent}$str")
-            }
-        }
-        return contents
-    }
 }

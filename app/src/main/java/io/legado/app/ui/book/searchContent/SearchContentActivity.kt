@@ -24,7 +24,9 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_search_content.*
 import kotlinx.android.synthetic.main.view_search.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 
@@ -34,7 +36,6 @@ class SearchContentActivity :
 
     override val viewModel: SearchContentViewModel
         get() = getViewModel(SearchContentViewModel::class.java)
-
     lateinit var adapter: SearchContentAdapter
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var searchResultCounts = 0
@@ -97,14 +98,12 @@ class SearchContentActivity :
 
     @SuppressLint("SetTextI18n")
     private fun initBook() {
-        launch {
-            tv_current_search_info.text = "搜索结果：$searchResultCounts"
-            viewModel.book?.let {
-                initCacheFileNames(it)
-                durChapterIndex = it.durChapterIndex
-                intent.getStringExtra("searchWord")?.let { searchWord ->
-                    search_view.setQuery(searchWord, true)
-                }
+        tv_current_search_info.text = "搜索结果：$searchResultCounts"
+        viewModel.book?.let {
+            initCacheFileNames(it)
+            durChapterIndex = it.durChapterIndex
+            intent.getStringExtra("searchWord")?.let { searchWord ->
+                search_view.setQuery(searchWord, true)
             }
         }
     }
@@ -141,14 +140,13 @@ class SearchContentActivity :
             var searchResults = listOf<SearchResult>()
             launch(Dispatchers.Main) {
                 App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map { chapter ->
-                    val job = async(Dispatchers.IO) {
+                    withContext(Dispatchers.IO) {
                         if (isLocalBook
                             || adapter.cacheFileNames.contains(chapter.getFileName())
                         ) {
                             searchResults = searchChapter(newText, chapter)
                         }
                     }
-                    job.await()
                     if (searchResults.isNotEmpty()) {
                         searchResultList.addAll(searchResults)
                         refresh_progress_bar.isAutoLoading = false
@@ -164,26 +162,27 @@ class SearchContentActivity :
     private suspend fun searchChapter(query: String, chapter: BookChapter?): List<SearchResult> {
         val searchResults: MutableList<SearchResult> = mutableListOf()
         var positions: List<Int>
-        var replaceContents: List<String>? = null
+        var replaceContents: List<String>?
         var totalContents: String
         if (chapter != null) {
             viewModel.book?.let { book ->
                 val bookContent = BookHelp.getContent(book, chapter)
                 if (bookContent != null) {
                     //搜索替换后的正文
-                    val job = async(Dispatchers.IO) {
+                    withContext(Dispatchers.IO) {
                         chapter.title = when (AppConfig.chineseConverterType) {
                             1 -> HanLP.convertToSimplifiedChinese(chapter.title)
                             2 -> HanLP.convertToTraditionalChinese(chapter.title)
                             else -> chapter.title
                         }
-                        replaceContents = BookHelp.disposeContent(book, chapter.title, bookContent)
+                        replaceContents =
+                            viewModel.contentProcessor!!.getContent(
+                                book,
+                                chapter.title,
+                                bookContent
+                            )
                     }
-                    job.await()
-                    while (replaceContents == null) {
-                        delay(100L)
-                    }
-                    totalContents = replaceContents!!.joinToString("")
+                    totalContents = replaceContents?.joinToString("") ?: bookContent
                     positions = searchPosition(totalContents, query)
                     var count = 1
                     positions.map {
@@ -241,7 +240,6 @@ class SearchContentActivity :
         get() = viewModel.book?.isLocalBook() == true
 
     override fun openSearchResult(searchResult: SearchResult) {
-
         val searchData = Intent()
         searchData.putExtra("index", searchResult.chapterIndex)
         searchData.putExtra("contentPosition", searchResult.contentPosition)
