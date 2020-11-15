@@ -8,10 +8,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReadRecord
-import io.legado.app.help.AppConfig
-import io.legado.app.help.BookHelp
-import io.legado.app.help.IntentDataHelp
-import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.*
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
@@ -30,6 +27,7 @@ import org.jetbrains.anko.toast
 object ReadBook {
     var titleDate = MutableLiveData<String>()
     var book: Book? = null
+    var contentProcessor: ContentProcessor? = null
     var inBookshelf = false
     var chapterSize = 0
     var durChapterIndex = 0
@@ -48,6 +46,7 @@ object ReadBook {
 
     fun resetData(book: Book) {
         this.book = book
+        contentProcessor = ContentProcessor(book.name, book.origin)
         readRecord.bookName = book.name
         readRecord.readTime = App.db.readRecordDao().getReadTime(book.name) ?: 0
         durChapterIndex = book.durChapterIndex
@@ -372,13 +371,14 @@ object ReadBook {
         resetPageOffset: Boolean
     ) {
         Coroutine.async {
+            ImageProvider.clearOut(durChapterIndex)
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
                 chapter.title = when (AppConfig.chineseConverterType) {
                     1 -> HanLP.convertToSimplifiedChinese(chapter.title)
                     2 -> HanLP.convertToTraditionalChinese(chapter.title)
                     else -> chapter.title
                 }
-                val contents = BookHelp.disposeContent(book, chapter.title, content)
+                val contents = contentProcessor!!.getContent(book, chapter.title, content)
                 when (chapter.index) {
                     durChapterIndex -> {
                         curTextChapter =
@@ -393,7 +393,6 @@ object ReadBook {
                         callBack?.upView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
-                        ImageProvider.clearOut(durChapterIndex)
                     }
                     durChapterIndex - 1 -> {
                         prevTextChapter =

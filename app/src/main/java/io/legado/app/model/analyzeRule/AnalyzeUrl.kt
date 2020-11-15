@@ -45,7 +45,7 @@ class AnalyzeUrl(
     headerMapF: Map<String, String>? = null
 ) : JsExtensions {
     companion object {
-        private val splitUrlRegex = Regex(",\\s*(?=\\{)")
+        val splitUrlRegex = Regex(",\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
         private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }

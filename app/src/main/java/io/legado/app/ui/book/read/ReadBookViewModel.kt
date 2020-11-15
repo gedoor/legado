@@ -276,7 +276,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      */
     fun replaceRuleChanged() {
         execute {
-            BookHelp.upReplaceRules()
+            ReadBook.contentProcessor?.upReplaceRules()
             ReadBook.loadContent(resetPageOffset = false)
         }
     }

@@ -226,6 +226,10 @@ class ContentView(context: Context) : FrameLayout(context) {
         content_text_view.setContent(pageData)
     }
 
+    fun setContentDescription(content: String) {
+        content_text_view.contentDescription = content
+    }
+
     fun resetPageOffset() {
         content_text_view.resetPageOffset()
     }

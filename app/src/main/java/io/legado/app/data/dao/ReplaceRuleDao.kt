@@ -35,15 +35,6 @@ interface ReplaceRuleDao {
     @Query(
         """
         SELECT * FROM replace_rules WHERE isEnabled = 1 
-        AND (scope LIKE '%' || :scope || '%' or scope is null or scope = '')
-        order by sortOrder
-        """
-    )
-    fun findEnabledByScope(scope: String): List<ReplaceRule>
-
-    @Query(
-        """
-        SELECT * FROM replace_rules WHERE isEnabled = 1 
         AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
         order by sortOrder
         """

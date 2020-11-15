@@ -47,13 +47,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     init {
         callBack = activity as CallBack
-        contentDescription = textPage.text
     }
 
     fun setContent(pageData: PageData) {
         this.textChapter = pageData.textChapter
         this.textPage = pageData.textPage
-        contentDescription = textPage.text
         invalidate()
     }
 
@@ -193,11 +191,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             textPage = pageFactory.curData.textPage
             pageOffset -= textPage.height.toInt()
             upView?.invoke(textPage)
+            contentDescription = textPage.text
         } else if (pageOffset < -textPage.height) {
             pageOffset += textPage.height.toInt()
             pageFactory.moveToNext(false)
             textPage = pageFactory.curData.textPage
             upView?.invoke(textPage)
+            contentDescription = textPage.text
         }
         invalidate()
     }

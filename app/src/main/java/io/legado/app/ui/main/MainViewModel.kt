@@ -68,44 +68,43 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    @Synchronized
     private fun updateToc() {
-        synchronized(this) {
-            bookMap.forEach { bookEntry ->
-                if (!updateList.contains(bookEntry.key)) {
-                    val book = bookEntry.value
-                    synchronized(this) {
-                        updateList.add(book.bookUrl)
-                        postEvent(EventBus.UP_BOOK, book.bookUrl)
-                    }
-                    App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
-                        val webBook = WebBook(bookSource)
-                        webBook.getChapterList(book, context = upTocPool)
-                            .timeout(300000)
-                            .onSuccess(IO) {
-                                App.db.bookDao().update(book)
-                                App.db.bookChapterDao().delByBook(book.bookUrl)
-                                App.db.bookChapterDao().insert(*it.toTypedArray())
-                                cacheBook(webBook, book)
-                            }
-                            .onError {
-                                it.printStackTrace()
-                            }
-                            .onFinally {
-                                synchronized(this) {
-                                    bookMap.remove(bookEntry.key)
-                                    updateList.remove(book.bookUrl)
-                                    postEvent(EventBus.UP_BOOK, book.bookUrl)
-                                    upNext()
-                                }
-                            }
-                    } ?: synchronized(this) {
-                        bookMap.remove(bookEntry.key)
-                        updateList.remove(book.bookUrl)
-                        postEvent(EventBus.UP_BOOK, book.bookUrl)
-                        upNext()
-                    }
-                    return
+        bookMap.forEach { bookEntry ->
+            if (!updateList.contains(bookEntry.key)) {
+                val book = bookEntry.value
+                synchronized(this) {
+                    updateList.add(book.bookUrl)
+                    postEvent(EventBus.UP_BOOK, book.bookUrl)
                 }
+                App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
+                    val webBook = WebBook(bookSource)
+                    webBook.getChapterList(book, context = upTocPool)
+                        .timeout(300000)
+                        .onSuccess(IO) {
+                            App.db.bookDao().update(book)
+                            App.db.bookChapterDao().delByBook(book.bookUrl)
+                            App.db.bookChapterDao().insert(*it.toTypedArray())
+                            cacheBook(webBook, book)
+                        }
+                        .onError {
+                            it.printStackTrace()
+                        }
+                        .onFinally {
+                            synchronized(this) {
+                                bookMap.remove(bookEntry.key)
+                                updateList.remove(book.bookUrl)
+                                postEvent(EventBus.UP_BOOK, book.bookUrl)
+                                upNext()
+                            }
+                        }
+                } ?: synchronized(this) {
+                    bookMap.remove(bookEntry.key)
+                    updateList.remove(book.bookUrl)
+                    postEvent(EventBus.UP_BOOK, book.bookUrl)
+                    upNext()
+                }
+                return
             }
         }
     }

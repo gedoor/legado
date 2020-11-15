@@ -10,6 +10,7 @@ import java.util.regex.Pattern
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object NetworkUtils {
+
     fun getUrl(response: Response<*>): String {
         response.raw().networkResponse()?.let {
             return it.request().url().toString()
@@ -79,6 +80,7 @@ object NetworkUtils {
     fun getAbsoluteURL(baseURL: String?, relativePath: String?): String? {
         if (baseURL.isNullOrEmpty()) return relativePath
         if (relativePath.isNullOrEmpty()) return baseURL
+        if (relativePath.isAbsUrl()) return baseURL
         var relativeUrl = relativePath
         try {
             val absoluteUrl = URL(baseURL.substringBefore(","))
