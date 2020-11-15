@@ -1,6 +1,5 @@
 package io.legado.app.help
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import io.legado.app.App
@@ -13,7 +12,6 @@ import io.legado.app.utils.*
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     private val context get() = App.INSTANCE
     val isGooglePlay = context.channel == "google"
-    val isCoolApk = context.channel == "coolApk"
     var replaceEnableDefault = context.getPrefBoolean(PreferKey.replaceEnableDefault, true)
     var isEInkMode = context.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = context.getPrefInt(PreferKey.clickActionTL, 2)
@@ -104,11 +102,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             }
         }
 
-    var isShowRSS: Boolean
+    val isShowRSS: Boolean
         get() = context.getPrefBoolean(PreferKey.showRss, true)
-        set(value) {
-            context.putPrefBoolean(PreferKey.showRss, value)
-        }
 
     val autoRefreshBook: Boolean
         get() = context.getPrefBoolean(R.string.pk_auto_refresh)
@@ -148,7 +143,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     var elevation: Int
-        @SuppressLint("PrivateResource")
         get() = context.getPrefInt(PreferKey.barElevation, AppConst.sysElevation)
         set(value) {
             context.putPrefInt(PreferKey.barElevation, value)
