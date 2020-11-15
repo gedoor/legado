@@ -34,8 +34,6 @@ class App : MultiDexApplication() {
         lateinit var androidId: String
         var versionCode = 0
         var versionName = ""
-
-
     }
 
     override fun onCreate() {
