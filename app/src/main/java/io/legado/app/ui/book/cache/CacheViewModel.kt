@@ -94,6 +94,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             BookHelp.getContent(book, chapter).let { content ->
                 val content1 = content?.let {
                     contentProcessor.getContent(book, chapter.title, it, false)
+                        .joinToString("\n")
                 }
                 stringBuilder.append("\n\n")
                     .append(chapter.title)
