@@ -10,6 +10,7 @@
         android:id="@+id/vw_menu_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/content"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
 
@@ -172,19 +173,22 @@
         <!--底部设置栏-->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="100dp"
+            android:importantForAccessibility="no">
 
             <View
                 android:id="@+id/vw_bg"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no" />
 
             <LinearLayout
                 android:id="@+id/ll_bottom_bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/background_menu"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:importantForAccessibility="no">
                 <!--章节设置-->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -193,7 +197,8 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="5dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:importantForAccessibility="no">
 
                     <TextView
                         android:id="@+id/tv_pre"
@@ -239,12 +244,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:importantForAccessibility="no">
 
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:importantForAccessibility="no" />
 
                     <!--目录按钮-->
                     <LinearLayout
@@ -283,7 +290,8 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2" />
+                        android:layout_weight="2"
+                        android:importantForAccessibility="no" />
 
                     <!--调节按钮-->
                     <LinearLayout
@@ -322,7 +330,9 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2" />
+                        android:layout_weight="2"
+                        android:importantForAccessibility="no" />
+
                     <!--界面按钮-->
                     <LinearLayout
                         android:id="@+id/ll_font"
@@ -360,7 +370,9 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2" />
+                        android:layout_weight="2"
+                        android:importantForAccessibility="no" />
+
                     <!--设置按钮-->
                     <LinearLayout
                         android:id="@+id/ll_setting"
@@ -398,7 +410,9 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:importantForAccessibility="no" />
+
                 </LinearLayout>
 
                 <View
