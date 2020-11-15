@@ -7,11 +7,11 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
-import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.constant.AppPattern.EXP_PATTERN
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.help.http.api.HttpGetApi
@@ -204,7 +204,7 @@ class AnalyzeUrl(
             }
         }
         headerMap[UA_NAME] ?: let {
-            headerMap[UA_NAME] = userAgent
+            headerMap[UA_NAME] = AppConfig.userAgent
         }
         when (method) {
             RequestMethod.GET -> {

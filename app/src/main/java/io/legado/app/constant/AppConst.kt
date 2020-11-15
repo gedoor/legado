@@ -18,10 +18,6 @@ object AppConst {
 
     const val UA_NAME = "User-Agent"
 
-    val userAgent: String by lazy {
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36"
-    }
-
     val SCRIPT_ENGINE: ScriptEngine by lazy {
         ScriptEngineManager().getEngineByName("rhino")
     }

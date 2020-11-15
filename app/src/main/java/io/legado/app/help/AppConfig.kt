@@ -12,6 +12,7 @@ import io.legado.app.utils.*
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     private val context get() = App.INSTANCE
     val isGooglePlay = context.channel == "google"
+    var userAgent: String = getPrefUserAgent()
     var replaceEnableDefault = context.getPrefBoolean(PreferKey.replaceEnableDefault, true)
     var isEInkMode = context.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = context.getPrefInt(PreferKey.clickActionTL, 2)
@@ -26,39 +27,28 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.themeMode -> {
-                isEInkMode = context.getPrefString(PreferKey.themeMode) == "3"
-            }
-            PreferKey.clickActionTL -> {
-                clickActionTL = context.getPrefInt(PreferKey.clickActionTL, 2)
-            }
-            PreferKey.clickActionTC -> {
-                clickActionTC = context.getPrefInt(PreferKey.clickActionTC, 2)
-            }
-            PreferKey.clickActionTR -> {
-                clickActionTR = context.getPrefInt(PreferKey.clickActionTR, 2)
-            }
-            PreferKey.clickActionML -> {
-                clickActionML = context.getPrefInt(PreferKey.clickActionML, 2)
-            }
-            PreferKey.clickActionMC -> {
-                clickActionMC = context.getPrefInt(PreferKey.clickActionMC, 2)
-            }
-            PreferKey.clickActionMR -> {
-                clickActionMR = context.getPrefInt(PreferKey.clickActionMR, 2)
-            }
-            PreferKey.clickActionBL -> {
-                clickActionBL = context.getPrefInt(PreferKey.clickActionBL, 2)
-            }
-            PreferKey.clickActionBC -> {
-                clickActionBC = context.getPrefInt(PreferKey.clickActionBC, 2)
-            }
-            PreferKey.clickActionBR -> {
-                clickActionBR = context.getPrefInt(PreferKey.clickActionBR, 2)
-            }
-            PreferKey.readBodyToLh -> {
-                ReadBookConfig.readBodyToLh = context.getPrefBoolean(PreferKey.readBodyToLh, true)
-            }
+            PreferKey.themeMode -> isEInkMode = context.getPrefString(PreferKey.themeMode) == "3"
+            PreferKey.clickActionTL -> clickActionTL =
+                context.getPrefInt(PreferKey.clickActionTL, 2)
+            PreferKey.clickActionTC -> clickActionTC =
+                context.getPrefInt(PreferKey.clickActionTC, 2)
+            PreferKey.clickActionTR -> clickActionTR =
+                context.getPrefInt(PreferKey.clickActionTR, 2)
+            PreferKey.clickActionML -> clickActionML =
+                context.getPrefInt(PreferKey.clickActionML, 2)
+            PreferKey.clickActionMC -> clickActionMC =
+                context.getPrefInt(PreferKey.clickActionMC, 2)
+            PreferKey.clickActionMR -> clickActionMR =
+                context.getPrefInt(PreferKey.clickActionMR, 2)
+            PreferKey.clickActionBL -> clickActionBL =
+                context.getPrefInt(PreferKey.clickActionBL, 2)
+            PreferKey.clickActionBC -> clickActionBC =
+                context.getPrefInt(PreferKey.clickActionBC, 2)
+            PreferKey.clickActionBR -> clickActionBR =
+                context.getPrefInt(PreferKey.clickActionBR, 2)
+            PreferKey.readBodyToLh -> ReadBookConfig.readBodyToLh =
+                context.getPrefBoolean(PreferKey.readBodyToLh, true)
+            PreferKey.userAgent -> userAgent = getPrefUserAgent()
         }
     }
 
@@ -157,5 +147,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val importKeepName get() = context.getPrefBoolean(PreferKey.importKeepName)
 
+    private fun getPrefUserAgent(): String {
+        val ua = context.getPrefString(PreferKey.userAgent)
+        if (ua.isNullOrBlank()) {
+            return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36"
+        }
+        return ua
+    }
 }
 

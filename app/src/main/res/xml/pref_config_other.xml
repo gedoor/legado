@@ -51,6 +51,10 @@
         app:iconSpaceReserved="false"
         app:layout="@layout/view_preference_category">
 
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="userAgent"
+            android:title="UserAgent" />
+
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="replaceEnableDefault"
