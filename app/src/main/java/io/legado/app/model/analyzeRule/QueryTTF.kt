@@ -6,8 +6,8 @@ import kotlin.experimental.and
 @ExperimentalUnsignedTypes
 /**
  * 解析TTF字体
- *
  * @see <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/">获取详情</a>
+ * @see <a href="https://photopea.github.io/Typr.js/demo/index.html">基于Javascript的TTF解析器</a>
  */
 class QueryTTF(var font: ByteArray) : JsExtensions {
     data class Index(var num: Int)
