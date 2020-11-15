@@ -137,16 +137,14 @@ object AppConfig {
 
     val importKeepName get() = App.INSTANCE.getPrefBoolean(PreferKey.importKeepName)
 
-    val clickActionTopLeft get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTopLeft, 2)
-    val clickActionTopCenter get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTopCenter, 2)
-    val clickActionTopRight get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTopRight, 1)
-    val clickActionMiddleLeft get() = App.INSTANCE.getPrefInt(PreferKey.clickActionMiddleLeft, 2)
-    val clickActionMiddleCenter
-        get() = App.INSTANCE.getPrefInt(PreferKey.clickActionMiddleCenter, 0)
-    val clickActionMiddleRight get() = App.INSTANCE.getPrefInt(PreferKey.clickActionMiddleRight, 1)
-    val clickActionBottomLeft get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBottomLeft, 2)
-    val clickActionBottomCenter
-        get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBottomCenter, 1)
-    val clickActionBottomRight get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBottomRight, 1)
+    val clickActionTL get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTL, 2)
+    val clickActionTC get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTC, 2)
+    val clickActionTR get() = App.INSTANCE.getPrefInt(PreferKey.clickActionTR, 1)
+    val clickActionML get() = App.INSTANCE.getPrefInt(PreferKey.clickActionML, 2)
+    val clickActionMC get() = App.INSTANCE.getPrefInt(PreferKey.clickActionMC, 0)
+    val clickActionMR get() = App.INSTANCE.getPrefInt(PreferKey.clickActionMR, 1)
+    val clickActionBL get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBL, 2)
+    val clickActionBC get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBC, 1)
+    val clickActionBR get() = App.INSTANCE.getPrefInt(PreferKey.clickActionBR, 1)
 }
 

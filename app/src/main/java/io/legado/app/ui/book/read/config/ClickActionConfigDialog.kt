@@ -56,14 +56,14 @@ class ClickActionConfigDialog : BaseDialogFragment() {
     }
 
     private fun initData() = with(AppConfig) {
-        tv_top_left.text = actions[clickActionTopLeft]
-        tv_top_center.text = actions[clickActionTopCenter]
-        tv_top_right.text = actions[clickActionTopRight]
-        tv_middle_left.text = actions[clickActionMiddleLeft]
-        tv_middle_right.text = actions[clickActionMiddleRight]
-        tv_bottom_left.text = actions[clickActionBottomLeft]
-        tv_bottom_center.text = actions[clickActionBottomCenter]
-        tv_bottom_right.text = actions[clickActionBottomRight]
+        tv_top_left.text = actions[clickActionTL]
+        tv_top_center.text = actions[clickActionTC]
+        tv_top_right.text = actions[clickActionTR]
+        tv_middle_left.text = actions[clickActionML]
+        tv_middle_right.text = actions[clickActionMR]
+        tv_bottom_left.text = actions[clickActionBL]
+        tv_bottom_center.text = actions[clickActionBC]
+        tv_bottom_right.text = actions[clickActionBR]
     }
 
     private fun initViewEvent() {
@@ -72,49 +72,49 @@ class ClickActionConfigDialog : BaseDialogFragment() {
         }
         tv_top_left.onClick {
             selectAction { action ->
-                putPrefInt(PreferKey.clickActionTopLeft, action)
+                putPrefInt(PreferKey.clickActionTL, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
         tv_top_center.onClick {
             selectAction { action ->
-                putPrefInt(PreferKey.clickActionTopCenter, action)
+                putPrefInt(PreferKey.clickActionTC, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
         tv_top_right.onClick {
             selectAction { action ->
-                putPrefInt(PreferKey.clickActionTopRight, action)
+                putPrefInt(PreferKey.clickActionTR, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
         tv_middle_left.onClick {
             selectAction { action ->
-                putPrefInt(PreferKey.clickActionMiddleLeft, action)
+                putPrefInt(PreferKey.clickActionML, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
         tv_middle_right.onClick {
             selectAction { action ->
-                putPrefInt(PreferKey.clickActionMiddleRight, action)
+                putPrefInt(PreferKey.clickActionMR, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
         tv_bottom_left.onClick {
             selectAction { action ->
-                putPrefInt(PreferKey.clickActionBottomLeft, action)
+                putPrefInt(PreferKey.clickActionBL, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
         tv_bottom_center.onClick {
             selectAction { action ->
-                putPrefInt(PreferKey.clickActionBottomCenter, action)
+                putPrefInt(PreferKey.clickActionBC, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
         tv_bottom_right.onClick {
             selectAction { action ->
-                putPrefInt(PreferKey.clickActionBottomRight, action)
+                putPrefInt(PreferKey.clickActionBR, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
