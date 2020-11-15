@@ -64,17 +64,20 @@ class QrCodeActivity : BaseActivity(R.layout.activity_qrcode_capture), QRCodeVie
             .rationale(R.string.qr_per)
             .onGranted {
                 zxingview.visibility = View.VISIBLE
-                zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
+                //TODO 显示扫描框，并开始识别
+                zxingview.startSpotAndShowRect()
             }.request()
     }
 
     override fun onStop() {
-        zxingview.stopCamera() // 关闭摄像头预览，并且隐藏扫描框
+        //TODO 关闭摄像头预览，并且隐藏扫描框
+        zxingview.stopCamera()
         super.onStop()
     }
 
     override fun onDestroy() {
-        zxingview.onDestroy() // 销毁二维码扫描控件
+        //TODO 销毁二维码扫描控件
+        zxingview.onDestroy()
         super.onDestroy()
     }
 
@@ -96,7 +99,8 @@ class QrCodeActivity : BaseActivity(R.layout.activity_qrcode_capture), QRCodeVie
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         data?.data?.let {
-            zxingview.startSpotAndShowRect() // 显示扫描框，并开始识别
+            //TODO 显示扫描框，并开始识别
+            zxingview.startSpotAndShowRect()
 
             if (resultCode == Activity.RESULT_OK && requestCode == requestQrImage) {
                 // 本来就用到 QRCodeView 时可直接调 QRCodeView 的方法，走通用的回调
