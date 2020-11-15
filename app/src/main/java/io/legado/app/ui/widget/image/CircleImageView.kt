@@ -139,6 +139,7 @@ class CircleImageView @JvmOverloads constructor(
                 DEFAULT_CIRCLE_BACKGROUND_COLOR
             )
         text = a.getString(R.styleable.CircleImageView_text)
+        contentDescription = text
         if (a.hasValue(R.styleable.CircleImageView_textColor)) {
             textColor = a.getColor(
                 R.styleable.CircleImageView_textColor,
@@ -226,6 +227,7 @@ class CircleImageView @JvmOverloads constructor(
 
     fun setText(text: String?) {
         this.text = text
+        contentDescription = text
         invalidate()
     }
 
