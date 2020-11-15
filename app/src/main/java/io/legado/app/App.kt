@@ -17,6 +17,7 @@ import io.legado.app.data.AppDatabase
 import io.legado.app.help.*
 import io.legado.app.utils.LanguageUtils
 import io.legado.app.utils.postEvent
+import org.jetbrains.anko.defaultSharedPreferences
 
 @Suppress("DEPRECATION")
 class App : MultiDexApplication() {
@@ -33,6 +34,8 @@ class App : MultiDexApplication() {
         lateinit var androidId: String
         var versionCode = 0
         var versionName = ""
+
+
     }
 
     override fun onCreate() {
@@ -53,8 +56,8 @@ class App : MultiDexApplication() {
             .supportBroadcast(this)
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
-
         registerActivityLifecycleCallbacks(ActivityHelp)
+        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -66,7 +69,6 @@ class App : MultiDexApplication() {
     }
 
     fun applyDayNight() {
-        AppConfig.upEInkMode()
         ReadBookConfig.upBg()
         ThemeConfig.applyTheme(this)
         initNightMode()

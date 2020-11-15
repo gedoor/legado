@@ -1,6 +1,7 @@
 package io.legado.app.help.http
 
 import io.legado.app.constant.AppConst
+import io.legado.app.help.AppConfig
 import io.legado.app.help.http.api.HttpGetApi
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -41,7 +42,7 @@ object HttpHelper {
     fun simpleGet(url: String, encode: String? = null): String? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             val response = getApiService<HttpGetApi>(baseUrl, encode)
-                .get(url, mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
+                .get(url, mapOf(Pair(AppConst.UA_NAME, AppConfig.userAgent)))
                 .execute()
             return response.body()
         }
@@ -51,7 +52,7 @@ object HttpHelper {
     suspend fun simpleGetAsync(url: String, encode: String? = null): String? {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             val response = getApiService<HttpGetApi>(baseUrl, encode)
-                .getAsync(url, mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
+                .getAsync(url, mapOf(Pair(AppConst.UA_NAME, AppConfig.userAgent)))
             return response.body()
         }
         return null
@@ -61,7 +62,7 @@ object HttpHelper {
         NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
             return getByteRetrofit(baseUrl)
                 .create(HttpGetApi::class.java)
-                .getMapByteAsync(url, mapOf(), mapOf(Pair(AppConst.UA_NAME, AppConst.userAgent)))
+                .getMapByteAsync(url, mapOf(), mapOf(Pair(AppConst.UA_NAME, AppConfig.userAgent)))
                 .body()
         }
         return null

@@ -5,9 +5,18 @@ import androidx.core.content.edit
 import io.legado.app.App
 
 object LocalConfig {
+    private const val versionCodeKey = "versionCode"
 
     private val localConfig =
         App.INSTANCE.getSharedPreferences("local", Context.MODE_PRIVATE)
+
+    var versionCode
+        get() = localConfig.getInt(versionCodeKey, 0)
+        set(value) {
+            localConfig.edit {
+                putInt(versionCodeKey, value)
+            }
+        }
 
     val isFirstOpenApp: Boolean
         get() {

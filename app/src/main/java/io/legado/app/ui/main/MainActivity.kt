@@ -27,7 +27,9 @@ import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.hideSoftInput
+import io.legado.app.utils.observeEvent
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 
@@ -101,8 +103,8 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
     }
 
     private fun upVersion() {
-        if (getPrefInt(PreferKey.versionCode) != App.versionCode) {
-            putPrefInt(PreferKey.versionCode, App.versionCode)
+        if (LocalConfig.versionCode != App.versionCode) {
+            LocalConfig.versionCode = App.versionCode
             if (LocalConfig.isFirstOpenApp) {
                 val text = String(assets.open("help/appHelp.md").readBytes())
                 TextDialog.show(supportFragmentManager, text, TextDialog.MD)

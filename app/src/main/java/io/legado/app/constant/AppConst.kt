@@ -1,6 +1,8 @@
 package io.legado.app.constant
 
 import android.annotation.SuppressLint
+import io.legado.app.App
+import io.legado.app.R
 import java.text.SimpleDateFormat
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -15,10 +17,6 @@ object AppConst {
     const val channelIdWeb = "channel_web"
 
     const val UA_NAME = "User-Agent"
-
-    val userAgent: String by lazy {
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36"
-    }
 
     val SCRIPT_ENGINE: ScriptEngine by lazy {
         ScriptEngineManager().getEngineByName("rhino")
@@ -69,4 +67,6 @@ object AppConst {
         "com.android.internal.view.menu.ListMenuItemView",
         "androidx.appcompat.view.menu.ListMenuItemView"
     )
+
+    val sysElevation = App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
 }

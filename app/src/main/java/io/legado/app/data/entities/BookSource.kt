@@ -5,11 +5,14 @@ import android.text.TextUtils
 import androidx.room.*
 import io.legado.app.App
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.AppConst.userAgent
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
+import io.legado.app.help.AppConfig
 import io.legado.app.help.JsExtensions
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.splitNotBlank
 import kotlinx.android.parcel.Parcelize
 import javax.script.SimpleBindings
 
@@ -51,7 +54,7 @@ data class BookSource(
     
     @Throws(Exception::class)
     fun getHeaderMap() = (HashMap<String, String>().apply {
-        this[AppConst.UA_NAME] = App.INSTANCE.getPrefString("user_agent") ?: userAgent
+        this[AppConst.UA_NAME] = AppConfig.userAgent
         header?.let {
             GSON.fromJsonObject<Map<String, String>>(
                 when {

@@ -21,7 +21,8 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.lib.dialogs.*
+import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
@@ -208,7 +209,7 @@ abstract class ReadBookBaseActivity :
      * 适配刘海
      */
     private fun upLayoutInDisplayCutoutMode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && AppConfig.readBodyToLh) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && ReadBookConfig.readBodyToLh) {
             window.attributes = window.attributes.apply {
                 layoutInDisplayCutoutMode =
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
