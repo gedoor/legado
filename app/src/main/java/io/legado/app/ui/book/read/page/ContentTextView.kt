@@ -47,13 +47,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     init {
         callBack = activity as CallBack
-        contentDescription = textPage.text
     }
 
     fun setContent(pageData: PageData) {
         this.textChapter = pageData.textChapter
         this.textPage = pageData.textPage
-        contentDescription = textPage.text
         invalidate()
     }
 

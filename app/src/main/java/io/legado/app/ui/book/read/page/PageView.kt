@@ -373,6 +373,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     }
 
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
+        curPage.setContentDescription(pageFactory.curData.textPage.text)
         if (isScroll && !callBack.isAutoPage) {
             curPage.setContent(pageFactory.curData, resetPageOffset)
         } else {
