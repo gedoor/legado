@@ -120,7 +120,6 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 key,
                 getPrefString(PreferKey.defaultCover)
             )
-            PreferKey.replaceEnableDefault -> AppConfig.upReplaceEnableDefault()
             PreferKey.language -> listView.postDelayed({
                 LanguageUtils.setConfiguration(App.INSTANCE)
                 val intent = Intent(App.INSTANCE, MainActivity::class.java)

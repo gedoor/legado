@@ -1,6 +1,8 @@
 package io.legado.app.constant
 
 import android.annotation.SuppressLint
+import io.legado.app.App
+import io.legado.app.R
 import java.text.SimpleDateFormat
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -69,4 +71,6 @@ object AppConst {
         "com.android.internal.view.menu.ListMenuItemView",
         "androidx.appcompat.view.menu.ListMenuItemView"
     )
+
+    val sysElevation = App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
 }

@@ -13,7 +13,10 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.*
-import io.legado.app.help.*
+import io.legado.app.help.DefaultData
+import io.legado.app.help.LauncherIconHelp
+import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.ThemeConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
@@ -206,7 +209,6 @@ object Restore {
                     }
                 }
                 edit.apply()
-                AppConfig.upConfig()
             }
             ReadBookConfig.apply {
                 styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)

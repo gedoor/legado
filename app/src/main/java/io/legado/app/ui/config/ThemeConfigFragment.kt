@@ -12,6 +12,7 @@ import androidx.preference.Preference
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
@@ -158,7 +159,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 .setMinValue(0)
                 .setValue(AppConfig.elevation)
                 .setCustomButton((R.string.btn_default_s)) {
-                    AppConfig.elevation = AppConfig.sysElevation
+                    AppConfig.elevation = AppConst.sysElevation
                     recreateActivities()
                 }
                 .show {
