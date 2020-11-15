@@ -11,6 +11,7 @@ base64DecodeToByteArray(str: String?): ByteArray?
 base64DecodeToByteArray(str: String?, flags: Int): ByteArray?
 ```
 * 导出添加替换净化
+* 修复正文内容TalkBack不对的bug,优化视障使用体验
 
 **2020/11/08**
 * 优化书源,订阅源导入,添加保持原名选项
