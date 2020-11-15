@@ -52,7 +52,6 @@ object Restore {
 
     //默认忽略keys
     private val ignorePrefKeys = arrayOf(
-        PreferKey.versionCode,
         PreferKey.defaultCover
     )
     private val readPrefKeys = arrayOf(
