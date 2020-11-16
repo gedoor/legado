@@ -495,7 +495,7 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
     /***
      * 获取字体轮廓 (fontCode:单个String字符)
      */
-    fun GetGlyf(fontCode: String): ArrayList<Short> {
-        return GetGlyf(fontCode[0].toInt())
+    fun getGlyf(str: String): ArrayList<Short> {
+        return getGlyf(str.toInt())
     }
 }
