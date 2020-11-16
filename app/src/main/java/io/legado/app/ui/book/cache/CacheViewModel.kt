@@ -92,13 +92,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             .append(context.getString(R.string.author_show, book.author))
         App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
-                val content1 = content?.let {
-                    contentProcessor.getContent(book, chapter.title, it, false)
-                        .joinToString("\n")
-                }
+                val content1 = contentProcessor
+                    .getContent(book, chapter.title, content ?: "", false)
+                    .joinToString("\n")
                 stringBuilder.append("\n\n")
-                    .append(chapter.title)
-                    .append("\n")
                     .append(content1)
             }
         }
