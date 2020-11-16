@@ -3,12 +3,13 @@ package io.legado.app.model.analyzeRule
 import io.legado.app.help.JsExtensions
 import kotlin.experimental.and
 
-@ExperimentalUnsignedTypes
 /**
  * 解析TTF字体
  * @see <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/">获取详情</a>
  * @see <a href="https://photopea.github.io/Typr.js/demo/index.html">基于Javascript的TTF解析器</a>
  */
+@Suppress("unused", "RedundantExplicitType", "MemberVisibilityCanBePrivate")
+@ExperimentalUnsignedTypes
 class QueryTTF(var font: ByteArray) : JsExtensions {
     data class Index(var num: Int)
 
@@ -33,7 +34,7 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
         var format: UShort = 0u
         var count: UShort = 0u
         var stringOffset: UShort = 0u
-        var Records = ArrayList<NameRecord>()
+        var records = ArrayList<NameRecord>()
     }
 
     class NameRecord {
@@ -136,9 +137,9 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
         lateinit var yCoordinates: Array<Short>
     }
 
-    var Header = FileHeader()
+    var header = FileHeader()
 
-    var Tables = mutableMapOf<String, TableDirectory>()
+    var tables = mutableMapOf<String, TableDirectory>()
 
     var name = NameTable()
 
@@ -165,7 +166,7 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
     }
 
     // 索引变量
-    var index = 0
+    private var index = 0
 
     // 从索引index开始拷贝指定长度的数组
     private fun ByteArray.copyOfIndex(length: Int): ByteArray {
@@ -182,26 +183,26 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
     init {
 
         // 解析文件头
-        Header = FileHeader()
+        header = FileHeader()
         // 跳过不需要的数据条目
         index = 4
-        Header.numOfTables = byteArrToUintx(font.copyOfIndex(2)).toUShort()
+        header.numOfTables = byteArrToUintx(font.copyOfIndex(2)).toUShort()
 
         // 获取数据表
         index = 12
-        for (i in 0 until Header.numOfTables.toInt()) {
+        for (i in 0 until header.numOfTables.toInt()) {
             val table = TableDirectory()
             table.tag = font.copyOfIndex(4).toString(Charsets.US_ASCII)
             table.checkSum = byteArrToUintx(font.copyOfIndex(4)).toUInt()
             table.offset = byteArrToUintx(font.copyOfIndex(4)).toUInt()
             table.length = byteArrToUintx(font.copyOfIndex(4)).toUInt()
             table.data = font.copyOfIndex(table.offset.toInt(), table.length.toInt())
-            Tables[table.tag] = table
+            tables[table.tag] = table
         }
 
         // 解析表 name (字体信息,包含版权、名称、作者等...)
         run {
-            val data = Tables["name"]!!.data
+            val data = tables["name"]!!.data
             index = 0
             name.format = byteArrToUintx(data.copyOfIndex(2)).toUShort()
             name.count = byteArrToUintx(data.copyOfIndex(2)).toUShort()
@@ -215,14 +216,17 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
                 record.nameID = byteArrToUintx(data.copyOfIndex(2)).toUShort()
                 record.length = byteArrToUintx(data.copyOfIndex(2)).toUShort()
                 record.offset = byteArrToUintx(data.copyOfIndex(2)).toUShort()
-                record.nameBuffer = data.copyOfIndex((name.stringOffset + record.offset).toInt(), record.length.toInt())
-                name.Records.add(record)
+                record.nameBuffer = data.copyOfIndex(
+                    (name.stringOffset + record.offset).toInt(),
+                    record.length.toInt()
+                )
+                name.records.add(record)
             }
         }
 
         // 解析表 head (获取 head.indexToLocFormat)
         run {
-            val data = Tables["head"]!!.data
+            val data = tables["head"]!!.data
             index = 0
             head.majorVersion = byteArrToUintx(data.copyOfIndex(2)).toUShort()
             head.minorVersion = byteArrToUintx(data.copyOfIndex(2)).toUShort()
@@ -246,8 +250,7 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
 
         // 解析表 maxp (获取 maxp.numGlyphs)
         run {
-            val data = Tables["maxp"]!!.data
-            index = 0
+            val data = tables["maxp"]!!.data
             index = 0
             maxp.majorVersion = byteArrToUintx(data.copyOfIndex(2)).toUShort()
             maxp.minorVersion = byteArrToUintx(data.copyOfIndex(2)).toUShort()
@@ -269,7 +272,7 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
 
         // 解析表 loca (轮廓数据偏移地址表)
         run {
-            val data = Tables["maxp"]!!.data
+            val data = tables["maxp"]!!.data
             val offset = if (head.indexToLocFormat.equals(0)) 2 else 4
             index = 0
             while (index < data.size) {
@@ -280,7 +283,7 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
 
         // 解析表 cmap (Unicode编码轮廓索引对照表)
         run {
-            val data = Tables["cmap"]!!.data
+            val data = tables["cmap"]!!.data
             index = 0
             cmap.version = byteArrToUintx(data.copyOfIndex(2)).toUShort()
             cmap.numTables = byteArrToUintx(data.copyOfIndex(2)).toUShort()
@@ -291,7 +294,7 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
                 record.encodingID = byteArrToUintx(data.copyOfIndex(2)).toUShort()
                 record.offset = byteArrToUintx(data.copyOfIndex(4)).toUInt()
                 cmap.records.add(record)
-                val tmpIndex = index;   // 缓存索引
+                val tmpIndex = index   // 缓存索引
 
                 index = record.offset.toInt()
                 val fmt = byteArrToUintx(data.copyOfIndex(2)).toUShort()
@@ -336,13 +339,13 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
                     }
                     cmap.tables[fmt.toInt()] = ft
                 }
-                index = tmpIndex;   // 读取缓存的索引
+                index = tmpIndex   // 读取缓存的索引
             }
         }
 
         // 解析表 glyf (字体轮廓数据表)
         run {
-            val data = Tables["glyf"]!!.data
+            val data = tables["glyf"]!!.data
             for (i in 0 until maxp.numGlyphs.toInt()) {
                 index = loca[i].toInt()
                 val numberOfContours = byteArrToUintx(data.copyOfIndex(2)).toShort()
@@ -359,9 +362,11 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
                     g.yMax = yMax
                     g.endPtsOfContours = IntArray(numberOfContours.toInt())
                     for (n in 0 until numberOfContours) {
-                        g.endPtsOfContours[n] = byteArrToUintx(data.copyOfIndex(2)).toInt(); // 这里数据源为UShort
+                        g.endPtsOfContours[n] =
+                            byteArrToUintx(data.copyOfIndex(2)).toInt() // 这里数据源为UShort
                     }
-                    g.instructionLength = byteArrToUintx(data.copyOfIndex(2)).toInt(); // 这里数据源为UShort
+                    g.instructionLength =
+                        byteArrToUintx(data.copyOfIndex(2)).toInt() // 这里数据源为UShort
                     g.instructions = data.copyOfIndex(g.instructionLength)
                     val flagLength = g.endPtsOfContours.last() + 1
                     g.flags = ByteArray(flagLength)
@@ -384,7 +389,8 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
                         val xByte = !(g.flags[n] and 0x02).equals(0)
                         val xSame = !(g.flags[n] and 0x10).equals(0)
                         if (xByte) {
-                            g.xCoordinates[n] = ((if (xSame) 1 else -1) * data.copyOfIndex(1).first()).toShort()
+                            g.xCoordinates[n] =
+                                ((if (xSame) 1 else -1) * data.copyOfIndex(1).first()).toShort()
                         } else {
                             if (xSame) g.xCoordinates[n] = 0
                             else {
@@ -398,7 +404,8 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
                         val yByte = !(g.flags[n] and 0x04).equals(0)
                         val ySame = !(g.flags[n] and 0x20).equals(0)
                         if (yByte) {
-                            g.yCoordinates[n] = ((if (ySame) 1 else -1) * data.copyOfIndex(1).first()).toShort()
+                            g.yCoordinates[n] =
+                                ((if (ySame) 1 else -1) * data.copyOfIndex(1).first()).toShort()
                         } else {
                             if (ySame) g.yCoordinates[n] = 0
                             else {
@@ -427,8 +434,8 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
      * 获取字体信息（默认获取字体名称）
      * @see <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/name#name-ids">获取详情</a>
      */
-    fun GetName(nameID: Int = 1): String {
-        for (record in name.Records) {
+    fun getName(nameID: Int = 1): String {
+        for (record in name.records) {
             if (!record.nameID.equals(nameID)) continue
             if (record.platformID.equals(1) && record.encodingID.equals(0)) {
                 return record.nameBuffer.toString(Charsets.UTF_8)
@@ -440,10 +447,10 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
     }
 
     /**
-    * 获取字体轮廓 (fontCode:十进制Unicode字符编码)
-    */
-    fun GetGlyf(fontCode: Int): ArrayList<Short> {
-        var fontIndex = -1;    // 轮廓索引
+     * 获取字体轮廓 (fontCode:十进制Unicode字符编码)
+     */
+    fun getGlyf(fontCode: Int): ArrayList<Short> {
+        var fontIndex = -1    // 轮廓索引
         val fmt4 = cmap.tables.getOrDefault(4, null)
         if (fmt4 != null) {
             val fmt = (fmt4 as Format4)
@@ -454,14 +461,18 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
                     break
                 }
             }
-            if (fontIndex == -1) fontIndex = 0
-            else if (fontCode < fmt.startCode[fontIndex]) fontIndex = 0
-            else {
-                if (fmt.idRangeOffset[fontIndex] != 0) {
-                    fontIndex =
-                        fmt.glyphIdArray[fontCode - fmt.startCode[fontIndex] + fmt.idRangeOffset[fontIndex].ushr(1) - (fmt.idRangeOffset.size - fontIndex)].toInt()
-                } else fontIndex = fontCode + fmt.idDelta[fontIndex]
-                fontIndex = fontIndex and 0xFFFF
+            when {
+                fontIndex == -1 -> fontIndex = 0
+                fontCode < fmt.startCode[fontIndex] -> fontIndex = 0
+                else -> {
+                    fontIndex = if (fmt.idRangeOffset[fontIndex] != 0) {
+                        val i = (fontCode - fmt.startCode[fontIndex]
+                                + fmt.idRangeOffset[fontIndex].ushr(1)
+                                - (fmt.idRangeOffset.size - fontIndex))
+                        fmt.glyphIdArray[i].toInt()
+                    } else fontCode + fmt.idDelta[fontIndex]
+                    fontIndex = fontIndex and 0xFFFF
+                }
             }
         } else {
             val fmt0 = cmap.tables.getOrDefault(0, null)
