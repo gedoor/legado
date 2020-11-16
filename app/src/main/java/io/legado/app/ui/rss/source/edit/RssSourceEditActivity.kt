@@ -50,7 +50,7 @@ class RssSourceEditActivity :
 
     override fun finish() {
         val source = getRssSource()
-        if (!source.equal(viewModel.rssSource ?: RssSource())) {
+        if (!source.equal(viewModel.rssSource)) {
             alert(R.string.exit) {
                 messageResource = R.string.exit_no_save
                 positiveButton(R.string.yes)
