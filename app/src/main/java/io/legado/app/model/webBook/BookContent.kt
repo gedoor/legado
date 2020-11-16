@@ -10,10 +10,8 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.htmlFormat
-import io.legado.app.utils.toStringArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 
@@ -36,13 +34,11 @@ object BookContent {
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
-        var queryTTF: QueryTTF? = null
         contentRule.font?.let {
             //todo 获取字体
             val analyzeRule = AnalyzeRule(book)
             analyzeRule.setContent(body).setBaseUrl(baseUrl)
             analyzeRule.getByteArray(it)?.let { font ->
-                queryTTF = QueryTTF(font)
                 BookHelp.saveFont(book, bookChapter, font)
             }
         }
@@ -114,12 +110,6 @@ object BookContent {
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")
         Debug.log(bookSource.bookSourceUrl, "└\n$contentStr")
-        queryTTF?.let {
-            contentStr.toStringArray().forEach { str ->
-                val fontData = it.getGlyf(str.toInt())
-
-            }
-        }
         if (contentStr.isNotBlank()) {
             BookHelp.saveContent(book, bookChapter, contentStr)
         }
