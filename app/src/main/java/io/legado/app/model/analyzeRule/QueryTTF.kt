@@ -8,7 +8,10 @@ import kotlin.experimental.and
  * @see <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/">获取详情</a>
  * @see <a href="https://photopea.github.io/Typr.js/demo/index.html">基于Javascript的TTF解析器</a>
  */
-@Suppress("unused", "RedundantExplicitType", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "unused", "RedundantExplicitType", "MemberVisibilityCanBePrivate",
+    "EqualsBetweenInconvertibleTypes", "ControlFlowWithEmptyBody"
+)
 @ExperimentalUnsignedTypes
 class QueryTTF(var font: ByteArray) : JsExtensions {
     data class Index(var num: Int)
@@ -385,31 +388,31 @@ class QueryTTF(var font: ByteArray) : JsExtensions {
                     }
                     // 获取x轴相对坐标
                     g.xCoordinates = Array(flagLength) { 0 }
-                    for (n in 0 until flagLength) {
-                        val xByte = !(g.flags[n] and 0x02).equals(0)
-                        val xSame = !(g.flags[n] and 0x10).equals(0)
+                    for (m in 0 until flagLength) {
+                        val xByte = !(g.flags[m] and 0x02).equals(0)
+                        val xSame = !(g.flags[m] and 0x10).equals(0)
                         if (xByte) {
-                            g.xCoordinates[n] =
+                            g.xCoordinates[m] =
                                 ((if (xSame) 1 else -1) * data.copyOfIndex(1).first()).toShort()
                         } else {
-                            if (xSame) g.xCoordinates[n] = 0
+                            if (xSame) g.xCoordinates[m] = 0
                             else {
-                                g.xCoordinates[n] = byteArrToUintx(data.copyOfIndex(2)).toShort()
+                                g.xCoordinates[m] = byteArrToUintx(data.copyOfIndex(2)).toShort()
                             }
                         }
                     }
                     // 获取y轴相对坐标
                     g.yCoordinates = Array(flagLength) { 0 }
-                    for (n in 0 until flagLength) {
-                        val yByte = !(g.flags[n] and 0x04).equals(0)
-                        val ySame = !(g.flags[n] and 0x20).equals(0)
+                    for (m in 0 until flagLength) {
+                        val yByte = !(g.flags[m] and 0x04).equals(0)
+                        val ySame = !(g.flags[m] and 0x20).equals(0)
                         if (yByte) {
-                            g.yCoordinates[n] =
+                            g.yCoordinates[m] =
                                 ((if (ySame) 1 else -1) * data.copyOfIndex(1).first()).toShort()
                         } else {
-                            if (ySame) g.yCoordinates[n] = 0
+                            if (ySame) g.yCoordinates[m] = 0
                             else {
-                                g.yCoordinates[n] = byteArrToUintx(data.copyOfIndex(2)).toShort()
+                                g.yCoordinates[m] = byteArrToUintx(data.copyOfIndex(2)).toShort()
                             }
                         }
                     }
