@@ -51,6 +51,11 @@ class ContentView(context: Context) : FrameLayout(context) {
         }
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        upStyle()
+    }
+
     fun upStyle() {
         ReadBookConfig.apply {
             bv_header_left.typeface = ChapterProvider.typeface
