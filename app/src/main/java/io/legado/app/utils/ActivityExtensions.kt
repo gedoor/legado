@@ -21,3 +21,12 @@ fun Activity.getSize(): DisplayMetrics {
     }
     return displayMetrics
 }
+
+val Activity.navigationBarHeight: Int
+    get() {
+        if (SystemUtils.isNavigationBarExist(this)) {
+            val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+            return resources.getDimensionPixelSize(resourceId)
+        }
+        return 0
+    }

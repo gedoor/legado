@@ -237,8 +237,7 @@ class ReadMenu @JvmOverloads constructor(
             override fun onAnimationEnd(animation: Animation) {
                 vw_menu_bg.onClick { runMenuOut() }
                 vwNavigationBar.layoutParams = vwNavigationBar.layoutParams.apply {
-                    height =
-                        if (SystemUtils.isNavigationBarExist(activity)) context.navigationBarHeight else 0
+                    height = activity!!.navigationBarHeight
                 }
                 if (LocalConfig.isFirstReadMenuShow) {
                     callBack.showReadMenuHelp()
