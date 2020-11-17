@@ -14,7 +14,6 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
-import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
@@ -237,10 +236,9 @@ class ReadMenu @JvmOverloads constructor(
 
             override fun onAnimationEnd(animation: Animation) {
                 vw_menu_bg.onClick { runMenuOut() }
-                val hasNavigationBar = ReadBookConfig.hideNavigationBar
-                        && SystemUtils.isNavigationBarExist(activity)
                 vwNavigationBar.layoutParams = vwNavigationBar.layoutParams.apply {
-                    height = if (hasNavigationBar) context.navigationBarHeight else 0
+                    height =
+                        if (SystemUtils.isNavigationBarExist(activity)) context.navigationBarHeight else 0
                 }
                 if (LocalConfig.isFirstReadMenuShow) {
                     callBack.showReadMenuHelp()

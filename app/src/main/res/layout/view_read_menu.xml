@@ -281,7 +281,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:ellipsize="middle"
                             android:text="@string/chapter_list"
                             android:textColor="@color/primaryText"
                             android:textSize="12sp" />
@@ -321,7 +322,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:ellipsize="middle"
                             android:text="@string/read_aloud"
                             android:textColor="@color/primaryText"
                             android:textSize="12sp" />
@@ -361,7 +363,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:ellipsize="middle"
                             android:text="@string/interface_setting"
                             android:textColor="@color/primaryText"
                             android:textSize="12sp" />
@@ -401,7 +404,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:ellipsize="middle"
                             android:text="@string/setting"
                             android:textColor="@color/primaryText"
                             android:textSize="12sp" />
