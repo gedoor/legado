@@ -25,7 +25,6 @@ class MoreConfigDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        (activity as ReadBookActivity).bottomDialog++
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
@@ -43,6 +42,7 @@ class MoreConfigDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as ReadBookActivity).bottomDialog++
         val view = LinearLayout(context)
         view.setBackgroundColor(requireContext().bottomBackground)
         view.id = R.id.tag1
