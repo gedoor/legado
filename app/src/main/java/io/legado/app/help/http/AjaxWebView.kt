@@ -117,10 +117,10 @@ class AjaxWebView {
         val isSniff: Boolean
             get() = !TextUtils.isEmpty(sourceRegex)
 
-        fun setCookie(url: String) {
+        fun putCookie(url: String) {
             tag?.let {
                 val cookie = CookieManager.getInstance().getCookie(url)
-                CookieStore.setCookie(it, cookie)
+                CookieStore.putCookie(it, cookie)
             }
         }
 
@@ -140,7 +140,7 @@ class AjaxWebView {
     ) : WebViewClient() {
 
         override fun onPageFinished(view: WebView, url: String) {
-            params.setCookie(url)
+            params.putCookie(url)
             val runnable = EvalJsRunnable(view, url, params.getJs(), handler)
             handler.postDelayed(runnable, 1000)
         }
@@ -193,7 +193,7 @@ class AjaxWebView {
         }
 
         override fun onPageFinished(view: WebView, url: String) {
-            params.setCookie(url)
+            params.putCookie(url)
             if (params.hasJavaScript()) {
                 evaluateJavascript(view, params.javaScript)
                 params.clearJavaScript()

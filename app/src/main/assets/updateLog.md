@@ -6,6 +6,7 @@
 **2020/11/18**
 * 优化导航栏
 * js添加java.log(msg: String)用于调试时输出消息
+* js添加cookie对象,可用方法见io.legado.app.help.http.api.CookieManager
 
 **2020/11/16**
 * 修复导出添加替换净化引起的bug

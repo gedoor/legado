@@ -39,7 +39,7 @@ class SourceLogin : BaseActivity(R.layout.activity_source_login) {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 val cookie = cookieManager.getCookie(url)
                 sourceUrl?.let {
-                    CookieStore.setCookie(it, cookie)
+                    CookieStore.putCookie(it, cookie)
                 }
                 super.onPageStarted(view, url, favicon)
             }
@@ -47,7 +47,7 @@ class SourceLogin : BaseActivity(R.layout.activity_source_login) {
             override fun onPageFinished(view: WebView?, url: String?) {
                 val cookie = cookieManager.getCookie(url)
                 sourceUrl?.let {
-                    CookieStore.setCookie(it, cookie)
+                    CookieStore.putCookie(it, cookie)
                 }
                 if (checking) {
                     finish()
