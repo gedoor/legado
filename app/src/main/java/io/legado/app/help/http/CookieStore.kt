@@ -7,17 +7,14 @@ import com.franmontiel.persistentcookiejar.persistence.CookiePersistor
 import com.franmontiel.persistentcookiejar.persistence.SerializableCookie
 import io.legado.app.App
 import io.legado.app.data.entities.Cookie
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.api.CookieManager
 import io.legado.app.utils.NetworkUtils
 
 object CookieStore : CookiePersistor, CookieManager {
 
-    override fun putCookie(url: String, cookie: String?) {
-        Coroutine.async {
-            val cookieBean = Cookie(NetworkUtils.getSubDomain(url), cookie ?: "")
-            App.db.cookieDao().insert(cookieBean)
-        }
+    override fun setCookie(url: String, cookie: String?) {
+        val cookieBean = Cookie(NetworkUtils.getSubDomain(url), cookie ?: "")
+        App.db.cookieDao().insert(cookieBean)
     }
 
     override fun replaceCookie(url: String, cookie: String) {
@@ -26,12 +23,12 @@ object CookieStore : CookiePersistor, CookieManager {
         }
         val oldCookie = getCookie(url)
         if (TextUtils.isEmpty(oldCookie)) {
-            putCookie(url, cookie)
+            setCookie(url, cookie)
         } else {
             val cookieMap = cookieToMap(oldCookie)
             cookieMap.putAll(cookieToMap(cookie))
             val newCookie = mapToCookie(cookieMap)
-            putCookie(url, newCookie)
+            setCookie(url, newCookie)
         }
     }
 

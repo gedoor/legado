@@ -5,7 +5,7 @@ interface CookieManager {
     /**
      * 保存cookie
      */
-    fun putCookie(url: String, cookie: String?)
+    fun setCookie(url: String, cookie: String?)
 
     /**
      * 替换cookie
