@@ -93,7 +93,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 val content1 = contentProcessor
-                    .getContent(book, chapter.title, content ?: "", false)
+                    .getContent(book, chapter.title, content ?: "null", false)
                     .joinToString("\n")
                 stringBuilder.append("\n\n")
                     .append(content1)
