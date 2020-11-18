@@ -7,6 +7,7 @@ import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.JsExtensions
+import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.*
 import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
@@ -649,6 +650,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private fun evalJS(jsStr: String, result: Any?): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["cookie"] = CookieStore
         bindings["book"] = book
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl

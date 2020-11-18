@@ -136,18 +136,19 @@ class AnalyzeUrl(
         if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
             var jsEval: Any
             val sb = StringBuffer()
-            val simpleBindings = SimpleBindings()
-            simpleBindings["java"] = this
-            simpleBindings["baseUrl"] = baseUrl
-            simpleBindings["page"] = page
-            simpleBindings["key"] = key
-            simpleBindings["speakText"] = speakText
-            simpleBindings["speakSpeed"] = speakSpeed
-            simpleBindings["book"] = book
+            val bindings = SimpleBindings()
+            bindings["java"] = this
+            bindings["cookie"] = CookieStore
+            bindings["baseUrl"] = baseUrl
+            bindings["page"] = page
+            bindings["key"] = key
+            bindings["speakText"] = speakText
+            bindings["speakSpeed"] = speakSpeed
+            bindings["book"] = book
             val expMatcher = EXP_PATTERN.matcher(ruleUrl)
             while (expMatcher.find()) {
                 jsEval = expMatcher.group(1)?.let {
-                    SCRIPT_ENGINE.eval(it, simpleBindings)
+                    SCRIPT_ENGINE.eval(it, bindings)
                 } ?: ""
                 if (jsEval is String) {
                     expMatcher.appendReplacement(sb, jsEval)
@@ -259,6 +260,7 @@ class AnalyzeUrl(
     private fun evalJS(jsStr: String, result: Any? = null): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["cookie"] = CookieStore
         bindings["page"] = page
         bindings["key"] = key
         bindings["speakText"] = speakText

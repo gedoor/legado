@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import io.legado.app.constant.AppConst
 import io.legado.app.help.AppConfig
 import io.legado.app.help.JsExtensions
+import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.android.parcel.Parcelize
@@ -76,6 +77,7 @@ data class RssSource(
     private fun evalJS(jsStr: String): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["cookie"] = CookieStore
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
