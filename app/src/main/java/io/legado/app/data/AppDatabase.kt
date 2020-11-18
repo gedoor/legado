@@ -17,8 +17,8 @@ import java.util.*
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
-        RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class],
-    version = 23,
+        RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class],
+    version = 24,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -38,6 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun txtTocRule(): TxtTocRuleDao
     abstract fun readRecordDao(): ReadRecordDao
     abstract fun httpTTSDao(): HttpTTSDao
+    abstract fun cacheDao(): CacheDao
 
     companion object {
 
@@ -58,7 +59,8 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_19_20,
                     migration_20_21,
                     migration_21_22,
-                    migration_22_23
+                    migration_22_23,
+                    migration_23_24
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -199,6 +201,13 @@ abstract class AppDatabase : RoomDatabase() {
         private val migration_22_23 = object : Migration(22, 23) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chapters ADD baseUrl TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val migration_23_24 = object : Migration(23, 24) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `caches` (`key` TEXT NOT NULL, `value` TEXT, `deadline` INTEGER NOT NULL, PRIMARY KEY(`key`))")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_caches_key` ON `caches` (`key`)")
             }
         }
     }

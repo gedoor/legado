@@ -12,6 +12,7 @@ import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
+import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.help.http.api.HttpGetApi
@@ -139,6 +140,7 @@ class AnalyzeUrl(
             val bindings = SimpleBindings()
             bindings["java"] = this
             bindings["cookie"] = CookieStore
+            bindings["cache"] = CacheManager
             bindings["baseUrl"] = baseUrl
             bindings["page"] = page
             bindings["key"] = key
@@ -261,6 +263,7 @@ class AnalyzeUrl(
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["cookie"] = CookieStore
+        bindings["cache"] = CacheManager
         bindings["page"] = page
         bindings["key"] = key
         bindings["speakText"] = speakText

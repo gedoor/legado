@@ -8,6 +8,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.AppConfig
+import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.ACache
@@ -111,6 +112,7 @@ data class BookSource(
                             bindings["baseUrl"] = bookSourceUrl
                             bindings["java"] = this
                             bindings["cookie"] = CookieStore
+                            bindings["cache"] = CacheManager
                             a = AppConst.SCRIPT_ENGINE.eval(
                                 it.substring(4, it.lastIndexOf("<")),
                                 bindings
@@ -139,6 +141,7 @@ data class BookSource(
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["cookie"] = CookieStore
+        bindings["cache"] = CacheManager
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 

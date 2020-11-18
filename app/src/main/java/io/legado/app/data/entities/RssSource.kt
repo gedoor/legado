@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.legado.app.constant.AppConst
 import io.legado.app.help.AppConfig
+import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.GSON
@@ -78,6 +79,7 @@ data class RssSource(
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["cookie"] = CookieStore
+        bindings["cache"] = CacheManager
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
