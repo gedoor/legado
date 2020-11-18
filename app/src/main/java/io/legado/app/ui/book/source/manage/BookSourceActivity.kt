@@ -329,6 +329,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     editText = edit_view
                     edit_view.setHint(R.string.group_name)
                     edit_view.setFilterValues(groups.toList())
+                    edit_view.dropDownHeight = 180.dp
                 }
             }
             okButton {
@@ -351,6 +352,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     editText = edit_view
                     edit_view.setHint(R.string.group_name)
                     edit_view.setFilterValues(groups.toList())
+                    edit_view.dropDownHeight = 180.dp
                 }
             }
             okButton {
