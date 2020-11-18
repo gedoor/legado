@@ -6,7 +6,9 @@
 **2020/11/18**
 * 优化导航栏
 * js添加java.log(msg: String)用于调试时输出消息
-* js添加cookie对象,可用方法见io.legado.app.help.http.api.CookieManager
+* js添加cookie变量,方法见io.legado.app.help.http.api.CookieManager
+* js添加cache变量,可以用来存储token之类的临时值,可以设置保存时间,方法见io.legado.app.help.CacheManager
+* 需要token的网站可以用js来写了,比如阿里tts
 
 **2020/11/16**
 * 修复导出添加替换净化引起的bug
