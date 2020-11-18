@@ -328,6 +328,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
                     edit_view.setHint(R.string.group_name)
+                    edit_view.setFilterValues(groups.toList())
                 }
             }
             okButton {
@@ -337,7 +338,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-            noButton()
+            cancelButton()
         }.show()
     }
 
@@ -349,6 +350,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
                     editText = edit_view
                     edit_view.setHint(R.string.group_name)
+                    edit_view.setFilterValues(groups.toList())
                 }
             }
             okButton {
@@ -358,7 +360,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
                     }
                 }
             }
-            noButton()
+            cancelButton()
         }.show()
     }
 
