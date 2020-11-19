@@ -43,6 +43,9 @@ import kotlinx.android.synthetic.main.view_read_menu.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivityForResult
 
+/**
+ * 阅读界面
+ */
 abstract class ReadBookBaseActivity :
     VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read) {
 
