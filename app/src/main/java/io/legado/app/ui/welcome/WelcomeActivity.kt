@@ -33,6 +33,7 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     private fun init() {
         Coroutine.async {
+            App.db.cacheDao().clearDeadline(System.currentTimeMillis())
             //清除过期数据
             if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
                 App.db.searchBookDao()
