@@ -41,6 +41,11 @@ object Debug {
         callback?.printLog(state, printMsg)
     }
 
+    @Synchronized
+    fun log(msg: String?) {
+        log(debugSource, msg, true)
+    }
+
     fun cancelDebug(destroy: Boolean = false) {
         tasks.clear()
 

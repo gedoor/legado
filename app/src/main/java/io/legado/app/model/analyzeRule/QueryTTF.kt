@@ -4,7 +4,6 @@ import io.legado.app.help.JsExtensions
 import java.nio.charset.Charset
 import kotlin.experimental.and
 
-@ExperimentalUnsignedTypes
 /**
  * 解析TTF字体
  * @see <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/">获取详情</a>

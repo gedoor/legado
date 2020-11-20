@@ -50,7 +50,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
 
     override fun onStart() {
         super.onStart()
-        (activity as ReadBookActivity).bottomDialog++
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
@@ -68,6 +67,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as ReadBookActivity).bottomDialog++
         return inflater.inflate(R.layout.dialog_read_bg_text, container)
     }
 

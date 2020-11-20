@@ -34,8 +34,7 @@ class App : MultiDexApplication() {
         lateinit var androidId: String
         var versionCode = 0
         var versionName = ""
-
-
+        var navigationBarHeight = 0
     }
 
     override fun onCreate() {

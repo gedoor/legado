@@ -23,7 +23,6 @@ class ClickActionConfigDialog : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        (activity as ReadBookActivity).bottomDialog++
         dialog?.window?.let {
             it.setBackgroundDrawableResource(R.color.transparent)
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -35,6 +34,7 @@ class ClickActionConfigDialog : BaseDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as ReadBookActivity).bottomDialog++
         return inflater.inflate(R.layout.dialog_click_action_config, container)
     }
 

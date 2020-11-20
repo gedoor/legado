@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppConst.timeFormat
@@ -51,41 +52,42 @@ class ContentView(context: Context) : FrameLayout(context) {
         }
     }
 
-    fun upStyle() {
-        ReadBookConfig.apply {
-            bv_header_left.typeface = ChapterProvider.typeface
-            tv_header_left.typeface = ChapterProvider.typeface
-            tv_header_middle.typeface = ChapterProvider.typeface
-            tv_header_right.typeface = ChapterProvider.typeface
-            bv_footer_left.typeface = ChapterProvider.typeface
-            tv_footer_left.typeface = ChapterProvider.typeface
-            tv_footer_middle.typeface = ChapterProvider.typeface
-            tv_footer_right.typeface = ChapterProvider.typeface
-            bv_header_left.setColor(textColor)
-            tv_header_left.setColor(textColor)
-            tv_header_middle.setColor(textColor)
-            tv_header_right.setColor(textColor)
-            bv_footer_left.setColor(textColor)
-            tv_footer_left.setColor(textColor)
-            tv_footer_middle.setColor(textColor)
-            tv_footer_right.setColor(textColor)
-            upStatusBar()
-            ll_header.setPadding(
-                headerPaddingLeft.dp,
-                headerPaddingTop.dp,
-                headerPaddingRight.dp,
-                headerPaddingBottom.dp
-            )
-            ll_footer.setPadding(
-                footerPaddingLeft.dp,
-                footerPaddingTop.dp,
-                footerPaddingRight.dp,
-                footerPaddingBottom.dp
-            )
-            vw_top_divider.visible(showHeaderLine)
-            vw_bottom_divider.visible(showFooterLine)
-            content_text_view.upVisibleRect()
+    fun upStyle() = ReadBookConfig.apply {
+        bv_header_left.typeface = ChapterProvider.typeface
+        tv_header_left.typeface = ChapterProvider.typeface
+        tv_header_middle.typeface = ChapterProvider.typeface
+        tv_header_right.typeface = ChapterProvider.typeface
+        bv_footer_left.typeface = ChapterProvider.typeface
+        tv_footer_left.typeface = ChapterProvider.typeface
+        tv_footer_middle.typeface = ChapterProvider.typeface
+        tv_footer_right.typeface = ChapterProvider.typeface
+        bv_header_left.setColor(textColor)
+        tv_header_left.setColor(textColor)
+        tv_header_middle.setColor(textColor)
+        tv_header_right.setColor(textColor)
+        bv_footer_left.setColor(textColor)
+        tv_footer_left.setColor(textColor)
+        tv_footer_middle.setColor(textColor)
+        tv_footer_right.setColor(textColor)
+        upStatusBar()
+        ll_header.setPadding(
+            headerPaddingLeft.dp,
+            headerPaddingTop.dp,
+            headerPaddingRight.dp,
+            headerPaddingBottom.dp
+        )
+        ll_footer.setPadding(
+            footerPaddingLeft.dp,
+            footerPaddingTop.dp,
+            footerPaddingRight.dp,
+            footerPaddingBottom.dp
+        )
+        vw_top_divider.visible(showHeaderLine)
+        vw_bottom_divider.visible(showFooterLine)
+        page_nv_bar.layoutParams = page_nv_bar.layoutParams.apply {
+            height = if (hideNavigationBar) 0 else App.navigationBarHeight
         }
+        content_text_view.upVisibleRect()
         upTime()
         upBattery(battery)
     }

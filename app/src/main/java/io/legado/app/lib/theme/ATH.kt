@@ -126,10 +126,8 @@ object ATH {
         activity: Activity,
         color: Int = ThemeStore.navigationBarColor(activity)
     ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.window.navigationBarColor = color
-            setLightNavigationBar(activity, ColorUtils.isColorLight(color))
-        }
+        activity.window.navigationBarColor = color
+        setLightNavigationBar(activity, ColorUtils.isColorLight(color))
     }
 
     fun setLightNavigationBar(activity: Activity, enabled: Boolean) {
@@ -170,18 +168,15 @@ object ATH {
     }
 
     fun setTaskDescriptionColor(activity: Activity, @ColorInt color: Int) {
-        val color1: Int
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            color1 = ColorUtils.stripAlpha(color)
-            @Suppress("DEPRECATION")
-            activity.setTaskDescription(
-                ActivityManager.TaskDescription(
-                    activity.title as String,
-                    null,
-                    color1
-                )
+        val color1: Int = ColorUtils.stripAlpha(color)
+        @Suppress("DEPRECATION")
+        activity.setTaskDescription(
+            ActivityManager.TaskDescription(
+                activity.title as String,
+                null,
+                color1
             )
-        }
+        )
     }
 
     fun setTint(

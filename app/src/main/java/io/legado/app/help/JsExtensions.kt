@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.SSLHelper
+import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import org.jsoup.Connection
@@ -206,4 +207,7 @@ interface JsExtensions {
         return Base64.decode(str, flags)
     }
 
+    fun log(msg: String) {
+        Debug.log(msg)
+    }
 }

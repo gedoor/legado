@@ -26,7 +26,9 @@ class BatteryView @JvmOverloads constructor(
         batteryPaint.strokeWidth = 1.dp.toFloat()
         batteryPaint.isAntiAlias = true
         batteryPaint.color = paint.color
-        typeface = Typeface.createFromAsset(context.assets, "font${File.separator}number.ttf")
+        if (!isInEditMode) {
+            typeface = Typeface.createFromAsset(context.assets, "font${File.separator}number.ttf")
+        }
     }
 
     fun setColor(@ColorInt color: Int) {

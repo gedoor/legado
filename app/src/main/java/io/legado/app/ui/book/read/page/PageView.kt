@@ -112,7 +112,7 @@ class PageView(context: Context, attrs: AttributeSet) :
         brRect.set(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
-        if (oldw != 0 && oldh != 0) {
+        if (w != 0 && h != 0) {
             ReadBook.loadContent(resetPageOffset = false)
         }
     }

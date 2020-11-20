@@ -3,6 +3,16 @@
 * 关注合作公众号 **[小说拾遗]()** 获取好看的小说。
 * 旧版数据导入教程：先在旧版阅读(2.x)中进行备份，然后在新版阅读(3.x)【我的】->【备份与恢复】，选择【导入旧版本数据】。
 
+**2020/11/18**
+* 优化导航栏
+* js添加java.log(msg: String)用于调试时输出消息
+* js添加cookie变量,方法见io.legado.app.help.http.api.CookieManager
+* js添加cache变量,可以用来存储token之类的临时值,可以设置保存时间,方法见io.legado.app.help.CacheManager
+* 需要token的网站可以用js来写了,比如阿里tts
+
+**2020/11/16**
+* 修复导出添加替换净化引起的bug
+
 **2020/11/15**
 * 正文规则添加字体规则,返回ByteArray
 * js添加方法:

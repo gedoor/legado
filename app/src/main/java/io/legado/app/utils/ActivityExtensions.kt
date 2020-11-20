@@ -21,3 +21,16 @@ fun Activity.getSize(): DisplayMetrics {
     }
     return displayMetrics
 }
+
+/**
+ * 该方法需要在View完全被绘制出来之后调用，否则判断不了
+ * 在比如 onWindowFocusChanged（）方法中可以得到正确的结果
+ */
+val Activity.navigationBarHeight: Int
+    get() {
+        if (SystemUtils.isNavigationBarExist(this)) {
+            val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+            return resources.getDimensionPixelSize(resourceId)
+        }
+        return 0
+    }

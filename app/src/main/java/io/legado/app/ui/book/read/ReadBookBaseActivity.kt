@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -44,6 +43,9 @@ import kotlinx.android.synthetic.main.view_read_menu.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivityForResult
 
+/**
+ * 阅读界面
+ */
 abstract class ReadBookBaseActivity :
     VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read) {
 
@@ -166,9 +168,7 @@ abstract class ReadBookBaseActivity :
         if (!isInMultiWindow) {
             flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
-        if (ReadBookConfig.hideNavigationBar) {
-            flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        }
+        flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         if (toolBarHide) {
             if (ReadBookConfig.hideStatusBar) {
                 flag = flag or View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -185,11 +185,8 @@ abstract class ReadBookBaseActivity :
             read_menu == null -> return
             read_menu.isVisible -> ATH.setNavigationBarColorAuto(this)
             bottomDialog > 0 -> ATH.setNavigationBarColorAuto(this, bottomBackground)
-            ReadBookConfig.bg is ColorDrawable -> {
-                ATH.setNavigationBarColorAuto(this, ReadBookConfig.bgMeanColor)
-            }
             else -> {
-                ATH.setNavigationBarColorAuto(this, Color.BLACK)
+                ATH.setNavigationBarColorAuto(this, Color.TRANSPARENT)
             }
         }
     }

@@ -12,6 +12,7 @@ import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
+import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.help.http.api.HttpGetApi
@@ -136,18 +137,20 @@ class AnalyzeUrl(
         if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
             var jsEval: Any
             val sb = StringBuffer()
-            val simpleBindings = SimpleBindings()
-            simpleBindings["java"] = this
-            simpleBindings["baseUrl"] = baseUrl
-            simpleBindings["page"] = page
-            simpleBindings["key"] = key
-            simpleBindings["speakText"] = speakText
-            simpleBindings["speakSpeed"] = speakSpeed
-            simpleBindings["book"] = book
+            val bindings = SimpleBindings()
+            bindings["java"] = this
+            bindings["cookie"] = CookieStore
+            bindings["cache"] = CacheManager
+            bindings["baseUrl"] = baseUrl
+            bindings["page"] = page
+            bindings["key"] = key
+            bindings["speakText"] = speakText
+            bindings["speakSpeed"] = speakSpeed
+            bindings["book"] = book
             val expMatcher = EXP_PATTERN.matcher(ruleUrl)
             while (expMatcher.find()) {
                 jsEval = expMatcher.group(1)?.let {
-                    SCRIPT_ENGINE.eval(it, simpleBindings)
+                    SCRIPT_ENGINE.eval(it, bindings)
                 } ?: ""
                 if (jsEval is String) {
                     expMatcher.appendReplacement(sb, jsEval)
@@ -259,6 +262,8 @@ class AnalyzeUrl(
     private fun evalJS(jsStr: String, result: Any? = null): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["cookie"] = CookieStore
+        bindings["cache"] = CacheManager
         bindings["page"] = page
         bindings["key"] = key
         bindings["speakText"] = speakText

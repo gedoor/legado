@@ -111,7 +111,7 @@ class WebBook(val bookSource: BookSource) {
                     headerMapF = bookSource.getHeaderMap(),
                     book = book
                 ).getResponseAwait(bookSource.bookSourceUrl)
-                BookInfo.analyzeBookInfo(book, res.body, bookSource, res.url, canReName)
+                BookInfo.analyzeBookInfo(book, res.body, bookSource, book.bookUrl, canReName)
             }
             book
         }
