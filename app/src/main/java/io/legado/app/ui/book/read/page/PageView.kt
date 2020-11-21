@@ -15,6 +15,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.delegate.*
+import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.activity
@@ -339,12 +340,12 @@ class PageView(context: Context, attrs: AttributeSet) :
         curPage.cancelSelect()
     }
 
-    fun fillPage(direction: PageDelegate.Direction) {
+    fun fillPage(direction: PageDirection) {
         when (direction) {
-            PageDelegate.Direction.PREV -> {
+            PageDirection.PREV -> {
                 pageFactory.moveToPrev(true)
             }
-            PageDelegate.Direction.NEXT -> {
+            PageDirection.NEXT -> {
                 pageFactory.moveToNext(true)
             }
             else -> Unit

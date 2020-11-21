@@ -6,6 +6,7 @@ import android.os.Build
 import android.view.MotionEvent
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.entities.PageDirection
 import kotlin.math.*
 
 @Suppress("DEPRECATION")
@@ -123,13 +124,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
             }
             MotionEvent.ACTION_MOVE -> {
                 if ((startY > viewHeight / 3 && startY < viewHeight * 2 / 3)
-                    || mDirection == Direction.PREV
+                    || mDirection == PageDirection.PREV
                 ) {
                     pageView.touchY = viewHeight.toFloat()
                 }
 
                 if (startY > viewHeight / 3 && startY < viewHeight / 2
-                    && mDirection == Direction.NEXT
+                    && mDirection == PageDirection.NEXT
                 ) {
                     pageView.touchY = 1f
                 }
@@ -137,17 +138,17 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         }
     }
 
-    override fun setDirection(direction: Direction) {
+    override fun setDirection(direction: PageDirection) {
         super.setDirection(direction)
         when (direction) {
-            Direction.PREV ->
+            PageDirection.PREV ->
                 //上一页滑动不出现对角
                 if (startX > viewWidth / 2) {
                     calcCornerXY(startX, viewHeight.toFloat())
                 } else {
                     calcCornerXY(viewWidth - startX, viewHeight.toFloat())
                 }
-            Direction.NEXT ->
+            PageDirection.NEXT ->
                 if (viewWidth / 2 > startX) {
                     calcCornerXY(viewWidth - startX, startY)
                 }
@@ -160,12 +161,12 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
         val dy: Float
         // dy 垂直方向滑动的距离，负值会使滚动向上滚动
         if (isCancel) {
-            dx = if (mCornerX > 0 && mDirection == Direction.NEXT) {
+            dx = if (mCornerX > 0 && mDirection == PageDirection.NEXT) {
                 (viewWidth - touchX)
             } else {
                 -touchX
             }
-            if (mDirection != Direction.NEXT) {
+            if (mDirection != PageDirection.NEXT) {
                 dx = -(viewWidth + touchX)
             }
             dy = if (mCornerY > 0) {
@@ -174,7 +175,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 -touchY // 防止mTouchY最终变为0
             }
         } else {
-            dx = if (mCornerX > 0 && mDirection == Direction.NEXT) {
+            dx = if (mCornerX > 0 && mDirection == PageDirection.NEXT) {
                 -(viewWidth + touchX)
             } else {
                 (viewWidth - touchX + viewWidth)
@@ -197,14 +198,14 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
     override fun onDraw(canvas: Canvas) {
         if (!isRunning) return
         when (mDirection) {
-            Direction.NEXT -> {
+            PageDirection.NEXT -> {
                 calcPoints()
                 drawCurrentPageArea(canvas, curBitmap)
                 drawNextPageAreaAndShadow(canvas, nextBitmap)
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, curBitmap)
             }
-            Direction.PREV -> {
+            PageDirection.PREV -> {
                 calcPoints()
                 drawCurrentPageArea(canvas, prevBitmap)
                 drawNextPageAreaAndShadow(canvas, curBitmap)

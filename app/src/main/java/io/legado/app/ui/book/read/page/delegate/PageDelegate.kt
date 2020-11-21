@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.entities.PageDirection
 import kotlin.math.abs
 
 abstract class PageDelegate(protected val pageView: PageView) {
@@ -47,7 +48,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
     var noNext = true
 
     //移动方向
-    var mDirection = Direction.NONE
+    var mDirection = PageDirection.NONE
     var isCancel = false
     var isRunning = false
     var isStarted = false
@@ -117,17 +118,17 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     abstract fun prevPageByAnim(animationSpeed: Int)
 
-    open fun keyTurnPage(direction: Direction) {
+    open fun keyTurnPage(direction: PageDirection) {
         if (isRunning) return
         when (direction) {
-            Direction.NEXT -> nextPageByAnim(100)
-            Direction.PREV -> prevPageByAnim(100)
+            PageDirection.NEXT -> nextPageByAnim(100)
+            PageDirection.PREV -> prevPageByAnim(100)
             else -> return
         }
     }
 
     @CallSuper
-    open fun setDirection(direction: Direction) {
+    open fun setDirection(direction: PageDirection) {
         mDirection = direction
     }
 
@@ -149,7 +150,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
         //取消
         isCancel = false
         //是下一章还是前一章
-        setDirection(Direction.NONE)
+        setDirection(PageDirection.NONE)
     }
 
     /**
@@ -182,10 +183,6 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     open fun onDestroy() {
 
-    }
-
-    enum class Direction {
-        NONE, PREV, NEXT
     }
 
 }
