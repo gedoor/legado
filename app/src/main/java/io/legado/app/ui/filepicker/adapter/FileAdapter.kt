@@ -97,7 +97,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
                     text_view.setTextColor(disabledTextColor)
                 } else {
                     callBack.allowExtensions?.let {
-                        if (it.contains(FileUtils.getExtension(item.path))) {
+                        if (it.isEmpty() || it.contains(FileUtils.getExtension(item.path))) {
                             text_view.setTextColor(primaryTextColor)
                         } else {
                             text_view.setTextColor(disabledTextColor)

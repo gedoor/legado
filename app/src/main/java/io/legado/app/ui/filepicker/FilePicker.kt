@@ -119,7 +119,7 @@ object FilePicker {
         activity: BaseActivity,
         requestCode: Int,
         title: String = activity.getString(R.string.select_file),
-        allowExtensions: Array<String>,
+        allowExtensions: Array<String> = arrayOf(),
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
@@ -177,7 +177,7 @@ object FilePicker {
         fragment: Fragment,
         requestCode: Int,
         title: String = fragment.getString(R.string.select_file),
-        allowExtensions: Array<String>,
+        allowExtensions: Array<String> = arrayOf(),
         otherActions: List<String>? = null,
         otherFun: ((action: String) -> Unit)? = null
     ) {
@@ -267,10 +267,15 @@ object FilePicker {
 
     private fun typesOfExtensions(allowExtensions: Array<String>): Array<String> {
         val types = hashSetOf<String>()
-        allowExtensions.forEach {
-            when (it) {
-                "txt", "xml" -> types.add("text/*")
-                else -> types.add("application/$it")
+        if (allowExtensions.isNullOrEmpty()) {
+            types.add("*/*")
+        } else {
+            allowExtensions.forEach {
+                when (it) {
+                    "*" -> types.add("*/*")
+                    "txt", "xml" -> types.add("text/*")
+                    else -> types.add("application/$it")
+                }
             }
         }
         return types.toTypedArray()

@@ -120,7 +120,7 @@ object BookContent {
             val cQueryTTF = QueryTTF(correctFont!!)
             val contentArray = contentStr.toStringArray()
             contentArray.forEachIndexed { index, s ->
-                val code = cQueryTTF.getCodeByGlyf(queryTTF.getGlyfByCode(s.toInt()))
+                val code = cQueryTTF.GetCodeByGlyf(queryTTF.GetGlyfByCode(s.toInt()))
                 contentArray[index] = code.toString()
             }
             contentStr = contentArray.joinToString("")

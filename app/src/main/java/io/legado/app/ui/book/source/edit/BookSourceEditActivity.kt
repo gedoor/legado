@@ -22,6 +22,8 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
+import io.legado.app.ui.filepicker.FilePicker
+import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.KeyboardToolPop
@@ -33,11 +35,13 @@ import kotlin.math.abs
 
 class BookSourceEditActivity :
     VMBaseActivity<BookSourceEditViewModel>(R.layout.activity_book_source_edit, false),
+    FilePickerDialog.CallBack,
     KeyboardToolPop.CallBack {
     override val viewModel: BookSourceEditViewModel
         get() = getViewModel(BookSourceEditViewModel::class.java)
 
     private val qrRequestCode = 101
+    private val selectPathRequestCode = 102
     private val adapter = BookSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
@@ -234,7 +238,7 @@ class BookSourceEditActivity :
             add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.rule_replace_regex))
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
             add(EditEntity("font", cr?.font, R.string.rule_font))
-            add(EditEntity("correctFont", cr?.font, R.string.rule_correct_font))
+            add(EditEntity("correctFont", cr?.correctFont, R.string.rule_correct_font))
         }
         //发现
         val er = source?.getExploreRule()
@@ -339,7 +343,7 @@ class BookSourceEditActivity :
                 "replaceRegex" -> contentRule.replaceRegex = it.value
                 "imageStyle" -> contentRule.imageStyle = it.value
                 "font" -> contentRule.font = it.value
-                "correctFont" -> contentRule.font = it.value
+                "correctFont" -> contentRule.correctFont = it.value
             }
         }
         source.ruleSearch = searchRule
@@ -382,12 +386,13 @@ class BookSourceEditActivity :
     }
 
     private fun showHelpDialog() {
-        val items = arrayListOf("插入URL参数", "书源教程", "正则教程")
+        val items = arrayListOf("插入URL参数", "书源教程", "正则教程", "选择文件")
         selector(getString(R.string.help), items) { _, index ->
             when (index) {
                 0 -> insertText(AppConst.urlOption)
                 1 -> openUrl("https://alanskycn.gitee.io/teachme/Rule/source.html")
                 2 -> showRegexHelp()
+                3 -> FilePicker.selectFile(this, selectPathRequestCode)
             }
         }
     }
@@ -417,6 +422,15 @@ class BookSourceEditActivity :
                 data?.getStringExtra("result")?.let {
                     viewModel.importSource(it) { source ->
                         upRecyclerView(source)
+                    }
+                }
+            }
+            selectPathRequestCode -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    if (uri.isContentScheme()) {
+                        sendText(uri.toString())
+                    } else {
+                        sendText(uri.path.toString())
                     }
                 }
             }
