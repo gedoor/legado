@@ -191,12 +191,7 @@ object ReadBook {
         if (book != null && textChapter != null) {
             val key = IntentDataHelp.putData(textChapter)
             ReadAloud.play(
-                App.INSTANCE,
-                book.name,
-                textChapter.title,
-                durPageIndex,
-                key,
-                play
+                App.INSTANCE, book.name, textChapter.title, durPageIndex, key, play
             )
         }
     }
@@ -275,10 +270,7 @@ object ReadBook {
             CacheBook.download(webBook, book, chapter)
         } else if (book != null) {
             contentLoadFinish(
-                book,
-                chapter,
-                "没有书源",
-                resetPageOffset = resetPageOffset
+                book, chapter, "没有书源", resetPageOffset = resetPageOffset
             )
             removeLoading(chapter.index)
         } else {
@@ -383,11 +375,7 @@ object ReadBook {
                     durChapterIndex -> {
                         curTextChapter =
                             ChapterProvider.getTextChapter(
-                                book,
-                                chapter,
-                                contents,
-                                chapterSize,
-                                imageStyle
+                                book, chapter, contents, chapterSize, imageStyle
                             )
                         if (upContent) callBack?.upContent(resetPageOffset = resetPageOffset)
                         callBack?.upView()
@@ -397,22 +385,14 @@ object ReadBook {
                     durChapterIndex - 1 -> {
                         prevTextChapter =
                             ChapterProvider.getTextChapter(
-                                book,
-                                chapter,
-                                contents,
-                                chapterSize,
-                                imageStyle
+                                book, chapter, contents, chapterSize, imageStyle
                             )
                         if (upContent) callBack?.upContent(-1, resetPageOffset)
                     }
                     durChapterIndex + 1 -> {
                         nextTextChapter =
                             ChapterProvider.getTextChapter(
-                                book,
-                                chapter,
-                                contents,
-                                chapterSize,
-                                imageStyle
+                                book, chapter, contents, chapterSize, imageStyle
                             )
                         if (upContent) callBack?.upContent(1, resetPageOffset)
                     }
