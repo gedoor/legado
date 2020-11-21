@@ -7,6 +7,7 @@ import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.*
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -224,6 +225,14 @@ interface JsExtensions {
      */
     fun readFile(path: String): ByteArray? {
         return File(path).readBytes()
+    }
+
+    /**
+     * 解析字体,返回字体解析类
+     */
+    fun queryTTF(font: ByteArray?): QueryTTF? {
+        font ?: return null
+        return QueryTTF(font)
     }
 
     /**
