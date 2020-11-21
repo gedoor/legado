@@ -9,7 +9,7 @@ import kotlin.experimental.and
  * @see <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/">获取详情</a>
  * @see <a href="https://photopea.github.io/Typr.js/demo/index.html">基于Javascript的TTF解析器</a>
  */
-class QueryTTF(var Font: Array<Byte>) : JsExtensions {
+class QueryTTF(var Font: ByteArray) : JsExtensions {
     private class Header {
         var majorVersion: UShort = 0u
         var minorVersion: UShort = 0u
@@ -150,7 +150,7 @@ class QueryTTF(var Font: Array<Byte>) : JsExtensions {
         lateinit var yCoordinates: ArrayList<Short>
     }
 
-    private class ByteArrayReader(var Buffer: Array<Byte>, var Index: Int) {
+    private class ByteArrayReader(var Buffer: ByteArray, var Index: Int) {
         fun ReadUIntX(len: Long): ULong {
             var result: ULong = 0u;
             for (i in 0 until len) {
