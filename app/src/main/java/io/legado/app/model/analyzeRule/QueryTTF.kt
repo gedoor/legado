@@ -9,6 +9,7 @@ import kotlin.experimental.and
  * @see <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/">获取详情</a>
  * @see <a href="https://photopea.github.io/Typr.js/demo/index.html">基于Javascript的TTF解析器</a>
  */
+@ExperimentalUnsignedTypes
 class QueryTTF(var Font: ByteArray) : JsExtensions {
     private class Header {
         var majorVersion: UShort = 0u
@@ -150,41 +151,42 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
         lateinit var yCoordinates: ArrayList<Short>
     }
 
+    @Suppress("unused")
     private class ByteArrayReader(var Buffer: ByteArray, var Index: Int) {
-        fun ReadUIntX(len: Long): ULong {
-            var result: ULong = 0u;
+        fun readUIntX(len: Long): ULong {
+            var result: ULong = 0u
             for (i in 0 until len) {
-                result.shl(8);
+                result.shl(8)
                 result = result or Buffer[Index++].toULong()
             }
-            return result;
+            return result
         }
 
-        fun ReadUInt64(): ULong {
-            return ReadUIntX(8)
+        fun readUInt64(): ULong {
+            return readUIntX(8)
         }
 
-        fun ReadInt64(): Long {
-            return ReadUIntX(8).toLong()
+        fun readInt64(): Long {
+            return readUIntX(8).toLong()
         }
 
-        fun ReadUInt32(): UInt {
-            return ReadUIntX(4).toUInt()
+        fun readUInt32(): UInt {
+            return readUIntX(4).toUInt()
         }
 
-        fun ReadInt32(): Int {
-            return ReadUIntX(4).toInt()
+        fun readInt32(): Int {
+            return readUIntX(4).toInt()
         }
 
-        fun ReadUInt16(): UShort {
-            return ReadUIntX(2).toUShort()
+        fun readUInt16(): UShort {
+            return readUIntX(2).toUShort()
         }
 
-        fun ReadInt16(): Short {
-            return ReadUIntX(2).toShort()
+        fun readInt16(): Short {
+            return readUIntX(2).toShort()
         }
 
-        fun ReadStrings(len: Int, charset: Charset): String {
+        fun readStrings(len: Int, charset: Charset): String {
             if (len <= 0) return ""
             val result = ByteArray(len)
             for (i in 0 until len) {
@@ -193,39 +195,39 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
             return result.toString(charset)
         }
 
-        fun GetByte(): Byte {
+        fun getByte(): Byte {
             return Buffer[Index++]
         }
 
-        fun GetBytes(len: Int): ArrayList<Byte> {
+        fun getBytes(len: Int): ArrayList<Byte> {
             if (len <= 0) return ArrayList(0)
             val result = ArrayList<Byte>(len)
             for (i in 0 until len) {
                 result[i] = Buffer[Index++]
             }
-            return result;
+            return result
         }
 
-        fun GetUInt16Array(len: Int): ArrayList<UShort> {
+        fun getUInt16Array(len: Int): ArrayList<UShort> {
             if (len <= 0) return ArrayList(0)
             val result = ArrayList<UShort>(len)
             for (i in 0 until len) {
-                result[i] = ReadUInt16()
+                result[i] = readUInt16()
             }
-            return result;
+            return result
         }
 
-        fun GetInt16Array(len: Int): ArrayList<Short> {
+        fun getInt16Array(len: Int): ArrayList<Short> {
             if (len <= 0) return ArrayList(0)
             val result = ArrayList<Short>(len)
             for (i in 0 until len) {
-                result[i] = ReadInt16()
+                result[i] = readInt16()
             }
-            return result;
+            return result
         }
     }
 
-    private var FontReader: ByteArrayReader
+    private var fontReader: ByteArrayReader
     private var fileHeader = Header()
     private var directorys = ArrayList<Directory>()
     private var name = NameLayout()
@@ -237,170 +239,180 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
     private var unicodeMap = mutableMapOf<Int, ArrayList<Short>>()
 
     init {
-        FontReader = ByteArrayReader(Font, 0)
+        fontReader = ByteArrayReader(Font, 0)
         // 获取文件头
-        fileHeader.majorVersion = FontReader.ReadUInt16()
-        fileHeader.minorVersion = FontReader.ReadUInt16();
-        fileHeader.numOfTables = FontReader.ReadUInt16();
-        fileHeader.searchRange = FontReader.ReadUInt16();
-        fileHeader.entrySelector = FontReader.ReadUInt16();
-        fileHeader.rangeShift = FontReader.ReadUInt16();
+        fileHeader.majorVersion = fontReader.readUInt16()
+        fileHeader.minorVersion = fontReader.readUInt16()
+        fileHeader.numOfTables = fontReader.readUInt16()
+        fileHeader.searchRange = fontReader.readUInt16()
+        fileHeader.entrySelector = fontReader.readUInt16()
+        fileHeader.rangeShift = fontReader.readUInt16()
         // 获取目录
         for (i in 0 until fileHeader.numOfTables.toInt()) {
-            val tag = FontReader.ReadStrings(4, Charsets.US_ASCII)
-            val t = Directory();
+            val tag = fontReader.readStrings(4, Charsets.US_ASCII)
+            val t = Directory()
             t.tag = tag
-            t.checkSum = FontReader.ReadUInt32()
-            t.offset = FontReader.ReadUInt32()
-            t.length = FontReader.ReadUInt32()
+            t.checkSum = fontReader.readUInt32()
+            t.offset = fontReader.readUInt32()
+            t.length = fontReader.readUInt32()
             directorys.add(t)
         }
         // 解析表 name (字体信息,包含版权、名称、作者等...)
-        for (Temp in directorys) {
-            if (Temp.tag == "name") {
-                FontReader.Index = Temp.offset.toInt();
-                name.format = FontReader.ReadUInt16();
-                name.count = FontReader.ReadUInt16();
-                name.stringOffset = FontReader.ReadUInt16();
+        for (temp in directorys) {
+            if (temp.tag == "name") {
+                fontReader.Index = temp.offset.toInt()
+                name.format = fontReader.readUInt16()
+                name.count = fontReader.readUInt16()
+                name.stringOffset = fontReader.readUInt16()
 
                 for (i in 0 until name.count.toInt()) {
                     val record = NameRecord()
-                    record.platformID = FontReader.ReadUInt16()
-                    record.encodingID = FontReader.ReadUInt16()
-                    record.languageID = FontReader.ReadUInt16()
-                    record.nameID = FontReader.ReadUInt16()
-                    record.length = FontReader.ReadUInt16()
-                    record.offset = FontReader.ReadUInt16()
-                    name.records.add(record);
+                    record.platformID = fontReader.readUInt16()
+                    record.encodingID = fontReader.readUInt16()
+                    record.languageID = fontReader.readUInt16()
+                    record.nameID = fontReader.readUInt16()
+                    record.length = fontReader.readUInt16()
+                    record.offset = fontReader.readUInt16()
+                    name.records.add(record)
                 }
             }
         }
         // 解析表 head (获取 head.indexToLocFormat)
-        for (Temp in directorys) {
-            if (Temp.tag == "head") {
-                FontReader.Index = Temp.offset.toInt();
-                head.majorVersion = FontReader.ReadUInt16();
-                head.minorVersion = FontReader.ReadUInt16();
-                head.fontRevision = FontReader.ReadUInt32();
-                head.checkSumAdjustment = FontReader.ReadUInt32();
-                head.magicNumber = FontReader.ReadUInt32();
-                head.flags = FontReader.ReadUInt16();
-                head.unitsPerEm = FontReader.ReadUInt16();
-                head.created = FontReader.ReadUInt64();
-                head.modified = FontReader.ReadUInt64();
-                head.xMin = FontReader.ReadInt16();
-                head.yMin = FontReader.ReadInt16();
-                head.xMax = FontReader.ReadInt16();
-                head.yMax = FontReader.ReadInt16();
-                head.macStyle = FontReader.ReadUInt16();
-                head.lowestRecPPEM = FontReader.ReadUInt16();
-                head.fontDirectionHint = FontReader.ReadInt16();
-                head.indexToLocFormat = FontReader.ReadInt16();
-                head.glyphDataFormat = FontReader.ReadInt16();
+        for (temp in directorys) {
+            if (temp.tag == "head") {
+                fontReader.Index = temp.offset.toInt()
+                head.majorVersion = fontReader.readUInt16()
+                head.minorVersion = fontReader.readUInt16()
+                head.fontRevision = fontReader.readUInt32()
+                head.checkSumAdjustment = fontReader.readUInt32()
+                head.magicNumber = fontReader.readUInt32()
+                head.flags = fontReader.readUInt16()
+                head.unitsPerEm = fontReader.readUInt16()
+                head.created = fontReader.readUInt64()
+                head.modified = fontReader.readUInt64()
+                head.xMin = fontReader.readInt16()
+                head.yMin = fontReader.readInt16()
+                head.xMax = fontReader.readInt16()
+                head.yMax = fontReader.readInt16()
+                head.macStyle = fontReader.readUInt16()
+                head.lowestRecPPEM = fontReader.readUInt16()
+                head.fontDirectionHint = fontReader.readInt16()
+                head.indexToLocFormat = fontReader.readInt16()
+                head.glyphDataFormat = fontReader.readInt16()
             }
         }
         // 解析表 maxp (获取 maxp.numGlyphs)
-        for (Temp in directorys) {
-            if (Temp.tag == "maxp") {
-                FontReader.Index = Temp.offset.toInt();
-                maxp.majorVersion = FontReader.ReadUInt16();
-                maxp.minorVersion = FontReader.ReadUInt16();
-                maxp.numGlyphs = FontReader.ReadUInt16();
-                maxp.maxPoints = FontReader.ReadUInt16();
-                maxp.maxContours = FontReader.ReadUInt16();
-                maxp.maxCompositePoints = FontReader.ReadUInt16();
-                maxp.maxCompositeContours = FontReader.ReadUInt16();
-                maxp.maxZones = FontReader.ReadUInt16();
-                maxp.maxTwilightPoints = FontReader.ReadUInt16();
-                maxp.maxStorage = FontReader.ReadUInt16();
-                maxp.maxFunctionDefs = FontReader.ReadUInt16();
-                maxp.maxInstructionDefs = FontReader.ReadUInt16();
-                maxp.maxStackElements = FontReader.ReadUInt16();
-                maxp.maxSizeOfInstructions = FontReader.ReadUInt16();
-                maxp.maxComponentElements = FontReader.ReadUInt16();
-                maxp.maxComponentDepth = FontReader.ReadUInt16();
+        for (temp in directorys) {
+            if (temp.tag == "maxp") {
+                fontReader.Index = temp.offset.toInt()
+                maxp.majorVersion = fontReader.readUInt16()
+                maxp.minorVersion = fontReader.readUInt16()
+                maxp.numGlyphs = fontReader.readUInt16()
+                maxp.maxPoints = fontReader.readUInt16()
+                maxp.maxContours = fontReader.readUInt16()
+                maxp.maxCompositePoints = fontReader.readUInt16()
+                maxp.maxCompositeContours = fontReader.readUInt16()
+                maxp.maxZones = fontReader.readUInt16()
+                maxp.maxTwilightPoints = fontReader.readUInt16()
+                maxp.maxStorage = fontReader.readUInt16()
+                maxp.maxFunctionDefs = fontReader.readUInt16()
+                maxp.maxInstructionDefs = fontReader.readUInt16()
+                maxp.maxStackElements = fontReader.readUInt16()
+                maxp.maxSizeOfInstructions = fontReader.readUInt16()
+                maxp.maxComponentElements = fontReader.readUInt16()
+                maxp.maxComponentDepth = fontReader.readUInt16()
             }
         }
         // 解析表 loca (轮廓数据偏移地址表)
-        for (Temp in directorys) {
-            if (Temp.tag == "loca") {
-                FontReader.Index = Temp.offset.toInt()
+        for (temp in directorys) {
+            if (temp.tag == "loca") {
+                fontReader.Index = temp.offset.toInt()
                 val offset: UInt = if (head.indexToLocFormat.toInt() == 0) 2u else 4u
                 var i: UInt = 0u
-                while (i < Temp.length) {
-                    loca.add(if (offset == 2u) FontReader.ReadUInt16().toUInt().shl(1) else FontReader.ReadUInt32())
+                while (i < temp.length) {
+                    loca.add(
+                        if (offset == 2u) fontReader.readUInt16().toUInt()
+                            .shl(1) else fontReader.readUInt32()
+                    )
                     i += offset
                 }
             }
         }
         // 解析表 cmap (Unicode编码轮廓索引对照表)
-        for (Temp in directorys) {
-            if (Temp.tag == "cmap") {
-                FontReader.Index = Temp.offset.toInt()
-                cmap.version = FontReader.ReadUInt16()
-                cmap.numTables = FontReader.ReadUInt16()
+        for (temp in directorys) {
+            if (temp.tag == "cmap") {
+                fontReader.Index = temp.offset.toInt()
+                cmap.version = fontReader.readUInt16()
+                cmap.numTables = fontReader.readUInt16()
 
                 for (i in 0 until cmap.numTables.toInt()) {
                     val record = CmapRecord()
-                    record.platformID = FontReader.ReadUInt16()
-                    record.encodingID = FontReader.ReadUInt16()
-                    record.offset = FontReader.ReadUInt32()
+                    record.platformID = fontReader.readUInt16()
+                    record.encodingID = fontReader.readUInt16()
+                    record.offset = fontReader.readUInt32()
                     cmap.records.add(record)
                 }
                 for (i in 0 until cmap.numTables.toInt()) {
-                    val fmtOffset = cmap.records[i].offset;
-                    FontReader.Index = (Temp.offset + fmtOffset).toInt();
-                    val EndIndex = FontReader.Index;
+                    val fmtOffset = cmap.records[i].offset
+                    fontReader.Index = (temp.offset + fmtOffset).toInt()
+                    val endIndex = fontReader.Index
 
-                    val format = FontReader.ReadUInt16();
+                    val format = fontReader.readUInt16()
 
-                    if (cmap.tables.contains(fmtOffset.toInt())) continue;
+                    if (cmap.tables.contains(fmtOffset.toInt())) continue
                     when {
                         format.equals(0) -> {
                             val fmt = CmapFormat0()
                             fmt.format = format
-                            fmt.length = FontReader.ReadUInt16()
-                            fmt.language = FontReader.ReadUInt16()
-                            fmt.glyphIdArray = FontReader.GetBytes(fmt.length.toInt() - 6)
+                            fmt.length = fontReader.readUInt16()
+                            fmt.language = fontReader.readUInt16()
+                            fmt.glyphIdArray = fontReader.getBytes(fmt.length.toInt() - 6)
                             cmap.tables[fmtOffset] = fmt
                         }
                         format.equals(4) -> {
                             val fmt = CmapFormat4()
                             fmt.format = format
-                            fmt.length = FontReader.ReadUInt16()
-                            fmt.language = FontReader.ReadUInt16()
-                            fmt.segCountX2 = FontReader.ReadUInt16()
+                            fmt.length = fontReader.readUInt16()
+                            fmt.language = fontReader.readUInt16()
+                            fmt.segCountX2 = fontReader.readUInt16()
                             val segCount = fmt.segCountX2.toInt() / 2
-                            fmt.searchRange = FontReader.ReadUInt16()
-                            fmt.entrySelector = FontReader.ReadUInt16()
-                            fmt.rangeShift = FontReader.ReadUInt16()
-                            fmt.endCode = FontReader.GetUInt16Array(segCount)
-                            fmt.reservedPad = FontReader.ReadUInt16()
-                            fmt.startCode = FontReader.GetUInt16Array(segCount)
-                            fmt.idDelta = FontReader.GetInt16Array(segCount)
-                            fmt.idRangeOffset = FontReader.GetUInt16Array(segCount)
-                            fmt.glyphIdArray = FontReader.GetUInt16Array((fmt.length.toInt() - (FontReader.Index - EndIndex)) / 2)
+                            fmt.searchRange = fontReader.readUInt16()
+                            fmt.entrySelector = fontReader.readUInt16()
+                            fmt.rangeShift = fontReader.readUInt16()
+                            fmt.endCode = fontReader.getUInt16Array(segCount)
+                            fmt.reservedPad = fontReader.readUInt16()
+                            fmt.startCode = fontReader.getUInt16Array(segCount)
+                            fmt.idDelta = fontReader.getInt16Array(segCount)
+                            fmt.idRangeOffset = fontReader.getUInt16Array(segCount)
+                            fmt.glyphIdArray =
+                                fontReader.getUInt16Array((fmt.length.toInt() - (fontReader.Index - endIndex)) / 2)
                             cmap.tables[fmtOffset] = fmt
                         }
                         format.equals(6) -> {
                             val fmt = CmapFormat6()
                             fmt.format = format
-                            fmt.length = FontReader.ReadUInt16()
-                            fmt.language = FontReader.ReadUInt16()
-                            fmt.firstCode = FontReader.ReadUInt16()
-                            fmt.entryCount = FontReader.ReadUInt16()
-                            fmt.glyphIdArray = FontReader.GetUInt16Array(fmt.entryCount.toInt())
+                            fmt.length = fontReader.readUInt16()
+                            fmt.language = fontReader.readUInt16()
+                            fmt.firstCode = fontReader.readUInt16()
+                            fmt.entryCount = fontReader.readUInt16()
+                            fmt.glyphIdArray = fontReader.getUInt16Array(fmt.entryCount.toInt())
                             cmap.tables[fmtOffset] = fmt
                         }
                         format.equals(12) -> {
                             val fmt = CmapFormat12()
                             fmt.format = format
-                            fmt.reserved = FontReader.ReadUInt16();
-                            fmt.length = FontReader.ReadUInt32();
-                            fmt.language = FontReader.ReadUInt32();
-                            fmt.numGroups = FontReader.ReadUInt32();
+                            fmt.reserved = fontReader.readUInt16()
+                            fmt.length = fontReader.readUInt32()
+                            fmt.language = fontReader.readUInt32()
+                            fmt.numGroups = fontReader.readUInt32()
                             for (n in 0 until fmt.numGroups.toLong()) {
-                                fmt.groups.add(Triple(FontReader.ReadUInt32(), FontReader.ReadUInt32(), FontReader.ReadUInt32()))
+                                fmt.groups.add(
+                                    Triple(
+                                        fontReader.readUInt32(),
+                                        fontReader.readUInt32(),
+                                        fontReader.readUInt32()
+                                    )
+                                )
                             }
                             cmap.tables[fmtOffset] = fmt
                         }
@@ -409,30 +421,30 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
             }
         }
         // 解析表 glyf (字体轮廓数据表)
-        for (Temp in directorys) {
-            if (Temp.tag == "glyf") {
-                FontReader.Index = Temp.offset.toInt()
+        for (temp in directorys) {
+            if (temp.tag == "glyf") {
+                fontReader.Index = temp.offset.toInt()
                 for (i in 0 until maxp.numGlyphs.toInt()) {
-                    FontReader.Index = (Temp.offset + loca[i]).toInt()
+                    fontReader.Index = (temp.offset + loca[i]).toInt()
 
                     val g = GlyfLayout()
-                    g.numberOfContours = FontReader.ReadInt16()
-                    g.xMin = FontReader.ReadInt16()
-                    g.yMin = FontReader.ReadInt16()
-                    g.xMax = FontReader.ReadInt16()
-                    g.yMax = FontReader.ReadInt16()
+                    g.numberOfContours = fontReader.readInt16()
+                    g.xMin = fontReader.readInt16()
+                    g.yMin = fontReader.readInt16()
+                    g.xMax = fontReader.readInt16()
+                    g.yMax = fontReader.readInt16()
                     if (g.numberOfContours > 0) {
-                        g.endPtsOfContours = FontReader.GetUInt16Array(g.numberOfContours.toInt())
-                        g.instructionLength = FontReader.ReadUInt16()
-                        g.instructions = FontReader.GetBytes(g.instructionLength.toInt())
+                        g.endPtsOfContours = fontReader.getUInt16Array(g.numberOfContours.toInt())
+                        g.instructionLength = fontReader.readUInt16()
+                        g.instructions = fontReader.getBytes(g.instructionLength.toInt())
                         val flagLength = g.endPtsOfContours.last().toInt() + 1
                         // 获取轮廓点描述标志
                         g.flags = ArrayList(flagLength)
                         var n = 0
                         while (n < flagLength) {
-                            g.flags[n] = FontReader.GetByte();
+                            g.flags[n] = fontReader.getByte()
                             if ((g.flags[n].and(0x08)).toInt() != 0x00) {
-                                for (m in FontReader.GetByte() downTo 1) {
+                                for (m in fontReader.getByte() downTo 1) {
                                     g.flags[++n] = g.flags[n - 1]
                                 }
                             }
@@ -443,9 +455,9 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
                         for (m in 0 until flagLength) {
                             val same = if ((g.flags[m].and(0x10)).toInt() != 0) 1 else -1
                             if ((g.flags[m].and(0x02)).toInt() != 0) {
-                                g.xCoordinates[m] = (same * FontReader.GetByte()).toShort()
+                                g.xCoordinates[m] = (same * fontReader.getByte()).toShort()
                             } else {
-                                g.xCoordinates[m] = if (same == 1) 0 else FontReader.ReadInt16()
+                                g.xCoordinates[m] = if (same == 1) 0 else fontReader.readInt16()
                             }
                         }
                         // 获取轮廓点描述y轴相对值
@@ -453,9 +465,9 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
                         for (m in 0 until flagLength) {
                             val same = if ((g.flags[m].and(0x20)).toInt() != 0) 1 else -1
                             if ((g.flags[m].and(0x04)).toInt() != 0) {
-                                g.yCoordinates[n] = (same * FontReader.GetByte()).toShort()
+                                g.yCoordinates[n] = (same * fontReader.getByte()).toShort()
                             } else {
-                                g.yCoordinates[n] = if (same == 1) 0 else FontReader.ReadInt16()
+                                g.yCoordinates[n] = if (same == 1) 0 else fontReader.readInt16()
                             }
                         }
                         /*
@@ -467,7 +479,7 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
                         }
                         */
 
-                        glyf.add(g);
+                        glyf.add(g)
                     } else {
                         // 复合字体暂未使用
                     }
@@ -477,13 +489,13 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
 
         // 建立Unicode&Glyf映射表
         for (i in 0..130000) {
-            val gid = GetGlyfIndex(i).toInt()
-            if (gid == 0) continue;
+            val gid = getGlyfIndex(i).toInt()
+            if (gid == 0) continue
             if (unicodeMap.containsKey(gid)) continue
             val thisGlyf = ArrayList<Short>()
             thisGlyf.addAll(glyf[gid].xCoordinates)
             thisGlyf.addAll(glyf[gid].yCoordinates)
-            unicodeMap[i] = thisGlyf;
+            unicodeMap[i] = thisGlyf
         }
 
     }
@@ -492,78 +504,84 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
     /**
      * 获取字体信息 (默认获取字体名称,索引位1)
      */
-    fun GetNameById(nameId: Int = 1): String {
+    @Suppress("unused")
+    fun getNameById(nameId: Int = 1): String {
         for (Temp in directorys) {
-            if (Temp.tag != "name") continue;
-            FontReader.Index = Temp.offset.toInt();
-            break;
+            if (Temp.tag != "name") continue
+            fontReader.Index = Temp.offset.toInt()
+            break
         }
         for (record in name.records) {
-            if (record.nameID.toInt() != nameId) continue;
-            FontReader.Index = FontReader.Index + (name.stringOffset + record.offset).toInt();
-            return FontReader.ReadStrings(record.length.toInt(), if (record.platformID.toInt() == 1) Charsets.UTF_8 else Charsets.UTF_16BE);
+            if (record.nameID.toInt() != nameId) continue
+            fontReader.Index = fontReader.Index + (name.stringOffset + record.offset).toInt()
+            return fontReader.readStrings(
+                record.length.toInt(),
+                if (record.platformID.toInt() == 1) Charsets.UTF_8 else Charsets.UTF_16BE
+            )
         }
-        return "error";
+        return "error"
     }
 
     var pps = arrayListOf<Pair<UShort, UShort>>(Pair(3u, 10u), Pair(0u, 4u), Pair(3u, 1u), Pair(1u, 0u), Pair(0u, 3u), Pair(0u, 1u))
+
     /**
      * 使用Unicode值查找轮廓索引
      */
-    private fun GetGlyfIndex(code: Int): Long {
-        var fmtKey: UInt = 0u;
+    private fun getGlyfIndex(code: Int): Long {
+        var fmtKey: UInt = 0u
         for (record in cmap.records) {
             for (item in pps) {
                 if ((item.first == record.platformID) && (item.second == record.encodingID)) {
-                    fmtKey = record.offset;
-                    break;
+                    fmtKey = record.offset
+                    break
                 }
             }
-            if (fmtKey > 0u) break;
+            if (fmtKey > 0u) break
         }
-        if (fmtKey == 0u) return 0;
+        if (fmtKey == 0u) return 0
 
-        var glyfID: Long = 0;
+        var glyfID: Long = 0
         if (cmap.tables[fmtKey] is CmapFormat0) {
             val tab = cmap.tables[fmtKey] as CmapFormat0
-            if (code >= tab.glyphIdArray.size) glyfID = 0;
-            else glyfID = tab.glyphIdArray[code].toLong();
+            if (code >= tab.glyphIdArray.size) glyfID = 0
+            else glyfID = tab.glyphIdArray[code].toLong()
         } else if (cmap.tables[fmtKey] is CmapFormat4) {
             val tab = cmap.tables[fmtKey] as CmapFormat4
-            if (code > tab.endCode.last().toInt()) return 0;
+            if (code > tab.endCode.last().toInt()) return 0
             // 二分法查找数值索引
             var start = 0
             var middle: Int
-            var end = tab.endCode.size - 1;
+            var end = tab.endCode.size - 1
             while (start + 1 != end) {
-                middle = (start + end) / 2;
-                if (tab.endCode[middle] <= code.toUInt()) start = middle;
-                else end = middle;
+                middle = (start + end) / 2
+                if (tab.endCode[middle] <= code.toUInt()) start = middle
+                else end = middle
             }
-            if (tab.endCode[start] < code.toUInt()) ++start;
-            if (code.toUInt() < tab.startCode[start]) return 0;
+            if (tab.endCode[start] < code.toUInt()) ++start
+            if (code.toUInt() < tab.startCode[start]) return 0
             glyfID = if (tab.idRangeOffset[start].toInt() != 0) {
-                tab.glyphIdArray[code - tab.startCode[start].toInt() + (tab.idRangeOffset[start].toInt() / 2) - (tab.idRangeOffset.size - start)].toLong();
-            } else (code + tab.idDelta[start]).toLong();
+                tab.glyphIdArray[code - tab.startCode[start].toInt() + (tab.idRangeOffset[start].toInt() / 2) - (tab.idRangeOffset.size - start)].toLong()
+            } else (code + tab.idDelta[start]).toLong()
             glyfID = glyfID.and(0xFFFF)
         } else if (cmap.tables[fmtKey] is CmapFormat6) {
             val tab = cmap.tables[fmtKey] as CmapFormat6
-            val index = code - tab.firstCode.toInt();
+            val index = code - tab.firstCode.toInt()
             glyfID = if (index < 0 || index >= tab.glyphIdArray.size) 0 else tab.glyphIdArray[index].toLong()
         } else if (cmap.tables[fmtKey] is CmapFormat12) {
-            val tab = (cmap.tables[fmtKey] as CmapFormat12);
-            if (code > tab.groups.last().second.toInt()) return 0;
+            val tab = (cmap.tables[fmtKey] as CmapFormat12)
+            if (code > tab.groups.last().second.toInt()) return 0
             // 二分法查找数值索引
             var start = 0
             var middle: Int
-            var end = tab.groups.size - 1;
+            var end = tab.groups.size - 1
             while (start + 1 != end) {
-                middle = (start + end) / 2;
-                if (tab.groups[middle].first.toInt() <= code) start = middle;
-                else end = middle;
+                middle = (start + end) / 2
+                if (tab.groups[middle].first.toInt() <= code) start = middle
+                else end = middle
             }
             if (tab.groups[start].first.toInt() <= code && code <= tab.groups[start].second.toInt()) {
-                glyfID = (tab.groups[start].third.toInt() + code - tab.groups[start].first.toInt()).toLong();
+                glyfID =
+                    (tab.groups[start].third.toInt() + code - tab.groups[start].first.toInt()).toLong()
             }
         }
         return glyfID
@@ -572,31 +590,30 @@ class QueryTTF(var Font: ByteArray) : JsExtensions {
     /**
      * 使用轮廓数据获取Unicode值
      */
-    public fun GetCodeByGlyf(inputGlyf:List<Short>): Int {
-        var unicodeVal = 0;
-        if(inputGlyf.isEmpty()) return 0;
-        for(g in unicodeMap)
-        {
-            if (inputGlyf.size != g.value.size) continue;
-            var isFound = true;
-            for(i in inputGlyf.indices)
-            {
+    @Suppress("unused")
+    fun getCodeByGlyf(inputGlyf: List<Short>): Int {
+        var unicodeVal = 0
+        if (inputGlyf.isEmpty()) return 0
+        for (g in unicodeMap) {
+            if (inputGlyf.size != g.value.size) continue
+            var isFound = true
+            for (i in inputGlyf.indices) {
                 if (inputGlyf[i] != g.value[i]) {
-                    isFound = false;
-                    break;
+                    isFound = false
+                    break
                 }
             }
-            if (isFound) unicodeVal = g.key;
+            if (isFound) unicodeVal = g.key
         }
-        return unicodeVal;
+        return unicodeVal
     }
 
     /**
      * 使用Unicode值获取轮廓数据
      */
-    public fun GetGlyfByCode(code:Int): ArrayList<Short>
-    {
-        if(code <= 0) return ArrayList()
+    @Suppress("unused")
+    fun getGlyfByCode(code: Int): ArrayList<Short> {
+        if (code <= 0) return ArrayList()
         return unicodeMap.getOrDefault(code, ArrayList())
     }
 }
