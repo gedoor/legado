@@ -10,6 +10,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import org.jsoup.Connection
 import org.jsoup.Jsoup
+import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.util.*
@@ -19,7 +20,7 @@ import java.util.*
 interface JsExtensions {
 
     /**
-     * js实现跨域访问,不能删
+     * 访问网络,返回String
      */
     fun ajax(urlStr: String): String? {
         return try {
@@ -32,6 +33,9 @@ interface JsExtensions {
         }
     }
 
+    /**
+     * 访问网络,返回Response<String>
+     */
     fun connect(urlStr: String): Any {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr)
@@ -44,7 +48,7 @@ interface JsExtensions {
     }
 
     /**
-     * js实现文件下载
+     * 实现文件下载,返回路径
      */
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url).type ?: return "type为空，未下载"
@@ -111,6 +115,9 @@ interface JsExtensions {
             .execute()
     }
 
+    /**
+     * 网络访问post
+     */
     fun post(urlStr: String, body: String, headers: Map<String, String>): Connection.Response {
         return Jsoup.connect(urlStr)
             .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
@@ -146,6 +153,20 @@ interface JsExtensions {
         return EncoderUtils.base64Decode(str, flags)
     }
 
+    fun base64DecodeToByteArray(str: String?): ByteArray? {
+        if (str.isNullOrBlank()) {
+            return null
+        }
+        return Base64.decode(str, Base64.DEFAULT)
+    }
+
+    fun base64DecodeToByteArray(str: String?, flags: Int): ByteArray? {
+        if (str.isNullOrBlank()) {
+            return null
+        }
+        return Base64.decode(str, flags)
+    }
+
     fun base64Encode(str: String): String? {
         return EncoderUtils.base64Encode(str, Base64.NO_WRAP)
     }
@@ -162,11 +183,16 @@ interface JsExtensions {
         return MD5Utils.md5Encode16(str)
     }
 
+    /**
+     * 时间格式化
+     */
     fun timeFormat(time: Long): String {
         return dateFormat.format(Date(time))
     }
 
-    //utf8编码转gbk编码
+    /**
+     * utf8编码转gbk编码
+     */
     fun utf8ToGbk(str: String): String {
         val utf8 = String(str.toByteArray(charset("UTF-8")))
         val unicode = String(utf8.toByteArray(), charset("UTF-8"))
@@ -193,20 +219,16 @@ interface JsExtensions {
         return str.htmlFormat()
     }
 
-    fun base64DecodeToByteArray(str: String?): ByteArray? {
-        if (str.isNullOrBlank()) {
-            return null
-        }
-        return Base64.decode(str, Base64.DEFAULT)
+    /**
+     * 读取本地文件
+     */
+    fun readFile(path: String): ByteArray? {
+        return File(path).readBytes()
     }
 
-    fun base64DecodeToByteArray(str: String?, flags: Int): ByteArray? {
-        if (str.isNullOrBlank()) {
-            return null
-        }
-        return Base64.decode(str, flags)
-    }
-
+    /**
+     * 输出调试日志
+     */
     fun log(msg: String) {
         Debug.log(msg)
     }
