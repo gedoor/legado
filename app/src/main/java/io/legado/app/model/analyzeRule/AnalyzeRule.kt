@@ -39,6 +39,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     private var objectChangedJS = false
     private var objectChangedJP = false
 
+    @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
         if (content == null) throw AssertionError("Content cannot be null")
         this.content = content
