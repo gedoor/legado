@@ -13,7 +13,6 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.htmlFormat
-import io.legado.app.utils.toStringArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 

@@ -390,11 +390,16 @@ class BookSourceEditActivity :
         selector(getString(R.string.help), items) { _, index ->
             when (index) {
                 0 -> insertText(AppConst.urlOption)
-                1 -> openUrl("https://alanskycn.gitee.io/teachme/Rule/source.html")
+                1 -> showSourceHelp()
                 2 -> showRegexHelp()
                 3 -> FilePicker.selectFile(this, selectPathRequestCode)
             }
         }
+    }
+
+    private fun showSourceHelp() {
+        val mdText = String(assets.open("help/sourceHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
     }
 
     private fun showRegexHelp() {
