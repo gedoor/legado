@@ -41,7 +41,7 @@ object CacheManager {
         return get(key)?.toFloatOrNull()
     }
 
-    fun getByteArray(key: String) {
-        ACache.get(App.INSTANCE).getAsBinary(key)
+    fun getByteArray(key: String): ByteArray? {
+        return ACache.get(App.INSTANCE).getAsBinary(key)
     }
 }
