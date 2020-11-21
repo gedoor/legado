@@ -118,10 +118,12 @@ object BookContent {
         if (correctFont != null && font != null) {
             val queryTTF = QueryTTF(font!!)
             val cQueryTTF = QueryTTF(correctFont!!)
-            val contentArray = contentStr.toStringArray()
+            val contentArray = contentStr.toCharArray()
             contentArray.forEachIndexed { index, s ->
-                val code = cQueryTTF.GetCodeByGlyf(queryTTF.GetGlyfByCode(s.toInt()))
-                contentArray[index] = code.toString()
+                if(s> 58000.toChar()){
+                    val code = cQueryTTF.GetCodeByGlyf(queryTTF.GetGlyfByCode(s.toInt()))
+                    contentArray[index] = code.toChar()
+                }
             }
             contentStr = contentArray.joinToString("")
         }
