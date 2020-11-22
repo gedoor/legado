@@ -21,7 +21,10 @@ import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.getViewModel
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.shareWithQr
 import kotlinx.android.synthetic.main.activity_rss_source_edit.*
 import org.jetbrains.anko.*
 import kotlin.math.abs
@@ -199,10 +202,15 @@ class RssSourceEditActivity :
         selector(getString(R.string.help), items) { _, index ->
             when (index) {
                 0 -> insertText(AppConst.urlOption)
-                1 -> openUrl("https://alanskycn.gitee.io/teachme/Rule/rss.html")
+                1 -> showSourceHelp()
                 2 -> showRegexHelp()
             }
         }
+    }
+
+    private fun showSourceHelp() {
+        val mdText = String(assets.open("help/sourceHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
     }
 
     private fun showRegexHelp() {

@@ -37,7 +37,7 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
-import io.legado.app.ui.book.read.page.delegate.PageDelegate
+import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.login.SourceLogin
@@ -260,28 +260,28 @@ class ReadBookActivity : ReadBookBaseActivity(),
         when {
             isPrevKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.PREV)
+                    page_view.pageDelegate?.keyTurnPage(PageDirection.PREV)
                     return true
                 }
             }
             isNextKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
+                    page_view.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                     return true
                 }
             }
             keyCode == KeyEvent.KEYCODE_VOLUME_UP -> {
-                if (volumeKeyPage(PageDelegate.Direction.PREV)) {
+                if (volumeKeyPage(PageDirection.PREV)) {
                     return true
                 }
             }
             keyCode == KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                if (volumeKeyPage(PageDelegate.Direction.NEXT)) {
+                if (volumeKeyPage(PageDirection.NEXT)) {
                     return true
                 }
             }
             keyCode == KeyEvent.KEYCODE_SPACE -> {
-                page_view.pageDelegate?.keyTurnPage(PageDelegate.Direction.NEXT)
+                page_view.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
             }
         }
@@ -307,7 +307,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                if (volumeKeyPage(PageDelegate.Direction.NONE)) {
+                if (volumeKeyPage(PageDirection.NONE)) {
                     return true
                 }
             }
@@ -458,7 +458,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     /**
      * 音量键翻页
      */
-    private fun volumeKeyPage(direction: PageDelegate.Direction): Boolean {
+    private fun volumeKeyPage(direction: PageDirection): Boolean {
         if (!read_menu.isVisible) {
             if (getPrefBoolean("volumeKeyPage", true)) {
                 if (getPrefBoolean("volumeKeyPageOnPlay")
@@ -612,7 +612,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             autoPageProgress++
             if (autoPageProgress >= ReadBookConfig.autoReadSpeed * 50) {
                 autoPageProgress = 0
-                page_view.fillPage(PageDelegate.Direction.NEXT)
+                page_view.fillPage(PageDirection.NEXT)
             } else {
                 page_view.invalidate()
             }

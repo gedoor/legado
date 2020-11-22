@@ -9,8 +9,6 @@ data class ContentRule(
     var nextContentUrl: String? = null,
     var webJs: String? = null,
     var sourceRegex: String? = null,
-    var replaceRegex: String? = null,
+    var replaceRegex: String? = null, //正文获取后处理规则
     var imageStyle: String? = null,  //默认大小居中,FULL最大宽度
-    var font: String? = null,    //网页内包含的字体必须返回ByteArray
-    var correctFont: String? = null,   //正确的字体必须返回ByteArray
 ) : Parcelable

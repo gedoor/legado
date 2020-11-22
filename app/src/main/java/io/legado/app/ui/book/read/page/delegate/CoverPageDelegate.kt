@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.drawable.GradientDrawable
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.entities.PageDirection
 
 class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     private val bitmapMatrix = Matrix()
@@ -21,19 +22,19 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
         if (!isRunning) return
         val offsetX = touchX - startX
 
-        if ((mDirection == Direction.NEXT && offsetX > 0)
-            || (mDirection == Direction.PREV && offsetX < 0)
+        if ((mDirection == PageDirection.NEXT && offsetX > 0)
+            || (mDirection == PageDirection.PREV && offsetX < 0)
         ) {
             return
         }
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
-        if (mDirection == Direction.PREV) {
+        if (mDirection == PageDirection.PREV) {
             bitmapMatrix.setTranslate(distanceX, 0.toFloat())
             curBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
             prevBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
             addShadow(distanceX.toInt(), canvas)
-        } else if (mDirection == Direction.NEXT) {
+        } else if (mDirection == PageDirection.NEXT) {
             bitmapMatrix.setTranslate(distanceX - viewWidth, 0.toFloat())
             nextBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
             curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
@@ -60,7 +61,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     override fun onAnimStart(animationSpeed: Int) {
         val distanceX: Float
         when (mDirection) {
-            Direction.NEXT -> distanceX =
+            PageDirection.NEXT -> distanceX =
                 if (isCancel) {
                     var dis = viewWidth - startX + touchX
                     if (dis > viewWidth) {

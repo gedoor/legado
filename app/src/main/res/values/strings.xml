@@ -420,10 +420,8 @@
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
-    <string name="rule_replace_regex">替换规则(replaceRegex)</string>
+    <string name="rule_replace_regex">正文获取后处理规则(replaceRegex)</string>
     <string name="rule_image_style">图片样式(imageStyle)</string>
-    <string name="rule_font">网页内嵌字体(font)</string>
-    <string name="rule_correct_font">正确字体(font)</string>
 
     <string name="source_icon">图标(sourceIcon)</string>
     <string name="r_articles">列表规则(ruleArticles)</string>

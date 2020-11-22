@@ -48,6 +48,7 @@ open class InertiaScrollTextView @JvmOverloads constructor(
         mTouchSlop = vc.scaledTouchSlop
         mMinFlingVelocity = vc.scaledMinimumFlingVelocity
         mMaxFlingVelocity = vc.scaledMaximumFlingVelocity
+        movementMethod = BetterLinkMovementMethod.instance
     }
 
     fun atTop(): Boolean {

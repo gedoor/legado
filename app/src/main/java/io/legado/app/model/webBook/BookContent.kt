@@ -10,10 +10,8 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.htmlFormat
-import io.legado.app.utils.toStringArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 
@@ -37,21 +35,6 @@ object BookContent {
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
         val analyzeRule = AnalyzeRule(book).setContent(body, baseUrl)
-        val fontRule = contentRule.font
-        val correctFontRule = contentRule.correctFont
-        var font: ByteArray? = null
-        var correctFont: ByteArray? = null
-        fontRule?.let {
-            //todo 获取网页嵌入字体
-            font = analyzeRule.getByteArray(it)
-        }
-        correctFontRule?.let {
-            //todo 获取正确字体
-            correctFont = analyzeRule.getByteArray(it)
-        }
-        if (correctFont == null && font != null) {
-            BookHelp.saveFont(book, bookChapter, font!!)
-        }
         var contentData = analyzeContent(
             book, baseUrl, body, contentRule, bookChapter, bookSource
         )
@@ -111,21 +94,7 @@ object BookContent {
         var contentStr = content.toString().htmlFormat()
         val replaceRegex = bookSource.ruleContent?.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
-            analyzeRule.setContent(contentStr).setBaseUrl(baseUrl)
-            analyzeRule.chapter = bookChapter
-            contentStr = analyzeRule.getString(replaceRegex)
-        }
-        if (correctFont != null && font != null) {
-            val queryTTF = QueryTTF(font!!)
-            val cQueryTTF = QueryTTF(correctFont!!)
-            val contentArray = contentStr.toCharArray()
-            contentArray.forEachIndexed { index, s ->
-                if(s> 58000.toChar()){
-                    val code = cQueryTTF.GetCodeByGlyf(queryTTF.GetGlyfByCode(s.toInt()))
-                    contentArray[index] = code.toChar()
-                }
-            }
-            contentStr = contentArray.joinToString("")
+            contentStr = analyzeRule.getContent(replaceRegex, contentStr)
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
