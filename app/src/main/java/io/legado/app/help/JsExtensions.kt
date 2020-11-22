@@ -245,9 +245,7 @@ interface JsExtensions {
         str ?: return null
         val key = md5Encode16(str)
         var qTTF = CacheManager.getQueryTTF(key)
-        if (qTTF != null) {
-            return qTTF
-        }
+        if (qTTF != null) return qTTF
         val font: ByteArray? = when {
             str.isAbsUrl() -> runBlocking {
                 var x = CacheManager.getByteArray(key)
@@ -276,12 +274,12 @@ interface JsExtensions {
         start: Int,
         end: Int
     ): String {
-        if (font1 == null || font2 == null) {
-            return text
-        }
+        if (font1 == null || font2 == null) return text
+        val startChar = start.toChar()
+        val endChar = end.toChar()
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
-            if (s > start.toChar() && s < end.toChar()) {
+            if (s in startChar until endChar) {
                 val code = font2.GetCodeByGlyf(font1.GetGlyfByCode(s.toInt()))
                 contentArray[index] = code.toChar()
             }
