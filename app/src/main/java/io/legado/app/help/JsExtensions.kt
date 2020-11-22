@@ -242,7 +242,7 @@ interface JsExtensions {
     }
 
     fun queryTTF(path: String): QueryTTF? {
-        val qTTF = CacheManager.getQueryTTF(path)
+        var qTTF = CacheManager.getQueryTTF(path)
         if (qTTF != null) {
             return qTTF
         }
@@ -265,7 +265,9 @@ interface JsExtensions {
             }
         }
         font ?: return null
-        return QueryTTF(font)
+        qTTF = QueryTTF(font)
+        CacheManager.put(path, qTTF)
+        return qTTF
     }
 
     fun replaceFont(
