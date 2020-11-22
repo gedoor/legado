@@ -3,6 +3,11 @@
 * 关注合作公众号 **[小说拾遗]** 获取好看的小说。
 * 旧版数据导入教程：先在旧版阅读(2.x)中进行备份，然后在新版阅读(3.x)【我的】->【备份与恢复】，选择【导入旧版本数据】。
 
+**2020/11/22**
+* 正文添加正确字体规则,可以通过文字轮廓对比将错误的文字替换为正确的文字
+* js添加java.readFile("path")读取本地文件,返回BiteArray
+* js添加java.queryTTF(font: ByteArray?),返回字体处理类,可以编码和轮廓互查,io.legado.app.model.analyzeRule.QueryTTF
+
 **2020/11/18**
 * 优化导航栏
 * js添加java.log(msg: String)用于调试时输出消息
