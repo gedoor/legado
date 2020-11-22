@@ -298,7 +298,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         return ArrayList()
     }
 
-    fun getByteArray(ruleStr: String): ByteArray? {
+    fun getResult(ruleStr: String): Any? {
         if (ruleStr.isEmpty()) return null
         val ruleList = splitSourceRule(ruleStr)
         var result: Any? = null
@@ -323,7 +323,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                 }
             }
         }
-        return result as? ByteArray
+        return result
     }
 
     /**
