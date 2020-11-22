@@ -244,9 +244,7 @@ interface JsExtensions {
     fun queryTTF(path: String): QueryTTF? {
         val key = md5Encode16(path)
         var qTTF = CacheManager.getQueryTTF(key)
-        if (qTTF != null) {
-            return qTTF
-        }
+        if (qTTF != null) return qTTF
         val font: ByteArray? = when {
             path.isAbsUrl() -> runBlocking {
                 var x = CacheManager.getByteArray(key)
@@ -261,8 +259,11 @@ interface JsExtensions {
             path.isContentScheme() -> {
                 Uri.parse(path).readBytes(App.INSTANCE)
             }
-            else -> {
+            path.startsWith("/storage")->{
                 File(path).readBytes()
+            }
+            else -> {
+                base64DecodeToByteArray(path.removePrefix("base64,"))
             }
         }
         font ?: return null
@@ -278,12 +279,12 @@ interface JsExtensions {
         start: Int,
         end: Int
     ): String {
-        if (font1 == null || font2 == null) {
-            return text
-        }
+        if (font1 == null || font2 == null) return text
+        val startChar = start.toChar()
+        val endChar = end.toChar()
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
-            if (s > start.toChar() && s < end.toChar()) {
+            if (s in startChar until endChar) {
                 val code = font2.GetCodeByGlyf(font1.GetGlyfByCode(s.toInt()))
                 contentArray[index] = code.toChar()
             }
