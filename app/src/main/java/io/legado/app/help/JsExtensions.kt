@@ -241,29 +241,27 @@ interface JsExtensions {
         return null
     }
 
-    fun queryTTF(path: String): QueryTTF? {
-        val key = md5Encode16(path)
+    fun queryTTF(str: String?): QueryTTF? {
+        str ?: return null
+        val key = md5Encode16(str)
         var qTTF = CacheManager.getQueryTTF(key)
         if (qTTF != null) {
             return qTTF
         }
         val font: ByteArray? = when {
-            path.isAbsUrl() -> runBlocking {
+            str.isAbsUrl() -> runBlocking {
                 var x = CacheManager.getByteArray(key)
                 if (x == null) {
-                    x = HttpHelper.simpleGetBytesAsync(path)
+                    x = HttpHelper.simpleGetBytesAsync(str)
                     x?.let {
                         CacheManager.put(key, it)
                     }
                 }
                 return@runBlocking x
             }
-            path.isContentScheme() -> {
-                Uri.parse(path).readBytes(App.INSTANCE)
-            }
-            else -> {
-                File(path).readBytes()
-            }
+            str.isContentScheme() -> Uri.parse(str).readBytes(App.INSTANCE)
+            str.startsWith("/storage") -> File(str).readBytes()
+            else -> base64DecodeToByteArray(str)
         }
         font ?: return null
         qTTF = QueryTTF(font)
