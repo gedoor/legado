@@ -279,7 +279,7 @@ interface JsExtensions {
         end: Int
     ): String {
         if (font1 == null || font2 == null) {
-            return ""
+            return text
         }
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
