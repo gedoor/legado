@@ -280,7 +280,7 @@ interface JsExtensions {
             val oldCode = s.toInt()
             if (oldCode in start until end) {
                 val code = font2.GetCodeByGlyf(font1.GetGlyfByCode(oldCode))
-                contentArray[index] = code.toChar()
+                if(code != 0) contentArray[index] = code.toChar()
             }
         }
         return contentArray.joinToString("")
