@@ -7,7 +7,9 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -231,7 +233,7 @@ public class QueryTTF {
     private final List<Integer> Loca = new LinkedList<>();
     private final CmapLayout Cmap = new CmapLayout();
     private final List<GlyfLayout> Glyf = new LinkedList<>();
-    private final Map<Integer, short[]> UnicodeMap = new HashMap<>();
+    private final Map<Integer, short[]> UnicodeMap = new LinkedHashMap<>();
     private final Pair<Integer, Integer>[] pps = new Pair[]{
             Pair.of(3, 10),
             Pair.of(0, 4),
@@ -529,8 +531,7 @@ public class QueryTTF {
         CmapFormat table = Cmap.tables.get(fmtKey);
         int fmt = table.format;
         if (fmt == 0) {
-            if (code >= table.glyphIdArray.length) glyfID = 0;
-            else glyfID = table.glyphIdArray[code] & 0xFF;
+            if (code < table.glyphIdArray.length) glyfID = table.glyphIdArray[code] & 0xFF;
         } else if (fmt == 4) {
             CmapFormat4 tab = (CmapFormat4) table;
             if (code > tab.endCode[tab.endCode.length - 1]) return 0;
@@ -570,6 +571,9 @@ public class QueryTTF {
         return glyfID;
     }
 
+    // 缓存查询结果,避免重复遍历
+    private final Map<Integer, short[]> CacheGlyhps = new HashMap<>();
+
     /**
      * 使用轮廓数据获取Unicode值
      *
@@ -577,23 +581,22 @@ public class QueryTTF {
      * @return 返回Unicode十进制值
      */
     public int GetCodeByGlyf(short[] inputGlyf) {
-        int unicodeVal = 0;
-        for (Map.Entry<Integer, short[]> g : UnicodeMap.entrySet()) {
-            if (inputGlyf.length != g.getValue().length) continue;
-            int i = inputGlyf.length;
-            while (i > 0) {
-                --i;
-                if (inputGlyf[i] != g.getValue()[i]) {
-                    ++i;
-                    break;
-                }
-            }
-            if (i == 0) {
-                unicodeVal = g.getKey();
-                break;
+        if (inputGlyf.length == 0) return 0;
+        // 优先查询缓存
+        for (Map.Entry<Integer, short[]> g : CacheGlyhps.entrySet()) {
+            if (Arrays.equals(inputGlyf, g.getValue())) {
+                return g.getKey();
             }
         }
-        return unicodeVal;
+        // 缓存内没有就查询完整的字体表
+        for (Map.Entry<Integer, short[]> g : UnicodeMap.entrySet()) {
+            if (inputGlyf.length != g.getValue().length) continue;
+            if (Arrays.equals(inputGlyf, g.getValue())) {
+                CacheGlyhps.put(g.getKey(), inputGlyf);
+                return g.getKey();
+            }
+        }
+        return 0;
     }
 
     /**
