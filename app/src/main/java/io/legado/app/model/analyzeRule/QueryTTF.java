@@ -474,6 +474,7 @@ public class QueryTTF {
 
         // 建立Unicode&Glyf映射表
         for (int i = 0; i < 130000; ++i) {
+            if (i == 0xFF) i = 0x3400;  // 屏蔽部分编码
             int gid = GetGlyfIndex(i);
             if (gid == 0) continue;
             int thisLength = Glyf.get(gid).flags.length;
@@ -587,7 +588,10 @@ public class QueryTTF {
                     break;
                 }
             }
-            if (i == 0) unicodeVal = g.getKey();
+            if (i == 0) {
+                unicodeVal = g.getKey();
+                break;
+            }
         }
         return unicodeVal;
     }
