@@ -275,12 +275,11 @@ interface JsExtensions {
         end: Int
     ): String {
         if (font1 == null || font2 == null) return text
-        val startChar = start.toChar()
-        val endChar = end.toChar()
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
-            if (s in startChar until endChar) {
-                val code = font2.GetCodeByGlyf(font1.GetGlyfByCode(s.toInt()))
+            val oldCode = s.toInt()
+            if (oldCode in start until end) {
+                val code = font2.GetCodeByGlyf(font1.GetGlyfByCode(oldCode))
                 contentArray[index] = code.toChar()
             }
         }
