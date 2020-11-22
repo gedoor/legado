@@ -298,34 +298,6 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         return ArrayList()
     }
 
-    fun getContent(ruleStr: String, text: String?): String {
-        if (ruleStr.isEmpty()) return ""
-        val ruleList = splitSourceRule(ruleStr)
-        var result: Any? = null
-        content?.let { o ->
-            if (ruleList.isNotEmpty()) result = o
-            for (sourceRule in ruleList) {
-                putRule(sourceRule.putMap)
-                result?.let {
-                    result = when (sourceRule.mode) {
-                        Mode.Regex -> AnalyzeByRegex.getElements(
-                            result.toString(),
-                            sourceRule.rule.splitNotBlank("&&")
-                        )
-                        Mode.Js -> evalJS(sourceRule.rule, result, text)
-                        Mode.Json -> getAnalyzeByJSonPath(it).getList(sourceRule.rule)
-                        Mode.XPath -> getAnalyzeByXPath(it).getElements(sourceRule.rule)
-                        else -> getAnalyzeByJSoup(it).getElements(sourceRule.rule)
-                    }
-                    if (sourceRule.replaceRegex.isNotEmpty()) {
-                        result = replaceRegex(result.toString(), sourceRule)
-                    }
-                }
-            }
-        }
-        return result?.toString() ?: ""
-    }
-
     /**
      * 保存变量
      */
@@ -649,7 +621,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     /**
      * 执行JS
      */
-    private fun evalJS(jsStr: String, result: Any?, content: String? = null): Any? {
+    fun evalJS(jsStr: String, result: Any?, content: String? = null): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["cookie"] = CookieStore

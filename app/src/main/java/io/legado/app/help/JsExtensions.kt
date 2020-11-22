@@ -242,17 +242,18 @@ interface JsExtensions {
     }
 
     fun queryTTF(path: String): QueryTTF? {
-        val qTTF = CacheManager.getQueryTTF(path)
+        val key = md5Encode16(path)
+        var qTTF = CacheManager.getQueryTTF(key)
         if (qTTF != null) {
             return qTTF
         }
         val font: ByteArray? = when {
             path.isAbsUrl() -> runBlocking {
-                var x = CacheManager.getByteArray(path)
+                var x = CacheManager.getByteArray(key)
                 if (x == null) {
                     x = HttpHelper.simpleGetBytesAsync(path)
                     x?.let {
-                        CacheManager.put(path, it)
+                        CacheManager.put(key, it)
                     }
                 }
                 return@runBlocking x
@@ -265,10 +266,21 @@ interface JsExtensions {
             }
         }
         font ?: return null
-        return QueryTTF(font)
+        qTTF = QueryTTF(font)
+        CacheManager.put(key, qTTF)
+        return qTTF
     }
 
-    fun replaceFont(text: String, font1: QueryTTF, font2: QueryTTF, start: Int, end: Int): String {
+    fun replaceFont(
+        text: String,
+        font1: QueryTTF?,
+        font2: QueryTTF?,
+        start: Int,
+        end: Int
+    ): String {
+        if (font1 == null || font2 == null) {
+            return ""
+        }
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
             if (s > start.toChar() && s < end.toChar()) {

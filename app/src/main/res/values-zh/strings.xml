@@ -417,6 +417,9 @@
     <string name="rule_book_content">正文规则(content)</string>
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
+    <string name="rule_image_style">图片样式(imageStyle)</string>
+    <string name="rule_replace_regex">替换规则(replaceRegex)</string>
+    <string name="rule_font_js">字体处理js</string>
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
 
     <string name="source_icon">图标(sourceIcon)</string>
@@ -734,8 +737,6 @@
     <string name="restore_ignore">恢复忽略列表</string>
     <string name="restore_ignore_summary">恢复时忽略一些内容不恢复,方便不同手机配置不同</string>
     <string name="read_config">阅读界面设置</string>
-    <string name="rule_image_style">图片样式(imageStyle)</string>
-    <string name="rule_replace_regex">正文获取后处理规则(replaceRegex)</string>
     <string name="group_name">分组名称</string>
     <string name="note_content">备注内容</string>
     <string name="replace_enable_default_t">默认启用替换净化</string>
