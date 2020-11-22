@@ -236,6 +236,7 @@ class BookSourceEditActivity :
             add(EditEntity("webJs", cr?.webJs, R.string.rule_web_js))
             add(EditEntity("sourceRegex", cr?.sourceRegex, R.string.rule_source_regex))
             add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.rule_replace_regex))
+            add(EditEntity("fontJs", cr?.fontJs, R.string.rule_font_js))
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
         }
         //发现
@@ -339,6 +340,7 @@ class BookSourceEditActivity :
                 "webJs" -> contentRule.webJs = it.value
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value
+                "fontJs" -> contentRule.fontJs = it.value
                 "imageStyle" -> contentRule.imageStyle = it.value
             }
         }

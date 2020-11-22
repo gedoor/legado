@@ -268,7 +268,16 @@ interface JsExtensions {
         return QueryTTF(font)
     }
 
-    fun replaceFont(text: String, font1: QueryTTF, font2: QueryTTF, start: Int, end: Int): String {
+    fun replaceFont(
+        text: String,
+        font1: QueryTTF?,
+        font2: QueryTTF?,
+        start: Int,
+        end: Int
+    ): String {
+        if (font1 == null || font2 == null) {
+            return ""
+        }
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
             if (s > start.toChar() && s < end.toChar()) {

@@ -92,9 +92,14 @@ object BookContent {
         }
         content.deleteCharAt(content.length - 1)
         var contentStr = content.toString().htmlFormat()
-        val replaceRegex = bookSource.ruleContent?.replaceRegex
+        val fontJs = contentRule.fontJs
+        if (!fontJs.isNullOrBlank()) {
+            contentStr = analyzeRule.evalJS(fontJs, body, contentStr)?.toString() ?: ""
+        }
+        val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
-            contentStr = analyzeRule.getContent(replaceRegex, contentStr)
+            analyzeRule.setContent(contentStr)
+            contentStr = analyzeRule.getString(replaceRegex)
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")

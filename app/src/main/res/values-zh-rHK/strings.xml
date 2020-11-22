@@ -412,7 +412,7 @@
     <string name="rule_next_content">正文下一頁 URL 規則 (nextContentUrl)</string>
     <string name="rule_web_js">webJs</string>
     <string name="rule_source_regex">資源正則 (sourceRegex)</string>
-
+    <string name="rule_font_js">字体处理js</string>
     <string name="source_icon">圖標 (sourceIcon)</string>
     <string name="r_articles">列表規則 (ruleArticles)</string>
     <string name="r_next">列表下一頁規則 (ruleArticles)</string>
@@ -730,7 +730,7 @@
     <string name="restore_ignore_summary">恢復時忽略一些內容不恢復,方便不同手機配置不同</string>
     <string name="read_config">閱讀界面設置</string>
     <string name="rule_image_style">图片样式(imageStyle)</string>
-    <string name="rule_replace_regex">正文获取后处理规则(replaceRegex)</string>
+    <string name="rule_replace_regex">替换规则(replaceRegex)</string>
     <string name="group_name">分組名稱</string>
     <string name="note_content">備註內容</string>
     <string name="replace_enable_default_t">默认启用替换净化</string>
