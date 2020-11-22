@@ -1,14 +1,18 @@
 package io.legado.app.help
 
+import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
+import io.legado.app.App
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.help.http.CookieStore
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.*
+import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import java.io.File
@@ -230,9 +234,49 @@ interface JsExtensions {
     /**
      * 解析字体,返回字体解析类
      */
-    fun queryTTF(font: ByteArray?): QueryTTF? {
+    fun queryBase64TTF(base64: String?): QueryTTF? {
+        base64DecodeToByteArray(base64)?.let {
+            return QueryTTF(it)
+        }
+        return null
+    }
+
+    fun queryTTF(path: String): QueryTTF? {
+        val qTTF = CacheManager.getQueryTTF(path)
+        if (qTTF != null) {
+            return qTTF
+        }
+        val font: ByteArray? = when {
+            path.isAbsUrl() -> runBlocking {
+                var x = CacheManager.getByteArray(path)
+                if (x == null) {
+                    x = HttpHelper.simpleGetBytesAsync(path)
+                    x?.let {
+                        CacheManager.put(path, it)
+                    }
+                }
+                return@runBlocking x
+            }
+            path.isContentScheme() -> {
+                Uri.parse(path).readBytes(App.INSTANCE)
+            }
+            else -> {
+                File(path).readBytes()
+            }
+        }
         font ?: return null
         return QueryTTF(font)
+    }
+
+    fun replaceFont(text: String, font1: QueryTTF, font2: QueryTTF, start: Int, end: Int): String {
+        val contentArray = text.toCharArray()
+        contentArray.forEachIndexed { index, s ->
+            if (s > start.toChar() && s < end.toChar()) {
+                val code = font2.GetCodeByGlyf(font1.GetGlyfByCode(s.toInt()))
+                contentArray[index] = code.toChar()
+            }
+        }
+        return contentArray.joinToString("")
     }
 
     /**

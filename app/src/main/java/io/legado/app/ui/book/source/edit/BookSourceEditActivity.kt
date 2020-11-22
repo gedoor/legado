@@ -237,8 +237,6 @@ class BookSourceEditActivity :
             add(EditEntity("sourceRegex", cr?.sourceRegex, R.string.rule_source_regex))
             add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.rule_replace_regex))
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
-            add(EditEntity("font", cr?.font, R.string.rule_font))
-            add(EditEntity("correctFont", cr?.correctFont, R.string.rule_correct_font))
         }
         //发现
         val er = source?.getExploreRule()
@@ -342,8 +340,6 @@ class BookSourceEditActivity :
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value
                 "imageStyle" -> contentRule.imageStyle = it.value
-                "font" -> contentRule.font = it.value
-                "correctFont" -> contentRule.correctFont = it.value
             }
         }
         source.ruleSearch = searchRule
