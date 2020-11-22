@@ -1,15 +1,12 @@
 package io.legado.app.model.analyzeRule;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -170,15 +167,7 @@ public class QueryTTF {
             return ReadUIntX(8);
         }
 
-        public long ReadInt64() {
-            return ReadUIntX(8);
-        }
-
         public int ReadUInt32() {
-            return (int) ReadUIntX(4);
-        }
-
-        public int ReadInt32() {
             return (int) ReadUIntX(4);
         }
 
@@ -233,7 +222,6 @@ public class QueryTTF {
     private final List<Integer> Loca = new LinkedList<>();
     private final CmapLayout Cmap = new CmapLayout();
     private final List<GlyfLayout> Glyf = new LinkedList<>();
-    private final Map<Integer, short[]> UnicodeMap = new LinkedHashMap<>();
     private final Pair<Integer, Integer>[] pps = new Pair[]{
             Pair.of(3, 10),
             Pair.of(0, 4),
@@ -242,6 +230,9 @@ public class QueryTTF {
             Pair.of(0, 3),
             Pair.of(0, 1)
     };
+
+    public final Map<Integer, String> CodeToGlyph = new HashMap<>();
+    public final Map<String, Integer> GlyphToCode = new HashMap<>();
 
     /**
      * 构造函数
@@ -474,16 +465,19 @@ public class QueryTTF {
             }
         }
 
-        // 建立Unicode&Glyf映射表
-        for (int i = 0; i < 130000; ++i) {
-            if (i == 0xFF) i = 0x3400;  // 屏蔽部分编码
-            int gid = GetGlyfIndex(i);
+        // 建立Unicode&Glyph双向表
+        for (int key = 0; key < 130000; ++key) {
+            if (key == 0xFF) key = 0x3400;
+            int gid = GetGlyfIndex(key);
             if (gid == 0) continue;
-            int thisLength = Glyf.get(gid).flags.length;
-            short[] thisGlyf = new short[thisLength << 1];
-            System.arraycopy(Glyf.get(gid).xCoordinates, 0, thisGlyf, 0, thisLength);
-            System.arraycopy(Glyf.get(gid).yCoordinates, 0, thisGlyf, thisLength, thisLength);
-            UnicodeMap.put(i, thisGlyf);
+            StringBuilder sb = new StringBuilder();
+            // 字型数据转String，方便存HashMap
+            for (short b : Glyf.get(gid).xCoordinates) sb.append(b);
+            for (short b : Glyf.get(gid).yCoordinates) sb.append(b);
+            String val = sb.toString();
+            CodeToGlyph.put(key, val);
+            if (GlyphToCode.containsKey(val)) continue;
+            GlyphToCode.put(val, key);
         }
     }
 
@@ -548,7 +542,6 @@ public class QueryTTF {
                 glyfID = tab.glyphIdArray[code - tab.startCode[start] + (tab.idRangeOffset[start] >> 1) - (tab.idRangeOffset.length - start)];
             } else glyfID = code + tab.idDelta[start];
             glyfID &= 0xFFFF;
-
         } else if (fmt == 6) {
             CmapFormat6 tab = (CmapFormat6) table;
             int index = code - tab.firstCode;
@@ -571,42 +564,23 @@ public class QueryTTF {
         return glyfID;
     }
 
-    // 缓存查询结果,避免重复遍历
-    private final Map<Integer, short[]> CacheGlyhps = new HashMap<>();
+    /**
+     * 使用Unicode值获取轮廓数据
+     *
+     * @param key 传入Unicode十进制值
+     * @return 返回轮廓数组的String值
+     */
+    public String GetGlyfByCode(int key) {
+        return CodeToGlyph.getOrDefault(key, "");
+    }
 
     /**
      * 使用轮廓数据获取Unicode值
      *
-     * @param inputGlyf 传入short[]轮廓数组
+     * @param val 传入轮廓数组的String值
      * @return 返回Unicode十进制值
      */
-    public int GetCodeByGlyf(short[] inputGlyf) {
-        if (inputGlyf.length == 0) return 0;
-        // 优先查询缓存
-        for (Map.Entry<Integer, short[]> g : CacheGlyhps.entrySet()) {
-            if (Arrays.equals(inputGlyf, g.getValue())) {
-                return g.getKey();
-            }
-        }
-        // 缓存内没有就查询完整的字体表
-        for (Map.Entry<Integer, short[]> g : UnicodeMap.entrySet()) {
-            if (inputGlyf.length != g.getValue().length) continue;
-            if (Arrays.equals(inputGlyf, g.getValue())) {
-                CacheGlyhps.put(g.getKey(), inputGlyf);
-                return g.getKey();
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * 使用Unicode值获取轮廓数据
-     *
-     * @param code 传入Unicode十进制值
-     * @return 返回short[]轮廓数组
-     */
-    public short[] GetGlyfByCode(int code) {
-        if (code <= 0) return new short[0];
-        return UnicodeMap.getOrDefault(code, new short[0]);
+    public int GetCodeByGlyf(String val) {
+        return GlyphToCode.getOrDefault(val, 0);
     }
 }
