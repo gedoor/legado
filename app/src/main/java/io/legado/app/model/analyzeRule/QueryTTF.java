@@ -1,15 +1,12 @@
 package io.legado.app.model.analyzeRule;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -170,15 +167,7 @@ public class QueryTTF {
             return ReadUIntX(8);
         }
 
-        public long ReadInt64() {
-            return ReadUIntX(8);
-        }
-
         public int ReadUInt32() {
-            return (int) ReadUIntX(4);
-        }
-
-        public int ReadInt32() {
             return (int) ReadUIntX(4);
         }
 
@@ -233,7 +222,6 @@ public class QueryTTF {
     private final List<Integer> Loca = new LinkedList<>();
     private final CmapLayout Cmap = new CmapLayout();
     private final List<GlyfLayout> Glyf = new LinkedList<>();
-    private final Map<Integer, short[]> UnicodeMap = new LinkedHashMap<>();
     private final Pair<Integer, Integer>[] pps = new Pair[]{
             Pair.of(3, 10),
             Pair.of(0, 4),
@@ -483,11 +471,12 @@ public class QueryTTF {
             int gid = GetGlyfIndex(key);
             if (gid == 0) continue;
             StringBuilder sb = new StringBuilder();
+            // 字型数据转String，方便存HashMap
             for (short b : Glyf.get(gid).xCoordinates) sb.append(b);
             for (short b : Glyf.get(gid).yCoordinates) sb.append(b);
             String val = sb.toString();
             CodeToGlyph.put(key, val);
-            if(GlyphToCode.containsKey(val)) continue;
+            if (GlyphToCode.containsKey(val)) continue;
             GlyphToCode.put(val, key);
         }
     }
