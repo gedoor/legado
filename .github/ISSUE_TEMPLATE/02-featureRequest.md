@@ -2,7 +2,7 @@
 name: "[FeatureRequest] 功能请求"
 about: 你希望能够在阅读中增加的功能
 title: "[Feature Request] "
-labels: ''
+labels: '需求'
 assignees: ''
 ---
 
