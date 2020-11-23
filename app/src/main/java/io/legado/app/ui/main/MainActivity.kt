@@ -17,6 +17,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
+import io.legado.app.help.DefaultData
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
@@ -111,6 +112,7 @@ class MainActivity : VMBaseActivity<MainViewModel>(R.layout.activity_main),
             } else if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
                 TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
+                DefaultData.importDefaultTocRules()//版本更新时更新自带本地txt目录规则
             }
             viewModel.upVersion()
         }
