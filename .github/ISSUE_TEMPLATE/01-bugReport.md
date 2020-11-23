@@ -1,6 +1,7 @@
 ---
 name: "[BUG] 问题提交模板"
-about: 请从符号">"后面开始填写内容，填写内容可以参考　https://github.com/gedoor/legado/issues/505　　　　　　　　　　
+about: 请从符号">"后面开始填写内容，填写内容可以参考　https://github.com/gedoor/legado/issues/505
+　
 title: "[BUG] "
 labels: 'BUG'
 assignees: ''
