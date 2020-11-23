@@ -274,7 +274,6 @@ class AudioPlayService : BaseService(),
                         if (index == AudioPlay.durChapterIndex) {
                             bookChapter = chapter
                             subtitle = chapter.title
-                            postEvent(EventBus.AUDIO_SUB_TITLE, subtitle)
                             postEvent(EventBus.AUDIO_SIZE, chapter.end?.toInt() ?: 0)
                             postEvent(EventBus.AUDIO_PROGRESS, position)
                         }

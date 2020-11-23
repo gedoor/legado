@@ -123,6 +123,9 @@ object AudioPlay {
     fun next(context: Context) {
         Coroutine.async {
             book?.let { book ->
+                if (book.durChapterIndex >= book.totalChapterNum) {
+                    return@let
+                }
                 pause(context)
                 durChapterIndex++
                 durPageIndex = 0
