@@ -161,8 +161,10 @@ class AudioPlayService : BaseService(),
 
     private fun resume() {
         pause = false
-        mediaPlayer.start()
-        mediaPlayer.seekTo(position)
+        if (!mediaPlayer.isPlaying) {
+            mediaPlayer.start()
+            mediaPlayer.seekTo(position)
+        }
         handler.removeCallbacks(mpRunnable)
         handler.postDelayed(mpRunnable, 1000)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
@@ -337,7 +339,7 @@ class AudioPlayService : BaseService(),
             AudioPlay.durChapterIndex--
             AudioPlay.durPageIndex = 0
             AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
-            saveRead()
+            AudioPlay.saveRead()
             position = 0
             loadContent(AudioPlay.durChapterIndex)
         }
@@ -349,24 +351,11 @@ class AudioPlayService : BaseService(),
             AudioPlay.durChapterIndex++
             AudioPlay.durPageIndex = 0
             AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
-            saveRead()
+            AudioPlay.saveRead()
             position = 0
             loadContent(AudioPlay.durChapterIndex)
         } else {
             stopSelf()
-        }
-    }
-
-    private fun saveRead() {
-        launch(IO) {
-            AudioPlay.book?.let { book ->
-                book.lastCheckCount = 0
-                book.durChapterTime = System.currentTimeMillis()
-                book.durChapterIndex = AudioPlay.durChapterIndex
-                book.durChapterPos = AudioPlay.durPageIndex
-                book.durChapterTitle = subtitle
-                App.db.bookDao().update(book)
-            }
         }
     }
 

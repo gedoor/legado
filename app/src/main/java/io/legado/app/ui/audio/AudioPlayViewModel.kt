@@ -47,7 +47,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         AudioPlay.chapterSize = count
                     }
                 }
-                saveRead()
+                AudioPlay.saveRead()
             }
         }
     }
@@ -125,21 +125,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             App.db.bookDao().update(book)
             App.db.bookChapterDao().insert(*chapters.toTypedArray())
             AudioPlay.chapterSize = chapters.size
-        }
-    }
-
-    fun saveRead() {
-        execute {
-            AudioPlay.book?.let { book ->
-                book.lastCheckCount = 0
-                book.durChapterTime = System.currentTimeMillis()
-                book.durChapterIndex = AudioPlay.durChapterIndex
-                book.durChapterPos = AudioPlay.durPageIndex
-                App.db.bookChapterDao().getChapter(book.bookUrl, book.durChapterIndex)?.let {
-                    book.durChapterTitle = it.title
-                }
-                App.db.bookDao().update(book)
-            }
         }
     }
 
