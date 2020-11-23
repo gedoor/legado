@@ -131,6 +131,7 @@ class AudioPlayService : BaseService(),
                 mediaPlayer.setDataSource(this, uri, analyzeUrl.headerMap)
                 mediaPlayer.prepareAsync()
             } catch (e: Exception) {
+                e.printStackTrace()
                 launch {
                     toast("$url ${e.localizedMessage}")
                     stopSelf()
@@ -147,7 +148,7 @@ class AudioPlayService : BaseService(),
                 AudioPlayService.pause = pause
                 handler.removeCallbacks(mpRunnable)
                 position = mediaPlayer.currentPosition
-                mediaPlayer.pause()
+                if (mediaPlayer.isPlaying) mediaPlayer.pause()
                 upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
                 AudioPlay.status = Status.PAUSE
                 postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
@@ -417,8 +418,7 @@ class AudioPlayService : BaseService(),
         })
         mediaSessionCompat?.setMediaButtonReceiver(
             PendingIntent.getBroadcast(
-                this,
-                0,
+                this, 0,
                 Intent(
                     Intent.ACTION_MEDIA_BUTTON,
                     null,
