@@ -1,13 +1,13 @@
 ---
 name: "[BUG] 问题提交模板"
-about: 请从符号">"后面开始填写内容，填写可以参考[BUG反馈模板](https://github.com/gedoor/legado/issues/505)
+about: 请从符号">"后面开始填写内容，填写内容可以参考 BUG反馈模板 - https://github.com/gedoor/legado/issues/505
 title: "[BUG] "
 labels: 'BUG'
 assignees: ''
 ---
 
 
-### 机型
+### 机型（如Redmi K30 Pro）
 >
 
 
@@ -15,7 +15,7 @@ assignees: ''
 >
 
 
-### 阅读Legdao版本（我的-关于-版本）
+### 阅读Legdao版本（我的-关于-版本,如3.20.112220）
 >
 
 
