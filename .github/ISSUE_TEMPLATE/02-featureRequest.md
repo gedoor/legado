@@ -1,6 +1,6 @@
 ---
-name: "[FeatureRequest] 功能请求"
-about: 你希望能够在阅读中增加的功能
+name: "[FeatureRequest] 功能请求模板"
+about: 提交你希望能够在阅读中增加的功能
 title: "[Feature Request] "
 labels: '需求'
 assignees: ''
