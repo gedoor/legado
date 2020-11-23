@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.AudioPlayService
+import io.legado.app.utils.postEvent
 
 object AudioPlay {
     var titleData = MutableLiveData<String>()
@@ -75,31 +77,65 @@ object AudioPlay {
         }
     }
 
-    fun skipTo(context: Context, chapterIndex: Int) {
-        val isPlay = !AudioPlayService.pause
-        pause(context)
-        status = Status.STOP
-        durChapterIndex = chapterIndex
-        durPageIndex = 0
-        book?.durChapterIndex = durChapterIndex
-        if (isPlay) {
-            play(context)
+    fun skipTo(context: Context, index: Int) {
+        Coroutine.async {
+            book?.let { book ->
+                val isPlay = !AudioPlayService.pause
+                pause(context)
+                status = Status.STOP
+                durChapterIndex = index
+                durPageIndex = 0
+                book.durChapterIndex = durChapterIndex
+                book.durChapterPos = 0
+                saveRead()
+                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+                    postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
+                }
+                if (isPlay) {
+                    play(context)
+                }
+            }
         }
     }
 
     fun prev(context: Context) {
-        if (AudioPlayService.isRun) {
-            val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = IntentAction.prev
-            context.startService(intent)
+        Coroutine.async {
+            book?.let { book ->
+                if (book.durChapterIndex <= 0) {
+                    return@let
+                }
+                pause(context)
+                durChapterIndex--
+                durPageIndex = 0
+                book.durChapterIndex = durChapterIndex
+                book.durChapterPos = 0
+                saveRead()
+                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+                    postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
+                }
+                if (AudioPlayService.isRun) {
+                    play(context)
+                }
+            }
         }
     }
 
     fun next(context: Context) {
-        if (AudioPlayService.isRun) {
-            val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = IntentAction.next
-            context.startService(intent)
+        Coroutine.async {
+            book?.let { book ->
+                pause(context)
+                durChapterIndex++
+                durPageIndex = 0
+                book.durChapterIndex = durChapterIndex
+                book.durChapterPos = 0
+                saveRead()
+                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+                    postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
+                }
+                if (AudioPlayService.isRun) {
+                    play(context)
+                }
+            }
         }
     }
 
@@ -108,8 +144,8 @@ object AudioPlay {
             book?.let { book ->
                 book.lastCheckCount = 0
                 book.durChapterTime = System.currentTimeMillis()
-                book.durChapterIndex = AudioPlay.durChapterIndex
-                book.durChapterPos = AudioPlay.durPageIndex
+                book.durChapterIndex = durChapterIndex
+                book.durChapterPos = durPageIndex
                 App.db.bookChapterDao().getChapter(book.bookUrl, book.durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }

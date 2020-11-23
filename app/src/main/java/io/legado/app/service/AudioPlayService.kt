@@ -91,8 +91,8 @@ class AudioPlayService : BaseService(),
                 }
                 IntentAction.pause -> pause(true)
                 IntentAction.resume -> resume()
-                IntentAction.prev -> moveToPrev()
-                IntentAction.next -> moveToNext()
+                IntentAction.prev -> AudioPlay.prev(this)
+                IntentAction.next -> AudioPlay.next(this)
                 IntentAction.adjustSpeed -> upSpeed(intent.getFloatExtra("adjust", 1f))
                 IntentAction.addTimer -> addTimer()
                 IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
@@ -230,7 +230,7 @@ class AudioPlayService : BaseService(),
      */
     override fun onCompletion(mp: MediaPlayer?) {
         handler.removeCallbacks(mpRunnable)
-        moveToNext()
+        AudioPlay.next(this)
     }
 
     private fun setTimer(minute: Int) {
@@ -330,32 +330,6 @@ class AudioPlayService : BaseService(),
             subtitle = chapter.title
             url = content
             play()
-        }
-    }
-
-    private fun moveToPrev() {
-        if (AudioPlay.durChapterIndex > 0) {
-            mediaPlayer.pause()
-            AudioPlay.durChapterIndex--
-            AudioPlay.durPageIndex = 0
-            AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
-            AudioPlay.saveRead()
-            position = 0
-            loadContent(AudioPlay.durChapterIndex)
-        }
-    }
-
-    private fun moveToNext() {
-        if (AudioPlay.durChapterIndex < AudioPlay.chapterSize - 1) {
-            mediaPlayer.pause()
-            AudioPlay.durChapterIndex++
-            AudioPlay.durPageIndex = 0
-            AudioPlay.book?.durChapterIndex = AudioPlay.durChapterIndex
-            AudioPlay.saveRead()
-            position = 0
-            loadContent(AudioPlay.durChapterIndex)
-        } else {
-            stopSelf()
         }
     }
 
