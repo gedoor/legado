@@ -233,6 +233,8 @@ public class QueryTTF {
 
     public final Map<Integer, String> CodeToGlyph = new HashMap<>();
     public final Map<String, Integer> GlyphToCode = new HashMap<>();
+    private int LimitMix = 0;
+    private int LimitMax = 0;
 
     /**
      * 构造函数
@@ -475,6 +477,8 @@ public class QueryTTF {
             for (short b : Glyf.get(gid).xCoordinates) sb.append(b);
             for (short b : Glyf.get(gid).yCoordinates) sb.append(b);
             String val = sb.toString();
+            if(LimitMix == 0) LimitMix = key;
+            LimitMax = key;
             CodeToGlyph.put(key, val);
             if (GlyphToCode.containsKey(val)) continue;
             GlyphToCode.put(val, key);
@@ -562,6 +566,15 @@ public class QueryTTF {
             }
         }
         return glyfID;
+    }
+
+    /**
+     * 判断Unicode值是否在字体范围内
+     * @param code 传入Unicode十进制值
+     * @return 返回bool查询结果
+     */
+    public boolean InLimit(char code){
+        return (LimitMix <= code) && (code < LimitMax);
     }
 
     /**

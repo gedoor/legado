@@ -270,15 +270,13 @@ interface JsExtensions {
     fun replaceFont(
         text: String,
         font1: QueryTTF?,
-        font2: QueryTTF?,
-        start: Int,
-        end: Int
+        font2: QueryTTF?
     ): String {
         if (font1 == null || font2 == null) return text
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
             val oldCode = s.toInt()
-            if (oldCode in start until end) {
+            if (font1.InLimit(s)) {
                 val code = font2.GetCodeByGlyf(font1.GetGlyfByCode(oldCode))
                 if(code != 0) contentArray[index] = code.toChar()
             }
