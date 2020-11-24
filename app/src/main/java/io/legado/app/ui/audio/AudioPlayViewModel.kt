@@ -16,27 +16,27 @@ import kotlinx.coroutines.Dispatchers
 
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
 
-    fun initData(intent: Intent) {
+    fun initData(intent: Intent) = AudioPlay.apply {
         execute {
             val bookUrl = intent.getStringExtra("bookUrl")
-            if (AudioPlay.book?.bookUrl != bookUrl) {
-                AudioPlay.stop(context)
-                AudioPlay.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-                AudioPlay.book = if (!bookUrl.isNullOrEmpty()) {
+            if (book?.bookUrl != bookUrl) {
+                stop(context)
+                inBookshelf = intent.getBooleanExtra("inBookshelf", true)
+                book = if (!bookUrl.isNullOrEmpty()) {
                     App.db.bookDao().getBook(bookUrl)
                 } else {
                     App.db.bookDao().lastReadBook
                 }
-                AudioPlay.book?.let { book ->
-                    AudioPlay.titleData.postValue(book.name)
-                    AudioPlay.coverData.postValue(book.getDisplayCover())
-                    AudioPlay.durChapterIndex = book.durChapterIndex
-                    AudioPlay.durPageIndex = book.durChapterPos
+                book?.let { book ->
+                    titleData.postValue(book.name)
+                    coverData.postValue(book.getDisplayCover())
+                    durChapterIndex = book.durChapterIndex
+                    durPageIndex = book.durChapterPos
                     App.db.bookChapterDao().getChapter(book.bookUrl, book.durChapterIndex)?.let {
                         postEvent(EventBus.AUDIO_SUB_TITLE, it.title)
                     }
                     App.db.bookSourceDao().getBookSource(book.origin)?.let {
-                        AudioPlay.webBook = WebBook(it)
+                        webBook = WebBook(it)
                     }
                     val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
                     if (count == 0) {
@@ -46,13 +46,13 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                             loadChapterList(book)
                         }
                     } else {
-                        if (AudioPlay.durChapterIndex > count - 1) {
-                            AudioPlay.durChapterIndex = count - 1
+                        if (durChapterIndex > count - 1) {
+                            durChapterIndex = count - 1
                         }
-                        AudioPlay.chapterSize = count
+                        chapterSize = count
                     }
                 }
-                AudioPlay.saveRead()
+                saveRead()
             }
         }
     }
