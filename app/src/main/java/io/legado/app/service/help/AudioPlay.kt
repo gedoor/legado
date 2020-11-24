@@ -80,9 +80,6 @@ object AudioPlay {
     fun skipTo(context: Context, index: Int) {
         Coroutine.async {
             book?.let { book ->
-                val isPlay = !AudioPlayService.pause
-                pause(context)
-                status = Status.STOP
                 durChapterIndex = index
                 durPageIndex = 0
                 book.durChapterIndex = durChapterIndex
@@ -91,9 +88,7 @@ object AudioPlay {
                 App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
                     postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
                 }
-                if (isPlay) {
-                    play(context)
-                }
+                play(context)
             }
         }
     }
@@ -104,7 +99,6 @@ object AudioPlay {
                 if (book.durChapterIndex <= 0) {
                     return@let
                 }
-                pause(context)
                 durChapterIndex--
                 durPageIndex = 0
                 book.durChapterIndex = durChapterIndex
@@ -113,9 +107,7 @@ object AudioPlay {
                 App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
                     postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
                 }
-                if (AudioPlayService.isRun) {
-                    play(context)
-                }
+                play(context)
             }
         }
     }
@@ -126,7 +118,6 @@ object AudioPlay {
                 if (book.durChapterIndex >= book.totalChapterNum) {
                     return@let
                 }
-                pause(context)
                 durChapterIndex++
                 durPageIndex = 0
                 book.durChapterIndex = durChapterIndex
@@ -135,9 +126,7 @@ object AudioPlay {
                 App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
                     postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
                 }
-                if (AudioPlayService.isRun) {
-                    play(context)
-                }
+                play(context)
             }
         }
     }

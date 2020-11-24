@@ -122,8 +122,8 @@ class AudioPlayService : BaseService(),
         upNotification()
         if (requestFocus()) {
             try {
-                AudioPlay.status = Status.PLAY
-                postEvent(EventBus.AUDIO_STATE, Status.PLAY)
+                AudioPlay.status = Status.STOP
+                postEvent(EventBus.AUDIO_STATE, Status.STOP)
                 mediaPlayer.reset()
                 val analyzeUrl =
                     AnalyzeUrl(url, headerMapF = AudioPlay.headers(), useWebView = true)
@@ -197,13 +197,14 @@ class AudioPlayService : BaseService(),
     /**
      * 加载完成
      */
-    override fun onPrepared(mp: MediaPlayer?) {
-        if (pause) return
+    override fun onPrepared(mp: MediaPlayer) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mediaPlayer.playbackParams = mediaPlayer.playbackParams.apply { speed = playSpeed }
         } else {
             mediaPlayer.start()
         }
+        AudioPlay.status = Status.PLAY
+        postEvent(EventBus.AUDIO_STATE, Status.PLAY)
         mediaPlayer.seekTo(position)
         postEvent(EventBus.AUDIO_SIZE, mediaPlayer.duration)
         bookChapter?.let {
@@ -216,7 +217,7 @@ class AudioPlayService : BaseService(),
     /**
      * 播放出错
      */
-    override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+    override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         if (!mediaPlayer.isPlaying) {
             AudioPlay.status = Status.STOP
             postEvent(EventBus.AUDIO_STATE, Status.STOP)
@@ -228,7 +229,7 @@ class AudioPlayService : BaseService(),
     /**
      * 播放结束
      */
-    override fun onCompletion(mp: MediaPlayer?) {
+    override fun onCompletion(mp: MediaPlayer) {
         handler.removeCallbacks(mpRunnable)
         AudioPlay.next(this)
     }
