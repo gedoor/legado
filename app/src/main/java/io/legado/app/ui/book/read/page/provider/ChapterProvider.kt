@@ -105,15 +105,9 @@ object ChapterProvider {
         }
 
         return TextChapter(
-            bookChapter.index,
-            bookChapter.title,
-            bookChapter.getAbsoluteURL(),
-            textPages,
-            pageLines,
-            pageLengths,
-            chapterSize,
-            paint.first,
-            paint.second
+            bookChapter.index, bookChapter.title,
+            bookChapter.getAbsoluteURL().substringBefore(","),
+            textPages, pageLines, pageLengths, chapterSize, paint.first, paint.second
         )
     }
 
