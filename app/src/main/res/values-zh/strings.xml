@@ -690,8 +690,6 @@
     <string name="click_to_apply">点击加入</string>
     <string name="middle">中</string>
     <string name="information">信息</string>
-    <string name="hideHeader">隐藏页眉</string>
-    <string name="hideFooter">隐藏页脚</string>
     <string name="switchLayout">切换布局</string>
     <string name="text_font_weight_converter">文章字重切换</string>
 
@@ -789,5 +787,7 @@
     <string name="next_page">下一页</string>
     <string name="prev_page">上一页</string>
     <string name="non_action">无操作</string>
+    <string name="body_title">正文标题</string>
+    <string name="show_hide">显示/隐藏</string>
 
 </resources>

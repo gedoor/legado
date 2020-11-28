@@ -695,8 +695,6 @@
     <string name="night_accent">夜間，強調色</string>
     <string name="night_background_color">夜間，背景色</string>
     <string name="night_navbar_color">夜間，導航欄顏色</string>
-    <string name="hideHeader">隱藏頁眉</string>
-    <string name="hideFooter">隱藏頁脚</string>
     <string name="auto_change_source">自動換源</string>
     <string name="to_bottom">置底</string>
     <string name="text_full_justify">文字兩端對齊</string>
@@ -785,5 +783,7 @@
     <string name="next_page">下一页</string>
     <string name="prev_page">上一页</string>
     <string name="non_action">无操作</string>
+    <string name="body_title">正文标题</string>
+    <string name="show_hide">显示/隐藏</string>
 
 </resources>

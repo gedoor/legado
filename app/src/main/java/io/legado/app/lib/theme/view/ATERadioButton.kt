@@ -12,6 +12,8 @@ import io.legado.app.lib.theme.accentColor
 class ATERadioButton(context: Context, attrs: AttributeSet) : AppCompatRadioButton(context, attrs) {
 
     init {
-        ATH.setTint(this@ATERadioButton, context.accentColor)
+        if (!isInEditMode) {
+            ATH.setTint(this@ATERadioButton, context.accentColor)
+        }
     }
 }

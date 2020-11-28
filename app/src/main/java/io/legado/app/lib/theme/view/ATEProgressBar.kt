@@ -12,6 +12,8 @@ import io.legado.app.lib.theme.ThemeStore
 class ATEProgressBar(context: Context, attrs: AttributeSet) : ProgressBar(context, attrs) {
 
     init {
-        ATH.setTint(this, ThemeStore.accentColor(context))
+        if (!isInEditMode) {
+            ATH.setTint(this, ThemeStore.accentColor(context))
+        }
     }
 }

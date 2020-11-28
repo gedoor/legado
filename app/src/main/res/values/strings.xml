@@ -691,8 +691,6 @@
     <string name="click_to_apply">Tap to join</string>
     <string name="middle">Middle</string>
     <string name="information">Information</string>
-    <string name="hideHeader">Hide header</string>
-    <string name="hideFooter">Hide footer</string>
     <string name="switchLayout">Switch Layout</string>
     <string name="text_font_weight_converter">Text font weight switching</string>
 
@@ -792,5 +790,7 @@
     <string name="next_page">下一页</string>
     <string name="prev_page">上一页</string>
     <string name="non_action">无操作</string>
+    <string name="body_title">正文标题</string>
+    <string name="show_hide">显示/隐藏</string>
 
 </resources>

@@ -350,8 +350,8 @@ object ReadBookConfig {
             exportConfig.tipFooterLeft = shareConfig.tipFooterLeft
             exportConfig.tipFooterMiddle = shareConfig.tipFooterMiddle
             exportConfig.tipFooterRight = shareConfig.tipFooterRight
-            exportConfig.hideHeader = shareConfig.hideHeader
-            exportConfig.hideFooter = shareConfig.hideFooter
+            exportConfig.headerMode = shareConfig.headerMode
+            exportConfig.footerMode = shareConfig.footerMode
         }
         return exportConfig
     }
@@ -405,8 +405,8 @@ object ReadBookConfig {
         var tipFooterLeft: Int = ReadTipConfig.chapterTitle,
         var tipFooterMiddle: Int = ReadTipConfig.none,
         var tipFooterRight: Int = ReadTipConfig.pageAndTotal,
-        var hideHeader: Boolean = true,
-        var hideFooter: Boolean = false
+        var headerMode: Int = 0,
+        var footerMode: Int = 0
     ) : Parcelable {
 
         fun setCurTextColor(color: Int) {

@@ -4,7 +4,15 @@ import io.legado.app.App
 import io.legado.app.R
 
 object ReadTipConfig {
-    val tipArray: Array<String> = App.INSTANCE.resources.getStringArray(R.array.read_tip)
+    val tips by lazy {
+        App.INSTANCE.resources.getStringArray(R.array.read_tip).toList()
+    }
+    val headerModes by lazy {
+        linkedMapOf(0 to "状态栏显示时隐藏", 1 to "显示", 2 to "隐藏")
+    }
+    val footerModes by lazy {
+        linkedMapOf(0 to "显示", 1 to "隐藏")
+    }
     const val none = 0
     const val chapterTitle = 1
     const val time = 2
@@ -14,12 +22,12 @@ object ReadTipConfig {
     const val pageAndTotal = 6
     const val bookName = 7
 
-    val tipHeaderLeftStr: String get() = tipArray.getOrElse(tipHeaderLeft) { tipArray[none] }
-    val tipHeaderMiddleStr: String get() = tipArray.getOrElse(tipHeaderMiddle) { tipArray[none] }
-    val tipHeaderRightStr: String get() = tipArray.getOrElse(tipHeaderRight) { tipArray[none] }
-    val tipFooterLeftStr: String get() = tipArray.getOrElse(tipFooterLeft) { tipArray[none] }
-    val tipFooterMiddleStr: String get() = tipArray.getOrElse(tipFooterMiddle) { tipArray[none] }
-    val tipFooterRightStr: String get() = tipArray.getOrElse(tipFooterRight) { tipArray[none] }
+    val tipHeaderLeftStr: String get() = tips.getOrElse(tipHeaderLeft) { tips[none] }
+    val tipHeaderMiddleStr: String get() = tips.getOrElse(tipHeaderMiddle) { tips[none] }
+    val tipHeaderRightStr: String get() = tips.getOrElse(tipHeaderRight) { tips[none] }
+    val tipFooterLeftStr: String get() = tips.getOrElse(tipFooterLeft) { tips[none] }
+    val tipFooterMiddleStr: String get() = tips.getOrElse(tipFooterMiddle) { tips[none] }
+    val tipFooterRightStr: String get() = tips.getOrElse(tipFooterRight) { tips[none] }
 
     var tipHeaderLeft: Int
         get() = ReadBookConfig.config.tipHeaderLeft
@@ -57,15 +65,15 @@ object ReadTipConfig {
             ReadBookConfig.config.tipFooterRight = value
         }
 
-    var hideHeader: Boolean
-        get() = ReadBookConfig.config.hideHeader
+    var headerMode: Int
+        get() = ReadBookConfig.config.headerMode
         set(value) {
-            ReadBookConfig.config.hideHeader = value
+            ReadBookConfig.config.headerMode = value
         }
 
-    var hideFooter: Boolean
-        get() = ReadBookConfig.config.hideFooter
+    var footerMode: Int
+        get() = ReadBookConfig.config.footerMode
         set(value) {
-            ReadBookConfig.config.hideFooter = value
+            ReadBookConfig.config.footerMode = value
         }
 }

@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.read.config
 
-import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
@@ -11,7 +10,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.EventBus
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
@@ -19,10 +17,12 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.dp
+import io.legado.app.utils.getIndexById
+import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.activity_book_read.*
 import kotlinx.android.synthetic.main.dialog_read_book_style.*
-import kotlinx.android.synthetic.main.dialog_title_config.view.*
 import kotlinx.android.synthetic.main.item_read_style.view.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -110,9 +110,6 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         chinese_converter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
-        tv_title_mode.onClick {
-            showTitleConfig()
-        }
         text_font_weight_converter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
@@ -163,36 +160,6 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             ReadBookConfig.paragraphSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-    }
-
-    @SuppressLint("InflateParams")
-    private fun showTitleConfig() = ReadBookConfig.apply {
-        alert(R.string.title) {
-            val rootView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_title_config, null).apply {
-                    rg_title_mode.checkByIndex(titleMode)
-                    dsb_title_size.progress = titleSize
-                    dsb_title_top.progress = titleTopSpacing
-                    dsb_title_bottom.progress = titleBottomSpacing
-                    rg_title_mode.onCheckedChange { _, checkedId ->
-                        titleMode = rg_title_mode.getIndexById(checkedId)
-                        postEvent(EventBus.UP_CONFIG, true)
-                    }
-                    dsb_title_size.onChanged = {
-                        titleSize = it
-                        postEvent(EventBus.UP_CONFIG, true)
-                    }
-                    dsb_title_top.onChanged = {
-                        titleTopSpacing = it
-                        postEvent(EventBus.UP_CONFIG, true)
-                    }
-                    dsb_title_bottom.onChanged = {
-                        titleBottomSpacing = it
-                        postEvent(EventBus.UP_CONFIG, true)
-                    }
-                }
-            customView = rootView
-        }.show()
     }
 
     private fun changeBg(index: Int) {

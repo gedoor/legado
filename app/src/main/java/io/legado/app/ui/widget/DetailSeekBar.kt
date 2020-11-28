@@ -41,7 +41,7 @@ class DetailSeekBar @JvmOverloads constructor(
         tv_seek_title.text = typedArray.getText(R.styleable.DetailSeekBar_title)
         seek_bar.max = typedArray.getInteger(R.styleable.DetailSeekBar_max, 0)
         typedArray.recycle()
-        if (isBottomBackground) {
+        if (isBottomBackground && !isInEditMode) {
             val isLight = ColorUtils.isColorLight(context.bottomBackground)
             val textColor = context.getPrimaryTextColor(isLight)
             tv_seek_title.setTextColor(textColor)

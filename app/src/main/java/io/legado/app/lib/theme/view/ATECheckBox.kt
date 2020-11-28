@@ -12,6 +12,8 @@ import io.legado.app.lib.theme.accentColor
 class ATECheckBox(context: Context, attrs: AttributeSet) : AppCompatCheckBox(context, attrs) {
 
     init {
-        ATH.setTint(this, context.accentColor)
+        if (!isInEditMode) {
+            ATH.setTint(this, context.accentColor)
+        }
     }
 }

@@ -20,25 +20,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_title_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:text="@string/title"
-            android:gravity="center"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            app:radius="3dp" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
         <io.legado.app.ui.book.read.config.TextFontWeightConverter
             android:id="@+id/text_font_weight_converter"
             android:layout_width="wrap_content"

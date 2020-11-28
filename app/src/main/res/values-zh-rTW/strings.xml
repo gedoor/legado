@@ -681,8 +681,6 @@
     <string name="click_to_apply">點擊加入</string>
     <string name="middle">中</string>
     <string name="information">訊息</string>
-    <string name="hideHeader">隱藏頁首</string>
-    <string name="hideFooter">隱藏頁尾</string>
     <string name="switchLayout">切換布局</string>
   
     <!--color-->
@@ -786,5 +784,7 @@
     <string name="next_page">下一页</string>
     <string name="prev_page">上一页</string>
     <string name="non_action">无操作</string>
+    <string name="body_title">正文标题</string>
+    <string name="show_hide">显示/隐藏</string>
 
 </resources>
