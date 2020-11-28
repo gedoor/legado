@@ -2,6 +2,7 @@ package io.legado.app.ui.widget.text
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.VelocityTracker
@@ -48,7 +49,7 @@ open class InertiaScrollTextView @JvmOverloads constructor(
         mTouchSlop = vc.scaledTouchSlop
         mMinFlingVelocity = vc.scaledMinimumFlingVelocity
         mMaxFlingVelocity = vc.scaledMaximumFlingVelocity
-        movementMethod = BetterLinkMovementMethod.instance
+        movementMethod = LinkMovementMethod.getInstance()
     }
 
     fun atTop(): Boolean {
