@@ -36,7 +36,7 @@ class PageView(context: Context, attrs: AttributeSet) :
             field = value
             upContent()
         }
-    var isScroll = ReadBook.pageAnim() == 3
+    var isScroll = false
     var prevPage: ContentView = ContentView(context)
     var curPage: ContentView = ContentView(context)
     var nextPage: ContentView = ContentView(context)
@@ -95,9 +95,11 @@ class PageView(context: Context, attrs: AttributeSet) :
         addView(nextPage)
         addView(curPage)
         addView(prevPage)
-        upBg()
-        setWillNotDraw(false)
-        upPageAnim()
+        if (!isInEditMode) {
+            upBg()
+            setWillNotDraw(false)
+            upPageAnim()
+        }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -118,7 +120,7 @@ class PageView(context: Context, attrs: AttributeSet) :
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         pageDelegate?.onDraw(canvas)
-        if (callBack.isAutoPage && !isScroll) {
+        if (!isInEditMode && callBack.isAutoPage && !isScroll) {
             nextPage.screenshot()?.let {
                 val bottom =
                     page_view.height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 50)
