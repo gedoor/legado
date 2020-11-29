@@ -6,17 +6,12 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.RssSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
-import io.legado.app.help.http.HttpHelper
-import io.legado.app.help.storage.Restore
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -137,23 +132,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             updateToc()
         } else {
             usePoolCount--
-        }
-    }
-
-    fun initRss() {
-        execute {
-            val url = "https://gitee.com/alanskycn/yuedu/raw/master/JS/RSS/rssSource"
-            HttpHelper.simpleGet(url)?.let { body ->
-                val sources = mutableListOf<RssSource>()
-                val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
-                for (item in items) {
-                    val jsonItem = Restore.jsonPath.parse(item)
-                    GSON.fromJsonObject<RssSource>(jsonItem.jsonString())?.let { source ->
-                        sources.add(source)
-                    }
-                }
-                App.db.rssSourceDao().insert(*sources.toTypedArray())
-            }
         }
     }
 
