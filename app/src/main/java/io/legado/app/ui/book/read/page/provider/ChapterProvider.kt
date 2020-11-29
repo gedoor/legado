@@ -23,20 +23,49 @@ import java.util.*
 
 @Suppress("DEPRECATION")
 object ChapterProvider {
+    @JvmStatic
     private var viewWidth = 0
+
+    @JvmStatic
     private var viewHeight = 0
+
+    @JvmStatic
     var paddingLeft = 0
+
+    @JvmStatic
     var paddingTop = 0
+
+    @JvmStatic
     var visibleWidth = 0
+
+    @JvmStatic
     var visibleHeight = 0
+
+    @JvmStatic
     var visibleRight = 0
+
+    @JvmStatic
     var visibleBottom = 0
+
+    @JvmStatic
     private var lineSpacingExtra = 0
+
+    @JvmStatic
     private var paragraphSpacing = 0
+
+    @JvmStatic
     private var titleTopSpacing = 0
+
+    @JvmStatic
     private var titleBottomSpacing = 0
+
+    @JvmStatic
     var typeface: Typeface = Typeface.SANS_SERIF
+
+    @JvmStatic
     lateinit var titlePaint: TextPaint
+
+    @JvmStatic
     lateinit var contentPaint: TextPaint
 
     init {
