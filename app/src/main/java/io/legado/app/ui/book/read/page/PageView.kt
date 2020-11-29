@@ -169,7 +169,6 @@ class PageView(context: Context, attrs: AttributeSet) :
                 setStartPoint(event.x, event.y)
             }
             MotionEvent.ACTION_MOVE -> {
-                pressDown = true
                 if (!isMove) {
                     isMove =
                         abs(startX - event.x) > slopSquare || abs(startY - event.y) > slopSquare
@@ -187,6 +186,7 @@ class PageView(context: Context, attrs: AttributeSet) :
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                 removeCallbacks(longPressRunnable)
                 if (!pressDown) return true
+                pressDown = false
                 if (!isMove) {
                     if (!longPressed && !pressOnTextSelected) {
                         onSingleTapUp()
