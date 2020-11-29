@@ -85,6 +85,7 @@
         <item>進度</item>
         <item>頁數及進度</item>
         <item>書名</item>
+        <item>時間及電量</item>
     </string-array>
 
     <string-array name="text_font_weight">

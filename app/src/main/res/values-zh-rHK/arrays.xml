@@ -44,6 +44,7 @@
         <item>进度</item>
         <item>页数及进度</item>
         <item>書名</item>
+        <item>时间及电量</item>
     </string-array>
 
     <string-array name="text_font_weight">

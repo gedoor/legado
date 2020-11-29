@@ -85,6 +85,7 @@
 		<item>Progress</item>
 		<item>Pages and progress</item>
 		<item>Book name</item>
+		<item>Time and Battery</item>
 	</string-array>
 
 	<string-array name="text_font_weight">
