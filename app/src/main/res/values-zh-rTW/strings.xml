@@ -411,7 +411,7 @@
     <string name="rule_update_time">更新時間(ChapterInfo)</string>
     <string name="rule_book_content">正文規則(content)</string>
     <string name="rule_next_content">正文下一頁URL規則(nextContentUrl)</string>
-    <string name="rule_web_js">webJs</string>
+    <string name="rule_web_js">WebViewJs(webJs)</string>
     <string name="rule_source_regex">資源正則(sourceRegex)</string>
 
     <string name="source_icon">圖示(sourceIcon)</string>
@@ -729,7 +729,6 @@
     <string name="read_config">閱讀介面設定</string>
     <string name="rule_image_style">圖片樣式(imageStyle)</string>
     <string name="rule_replace_regex">取代規則(replaceRegex)</string>
-    <string name="rule_font_js">字体处理js</string>
     <string name="group_name">分組名稱</string>
     <string name="note_content">備註內容</string>
     <string name="replace_enable_default_t">預設啟用取代淨化</string>
