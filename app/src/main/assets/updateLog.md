@@ -18,7 +18,7 @@
 var b64=String(result).match(/ttf;base64,([^\)]+)/);
 var f1 = java.queryBase64TTF(b64[1])
 var f2 = java.queryTTF("/storage/emulated/0/Fonts/Source Han Sans CN Regular.ttf")
-java.replaceFont(content, f1, f2, 58000,59000)
+java.replaceFont(content, f1, f2)
 ```
 
 **2020/11/18**
