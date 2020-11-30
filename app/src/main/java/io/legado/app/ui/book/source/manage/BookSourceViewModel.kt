@@ -1,9 +1,13 @@
 package io.legado.app.ui.book.source.manage
 
 import android.app.Application
+import android.content.Intent
 import android.text.TextUtils
+import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
+import io.legado.app.BuildConfig
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
@@ -160,6 +164,28 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             context.longToast("成功导出至\n${doc.uri.path}")
         }.onError {
             context.longToast("导出失败\n${it.localizedMessage}")
+        }
+    }
+
+    fun shareSelection(sources: List<BookSource>) {
+        execute {
+            val intent = Intent(Intent.ACTION_SEND)
+            val file = FileUtils.createFileWithReplace("${context.filesDir}/shareBookSource.json")
+            file.writeText(GSON.toJson(sources))
+            val fileUri = FileProvider.getUriForFile(
+                context,
+                BuildConfig.APPLICATION_ID + ".fileProvider",
+                file
+            )
+            intent.type = "text/*"
+            intent.putExtra(Intent.EXTRA_STREAM, fileUri)
+            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent
+        }.onSuccess {
+            context.startActivity(
+                Intent.createChooser(it, context.getString(R.string.share_selected_source))
+            )
         }
     }
 

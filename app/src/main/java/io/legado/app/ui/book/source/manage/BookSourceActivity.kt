@@ -2,7 +2,6 @@ package io.legado.app.ui.book.source.manage
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -10,7 +9,6 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
@@ -18,7 +16,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
-import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
@@ -99,30 +96,7 @@ class BookSourceActivity : VMBaseActivity<BookSourceViewModel>(R.layout.activity
         when (item.itemId) {
             R.id.menu_add_book_source -> startActivity<BookSourceEditActivity>()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
-            R.id.menu_share_source -> {
-                try {
-                    val json = GSON.toJson(adapter.getSelection())
-                    val intent = Intent(Intent.ACTION_SEND)
-                    val file = FileUtils.createFileWithReplace("$filesDir/shareBookSource.json")
-                    file.writeText(json)
-                    val fileUri = FileProvider.getUriForFile(
-                        this,
-                        BuildConfig.APPLICATION_ID + ".fileProvider",
-                        file
-                    )
-                    intent.type = "text/*"
-                    intent.putExtra(Intent.EXTRA_STREAM, fileUri)
-                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    startActivity(
-                        Intent.createChooser(
-                            intent,
-                            getString(R.string.share_selected_source)
-                        )
-                    )
-                } catch (e: ActivityNotFoundException) {
-                    e.printStackTrace()
-                }
-            }
+            R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection())
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> FilePicker
