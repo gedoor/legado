@@ -4,20 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.utils.checkByIndex
-import io.legado.app.utils.getIndexById
-import io.legado.app.utils.postEvent
+import io.legado.app.utils.*
 import kotlinx.android.synthetic.main.dialog_tip_config.*
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class TipConfigDialog : BaseDialogFragment() {
+
+    companion object {
+        const val TIP_COLOR = 7897
+    }
 
     override fun onStart() {
         super.onStart()
@@ -36,6 +39,9 @@ class TipConfigDialog : BaseDialogFragment() {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initView()
         initEvent()
+        observeEvent<String>(EventBus.TIP_COLOR) {
+            upTvTipColor()
+        }
     }
 
     private fun initView() {
@@ -53,6 +59,17 @@ class TipConfigDialog : BaseDialogFragment() {
         tv_footer_left.text = ReadTipConfig.tipFooterLeftStr
         tv_footer_middle.text = ReadTipConfig.tipFooterMiddleStr
         tv_footer_right.text = ReadTipConfig.tipFooterRightStr
+
+        upTvTipColor()
+    }
+
+    private fun upTvTipColor() {
+        tv_tip_color.text =
+            if (ReadTipConfig.tipColor == 0) {
+                "跟随正文"
+            } else {
+                "#${ReadTipConfig.tipColor.hexString}"
+            }
     }
 
     private fun initEvent() {
@@ -132,6 +149,22 @@ class TipConfigDialog : BaseDialogFragment() {
                 ReadTipConfig.tipFooterRight = i
                 tv_footer_right.text = ReadTipConfig.tips[i]
                 postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        ll_tip_color.onClick {
+            selector(items = arrayListOf("跟随正文", "自定义")) { _, i ->
+                when (i) {
+                    0 -> {
+                        ReadTipConfig.tipColor = 0
+                        upTvTipColor()
+                        postEvent(EventBus.UP_CONFIG, true)
+                    }
+                    1 -> ColorPickerDialog.newBuilder()
+                        .setShowAlphaSlider(false)
+                        .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
+                        .setDialogId(TIP_COLOR)
+                        .show(requireActivity())
+                }
             }
         }
     }

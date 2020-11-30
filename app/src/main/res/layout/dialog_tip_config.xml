@@ -270,4 +270,34 @@
 
     </LinearLayout>
 
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/header_footer"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_tip_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="RtlHardcoded,RtlSymmetry">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="6dp"
+            android:text="@string/text_color" />
+
+        <TextView
+            android:id="@+id/tv_tip_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            tools:text="@string/text_color" />
+
+    </LinearLayout>
+
 </LinearLayout>

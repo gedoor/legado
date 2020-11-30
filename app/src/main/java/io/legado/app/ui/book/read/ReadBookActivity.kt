@@ -21,6 +21,7 @@ import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.ReadTipConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.dialogs.alert
@@ -34,6 +35,7 @@ import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
+import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_COLOR
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.PageView
 import io.legado.app.ui.book.read.page.TextPageFactory
@@ -699,6 +701,11 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 setCurBg(0, "#${color.hexString}")
                 ReadBookConfig.upBg()
                 postEvent(EventBus.UP_CONFIG, false)
+            }
+            TIP_COLOR -> {
+                ReadTipConfig.tipColor = color
+                postEvent(EventBus.TIP_COLOR, "")
+                postEvent(EventBus.UP_CONFIG, true)
             }
         }
     }

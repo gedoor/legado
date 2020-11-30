@@ -792,5 +792,6 @@
     <string name="non_action">无操作</string>
     <string name="body_title">正文标题</string>
     <string name="show_hide">显示/隐藏</string>
+    <string name="header_footer">footer <![CDATA[&]]> header</string>
 
 </resources>
