@@ -7,7 +7,7 @@
 * 去掉FontJs规则,可以写在替换规则里,例
 ```
 @js:
-var b64=String(content).match(/ttf;base64,([^\)]+)/);
+var b64=String(src).match(/ttf;base64,([^\)]+)/);
 if (b64) {
     var f1 = java.queryBase64TTF(b64[1])
     var f2 = java.queryTTF("/storage/emulated/0/Fonts/Source Han Sans CN Regular.ttf")
