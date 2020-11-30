@@ -25,7 +25,8 @@ import kotlin.collections.HashMap
 @Suppress("unused", "RegExpRedundantEscape")
 class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     var chapter: BookChapter? = null
-    private var content: Any? = null
+    var content: Any? = null
+        private set
     private var baseUrl: String? = null
     private var baseURL: URL? = null
     private var isJSON: Boolean = false
