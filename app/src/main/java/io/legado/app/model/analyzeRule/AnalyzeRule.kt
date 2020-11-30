@@ -635,7 +635,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         bindings["baseUrl"] = baseUrl
         bindings["chapter"] = chapter
         bindings["title"] = chapter?.title
-        bindings["content"] = content
+        bindings["src"] = content
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
