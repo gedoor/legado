@@ -1,11 +1,8 @@
 package io.legado.app.ui.book.read
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -16,6 +13,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
+import io.legado.app.databinding.ActivityBookReadBinding
+import io.legado.app.databinding.DialogDownloadChoiceBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.ReadBookConfig
@@ -31,27 +30,19 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
-import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
-import kotlinx.android.synthetic.main.activity_book_read.*
-import kotlinx.android.synthetic.main.dialog_download_choice.view.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.view_read_menu.*
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.startActivityForResult
 
 /**
  * 阅读界面
  */
 abstract class ReadBookBaseActivity :
-    VMBaseActivity<ReadBookViewModel>(R.layout.activity_book_read) {
+    VMBaseActivity<ActivityBookReadBinding, ReadBookViewModel>() {
 
     override val viewModel: ReadBookViewModel
         get() = getViewModel(ReadBookViewModel::class.java)
-    private val requestCodeEditSource = 111
     var bottomDialog = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,40 +53,8 @@ abstract class ReadBookBaseActivity :
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        initView()
         if (LocalConfig.isFirstRead) {
             showClickRegionalConfig()
-        }
-    }
-
-    /**
-     * 初始化View
-     */
-    private fun initView() {
-        tv_chapter_name.onClick {
-            ReadBook.webBook?.let {
-                startActivityForResult<BookSourceEditActivity>(
-                    requestCodeEditSource,
-                    Pair("data", it.bookSource.bookSourceUrl)
-                )
-            }
-        }
-        tv_chapter_url.onClick {
-            runCatching {
-                val url = tv_chapter_url.text.toString()
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(url)
-                startActivity(intent)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                requestCodeEditSource -> viewModel.upBookSource()
-            }
         }
     }
 
@@ -182,8 +141,7 @@ abstract class ReadBookBaseActivity :
 
     override fun upNavigationBarColor() {
         when {
-            read_menu == null -> return
-            read_menu.isVisible -> ATH.setNavigationBarColorAuto(this)
+            binding.readMenu.isVisible -> ATH.setNavigationBarColorAuto(this)
             bottomDialog > 0 -> ATH.setNavigationBarColorAuto(this, bottomBackground)
             else -> {
                 ATH.setNavigationBarColorAuto(this, Color.TRANSPARENT)
@@ -218,23 +176,22 @@ abstract class ReadBookBaseActivity :
     fun showDownloadDialog() {
         ReadBook.book?.let { book ->
             alert(titleResource = R.string.offline_cache) {
-                var view: View? = null
+                var dialogBinding: DialogDownloadChoiceBinding? = null
                 customView {
                     LayoutInflater.from(this@ReadBookBaseActivity)
                         .inflate(R.layout.dialog_download_choice, null)
                         .apply {
-                            view = this
+                            dialogBinding = DialogDownloadChoiceBinding.bind(this)
                             setBackgroundColor(context.backgroundColor)
-                            edit_start.setText((book.durChapterIndex + 1).toString())
-                            edit_end.setText(book.totalChapterNum.toString())
+                            dialogBinding!!.editStart.setText((book.durChapterIndex + 1).toString())
+                            dialogBinding!!.editEnd.setText(book.totalChapterNum.toString())
                         }
                 }
                 yesButton {
-                    view?.apply {
-                        val start = edit_start?.text?.toString()?.toInt() ?: 0
-                        val end = edit_end?.text?.toString()?.toInt() ?: book.totalChapterNum
-                        CacheBook.start(context, book.bookUrl, start - 1, end - 1)
-                    }
+                    val start = dialogBinding!!.editStart.text?.toString()?.toInt() ?: 0
+                    val end =
+                        dialogBinding!!.editEnd.text?.toString()?.toInt() ?: book.totalChapterNum
+                    CacheBook.start(this@ReadBookBaseActivity, book.bookUrl, start - 1, end - 1)
                 }
                 noButton()
             }.show()
@@ -250,9 +207,8 @@ abstract class ReadBookBaseActivity :
             message = book.name + " • " + textChapter.title
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view.apply {
-                        setHint(R.string.note_content)
-                    }
+                    editText = findViewById(R.id.edit_view)
+                    editText!!.setHint(R.string.note_content)
                 }
             }
             yesButton {
@@ -282,9 +238,9 @@ abstract class ReadBookBaseActivity :
             var editText: AutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view
-                    edit_view.setFilterValues(charsets)
-                    edit_view.setText(ReadBook.book?.charset)
+                    editText = findViewById(R.id.edit_view)
+                    editText?.setFilterValues(charsets)
+                    editText?.setText(ReadBook.book?.charset)
                 }
             }
             okButton {

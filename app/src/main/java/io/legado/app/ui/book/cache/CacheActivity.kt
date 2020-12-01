@@ -17,13 +17,13 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.databinding.ActivityCacheBookBinding
 import io.legado.app.help.BookHelp
 import io.legado.app.service.help.CacheBook
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.widget.dialog.TextListDialog
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_download.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
 
-class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download),
+class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>(),
     FilePickerDialog.CallBack,
     CacheAdapter.CallBack {
     private val exportRequestCode = 32
@@ -50,7 +50,7 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)
-        title_bar.subtitle = intent.getStringExtra("groupName") ?: getString(R.string.all)
+        binding.titleBar.subtitle = intent.getStringExtra("groupName") ?: getString(R.string.all)
         initRecyclerView()
         initGroupData()
         initBookData()
@@ -96,7 +96,7 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
                 TextListDialog.show(supportFragmentManager, getString(R.string.log), CacheBook.logs)
             }
             else -> if (item.groupId == R.id.menu_group) {
-                title_bar.subtitle = item.title
+                binding.titleBar.subtitle = item.title
                 groupId = App.db.bookGroupDao().getByName(item.title.toString())?.groupId ?: 0
                 initBookData()
             }
@@ -105,9 +105,9 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
     }
 
     private fun initRecyclerView() {
-        recycler_view.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = CacheAdapter(this, this)
-        recycler_view.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun initBookData() {
@@ -194,10 +194,10 @@ class CacheActivity : VMBaseActivity<CacheViewModel>(R.layout.activity_download)
 
     private fun startExport(path: String) {
         adapter.getItem(exportPosition)?.let { book ->
-            Snackbar.make(title_bar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(binding.titleBar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
                 .show()
             viewModel.export(path, book) {
-                title_bar.snackbar(it)
+                binding.titleBar.snackbar(it)
             }
         }
     }

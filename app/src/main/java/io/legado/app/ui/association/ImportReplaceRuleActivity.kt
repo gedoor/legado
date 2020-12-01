@@ -2,32 +2,35 @@ package io.legado.app.ui.association
 
 import android.os.Bundle
 import io.legado.app.App
-import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_translucence.*
 import org.jetbrains.anko.toast
 
-class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
-    R.layout.activity_translucence,
-    theme = Theme.Transparent
-) {
+class ImportReplaceRuleActivity :
+    VMBaseActivity<ActivityTranslucenceBinding, ImportReplaceRuleViewModel>(
+        theme = Theme.Transparent
+    ) {
 
     override val viewModel: ImportReplaceRuleViewModel
         get() = getViewModel(ImportReplaceRuleViewModel::class.java)
 
+    override fun getViewBinding(): ActivityTranslucenceBinding {
+        return ActivityTranslucenceBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        rotate_loading.show()
+        binding.rotateLoading.show()
         viewModel.errorLiveData.observe(this, {
-            rotate_loading.hide()
+            binding.rotateLoading.hide()
             errorDialog(it)
         })
         viewModel.successLiveData.observe(this, {
-            rotate_loading.hide()
+            binding.rotateLoading.hide()
             if (it.size > 0) {
                 successDialog(it)
             } else {
@@ -62,7 +65,7 @@ class ImportReplaceRuleActivity : VMBaseActivity<ImportReplaceRuleViewModel>(
                     }
                 }
                 else -> {
-                    rotate_loading.hide()
+                    binding.rotateLoading.hide()
                     toast("格式不对")
                     finish()
                 }

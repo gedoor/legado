@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <cn.bingoogolapple.qrcode.zxing.ZXingView
-        android:id="@+id/zxingview"
+        android:id="@+id/z_xing_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

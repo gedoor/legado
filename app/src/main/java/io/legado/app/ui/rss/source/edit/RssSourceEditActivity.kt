@@ -15,6 +15,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.RssSource
+import io.legado.app.databinding.ActivityRssSourceEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.qrcode.QrCodeActivity
@@ -25,12 +26,11 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.shareWithQr
-import kotlinx.android.synthetic.main.activity_rss_source_edit.*
 import org.jetbrains.anko.*
 import kotlin.math.abs
 
 class RssSourceEditActivity :
-    VMBaseActivity<RssSourceEditViewModel>(R.layout.activity_rss_source_edit, false),
+    VMBaseActivity<ActivityRssSourceEditBinding, RssSourceEditViewModel>(false),
     ViewTreeObserver.OnGlobalLayoutListener,
     KeyboardToolPop.CallBack {
 
@@ -42,7 +42,6 @@ class RssSourceEditActivity :
 
     override val viewModel: RssSourceEditViewModel
         get() = getViewModel(RssSourceEditViewModel::class.java)
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -105,18 +104,18 @@ class RssSourceEditActivity :
     }
 
     private fun initView() {
-        ATH.applyEdgeEffectColor(recycler_view)
+        ATH.applyEdgeEffectColor(binding.recyclerView)
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
     }
 
     private fun upRecyclerView(rssSource: RssSource? = viewModel.rssSource) {
         rssSource?.let {
-            cb_is_enable.isChecked = rssSource.enabled
-            cb_enable_js.isChecked = rssSource.enableJs
-            cb_enable_base_url.isChecked = rssSource.loadWithBaseUrl
+            binding.cbIsEnable.isChecked = rssSource.enabled
+            binding.cbEnableJs.isChecked = rssSource.enableJs
+            binding.cbEnableBaseUrl.isChecked = rssSource.loadWithBaseUrl
         }
         sourceEntities.clear()
         sourceEntities.apply {
@@ -141,9 +140,9 @@ class RssSourceEditActivity :
 
     private fun getRssSource(): RssSource {
         val source = viewModel.rssSource
-        source.enabled = cb_is_enable.isChecked
-        source.enableJs = cb_enable_js.isChecked
-        source.loadWithBaseUrl = cb_enable_base_url.isChecked
+        source.enabled = binding.cbIsEnable.isChecked
+        source.enableJs = binding.cbEnableJs.isChecked
+        source.loadWithBaseUrl = binding.cbEnableBaseUrl.isChecked
         sourceEntities.forEach {
             when (it.key) {
                 "sourceName" -> source.sourceName = it.value ?: ""
@@ -222,7 +221,7 @@ class RssSourceEditActivity :
         mSoftKeyboardTool?.let {
             if (it.isShowing) return
             if (!isFinishing) {
-                it.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+                it.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
             }
         }
     }
@@ -240,11 +239,11 @@ class RssSourceEditActivity :
         val preShowing = mIsSoftKeyBoardShowing
         if (abs(keyboardHeight) > screenHeight / 5) {
             mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-            recycler_view.setPadding(0, 0, 0, 100)
+            binding.recyclerView.setPadding(0, 0, 0, 100)
             showKeyboardTopPopupWindow()
         } else {
             mIsSoftKeyBoardShowing = false
-            recycler_view.setPadding(0, 0, 0, 0)
+            binding.recyclerView.setPadding(0, 0, 0, 0)
             if (preShowing) {
                 closePopupWindow()
             }

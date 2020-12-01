@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'de.timfreiheit.resourceplaceholders'
 apply plugin: 'com.google.firebase.crashlytics'
 
-androidExtensions {
-    experimental = true
-}
+//androidExtensions {
+//    experimental = true
+//}
 
 static def releaseTime() {
     return new Date().format("yy.MMddHH", TimeZone.getTimeZone("GMT+8"))
@@ -49,6 +50,9 @@ android {
                 ]
             }
         }
+    }
+    buildFeatures {
+        viewBinding true
     }
     buildTypes {
         release {

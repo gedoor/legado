@@ -5,7 +5,6 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
@@ -116,7 +115,7 @@ object FilePicker {
     }
 
     fun selectFile(
-        activity: BaseActivity,
+        activity: AppCompatActivity,
         requestCode: Int,
         title: String = activity.getString(R.string.select_file),
         allowExtensions: Array<String> = arrayOf(),

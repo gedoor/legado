@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.page
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -10,6 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppConst.timeFormat
+import io.legado.app.databinding.ViewBookPageBinding
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.service.help.ReadBook
@@ -18,13 +20,14 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.view_book_page.view.*
 import org.jetbrains.anko.topPadding
 import java.util.*
 
-
+/**
+ * 阅读界面
+ */
 class ContentView(context: Context) : FrameLayout(context) {
-
+    private val binding = ViewBookPageBinding.inflate(LayoutInflater.from(context), this, true)
     private var battery = 100
     private var tvTitle: BatteryView? = null
     private var tvTime: BatteryView? = null
@@ -38,7 +41,7 @@ class ContentView(context: Context) : FrameLayout(context) {
     val headerHeight: Int
         get() {
             val h1 = if (ReadBookConfig.hideStatusBar) 0 else context.statusBarHeight
-            val h2 = if (ll_header.isGone) 0 else ll_header.height
+            val h2 = if (binding.llHeader.isGone) 0 else binding.llHeader.height
             return h1 + h2
         }
 
@@ -46,52 +49,51 @@ class ContentView(context: Context) : FrameLayout(context) {
         if (!isInEditMode) {
             //设置背景防止切换背景时文字重叠
             setBackgroundColor(context.getCompatColor(R.color.background))
-            inflate(context, R.layout.view_book_page, this)
             upTipStyle()
             upStyle()
-            content_text_view.upView = {
+            binding.contentTextView.upView = {
                 setProgress(it)
             }
         }
     }
 
     fun upStyle() = ReadBookConfig.apply {
-        bv_header_left.typeface = ChapterProvider.typeface
-        tv_header_left.typeface = ChapterProvider.typeface
-        tv_header_middle.typeface = ChapterProvider.typeface
-        tv_header_right.typeface = ChapterProvider.typeface
-        bv_footer_left.typeface = ChapterProvider.typeface
-        tv_footer_left.typeface = ChapterProvider.typeface
-        tv_footer_middle.typeface = ChapterProvider.typeface
-        tv_footer_right.typeface = ChapterProvider.typeface
+        binding.bvHeaderLeft.typeface = ChapterProvider.typeface
+        binding.tvHeaderLeft.typeface = ChapterProvider.typeface
+        binding.tvHeaderMiddle.typeface = ChapterProvider.typeface
+        binding.tvHeaderRight.typeface = ChapterProvider.typeface
+        binding.bvFooterLeft.typeface = ChapterProvider.typeface
+        binding.tvFooterLeft.typeface = ChapterProvider.typeface
+        binding.tvFooterMiddle.typeface = ChapterProvider.typeface
+        binding.tvFooterRight.typeface = ChapterProvider.typeface
         val tipColor = if (ReadTipConfig.tipColor == 0) textColor else ReadTipConfig.tipColor
-        bv_header_left.setColor(tipColor)
-        tv_header_left.setColor(tipColor)
-        tv_header_middle.setColor(tipColor)
-        tv_header_right.setColor(tipColor)
-        bv_footer_left.setColor(tipColor)
-        tv_footer_left.setColor(tipColor)
-        tv_footer_middle.setColor(tipColor)
-        tv_footer_right.setColor(tipColor)
+        binding.bvHeaderLeft.setColor(tipColor)
+        binding.tvHeaderLeft.setColor(tipColor)
+        binding.tvHeaderMiddle.setColor(tipColor)
+        binding.tvHeaderRight.setColor(tipColor)
+        binding.bvFooterLeft.setColor(tipColor)
+        binding.tvFooterLeft.setColor(tipColor)
+        binding.tvFooterMiddle.setColor(tipColor)
+        binding.tvFooterRight.setColor(tipColor)
         upStatusBar()
-        ll_header.setPadding(
+        binding.llHeader.setPadding(
             headerPaddingLeft.dp,
             headerPaddingTop.dp,
             headerPaddingRight.dp,
             headerPaddingBottom.dp
         )
-        ll_footer.setPadding(
+        binding.llFooter.setPadding(
             footerPaddingLeft.dp,
             footerPaddingTop.dp,
             footerPaddingRight.dp,
             footerPaddingBottom.dp
         )
-        vw_top_divider.visible(showHeaderLine)
-        vw_bottom_divider.visible(showFooterLine)
-        page_nv_bar.layoutParams = page_nv_bar.layoutParams.apply {
+        binding.vwTopDivider.visible(showHeaderLine)
+        binding.vwBottomDivider.visible(showFooterLine)
+        binding.pageNvBar.layoutParams = binding.pageNvBar.layoutParams.apply {
             height = if (hideNavigationBar) 0 else App.navigationBarHeight
         }
-        content_text_view.upVisibleRect()
+        binding.contentTextView.upVisibleRect()
         upTime()
         upBattery(battery)
     }
@@ -100,27 +102,29 @@ class ContentView(context: Context) : FrameLayout(context) {
      * 显示状态栏时隐藏header
      */
     fun upStatusBar() {
-        vw_status_bar.topPadding = context.statusBarHeight
-        vw_status_bar.isGone =
-            ReadBookConfig.hideStatusBar || (activity as? BaseActivity)?.isInMultiWindow == true
+        binding.vwStatusBar.topPadding = context.statusBarHeight
+        binding.vwStatusBar.isGone =
+            ReadBookConfig.hideStatusBar || (activity as? BaseActivity<*>)?.isInMultiWindow == true
     }
 
     fun upTipStyle() {
         ReadTipConfig.apply {
-            tv_header_left.isInvisible = tipHeaderLeft != chapterTitle
-            bv_header_left.isInvisible = tipHeaderLeft == none || !tv_header_left.isInvisible
-            tv_header_right.isGone = tipHeaderRight == none
-            tv_header_middle.isGone = tipHeaderMiddle == none
-            tv_footer_left.isInvisible = tipFooterLeft != chapterTitle
-            bv_footer_left.isInvisible = tipFooterLeft == none || !tv_footer_left.isInvisible
-            tv_footer_right.isGone = tipFooterRight == none
-            tv_footer_middle.isGone = tipFooterMiddle == none
-            ll_header.isGone = when (headerMode) {
+            binding.tvHeaderLeft.isInvisible = tipHeaderLeft != chapterTitle
+            binding.bvHeaderLeft.isInvisible =
+                tipHeaderLeft == none || !binding.bvHeaderLeft.isInvisible
+            binding.tvHeaderRight.isGone = tipHeaderRight == none
+            binding.tvHeaderMiddle.isGone = tipHeaderMiddle == none
+            binding.tvFooterLeft.isInvisible = tipFooterLeft != chapterTitle
+            binding.bvFooterLeft.isInvisible =
+                tipFooterLeft == none || !binding.tvFooterLeft.isInvisible
+            binding.tvFooterRight.isGone = tipFooterRight == none
+            binding.tvFooterMiddle.isGone = tipFooterMiddle == none
+            binding.llHeader.isGone = when (headerMode) {
                 1 -> false
                 2 -> true
                 else -> !ReadBookConfig.hideStatusBar
             }
-            ll_footer.isGone = when (footerMode) {
+            binding.llFooter.isGone = when (footerMode) {
                 1 -> true
                 else -> false
             }
@@ -170,19 +174,19 @@ class ContentView(context: Context) : FrameLayout(context) {
     private fun getTipView(tip: Int): BatteryView? {
         return when (tip) {
             ReadTipConfig.tipHeaderLeft ->
-                if (tip == ReadTipConfig.chapterTitle) tv_header_left else bv_header_left
-            ReadTipConfig.tipHeaderMiddle -> tv_header_middle
-            ReadTipConfig.tipHeaderRight -> tv_header_right
+                if (tip == ReadTipConfig.chapterTitle) binding.tvHeaderLeft else binding.bvHeaderLeft
+            ReadTipConfig.tipHeaderMiddle -> binding.tvHeaderMiddle
+            ReadTipConfig.tipHeaderRight -> binding.tvHeaderRight
             ReadTipConfig.tipFooterLeft ->
-                if (tip == ReadTipConfig.chapterTitle) tv_footer_left else bv_footer_left
-            ReadTipConfig.tipFooterMiddle -> tv_footer_middle
-            ReadTipConfig.tipFooterRight -> tv_footer_right
+                if (tip == ReadTipConfig.chapterTitle) binding.tvFooterLeft else binding.bvFooterLeft
+            ReadTipConfig.tipFooterMiddle -> binding.tvFooterMiddle
+            ReadTipConfig.tipFooterRight -> binding.tvFooterRight
             else -> null
         }
     }
 
     fun setBg(bg: Drawable?) {
-        page_panel.background = bg
+        binding.pagePanel.background = bg
     }
 
     fun upTime() {
@@ -209,15 +213,15 @@ class ContentView(context: Context) : FrameLayout(context) {
         if (resetPageOffset) {
             resetPageOffset()
         }
-        content_text_view.setContent(pageData)
+        binding.contentTextView.setContent(pageData)
     }
 
     fun setContentDescription(content: String) {
-        content_text_view.contentDescription = content
+        binding.contentTextView.contentDescription = content
     }
 
     fun resetPageOffset() {
-        content_text_view.resetPageOffset()
+        binding.contentTextView.resetPageOffset()
     }
 
     @SuppressLint("SetTextI18n")
@@ -230,40 +234,40 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun scroll(offset: Int) {
-        content_text_view.scroll(offset)
+        binding.contentTextView.scroll(offset)
     }
 
     fun upSelectAble(selectAble: Boolean) {
-        content_text_view.selectAble = selectAble
+        binding.contentTextView.selectAble = selectAble
     }
 
     fun selectText(
         x: Float, y: Float,
         select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
-        return content_text_view.selectText(x, y - headerHeight, select)
+        return binding.contentTextView.selectText(x, y - headerHeight, select)
     }
 
     fun selectStartMove(x: Float, y: Float) {
-        content_text_view.selectStartMove(x, y - headerHeight)
+        binding.contentTextView.selectStartMove(x, y - headerHeight)
     }
 
     fun selectStartMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
-        content_text_view.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+        binding.contentTextView.selectStartMoveIndex(relativePage, lineIndex, charIndex)
     }
 
     fun selectEndMove(x: Float, y: Float) {
-        content_text_view.selectEndMove(x, y - headerHeight)
+        binding.contentTextView.selectEndMove(x, y - headerHeight)
     }
 
     fun selectEndMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
-        content_text_view.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+        binding.contentTextView.selectEndMoveIndex(relativePage, lineIndex, charIndex)
     }
 
     fun cancelSelect() {
-        content_text_view.cancelSelect()
+        binding.contentTextView.cancelSelect()
     }
 
-    val selectedText: String get() = content_text_view.selectedText
+    val selectedText: String get() = binding.contentTextView.selectedText
 
 }

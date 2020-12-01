@@ -17,7 +17,9 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 
-        <include layout="@layout/item_read_record" />
+        <include
+            android:id="@+id/read_record"
+            layout="@layout/item_read_record" />
 
     </FrameLayout>
 

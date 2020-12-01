@@ -15,7 +15,7 @@ import io.legado.app.utils.ACache
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.splitNotBlank
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import javax.script.SimpleBindings
 
 @Parcelize

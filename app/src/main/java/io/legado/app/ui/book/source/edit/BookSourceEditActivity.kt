@@ -18,6 +18,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
+import io.legado.app.databinding.ActivityBookSourceEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
@@ -29,12 +30,11 @@ import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_book_source_edit.*
 import org.jetbrains.anko.*
 import kotlin.math.abs
 
 class BookSourceEditActivity :
-    VMBaseActivity<BookSourceEditViewModel>(R.layout.activity_book_source_edit, false),
+    VMBaseActivity<ActivityBookSourceEditBinding, BookSourceEditViewModel>(false),
     FilePickerDialog.CallBack,
     KeyboardToolPop.CallBack {
     override val viewModel: BookSourceEditViewModel
@@ -116,13 +116,13 @@ class BookSourceEditActivity :
     }
 
     private fun initView() {
-        ATH.applyEdgeEffectColor(recycler_view)
+        ATH.applyEdgeEffectColor(binding.recyclerView)
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.adapter = adapter
-        tab_layout.setBackgroundColor(backgroundColor)
-        tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
+        binding.tabLayout.setBackgroundColor(backgroundColor)
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
 
             }
@@ -166,14 +166,14 @@ class BookSourceEditActivity :
             5 -> adapter.editEntities = contentEntities
             else -> adapter.editEntities = sourceEntities
         }
-        recycler_view.scrollToPosition(0)
+        binding.recyclerView.scrollToPosition(0)
     }
 
     private fun upRecyclerView(source: BookSource? = viewModel.bookSource) {
         source?.let {
-            cb_is_enable.isChecked = it.enabled
-            cb_is_enable_find.isChecked = it.enabledExplore
-            sp_type.setSelection(it.bookSourceType)
+            binding.cbIsEnable.isChecked = it.enabled
+            binding.cbIsEnableFind.isChecked = it.enabledExplore
+            binding.spType.setSelection(it.bookSourceType)
         }
         //基本信息
         sourceEntities.clear()
@@ -253,15 +253,15 @@ class BookSourceEditActivity :
             add(EditEntity("coverUrl", er?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("bookUrl", er?.bookUrl, R.string.r_book_url))
         }
-        tab_layout.selectTab(tab_layout.getTabAt(0))
+        binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         setEditEntities(0)
     }
 
     private fun getSource(): BookSource {
         val source = viewModel.bookSource?.copy() ?: BookSource()
-        source.enabled = cb_is_enable.isChecked
-        source.enabledExplore = cb_is_enable_find.isChecked
-        source.bookSourceType = sp_type.selectedItemPosition
+        source.enabled = binding.cbIsEnable.isChecked
+        source.enabledExplore = binding.cbIsEnableFind.isChecked
+        source.bookSourceType = binding.spType.selectedItemPosition
         val searchRule = SearchRule()
         val exploreRule = ExploreRule()
         val bookInfoRule = BookInfoRule()
@@ -407,7 +407,7 @@ class BookSourceEditActivity :
         mSoftKeyboardTool?.let {
             if (it.isShowing) return
             if (!isFinishing) {
-                it.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+                it.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
             }
         }
     }
@@ -448,11 +448,11 @@ class BookSourceEditActivity :
             val preShowing = mIsSoftKeyBoardShowing
             if (abs(keyboardHeight) > screenHeight / 5) {
                 mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-                recycler_view.setPadding(0, 0, 0, 100)
+                binding.recyclerView.setPadding(0, 0, 0, 100)
                 showKeyboardTopPopupWindow()
             } else {
                 mIsSoftKeyBoardShowing = false
-                recycler_view.setPadding(0, 0, 0, 0)
+                binding.recyclerView.setPadding(0, 0, 0, 0)
                 if (preShowing) {
                     closePopupWindow()
                 }

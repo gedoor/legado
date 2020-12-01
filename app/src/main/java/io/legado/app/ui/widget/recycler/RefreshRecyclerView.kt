@@ -9,11 +9,13 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
-import kotlinx.android.synthetic.main.view_refresh_recycler.view.*
+import io.legado.app.databinding.ViewRefreshRecyclerBinding
+import io.legado.app.lib.theme.ATH
 
 
+@SuppressLint("ClickableViewAccessibility")
 class RefreshRecyclerView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
-
+    private var binding: ViewRefreshRecyclerBinding
     private var durTouchX = -1000000f
     private var durTouchY = -1000000f
 
@@ -21,8 +23,10 @@ class RefreshRecyclerView(context: Context?, attrs: AttributeSet?) : LinearLayou
 
     init {
         orientation = VERTICAL
-        LayoutInflater.from(context).inflate(R.layout.view_refresh_recycler, this, true)
-        recycler_view.setOnTouchListener(object : OnTouchListener {
+        val view = LayoutInflater.from(context).inflate(R.layout.view_refresh_recycler, this, true)
+        binding = ViewRefreshRecyclerBinding.bind(view)
+        ATH.applyEdgeEffectColor(binding.recyclerView)
+        binding.recyclerView.setOnTouchListener(object : OnTouchListener {
             @SuppressLint("ClickableViewAccessibility")
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
@@ -39,26 +43,31 @@ class RefreshRecyclerView(context: Context?, attrs: AttributeSet?) : LinearLayou
 
                         val dY = event.y - durTouchY  //>0下拉
                         durTouchY = event.y
-                        if (!refresh_progress_bar.isAutoLoading && refresh_progress_bar.getSecondDurProgress() == refresh_progress_bar.secondFinalProgress) {
-                            recycler_view.adapter?.let {
+                        if (!binding.refreshProgressBar.isAutoLoading &&
+                            binding.refreshProgressBar.getSecondDurProgress() == binding.refreshProgressBar.secondFinalProgress
+                        ) {
+                            binding.recyclerView.adapter?.let {
                                 if (it.itemCount > 0) {
-                                    if (0 == (recycler_view.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()) {
-                                        refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
+                                    if (0 == (binding.recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()) {
+                                        binding.refreshProgressBar.setSecondDurProgress((binding.refreshProgressBar.getSecondDurProgress() + dY / 2).toInt())
                                     }
                                 } else {
-                                    refresh_progress_bar.setSecondDurProgress((refresh_progress_bar.getSecondDurProgress() + dY / 2).toInt())
+                                    binding.refreshProgressBar.setSecondDurProgress((binding.refreshProgressBar.getSecondDurProgress() + dY / 2).toInt())
                                 }
                             }
-                            return refresh_progress_bar.getSecondDurProgress() > 0
+                            return binding.refreshProgressBar.getSecondDurProgress() > 0
                         }
                     }
                     MotionEvent.ACTION_UP -> {
-                        if (!refresh_progress_bar.isAutoLoading && refresh_progress_bar.secondMaxProgress > 0 && refresh_progress_bar.getSecondDurProgress() > 0) {
-                            if (refresh_progress_bar.getSecondDurProgress() >= refresh_progress_bar.secondMaxProgress) {
-                                refresh_progress_bar.isAutoLoading = true
+                        if (!binding.refreshProgressBar.isAutoLoading &&
+                            binding.refreshProgressBar.secondMaxProgress > 0 &&
+                            binding.refreshProgressBar.getSecondDurProgress() > 0
+                        ) {
+                            if (binding.refreshProgressBar.getSecondDurProgress() >= binding.refreshProgressBar.secondMaxProgress) {
+                                binding.refreshProgressBar.isAutoLoading = true
                                 onRefreshStart?.invoke()
                             } else {
-                                refresh_progress_bar.setSecondDurProgressWithAnim(0)
+                                binding.refreshProgressBar.setSecondDurProgressWithAnim(0)
                             }
                         }
                         durTouchX = -1000000f
@@ -70,12 +79,14 @@ class RefreshRecyclerView(context: Context?, attrs: AttributeSet?) : LinearLayou
         })
     }
 
+    val recyclerView get() = binding.recyclerView
+
     fun startLoading() {
-        refresh_progress_bar.isAutoLoading = true
+        binding.refreshProgressBar.isAutoLoading = true
         onRefreshStart?.invoke()
     }
 
     fun stopLoading() {
-        refresh_progress_bar.isAutoLoading = false
+        binding.refreshProgressBar.isAutoLoading = false
     }
 }

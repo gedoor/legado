@@ -20,7 +20,6 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.activity
 import io.legado.app.utils.screenshot
-import kotlinx.android.synthetic.main.activity_book_read.view.*
 import kotlin.math.abs
 
 class PageView(context: Context, attrs: AttributeSet) :
@@ -123,13 +122,13 @@ class PageView(context: Context, attrs: AttributeSet) :
         if (!isInEditMode && callBack.isAutoPage && !isScroll) {
             nextPage.screenshot()?.let {
                 val bottom =
-                    page_view.height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 50)
-                autoPageRect.set(0, 0, page_view.width, bottom)
+                    height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 50)
+                autoPageRect.set(0, 0, width, bottom)
                 canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
                 canvas.drawRect(
                     0f,
                     bottom.toFloat() - 1,
-                    page_view.width.toFloat(),
+                    width.toFloat(),
                     bottom.toFloat(),
                     autoPagePint
                 )

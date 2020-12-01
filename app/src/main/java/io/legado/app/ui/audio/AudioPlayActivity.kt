@@ -17,6 +17,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.Status
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
+import io.legado.app.databinding.ActivityAudioPlayBinding
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.ImageLoader
 import io.legado.app.lib.dialogs.alert
@@ -25,7 +26,6 @@ import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_audio_play.*
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -33,7 +33,7 @@ import org.jetbrains.anko.startActivityForResult
 
 
 class AudioPlayActivity :
-    VMBaseActivity<AudioPlayViewModel>(R.layout.activity_audio_play, toolBarTheme = Theme.Dark),
+    VMBaseActivity<ActivityAudioPlayBinding, AudioPlayViewModel>(toolBarTheme = Theme.Dark),
     ChangeSourceDialog.CallBack {
 
     override val viewModel: AudioPlayViewModel
@@ -43,8 +43,8 @@ class AudioPlayActivity :
     private var adjustProgress = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        title_bar.transparent()
-        AudioPlay.titleData.observe(this, { title_bar.title = it })
+        binding.titleBar.transparent()
+        AudioPlay.titleData.observe(this, { binding.titleBar.title = it })
         AudioPlay.coverData.observe(this, { upCover(it) })
         viewModel.initData(intent)
         initView()
@@ -65,22 +65,22 @@ class AudioPlayActivity :
     }
 
     private fun initView() {
-        fab_play_stop.onClick {
+        binding.fabPlayStop.onClick {
             playButton()
         }
-        fab_play_stop.onLongClick {
+        binding.fabPlayStop.onLongClick {
             AudioPlay.stop(this)
             true
         }
-        iv_skip_next.onClick {
+        binding.ivSkipNext.onClick {
             AudioPlay.next(this)
         }
-        iv_skip_previous.onClick {
+        binding.ivSkipPrevious.onClick {
             AudioPlay.prev(this)
         }
-        player_progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.playerProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                tv_dur_time.text = DateFormatUtils.format(progress.toLong(), "mm:ss")
+                binding.tvDurTime.text = DateFormatUtils.format(progress.toLong(), "mm:ss")
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -89,10 +89,10 @@ class AudioPlayActivity :
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 adjustProgress = false
-                AudioPlay.adjustProgress(this@AudioPlayActivity, player_progress.progress)
+                AudioPlay.adjustProgress(this@AudioPlayActivity, binding.playerProgress.progress)
             }
         })
-        iv_chapter.onClick {
+        binding.ivChapter.onClick {
             AudioPlay.book?.let {
                 startActivityForResult<ChapterListActivity>(
                     requestCodeChapter,
@@ -101,13 +101,13 @@ class AudioPlayActivity :
             }
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            iv_fast_rewind.invisible()
-            iv_fast_forward.invisible()
+            binding.ivFastRewind.invisible()
+            binding.ivFastForward.invisible()
         }
-        iv_fast_forward.onClick {
+        binding.ivFastForward.onClick {
             AudioPlay.adjustSpeed(this, 0.1f)
         }
-        iv_fast_rewind.onClick {
+        binding.ivFastRewind.onClick {
             AudioPlay.adjustSpeed(this, -0.1f)
         }
     }
@@ -116,12 +116,12 @@ class AudioPlayActivity :
         ImageLoader.load(this, path)
             .placeholder(CoverImageView.defaultDrawable)
             .error(CoverImageView.defaultDrawable)
-            .into(iv_cover)
+            .into(binding.ivCover)
         ImageLoader.load(this, path)
             .transition(DrawableTransitionOptions.withCrossFade(1500))
             .thumbnail(defaultCover())
             .apply(bitmapTransform(BlurTransformation(this, 25)))
-            .into(iv_bg)
+            .into(binding.ivBg)
     }
 
     private fun defaultCover(): RequestBuilder<Drawable> {
@@ -190,26 +190,26 @@ class AudioPlayActivity :
         observeEventSticky<Int>(EventBus.AUDIO_STATE) {
             AudioPlay.status = it
             if (it == Status.PLAY) {
-                fab_play_stop.setImageResource(R.drawable.ic_pause_24dp)
+                binding.fabPlayStop.setImageResource(R.drawable.ic_pause_24dp)
             } else {
-                fab_play_stop.setImageResource(R.drawable.ic_play_24dp)
+                binding.fabPlayStop.setImageResource(R.drawable.ic_play_24dp)
             }
         }
         observeEventSticky<String>(EventBus.AUDIO_SUB_TITLE) {
-            tv_sub_title.text = it
+            binding.tvSubTitle.text = it
         }
         observeEventSticky<Int>(EventBus.AUDIO_SIZE) {
-            player_progress.max = it
-            tv_all_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+            binding.playerProgress.max = it
+            binding.tvAllTime.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
         observeEventSticky<Int>(EventBus.AUDIO_PROGRESS) {
             AudioPlay.durPageIndex = it
-            if (!adjustProgress) player_progress.progress = it
-            tv_dur_time.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+            if (!adjustProgress) binding.playerProgress.progress = it
+            binding.tvDurTime.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
         observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
-            tv_speed.text = String.format("%.1fX", it)
-            tv_speed.visible()
+            binding.tvSpeed.text = String.format("%.1fX", it)
+            binding.tvSpeed.visible()
         }
     }
 

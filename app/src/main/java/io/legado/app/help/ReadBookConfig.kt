@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.os.Parcelable
 import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
@@ -12,7 +11,6 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
-import kotlinx.android.parcel.Parcelize
 import java.io.File
 
 /**
@@ -358,7 +356,6 @@ object ReadBookConfig {
     }
 
     @Keep
-    @Parcelize
     class Config(
         var name: String = "",
         var bgStr: String = "#EEEEEE",//白天背景
@@ -409,7 +406,7 @@ object ReadBookConfig {
         var tipColor: Int = 0,
         var headerMode: Int = 0,
         var footerMode: Int = 0
-    ) : Parcelable {
+    ) {
 
         fun setCurTextColor(color: Int) {
             when {

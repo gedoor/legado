@@ -6,7 +6,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
@@ -43,17 +43,17 @@ data class ReplaceRule(
 
     fun isValid(): Boolean{
         if (TextUtils.isEmpty(pattern)){
-            return false;
+            return false
         }
         //判断正则表达式是否正确
         if (isRegex){
             try {
-                Pattern.compile(pattern);
+                Pattern.compile(pattern)
             }
             catch (ex: PatternSyntaxException){
-                return false;
+                return false
             }
         }
-        return true;
+        return true
     }
 }

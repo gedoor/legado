@@ -19,6 +19,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.RssSource
+import io.legado.app.databinding.ActivityRssSourceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
@@ -34,9 +35,6 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_rss_source.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.view_search.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
@@ -45,7 +43,7 @@ import java.text.Collator
 import java.util.*
 
 
-class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_rss_source),
+class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceViewModel>(),
     PopupMenu.OnMenuItemClickListener,
     FilePickerDialog.CallBack,
     SelectActionBar.CallBack,
@@ -91,7 +89,8 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(supportFragmentManager, "rssGroupManage")
             else -> if (item.groupId == R.id.source_group) {
-                search_view.setQuery(item.title, true)
+                binding.titleBar.findViewById<SearchView>(R.id.search_view)
+                    .setQuery(item.title, true)
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -110,38 +109,40 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(recycler_view)
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.addItemDecoration(VerticalDivider(this))
+        ATH.applyEdgeEffectColor(binding.recyclerView)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.addItemDecoration(VerticalDivider(this))
         adapter = RssSourceAdapter(this, this)
-        recycler_view.adapter = adapter
+        binding.recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         val dragSelectTouchHelper: DragSelectTouchHelper =
             DragSelectTouchHelper(adapter.initDragSelectTouchHelperCallback()).setSlideArea(16, 50)
-        dragSelectTouchHelper.attachToRecyclerView(recycler_view)
+        dragSelectTouchHelper.attachToRecyclerView(binding.recyclerView)
         // When this page is opened, it is in selection mode
         dragSelectTouchHelper.activeSlideSelect()
 
         // Note: need judge selection first, so add ItemTouchHelper after it.
-        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
     }
 
     private fun initSearchView() {
-        ATH.setTint(search_view, primaryTextColor)
-        search_view.onActionViewExpanded()
-        search_view.queryHint = getString(R.string.search_rss_source)
-        search_view.clearFocus()
-        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        binding.titleBar.findViewById<SearchView>(R.id.search_view).let {
+            ATH.setTint(it, primaryTextColor)
+            it.onActionViewExpanded()
+            it.queryHint = getString(R.string.search_rss_source)
+            it.clearFocus()
+            it.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                initLiveDataSource(newText)
-                return false
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    initLiveDataSource(newText)
+                    return false
+                }
+            })
+        }
     }
 
     private fun initLiveDataGroup() {
@@ -171,10 +172,10 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     private fun initViewEvent() {
-        select_action_bar.setMainActionText(R.string.delete)
-        select_action_bar.inflateMenu(R.menu.rss_source_sel)
-        select_action_bar.setOnMenuItemClickListener(this)
-        select_action_bar.setCallBack(this)
+        binding.selectActionBar.setMainActionText(R.string.delete)
+        binding.selectActionBar.inflateMenu(R.menu.rss_source_sel)
+        binding.selectActionBar.setOnMenuItemClickListener(this)
+        binding.selectActionBar.setCallBack(this)
     }
 
     private fun delSourceDialog() {
@@ -209,7 +210,10 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
     }
 
     override fun upCountView() {
-        select_action_bar.upCountView(adapter.getSelection().size, adapter.getActualItemCount())
+        binding.selectActionBar.upCountView(
+            adapter.getSelection().size,
+            adapter.getActualItemCount()
+        )
     }
 
     @SuppressLint("InflateParams")
@@ -223,9 +227,9 @@ class RssSourceActivity : VMBaseActivity<RssSourceViewModel>(R.layout.activity_r
             var editText: AutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view
-                    edit_view.setFilterValues(cacheUrls)
-                    edit_view.delCallBack = {
+                    editText = findViewById(R.id.edit_view)
+                    editText?.setFilterValues(cacheUrls)
+                    editText?.delCallBack = {
                         cacheUrls.remove(it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }

@@ -10,8 +10,8 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
-import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 import java.nio.charset.Charset
 import kotlin.math.max
 import kotlin.math.min

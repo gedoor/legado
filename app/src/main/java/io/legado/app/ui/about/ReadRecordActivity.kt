@@ -8,17 +8,16 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.ReadRecordShow
+import io.legado.app.databinding.ActivityReadRecordBinding
+import io.legado.app.databinding.ItemReadRecordBinding
 import io.legado.app.lib.dialogs.alert
-import kotlinx.android.synthetic.main.activity_read_record.*
-import kotlinx.android.synthetic.main.item_read_record.*
-import kotlinx.android.synthetic.main.item_read_record.view.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 
-class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
+class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     lateinit var adapter: RecordAdapter
 
@@ -28,10 +27,10 @@ class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
     }
 
     private fun initView() {
-        tv_book_name.setText(R.string.all_read_time)
+        binding.readRecord.tvBookName.setText(R.string.all_read_time)
         adapter = RecordAdapter(this)
-        recycler_view.adapter = adapter
-        iv_remove.onClick {
+        binding.recyclerView.adapter = adapter
+        binding.readRecord.ivRemove.onClick {
             alert(R.string.delete, R.string.sure_del) {
                 okButton {
                     App.db.readRecordDao().clear()
@@ -46,7 +45,7 @@ class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
         launch(IO) {
             val allTime = App.db.readRecordDao().allTime
             withContext(Main) {
-                tv_read_time.text = formatDuring(allTime)
+                binding.readRecord.tvReadTime.text = formatDuring(allTime)
             }
             val readRecords = App.db.readRecordDao().allShow
             withContext(Main) {
@@ -63,15 +62,15 @@ class ReadRecordActivity : BaseActivity(R.layout.activity_read_record) {
             item: ReadRecordShow,
             payloads: MutableList<Any>
         ) {
-            holder.itemView.apply {
-                tv_book_name.text = item.bookName
-                tv_read_time.text = formatDuring(item.readTime)
+            ItemReadRecordBinding.bind(holder.itemView).apply {
+                tvBookName.text = item.bookName
+                tvReadTime.text = formatDuring(item.readTime)
             }
         }
 
         override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.apply {
-                iv_remove.onClick {
+            ItemReadRecordBinding.bind(holder.itemView).apply {
+                ivRemove.onClick {
                     alert(R.string.delete, R.string.sure_del) {
                         okButton {
                             getItem(holder.layoutPosition)?.let {

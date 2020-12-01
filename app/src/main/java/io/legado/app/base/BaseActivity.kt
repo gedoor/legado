@@ -5,11 +5,13 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewbinding.ViewBinding
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
@@ -22,16 +24,26 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import java.lang.reflect.ParameterizedType
 
 
-abstract class BaseActivity(
-    private val layoutID: Int,
+abstract class BaseActivity<VB : ViewBinding>(
     val fullScreen: Boolean = true,
     private val theme: Theme = Theme.Auto,
     private val toolBarTheme: Theme = Theme.Auto,
     private val transparent: Boolean = false
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
+
+    @Suppress("UNCHECKED_CAST")
+    protected val binding: VB by lazy {
+        //使用反射得到viewBinding的class
+        val type = javaClass.genericSuperclass as ParameterizedType
+        val aClass = type.actualTypeArguments[0] as Class<*>
+        val method = aClass.getDeclaredMethod("inflate", LayoutInflater::class.java)
+        method.invoke(null, layoutInflater) as VB
+    }
+
 
     val isInMultiWindow: Boolean
         get() {
@@ -63,7 +75,7 @@ abstract class BaseActivity(
         initTheme()
         setupSystemBar()
         super.onCreate(savedInstanceState)
-        setContentView(layoutID)
+        setContentView(binding.root)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)

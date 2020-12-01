@@ -7,8 +7,8 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssSource
+import io.legado.app.databinding.ItemRssBinding
 import io.legado.app.help.ImageLoader
-import kotlinx.android.synthetic.main.item_rss.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
@@ -16,27 +16,29 @@ class RssAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss) {
 
     override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {
-        with(holder.itemView) {
-            tv_name.text = item.sourceName
+        ItemRssBinding.bind(holder.itemView).apply {
+            tvName.text = item.sourceName
             ImageLoader.load(context, item.sourceIcon)
                 .centerCrop()
                 .placeholder(R.drawable.image_rss)
                 .error(R.drawable.image_rss)
-                .into(iv_icon)
+                .into(ivIcon)
         }
     }
 
     override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.onClick {
-            getItem(holder.layoutPosition)?.let {
-                callBack.openRss(it)
+        ItemRssBinding.bind(holder.itemView).apply {
+            root.onClick {
+                getItem(holder.layoutPosition)?.let {
+                    callBack.openRss(it)
+                }
             }
-        }
-        holder.itemView.onLongClick {
-            getItem(holder.layoutPosition)?.let {
-                showMenu(holder.itemView.iv_icon, it)
+            root.onLongClick {
+                getItem(holder.layoutPosition)?.let {
+                    showMenu(ivIcon, it)
+                }
+                true
             }
-            true
         }
     }
 

@@ -7,54 +7,54 @@ import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.databinding.ActivitySourceDebugBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_source_debug.*
-import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 
-class BookSourceDebugActivity :
-    VMBaseActivity<BookSourceDebugModel>(R.layout.activity_source_debug) {
+class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookSourceDebugModel>() {
 
     override val viewModel: BookSourceDebugModel
         get() = getViewModel(BookSourceDebugModel::class.java)
 
     private lateinit var adapter: BookSourceDebugAdapter
+    private lateinit var searchView: SearchView
     private val qrRequestCode = 101
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        searchView = binding.titleBar.findViewById(R.id.search_view)
         viewModel.init(intent.getStringExtra("key"))
         initRecyclerView()
         initSearchView()
-        viewModel.observe{state, msg->
+        viewModel.observe { state, msg ->
             launch {
                 adapter.addItem(msg)
                 if (state == -1 || state == 1000) {
-                    rotate_loading.hide()
+                    binding.rotateLoading.hide()
                 }
             }
         }
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(recycler_view)
+        ATH.applyEdgeEffectColor(binding.recyclerView)
         adapter = BookSourceDebugAdapter(this)
-        recycler_view.adapter = adapter
-        rotate_loading.loadingColor = accentColor
+        binding.recyclerView.adapter = adapter
+        binding.rotateLoading.loadingColor = accentColor
     }
 
     private fun initSearchView() {
-        search_view.onActionViewExpanded()
-        search_view.isSubmitButtonEnabled = true
-        search_view.queryHint = getString(R.string.search_book_key)
-        search_view.clearFocus()
-        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.queryHint = getString(R.string.search_book_key)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                search_view.clearFocus()
+                searchView.clearFocus()
                 startSearch(query ?: "我的")
                 return true
             }
@@ -68,7 +68,7 @@ class BookSourceDebugActivity :
     private fun startSearch(key: String) {
         adapter.clearItems()
         viewModel.startDebug(key, {
-            rotate_loading.show()
+            binding.rotateLoading.show()
         }, {
             toast("未获取到书源")
         })

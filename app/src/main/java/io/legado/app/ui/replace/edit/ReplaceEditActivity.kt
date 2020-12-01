@@ -15,13 +15,13 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.databinding.ActivityReplaceEditBinding
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.postEvent
 import kotlinx.android.synthetic.main.activity_replace_edit.*
 import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.toast
 import kotlin.math.abs
@@ -30,7 +30,7 @@ import kotlin.math.abs
  * 编辑替换规则
  */
 class ReplaceEditActivity :
-    VMBaseActivity<ReplaceEditViewModel>(R.layout.activity_replace_edit, false),
+    VMBaseActivity<ActivityReplaceEditBinding, ReplaceEditViewModel>(false),
     ViewTreeObserver.OnGlobalLayoutListener,
     KeyboardToolPop.CallBack {
 
@@ -57,6 +57,10 @@ class ReplaceEditActivity :
 
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
+
+    override fun getViewBinding(): ActivityReplaceEditBinding {
+        return ActivityReplaceEditBinding.inflate(layoutInflater)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)

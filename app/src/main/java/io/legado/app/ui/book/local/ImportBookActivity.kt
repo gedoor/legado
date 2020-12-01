@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
@@ -23,7 +24,6 @@ import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_import_book.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -36,7 +36,7 @@ import java.util.*
 /**
  * 导入本地书籍界面
  */
-class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity_import_book),
+class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookViewModel>(),
     FilePickerDialog.CallBack,
     PopupMenu.OnMenuItemClickListener,
     SelectActionBar.CallBack,
@@ -97,18 +97,18 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     private fun initView() {
-        lay_top.setBackgroundColor(backgroundColor)
-        recycler_view.layoutManager = LinearLayoutManager(this)
+        binding.layTop.setBackgroundColor(backgroundColor)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = ImportBookAdapter(this, this)
-        recycler_view.adapter = adapter
-        select_action_bar.setMainActionText(R.string.add_to_shelf)
-        select_action_bar.inflateMenu(R.menu.import_book_sel)
-        select_action_bar.setOnMenuItemClickListener(this)
-        select_action_bar.setCallBack(this)
+        binding.recyclerView.adapter = adapter
+        binding.selectActionBar.setMainActionText(R.string.add_to_shelf)
+        binding.selectActionBar.inflateMenu(R.menu.import_book_sel)
+        binding.selectActionBar.setOnMenuItemClickListener(this)
+        binding.selectActionBar.setCallBack(this)
     }
 
     private fun initEvent() {
-        tv_go_back.onClick {
+        binding.tvGoBack.onClick {
             goBackDir()
         }
     }
@@ -125,14 +125,14 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         val lastPath = AppConfig.importBookPath
         when {
             lastPath.isNullOrEmpty() -> {
-                tv_empty_msg.visible()
+                binding.tvEmptyMsg.visible()
                 FilePicker.selectFolder(this, requestCodeSelectFolder)
             }
             lastPath.isContentScheme() -> {
                 val rootUri = Uri.parse(lastPath)
                 rootDoc = DocumentFile.fromTreeUri(this, rootUri)
                 if (rootDoc == null) {
-                    tv_empty_msg.visible()
+                    binding.tvEmptyMsg.visible()
                     FilePicker.selectFolder(this, requestCodeSelectFolder)
                 } else {
                     subDocs.clear()
@@ -140,11 +140,11 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
                 }
             }
             Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
-                tv_empty_msg.visible()
+                binding.tvEmptyMsg.visible()
                 FilePicker.selectFolder(this, requestCodeSelectFolder)
             }
             else -> {
-                tv_empty_msg.visible()
+                binding.tvEmptyMsg.visible()
                 PermissionsCompat.Builder(this)
                     .addPermissions(*Permissions.Group.STORAGE)
                     .rationale(R.string.tip_perm_request_storage)
@@ -167,14 +167,14 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     private fun upDocs(rootDoc: DocumentFile) {
-        tv_empty_msg.gone()
+        binding.tvEmptyMsg.gone()
         var path = rootDoc.name.toString() + File.separator
         var lastDoc = rootDoc
         for (doc in subDocs) {
             lastDoc = doc
             path = path + doc.name + File.separator
         }
-        tv_path.text = path
+        binding.tvPath.text = path
         adapter.selectedUris.clear()
         adapter.clearItems()
         launch(IO) {
@@ -198,8 +198,8 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     private fun upFiles() {
-        tv_empty_msg.gone()
-        tv_path.text = path.replace(sdPath, "SD")
+        binding.tvEmptyMsg.gone()
+        binding.tvPath.text = path.replace(sdPath, "SD")
         val docList = arrayListOf<DocItem>()
         File(path).listFiles()?.forEach {
             if (it.isDirectory) {
@@ -238,11 +238,11 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
         rootDoc?.let { doc ->
             adapter.clearItems()
             val lastDoc = subDocs.lastOrNull() ?: doc
-            refresh_progress_bar.isAutoLoading = true
+            binding.refreshProgressBar.isAutoLoading = true
             launch(IO) {
                 viewModel.scanDoc(lastDoc, true, find) {
                     launch {
-                        refresh_progress_bar.isAutoLoading = false
+                        binding.refreshProgressBar.isAutoLoading = false
                     }
                 }
             }
@@ -253,11 +253,11 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
             } else {
                 adapter.clearItems()
                 val file = File(path)
-                refresh_progress_bar.isAutoLoading = true
+                binding.refreshProgressBar.isAutoLoading = true
                 launch(IO) {
                     viewModel.scanFile(file, true, find) {
                         launch {
-                            refresh_progress_bar.isAutoLoading = false
+                            binding.refreshProgressBar.isAutoLoading = false
                         }
                     }
                 }
@@ -332,7 +332,7 @@ class ImportBookActivity : VMBaseActivity<ImportBookViewModel>(R.layout.activity
     }
 
     override fun upCountView() {
-        select_action_bar.upCountView(adapter.selectedUris.size, adapter.checkableCount)
+        binding.selectActionBar.upCountView(adapter.selectedUris.size, adapter.checkableCount)
     }
 
 }

@@ -10,17 +10,17 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
+import io.legado.app.databinding.ActivityBookInfoEditBinding
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_book_info_edit.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.toast
 import java.io.File
 
 class BookInfoEditActivity :
-    VMBaseActivity<BookInfoEditViewModel>(R.layout.activity_book_info_edit),
+    VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
     ChangeCoverDialog.CallBack {
 
     private val resultSelectCover = 132
@@ -51,41 +51,41 @@ class BookInfoEditActivity :
     }
 
     private fun initEvent() {
-        tv_change_cover.onClick {
+        binding.tvChangeCover.onClick {
             viewModel.bookData.value?.let {
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        tv_select_cover.onClick {
+        binding.tvSelectCover.onClick {
             selectImage()
         }
-        tv_refresh_cover.onClick {
-            viewModel.book?.customCoverUrl = tie_cover_url.text?.toString()
+        binding.tvRefreshCover.onClick {
+            viewModel.book?.customCoverUrl = binding.tieCoverUrl.text?.toString()
             upCover()
         }
     }
 
     private fun upView(book: Book) {
-        tie_book_name.setText(book.name)
-        tie_book_author.setText(book.author)
-        tie_cover_url.setText(book.getDisplayCover())
-        tie_book_intro.setText(book.getDisplayIntro())
+        binding.tieBookName.setText(book.name)
+        binding.tieBookAuthor.setText(book.author)
+        binding.tieCoverUrl.setText(book.getDisplayCover())
+        binding.tieBookIntro.setText(book.getDisplayIntro())
         upCover()
     }
 
     private fun upCover() {
         viewModel.book.let {
-            iv_cover.load(it?.getDisplayCover(), it?.name, it?.author)
+            binding.ivCover.load(it?.getDisplayCover(), it?.name, it?.author)
         }
     }
 
     private fun saveData() {
         viewModel.book?.let { book ->
-            book.name = tie_book_name.text?.toString() ?: ""
-            book.author = tie_book_author.text?.toString() ?: ""
-            val customCoverUrl = tie_cover_url.text?.toString()
+            book.name = binding.tieBookName.text?.toString() ?: ""
+            book.author = binding.tieBookAuthor.text?.toString() ?: ""
+            val customCoverUrl = binding.tieCoverUrl.text?.toString()
             book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
-            book.customIntro = tie_book_intro.text?.toString()
+            book.customIntro = binding.tieBookIntro.text?.toString()
             viewModel.saveBook(book) {
                 setResult(Activity.RESULT_OK)
                 finish()
@@ -102,7 +102,7 @@ class BookInfoEditActivity :
 
     override fun coverChangeTo(coverUrl: String) {
         viewModel.book?.customCoverUrl = coverUrl
-        tie_cover_url.setText(coverUrl)
+        binding.tieCoverUrl.setText(coverUrl)
         upCover()
     }
 

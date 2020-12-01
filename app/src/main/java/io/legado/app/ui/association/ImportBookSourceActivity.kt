@@ -4,29 +4,29 @@ import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
+import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_translucence.*
 import org.jetbrains.anko.toast
 
 
-class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
-    R.layout.activity_translucence,
-    theme = Theme.Transparent
-) {
+class ImportBookSourceActivity :
+    VMBaseActivity<ActivityTranslucenceBinding, ImportBookSourceViewModel>(
+        theme = Theme.Transparent
+    ) {
 
     override val viewModel: ImportBookSourceViewModel
         get() = getViewModel(ImportBookSourceViewModel::class.java)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        rotate_loading.show()
+        binding.rotateLoading.show()
         viewModel.errorLiveData.observe(this, {
-            rotate_loading.hide()
+            binding.rotateLoading.hide()
             errorDialog(it)
         })
         viewModel.successLiveData.observe(this, {
-            rotate_loading.hide()
+            binding.rotateLoading.hide()
             if (it > 0) {
                 successDialog()
             } else {
@@ -61,7 +61,7 @@ class ImportBookSourceActivity : VMBaseActivity<ImportBookSourceViewModel>(
                     }
                 }
                 else -> {
-                    rotate_loading.hide()
+                    binding.rotateLoading.hide()
                     toast(R.string.wrong_format)
                     finish()
                 }

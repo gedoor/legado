@@ -11,6 +11,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.databinding.ActivitySearchContentBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.ATH
@@ -22,8 +23,6 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.observeEvent
-import kotlinx.android.synthetic.main.activity_search_content.*
-import kotlinx.android.synthetic.main.view_search.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,24 +30,26 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class SearchContentActivity :
-    VMBaseActivity<SearchContentViewModel>(R.layout.activity_search_content),
+    VMBaseActivity<ActivitySearchContentBinding, SearchContentViewModel>(),
     SearchContentAdapter.Callback {
 
     override val viewModel: SearchContentViewModel
         get() = getViewModel(SearchContentViewModel::class.java)
     lateinit var adapter: SearchContentAdapter
     private lateinit var mLayoutManager: UpLinearLayoutManager
+    private lateinit var searchView: SearchView
     private var searchResultCounts = 0
     private var durChapterIndex = 0
     private var searchResultList: MutableList<SearchResult> = mutableListOf()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        searchView = binding.titleBar.findViewById(R.id.search_view)
         val bbg = bottomBackground
         val btc = getPrimaryTextColor(ColorUtils.isColorLight(bbg))
-        ll_search_base_info.setBackgroundColor(bbg)
-        tv_current_search_info.setTextColor(btc)
-        iv_search_content_top.setColorFilter(btc)
-        iv_search_content_bottom.setColorFilter(btc)
+        binding.llSearchBaseInfo.setBackgroundColor(bbg)
+        binding.tvCurrentSearchInfo.setTextColor(btc)
+        binding.ivSearchContentTop.setColorFilter(btc)
+        binding.ivSearchContentBottom.setColorFilter(btc)
         initSearchView()
         initRecyclerView()
         initView()
@@ -60,12 +61,12 @@ class SearchContentActivity :
     }
 
     private fun initSearchView() {
-        ATH.setTint(search_view, primaryTextColor)
-        search_view.onActionViewExpanded()
-        search_view.isSubmitButtonEnabled = true
-        search_view.queryHint = getString(R.string.search)
-        search_view.clearFocus()
-        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        ATH.setTint(searchView, primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.queryHint = getString(R.string.search)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (viewModel.lastQuery != query) {
                     startContentSearch(query)
@@ -82,14 +83,14 @@ class SearchContentActivity :
     private fun initRecyclerView() {
         adapter = SearchContentAdapter(this, this)
         mLayoutManager = UpLinearLayoutManager(this)
-        recycler_view.layoutManager = mLayoutManager
-        recycler_view.addItemDecoration(VerticalDivider(this))
-        recycler_view.adapter = adapter
+        binding.recyclerView.layoutManager = mLayoutManager
+        binding.recyclerView.addItemDecoration(VerticalDivider(this))
+        binding.recyclerView.adapter = adapter
     }
 
     private fun initView() {
-        iv_search_content_top.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
-        iv_search_content_bottom.onClick {
+        binding.ivSearchContentTop.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
+        binding.ivSearchContentBottom.onClick {
             if (adapter.itemCount > 0) {
                 mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
             }
@@ -98,12 +99,12 @@ class SearchContentActivity :
 
     @SuppressLint("SetTextI18n")
     private fun initBook() {
-        tv_current_search_info.text = "搜索结果：$searchResultCounts"
+        binding.tvCurrentSearchInfo.text = "搜索结果：$searchResultCounts"
         viewModel.book?.let {
             initCacheFileNames(it)
             durChapterIndex = it.durChapterIndex
             intent.getStringExtra("searchWord")?.let { searchWord ->
-                search_view.setQuery(searchWord, true)
+                searchView.setQuery(searchWord, true)
             }
         }
     }
@@ -131,10 +132,10 @@ class SearchContentActivity :
     @SuppressLint("SetTextI18n")
     fun startContentSearch(newText: String) {
         // 按章节搜索内容
-        if (!newText.isBlank()) {
+        if (newText.isNotBlank()) {
             adapter.clearItems()
             searchResultList.clear()
-            refresh_progress_bar.isAutoLoading = true
+            binding.refreshProgressBar.isAutoLoading = true
             searchResultCounts = 0
             viewModel.lastQuery = newText
             var searchResults = listOf<SearchResult>()
@@ -149,8 +150,8 @@ class SearchContentActivity :
                     }
                     if (searchResults.isNotEmpty()) {
                         searchResultList.addAll(searchResults)
-                        refresh_progress_bar.isAutoLoading = false
-                        tv_current_search_info.text = "搜索结果：$searchResultCounts"
+                        binding.refreshProgressBar.isAutoLoading = false
+                        binding.tvCurrentSearchInfo.text = "搜索结果：$searchResultCounts"
                         adapter.addItems(searchResults)
                         searchResults = listOf()
                     }
