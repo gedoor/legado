@@ -20,17 +20,17 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.DialogTocRegexBinding
+import io.legado.app.databinding.DialogTocRegexEditBinding
+import io.legado.app.databinding.ItemTocRegexBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.dialog_toc_regex.*
-import kotlinx.android.synthetic.main.dialog_toc_regex_edit.view.*
-import kotlinx.android.synthetic.main.item_toc_regex.view.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -44,6 +44,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     var selectedName: String? = null
     private var durRegex: String? = null
     lateinit var viewModel: TocRegexViewModel
+    private val binding by viewBinding(DialogTocRegexBinding::bind)
 
     override fun onStart() {
         super.onStart()
@@ -61,28 +62,28 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.setBackgroundColor(primaryColor)
+        binding.toolBar.setBackgroundColor(primaryColor)
         durRegex = arguments?.getString("tocRegex")
-        tool_bar.setTitle(R.string.txt_toc_regex)
-        tool_bar.inflateMenu(R.menu.txt_toc_regex)
-        tool_bar.menu.applyTint(requireContext())
-        tool_bar.setOnMenuItemClickListener(this)
+        binding.toolBar.setTitle(R.string.txt_toc_regex)
+        binding.toolBar.inflateMenu(R.menu.txt_toc_regex)
+        binding.toolBar.menu.applyTint(requireContext())
+        binding.toolBar.setOnMenuItemClickListener(this)
         initView()
         initData()
     }
 
-    private fun initView() {
+    private fun initView() = with(binding) {
         adapter = TocRegexAdapter(requireContext())
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
-        recycler_view.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.addItemDecoration(VerticalDivider(requireContext()))
+        recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
-        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
-        tv_cancel.onClick {
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recyclerView)
+        tvCancel.onClick {
             dismiss()
         }
-        tv_ok.onClick {
+        tvOk.onClick {
             adapter.getItems().forEach { tocRule ->
                 if (selectedName == tocRule.name) {
                     val callBack = activity as? CallBack
@@ -139,27 +140,26 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
             cacheUrls.add(0, defaultUrl)
         }
         requireContext().alert(titleResource = R.string.import_book_source_on_line) {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = this.edit_view
-                    edit_view.setFilterValues(cacheUrls)
-                    edit_view.delCallBack = {
-                        cacheUrls.remove(it)
-                        aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
-                    }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            alertBinding.apply {
+                editView.setFilterValues(cacheUrls)
+                editView.delCallBack = {
+                    cacheUrls.remove(it)
+                    aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
                 }
             }
+            customView = alertBinding.root
             okButton {
-                val text = editText?.text?.toString()
+                val text = alertBinding.editView.text?.toString()
                 text?.let {
                     if (!cacheUrls.contains(it)) {
                         cacheUrls.add(0, it)
                         aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
                     }
-                    Snackbar.make(tool_bar, R.string.importing, Snackbar.LENGTH_INDEFINITE).show()
+                    Snackbar.make(binding.toolBar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
+                        .show()
                     viewModel.importOnLine(it) { msg ->
-                        tool_bar.snackbar(msg)
+                        binding.toolBar.snackbar(msg)
                     }
                 }
             }
@@ -171,19 +171,16 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private fun editRule(rule: TxtTocRule? = null) {
         val tocRule = rule?.copy() ?: TxtTocRule()
         requireContext().alert(titleResource = R.string.txt_toc_regex) {
-            var rootView: View? = null
-            customView {
-                LayoutInflater.from(requireContext())
-                    .inflate(R.layout.dialog_toc_regex_edit, null).apply {
-                        rootView = this
-                        tv_rule_name.setText(tocRule.name)
-                        tv_rule_regex.setText(tocRule.rule)
-                    }
+            val alertBinding = DialogTocRegexEditBinding.inflate(layoutInflater)
+            alertBinding.apply {
+                tvRuleName.setText(tocRule.name)
+                tvRuleRegex.setText(tocRule.rule)
             }
+            customView = alertBinding.root
             okButton {
-                rootView?.apply {
-                    tocRule.name = tv_rule_name.text.toString()
-                    tocRule.rule = tv_rule_regex.text.toString()
+                alertBinding.apply {
+                    tocRule.name = tvRuleName.text.toString()
+                    tocRule.rule = tvRuleRegex.text.toString()
                     viewModel.saveRule(tocRule)
                 }
             }
@@ -192,31 +189,36 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     inner class TocRegexAdapter(context: Context) :
-        SimpleRecyclerAdapter<TxtTocRule>(context, R.layout.item_toc_regex),
+        SimpleRecyclerAdapter<TxtTocRule, ItemTocRegexBinding>(context),
         ItemTouchCallback.Callback {
 
-        override fun convert(holder: ItemViewHolder, item: TxtTocRule, payloads: MutableList<Any>) {
-            holder.itemView.apply {
+        override fun convert(
+            holder: ItemViewHolder,
+            binding: ItemTocRegexBinding,
+            item: TxtTocRule,
+            payloads: MutableList<Any>
+        ) {
+            binding.apply {
                 if (payloads.isEmpty()) {
-                    setBackgroundColor(context.backgroundColor)
-                    rb_regex_name.text = item.name
-                    rb_regex_name.isChecked = item.name == selectedName
-                    swt_enabled.isChecked = item.enable
+                    root.setBackgroundColor(context.backgroundColor)
+                    rbRegexName.text = item.name
+                    rbRegexName.isChecked = item.name == selectedName
+                    swtEnabled.isChecked = item.enable
                 } else {
-                    rb_regex_name.isChecked = item.name == selectedName
+                    rbRegexName.isChecked = item.name == selectedName
                 }
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.apply {
-                rb_regex_name.setOnCheckedChangeListener { buttonView, isChecked ->
+        override fun registerListener(holder: ItemViewHolder, binding: ItemTocRegexBinding) {
+            binding.apply {
+                rbRegexName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed && isChecked) {
                         selectedName = getItem(holder.layoutPosition)?.name
                         updateItems(0, itemCount - 1, true)
                     }
                 }
-                swt_enabled.setOnCheckedChangeListener { buttonView, isChecked ->
+                swtEnabled.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         getItem(holder.layoutPosition)?.let {
                             it.enable = isChecked
@@ -226,10 +228,10 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                         }
                     }
                 }
-                iv_edit.onClick {
+                ivEdit.onClick {
                     editRule(getItem(holder.layoutPosition))
                 }
-                iv_delete.onClick {
+                ivDelete.onClick {
                     getItem(holder.layoutPosition)?.let { item ->
                         launch(IO) {
                             App.db.txtTocRule().delete(item)

@@ -13,6 +13,8 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
+import io.legado.app.databinding.DialogReadBgTextBinding
+import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.permission.Permissions
@@ -26,9 +28,7 @@ import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.dialog_read_bg_text.*
-import kotlinx.android.synthetic.main.item_bg_image.view.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
@@ -40,6 +40,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         const val BG_COLOR = 122
     }
 
+    private val binding by viewBinding(DialogReadBgTextBinding::bind)
     private val requestCodeBg = 123
     private val requestCodeExport = 131
     private val requestCodeImport = 132
@@ -88,28 +89,31 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         val isLight = ColorUtils.isColorLight(bg)
         primaryTextColor = requireContext().getPrimaryTextColor(isLight)
         secondaryTextColor = requireContext().getSecondaryTextColor(isLight)
-        root_view.setBackgroundColor(bg)
-        sw_dark_status_icon.setTextColor(primaryTextColor)
-        iv_import.setColorFilter(primaryTextColor)
-        iv_export.setColorFilter(primaryTextColor)
-        iv_delete.setColorFilter(primaryTextColor)
-        tv_bg_image.setTextColor(primaryTextColor)
+        binding.rootView.setBackgroundColor(bg)
+        binding.swDarkStatusIcon.setTextColor(primaryTextColor)
+        binding.ivImport.setColorFilter(primaryTextColor)
+        binding.ivExport.setColorFilter(primaryTextColor)
+        binding.ivDelete.setColorFilter(primaryTextColor)
+        binding.tvBgImage.setTextColor(primaryTextColor)
     }
 
     @SuppressLint("InflateParams")
     private fun initData() = with(ReadBookConfig.durConfig) {
-        tv_name.text = name.ifBlank { "文字" }
-        sw_dark_status_icon.isChecked = curStatusIconDark()
+        binding.tvName.text = name.ifBlank { "文字" }
+        binding.swDarkStatusIcon.isChecked = curStatusIconDark()
         adapter = BgAdapter(requireContext(), secondaryTextColor)
-        recycler_view.adapter = adapter
-        val headerView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.item_bg_image, recycler_view, false)
+        binding.recyclerView.adapter = adapter
+        val headerView = ItemBgImageBinding.inflate(
+            LayoutInflater.from(requireContext()),
+            binding.recyclerView,
+            false
+        )
         adapter.addHeaderView(headerView)
-        headerView.tv_name.setTextColor(secondaryTextColor)
-        headerView.tv_name.text = getString(R.string.select_image)
-        headerView.iv_bg.setImageResource(R.drawable.ic_image)
-        headerView.iv_bg.setColorFilter(primaryTextColor)
-        headerView.onClick { selectImage() }
+        headerView.tvName.setTextColor(secondaryTextColor)
+        headerView.tvName.text = getString(R.string.select_image)
+        headerView.ivBg.setImageResource(R.drawable.ic_image)
+        headerView.ivBg.setColorFilter(primaryTextColor)
+        headerView.root.onClick { selectImage() }
         requireContext().assets.list("bg")?.let {
             adapter.setItems(it.toList())
         }
@@ -117,31 +121,31 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
 
     @SuppressLint("InflateParams")
     private fun initEvent() = with(ReadBookConfig.durConfig) {
-        iv_edit.onClick {
+        binding.ivEdit.onClick {
             alert(R.string.style_name) {
                 var editText: AutoCompleteTextView? = null
                 customView {
                     layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                        edit_view.setText(ReadBookConfig.durConfig.name)
-                        editText = edit_view
+                        editText = findViewById(R.id.edit_view)
+                        editText!!.setText(ReadBookConfig.durConfig.name)
                     }
                 }
                 okButton {
                     editText?.text?.toString()?.let {
-                        tv_name.text = it
+                        binding.tvName.text = it
                         ReadBookConfig.durConfig.name = it
                     }
                 }
                 cancelButton()
             }.show()
         }
-        sw_dark_status_icon.onCheckedChange { buttonView, isChecked ->
+        binding.swDarkStatusIcon.onCheckedChange { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
                 setCurStatusIconDark(isChecked)
                 (activity as? ReadBookActivity)?.upSystemUiVisibility()
             }
         }
-        tv_text_color.onClick {
+        binding.tvTextColor.onClick {
             ColorPickerDialog.newBuilder()
                 .setColor(curTextColor())
                 .setShowAlphaSlider(false)
@@ -149,7 +153,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 .setDialogId(TEXT_COLOR)
                 .show(requireActivity())
         }
-        tv_bg_color.onClick {
+        binding.tvBgColor.onClick {
             val bgColor =
                 if (curBgType() == 0) Color.parseColor(curBgStr())
                 else Color.parseColor("#015A86")
@@ -160,7 +164,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 .setDialogId(BG_COLOR)
                 .show(requireActivity())
         }
-        iv_import.onClick {
+        binding.ivImport.onClick {
             val importFormNet = "网络导入"
             val otherActions = arrayListOf(importFormNet)
             FilePicker.selectFile(
@@ -175,14 +179,14 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 }
             }
         }
-        iv_export.onClick {
+        binding.ivExport.onClick {
             FilePicker.selectFolder(
                 this@BgTextConfigDialog,
                 requestCodeExport,
                 title = getString(R.string.export_str)
             )
         }
-        iv_delete.onClick {
+        binding.ivDelete.onClick {
             if (ReadBookConfig.deleteDur()) {
                 postEvent(EventBus.UP_CONFIG, true)
                 dismiss()
@@ -277,7 +281,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
             var editText: AutoCompleteTextView? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view
+                    editText = findViewById(R.id.edit_view)
                 }
             }
             okButton {

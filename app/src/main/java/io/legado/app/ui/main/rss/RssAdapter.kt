@@ -13,10 +13,15 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class RssAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss) {
+    SimpleRecyclerAdapter<RssSource, ItemRssBinding>(context) {
 
-    override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {
-        ItemRssBinding.bind(holder.itemView).apply {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemRssBinding,
+        item: RssSource,
+        payloads: MutableList<Any>
+    ) {
+        binding.apply {
             tvName.text = item.sourceName
             ImageLoader.load(context, item.sourceIcon)
                 .centerCrop()
@@ -26,8 +31,8 @@ class RssAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
-        ItemRssBinding.bind(holder.itemView).apply {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemRssBinding) {
+        binding.apply {
             root.onClick {
                 getItem(holder.layoutPosition)?.let {
                     callBack.openRss(it)

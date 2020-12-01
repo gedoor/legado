@@ -9,16 +9,17 @@ import android.widget.TextView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
+import io.legado.app.databinding.DialogClickActionConfigBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.putPrefInt
-import kotlinx.android.synthetic.main.dialog_click_action_config.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ClickActionConfigDialog : BaseDialogFragment() {
-
+    private val binding by viewBinding(DialogClickActionConfigBinding::bind)
     private val actions = linkedMapOf<Int, String>()
 
     override fun onStart() {
@@ -56,63 +57,63 @@ class ClickActionConfigDialog : BaseDialogFragment() {
     }
 
     private fun initData() = with(AppConfig) {
-        tv_top_left.text = actions[clickActionTL]
-        tv_top_center.text = actions[clickActionTC]
-        tv_top_right.text = actions[clickActionTR]
-        tv_middle_left.text = actions[clickActionML]
-        tv_middle_right.text = actions[clickActionMR]
-        tv_bottom_left.text = actions[clickActionBL]
-        tv_bottom_center.text = actions[clickActionBC]
-        tv_bottom_right.text = actions[clickActionBR]
+        binding.tvTopLeft.text = actions[clickActionTL]
+        binding.tvTopCenter.text = actions[clickActionTC]
+        binding.tvTopRight.text = actions[clickActionTR]
+        binding.tvMiddleLeft.text = actions[clickActionML]
+        binding.tvMiddleRight.text = actions[clickActionMR]
+        binding.tvBottomLeft.text = actions[clickActionBL]
+        binding.tvBottomCenter.text = actions[clickActionBC]
+        binding.tvBottomRight.text = actions[clickActionBR]
     }
 
     private fun initViewEvent() {
-        iv_close.onClick {
+        binding.ivClose.onClick {
             dismiss()
         }
-        tv_top_left.onClick {
+        binding.tvTopLeft.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTL, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        tv_top_center.onClick {
+        binding.tvTopCenter.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTC, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        tv_top_right.onClick {
+        binding.tvTopRight.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTR, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        tv_middle_left.onClick {
+        binding.tvMiddleLeft.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionML, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        tv_middle_right.onClick {
+        binding.tvMiddleRight.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionMR, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        tv_bottom_left.onClick {
+        binding.tvBottomLeft.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBL, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        tv_bottom_center.onClick {
+        binding.tvBottomCenter.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBC, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        tv_bottom_right.onClick {
+        binding.tvBottomRight.onClick {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBR, action)
                 (it as? TextView)?.text = actions[action]

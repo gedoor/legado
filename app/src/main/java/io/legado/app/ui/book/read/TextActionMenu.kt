@@ -20,13 +20,13 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.databinding.ItemTextBinding
+import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.utils.gone
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_fillet_text.view.*
-import kotlinx.android.synthetic.main.popup_action_menu.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.share
 import org.jetbrains.anko.toast
@@ -36,14 +36,14 @@ import java.util.*
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
     PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
     TextToSpeech.OnInitListener {
-
+    private val binding = PopupActionMenuBinding.inflate(LayoutInflater.from(context))
     private val adapter = Adapter(context)
     private val menu = MenuBuilder(context)
     private val moreMenu = MenuBuilder(context)
 
     init {
         @SuppressLint("InflateParams")
-        contentView = LayoutInflater.from(context).inflate(R.layout.popup_action_menu, null)
+        contentView = binding.root
 
         isTouchable = true
         isOutsideTouchable = false
@@ -52,54 +52,55 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         initRecyclerView()
         setOnDismissListener {
             contentView.apply {
-                iv_menu_more.setImageResource(R.drawable.ic_more_vert)
-                recycler_view_more.gone()
+                binding.ivMenuMore.setImageResource(R.drawable.ic_more_vert)
+                binding.recyclerViewMore.gone()
                 adapter.setItems(menu.visibleItems)
-                recycler_view.visible()
+                binding.recyclerView.visible()
             }
         }
     }
 
     private fun initRecyclerView() = with(contentView) {
-        recycler_view.adapter = adapter
-        recycler_view_more.adapter = adapter
+        binding.recyclerView.adapter = adapter
+        binding.recyclerViewMore.adapter = adapter
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)
         adapter.setItems(menu.visibleItems)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             onInitializeMenu(moreMenu)
         }
         if (moreMenu.size() > 0) {
-            iv_menu_more.visible()
+            binding.ivMenuMore.visible()
         }
-        iv_menu_more.onClick {
-            if (recycler_view.isVisible) {
-                iv_menu_more.setImageResource(R.drawable.ic_arrow_back)
+        binding.ivMenuMore.onClick {
+            if (binding.recyclerView.isVisible) {
+                binding.ivMenuMore.setImageResource(R.drawable.ic_arrow_back)
                 adapter.setItems(moreMenu.visibleItems)
-                recycler_view.gone()
-                recycler_view_more.visible()
+                binding.recyclerView.gone()
+                binding.recyclerViewMore.visible()
             } else {
-                iv_menu_more.setImageResource(R.drawable.ic_more_vert)
-                recycler_view_more.gone()
+                binding.ivMenuMore.setImageResource(R.drawable.ic_more_vert)
+                binding.recyclerViewMore.gone()
                 adapter.setItems(menu.visibleItems)
-                recycler_view.visible()
+                binding.recyclerView.visible()
             }
         }
     }
 
     inner class Adapter(context: Context) :
-        SimpleRecyclerAdapter<MenuItemImpl>(context, R.layout.item_text) {
+        SimpleRecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
 
         override fun convert(
             holder: ItemViewHolder,
+            binding: ItemTextBinding,
             item: MenuItemImpl,
             payloads: MutableList<Any>
         ) {
-            with(holder.itemView) {
-                text_view.text = item.title
+            with(binding) {
+                textView.text = item.title
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
+        override fun registerListener(holder: ItemViewHolder, binding: ItemTextBinding) {
             holder.itemView.onClick {
                 getItem(holder.layoutPosition)?.let {
                     if (!callBack.onMenuItemSelected(it.itemId)) {

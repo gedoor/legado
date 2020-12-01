@@ -8,11 +8,12 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
+import io.legado.app.databinding.DialogTipConfigBinding
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_tip_config.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
 
@@ -21,6 +22,8 @@ class TipConfigDialog : BaseDialogFragment() {
     companion object {
         const val TIP_COLOR = 7897
     }
+
+    private val binding by viewBinding(DialogTipConfigBinding::bind)
 
     override fun onStart() {
         super.onStart()
@@ -44,27 +47,27 @@ class TipConfigDialog : BaseDialogFragment() {
         }
     }
 
-    private fun initView() {
-        rg_title_mode.checkByIndex(ReadBookConfig.titleMode)
-        dsb_title_size.progress = ReadBookConfig.titleSize
-        dsb_title_top.progress = ReadBookConfig.titleTopSpacing
-        dsb_title_bottom.progress = ReadBookConfig.titleBottomSpacing
+    private fun initView() = with(binding) {
+        rgTitleMode.checkByIndex(ReadBookConfig.titleMode)
+        dsbTitleSize.progress = ReadBookConfig.titleSize
+        dsbTitleTop.progress = ReadBookConfig.titleTopSpacing
+        dsbTitleBottom.progress = ReadBookConfig.titleBottomSpacing
 
-        tv_header_show.text = ReadTipConfig.headerModes[ReadTipConfig.headerMode]
-        tv_footer_show.text = ReadTipConfig.footerModes[ReadTipConfig.footerMode]
+        tvHeaderShow.text = ReadTipConfig.headerModes[ReadTipConfig.headerMode]
+        tvFooterShow.text = ReadTipConfig.footerModes[ReadTipConfig.footerMode]
 
-        tv_header_left.text = ReadTipConfig.tipHeaderLeftStr
-        tv_header_middle.text = ReadTipConfig.tipHeaderMiddleStr
-        tv_header_right.text = ReadTipConfig.tipHeaderRightStr
-        tv_footer_left.text = ReadTipConfig.tipFooterLeftStr
-        tv_footer_middle.text = ReadTipConfig.tipFooterMiddleStr
-        tv_footer_right.text = ReadTipConfig.tipFooterRightStr
+        tvHeaderLeft.text = ReadTipConfig.tipHeaderLeftStr
+        tvHeaderMiddle.text = ReadTipConfig.tipHeaderMiddleStr
+        tvHeaderRight.text = ReadTipConfig.tipHeaderRightStr
+        tvFooterLeft.text = ReadTipConfig.tipFooterLeftStr
+        tvFooterMiddle.text = ReadTipConfig.tipFooterMiddleStr
+        tvFooterRight.text = ReadTipConfig.tipFooterRightStr
 
         upTvTipColor()
     }
 
     private fun upTvTipColor() {
-        tv_tip_color.text =
+        binding.tvTipColor.text =
             if (ReadTipConfig.tipColor == 0) {
                 "跟随正文"
             } else {
@@ -72,86 +75,86 @@ class TipConfigDialog : BaseDialogFragment() {
             }
     }
 
-    private fun initEvent() {
-        rg_title_mode.onCheckedChange { _, checkedId ->
-            ReadBookConfig.titleMode = rg_title_mode.getIndexById(checkedId)
+    private fun initEvent() = with(binding) {
+        rgTitleMode.onCheckedChange { _, checkedId ->
+            ReadBookConfig.titleMode = rgTitleMode.getIndexById(checkedId)
             postEvent(EventBus.UP_CONFIG, true)
         }
-        dsb_title_size.onChanged = {
+        dsbTitleSize.onChanged = {
             ReadBookConfig.titleSize = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        dsb_title_top.onChanged = {
+        dsbTitleTop.onChanged = {
             ReadBookConfig.titleTopSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        dsb_title_bottom.onChanged = {
+        dsbTitleBottom.onChanged = {
             ReadBookConfig.titleBottomSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        ll_header_show.onClick {
+        llHeaderShow.onClick {
             selector(items = ReadTipConfig.headerModes.values.toList()) { _, i ->
                 ReadTipConfig.headerMode = ReadTipConfig.headerModes.keys.toList()[i]
-                tv_header_show.text = ReadTipConfig.headerModes[ReadTipConfig.headerMode]
+                tvHeaderShow.text = ReadTipConfig.headerModes[ReadTipConfig.headerMode]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        ll_footer_show.onClick {
+        llFooterShow.onClick {
             selector(items = ReadTipConfig.footerModes.values.toList()) { _, i ->
                 ReadTipConfig.footerMode = ReadTipConfig.footerModes.keys.toList()[i]
-                tv_footer_show.text = ReadTipConfig.footerModes[ReadTipConfig.footerMode]
+                tvFooterShow.text = ReadTipConfig.footerModes[ReadTipConfig.footerMode]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        ll_header_left.onClick {
+        llHeaderLeft.onClick {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderLeft = i
-                tv_header_left.text = ReadTipConfig.tips[i]
+                tvHeaderLeft.text = ReadTipConfig.tips[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        ll_header_middle.onClick {
+        llHeaderMiddle.onClick {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderMiddle = i
-                tv_header_middle.text = ReadTipConfig.tips[i]
+                tvHeaderMiddle.text = ReadTipConfig.tips[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        ll_header_right.onClick {
+        llHeaderRight.onClick {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderRight = i
-                tv_header_right.text = ReadTipConfig.tips[i]
+                tvHeaderRight.text = ReadTipConfig.tips[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        ll_footer_left.onClick {
+        llFooterLeft.onClick {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterLeft = i
-                tv_footer_left.text = ReadTipConfig.tips[i]
+                tvFooterLeft.text = ReadTipConfig.tips[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        ll_footer_middle.onClick {
+        llFooterMiddle.onClick {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterMiddle = i
-                tv_footer_middle.text = ReadTipConfig.tips[i]
+                tvFooterMiddle.text = ReadTipConfig.tips[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        ll_footer_right.onClick {
+        llFooterRight.onClick {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterRight = i
-                tv_footer_right.text = ReadTipConfig.tips[i]
+                tvFooterRight.text = ReadTipConfig.tips[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        ll_tip_color.onClick {
+        llTipColor.onClick {
             selector(items = arrayListOf("跟随正文", "自定义")) { _, i ->
                 when (i) {
                     0 -> {
@@ -173,27 +176,27 @@ class TipConfigDialog : BaseDialogFragment() {
         if (repeat != none) {
             if (tipHeaderLeft == repeat) {
                 tipHeaderLeft = none
-                tv_header_left.text = tips[none]
+                binding.tvHeaderLeft.text = tips[none]
             }
             if (tipHeaderMiddle == repeat) {
                 tipHeaderMiddle = none
-                tv_header_middle.text = tips[none]
+                binding.tvHeaderMiddle.text = tips[none]
             }
             if (tipHeaderRight == repeat) {
                 tipHeaderRight = none
-                tv_header_right.text = tips[none]
+                binding.tvHeaderRight.text = tips[none]
             }
             if (tipFooterLeft == repeat) {
                 tipFooterLeft = none
-                tv_footer_left.text = tips[none]
+                binding.tvFooterLeft.text = tips[none]
             }
             if (tipFooterMiddle == repeat) {
                 tipFooterMiddle = none
-                tv_footer_middle.text = tips[none]
+                binding.tvFooterMiddle.text = tips[none]
             }
             if (tipFooterRight == repeat) {
                 tipFooterRight = none
-                tv_footer_right.text = tips[none]
+                binding.tvFooterRight.text = tips[none]
             }
         }
     }

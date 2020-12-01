@@ -20,16 +20,16 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.lib.dialogs.*
+import io.legado.app.databinding.DialogRecyclerViewBinding
+import io.legado.app.databinding.ItemGroupManageBinding
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.dialog_recycler_view.*
-import kotlinx.android.synthetic.main.item_group_manage.view.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 import kotlin.collections.ArrayList
@@ -37,6 +37,7 @@ import kotlin.collections.ArrayList
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: GroupViewModel
     private lateinit var adapter: GroupAdapter
+    private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
     override fun onStart() {
         super.onStart()
@@ -54,8 +55,8 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.setBackgroundColor(primaryColor)
-        tool_bar.title = getString(R.string.group_manage)
+        binding.toolBar.setBackgroundColor(primaryColor)
+        binding.toolBar.title = getString(R.string.group_manage)
         initView()
         initData()
         initMenu()
@@ -63,15 +64,15 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private fun initView() {
         adapter = GroupAdapter(requireContext())
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
-        recycler_view.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
+        binding.recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
-        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recycler_view)
-        tv_ok.setTextColor(requireContext().accentColor)
-        tv_ok.visible()
-        tv_ok.onClick { dismiss() }
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
+        binding.tvOk.setTextColor(requireContext().accentColor)
+        binding.tvOk.visible()
+        binding.tvOk.onClick { dismiss() }
     }
 
     private fun initData() {
@@ -83,9 +84,9 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     private fun initMenu() {
-        tool_bar.setOnMenuItemClickListener(this)
-        tool_bar.inflateMenu(R.menu.book_group_manage)
-        tool_bar.menu.applyTint(requireContext())
+        binding.toolBar.setOnMenuItemClickListener(this)
+        binding.toolBar.inflateMenu(R.menu.book_group_manage)
+        binding.toolBar.menu.applyTint(requireContext())
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -101,9 +102,8 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             var editText: EditText? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view.apply {
-                        setHint(R.string.group_name)
-                    }
+                    editText = findViewById(R.id.edit_view)
+                    editText?.setHint(R.string.group_name)
                 }
             }
             yesButton {
@@ -123,10 +123,9 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             var editText: EditText? = null
             customView {
                 layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view.apply {
-                        setHint(R.string.group_name)
-                        setText(bookGroup.groupName)
-                    }
+                    editText = findViewById(R.id.edit_view)
+                    editText!!.setHint(R.string.group_name)
+                    editText!!.setText(bookGroup.groupName)
                 }
             }
             yesButton {
@@ -174,26 +173,31 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     private inner class GroupAdapter(context: Context) :
-        SimpleRecyclerAdapter<BookGroup>(context, R.layout.item_group_manage),
+        SimpleRecyclerAdapter<BookGroup, ItemGroupManageBinding>(context),
         ItemTouchCallback.Callback {
 
         private var isMoved = false
 
-        override fun convert(holder: ItemViewHolder, item: BookGroup, payloads: MutableList<Any>) {
-            holder.itemView.apply {
-                setBackgroundColor(context.backgroundColor)
-                tv_group.text = item.getManageName(context)
-                sw_show.isChecked = item.show
-                tv_del.isGone = item.groupId < 0
-                sw_show.isGone = item.groupId >= 0
+        override fun convert(
+            holder: ItemViewHolder,
+            binding: ItemGroupManageBinding,
+            item: BookGroup,
+            payloads: MutableList<Any>
+        ) {
+            with(binding) {
+                root.setBackgroundColor(context.backgroundColor)
+                tvGroup.text = item.getManageName(context)
+                swShow.isChecked = item.show
+                tvDel.isGone = item.groupId < 0
+                swShow.isGone = item.groupId >= 0
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.apply {
-                tv_edit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
-                tv_del.onClick { getItem(holder.layoutPosition)?.let { deleteGroup(it) } }
-                sw_show.setOnCheckedChangeListener { buttonView, isChecked ->
+        override fun registerListener(holder: ItemViewHolder, binding: ItemGroupManageBinding) {
+            with(binding) {
+                tvEdit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
+                tvDel.onClick { getItem(holder.layoutPosition)?.let { deleteGroup(it) } }
+                swShow.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         getItem(holder.layoutPosition)?.let {
                             viewModel.upGroup(it.copy(show = isChecked))

@@ -55,21 +55,22 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     }
 
     inner class RecordAdapter(context: Context) :
-        SimpleRecyclerAdapter<ReadRecordShow>(context, R.layout.item_read_record) {
+        SimpleRecyclerAdapter<ReadRecordShow, ItemReadRecordBinding>(context) {
 
         override fun convert(
             holder: ItemViewHolder,
+            binding: ItemReadRecordBinding,
             item: ReadRecordShow,
             payloads: MutableList<Any>
         ) {
-            ItemReadRecordBinding.bind(holder.itemView).apply {
+            binding.apply {
                 tvBookName.text = item.bookName
                 tvReadTime.text = formatDuring(item.readTime)
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
-            ItemReadRecordBinding.bind(holder.itemView).apply {
+        override fun registerListener(holder: ItemViewHolder, binding: ItemReadRecordBinding) {
+            binding.apply {
                 ivRemove.onClick {
                     alert(R.string.delete, R.string.sure_del) {
                         okButton {

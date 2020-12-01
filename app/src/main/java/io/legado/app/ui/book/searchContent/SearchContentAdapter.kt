@@ -4,30 +4,35 @@ import android.content.Context
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.databinding.ItemSearchListBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.hexString
-import kotlinx.android.synthetic.main.item_search_list.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchContentAdapter(context: Context, val callback: Callback) :
-    SimpleRecyclerAdapter<SearchResult>(context, R.layout.item_search_list) {
+    SimpleRecyclerAdapter<SearchResult, ItemSearchListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
     val textColor = context.getCompatColor(R.color.primaryText).hexString.substring(2)
     val accentColor = context.accentColor.hexString.substring(2)
 
-    override fun convert(holder: ItemViewHolder, item: SearchResult, payloads: MutableList<Any>) {
-        with(holder.itemView) {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemSearchListBinding,
+        item: SearchResult,
+        payloads: MutableList<Any>
+    ) {
+        with(binding) {
             val isDur = callback.durChapterIndex() == item.chapterIndex
             if (payloads.isEmpty()) {
-                tv_search_result.text = item.getHtmlCompat(textColor, accentColor)
-                tv_search_result.paint.isFakeBoldText = isDur
+                tvSearchResult.text = item.getHtmlCompat(textColor, accentColor)
+                tvSearchResult.paint.isFakeBoldText = isDur
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemSearchListBinding) {
         holder.itemView.onClick {
             getItem(holder.layoutPosition)?.let {
                 callback.openSearchResult(it)

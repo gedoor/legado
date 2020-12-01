@@ -16,6 +16,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
+import io.legado.app.databinding.FragmentExploreBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
@@ -24,9 +25,7 @@ import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
-import kotlinx.android.synthetic.main.fragment_explore.*
-import kotlinx.android.synthetic.main.view_search.*
-import kotlinx.android.synthetic.main.view_title_bar.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.text.Collator
 
 /**
@@ -36,16 +35,18 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     ExploreAdapter.CallBack {
     override val viewModel: ExploreViewModel
         get() = getViewModel(ExploreViewModel::class.java)
-
+    private val binding by viewBinding(FragmentExploreBinding::bind)
     private lateinit var adapter: ExploreAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var searchView: SearchView
     private val groups = linkedSetOf<String>()
     private var liveGroup: LiveData<List<String>>? = null
     private var liveExplore: LiveData<List<BookSource>>? = null
     private var groupsMenu: SubMenu? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        setSupportToolbar(toolbar)
+        searchView = binding.titleBar.findViewById(R.id.search_view)
+        setSupportToolbar(binding.titleBar.toolbar)
         initSearchView()
         initRecyclerView()
         initGroupData()
@@ -60,12 +61,12 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     private fun initSearchView() {
-        ATH.setTint(search_view, primaryTextColor)
-        search_view.onActionViewExpanded()
-        search_view.isSubmitButtonEnabled = true
-        search_view.queryHint = getString(R.string.screen_find)
-        search_view.clearFocus()
-        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        ATH.setTint(searchView, primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.queryHint = getString(R.string.screen_find)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -78,17 +79,17 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(rv_find)
+        ATH.applyEdgeEffectColor(binding.rvFind)
         linearLayoutManager = LinearLayoutManager(context)
-        rv_find.layoutManager = linearLayoutManager
+        binding.rvFind.layoutManager = linearLayoutManager
         adapter = ExploreAdapter(requireContext(), this, this)
-        rv_find.adapter = adapter
+        binding.rvFind.adapter = adapter
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
 
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
                 if (positionStart == 0) {
-                    rv_find.scrollToPosition(0)
+                    binding.rvFind.scrollToPosition(0)
                 }
             }
         })
@@ -114,7 +115,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
             App.db.bookSourceDao().liveExplore("%$key%")
         }
         liveExplore?.observe(viewLifecycleOwner, {
-            tv_empty_msg.isGone = it.isNotEmpty() || search_view.query.isNotEmpty()
+            binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
             val diffResult = DiffUtil
                 .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
             adapter.setItems(it)
@@ -135,12 +136,12 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         super.onCompatOptionsItemSelected(item)
         if (item.groupId == R.id.menu_group_text) {
-            search_view.setQuery(item.title, true)
+            searchView.setQuery(item.title, true)
         }
     }
 
     override fun scrollTo(pos: Int) {
-        (rv_find.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, 0)
+        (binding.rvFind.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, 0)
     }
 
     override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
@@ -162,9 +163,9 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     fun compressExplore() {
         if (!adapter.compressExplore()) {
             if (AppConfig.isEInkMode) {
-                rv_find.scrollToPosition(0)
+                binding.rvFind.scrollToPosition(0)
             } else {
-                rv_find.smoothScrollToPosition(0)
+                binding.rvFind.smoothScrollToPosition(0)
             }
         }
     }

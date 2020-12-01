@@ -1,14 +1,12 @@
 package io.legado.app.ui.book.toc
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.R
 import io.legado.app.data.entities.Bookmark
-import kotlinx.android.synthetic.main.item_bookmark.view.*
+import io.legado.app.databinding.ItemBookmarkBinding
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 
@@ -31,7 +29,9 @@ class BookmarkAdapter(val callback: Callback) : PagedListAdapter<Bookmark, Bookm
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_bookmark, parent, false))
+        val binding =
+            ItemBookmarkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -40,11 +40,11 @@ class BookmarkAdapter(val callback: Callback) : PagedListAdapter<Bookmark, Bookm
         }
     }
 
-    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class MyViewHolder(val binding: ItemBookmarkBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(bookmark: Bookmark, callback: Callback?) = with(itemView) {
-            tv_chapter_name.text = bookmark.chapterName
-            tv_content.text = bookmark.content
+        fun bind(bookmark: Bookmark, callback: Callback?) = with(binding) {
+            tvChapterName.text = bookmark.chapterName
+            tvContent.text = bookmark.content
             itemView.onClick {
                 callback?.onClick(bookmark)
             }

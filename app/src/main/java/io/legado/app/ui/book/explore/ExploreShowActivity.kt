@@ -8,6 +8,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ActivityExploreShowBinding
+import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -36,7 +37,7 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
         loadMoreView = LoadMoreView(this)
-        adapter.addFooterView(loadMoreView)
+        adapter.addFooterView(ViewLoadMoreBinding.bind(loadMoreView))
         loadMoreView.startLoad()
         loadMoreView.setOnClickListener {
             if (!isLoading) {

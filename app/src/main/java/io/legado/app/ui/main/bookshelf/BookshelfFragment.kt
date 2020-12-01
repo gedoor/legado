@@ -15,6 +15,9 @@ import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.databinding.DialogBookshelfConfigBinding
+import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.FragmentBookshelfBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
@@ -25,13 +28,8 @@ import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.main.bookshelf.books.BooksFragment
-import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_bookshelf_config.view.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.fragment_bookshelf.*
-import kotlinx.android.synthetic.main.view_tab_layout.*
-import kotlinx.android.synthetic.main.view_title_bar.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
  * 书架界面
@@ -39,18 +37,20 @@ import kotlinx.android.synthetic.main.view_title_bar.*
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     TabLayout.OnTabSelectedListener,
     SearchView.OnQueryTextListener {
-
+    private val binding by viewBinding(FragmentBookshelfBinding::bind)
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
     private val activityViewModel: MainViewModel
         get() = getViewModelOfActivity(MainViewModel::class.java)
     private lateinit var adapter: FragmentStatePagerAdapter
+    private lateinit var tabLayout: TabLayout
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Long, BooksFragment>()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        setSupportToolbar(toolbar)
+        tabLayout = binding.titleBar.findViewById(R.id.tab_layout)
+        setSupportToolbar(binding.titleBar.toolbar)
         initView()
         initBookGroupData()
     }
@@ -64,7 +64,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         when (item.itemId) {
             R.id.menu_search -> startActivity<SearchActivity>()
             R.id.menu_update_toc -> {
-                val group = bookGroups[tab_layout.selectedTabPosition]
+                val group = bookGroups[tabLayout.selectedTabPosition]
                 val fragment = fragmentMap[group.groupId]
                 fragment?.getBooks()?.let {
                     activityViewModel.upToc(it)
@@ -87,17 +87,17 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     private val selectedGroup: BookGroup?
-        get() = bookGroups.getOrNull(view_pager_bookshelf?.currentItem ?: 0)
+        get() = bookGroups.getOrNull(binding.viewPagerBookshelf.currentItem)
 
     private fun initView() {
-        ATH.applyEdgeEffectColor(view_pager_bookshelf)
-        tab_layout.isTabIndicatorFullWidth = false
-        tab_layout.tabMode = TabLayout.MODE_SCROLLABLE
-        tab_layout.setSelectedTabIndicatorColor(requireContext().accentColor)
-        tab_layout.setupWithViewPager(view_pager_bookshelf)
-        view_pager_bookshelf.offscreenPageLimit = 1
+        ATH.applyEdgeEffectColor(binding.viewPagerBookshelf)
+        tabLayout.isTabIndicatorFullWidth = false
+        tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
+        tabLayout.setSelectedTabIndicatorColor(requireContext().accentColor)
+        tabLayout.setupWithViewPager(binding.viewPagerBookshelf)
+        binding.viewPagerBookshelf.offscreenPageLimit = 1
         adapter = TabFragmentPageAdapter(childFragmentManager)
-        view_pager_bookshelf.adapter = adapter
+        binding.viewPagerBookshelf.adapter = adapter
     }
 
     private fun initBookGroupData() {
@@ -135,9 +135,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     @Synchronized
     private fun selectLastTab() {
-        tab_layout.removeOnTabSelectedListener(this)
-        tab_layout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
-        tab_layout.addOnTabSelectedListener(this)
+        tabLayout.removeOnTabSelectedListener(this)
+        tabLayout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
+        tabLayout.addOnTabSelectedListener(this)
     }
 
     @SuppressLint("InflateParams")
@@ -145,21 +145,22 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         alert(titleResource = R.string.bookshelf_layout) {
             val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
             val bookshelfSort = getPrefInt(PreferKey.bookshelfSort)
-            val root = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_bookshelf_config, null).apply {
-                    rg_layout.checkByIndex(bookshelfLayout)
-                    rg_sort.checkByIndex(bookshelfSort)
-                }
-            customView = root
+            val alertBinding =
+                DialogBookshelfConfigBinding.inflate(LayoutInflater.from(requireContext()))
+                    .apply {
+                        rgLayout.checkByIndex(bookshelfLayout)
+                        rgSort.checkByIndex(bookshelfSort)
+                    }
+            customView = alertBinding.root
             okButton {
-                root.apply {
+                alertBinding.apply {
                     var changed = false
-                    if (bookshelfLayout != rg_layout.getCheckedIndex()) {
-                        putPrefInt(PreferKey.bookshelfLayout, rg_layout.getCheckedIndex())
+                    if (bookshelfLayout != rgLayout.getCheckedIndex()) {
+                        putPrefInt(PreferKey.bookshelfLayout, rgLayout.getCheckedIndex())
                         changed = true
                     }
-                    if (bookshelfSort != rg_sort.getCheckedIndex()) {
-                        putPrefInt(PreferKey.bookshelfSort, rg_sort.getCheckedIndex())
+                    if (bookshelfSort != rgSort.getCheckedIndex()) {
+                        putPrefInt(PreferKey.bookshelfSort, rgSort.getCheckedIndex())
                         changed = true
                     }
                     if (changed) {
@@ -174,14 +175,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     @SuppressLint("InflateParams")
     private fun addBookByUrl() {
         alert(titleResource = R.string.add_book_url) {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view
-                }
-            }
+            val alertBinding = DialogEditTextBinding.inflate(LayoutInflater.from(requireContext()))
+            customView = alertBinding.root
             okButton {
-                editText?.text?.toString()?.let {
+                alertBinding.editView.text?.toString()?.let {
                     viewModel.addBookByUrl(it)
                 }
             }

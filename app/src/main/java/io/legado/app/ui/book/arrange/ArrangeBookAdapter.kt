@@ -4,21 +4,20 @@ import android.content.Context
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.databinding.ItemArrangeBookBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import kotlinx.android.synthetic.main.item_arrange_book.view.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<Book>(context, R.layout.item_arrange_book),
+    SimpleRecyclerAdapter<Book, ItemArrangeBookBinding>(context),
     ItemTouchCallback.Callback {
     val groupRequestCode = 12
     private val selectedBooks: HashSet<Book> = hashSetOf()
@@ -58,19 +57,24 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         return books.toTypedArray()
     }
 
-    override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
-        with(holder.itemView) {
-            backgroundColor = context.backgroundColor
-            tv_name.text = item.name
-            tv_author.text = item.author
-            tv_author.visibility = if (item.author.isEmpty()) View.GONE else View.VISIBLE
-            tv_group_s.text = getGroupName(item.group)
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemArrangeBookBinding,
+        item: Book,
+        payloads: MutableList<Any>
+    ) {
+        binding.apply {
+            root.backgroundColor = context.backgroundColor
+            tvName.text = item.name
+            tvAuthor.text = item.author
+            tvAuthor.visibility = if (item.author.isEmpty()) View.GONE else View.VISIBLE
+            tvGroupS.text = getGroupName(item.group)
             checkbox.isChecked = selectedBooks.contains(item)
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.apply {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemArrangeBookBinding) {
+        binding.apply {
             checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
                 getItem(holder.layoutPosition)?.let {
                     if (buttonView.isPressed) {
@@ -84,7 +88,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
 
                 }
             }
-            onClick {
+            root.onClick {
                 getItem(holder.layoutPosition)?.let {
                     checkbox.isChecked = !checkbox.isChecked
                     if (checkbox.isChecked) {
@@ -95,12 +99,12 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                     callBack.upSelectCount()
                 }
             }
-            tv_delete.onClick {
+            tvDelete.onClick {
                 getItem(holder.layoutPosition)?.let {
                     callBack.deleteBook(it)
                 }
             }
-            tv_group.onClick {
+            tvGroup.onClick {
                 getItem(holder.layoutPosition)?.let {
                     actionItem = it
                     callBack.selectGroup(groupRequestCode, it.group)

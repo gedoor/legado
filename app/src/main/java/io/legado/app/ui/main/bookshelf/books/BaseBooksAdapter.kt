@@ -2,11 +2,12 @@ package io.legado.app.ui.main.bookshelf.books
 
 import android.content.Context
 import androidx.core.os.bundleOf
+import androidx.viewbinding.ViewBinding
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 
-abstract class BaseBooksAdapter(context: Context, layoutId: Int) :
-    SimpleRecyclerAdapter<Book>(context, layoutId) {
+abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
+    SimpleRecyclerAdapter<Book, VB>(context) {
 
     fun notification(bookUrl: String) {
         for (i in 0 until itemCount) {

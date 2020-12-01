@@ -7,44 +7,49 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.databinding.ItemDownloadBinding
 import io.legado.app.service.help.CacheBook
-import kotlinx.android.synthetic.main.item_download.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
 
 class CacheAdapter(context: Context, private val callBack: CallBack) :
-    SimpleRecyclerAdapter<Book>(context, R.layout.item_download) {
+    SimpleRecyclerAdapter<Book, ItemDownloadBinding>(context) {
 
     val cacheChapters = hashMapOf<String, HashSet<String>>()
     var downloadMap: ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>? = null
 
-    override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
-        with(holder.itemView) {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemDownloadBinding,
+        item: Book,
+        payloads: MutableList<Any>
+    ) {
+        with(binding) {
             if (payloads.isEmpty()) {
-                tv_name.text = item.name
-                tv_author.text = context.getString(R.string.author_show, item.getRealAuthor())
+                tvName.text = item.name
+                tvAuthor.text = context.getString(R.string.author_show, item.getRealAuthor())
                 val cs = cacheChapters[item.bookUrl]
                 if (cs == null) {
-                    tv_download.setText(R.string.loading)
+                    tvDownload.setText(R.string.loading)
                 } else {
-                    tv_download.text =
+                    tvDownload.text =
                         context.getString(R.string.download_count, cs.size, item.totalChapterNum)
                 }
-                upDownloadIv(iv_download, item)
+                upDownloadIv(ivDownload, item)
             } else {
                 val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
-                tv_download.text =
+                tvDownload.text =
                     context.getString(R.string.download_count, cacheSize, item.totalChapterNum)
-                upDownloadIv(iv_download, item)
+                upDownloadIv(ivDownload, item)
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.apply {
-            iv_download.onClick {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemDownloadBinding) {
+        with(binding) {
+            ivDownload.onClick {
                 getItem(holder.layoutPosition)?.let {
                     if (downloadMap?.containsKey(it.bookUrl) == true) {
                         CacheBook.remove(context, it.bookUrl)
@@ -53,7 +58,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                     }
                 }
             }
-            tv_export.onClick {
+            tvExport.onClick {
                 callBack.export(holder.layoutPosition)
             }
         }

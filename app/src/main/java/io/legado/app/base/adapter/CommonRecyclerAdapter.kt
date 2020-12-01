@@ -3,11 +3,12 @@ package io.legado.app.base.adapter
 import android.content.Context
 import android.util.SparseArray
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
+import java.lang.reflect.ParameterizedType
 import java.util.*
 
 /**
@@ -16,26 +17,26 @@ import java.util.*
  * 通用的adapter 可添加header，footer，以及不同类型item
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
+abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
     RecyclerView.Adapter<ItemViewHolder>() {
 
-    constructor(context: Context, vararg delegates: ItemViewDelegate<ITEM>) : this(context) {
+    constructor(context: Context, vararg delegates: ItemViewDelegate<ITEM, VB>) : this(context) {
         addItemViewDelegates(*delegates)
     }
 
     constructor(
         context: Context,
-        vararg delegates: Pair<Int, ItemViewDelegate<ITEM>>
+        vararg delegates: Pair<Int, ItemViewDelegate<ITEM, VB>>
     ) : this(context) {
         addItemViewDelegates(*delegates)
     }
 
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
+    val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    private var headerItems: SparseArray<View>? = null
-    private var footerItems: SparseArray<View>? = null
+    private var headerItems: SparseArray<ViewBinding>? = null
+    private var footerItems: SparseArray<ViewBinding>? = null
 
-    private val itemDelegates: HashMap<Int, ItemViewDelegate<ITEM>> = hashMapOf()
+    private val itemDelegates: HashMap<Int, ItemViewDelegate<ITEM, VB>> = hashMapOf()
     private val items: MutableList<ITEM> = mutableListOf()
 
     private val lock = Object()
@@ -58,26 +59,29 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
         recyclerView.adapter = this
     }
 
-    fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegate(viewType: Int, delegate: DELEGATE) {
+    fun <DELEGATE : ItemViewDelegate<ITEM, VB>> addItemViewDelegate(
+        viewType: Int,
+        delegate: DELEGATE
+    ) {
         itemDelegates[viewType] = delegate
     }
 
-    fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegate(delegate: DELEGATE) {
+    fun addItemViewDelegate(delegate: ItemViewDelegate<ITEM, VB>) {
         itemDelegates[itemDelegates.size] = delegate
     }
 
-    fun <DELEGATE : ItemViewDelegate<ITEM>> addItemViewDelegates(vararg delegates: DELEGATE) {
+    fun addItemViewDelegates(vararg delegates: ItemViewDelegate<ITEM, VB>) {
         delegates.forEach {
             addItemViewDelegate(it)
         }
     }
 
-    fun addItemViewDelegates(vararg delegates: Pair<Int, ItemViewDelegate<ITEM>>) =
+    fun addItemViewDelegates(vararg delegates: Pair<Int, ItemViewDelegate<ITEM, VB>>) =
         delegates.forEach {
             addItemViewDelegate(it.first, it.second)
         }
 
-    fun addHeaderView(header: View) {
+    fun addHeaderView(header: ViewBinding) {
         synchronized(lock) {
             if (headerItems == null) {
                 headerItems = SparseArray()
@@ -90,7 +94,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
         }
     }
 
-    fun addFooterView(footer: View) =
+    fun addFooterView(footer: ViewBinding) =
         synchronized(lock) {
             if (footerItems == null) {
                 footerItems = SparseArray()
@@ -103,7 +107,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
         }
 
 
-    fun removeHeaderView(header: View) =
+    fun removeHeaderView(header: ViewBinding) =
         synchronized(lock) {
             headerItems?.let {
                 val index = it.indexOfValue(header)
@@ -114,7 +118,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
             }
         }
 
-    fun removeFooterView(footer: View) =
+    fun removeFooterView(footer: ViewBinding) =
         synchronized(lock) {
             footerItems?.let {
                 val index = it.indexOfValue(footer)
@@ -309,16 +313,12 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
         }
 
         else -> {
-            val holder = ItemViewHolder(
-                inflater.inflate(
-                    itemDelegates.getValue(viewType).layoutId,
-                    parent,
-                    false
-                )
-            )
+            //使用反射得到viewBinding的class
+            val holder = ItemViewHolder(getViewBinding(parent, viewType))
 
+            @Suppress("UNCHECKED_CAST")
             itemDelegates.getValue(viewType)
-                .registerListener(holder)
+                .registerListener(holder, (holder.binding as VB))
 
             if (itemClickListener != null) {
                 holder.itemView.setOnClickListener {
@@ -340,8 +340,18 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
         }
     }
 
+    private fun getViewBinding(parent: ViewGroup, viewType: Int): ViewBinding {
+        //使用反射得到viewBinding的class
+        val type = javaClass.genericSuperclass as ParameterizedType
+        val aClass = type.actualTypeArguments[0] as Class<*>
+        val method = aClass.getDeclaredMethod("inflate", LayoutInflater::class.java)
+        @Suppress("UNCHECKED_CAST")
+        return method.invoke(null, inflater, parent, false) as VB
+    }
+
     final override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {}
 
+    @Suppress("UNCHECKED_CAST")
     final override fun onBindViewHolder(
         holder: ItemViewHolder,
         position: Int,
@@ -350,7 +360,7 @@ abstract class CommonRecyclerAdapter<ITEM>(protected val context: Context) :
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
             getItem(holder.layoutPosition - getHeaderCount())?.let {
                 itemDelegates.getValue(getItemViewType(holder.layoutPosition))
-                    .convert(holder, it, payloads)
+                    .convert(holder, (holder.binding as VB), it, payloads)
             }
         }
     }

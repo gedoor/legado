@@ -16,21 +16,23 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.RssSource
+import io.legado.app.databinding.DialogRecyclerViewBinding
+import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.dialog_recycler_view.*
-import kotlinx.android.synthetic.main.item_source_import.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 /**
  * 导入rss源弹出窗口
  */
 class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+
+    private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
     val viewModel: ImportRssSourceViewModel
         get() = getViewModelOfActivity(ImportRssSourceViewModel::class.java)
@@ -53,18 +55,18 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tool_bar.setTitle(R.string.import_rss_source)
+        binding.toolBar.setTitle(R.string.import_rss_source)
         initMenu()
         adapter = SourcesAdapter(requireContext())
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
         adapter.setItems(viewModel.allSources)
-        tv_cancel.visible()
-        tv_cancel.onClick {
+        binding.tvCancel.visible()
+        binding.tvCancel.onClick {
             dismiss()
         }
-        tv_ok.visible()
-        tv_ok.onClick {
+        binding.tvOk.visible()
+        binding.tvOk.onClick {
             viewModel.importSelect {
                 dismiss()
             }
@@ -72,9 +74,10 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
     }
 
     private fun initMenu() {
-        tool_bar.setOnMenuItemClickListener(this)
-        tool_bar.inflateMenu(R.menu.import_source)
-        tool_bar.menu.findItem(R.id.menu_Keep_original_name)?.isChecked = AppConfig.importKeepName
+        binding.toolBar.setOnMenuItemClickListener(this)
+        binding.toolBar.inflateMenu(R.menu.import_source)
+        binding.toolBar.menu.findItem(R.id.menu_Keep_original_name)?.isChecked =
+            AppConfig.importKeepName
     }
 
     @SuppressLint("InflateParams")
@@ -85,7 +88,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
                     var editText: AutoCompleteTextView? = null
                     customView {
                         layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                            editText = edit_view
+                            editText = findViewById(R.id.edit_view)
                         }
                     }
                     okButton {
@@ -127,13 +130,18 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
     }
 
     inner class SourcesAdapter(context: Context) :
-        SimpleRecyclerAdapter<RssSource>(context, R.layout.item_source_import) {
+        SimpleRecyclerAdapter<RssSource, ItemSourceImportBinding>(context) {
 
-        override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {
-            holder.itemView.apply {
-                cb_source_name.isChecked = viewModel.selectStatus[holder.layoutPosition]
-                cb_source_name.text = item.sourceName
-                tv_source_state.text = if (viewModel.checkSources[holder.layoutPosition] != null) {
+        override fun convert(
+            holder: ItemViewHolder,
+            binding: ItemSourceImportBinding,
+            item: RssSource,
+            payloads: MutableList<Any>
+        ) {
+            binding.apply {
+                cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
+                cbSourceName.text = item.sourceName
+                tvSourceState.text = if (viewModel.checkSources[holder.layoutPosition] != null) {
                     "已存在"
                 } else {
                     "新订阅源"
@@ -141,9 +149,9 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.apply {
-                cb_source_name.setOnCheckedChangeListener { buttonView, isChecked ->
+        override fun registerListener(holder: ItemViewHolder, binding: ItemSourceImportBinding) {
+            binding.apply {
+                cbSourceName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         viewModel.selectStatus[holder.layoutPosition] = isChecked
                     }

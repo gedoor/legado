@@ -2,31 +2,33 @@ package io.legado.app.ui.book.search
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_bookshelf_list.view.iv_cover
-import kotlinx.android.synthetic.main.item_bookshelf_list.view.tv_name
-import kotlinx.android.synthetic.main.item_search.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_search) {
+    SimpleRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
 
-    override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemSearchBinding,
+        item: SearchBook,
+        payloads: MutableList<Any>
+    ) {
         val bundle = payloads.getOrNull(0) as? Bundle
         if (bundle == null) {
-            bind(holder.itemView, item)
+            bind(binding, item)
         } else {
-            bindChange(holder.itemView, item, bundle)
+            bindChange(binding, item, bundle)
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
         holder.itemView.apply {
             onClick {
                 getItem(holder.layoutPosition)?.let {
@@ -36,45 +38,45 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun bind(itemView: View, searchBook: SearchBook) {
-        with(itemView) {
-            tv_name.text = searchBook.name
-            tv_author.text = context.getString(R.string.author_show, searchBook.author)
-            bv_originCount.setBadgeCount(searchBook.origins.size)
-            upLasted(itemView, searchBook.latestChapterTitle)
+    private fun bind(binding: ItemSearchBinding, searchBook: SearchBook) {
+        with(binding) {
+            tvName.text = searchBook.name
+            tvAuthor.text = context.getString(R.string.author_show, searchBook.author)
+            bvOriginCount.setBadgeCount(searchBook.origins.size)
+            upLasted(binding, searchBook.latestChapterTitle)
             if (searchBook.intro.isNullOrEmpty()) {
-                tv_introduce.text =
+                tvIntroduce.text =
                     context.getString(R.string.intro_show_null)
             } else {
-                tv_introduce.text =
+                tvIntroduce.text =
                     context.getString(R.string.intro_show, searchBook.intro)
             }
-            upKind(itemView, searchBook.getKindList())
-            iv_cover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
+            upKind(binding, searchBook.getKindList())
+            ivCover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
 
         }
     }
 
-    private fun bindChange(itemView: View, searchBook: SearchBook, bundle: Bundle) {
-        with(itemView) {
+    private fun bindChange(binding: ItemSearchBinding, searchBook: SearchBook, bundle: Bundle) {
+        with(binding) {
             bundle.keySet().map {
                 when (it) {
-                    "name" -> tv_name.text = searchBook.name
-                    "author" -> tv_author.text =
+                    "name" -> tvName.text = searchBook.name
+                    "author" -> tvAuthor.text =
                         context.getString(R.string.author_show, searchBook.author)
-                    "origins" -> bv_originCount.setBadgeCount(searchBook.origins.size)
-                    "last" -> upLasted(itemView, searchBook.latestChapterTitle)
+                    "origins" -> bvOriginCount.setBadgeCount(searchBook.origins.size)
+                    "last" -> upLasted(binding, searchBook.latestChapterTitle)
                     "intro" -> {
                         if (searchBook.intro.isNullOrEmpty()) {
-                            tv_introduce.text =
+                            tvIntroduce.text =
                                 context.getString(R.string.intro_show_null)
                         } else {
-                            tv_introduce.text =
+                            tvIntroduce.text =
                                 context.getString(R.string.intro_show, searchBook.intro)
                         }
                     }
-                    "kind" -> upKind(itemView, searchBook.getKindList())
-                    "cover" -> iv_cover.load(
+                    "kind" -> upKind(binding, searchBook.getKindList())
+                    "cover" -> ivCover.load(
                         searchBook.coverUrl,
                         searchBook.name,
                         searchBook.author
@@ -84,27 +86,24 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun upLasted(itemView: View, latestChapterTitle: String?) {
-        with(itemView) {
+    private fun upLasted(binding: ItemSearchBinding, latestChapterTitle: String?) {
+        with(binding) {
             if (latestChapterTitle.isNullOrEmpty()) {
-                tv_lasted.gone()
+                tvLasted.gone()
             } else {
-                tv_lasted.text =
-                    context.getString(
-                        R.string.lasted_show,
-                        latestChapterTitle
-                    )
-                tv_lasted.visible()
+                tvLasted.text =
+                    context.getString(R.string.lasted_show, latestChapterTitle)
+                tvLasted.visible()
             }
         }
     }
 
-    private fun upKind(itemView: View, kinds: List<String>) = with(itemView) {
+    private fun upKind(binding: ItemSearchBinding, kinds: List<String>) = with(binding) {
         if (kinds.isEmpty()) {
-            ll_kind.gone()
+            llKind.gone()
         } else {
-            ll_kind.visible()
-            ll_kind.setLabels(kinds)
+            llKind.visible()
+            llKind.setLabels(kinds)
         }
     }
 

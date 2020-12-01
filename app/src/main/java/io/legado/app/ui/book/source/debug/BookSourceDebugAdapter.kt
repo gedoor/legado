@@ -5,29 +5,35 @@ import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import kotlinx.android.synthetic.main.item_log.view.*
+import io.legado.app.databinding.ItemLogBinding
 
 class BookSourceDebugAdapter(context: Context) :
-    SimpleRecyclerAdapter<String>(context, R.layout.item_log) {
-    override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-        holder.itemView.apply {
-            if (text_view.getTag(R.id.tag1) == null) {
+    SimpleRecyclerAdapter<String, ItemLogBinding>(context) {
+
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemLogBinding,
+        item: String,
+        payloads: MutableList<Any>
+    ) {
+        binding.apply {
+            if (textView.getTag(R.id.tag1) == null) {
                 val listener = object : View.OnAttachStateChangeListener {
                     override fun onViewAttachedToWindow(v: View) {
-                        text_view.isCursorVisible = false
-                        text_view.isCursorVisible = true
+                        textView.isCursorVisible = false
+                        textView.isCursorVisible = true
                     }
 
                     override fun onViewDetachedFromWindow(v: View) {}
                 }
-                text_view.addOnAttachStateChangeListener(listener)
-                text_view.setTag(R.id.tag1, listener)
+                textView.addOnAttachStateChangeListener(listener)
+                textView.setTag(R.id.tag1, listener)
             }
-            text_view.text = item
+            textView.text = item
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemLogBinding) {
         //nothing
     }
 }

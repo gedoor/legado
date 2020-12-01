@@ -19,10 +19,6 @@ class ImportReplaceRuleActivity :
     override val viewModel: ImportReplaceRuleViewModel
         get() = getViewModel(ImportReplaceRuleViewModel::class.java)
 
-    override fun getViewBinding(): ActivityTranslucenceBinding {
-        return ActivityTranslucenceBinding.inflate(layoutInflater)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()
         viewModel.errorLiveData.observe(this, {

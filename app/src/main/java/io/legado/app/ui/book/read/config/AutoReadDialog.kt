@@ -6,6 +6,7 @@ import android.view.*
 import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.databinding.DialogAutoReadBinding
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -13,11 +14,13 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.ColorUtils
-import kotlinx.android.synthetic.main.dialog_auto_read.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class AutoReadDialog : BaseDialogFragment() {
     var callBack: CallBack? = null
+
+    private val binding by viewBinding(DialogAutoReadBinding::bind)
 
     override fun onStart() {
         super.onStart()
@@ -52,17 +55,17 @@ class AutoReadDialog : BaseDialogFragment() {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
-        root_view.setBackgroundColor(bg)
-        tv_read_speed_title.setTextColor(textColor)
-        tv_read_speed.setTextColor(textColor)
-        iv_catalog.setColorFilter(textColor)
-        tv_catalog.setTextColor(textColor)
-        iv_main_menu.setColorFilter(textColor)
-        tv_main_menu.setTextColor(textColor)
-        iv_auto_page_stop.setColorFilter(textColor)
-        tv_auto_page_stop.setTextColor(textColor)
-        iv_setting.setColorFilter(textColor)
-        tv_setting.setTextColor(textColor)
+        binding.root.setBackgroundColor(bg)
+        binding.tvReadSpeedTitle.setTextColor(textColor)
+        binding.tvReadSpeed.setTextColor(textColor)
+        binding.ivCatalog.setColorFilter(textColor)
+        binding.tvCatalog.setTextColor(textColor)
+        binding.ivMainMenu.setColorFilter(textColor)
+        binding.tvMainMenu.setTextColor(textColor)
+        binding.ivAutoPageStop.setColorFilter(textColor)
+        binding.tvAutoPageStop.setTextColor(textColor)
+        binding.ivSetting.setColorFilter(textColor)
+        binding.tvSetting.setTextColor(textColor)
         initOnChange()
         initData()
         initEvent()
@@ -70,34 +73,34 @@ class AutoReadDialog : BaseDialogFragment() {
 
     private fun initData() {
         val speed = if (ReadBookConfig.autoReadSpeed < 10) 10 else ReadBookConfig.autoReadSpeed
-        tv_read_speed.text = String.format("%ds", speed)
-        seek_auto_read.progress = speed
+        binding.tvReadSpeed.text = String.format("%ds", speed)
+        binding.seekAutoRead.progress = speed
     }
 
     private fun initOnChange() {
-        seek_auto_read.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.seekAutoRead.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 val speed = if (progress < 10) 10 else progress
-                tv_read_speed.text = String.format("%ds", speed)
+                binding.tvReadSpeed.text = String.format("%ds", speed)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 ReadBookConfig.autoReadSpeed =
-                    if (seek_auto_read.progress < 10) 10 else seek_auto_read.progress
+                    if (binding.seekAutoRead.progress < 10) 10 else binding.seekAutoRead.progress
                 upTtsSpeechRate()
             }
         })
     }
 
     private fun initEvent() {
-        ll_main_menu.onClick { callBack?.showMenuBar(); dismiss() }
-        ll_setting.onClick {
+        binding.llMainMenu.onClick { callBack?.showMenuBar(); dismiss() }
+        binding.llSetting.onClick {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
-        ll_catalog.onClick { callBack?.openChapterList() }
-        ll_auto_page_stop.onClick {
+        binding.llCatalog.onClick { callBack?.openChapterList() }
+        binding.llAutoPageStop.onClick {
             callBack?.autoPageStop()
             dismiss()
         }

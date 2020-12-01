@@ -15,6 +15,7 @@ import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ThemeConfig
@@ -23,9 +24,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.ui.widget.prefs.IconListPreference
-import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 
 
 @Suppress("SameParameterValue")
@@ -175,14 +174,10 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     @SuppressLint("InflateParams")
     private fun saveThemeAlert(key: String) {
         alert(R.string.theme_name) {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view
-                }
-            }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            customView = alertBinding.root
             okButton {
-                editText?.text?.toString()?.let { themeName ->
+                alertBinding.editView.text?.toString()?.let { themeName ->
                     when (key) {
                         "saveDayTheme" -> {
                             ThemeConfig.saveDayTheme(requireContext(), themeName)

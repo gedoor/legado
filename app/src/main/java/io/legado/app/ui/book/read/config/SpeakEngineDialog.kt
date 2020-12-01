@@ -17,28 +17,29 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.HttpTTS
+import io.legado.app.databinding.DialogHttpTtsEditBinding
+import io.legado.app.databinding.DialogRecyclerViewBinding
+import io.legado.app.databinding.ItemHttpTtsBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_http_tts_edit.view.*
-import kotlinx.android.synthetic.main.dialog_recycler_view.*
-import kotlinx.android.synthetic.main.item_http_tts.view.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+    private val binding by viewBinding(DialogRecyclerViewBinding::bind)
+    lateinit var adapter: Adapter
+    lateinit var viewModel: SpeakEngineViewModel
+    private var httpTTSData: LiveData<List<HttpTTS>>? = null
+    var engineId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
 
     override fun onStart() {
         super.onStart()
         val dm = requireActivity().getSize()
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
-
-    lateinit var adapter: Adapter
-    lateinit var viewModel: SpeakEngineViewModel
-    private var httpTTSData: LiveData<List<HttpTTS>>? = null
-    var engineId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,33 +56,33 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         initData()
     }
 
-    private fun initView() {
-        tool_bar.setBackgroundColor(primaryColor)
-        tool_bar.setTitle(R.string.speak_engine)
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
+    private fun initView() = with(binding) {
+        toolBar.setBackgroundColor(primaryColor)
+        toolBar.setTitle(R.string.speak_engine)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = Adapter(requireContext())
-        recycler_view.adapter = adapter
-        tv_footer_left.setText(R.string.local_tts)
-        tv_footer_left.visible()
-        tv_footer_left.onClick {
+        recyclerView.adapter = adapter
+        tvFooterLeft.setText(R.string.local_tts)
+        tvFooterLeft.visible()
+        tvFooterLeft.onClick {
             removePref(PreferKey.speakEngine)
             dismiss()
         }
-        tv_ok.visible()
-        tv_ok.onClick {
+        tvOk.visible()
+        tvOk.onClick {
             putPrefLong(PreferKey.speakEngine, engineId)
             dismiss()
         }
-        tv_cancel.visible()
-        tv_cancel.onClick {
+        tvCancel.visible()
+        tvCancel.onClick {
             dismiss()
         }
     }
 
-    private fun initMenu() {
-        tool_bar.inflateMenu(R.menu.speak_engine)
-        tool_bar.menu.applyTint(requireContext())
-        tool_bar.setOnMenuItemClickListener(this)
+    private fun initMenu() = with(binding) {
+        toolBar.inflateMenu(R.menu.speak_engine)
+        toolBar.menu.applyTint(requireContext())
+        toolBar.setOnMenuItemClickListener(this@SpeakEngineDialog)
     }
 
     private fun initData() {
@@ -104,20 +105,16 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun editHttpTTS(v: HttpTTS? = null) {
         val httpTTS = v?.copy() ?: HttpTTS()
         requireContext().alert(titleResource = R.string.speak_engine) {
-            var rootView: View? = null
-            customView {
-                LayoutInflater.from(requireContext())
-                    .inflate(R.layout.dialog_http_tts_edit, null).apply {
-                        rootView = this
-                        tv_name.setText(httpTTS.name)
-                        tv_url.setText(httpTTS.url)
-                    }
-            }
+            val alertBinding =
+                DialogHttpTtsEditBinding.inflate(LayoutInflater.from(requireContext()))
+            alertBinding.tvName.setText(httpTTS.name)
+            alertBinding.tvUrl.setText(httpTTS.url)
+            customView = alertBinding.root
             cancelButton()
             okButton {
-                rootView?.apply {
-                    httpTTS.name = tv_name.text.toString()
-                    httpTTS.url = tv_url.text.toString()
+                alertBinding.apply {
+                    httpTTS.name = tvName.text.toString()
+                    httpTTS.url = tvUrl.text.toString()
                     App.db.httpTTSDao().insert(httpTTS)
                     ReadAloud.upReadAloudClass()
                 }
@@ -132,27 +129,32 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     inner class Adapter(context: Context) :
-        SimpleRecyclerAdapter<HttpTTS>(context, R.layout.item_http_tts) {
+        SimpleRecyclerAdapter<HttpTTS, ItemHttpTtsBinding>(context) {
 
-        override fun convert(holder: ItemViewHolder, item: HttpTTS, payloads: MutableList<Any>) {
-            holder.itemView.apply {
-                cb_name.text = item.name
-                cb_name.isChecked = item.id == engineId
+        override fun convert(
+            holder: ItemViewHolder,
+            binding: ItemHttpTtsBinding,
+            item: HttpTTS,
+            payloads: MutableList<Any>
+        ) {
+            binding.apply {
+                cbName.text = item.name
+                cbName.isChecked = item.id == engineId
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.apply {
-                cb_name.onClick {
+        override fun registerListener(holder: ItemViewHolder, binding: ItemHttpTtsBinding) {
+            binding.apply {
+                cbName.onClick {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
                         engineId = httpTTS.id
                         notifyItemRangeChanged(0, getActualItemCount())
                     }
                 }
-                iv_edit.onClick {
+                ivEdit.onClick {
                     editHttpTTS(getItem(holder.layoutPosition))
                 }
-                iv_menu_delete.onClick {
+                ivMenuDelete.onClick {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
                         App.db.httpTTSDao().delete(httpTTS)
                     }

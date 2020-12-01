@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -14,13 +13,14 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.entities.Bookmark
+import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.FragmentBookmarkBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.requestInputMethod
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.fragment_bookmark.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
 class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_bookmark),
@@ -28,7 +28,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     ChapterListViewModel.BookmarkCallBack {
     override val viewModel: ChapterListViewModel
         get() = getViewModelOfActivity(ChapterListViewModel::class.java)
-
+    private val binding by viewBinding(FragmentBookmarkBinding::bind)
     private lateinit var adapter: BookmarkAdapter
     private var bookmarkLiveData: LiveData<PagedList<Bookmark>>? = null
 
@@ -39,11 +39,11 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(recycler_view)
+        ATH.applyEdgeEffectColor(binding.recyclerView)
         adapter = BookmarkAdapter(this)
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
-        recycler_view.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
+        binding.recyclerView.adapter = adapter
     }
 
     private fun initData() {
@@ -85,18 +85,16 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     override fun onLongClick(bookmark: Bookmark) {
         viewModel.book?.let { book ->
             requireContext().alert(R.string.bookmark) {
-                var editText: EditText? = null
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
                 message = book.name + " • " + bookmark.chapterName
                 customView {
-                    layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                        editText = edit_view.apply {
-                            setHint(R.string.note_content)
-                            setText(bookmark.content)
-                        }
-                    }
+                    alertBinding.apply {
+                        editView.setHint(R.string.note_content)
+                        editView.setText(bookmark.content)
+                    }.root
                 }
                 yesButton {
-                    editText?.text?.toString()?.let { editContent ->
+                    alertBinding.editView.text?.toString()?.let { editContent ->
                         bookmark.content = editContent
                         App.db.bookmarkDao().update(bookmark)
                     }

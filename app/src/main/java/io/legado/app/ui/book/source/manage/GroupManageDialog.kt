@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,19 +15,21 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.AppPattern
+import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.DialogRecyclerViewBinding
+import io.legado.app.databinding.ItemGroupManageBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
-import kotlinx.android.synthetic.main.dialog_recycler_view.*
-import kotlinx.android.synthetic.main.item_group_manage.view.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: BookSourceViewModel
     private lateinit var adapter: GroupAdapter
+    private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
     override fun onStart() {
         super.onStart()
@@ -48,15 +49,15 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(backgroundColor)
-        tool_bar.setBackgroundColor(primaryColor)
-        tool_bar.title = getString(R.string.group_manage)
-        tool_bar.inflateMenu(R.menu.group_manage)
-        tool_bar.menu.applyTint(requireContext())
-        tool_bar.setOnMenuItemClickListener(this)
+        binding.toolBar.setBackgroundColor(primaryColor)
+        binding.toolBar.title = getString(R.string.group_manage)
+        binding.toolBar.inflateMenu(R.menu.group_manage)
+        binding.toolBar.menu.applyTint(requireContext())
+        binding.toolBar.setOnMenuItemClickListener(this)
         adapter = GroupAdapter(requireContext())
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        recycler_view.addItemDecoration(VerticalDivider(requireContext()))
-        recycler_view.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
+        binding.recyclerView.adapter = adapter
         initData()
     }
 
@@ -80,16 +81,11 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     @SuppressLint("InflateParams")
     private fun addGroup() {
         alert(title = getString(R.string.add_group)) {
-            var editText: EditText? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view.apply {
-                        setHint(R.string.group_name)
-                    }
-                }
-            }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            alertBinding.editView.setHint(R.string.group_name)
+            customView = alertBinding.root
             yesButton {
-                editText?.text?.toString()?.let {
+                alertBinding.editView.text?.toString()?.let {
                     if (it.isNotBlank()) {
                         viewModel.addGroup(it)
                     }
@@ -102,40 +98,39 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     @SuppressLint("InflateParams")
     private fun editGroup(group: String) {
         alert(title = getString(R.string.group_edit)) {
-            var editText: EditText? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = edit_view.apply {
-                        setHint(R.string.group_name)
-                        setText(group)
-                    }
-                }
-            }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            alertBinding.editView.setHint(R.string.group_name)
+            customView = alertBinding.root
             yesButton {
-                viewModel.upGroup(group, editText?.text?.toString())
+                viewModel.upGroup(group, alertBinding.editView.text?.toString())
             }
             noButton()
         }.show().requestInputMethod()
     }
 
     private inner class GroupAdapter(context: Context) :
-        SimpleRecyclerAdapter<String>(context, R.layout.item_group_manage) {
+        SimpleRecyclerAdapter<String, ItemGroupManageBinding>(context) {
 
-        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-            with(holder.itemView) {
-                setBackgroundColor(context.backgroundColor)
-                tv_group.text = item
+        override fun convert(
+            holder: ItemViewHolder,
+            binding: ItemGroupManageBinding,
+            item: String,
+            payloads: MutableList<Any>
+        ) {
+            with(binding) {
+                root.setBackgroundColor(context.backgroundColor)
+                tvGroup.text = item
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.apply {
-                tv_edit.onClick {
+        override fun registerListener(holder: ItemViewHolder, binding: ItemGroupManageBinding) {
+            binding.apply {
+                tvEdit.onClick {
                     getItem(holder.layoutPosition)?.let {
                         editGroup(it)
                     }
                 }
-                tv_del.onClick {
+                tvDel.onClick {
                     getItem(holder.layoutPosition)?.let { viewModel.delGroup(it) }
                 }
             }

@@ -12,17 +12,17 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
+import io.legado.app.databinding.ItemBookSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_book_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<BookSource>(context, R.layout.item_book_source),
+    SimpleRecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
     Callback {
 
     private val selected = linkedSetOf<BookSource>()
@@ -57,41 +57,46 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         return selection.sortedBy { it.customOrder }
     }
 
-    override fun convert(holder: ItemViewHolder, item: BookSource, payloads: MutableList<Any>) {
-        with(holder.itemView) {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemBookSourceBinding,
+        item: BookSource,
+        payloads: MutableList<Any>
+    ) {
+        with(binding) {
             val payload = payloads.getOrNull(0) as? Bundle
             if (payload == null) {
-                this.setBackgroundColor(context.backgroundColor)
+                root.setBackgroundColor(context.backgroundColor)
                 if (item.bookSourceGroup.isNullOrEmpty()) {
-                    cb_book_source.text = item.bookSourceName
+                    cbBookSource.text = item.bookSourceName
                 } else {
-                    cb_book_source.text =
+                    cbBookSource.text =
                         String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
                 }
-                swt_enabled.isChecked = item.enabled
-                cb_book_source.isChecked = selected.contains(item)
-                upShowExplore(iv_explore, item)
+                swtEnabled.isChecked = item.enabled
+                cbBookSource.isChecked = selected.contains(item)
+                upShowExplore(ivExplore, item)
             } else {
                 payload.keySet().map {
                     when (it) {
-                        "selected" -> cb_book_source.isChecked = selected.contains(item)
+                        "selected" -> cbBookSource.isChecked = selected.contains(item)
                         "name", "group" -> if (item.bookSourceGroup.isNullOrEmpty()) {
-                            cb_book_source.text = item.bookSourceName
+                            cbBookSource.text = item.bookSourceName
                         } else {
-                            cb_book_source.text =
+                            cbBookSource.text =
                                 String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
                         }
-                        "enabled" -> swt_enabled.isChecked = payload.getBoolean(it)
-                        "showExplore" -> upShowExplore(iv_explore, item)
+                        "enabled" -> swtEnabled.isChecked = payload.getBoolean(it)
+                        "showExplore" -> upShowExplore(ivExplore, item)
                     }
                 }
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.apply {
-            swt_enabled.setOnCheckedChangeListener { view, checked ->
+    override fun registerListener(holder: ItemViewHolder, binding: ItemBookSourceBinding) {
+        binding.apply {
+            swtEnabled.setOnCheckedChangeListener { view, checked ->
                 getItem(holder.layoutPosition)?.let {
                     if (view.isPressed) {
                         it.enabled = checked
@@ -99,7 +104,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            cb_book_source.setOnCheckedChangeListener { view, checked ->
+            cbBookSource.setOnCheckedChangeListener { view, checked ->
                 getItem(holder.layoutPosition)?.let {
                     if (view.isPressed) {
                         if (checked) {
@@ -111,13 +116,13 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            iv_edit.onClick {
+            ivEdit.onClick {
                 getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
-            iv_menu_more.onClick {
-                showMenu(iv_menu_more, holder.layoutPosition)
+            ivMenuMore.onClick {
+                showMenu(ivMenuMore, holder.layoutPosition)
             }
         }
     }

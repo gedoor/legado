@@ -1,46 +1,49 @@
 package io.legado.app.ui.book.toc
 
 import android.content.Context
-import android.view.View
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_bookmark.view.tv_chapter_name
-import kotlinx.android.synthetic.main.item_chapter_list.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
-    SimpleRecyclerAdapter<BookChapter>(context, R.layout.item_chapter_list) {
+    SimpleRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
 
-    override fun convert(holder: ItemViewHolder, item: BookChapter, payloads: MutableList<Any>) {
-        with(holder.itemView) {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemChapterListBinding,
+        item: BookChapter,
+        payloads: MutableList<Any>
+    ) {
+        with(binding) {
             val isDur = callback.durChapterIndex() == item.index
             val cached = callback.isLocalBook || cacheFileNames.contains(item.getFileName())
             if (payloads.isEmpty()) {
                 if (isDur) {
-                    tv_chapter_name.setTextColor(context.accentColor)
+                    tvChapterName.setTextColor(context.accentColor)
                 } else {
-                    tv_chapter_name.setTextColor(context.getCompatColor(R.color.primaryText))
+                    tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                tv_chapter_name.text = item.title
+                tvChapterName.text = item.title
                 if (!item.tag.isNullOrEmpty()) {
-                    tv_tag.text = item.tag
-                    tv_tag.visible()
+                    tvTag.text = item.tag
+                    tvTag.visible()
                 }
-                upHasCache(this, isDur, cached)
+                upHasCache(binding, isDur, cached)
             } else {
-                upHasCache(this, isDur, cached)
+                upHasCache(binding, isDur, cached)
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemChapterListBinding) {
         holder.itemView.onClick {
             getItem(holder.layoutPosition)?.let {
                 callback.openChapter(it)
@@ -48,15 +51,16 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
     }
 
-    private fun upHasCache(itemView: View, isDur: Boolean, cached: Boolean) = itemView.apply {
-        tv_chapter_name.paint.isFakeBoldText = cached
-        iv_checked.setImageResource(R.drawable.ic_outline_cloud_24)
-        iv_checked.visible(!cached)
-        if (isDur) {
-            iv_checked.setImageResource(R.drawable.ic_check)
-            iv_checked.visible()
+    private fun upHasCache(binding: ItemChapterListBinding, isDur: Boolean, cached: Boolean) =
+        binding.apply {
+            tvChapterName.paint.isFakeBoldText = cached
+            ivChecked.setImageResource(R.drawable.ic_outline_cloud_24)
+            ivChecked.visible(!cached)
+            if (isDur) {
+                ivChecked.setImageResource(R.drawable.ic_check)
+                ivChecked.visible()
+            }
         }
-    }
 
     interface Callback {
         val isLocalBook: Boolean

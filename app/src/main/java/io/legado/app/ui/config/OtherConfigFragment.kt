@@ -18,6 +18,7 @@ import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.permission.Permissions
@@ -30,9 +31,7 @@ import io.legado.app.service.WebService
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
-import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 import java.io.File
 
 
@@ -155,15 +154,11 @@ class OtherConfigFragment : BasePreferenceFragment(),
     @SuppressLint("InflateParams")
     private fun showUserAgentDialog() {
         alert("UserAgent") {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    edit_view.setText(AppConfig.userAgent)
-                    editText = edit_view
-                }
-            }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            alertBinding.editView.setText(AppConfig.userAgent)
+            customView = alertBinding.root
             okButton {
-                val userAgent = editText?.text?.toString()
+                val userAgent = alertBinding.editView.text?.toString()
                 if (userAgent.isNullOrBlank()) {
                     removePref(PreferKey.userAgent)
                 } else {
