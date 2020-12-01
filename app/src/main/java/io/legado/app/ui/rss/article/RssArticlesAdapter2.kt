@@ -9,19 +9,19 @@ import com.bumptech.glide.request.target.Target
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.RssArticle
-import io.legado.app.databinding.ItemRssArticleBinding
+import io.legado.app.databinding.ItemRssArticle2Binding
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.textColorResource
 
-class RssArticlesAdapter(context: Context, callBack: CallBack) :
-    BaseRssArticlesAdapter<ItemRssArticleBinding>(context, callBack) {
+class RssArticlesAdapter2(context: Context, callBack: CallBack) :
+    BaseRssArticlesAdapter<ItemRssArticle2Binding>(context, callBack) {
 
     override fun convert(
         holder: ItemViewHolder,
-        binding: ItemRssArticleBinding,
+        binding: ItemRssArticle2Binding,
         item: RssArticle,
         payloads: MutableList<Any>
     ) {
@@ -69,7 +69,7 @@ class RssArticlesAdapter(context: Context, callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemRssArticleBinding) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemRssArticle2Binding) {
         holder.itemView.onClick {
             getItem(holder.layoutPosition)?.let {
                 callBack.readRss(it)

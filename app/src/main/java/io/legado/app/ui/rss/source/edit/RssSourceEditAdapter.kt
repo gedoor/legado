@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import kotlinx.android.synthetic.main.item_source_edit.view.*
+import io.legado.app.databinding.ItemSourceEditBinding
 
 class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHolder>() {
 
@@ -18,11 +18,9 @@ class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHol
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(
-            LayoutInflater.from(
-                parent.context
-            ).inflate(R.layout.item_source_edit, parent, false)
-        )
+        val binding = ItemSourceEditBinding
+            .inflate(LayoutInflater.from(parent.context), parent, false)
+        return MyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -33,8 +31,9 @@ class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHol
         return editEntities.size
     }
 
-    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(editEntity: EditEntity) = with(itemView) {
+    class MyViewHolder(val binding: ItemSourceEditBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(editEntity: EditEntity) = with(binding) {
             if (editText.getTag(R.id.tag1) == null) {
                 val listener = object : View.OnAttachStateChangeListener {
                     override fun onViewAttachedToWindow(v: View) {
@@ -57,7 +56,7 @@ class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHol
                 }
             }
             editText.setText(editEntity.value)
-            textInputLayout.hint = context.getString(editEntity.hint)
+            textInputLayout.hint = itemView.context.getString(editEntity.hint)
             val textWatcher = object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence,

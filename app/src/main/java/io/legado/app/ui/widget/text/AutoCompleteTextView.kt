@@ -8,12 +8,13 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import io.legado.app.R
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_1line_text_and_del.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 @Suppress("unused")
@@ -56,9 +57,11 @@ class AutoCompleteTextView @JvmOverloads constructor(
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = convertView ?: LayoutInflater.from(context)
                 .inflate(R.layout.item_1line_text_and_del, parent, false)
-            view.text_view.text = getItem(position)
-            if (delCallBack != null) view.iv_delete.visible() else view.iv_delete.gone()
-            view.iv_delete.onClick {
+            val textView = view.findViewById<TextView>(R.id.text_view)
+            textView.text = getItem(position)
+            val ivDelete = view.findViewById<ImageView>(R.id.iv_delete)
+            if (delCallBack != null) ivDelete.visible() else ivDelete.gone()
+            ivDelete.onClick {
                 getItem(position)?.let {
                     remove(it)
                     delCallBack?.invoke(it)

@@ -2,9 +2,9 @@ package io.legado.app.ui.filepicker.adapter
 
 
 import android.content.Context
-import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.databinding.ItemFileFilepickerBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.getPrimaryDisabledTextColor
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -12,14 +12,13 @@ import io.legado.app.ui.filepicker.entity.FileItem
 import io.legado.app.ui.filepicker.utils.ConvertUtils
 import io.legado.app.ui.filepicker.utils.FilePickerIcon
 import io.legado.app.utils.FileUtils
-import kotlinx.android.synthetic.main.item_path_filepicker.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.io.File
 import java.util.*
 
 
 class FileAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<FileItem>(context, R.layout.item_file_filepicker) {
+    SimpleRecyclerAdapter<FileItem, ItemFileFilepickerBinding>(context) {
     private var rootPath: String? = null
     var currentPath: String? = null
         private set
@@ -86,29 +85,34 @@ class FileAdapter(context: Context, val callBack: CallBack) :
 
     }
 
-    override fun convert(holder: ItemViewHolder, item: FileItem, payloads: MutableList<Any>) {
-        holder.itemView.apply {
-            image_view.setImageDrawable(item.icon)
-            text_view.text = item.name
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemFileFilepickerBinding,
+        item: FileItem,
+        payloads: MutableList<Any>
+    ) {
+        binding.apply {
+            imageView.setImageDrawable(item.icon)
+            textView.text = item.name
             if (item.isDirectory) {
-                text_view.setTextColor(primaryTextColor)
+                textView.setTextColor(primaryTextColor)
             } else {
                 if (callBack.isSelectDir) {
-                    text_view.setTextColor(disabledTextColor)
+                    textView.setTextColor(disabledTextColor)
                 } else {
                     callBack.allowExtensions?.let {
                         if (it.isEmpty() || it.contains(FileUtils.getExtension(item.path))) {
-                            text_view.setTextColor(primaryTextColor)
+                            textView.setTextColor(primaryTextColor)
                         } else {
-                            text_view.setTextColor(disabledTextColor)
+                            textView.setTextColor(disabledTextColor)
                         }
-                    } ?: text_view.setTextColor(primaryTextColor)
+                    } ?: textView.setTextColor(primaryTextColor)
                 }
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemFileFilepickerBinding) {
         holder.itemView.onClick {
             callBack.onFileClick(holder.layoutPosition)
         }

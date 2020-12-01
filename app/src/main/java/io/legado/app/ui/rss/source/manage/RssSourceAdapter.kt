@@ -10,15 +10,15 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssSource
+import io.legado.app.databinding.ItemRssSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import kotlinx.android.synthetic.main.item_rss_source.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss_source),
+    SimpleRecyclerAdapter<RssSource, ItemRssSourceBinding>(context),
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<RssSource>()
@@ -53,40 +53,45 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         return selection.sortedBy { it.customOrder }
     }
 
-    override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {
-        with(holder.itemView) {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemRssSourceBinding,
+        item: RssSource,
+        payloads: MutableList<Any>
+    ) {
+        with(binding) {
             val bundle = payloads.getOrNull(0) as? Bundle
             if (bundle == null) {
-                this.setBackgroundColor(context.backgroundColor)
+                root.setBackgroundColor(context.backgroundColor)
                 if (item.sourceGroup.isNullOrEmpty()) {
-                    cb_source.text = item.sourceName
+                    cbSource.text = item.sourceName
                 } else {
-                    cb_source.text =
+                    cbSource.text =
                         String.format("%s (%s)", item.sourceName, item.sourceGroup)
                 }
-                swt_enabled.isChecked = item.enabled
-                cb_source.isChecked = selected.contains(item)
+                swtEnabled.isChecked = item.enabled
+                cbSource.isChecked = selected.contains(item)
             } else {
                 bundle.keySet().map {
                     when (it) {
                         "name", "group" ->
                             if (item.sourceGroup.isNullOrEmpty()) {
-                                cb_source.text = item.sourceName
+                                cbSource.text = item.sourceName
                             } else {
-                                cb_source.text =
+                                cbSource.text =
                                     String.format("%s (%s)", item.sourceName, item.sourceGroup)
                             }
-                        "selected" -> cb_source.isChecked = selected.contains(item)
-                        "enabled" -> swt_enabled.isChecked = item.enabled
+                        "selected" -> cbSource.isChecked = selected.contains(item)
+                        "enabled" -> cbSource.isChecked = item.enabled
                     }
                 }
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.apply {
-            swt_enabled.setOnCheckedChangeListener { view, checked ->
+    override fun registerListener(holder: ItemViewHolder, binding: ItemRssSourceBinding) {
+        binding.apply {
+            swtEnabled.setOnCheckedChangeListener { view, checked ->
                 getItem(holder.layoutPosition)?.let {
                     if (view.isPressed) {
                         it.enabled = checked
@@ -94,7 +99,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            cb_source.setOnCheckedChangeListener { view, checked ->
+            cbSource.setOnCheckedChangeListener { view, checked ->
                 getItem(holder.layoutPosition)?.let {
                     if (view.isPressed) {
                         if (checked) {
@@ -106,13 +111,13 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            iv_edit.onClick {
+            ivEdit.onClick {
                 getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
-            iv_menu_more.onClick {
-                showMenu(iv_menu_more, holder.layoutPosition)
+            ivMenuMore.onClick {
+                showMenu(ivMenuMore, holder.layoutPosition)
             }
         }
     }

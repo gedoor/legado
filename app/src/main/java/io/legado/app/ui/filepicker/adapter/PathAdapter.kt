@@ -2,18 +2,17 @@ package io.legado.app.ui.filepicker.adapter
 
 import android.content.Context
 import android.os.Environment
-import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.databinding.ItemPathFilepickerBinding
 import io.legado.app.ui.filepicker.utils.ConvertUtils
 import io.legado.app.ui.filepicker.utils.FilePickerIcon
-import kotlinx.android.synthetic.main.item_path_filepicker.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
 
 class PathAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<String>(context, R.layout.item_path_filepicker) {
+    SimpleRecyclerAdapter<String, ItemPathFilepickerBinding>(context) {
     private val paths = LinkedList<String>()
     private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getArrow())
 
@@ -44,14 +43,19 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         setItems(paths)
     }
 
-    override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-        holder.itemView.apply {
-            text_view.text = item
-            image_view.setImageDrawable(arrowIcon)
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemPathFilepickerBinding,
+        item: String,
+        payloads: MutableList<Any>
+    ) {
+        binding.apply {
+            textView.text = item
+            imageView.setImageDrawable(arrowIcon)
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemPathFilepickerBinding) {
         holder.itemView.onClick {
             callBack.onPathClick(holder.layoutPosition)
         }
@@ -65,6 +69,6 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         private const val ROOT_HINT = "SD"
 
         @Suppress("DEPRECATION")
-        val sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
+        val sdCardDirectory: String = Environment.getExternalStorageDirectory().absolutePath
     }
 }

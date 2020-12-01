@@ -3,23 +3,27 @@ package io.legado.app.ui.widget.font
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Build
-import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.databinding.ItemFontBinding
 import io.legado.app.utils.DocItem
 import io.legado.app.utils.RealPathUtil
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_font.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.toast
 import java.io.File
 
 class FontAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<DocItem>(context, R.layout.item_font) {
+    SimpleRecyclerAdapter<DocItem, ItemFontBinding>(context) {
 
-    override fun convert(holder: ItemViewHolder, item: DocItem, payloads: MutableList<Any>) {
-        with(holder.itemView) {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemFontBinding,
+        item: DocItem,
+        payloads: MutableList<Any>
+    ) {
+        with(binding) {
             try {
                 val typeface: Typeface? = if (item.isContentPath) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -34,22 +38,22 @@ class FontAdapter(context: Context, val callBack: CallBack) :
                 } else {
                     Typeface.createFromFile(item.uri.toString())
                 }
-                tv_font.typeface = typeface
+                tvFont.typeface = typeface
             } catch (e: Exception) {
                 e.printStackTrace()
                 context.toast("Read ${item.name} Error: ${e.localizedMessage}")
             }
-            tv_font.text = item.name
-            this.onClick { callBack.onClick(item) }
+            tvFont.text = item.name
+            root.onClick { callBack.onClick(item) }
             if (item.name == callBack.curFilePath.substringAfterLast(File.separator)) {
-                iv_checked.visible()
+                ivChecked.visible()
             } else {
-                iv_checked.invisible()
+                ivChecked.invisible()
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemFontBinding) {
         holder.itemView.onClick {
             getItem(holder.layoutPosition)?.let {
                 callBack.onClick(it)

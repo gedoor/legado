@@ -14,12 +14,13 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.databinding.DialogFileChooserBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.filepicker.adapter.FileAdapter
 import io.legado.app.ui.filepicker.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.dialog_file_chooser.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
 
@@ -61,6 +62,7 @@ class FilePickerDialog : DialogFragment(),
         }
     }
 
+    private val binding by viewBinding(DialogFileChooserBinding::bind)
     override var allowExtensions: Array<String>? = null
     override val isSelectDir: Boolean
         get() = mode == DIRECTORY
@@ -92,7 +94,7 @@ class FilePickerDialog : DialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tool_bar.setBackgroundColor(primaryColor)
+        binding.toolBar.setBackgroundColor(primaryColor)
         view.setBackgroundResource(R.color.background_card)
         arguments?.let {
             requestCode = it.getInt("requestCode")
@@ -107,7 +109,7 @@ class FilePickerDialog : DialogFragment(),
             allowExtensions = it.getStringArray("allowExtensions")
             menus = it.getStringArray("menus")
         }
-        tool_bar.title = title ?: let {
+        binding.toolBar.title = title ?: let {
             if (isSelectDir) {
                 getString(R.string.folder_chooser)
             } else {
@@ -120,29 +122,29 @@ class FilePickerDialog : DialogFragment(),
     }
 
     private fun initMenu() {
-        tool_bar.inflateMenu(R.menu.file_chooser)
+        binding.toolBar.inflateMenu(R.menu.file_chooser)
         if (isSelectDir) {
-            tool_bar.menu.findItem(R.id.menu_ok).isVisible = true
+            binding.toolBar.menu.findItem(R.id.menu_ok).isVisible = true
         }
         menus?.let {
             it.forEach { menuTitle ->
-                tool_bar.menu.add(menuTitle)
+                binding.toolBar.menu.add(menuTitle)
             }
         }
-        tool_bar.menu.applyTint(requireContext())
-        tool_bar.setOnMenuItemClickListener(this)
+        binding.toolBar.menu.applyTint(requireContext())
+        binding.toolBar.setOnMenuItemClickListener(this)
     }
 
     private fun initContentView() {
         fileAdapter = FileAdapter(requireContext(), this)
         pathAdapter = PathAdapter(requireContext(), this)
 
-        rv_file.addItemDecoration(VerticalDivider(requireContext()))
-        rv_file.layoutManager = LinearLayoutManager(activity)
-        rv_file.adapter = fileAdapter
+        binding.rvFile.addItemDecoration(VerticalDivider(requireContext()))
+        binding.rvFile.layoutManager = LinearLayoutManager(activity)
+        binding.rvFile.adapter = fileAdapter
 
-        rv_path.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
-        rv_path.adapter = pathAdapter
+        binding.rvPath.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
+        binding.rvPath.adapter = pathAdapter
 
     }
 
@@ -200,10 +202,10 @@ class FilePickerDialog : DialogFragment(),
             adapterCount--
         }
         if (adapterCount < 1) {
-            tv_empty.visible()
-            tv_empty.setText(R.string.empty)
+            binding.tvEmpty.visible()
+            binding.tvEmpty.setText(R.string.empty)
         } else {
-            tv_empty.gone()
+            binding.tvEmpty.gone()
         }
     }
 

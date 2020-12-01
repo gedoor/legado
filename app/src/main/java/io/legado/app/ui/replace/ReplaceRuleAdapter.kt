@@ -10,16 +10,16 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.databinding.ItemReplaceRuleBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import kotlinx.android.synthetic.main.item_replace_rule.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
 
 class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
-    SimpleRecyclerAdapter<ReplaceRule>(context, R.layout.item_replace_rule),
+    SimpleRecyclerAdapter<ReplaceRule, ItemReplaceRuleBinding>(context),
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<ReplaceRule>()
@@ -54,53 +54,58 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         return selection
     }
 
-    override fun convert(holder: ItemViewHolder, item: ReplaceRule, payloads: MutableList<Any>) {
-        with(holder.itemView) {
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemReplaceRuleBinding,
+        item: ReplaceRule,
+        payloads: MutableList<Any>
+    ) {
+        with(binding) {
             val bundle = payloads.getOrNull(0) as? Bundle
             if (bundle == null) {
-                this.setBackgroundColor(context.backgroundColor)
+                root.setBackgroundColor(context.backgroundColor)
                 if (item.group.isNullOrEmpty()) {
-                    cb_name.text = item.name
+                    cbName.text = item.name
                 } else {
-                    cb_name.text =
+                    cbName.text =
                         String.format("%s (%s)", item.name, item.group)
                 }
-                swt_enabled.isChecked = item.isEnabled
-                cb_name.isChecked = selected.contains(item)
+                swtEnabled.isChecked = item.isEnabled
+                cbName.isChecked = selected.contains(item)
             } else {
                 bundle.keySet().map {
                     when (it) {
-                        "selected" -> cb_name.isChecked = selected.contains(item)
+                        "selected" -> cbName.isChecked = selected.contains(item)
                         "name", "group" ->
                             if (item.group.isNullOrEmpty()) {
-                                cb_name.text = item.name
+                                cbName.text = item.name
                             } else {
-                                cb_name.text =
+                                cbName.text =
                                     String.format("%s (%s)", item.name, item.group)
                             }
-                        "enabled" -> swt_enabled.isChecked = item.isEnabled
+                        "enabled" -> swtEnabled.isChecked = item.isEnabled
                     }
                 }
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.apply {
-            swt_enabled.setOnCheckedChangeListener { _, isChecked ->
+    override fun registerListener(holder: ItemViewHolder, binding: ItemReplaceRuleBinding) {
+        binding.apply {
+            swtEnabled.setOnCheckedChangeListener { _, isChecked ->
                 getItem(holder.layoutPosition)?.let {
                     it.isEnabled = isChecked
                     callBack.update(it)
                 }
             }
-            iv_edit.onClick {
+            ivEdit.onClick {
                 getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
-            cb_name.onClick {
+            cbName.onClick {
                 getItem(holder.layoutPosition)?.let {
-                    if (cb_name.isChecked) {
+                    if (cbName.isChecked) {
                         selected.add(it)
                     } else {
                         selected.remove(it)
@@ -108,8 +113,8 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 }
                 callBack.upCountView()
             }
-            iv_menu_more.onClick {
-                showMenu(iv_menu_more, holder.layoutPosition)
+            ivMenuMore.onClick {
+                showMenu(ivMenuMore, holder.layoutPosition)
             }
         }
     }

@@ -11,9 +11,10 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.databinding.DialogRecyclerViewBinding
+import io.legado.app.databinding.ItemLogBinding
 import io.legado.app.utils.getSize
-import kotlinx.android.synthetic.main.dialog_recycler_view.*
-import kotlinx.android.synthetic.main.item_log.view.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class TextListDialog : BaseDialogFragment() {
 
@@ -28,8 +29,9 @@ class TextListDialog : BaseDialogFragment() {
         }
     }
 
+    private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     lateinit var adapter: TextAdapter
-    var values: ArrayList<String>? = null
+    private var values: ArrayList<String>? = null
 
     override fun onStart() {
         super.onStart()
@@ -45,38 +47,44 @@ class TextListDialog : BaseDialogFragment() {
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
         arguments?.let {
-            tool_bar.title = it.getString("title")
+            toolBar.title = it.getString("title")
             values = it.getStringArrayList("values")
         }
-        recycler_view.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = TextAdapter(requireContext())
-        recycler_view.adapter = adapter
+        recyclerView.adapter = adapter
         adapter.setItems(values)
     }
 
     class TextAdapter(context: Context) :
-        SimpleRecyclerAdapter<String>(context, R.layout.item_log) {
-        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-            holder.itemView.apply {
-                if (text_view.getTag(R.id.tag1) == null) {
+        SimpleRecyclerAdapter<String, ItemLogBinding>(context) {
+
+        override fun convert(
+            holder: ItemViewHolder,
+            binding: ItemLogBinding,
+            item: String,
+            payloads: MutableList<Any>
+        ) {
+            binding.apply {
+                if (textView.getTag(R.id.tag1) == null) {
                     val listener = object : View.OnAttachStateChangeListener {
                         override fun onViewAttachedToWindow(v: View) {
-                            text_view.isCursorVisible = false
-                            text_view.isCursorVisible = true
+                            textView.isCursorVisible = false
+                            textView.isCursorVisible = true
                         }
 
                         override fun onViewDetachedFromWindow(v: View) {}
                     }
-                    text_view.addOnAttachStateChangeListener(listener)
-                    text_view.setTag(R.id.tag1, listener)
+                    textView.addOnAttachStateChangeListener(listener)
+                    textView.setTag(R.id.tag1, listener)
                 }
-                text_view.text = item
+                textView.text = item
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
+        override fun registerListener(holder: ItemViewHolder, binding: ItemLogBinding) {
             //nothing
         }
     }

@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.databinding.DialogPhotoViewBinding
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.provider.ImageProvider
-import kotlinx.android.synthetic.main.dialog_photo_view.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
 class PhotoDialog : BaseDialogFragment() {
@@ -30,6 +31,8 @@ class PhotoDialog : BaseDialogFragment() {
         }
 
     }
+
+    private val binding by viewBinding(DialogPhotoViewBinding::bind)
 
     override fun onStart() {
         super.onStart()
@@ -57,7 +60,7 @@ class PhotoDialog : BaseDialogFragment() {
                         ImageProvider.getImage(book, chapterIndex, src)
                     }.onSuccess { bitmap ->
                         if (bitmap != null) {
-                            photo_view.setImageBitmap(bitmap)
+                            binding.photoView.setImageBitmap(bitmap)
                         }
                     }
                 }

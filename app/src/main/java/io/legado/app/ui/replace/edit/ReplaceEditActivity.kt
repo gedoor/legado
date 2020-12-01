@@ -20,8 +20,8 @@ import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.postEvent
-import kotlinx.android.synthetic.main.activity_replace_edit.*
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.toast
 import kotlin.math.abs
@@ -58,17 +58,13 @@ class ReplaceEditActivity :
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
 
-    override fun getViewBinding(): ActivityReplaceEditBinding {
-        return ActivityReplaceEditBinding.inflate(layoutInflater)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
         viewModel.initData(intent) {
             upReplaceView(it)
         }
-        iv_help.onClick {
+        binding.ivHelp.onClick {
             showRegexHelp()
         }
     }
@@ -95,23 +91,23 @@ class ReplaceEditActivity :
         return true
     }
 
-    private fun upReplaceView(replaceRule: ReplaceRule) {
-        et_name.setText(replaceRule.name)
-        et_group.setText(replaceRule.group)
-        et_replace_rule.setText(replaceRule.pattern)
-        cb_use_regex.isChecked = replaceRule.isRegex
-        et_replace_to.setText(replaceRule.replacement)
-        et_scope.setText(replaceRule.scope)
+    private fun upReplaceView(replaceRule: ReplaceRule) = with(binding) {
+        etName.setText(replaceRule.name)
+        etGroup.setText(replaceRule.group)
+        etReplaceRule.setText(replaceRule.pattern)
+        cbUseRegex.isChecked = replaceRule.isRegex
+        etReplaceTo.setText(replaceRule.replacement)
+        etScope.setText(replaceRule.scope)
     }
 
-    private fun getReplaceRule(): ReplaceRule {
+    private fun getReplaceRule(): ReplaceRule = with(binding) {
         val replaceRule: ReplaceRule = viewModel.replaceRule ?: ReplaceRule()
-        replaceRule.name = et_name.text.toString()
-        replaceRule.group = et_group.text.toString()
-        replaceRule.pattern = et_replace_rule.text.toString()
-        replaceRule.isRegex = cb_use_regex.isChecked
-        replaceRule.replacement = et_replace_to.text.toString()
-        replaceRule.scope = et_scope.text.toString()
+        replaceRule.name = etName.text.toString()
+        replaceRule.group = etGroup.text.toString()
+        replaceRule.pattern = etReplaceRule.text.toString()
+        replaceRule.isRegex = cbUseRegex.isChecked
+        replaceRule.replacement = etReplaceTo.text.toString()
+        replaceRule.scope = etScope.text.toString()
         return replaceRule
     }
 
@@ -158,7 +154,7 @@ class ReplaceEditActivity :
         mSoftKeyboardTool?.let {
             if (it.isShowing) return
             if (!isFinishing) {
-                it.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+                it.showAtLocation(binding.llContent, Gravity.BOTTOM, 0, 0)
             }
         }
     }
@@ -176,11 +172,11 @@ class ReplaceEditActivity :
         val preShowing = mIsSoftKeyBoardShowing
         if (abs(keyboardHeight) > screenHeight / 5) {
             mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-            root_view.setPadding(0, 0, 0, 100)
+            binding.rootView.setPadding(0, 0, 0, 100)
             showKeyboardTopPopupWindow()
         } else {
             mIsSoftKeyBoardShowing = false
-            root_view.setPadding(0, 0, 0, 0)
+            binding.rootView.setPadding(0, 0, 0, 0)
             if (preShowing) {
                 closePopupWindow()
             }

@@ -2,18 +2,18 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.Menu
-import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.MenuRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
+import io.legado.app.databinding.ViewSelectActionBarBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.view_select_action_bar.view.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 @Suppress("unused")
@@ -23,42 +23,43 @@ class SelectActionBar @JvmOverloads constructor(
 ) : FrameLayout(context, attrs) {
     private var callBack: CallBack? = null
     private var selMenu: PopupMenu? = null
+    private val binding =
+        ViewSelectActionBarBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
         setBackgroundColor(context.bottomBackground)
         elevation =
             if (AppConfig.elevation < 0) context.elevation else AppConfig.elevation.toFloat()
-        View.inflate(context, R.layout.view_select_action_bar, this)
         val textIsDark = ColorUtils.isColorLight(context.bottomBackground)
         val primaryTextColor = context.getPrimaryTextColor(textIsDark)
         val secondaryTextColor = context.getSecondaryTextColor(textIsDark)
-        cb_selected_all.setTextColor(primaryTextColor)
-        TintHelper.setTint(cb_selected_all, context.accentColor, !textIsDark)
-        iv_menu_more.setColorFilter(secondaryTextColor)
-        cb_selected_all.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.cbSelectedAll.setTextColor(primaryTextColor)
+        TintHelper.setTint(binding.cbSelectedAll, context.accentColor, !textIsDark)
+        binding.ivMenuMore.setColorFilter(secondaryTextColor)
+        binding.cbSelectedAll.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
                 callBack?.selectAll(isChecked)
             }
         }
-        btn_revert_selection.onClick { callBack?.revertSelection() }
-        btn_select_action_main.onClick { callBack?.onClickMainAction() }
-        iv_menu_more.onClick { selMenu?.show() }
+        binding.btnRevertSelection.onClick { callBack?.revertSelection() }
+        binding.btnSelectActionMain.onClick { callBack?.onClickMainAction() }
+        binding.ivMenuMore.onClick { selMenu?.show() }
     }
 
-    fun setMainActionText(text: String) {
-        btn_select_action_main.text = text
-        btn_select_action_main.visible()
+    fun setMainActionText(text: String) = with(binding) {
+        btnSelectActionMain.text = text
+        btnSelectActionMain.visible()
     }
 
-    fun setMainActionText(@StringRes id: Int) {
-        btn_select_action_main.setText(id)
-        btn_select_action_main.visible()
+    fun setMainActionText(@StringRes id: Int) = with(binding) {
+        btnSelectActionMain.setText(id)
+        btnSelectActionMain.visible()
     }
 
     fun inflateMenu(@MenuRes resId: Int): Menu? {
-        selMenu = PopupMenu(context, iv_menu_more)
+        selMenu = PopupMenu(context, binding.ivMenuMore)
         selMenu?.inflate(resId)
-        iv_menu_more.visible()
+        binding.ivMenuMore.visible()
         return selMenu?.menu
     }
 
@@ -70,22 +71,22 @@ class SelectActionBar @JvmOverloads constructor(
         selMenu?.setOnMenuItemClickListener(listener)
     }
 
-    fun upCountView(selectCount: Int, allCount: Int) {
+    fun upCountView(selectCount: Int, allCount: Int) = with(binding) {
         if (selectCount == 0) {
-            cb_selected_all.isChecked = false
+            cbSelectedAll.isChecked = false
         } else {
-            cb_selected_all.isChecked = selectCount >= allCount
+            cbSelectedAll.isChecked = selectCount >= allCount
         }
 
         //重置全选的文字
-        if (cb_selected_all.isChecked) {
-            cb_selected_all.text = context.getString(
+        if (cbSelectedAll.isChecked) {
+            cbSelectedAll.text = context.getString(
                 R.string.select_cancel_count,
                 selectCount,
                 allCount
             )
         } else {
-            cb_selected_all.text = context.getString(
+            cbSelectedAll.text = context.getString(
                 R.string.select_all_count,
                 selectCount,
                 allCount
@@ -94,11 +95,11 @@ class SelectActionBar @JvmOverloads constructor(
         setMenuClickable(selectCount > 0)
     }
 
-    private fun setMenuClickable(isClickable: Boolean) {
-        btn_revert_selection.isEnabled = isClickable
-        btn_revert_selection.isClickable = isClickable
-        btn_select_action_main.isEnabled = isClickable
-        btn_select_action_main.isClickable = isClickable
+    private fun setMenuClickable(isClickable: Boolean) = with(binding) {
+        btnRevertSelection.isEnabled = isClickable
+        btnRevertSelection.isClickable = isClickable
+        btnSelectActionMain.isEnabled = isClickable
+        btnSelectActionMain.isClickable = isClickable
     }
 
     interface CallBack {

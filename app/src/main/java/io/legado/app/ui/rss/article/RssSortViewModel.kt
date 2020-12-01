@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
-import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssReadRecord
@@ -17,12 +16,6 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
     val titleLiveData = MutableLiveData<String>()
     var order = System.currentTimeMillis()
     val isGridLayout get() = rssSource?.articleStyle == 2
-    val layoutId
-        get() = when (rssSource?.articleStyle) {
-            1 -> R.layout.item_rss_article_1
-            2 -> R.layout.item_rss_article_2
-            else -> R.layout.item_rss_article
-        }
 
     fun initData(intent: Intent, finally: () -> Unit) {
         execute {
