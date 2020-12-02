@@ -2,6 +2,7 @@ package io.legado.app.ui.rss.favorites
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.ViewGroup
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -17,6 +18,10 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class RssFavoritesAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssStar, ItemRssArticleBinding>(context) {
+
+    override fun getViewBinding(parent: ViewGroup): ItemRssArticleBinding {
+        return ItemRssArticleBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

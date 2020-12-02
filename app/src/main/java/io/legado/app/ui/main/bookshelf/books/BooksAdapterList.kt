@@ -2,6 +2,7 @@ package io.legado.app.ui.main.bookshelf.books
 
 import android.content.Context
 import android.os.Bundle
+import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
@@ -13,6 +14,10 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class BooksAdapterList(context: Context, private val callBack: CallBack) :
     BaseBooksAdapter<ItemBookshelfListBinding>(context) {
+
+    override fun getViewBinding(parent: ViewGroup): ItemBookshelfListBinding {
+        return ItemBookshelfListBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

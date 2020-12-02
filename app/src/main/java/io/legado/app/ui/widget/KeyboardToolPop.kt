@@ -42,6 +42,10 @@ class KeyboardToolPop(
     inner class Adapter(context: Context) :
         SimpleRecyclerAdapter<String, ItemFilletTextBinding>(context) {
 
+        override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
+            return ItemFilletTextBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemFilletTextBinding,

@@ -111,6 +111,10 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private inner class GroupAdapter(context: Context) :
         SimpleRecyclerAdapter<String, ItemGroupManageBinding>(context) {
 
+        override fun getViewBinding(parent: ViewGroup): ItemGroupManageBinding {
+            return ItemGroupManageBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemGroupManageBinding,

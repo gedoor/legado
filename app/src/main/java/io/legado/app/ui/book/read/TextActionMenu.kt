@@ -89,6 +89,10 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     inner class Adapter(context: Context) :
         SimpleRecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
 
+        override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
+            return ItemTextBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemTextBinding,

@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.search
 
+import android.view.ViewGroup
 import io.legado.app.App
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -17,6 +18,10 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchKeyword, ItemFilletTextBinding>(activity) {
 
     private val explosionField = ExplosionField.attach2Window(activity)
+
+    override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
+        return ItemFilletTextBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

@@ -3,6 +3,7 @@ package io.legado.app.ui.main.explore
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
 import io.legado.app.App
 import io.legado.app.R
@@ -26,6 +27,10 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
     SimpleRecyclerAdapter<BookSource, ItemFindBookBinding>(context) {
     private var exIndex = -1
     private var scrollTo = -1
+
+    override fun getViewBinding(parent: ViewGroup): ItemFindBookBinding {
+        return ItemFindBookBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

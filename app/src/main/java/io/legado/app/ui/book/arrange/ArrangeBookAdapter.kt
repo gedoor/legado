@@ -2,6 +2,7 @@ package io.legado.app.ui.book.arrange
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.base.adapter.ItemViewHolder
@@ -23,38 +24,8 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     private val selectedBooks: HashSet<Book> = hashSetOf()
     var actionItem: Book? = null
 
-    fun selectAll(selectAll: Boolean) {
-        if (selectAll) {
-            getItems().forEach {
-                selectedBooks.add(it)
-            }
-        } else {
-            selectedBooks.clear()
-        }
-        notifyDataSetChanged()
-        callBack.upSelectCount()
-    }
-
-    fun revertSelection() {
-        getItems().forEach {
-            if (selectedBooks.contains(it)) {
-                selectedBooks.remove(it)
-            } else {
-                selectedBooks.add(it)
-            }
-        }
-        notifyDataSetChanged()
-        callBack.upSelectCount()
-    }
-
-    fun selectedBooks(): Array<Book> {
-        val books = arrayListOf<Book>()
-        selectedBooks.forEach {
-            if (getItems().contains(it)) {
-                books.add(it)
-            }
-        }
-        return books.toTypedArray()
+    override fun getViewBinding(parent: ViewGroup): ItemArrangeBookBinding {
+        return ItemArrangeBookBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(
@@ -111,6 +82,40 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 }
             }
         }
+    }
+
+    fun selectAll(selectAll: Boolean) {
+        if (selectAll) {
+            getItems().forEach {
+                selectedBooks.add(it)
+            }
+        } else {
+            selectedBooks.clear()
+        }
+        notifyDataSetChanged()
+        callBack.upSelectCount()
+    }
+
+    fun revertSelection() {
+        getItems().forEach {
+            if (selectedBooks.contains(it)) {
+                selectedBooks.remove(it)
+            } else {
+                selectedBooks.add(it)
+            }
+        }
+        notifyDataSetChanged()
+        callBack.upSelectCount()
+    }
+
+    fun selectedBooks(): Array<Book> {
+        val books = arrayListOf<Book>()
+        selectedBooks.forEach {
+            if (getItems().contains(it)) {
+                books.add(it)
+            }
+        }
+        return books.toTypedArray()
     }
 
     private fun getGroupList(groupId: Long): List<String> {

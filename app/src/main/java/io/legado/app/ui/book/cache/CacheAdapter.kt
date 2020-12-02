@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.cache
 
 import android.content.Context
+import android.view.ViewGroup
 import android.widget.ImageView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -19,6 +20,10 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
 
     val cacheChapters = hashMapOf<String, HashSet<String>>()
     var downloadMap: ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>? = null
+
+    override fun getViewBinding(parent: ViewGroup): ItemDownloadBinding {
+        return ItemDownloadBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

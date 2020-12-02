@@ -2,6 +2,7 @@ package io.legado.app.ui.filepicker.adapter
 
 
 import android.content.Context
+import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.databinding.ItemFileFilepickerBinding
@@ -83,6 +84,10 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             setItems(data)
         }
 
+    }
+
+    override fun getViewBinding(parent: ViewGroup): ItemFileFilepickerBinding {
+        return ItemFileFilepickerBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(

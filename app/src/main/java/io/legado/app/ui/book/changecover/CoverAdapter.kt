@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.changecover
 
 import android.content.Context
+import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SearchBook
@@ -9,6 +10,10 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class CoverAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook, ItemCoverBinding>(context) {
+
+    override fun getViewBinding(parent: ViewGroup): ItemCoverBinding {
+        return ItemCoverBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

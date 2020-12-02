@@ -3,6 +3,7 @@ package io.legado.app.ui.rss.source.manage
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
@@ -23,34 +24,8 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
 
     private val selected = linkedSetOf<RssSource>()
 
-    fun selectAll() {
-        getItems().forEach {
-            selected.add(it)
-        }
-        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
-        callBack.upCountView()
-    }
-
-    fun revertSelection() {
-        getItems().forEach {
-            if (selected.contains(it)) {
-                selected.remove(it)
-            } else {
-                selected.add(it)
-            }
-        }
-        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
-        callBack.upCountView()
-    }
-
-    fun getSelection(): List<RssSource> {
-        val selection = arrayListOf<RssSource>()
-        getItems().forEach {
-            if (selected.contains(it)) {
-                selection.add(it)
-            }
-        }
-        return selection.sortedBy { it.customOrder }
+    override fun getViewBinding(parent: ViewGroup): ItemRssSourceBinding {
+        return ItemRssSourceBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(
@@ -120,6 +95,36 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 showMenu(ivMenuMore, holder.layoutPosition)
             }
         }
+    }
+
+    fun selectAll() {
+        getItems().forEach {
+            selected.add(it)
+        }
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    fun revertSelection() {
+        getItems().forEach {
+            if (selected.contains(it)) {
+                selected.remove(it)
+            } else {
+                selected.add(it)
+            }
+        }
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    fun getSelection(): List<RssSource> {
+        val selection = arrayListOf<RssSource>()
+        getItems().forEach {
+            if (selected.contains(it)) {
+                selection.add(it)
+            }
+        }
+        return selection.sortedBy { it.customOrder }
     }
 
     private fun showMenu(view: View, position: Int) {

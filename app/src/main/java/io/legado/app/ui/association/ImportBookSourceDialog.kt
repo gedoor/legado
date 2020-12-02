@@ -132,6 +132,10 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
     inner class SourcesAdapter(context: Context) :
         SimpleRecyclerAdapter<BookSource, ItemSourceImportBinding>(context) {
 
+        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding {
+            return ItemSourceImportBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemSourceImportBinding,

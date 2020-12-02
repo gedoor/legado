@@ -2,6 +2,7 @@ package io.legado.app.ui.about
 
 import android.content.Context
 import android.os.Bundle
+import android.view.ViewGroup
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -56,6 +57,10 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     inner class RecordAdapter(context: Context) :
         SimpleRecyclerAdapter<ReadRecordShow, ItemReadRecordBinding>(context) {
+
+        override fun getViewBinding(parent: ViewGroup): ItemReadRecordBinding {
+            return ItemReadRecordBinding.inflate(inflater, parent, false)
+        }
 
         override fun convert(
             holder: ItemViewHolder,

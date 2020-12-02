@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
@@ -27,34 +28,8 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     private val selected = linkedSetOf<BookSource>()
 
-    fun selectAll() {
-        getItems().forEach {
-            selected.add(it)
-        }
-        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
-        callBack.upCountView()
-    }
-
-    fun revertSelection() {
-        getItems().forEach {
-            if (selected.contains(it)) {
-                selected.remove(it)
-            } else {
-                selected.add(it)
-            }
-        }
-        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
-        callBack.upCountView()
-    }
-
-    fun getSelection(): List<BookSource> {
-        val selection = arrayListOf<BookSource>()
-        getItems().map {
-            if (selected.contains(it)) {
-                selection.add(it)
-            }
-        }
-        return selection.sortedBy { it.customOrder }
+    override fun getViewBinding(parent: ViewGroup): ItemBookSourceBinding {
+        return ItemBookSourceBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(
@@ -169,6 +144,36 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 iv.visible()
             }
         }
+    }
+
+    fun selectAll() {
+        getItems().forEach {
+            selected.add(it)
+        }
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    fun revertSelection() {
+        getItems().forEach {
+            if (selected.contains(it)) {
+                selected.remove(it)
+            } else {
+                selected.add(it)
+            }
+        }
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    fun getSelection(): List<BookSource> {
+        val selection = arrayListOf<BookSource>()
+        getItems().map {
+            if (selected.contains(it)) {
+                selection.add(it)
+            }
+        }
+        return selection.sortedBy { it.customOrder }
     }
 
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {

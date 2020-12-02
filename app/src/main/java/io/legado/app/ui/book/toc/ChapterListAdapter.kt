@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.toc
 
 import android.content.Context
+import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -15,6 +16,10 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     SimpleRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
+
+    override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding {
+        return ItemChapterListBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

@@ -2,6 +2,7 @@ package io.legado.app.ui.main.rss
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -14,6 +15,10 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class RssAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource, ItemRssBinding>(context) {
+
+    override fun getViewBinding(parent: ViewGroup): ItemRssBinding {
+        return ItemRssBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

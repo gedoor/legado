@@ -158,6 +158,10 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         inner class Adapter(context: Context) :
             SimpleRecyclerAdapter<CharSequence, ItemIconPreferenceBinding>(context) {
 
+            override fun getViewBinding(parent: ViewGroup): ItemIconPreferenceBinding {
+                return ItemIconPreferenceBinding.inflate(inflater, parent, false)
+            }
+
             override fun convert(
                 holder: ItemViewHolder,
                 binding: ItemIconPreferenceBinding,

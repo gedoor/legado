@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.info
 
 import android.content.Context
+import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -12,6 +13,10 @@ import org.jetbrains.anko.textColorResource
 
 class ChapterListAdapter(context: Context, var callBack: CallBack) :
     SimpleRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
+
+    override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding {
+        return ItemChapterListBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

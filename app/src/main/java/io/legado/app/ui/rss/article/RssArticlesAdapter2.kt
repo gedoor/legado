@@ -2,6 +2,7 @@ package io.legado.app.ui.rss.article
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.ViewGroup
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -18,6 +19,10 @@ import org.jetbrains.anko.textColorResource
 
 class RssArticlesAdapter2(context: Context, callBack: CallBack) :
     BaseRssArticlesAdapter<ItemRssArticle2Binding>(context, callBack) {
+
+    override fun getViewBinding(parent: ViewGroup): ItemRssArticle2Binding {
+        return ItemRssArticle2Binding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

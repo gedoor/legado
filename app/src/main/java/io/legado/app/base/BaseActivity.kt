@@ -35,12 +35,12 @@ abstract class BaseActivity<VB : ViewBinding>(
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
-    @Suppress("UNCHECKED_CAST")
     protected val binding: VB by lazy {
         //使用反射得到viewBinding的class
         val type = javaClass.genericSuperclass as ParameterizedType
         val aClass = type.actualTypeArguments[0] as Class<*>
         val method = aClass.getDeclaredMethod("inflate", LayoutInflater::class.java)
+        @Suppress("UNCHECKED_CAST")
         method.invoke(null, layoutInflater) as VB
     }
 

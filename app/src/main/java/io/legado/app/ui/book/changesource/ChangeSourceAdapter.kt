@@ -3,6 +3,7 @@ package io.legado.app.ui.book.changesource
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -17,6 +18,10 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
+
+    override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding {
+        return ItemChangeSourceBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

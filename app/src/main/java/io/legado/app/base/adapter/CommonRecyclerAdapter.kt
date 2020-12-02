@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import java.lang.reflect.ParameterizedType
 import java.util.*
 
 /**
@@ -313,8 +312,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
         }
 
         else -> {
-            //使用反射得到viewBinding的class
-            val holder = ItemViewHolder(getViewBinding(parent, viewType))
+            val holder = ItemViewHolder(getViewBinding(parent))
 
             @Suppress("UNCHECKED_CAST")
             itemDelegates.getValue(viewType)
@@ -340,14 +338,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
         }
     }
 
-    private fun getViewBinding(parent: ViewGroup, viewType: Int): ViewBinding {
-        //使用反射得到viewBinding的class
-        val type = javaClass.genericSuperclass as ParameterizedType
-        val aClass = type.actualTypeArguments[0] as Class<*>
-        val method = aClass.getDeclaredMethod("inflate", LayoutInflater::class.java)
-        @Suppress("UNCHECKED_CAST")
-        return method.invoke(null, inflater, parent, false) as VB
-    }
+    protected abstract fun getViewBinding(parent: ViewGroup): VB
 
     final override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {}
 

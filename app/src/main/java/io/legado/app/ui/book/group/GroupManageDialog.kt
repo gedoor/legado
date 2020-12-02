@@ -178,6 +178,10 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
         private var isMoved = false
 
+        override fun getViewBinding(parent: ViewGroup): ItemGroupManageBinding {
+            return ItemGroupManageBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemGroupManageBinding,

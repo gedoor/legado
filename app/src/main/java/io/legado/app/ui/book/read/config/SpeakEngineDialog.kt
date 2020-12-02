@@ -131,6 +131,10 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     inner class Adapter(context: Context) :
         SimpleRecyclerAdapter<HttpTTS, ItemHttpTtsBinding>(context) {
 
+        override fun getViewBinding(parent: ViewGroup): ItemHttpTtsBinding {
+            return ItemHttpTtsBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemHttpTtsBinding,

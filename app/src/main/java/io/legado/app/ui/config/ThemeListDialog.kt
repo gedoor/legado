@@ -98,6 +98,10 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     inner class Adapter :
         SimpleRecyclerAdapter<ThemeConfig.Config, ItemThemeConfigBinding>(requireContext()) {
 
+        override fun getViewBinding(parent: ViewGroup): ItemThemeConfigBinding {
+            return ItemThemeConfigBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemThemeConfigBinding,

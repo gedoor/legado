@@ -162,6 +162,10 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
         private var isMoved: Boolean = false
 
+        override fun getViewBinding(parent: ViewGroup): ItemGroupSelectBinding {
+            return ItemGroupSelectBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemGroupSelectBinding,

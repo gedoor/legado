@@ -61,6 +61,10 @@ class TextListDialog : BaseDialogFragment() {
     class TextAdapter(context: Context) :
         SimpleRecyclerAdapter<String, ItemLogBinding>(context) {
 
+        override fun getViewBinding(parent: ViewGroup): ItemLogBinding {
+            return ItemLogBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemLogBinding,

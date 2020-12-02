@@ -2,6 +2,7 @@ package io.legado.app.ui.book.search
 
 import android.content.Context
 import android.os.Bundle
+import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -13,6 +14,10 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
+
+    override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
+        return ItemSearchBinding.inflate(inflater, parent, false)
+    }
 
     override fun convert(
         holder: ItemViewHolder,

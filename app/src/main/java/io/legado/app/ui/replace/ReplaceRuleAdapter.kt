@@ -3,6 +3,7 @@ package io.legado.app.ui.replace
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
@@ -52,6 +53,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             }
         }
         return selection
+    }
+
+    override fun getViewBinding(parent: ViewGroup): ItemReplaceRuleBinding {
+        return ItemReplaceRuleBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(

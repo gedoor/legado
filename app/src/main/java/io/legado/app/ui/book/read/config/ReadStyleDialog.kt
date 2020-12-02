@@ -208,6 +208,10 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     inner class StyleAdapter :
         SimpleRecyclerAdapter<ReadBookConfig.Config, ItemReadStyleBinding>(requireContext()) {
 
+        override fun getViewBinding(parent: ViewGroup): ItemReadStyleBinding {
+            return ItemReadStyleBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemReadStyleBinding,

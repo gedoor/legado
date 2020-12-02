@@ -192,6 +192,10 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         SimpleRecyclerAdapter<TxtTocRule, ItemTocRegexBinding>(context),
         ItemTouchCallback.Callback {
 
+        override fun getViewBinding(parent: ViewGroup): ItemTocRegexBinding {
+            return ItemTocRegexBinding.inflate(inflater, parent, false)
+        }
+
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemTocRegexBinding,
