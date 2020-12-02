@@ -87,7 +87,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         styleAdapter = StyleAdapter()
         rvStyle.adapter = styleAdapter
         val footerBinding =
-            ItemReadStyleBinding.inflate(LayoutInflater.from(requireContext()), rvStyle, false)
+            ItemReadStyleBinding.inflate(layoutInflater, rvStyle, false)
         footerBinding.ivStyle.setPadding(6.dp, 6.dp, 6.dp, 6.dp)
         footerBinding.ivStyle.setText(null)
         footerBinding.ivStyle.setColorFilter(textColor)

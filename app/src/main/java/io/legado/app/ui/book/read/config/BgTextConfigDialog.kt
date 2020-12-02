@@ -104,7 +104,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         adapter = BgAdapter(requireContext(), secondaryTextColor)
         binding.recyclerView.adapter = adapter
         val headerView = ItemBgImageBinding.inflate(
-            LayoutInflater.from(requireContext()),
+            layoutInflater,
             binding.recyclerView,
             false
         )

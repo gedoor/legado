@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.config
 import android.app.Dialog
 import android.content.Context
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogPageKeyBinding
@@ -16,7 +15,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDialog) {
 
-    private val binding = DialogPageKeyBinding.inflate(LayoutInflater.from(context))
+    private val binding = DialogPageKeyBinding.inflate(layoutInflater)
 
     init {
         setContentView(binding.root)

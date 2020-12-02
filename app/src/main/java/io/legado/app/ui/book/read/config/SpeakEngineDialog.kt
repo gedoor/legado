@@ -105,8 +105,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun editHttpTTS(v: HttpTTS? = null) {
         val httpTTS = v?.copy() ?: HttpTTS()
         requireContext().alert(titleResource = R.string.speak_engine) {
-            val alertBinding =
-                DialogHttpTtsEditBinding.inflate(LayoutInflater.from(requireContext()))
+            val alertBinding = DialogHttpTtsEditBinding.inflate(layoutInflater)
             alertBinding.tvName.setText(httpTTS.name)
             alertBinding.tvUrl.setText(httpTTS.url)
             customView = alertBinding.root

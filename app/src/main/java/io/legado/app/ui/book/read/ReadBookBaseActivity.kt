@@ -179,22 +179,18 @@ abstract class ReadBookBaseActivity :
     fun showDownloadDialog() {
         ReadBook.book?.let { book ->
             alert(titleResource = R.string.offline_cache) {
-                var dialogBinding: DialogDownloadChoiceBinding? = null
-                customView {
-                    LayoutInflater.from(this@ReadBookBaseActivity)
-                        .inflate(R.layout.dialog_download_choice, null)
-                        .apply {
-                            dialogBinding = DialogDownloadChoiceBinding.bind(this)
-                            setBackgroundColor(context.backgroundColor)
-                            dialogBinding!!.editStart.setText((book.durChapterIndex + 1).toString())
-                            dialogBinding!!.editEnd.setText(book.totalChapterNum.toString())
-                        }
+                val alertBinding = DialogDownloadChoiceBinding.inflate(layoutInflater).apply {
+                    root.setBackgroundColor(root.context.backgroundColor)
+                    editStart.setText((book.durChapterIndex + 1).toString())
+                    editEnd.setText(book.totalChapterNum.toString())
                 }
+                customView = alertBinding.root
                 yesButton {
-                    val start = dialogBinding!!.editStart.text?.toString()?.toInt() ?: 0
-                    val end =
-                        dialogBinding!!.editEnd.text?.toString()?.toInt() ?: book.totalChapterNum
-                    CacheBook.start(this@ReadBookBaseActivity, book.bookUrl, start - 1, end - 1)
+                    alertBinding.run {
+                        val start = editStart.text?.toString()?.toInt() ?: 0
+                        val end = editEnd.text?.toString()?.toInt() ?: book.totalChapterNum
+                        CacheBook.start(this@ReadBookBaseActivity, book.bookUrl, start - 1, end - 1)
+                    }
                 }
                 noButton()
             }.show()
