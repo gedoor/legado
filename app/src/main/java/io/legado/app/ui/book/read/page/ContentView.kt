@@ -111,7 +111,7 @@ class ContentView(context: Context) : FrameLayout(context) {
         ReadTipConfig.apply {
             binding.tvHeaderLeft.isInvisible = tipHeaderLeft != chapterTitle
             binding.bvHeaderLeft.isInvisible =
-                tipHeaderLeft == none || !binding.bvHeaderLeft.isInvisible
+                tipHeaderLeft == none || !binding.tvHeaderLeft.isInvisible
             binding.tvHeaderRight.isGone = tipHeaderRight == none
             binding.tvHeaderMiddle.isGone = tipHeaderMiddle == none
             binding.tvFooterLeft.isInvisible = tipFooterLeft != chapterTitle
