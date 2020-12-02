@@ -57,45 +57,47 @@ class ContentView(context: Context) : FrameLayout(context) {
         }
     }
 
-    fun upStyle() = ReadBookConfig.apply {
-        binding.bvHeaderLeft.typeface = ChapterProvider.typeface
-        binding.tvHeaderLeft.typeface = ChapterProvider.typeface
-        binding.tvHeaderMiddle.typeface = ChapterProvider.typeface
-        binding.tvHeaderRight.typeface = ChapterProvider.typeface
-        binding.bvFooterLeft.typeface = ChapterProvider.typeface
-        binding.tvFooterLeft.typeface = ChapterProvider.typeface
-        binding.tvFooterMiddle.typeface = ChapterProvider.typeface
-        binding.tvFooterRight.typeface = ChapterProvider.typeface
-        val tipColor = if (ReadTipConfig.tipColor == 0) textColor else ReadTipConfig.tipColor
-        binding.bvHeaderLeft.setColor(tipColor)
-        binding.tvHeaderLeft.setColor(tipColor)
-        binding.tvHeaderMiddle.setColor(tipColor)
-        binding.tvHeaderRight.setColor(tipColor)
-        binding.bvFooterLeft.setColor(tipColor)
-        binding.tvFooterLeft.setColor(tipColor)
-        binding.tvFooterMiddle.setColor(tipColor)
-        binding.tvFooterRight.setColor(tipColor)
-        upStatusBar()
-        binding.llHeader.setPadding(
-            headerPaddingLeft.dp,
-            headerPaddingTop.dp,
-            headerPaddingRight.dp,
-            headerPaddingBottom.dp
-        )
-        binding.llFooter.setPadding(
-            footerPaddingLeft.dp,
-            footerPaddingTop.dp,
-            footerPaddingRight.dp,
-            footerPaddingBottom.dp
-        )
-        binding.vwTopDivider.visible(showHeaderLine)
-        binding.vwBottomDivider.visible(showFooterLine)
-        binding.pageNvBar.layoutParams = binding.pageNvBar.layoutParams.apply {
-            height = if (hideNavigationBar) 0 else App.navigationBarHeight
+    fun upStyle() = with(binding) {
+        ReadBookConfig.apply {
+            bvHeaderLeft.typeface = ChapterProvider.typeface
+            tvHeaderLeft.typeface = ChapterProvider.typeface
+            tvHeaderMiddle.typeface = ChapterProvider.typeface
+            tvHeaderRight.typeface = ChapterProvider.typeface
+            bvFooterLeft.typeface = ChapterProvider.typeface
+            tvFooterLeft.typeface = ChapterProvider.typeface
+            tvFooterMiddle.typeface = ChapterProvider.typeface
+            tvFooterRight.typeface = ChapterProvider.typeface
+            val tipColor = if (ReadTipConfig.tipColor == 0) textColor else ReadTipConfig.tipColor
+            bvHeaderLeft.setColor(tipColor)
+            tvHeaderLeft.setColor(tipColor)
+            tvHeaderMiddle.setColor(tipColor)
+            tvHeaderRight.setColor(tipColor)
+            bvFooterLeft.setColor(tipColor)
+            tvFooterLeft.setColor(tipColor)
+            tvFooterMiddle.setColor(tipColor)
+            tvFooterRight.setColor(tipColor)
+            upStatusBar()
+            llHeader.setPadding(
+                headerPaddingLeft.dp,
+                headerPaddingTop.dp,
+                headerPaddingRight.dp,
+                headerPaddingBottom.dp
+            )
+            llFooter.setPadding(
+                footerPaddingLeft.dp,
+                footerPaddingTop.dp,
+                footerPaddingRight.dp,
+                footerPaddingBottom.dp
+            )
+            vwTopDivider.visible(showHeaderLine)
+            vwBottomDivider.visible(showFooterLine)
+            pageNvBar.layoutParams = pageNvBar.layoutParams.apply {
+                height = if (hideNavigationBar) 0 else App.navigationBarHeight
+            }
+            contentTextView.upVisibleRect()
+            upTime()
+            upBattery(battery)
         }
-        binding.contentTextView.upVisibleRect()
-        upTime()
-        upBattery(battery)
     }
 
     /**
@@ -107,24 +109,24 @@ class ContentView(context: Context) : FrameLayout(context) {
             ReadBookConfig.hideStatusBar || (activity as? BaseActivity<*>)?.isInMultiWindow == true
     }
 
-    fun upTipStyle() {
+    fun upTipStyle() = with(binding) {
         ReadTipConfig.apply {
-            binding.tvHeaderLeft.isInvisible = tipHeaderLeft != chapterTitle
-            binding.bvHeaderLeft.isInvisible =
-                tipHeaderLeft == none || !binding.tvHeaderLeft.isInvisible
-            binding.tvHeaderRight.isGone = tipHeaderRight == none
-            binding.tvHeaderMiddle.isGone = tipHeaderMiddle == none
-            binding.tvFooterLeft.isInvisible = tipFooterLeft != chapterTitle
-            binding.bvFooterLeft.isInvisible =
-                tipFooterLeft == none || !binding.tvFooterLeft.isInvisible
-            binding.tvFooterRight.isGone = tipFooterRight == none
-            binding.tvFooterMiddle.isGone = tipFooterMiddle == none
-            binding.llHeader.isGone = when (headerMode) {
+            tvHeaderLeft.isInvisible = tipHeaderLeft != chapterTitle
+            bvHeaderLeft.isInvisible =
+                tipHeaderLeft == none || !tvHeaderLeft.isInvisible
+            tvHeaderRight.isGone = tipHeaderRight == none
+            tvHeaderMiddle.isGone = tipHeaderMiddle == none
+            tvFooterLeft.isInvisible = tipFooterLeft != chapterTitle
+            bvFooterLeft.isInvisible =
+                tipFooterLeft == none || !tvFooterLeft.isInvisible
+            tvFooterRight.isGone = tipFooterRight == none
+            tvFooterMiddle.isGone = tipFooterMiddle == none
+            llHeader.isGone = when (headerMode) {
                 1 -> false
                 2 -> true
                 else -> !ReadBookConfig.hideStatusBar
             }
-            binding.llFooter.isGone = when (footerMode) {
+            llFooter.isGone = when (footerMode) {
                 1 -> true
                 else -> false
             }
@@ -171,16 +173,16 @@ class ContentView(context: Context) : FrameLayout(context) {
         }
     }
 
-    private fun getTipView(tip: Int): BatteryView? {
+    private fun getTipView(tip: Int): BatteryView? = with(binding) {
         return when (tip) {
             ReadTipConfig.tipHeaderLeft ->
-                if (tip == ReadTipConfig.chapterTitle) binding.tvHeaderLeft else binding.bvHeaderLeft
-            ReadTipConfig.tipHeaderMiddle -> binding.tvHeaderMiddle
-            ReadTipConfig.tipHeaderRight -> binding.tvHeaderRight
+                if (tip == ReadTipConfig.chapterTitle) tvHeaderLeft else bvHeaderLeft
+            ReadTipConfig.tipHeaderMiddle -> tvHeaderMiddle
+            ReadTipConfig.tipHeaderRight -> tvHeaderRight
             ReadTipConfig.tipFooterLeft ->
-                if (tip == ReadTipConfig.chapterTitle) binding.tvFooterLeft else binding.bvFooterLeft
-            ReadTipConfig.tipFooterMiddle -> binding.tvFooterMiddle
-            ReadTipConfig.tipFooterRight -> binding.tvFooterRight
+                if (tip == ReadTipConfig.chapterTitle) tvFooterLeft else bvFooterLeft
+            ReadTipConfig.tipFooterMiddle -> tvFooterMiddle
+            ReadTipConfig.tipFooterRight -> tvFooterRight
             else -> null
         }
     }
