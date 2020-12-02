@@ -160,7 +160,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 for (i in 0 until menu.size) {
                     val item = menu[i]
                     when (item.groupId) {
-                        R.id.menu_group_on_line -> item.isVisible = onLine
+                        R.id.menu_group_on_line,
+                        R.id.menu_group_on_line_ns -> item.isVisible = onLine
                         R.id.menu_group_local -> item.isVisible = !onLine
                         R.id.menu_group_text -> item.isVisible = book.isLocalTxt()
                         R.id.menu_group_login ->
