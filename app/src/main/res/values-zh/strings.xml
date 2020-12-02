@@ -409,6 +409,7 @@
     <string name="book_url_pattern">书籍URL正则(bookUrlPattern)</string>
     <string name="rule_book_info_init">预处理规则(bookInfoInit)</string>
     <string name="rule_toc_url">目录URL规则(tocUrl)</string>
+    <string name="rule_can_re_name">允许修改书名作者(canReName)</string>
     <string name="rule_next_toc_url">目录下一页规则(nextTocUrl)</string>
     <string name="rule_chapter_list">目录列表规则(chapterList)</string>
     <string name="rule_chapter_name">章节名称规则(ChapterName)</string>

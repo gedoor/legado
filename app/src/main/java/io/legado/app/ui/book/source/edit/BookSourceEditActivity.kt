@@ -219,6 +219,7 @@ class BookSourceEditActivity :
             add(EditEntity("intro", ir?.intro, R.string.rule_book_intro))
             add(EditEntity("coverUrl", ir?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("tocUrl", ir?.tocUrl, R.string.rule_toc_url))
+            add(EditEntity("canReName", ir?.canReName, R.string.rule_can_re_name))
         }
         //目录页
         val tr = source?.getTocRule()
@@ -324,6 +325,7 @@ class BookSourceEditActivity :
                 "lastChapter" -> bookInfoRule.lastChapter = it.value
                 "coverUrl" -> bookInfoRule.coverUrl = it.value
                 "tocUrl" -> bookInfoRule.tocUrl = it.value
+                "canReName" -> bookInfoRule.canReName = it.value
             }
         }
         tocEntities.forEach {

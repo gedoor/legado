@@ -34,7 +34,7 @@ object BookInfo {
                 analyzeRule.setContent(analyzeRule.getElement(it))
             }
         }
-        val mCanReName = canReName && infoRule.canReName == true
+        val mCanReName = canReName && !infoRule.canReName.isNullOrBlank()
         Debug.log(bookSource.bookSourceUrl, "┌获取书名")
         BookHelp.formatBookName(analyzeRule.getString(infoRule.name)).let {
             if (it.isNotEmpty() && (mCanReName || book.name.isEmpty())) {
