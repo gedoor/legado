@@ -143,7 +143,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.read_book, menu)
+        menuInflater.inflate(R.menu.book_read, menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 

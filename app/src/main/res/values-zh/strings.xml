@@ -200,6 +200,7 @@
     <string name="volume_key_page">音量键翻页</string>
     <string name="click_turn_page">点击翻页</string>
     <string name="page_anim">翻页动画</string>
+    <string name="book_page_anim">翻页动画(本书)</string>
     <string name="keep_light">屏幕超时</string>
     <string name="back">返回</string>
     <string name="menu">菜单</string>

@@ -73,7 +73,7 @@
 
     <item
         android:id="@+id/menu_page_anim"
-        android:title="@string/page_anim"
+        android:title="@string/book_page_anim"
         app:showAsAction="never" />
 
     <item
