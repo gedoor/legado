@@ -15,6 +15,7 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.observeEvent
@@ -102,25 +103,19 @@ class ReadAloudDialog : BaseDialogFragment() {
                 upTtsSpeechRate()
             }
         }
-        seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            }
+        seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                AppConfig.ttsSpeechRate = seekTtsSpeechRate.progress
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                AppConfig.ttsSpeechRate = seekBar.progress
                 upTtsSpeechRate()
             }
         })
-        seekTimer.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        seekTimer.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 upTimerText(progress)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
                 ReadAloud.setTimer(requireContext(), seekTimer.progress)
             }
         })

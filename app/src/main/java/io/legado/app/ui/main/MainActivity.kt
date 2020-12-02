@@ -51,17 +51,17 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         return ActivityMainBinding.inflate(layoutInflater)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        ATH.applyEdgeEffectColor(binding.viewPagerMain)
-        ATH.applyBottomNavigationColor(binding.bottomNavigationView)
-        binding.viewPagerMain.offscreenPageLimit = 3
-        binding.viewPagerMain.adapter = TabFragmentPageAdapter(supportFragmentManager)
-        binding.viewPagerMain.addOnPageChangeListener(this)
-        binding.bottomNavigationView.elevation =
+    override fun onActivityCreated(savedInstanceState: Bundle?) = with(binding) {
+        ATH.applyEdgeEffectColor(viewPagerMain)
+        ATH.applyBottomNavigationColor(bottomNavigationView)
+        viewPagerMain.offscreenPageLimit = 3
+        viewPagerMain.adapter = TabFragmentPageAdapter(supportFragmentManager)
+        viewPagerMain.addOnPageChangeListener(this@MainActivity)
+        bottomNavigationView.elevation =
             if (AppConfig.elevation < 0) elevation else AppConfig.elevation.toFloat()
-        binding.bottomNavigationView.setOnNavigationItemSelectedListener(this)
-        binding.bottomNavigationView.setOnNavigationItemReselectedListener(this)
-        binding.bottomNavigationView.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
+        bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
+        bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
+        bottomNavigationView.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -78,12 +78,12 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }, 3000)
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+    override fun onNavigationItemSelected(item: MenuItem): Boolean = with(binding) {
         when (item.itemId) {
-            R.id.menu_bookshelf -> binding.viewPagerMain.setCurrentItem(0, false)
-            R.id.menu_explore -> binding.viewPagerMain.setCurrentItem(1, false)
-            R.id.menu_rss -> binding.viewPagerMain.setCurrentItem(2, false)
-            R.id.menu_my_config -> binding.viewPagerMain.setCurrentItem(3, false)
+            R.id.menu_bookshelf -> viewPagerMain.setCurrentItem(0, false)
+            R.id.menu_explore -> viewPagerMain.setCurrentItem(1, false)
+            R.id.menu_rss -> viewPagerMain.setCurrentItem(2, false)
+            R.id.menu_my_config -> viewPagerMain.setCurrentItem(3, false)
         }
         return false
     }
@@ -122,15 +122,15 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
-    override fun onPageSelected(position: Int) {
-        binding.viewPagerMain.hideSoftInput()
+    override fun onPageSelected(position: Int) = with(binding) {
+        viewPagerMain.hideSoftInput()
         pagePosition = position
         when (position) {
-            0, 1, 3 -> binding.bottomNavigationView.menu.getItem(position).isChecked = true
+            0, 1, 3 -> bottomNavigationView.menu.getItem(position).isChecked = true
             2 -> if (AppConfig.isShowRSS) {
-                binding.bottomNavigationView.menu.getItem(position).isChecked = true
+                bottomNavigationView.menu.getItem(position).isChecked = true
             } else {
-                binding.bottomNavigationView.menu.getItem(3).isChecked = true
+                bottomNavigationView.menu.getItem(3).isChecked = true
             }
         }
     }

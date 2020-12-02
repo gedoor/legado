@@ -25,6 +25,7 @@ import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.widget.image.CoverImageView
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -82,18 +83,18 @@ class AudioPlayActivity :
         binding.ivSkipPrevious.onClick {
             AudioPlay.prev(this)
         }
-        binding.playerProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        binding.playerProgress.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 binding.tvDurTime.text = DateFormatUtils.format(progress.toLong(), "mm:ss")
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
                 adjustProgress = true
             }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
                 adjustProgress = false
-                AudioPlay.adjustProgress(this@AudioPlayActivity, binding.playerProgress.progress)
+                AudioPlay.adjustProgress(this@AudioPlayActivity, seekBar.progress)
             }
         })
         binding.ivChapter.onClick {

@@ -18,6 +18,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
@@ -46,40 +47,44 @@ class ReadMenu @JvmOverloads constructor(
     val showBrightnessView get() = context.getPrefBoolean(PreferKey.showBrightnessView, true)
 
     init {
+        initView()
+        upBrightnessState()
+        bindEvent()
+    }
+
+    private fun initView() = with(binding) {
         if (AppConfig.isNightTheme) {
-            binding.fabNightTheme.setImageResource(R.drawable.ic_daytime)
+            fabNightTheme.setImageResource(R.drawable.ic_daytime)
         } else {
-            binding.fabNightTheme.setImageResource(R.drawable.ic_brightness)
+            fabNightTheme.setImageResource(R.drawable.ic_brightness)
         }
         initAnimation()
         val brightnessBackground = GradientDrawable()
         brightnessBackground.cornerRadius = 5F.dp
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
-        binding.llBrightness.background = brightnessBackground
-        binding.llBottomBg.setBackgroundColor(bgColor)
-        binding.fabSearch.backgroundTintList = bottomBackgroundList
-        binding.fabSearch.setColorFilter(textColor)
-        binding.fabAutoPage.backgroundTintList = bottomBackgroundList
-        binding.fabAutoPage.setColorFilter(textColor)
-        binding.fabReplaceRule.backgroundTintList = bottomBackgroundList
-        binding.fabReplaceRule.setColorFilter(textColor)
-        binding.fabNightTheme.backgroundTintList = bottomBackgroundList
-        binding.fabNightTheme.setColorFilter(textColor)
-        binding.tvPre.setTextColor(textColor)
-        binding.tvNext.setTextColor(textColor)
-        binding.ivCatalog.setColorFilter(textColor)
-        binding.tvCatalog.setTextColor(textColor)
-        binding.ivReadAloud.setColorFilter(textColor)
-        binding.tvReadAloud.setTextColor(textColor)
-        binding.ivFont.setColorFilter(textColor)
-        binding.tvFont.setTextColor(textColor)
-        binding.ivSetting.setColorFilter(textColor)
-        binding.tvSetting.setTextColor(textColor)
-        binding.vwBg.onClick { }
-        binding.vwNavigationBar.onClick { }
-        binding.seekBrightness.progress = context.getPrefInt("brightness", 100)
-        upBrightnessState()
-        bindEvent()
+        llBrightness.background = brightnessBackground
+        llBottomBg.setBackgroundColor(bgColor)
+        fabSearch.backgroundTintList = bottomBackgroundList
+        fabSearch.setColorFilter(textColor)
+        fabAutoPage.backgroundTintList = bottomBackgroundList
+        fabAutoPage.setColorFilter(textColor)
+        fabReplaceRule.backgroundTintList = bottomBackgroundList
+        fabReplaceRule.setColorFilter(textColor)
+        fabNightTheme.backgroundTintList = bottomBackgroundList
+        fabNightTheme.setColorFilter(textColor)
+        tvPre.setTextColor(textColor)
+        tvNext.setTextColor(textColor)
+        ivCatalog.setColorFilter(textColor)
+        tvCatalog.setTextColor(textColor)
+        ivReadAloud.setColorFilter(textColor)
+        tvReadAloud.setTextColor(textColor)
+        ivFont.setColorFilter(textColor)
+        tvFont.setTextColor(textColor)
+        ivSetting.setColorFilter(textColor)
+        tvSetting.setTextColor(textColor)
+        vwBg.onClick { }
+        vwNavigationBar.onClick { }
+        seekBrightness.progress = context.getPrefInt("brightness", 100)
     }
 
     fun upBrightnessState() {
@@ -128,25 +133,22 @@ class ReadMenu @JvmOverloads constructor(
         return context.getPrefBoolean("brightnessAuto", true) || !showBrightnessView
     }
 
-    private fun bindEvent() {
-        binding.tvChapterName.onClick {
+    private fun bindEvent() = with(binding) {
+        tvChapterName.onClick {
             callBack.openSourceEditActivity()
         }
-        binding.tvChapterUrl.onClick {
+        tvChapterUrl.onClick {
             context.openUrl(binding.tvChapterUrl.text.toString())
         }
-        binding.ivBrightnessAuto.onClick {
+        ivBrightnessAuto.onClick {
             context.putPrefBoolean("brightnessAuto", !brightnessAuto())
             upBrightnessState()
         }
         //亮度调节
-        binding.seekBrightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        seekBrightness.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 setScreenBrightness(progress)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
@@ -156,75 +158,69 @@ class ReadMenu @JvmOverloads constructor(
         })
 
         //阅读进度
-        binding.seekReadPage.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-
-            }
+        seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 ReadBook.skipToPage(seekBar.progress)
             }
+
         })
 
         //搜索
-        binding.fabSearch.onClick {
+        fabSearch.onClick {
             runMenuOut {
                 callBack.openSearchActivity(null)
             }
         }
 
         //自动翻页
-        binding.fabAutoPage.onClick {
+        fabAutoPage.onClick {
             runMenuOut {
                 callBack.autoPage()
             }
         }
 
         //替换
-        binding.fabReplaceRule.onClick { callBack.openReplaceRule() }
+        fabReplaceRule.onClick { callBack.openReplaceRule() }
 
         //夜间模式
-        binding.fabNightTheme.onClick {
+        fabNightTheme.onClick {
             AppConfig.isNightTheme = !AppConfig.isNightTheme
             App.INSTANCE.applyDayNight()
         }
 
         //上一章
-        binding.tvPre.onClick { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
+        tvPre.onClick { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
 
         //下一章
-        binding.tvNext.onClick { ReadBook.moveToNextChapter(true) }
+        tvNext.onClick { ReadBook.moveToNextChapter(true) }
 
         //目录
-        binding.llCatalog.onClick {
+        llCatalog.onClick {
             runMenuOut {
                 callBack.openChapterList()
             }
         }
 
         //朗读
-        binding.llReadAloud.onClick {
+        llReadAloud.onClick {
             runMenuOut {
                 callBack.onClickReadAloud()
             }
         }
-        binding.llReadAloud.onLongClick {
+        llReadAloud.onLongClick {
             runMenuOut { callBack.showReadAloudDialog() }
             true
         }
         //界面
-        binding.llFont.onClick {
+        llFont.onClick {
             runMenuOut {
                 callBack.showReadStyle()
             }
         }
 
         //设置
-        binding.llSetting.onClick {
+        llSetting.onClick {
             runMenuOut {
                 callBack.showMoreSetting()
             }

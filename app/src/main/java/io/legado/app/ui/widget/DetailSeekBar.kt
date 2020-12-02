@@ -9,6 +9,7 @@ import io.legado.app.R
 import io.legado.app.databinding.ViewDetailSeekBarBinding
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.progressAdd
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -17,7 +18,7 @@ class DetailSeekBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs),
-    SeekBar.OnSeekBarChangeListener {
+    SeekBarChangeListener {
     private var binding: ViewDetailSeekBarBinding =
         ViewDetailSeekBarBinding.inflate(LayoutInflater.from(context), this, true)
     private val isBottomBackground: Boolean
@@ -69,15 +70,15 @@ class DetailSeekBar @JvmOverloads constructor(
         }
     }
 
-    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         upValue(progress)
     }
 
-    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+    override fun onStartTrackingTouch(seekBar: SeekBar) {
 
     }
 
-    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+    override fun onStopTrackingTouch(seekBar: SeekBar) {
         onChanged?.invoke(binding.seekBar.progress)
     }
 
