@@ -58,16 +58,20 @@ class ContentView(context: Context) : FrameLayout(context) {
     }
 
     fun upStyle() = with(binding) {
-        ReadBookConfig.apply {
-            bvHeaderLeft.typeface = ChapterProvider.typeface
-            tvHeaderLeft.typeface = ChapterProvider.typeface
-            tvHeaderMiddle.typeface = ChapterProvider.typeface
-            tvHeaderRight.typeface = ChapterProvider.typeface
-            bvFooterLeft.typeface = ChapterProvider.typeface
-            tvFooterLeft.typeface = ChapterProvider.typeface
-            tvFooterMiddle.typeface = ChapterProvider.typeface
-            tvFooterRight.typeface = ChapterProvider.typeface
-            val tipColor = if (ReadTipConfig.tipColor == 0) textColor else ReadTipConfig.tipColor
+        ChapterProvider.let {
+            bvHeaderLeft.typeface = it.typeface
+            tvHeaderLeft.typeface = it.typeface
+            tvHeaderMiddle.typeface = it.typeface
+            tvHeaderRight.typeface = it.typeface
+            bvFooterLeft.typeface = it.typeface
+            tvFooterLeft.typeface = it.typeface
+            tvFooterMiddle.typeface = it.typeface
+            tvFooterRight.typeface = it.typeface
+        }
+        ReadBookConfig.let {
+            val tipColor = with(ReadTipConfig) {
+                if (tipColor == 0) it.textColor else tipColor
+            }
             bvHeaderLeft.setColor(tipColor)
             tvHeaderLeft.setColor(tipColor)
             tvHeaderMiddle.setColor(tipColor)
@@ -78,26 +82,26 @@ class ContentView(context: Context) : FrameLayout(context) {
             tvFooterRight.setColor(tipColor)
             upStatusBar()
             llHeader.setPadding(
-                headerPaddingLeft.dp,
-                headerPaddingTop.dp,
-                headerPaddingRight.dp,
-                headerPaddingBottom.dp
+                it.headerPaddingLeft.dp,
+                it.headerPaddingTop.dp,
+                it.headerPaddingRight.dp,
+                it.headerPaddingBottom.dp
             )
             llFooter.setPadding(
-                footerPaddingLeft.dp,
-                footerPaddingTop.dp,
-                footerPaddingRight.dp,
-                footerPaddingBottom.dp
+                it.footerPaddingLeft.dp,
+                it.footerPaddingTop.dp,
+                it.footerPaddingRight.dp,
+                it.footerPaddingBottom.dp
             )
-            vwTopDivider.visible(showHeaderLine)
-            vwBottomDivider.visible(showFooterLine)
+            vwTopDivider.visible(it.showHeaderLine)
+            vwBottomDivider.visible(it.showFooterLine)
             pageNvBar.layoutParams = pageNvBar.layoutParams.apply {
-                height = if (hideNavigationBar) 0 else App.navigationBarHeight
+                height = if (it.hideNavigationBar) 0 else App.navigationBarHeight
             }
-            contentTextView.upVisibleRect()
-            upTime()
-            upBattery(battery)
         }
+        contentTextView.upVisibleRect()
+        upTime()
+        upBattery(battery)
     }
 
     /**
