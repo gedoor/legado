@@ -16,6 +16,10 @@ class FileAssociationActivity :
         theme = Theme.Transparent
     ) {
 
+    override fun getViewBinding(): ActivityTranslucenceBinding {
+        return ActivityTranslucenceBinding.inflate(layoutInflater)
+    }
+
     override val viewModel: FileAssociationViewModel
         get() = getViewModel(FileAssociationViewModel::class.java)
 

@@ -53,6 +53,10 @@ class BookSourceEditActivity :
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
 
+    override fun getViewBinding(): ActivityBookSourceEditBinding {
+        return ActivityBookSourceEditBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         viewModel.initData(intent) {

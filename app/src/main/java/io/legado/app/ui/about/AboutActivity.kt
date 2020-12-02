@@ -17,6 +17,10 @@ import org.jetbrains.anko.share
 
 class AboutActivity : BaseActivity<ActivityAboutBinding>() {
 
+    override fun getViewBinding(): ActivityAboutBinding {
+        return ActivityAboutBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.llAbout.background = ATH.getDialogBackground()
         val fTag = "aboutFragment"

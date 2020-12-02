@@ -52,6 +52,10 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     override val viewModel: ImportBookViewModel
         get() = getViewModel(ImportBookViewModel::class.java)
 
+    override fun getViewBinding(): ActivityImportBookBinding {
+        return ActivityImportBookBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         initEvent()

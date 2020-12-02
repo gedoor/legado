@@ -18,6 +18,10 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
 
     private lateinit var adapter: RssSourceDebugAdapter
 
+    override fun getViewBinding(): ActivitySourceDebugBinding {
+        return ActivitySourceDebugBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()

@@ -21,6 +21,10 @@ class SourceLogin : BaseActivity<ActivitySourceLoginBinding>() {
     var loginUrl: String? = null
     var checking = false
 
+    override fun getViewBinding(): ActivitySourceLoginBinding {
+        return ActivitySourceLoginBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         sourceUrl = intent.getStringExtra("sourceUrl")
         loginUrl = intent.getStringExtra("loginUrl")

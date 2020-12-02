@@ -52,6 +52,10 @@ class ReplaceEditActivity :
         }
     }
 
+    override fun getViewBinding(): ActivityReplaceEditBinding {
+        return ActivityReplaceEditBinding.inflate(layoutInflater)
+    }
+
     override val viewModel: ReplaceEditViewModel
         get() = getViewModel(ReplaceEditViewModel::class.java)
 

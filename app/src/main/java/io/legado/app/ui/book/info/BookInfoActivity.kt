@@ -57,6 +57,10 @@ class BookInfoActivity :
     override val viewModel: BookInfoViewModel
         get() = getViewModel(BookInfoViewModel::class.java)
 
+    override fun getViewBinding(): ActivityBookInfoBinding {
+        return ActivityBookInfoBinding.inflate(layoutInflater)
+    }
+
     @SuppressLint("PrivateResource")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.transparent()

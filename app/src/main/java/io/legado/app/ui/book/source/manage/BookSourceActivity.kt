@@ -67,6 +67,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var sortAscending = 0
     private var snackBar: Snackbar? = null
 
+    override fun getViewBinding(): ActivityBookSourceBinding {
+        return ActivityBookSourceBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         searchView = binding.titleBar.findViewById(R.id.search_view)
         initRecyclerView()

@@ -60,6 +60,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private var replaceRuleLiveData: LiveData<List<ReplaceRule>>? = null
     private var dataInit = false
 
+    override fun getViewBinding(): ActivityReplaceRuleBinding {
+        return ActivityReplaceRuleBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()

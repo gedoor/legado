@@ -18,6 +18,10 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
     private var liveData: LiveData<List<RssStar>>? = null
     private lateinit var adapter: RssFavoritesAdapter
 
+    override fun getViewBinding(): ActivityRssFavoritesBinding {
+        return ActivityRssFavoritesBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         initData()

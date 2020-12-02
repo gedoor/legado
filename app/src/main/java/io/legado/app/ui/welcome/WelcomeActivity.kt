@@ -20,6 +20,10 @@ import java.util.concurrent.TimeUnit
 
 open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
+    override fun getViewBinding(): ActivityWelcomeBinding {
+        return ActivityWelcomeBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.ivBook.setColorFilter(accentColor)
         binding.vwTitleLine.setBackgroundColor(accentColor)

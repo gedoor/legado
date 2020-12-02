@@ -42,6 +42,10 @@ class AudioPlayActivity :
     private var requestCodeChapter = 8461
     private var adjustProgress = false
 
+    override fun getViewBinding(): ActivityAudioPlayBinding {
+        return ActivityAudioPlayBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.transparent()
         AudioPlay.titleData.observe(this, { binding.titleBar.title = it })

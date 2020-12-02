@@ -40,6 +40,10 @@ class RssSourceEditActivity :
     private val adapter = RssSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
 
+    override fun getViewBinding(): ActivityRssSourceEditBinding {
+        return ActivityRssSourceEditBinding.inflate(layoutInflater)
+    }
+
     override val viewModel: RssSourceEditViewModel
         get() = getViewModel(RssSourceEditViewModel::class.java)
 

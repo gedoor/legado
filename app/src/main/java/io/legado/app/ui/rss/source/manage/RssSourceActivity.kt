@@ -60,6 +60,10 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
 
+    override fun getViewBinding(): ActivityRssSourceBinding {
+        return ActivityRssSourceBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()

@@ -42,6 +42,10 @@ class SearchContentActivity :
     private var durChapterIndex = 0
     private var searchResultList: MutableList<SearchResult> = mutableListOf()
 
+    override fun getViewBinding(): ActivitySearchContentBinding {
+        return ActivitySearchContentBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         searchView = binding.titleBar.findViewById(R.id.search_view)
         val bbg = bottomBackground

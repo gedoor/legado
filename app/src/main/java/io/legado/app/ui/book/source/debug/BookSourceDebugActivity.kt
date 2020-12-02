@@ -25,6 +25,10 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     private lateinit var searchView: SearchView
     private val qrRequestCode = 101
 
+    override fun getViewBinding(): ActivitySourceDebugBinding {
+        return ActivitySourceDebugBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         searchView = binding.titleBar.findViewById(R.id.search_view)
         viewModel.init(intent.getStringExtra("key"))

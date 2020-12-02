@@ -48,6 +48,10 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     override val viewModel: CacheViewModel
         get() = getViewModel(CacheViewModel::class.java)
 
+    override fun getViewBinding(): ActivityCacheBookBinding {
+        return ActivityCacheBookBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)
         binding.titleBar.subtitle = intent.getStringExtra("groupName") ?: getString(R.string.all)

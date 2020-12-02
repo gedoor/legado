@@ -52,6 +52,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = linkedSetOf<String>()
 
+    override fun getViewBinding(): ActivityBookSearchBinding {
+        return ActivityBookSearchBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.llHistory.setBackgroundColor(backgroundColor)
         serchView = binding.titleBar.findViewById(R.id.search_view)

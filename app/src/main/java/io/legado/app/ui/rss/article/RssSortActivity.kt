@@ -25,6 +25,10 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     private val fragments = linkedMapOf<String, RssArticlesFragment>()
     private lateinit var adapter: TabFragmentPageAdapter
 
+    override fun getViewBinding(): ActivityRssArtivlesBinding {
+        return ActivityRssArtivlesBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         adapter = TabFragmentPageAdapter(supportFragmentManager)
         binding.tabLayout.setupWithViewPager(binding.viewPager)

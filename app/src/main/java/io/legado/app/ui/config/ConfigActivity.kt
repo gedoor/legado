@@ -12,6 +12,10 @@ class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() 
     override val viewModel: ConfigViewModel
         get() = getViewModel(ConfigViewModel::class.java)
 
+    override fun getViewBinding(): ActivityConfigBinding {
+        return ActivityConfigBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         intent.getIntExtra("configType", -1).let {
             if (it != -1) viewModel.configType = it

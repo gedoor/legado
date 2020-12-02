@@ -26,6 +26,10 @@ class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterLi
     private lateinit var tabLayout: TabLayout
     private var searchView: SearchView? = null
 
+    override fun getViewBinding(): ActivityChapterListBinding {
+        return ActivityChapterListBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         tabLayout = binding.titleBar.findViewById(R.id.tab_layout)
         tabLayout.isTabIndicatorFullWidth = false

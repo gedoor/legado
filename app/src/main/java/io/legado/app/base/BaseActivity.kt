@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,7 +23,6 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import java.lang.reflect.ParameterizedType
 
 
 abstract class BaseActivity<VB : ViewBinding>(
@@ -35,15 +33,7 @@ abstract class BaseActivity<VB : ViewBinding>(
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
-    protected val binding: VB by lazy {
-        //使用反射得到viewBinding的class
-        val type = javaClass.genericSuperclass as ParameterizedType
-        val aClass = type.actualTypeArguments[0] as Class<*>
-        val method = aClass.getDeclaredMethod("inflate", LayoutInflater::class.java)
-        @Suppress("UNCHECKED_CAST")
-        method.invoke(null, layoutInflater) as VB
-    }
-
+    protected val binding: VB by lazy { getViewBinding() }
 
     val isInMultiWindow: Boolean
         get() {
@@ -57,6 +47,8 @@ abstract class BaseActivity<VB : ViewBinding>(
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LanguageUtils.setConfiguration(newBase))
     }
+
+    protected abstract fun getViewBinding(): VB
 
     override fun onCreateView(
         parent: View?,

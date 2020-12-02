@@ -43,6 +43,10 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
     private var webPic: String? = null
 
+    override fun getViewBinding(): ActivityRssReadBinding {
+        return ActivityRssReadBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.callBack = this
         binding.titleBar.title = intent.getStringExtra("title")

@@ -45,6 +45,10 @@ abstract class ReadBookBaseActivity :
         get() = getViewModel(ReadBookViewModel::class.java)
     var bottomDialog = 0
 
+    override fun getViewBinding(): ActivityBookReadBinding {
+        return ActivityBookReadBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         ReadBook.msg = null
         setOrientation()

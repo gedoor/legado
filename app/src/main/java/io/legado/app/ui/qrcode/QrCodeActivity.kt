@@ -21,6 +21,10 @@ class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), QRCodeView.
     private val requestQrImage = 202
     private var flashlightIsOpen: Boolean = false
 
+    override fun getViewBinding(): ActivityQrcodeCaptureBinding {
+        return ActivityQrcodeCaptureBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.zXingView.setDelegate(this)
         binding.fabFlashlight.setOnClickListener {

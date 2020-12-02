@@ -22,6 +22,10 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     lateinit var adapter: RecordAdapter
 
+    override fun getViewBinding(): ActivityReadRecordBinding {
+        return ActivityReadRecordBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         initData()

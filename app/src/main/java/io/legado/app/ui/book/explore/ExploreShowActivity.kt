@@ -24,6 +24,10 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
     private lateinit var loadMoreView: LoadMoreView
     private var isLoading = true
 
+    override fun getViewBinding(): ActivityExploreShowBinding {
+        return ActivityExploreShowBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.title = intent.getStringExtra("exploreName")
         initRecyclerView()

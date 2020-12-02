@@ -16,6 +16,10 @@ class ImportBookSourceActivity :
         theme = Theme.Transparent
     ) {
 
+    override fun getViewBinding(): ActivityTranslucenceBinding {
+        return ActivityTranslucenceBinding.inflate(layoutInflater)
+    }
+
     override val viewModel: ImportBookSourceViewModel
         get() = getViewModel(ImportBookSourceViewModel::class.java)
 

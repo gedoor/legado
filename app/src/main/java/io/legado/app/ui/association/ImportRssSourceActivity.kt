@@ -15,6 +15,10 @@ class ImportRssSourceActivity :
         theme = Theme.Transparent
     ) {
 
+    override fun getViewBinding(): ActivityTranslucenceBinding {
+        return ActivityTranslucenceBinding.inflate(layoutInflater)
+    }
+
     override val viewModel: ImportRssSourceViewModel
         get() = getViewModel(ImportRssSourceViewModel::class.java)
 

@@ -47,6 +47,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private var pagePosition = 0
     private val fragmentMap = hashMapOf<Int, Fragment>()
 
+    override fun getViewBinding(): ActivityMainBinding {
+        return ActivityMainBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ATH.applyEdgeEffectColor(binding.viewPagerMain)
         ATH.applyBottomNavigationColor(binding.bottomNavigationView)

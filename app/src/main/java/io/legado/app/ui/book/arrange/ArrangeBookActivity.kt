@@ -43,6 +43,10 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     private var menu: Menu? = null
     private var groupId: Long = -1
 
+    override fun getViewBinding(): ActivityArrangeBookBinding {
+        return ActivityArrangeBookBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)
         binding.titleBar.subtitle = intent.getStringExtra("groupName") ?: getString(R.string.all)

@@ -13,6 +13,10 @@ import io.legado.app.databinding.ActivityDonateBinding
 
 class DonateActivity : BaseActivity<ActivityDonateBinding>() {
 
+    override fun getViewBinding(): ActivityDonateBinding {
+        return ActivityDonateBinding.inflate(layoutInflater)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val fTag = "donateFragment"
         var donateFragment = supportFragmentManager.findFragmentByTag(fTag)
