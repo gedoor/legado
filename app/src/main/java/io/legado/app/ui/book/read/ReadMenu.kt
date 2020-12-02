@@ -156,7 +156,7 @@ class ReadMenu @JvmOverloads constructor(
         })
 
         //阅读进度
-        binding.seekBrightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.seekReadPage.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
 
             }
