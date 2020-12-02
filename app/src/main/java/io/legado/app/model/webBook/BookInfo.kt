@@ -34,20 +34,21 @@ object BookInfo {
                 analyzeRule.setContent(analyzeRule.getElement(it))
             }
         }
+        val mCanReName = canReName && infoRule.canReName == true
         Debug.log(bookSource.bookSourceUrl, "┌获取书名")
         BookHelp.formatBookName(analyzeRule.getString(infoRule.name)).let {
-            if (it.isNotEmpty() && (canReName || book.name.isEmpty())) {
+            if (it.isNotEmpty() && (mCanReName || book.name.isEmpty())) {
                 book.name = it
             }
+            Debug.log(bookSource.bookSourceUrl, "└${it}")
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.name}")
         Debug.log(bookSource.bookSourceUrl, "┌获取作者")
         BookHelp.formatBookAuthor(analyzeRule.getString(infoRule.author)).let {
-            if (it.isNotEmpty() && (canReName || book.name.isEmpty())) {
+            if (it.isNotEmpty() && (mCanReName || book.name.isEmpty())) {
                 book.author = it
             }
+            Debug.log(bookSource.bookSourceUrl, "└${it}")
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.author}")
         Debug.log(bookSource.bookSourceUrl, "┌获取分类")
         analyzeRule.getStringList(infoRule.kind)
             ?.joinToString(",")

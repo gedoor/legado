@@ -15,5 +15,6 @@ data class BookInfoRule(
     var updateTime: String? = null,
     var coverUrl: String? = null,
     var tocUrl: String? = null,
-    var wordCount: String? = null
+    var wordCount: String? = null,
+    var canReName: Boolean? = null
 ) : Parcelable
