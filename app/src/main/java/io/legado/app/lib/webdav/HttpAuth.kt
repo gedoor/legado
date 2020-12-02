@@ -1,4 +1,4 @@
-package io.legado.app.lib.webdav.http
+package io.legado.app.lib.webdav
 
 object HttpAuth {
 

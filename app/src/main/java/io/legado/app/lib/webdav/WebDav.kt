@@ -1,8 +1,6 @@
 package io.legado.app.lib.webdav
 
 import io.legado.app.help.http.HttpHelper
-import io.legado.app.lib.webdav.http.Handler
-import io.legado.app.lib.webdav.http.HttpAuth
 import okhttp3.*
 import org.jsoup.Jsoup
 import java.io.File
@@ -14,7 +12,7 @@ import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class WebDav(urlStr: String) {
     companion object {
         // 指定返回哪些属性
@@ -32,7 +30,7 @@ class WebDav(urlStr: String) {
                 </a:propfind>"""
     }
 
-    private val url: URL = URL(null, urlStr, Handler)
+    private val url: URL = URL(urlStr)
     private val httpUrl: String? by lazy {
         val raw = url.toString().replace("davs://", "https://").replace("dav://", "http://")
         try {
@@ -45,25 +43,13 @@ class WebDav(urlStr: String) {
             return@lazy null
         }
     }
-
+    val host: String? get() = url.host
+    val path get() = url.toString()
     var displayName: String? = null
     var size: Long = 0
     var exists = false
     var parent = ""
     var urlName = ""
-        get() {
-            if (field.isEmpty()) {
-                this.urlName = (
-                        if (parent.isEmpty()) url.file
-                        else url.toString().replace(parent, "")
-                        ).replace("/", "")
-            }
-            return field
-        }
-
-    val path get() = url.toString()
-
-    val host: String? get() = url.host
 
     /**
      * 填充文件信息。实例化WebDAVFile对象时，并没有将远程文件的信息填充到实例中。需要手动填充！
@@ -143,8 +129,8 @@ class WebDav(urlStr: String) {
         val list = ArrayList<WebDav>()
         val document = Jsoup.parse(s)
         val elements = document.getElementsByTag("d:response")
-        httpUrl?.let { url ->
-            val baseUrl = if (url.endsWith("/")) url else "$url/"
+        httpUrl?.let { urlStr ->
+            val baseUrl = if (urlStr.endsWith("/")) urlStr else "$urlStr/"
             for (element in elements) {
                 val href = element.getElementsByTag("d:href")[0].text()
                 if (!href.endsWith("/")) {
@@ -153,7 +139,13 @@ class WebDav(urlStr: String) {
                     try {
                         webDavFile = WebDav(baseUrl + fileName)
                         webDavFile.displayName = fileName
-                        webDavFile.urlName = href
+                        if (href.isEmpty()) {
+                            webDavFile.urlName =
+                                if (parent.isEmpty()) url.file.replace("/", "")
+                                else url.toString().replace(parent, "").replace("/", "")
+                        } else {
+                            webDavFile.urlName = href
+                        }
                         list.add(webDavFile)
                     } catch (e: MalformedURLException) {
                         e.printStackTrace()
