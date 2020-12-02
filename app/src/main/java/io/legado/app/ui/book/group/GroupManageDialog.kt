@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
@@ -20,6 +19,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemGroupManageBinding
 import io.legado.app.lib.dialogs.alert
@@ -99,15 +99,12 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     @SuppressLint("InflateParams")
     private fun addGroup() {
         alert(title = getString(R.string.add_group)) {
-            var editText: EditText? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                    editText?.setHint(R.string.group_name)
-                }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setHint(R.string.group_name)
             }
+            customView = alertBinding.root
             yesButton {
-                editText?.text?.toString()?.let {
+                alertBinding.editView.text?.toString()?.let {
                     if (it.isNotBlank()) {
                         viewModel.addGroup(it)
                     }
@@ -120,16 +117,15 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     @SuppressLint("InflateParams")
     private fun editGroup(bookGroup: BookGroup) {
         alert(title = getString(R.string.group_edit)) {
-            var editText: EditText? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                    editText!!.setHint(R.string.group_name)
-                    editText!!.setText(bookGroup.groupName)
-                }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setHint(R.string.group_name)
+                editView.setText(bookGroup.groupName)
             }
+            customView = alertBinding.root
             yesButton {
-                viewModel.upGroup(bookGroup.copy(groupName = editText?.text?.toString() ?: ""))
+                alertBinding.editView.text?.toString()?.let {
+                    viewModel.upGroup(bookGroup.copy(groupName = it))
+                }
             }
             noButton()
         }.show().requestInputMethod()

@@ -22,6 +22,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
@@ -38,7 +39,6 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
@@ -279,15 +279,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     @SuppressLint("InflateParams")
     private fun checkSource() {
         alert(titleResource = R.string.search_book_key) {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                    editText?.setText(CheckSource.keyword)
-                }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setText(CheckSource.keyword)
             }
+            customView = alertBinding.root
             okButton {
-                editText?.text?.toString()?.let {
+                alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
                         CheckSource.keyword = it
                     }
@@ -301,17 +298,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     @SuppressLint("InflateParams")
     private fun selectionAddToGroups() {
         alert(titleResource = R.string.add_group) {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                    editText?.setHint(R.string.group_name)
-                    editText?.setFilterValues(groups.toList())
-                    editText?.dropDownHeight = 180.dp
-                }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setHint(R.string.group_name)
+                editView.setFilterValues(groups.toList())
+                editView.dropDownHeight = 180.dp
             }
+            customView = alertBinding.root
             okButton {
-                editText?.text?.toString()?.let {
+                alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
                         viewModel.selectionAddToGroups(adapter.getSelection(), it)
                     }
@@ -324,17 +318,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     @SuppressLint("InflateParams")
     private fun selectionRemoveFromGroups() {
         alert(titleResource = R.string.remove_group) {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                    editText?.setHint(R.string.group_name)
-                    editText?.setFilterValues(groups.toList())
-                    editText?.dropDownHeight = 180.dp
-                }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setHint(R.string.group_name)
+                editView.setFilterValues(groups.toList())
+                editView.dropDownHeight = 180.dp
             }
+            customView = alertBinding.root
             okButton {
-                editText?.text?.toString()?.let {
+                alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
                         viewModel.selectionRemoveFromGroups(adapter.getSelection(), it)
                     }
@@ -360,19 +351,16 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_book_source_on_line) {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                    editText?.setFilterValues(cacheUrls)
-                    editText?.delCallBack = {
-                        cacheUrls.remove(it)
-                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
-                    }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setFilterValues(cacheUrls)
+                editView.delCallBack = {
+                    cacheUrls.remove(it)
+                    aCache.put(importRecordKey, cacheUrls.joinToString(","))
                 }
             }
+            customView = alertBinding.root
             okButton {
-                val text = editText?.text?.toString()
+                val text = alertBinding.editView.text?.toString()
                 text?.let {
                     if (!cacheUrls.contains(it)) {
                         cacheUrls.add(0, it)

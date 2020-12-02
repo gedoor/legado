@@ -16,11 +16,11 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BookSource
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -85,14 +85,10 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         when (item.itemId) {
             R.id.menu_new_group -> {
                 alert(R.string.diy_edit_source_group) {
-                    var editText: AutoCompleteTextView? = null
-                    customView {
-                        layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                            editText = findViewById(R.id.edit_view)
-                        }
-                    }
+                    val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+                    customView = alertBinding.root
                     okButton {
-                        editText?.text?.toString()?.let { group ->
+                        alertBinding.editView.text?.toString()?.let { group ->
                             viewModel.groupName = group
                             item.title = getString(R.string.diy_edit_source_group_title, group)
                         }

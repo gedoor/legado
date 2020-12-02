@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.*
-import android.widget.EditText
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
@@ -15,6 +14,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ActivityBookReadBinding
 import io.legado.app.databinding.DialogDownloadChoiceBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.ReadBookConfig
@@ -30,7 +30,6 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
-import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
@@ -207,16 +206,13 @@ abstract class ReadBookBaseActivity :
         val book = ReadBook.book ?: return
         val textChapter = ReadBook.curTextChapter ?: return
         alert(title = getString(R.string.bookmark_add)) {
-            var editText: EditText? = null
-            message = book.name + " • " + textChapter.title
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                    editText!!.setHint(R.string.note_content)
-                }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setHint(R.string.note_content)
             }
+            message = book.name + " • " + textChapter.title
+            customView = alertBinding.root
             yesButton {
-                editText?.text?.toString()?.let { editContent ->
+                alertBinding.editView.text?.toString()?.let { editContent ->
                     Coroutine.async {
                         val bookmark = Bookmark(
                             bookUrl = book.bookUrl,
@@ -239,17 +235,13 @@ abstract class ReadBookBaseActivity :
         val charsets =
             arrayListOf("UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "UTF-16LE", "ASCII")
         alert(R.string.set_charset) {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                    editText?.setFilterValues(charsets)
-                    editText?.setText(ReadBook.book?.charset)
-                }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setFilterValues(charsets)
+                editView.setText(ReadBook.book?.charset)
             }
+            customView = alertBinding.root
             okButton {
-                val text = editText?.text?.toString()
-                text?.let {
+                alertBinding.editView.text?.toString()?.let {
                     ReadBook.setCharset(it)
                 }
             }

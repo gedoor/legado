@@ -2,7 +2,10 @@ package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -146,7 +149,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
             val bookshelfSort = getPrefInt(PreferKey.bookshelfSort)
             val alertBinding =
-                DialogBookshelfConfigBinding.inflate(LayoutInflater.from(requireContext()))
+                DialogBookshelfConfigBinding.inflate(layoutInflater)
                     .apply {
                         rgLayout.checkByIndex(bookshelfLayout)
                         rgSort.checkByIndex(bookshelfSort)
@@ -175,7 +178,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     @SuppressLint("InflateParams")
     private fun addBookByUrl() {
         alert(titleResource = R.string.add_book_url) {
-            val alertBinding = DialogEditTextBinding.inflate(LayoutInflater.from(requireContext()))
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
             customView = alertBinding.root
             okButton {
                 alertBinding.editView.text?.toString()?.let {

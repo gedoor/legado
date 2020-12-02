@@ -13,6 +13,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogReadBgTextBinding
 import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.ReadBookConfig
@@ -26,7 +27,6 @@ import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
-import io.legado.app.ui.widget.text.AutoCompleteTextView
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
@@ -123,15 +123,12 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     private fun initEvent() = with(ReadBookConfig.durConfig) {
         binding.ivEdit.onClick {
             alert(R.string.style_name) {
-                var editText: AutoCompleteTextView? = null
-                customView {
-                    layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                        editText = findViewById(R.id.edit_view)
-                        editText!!.setText(ReadBookConfig.durConfig.name)
-                    }
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.setText(ReadBookConfig.durConfig.name)
                 }
+                customView = alertBinding.root
                 okButton {
-                    editText?.text?.toString()?.let {
+                    alertBinding.editView.text?.toString()?.let {
                         binding.tvName.text = it
                         ReadBookConfig.durConfig.name = it
                     }
@@ -278,14 +275,10 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     @SuppressLint("InflateParams")
     private fun importNetConfigAlert() {
         alert("输入地址") {
-            var editText: AutoCompleteTextView? = null
-            customView {
-                layoutInflater.inflate(R.layout.dialog_edit_text, null).apply {
-                    editText = findViewById(R.id.edit_view)
-                }
-            }
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            customView = alertBinding.root
             okButton {
-                editText?.text?.toString()?.let { url ->
+                alertBinding.editView.text?.toString()?.let { url ->
                     importNetConfig(url)
                 }
             }
