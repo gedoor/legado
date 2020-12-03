@@ -20,8 +20,8 @@ data class TextPage(
     var height: Float = 0f,
 ) {
 
-    val lineSize = textLines.size
-    val charSize = text.length
+    val lineSize get() = textLines.size
+    val charSize get() = text.length
 
     fun upLinesPosition() = ChapterProvider.apply {
         if (!ReadBookConfig.textBottomJustify) return@apply

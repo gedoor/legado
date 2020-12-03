@@ -117,7 +117,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         binding.readView.upStatusBar()
-        ReadBook.loadContent(resetPageOffset = false)
     }
 
     override fun onResume() {
