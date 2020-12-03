@@ -5,7 +5,7 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 
 interface DataSource {
 
-    val pageIndex: Int get() = ReadBook.durChapterPos()
+    val pageIndex: Int get() = ReadBook.durPageIndex()
 
     val currentChapter: TextChapter?
 

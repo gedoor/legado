@@ -21,7 +21,7 @@ object AudioPlay {
     var inBookshelf = false
     var chapterSize = 0
     var durChapterIndex = 0
-    var durPageIndex = 0
+    var durChapterPos = 0
     var webBook: WebBook? = null
     val loadingChapters = arrayListOf<Int>()
 
@@ -81,7 +81,7 @@ object AudioPlay {
         Coroutine.async {
             book?.let { book ->
                 durChapterIndex = index
-                durPageIndex = 0
+                durChapterPos = 0
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
@@ -100,7 +100,7 @@ object AudioPlay {
                     return@let
                 }
                 durChapterIndex--
-                durPageIndex = 0
+                durChapterPos = 0
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
@@ -119,7 +119,7 @@ object AudioPlay {
                     return@let
                 }
                 durChapterIndex++
-                durPageIndex = 0
+                durChapterPos = 0
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
@@ -137,7 +137,7 @@ object AudioPlay {
                 book.lastCheckCount = 0
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
-                book.durChapterPos = durPageIndex
+                book.durChapterPos = durChapterPos
                 App.db.bookChapterDao().getChapter(book.bookUrl, book.durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }

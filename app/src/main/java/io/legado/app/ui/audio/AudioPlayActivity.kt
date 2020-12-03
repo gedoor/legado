@@ -208,7 +208,7 @@ class AudioPlayActivity :
             binding.tvAllTime.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }
         observeEventSticky<Int>(EventBus.AUDIO_PROGRESS) {
-            AudioPlay.durPageIndex = it
+            AudioPlay.durChapterPos = it
             if (!adjustProgress) binding.playerProgress.progress = it
             binding.tvDurTime.text = DateFormatUtils.format(it.toLong(), "mm:ss")
         }

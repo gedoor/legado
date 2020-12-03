@@ -31,7 +31,7 @@ object ReadBook {
     var inBookshelf = false
     var chapterSize = 0
     var durChapterIndex = 0
-    var durPageIndex = 0
+    var durChapterPos = 0
     var isLocalBook = true
     var callBack: CallBack? = null
     var prevTextChapter: TextChapter? = null
@@ -50,7 +50,7 @@ object ReadBook {
         readRecord.bookName = book.name
         readRecord.readTime = App.db.readRecordDao().getReadTime(book.name) ?: 0
         durChapterIndex = book.durChapterIndex
-        durPageIndex = book.durChapterPos
+        durChapterPos = book.durChapterPos
         isLocalBook = book.origin == BookType.local
         chapterSize = 0
         prevTextChapter = null
@@ -96,14 +96,14 @@ object ReadBook {
     }
 
     fun moveToNextPage() {
-        durPageIndex++
+        durChapterPos = curTextChapter?.getNextPageLength(durChapterPos) ?: durChapterPos
         callBack?.upContent()
         saveRead()
     }
 
     fun moveToNextChapter(upContent: Boolean): Boolean {
         if (durChapterIndex < chapterSize - 1) {
-            durPageIndex = 0
+            durChapterPos = 0
             durChapterIndex++
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
@@ -133,7 +133,7 @@ object ReadBook {
 
     fun moveToPrevChapter(upContent: Boolean, toLast: Boolean = true): Boolean {
         if (durChapterIndex > 0) {
-            durPageIndex = if (toLast) prevTextChapter?.lastIndex ?: 0 else 0
+            durChapterPos = if (toLast) prevTextChapter?.lastReadLength ?: 0 else 0
             durChapterIndex--
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
@@ -161,15 +161,15 @@ object ReadBook {
         }
     }
 
-    fun skipToPage(page: Int) {
-        durPageIndex = page
+    fun skipToPage(index: Int) {
+        durChapterPos = curTextChapter?.getReadLength(index) ?: index
         callBack?.upContent()
         curPageChanged()
         saveRead()
     }
 
-    fun setPageIndex(pageIndex: Int) {
-        durPageIndex = pageIndex
+    fun setPageIndex(index: Int) {
+        durChapterPos = curTextChapter?.getReadLength(index) ?: index
         saveRead()
         curPageChanged()
     }
@@ -191,19 +191,16 @@ object ReadBook {
         if (book != null && textChapter != null) {
             val key = IntentDataHelp.putData(textChapter)
             ReadAloud.play(
-                App.INSTANCE, book.name, textChapter.title, durPageIndex, key, play
+                App.INSTANCE, book.name, textChapter.title, durPageIndex(), key, play
             )
         }
     }
 
-    fun durChapterPos(): Int {
+    fun durPageIndex(): Int {
         curTextChapter?.let {
-            if (durPageIndex < it.pageSize) {
-                return durPageIndex
-            }
-            return it.pageSize - 1
+            return it.getPageIndexByCharIndex(durChapterPos)
         }
-        return durPageIndex
+        return durChapterPos
     }
 
     /**
@@ -430,7 +427,7 @@ object ReadBook {
                 book.lastCheckCount = 0
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
-                book.durChapterPos = durPageIndex
+                book.durChapterPos = durChapterPos
                 App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }

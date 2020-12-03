@@ -31,7 +31,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                     titleData.postValue(book.name)
                     coverData.postValue(book.getDisplayCover())
                     durChapterIndex = book.durChapterIndex
-                    durPageIndex = book.durChapterPos
+                    durChapterPos = book.durChapterPos
                     App.db.bookChapterDao().getChapter(book.bookUrl, book.durChapterIndex)?.let {
                         postEvent(EventBus.AUDIO_SUB_TITLE, it.title)
                     }

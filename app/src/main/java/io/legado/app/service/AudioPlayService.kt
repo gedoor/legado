@@ -336,7 +336,7 @@ class AudioPlayService : BaseService(),
     private fun saveProgress() {
         launch(IO) {
             AudioPlay.book?.let {
-                App.db.bookDao().upProgress(it.bookUrl, AudioPlay.durPageIndex)
+                App.db.bookDao().upProgress(it.bookUrl, AudioPlay.durChapterPos)
             }
         }
     }

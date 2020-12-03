@@ -287,7 +287,7 @@ class ReadMenu @JvmOverloads constructor(
                 binding.tvChapterUrl.gone()
             }
             binding.seekReadPage.max = it.pageSize.minus(1)
-            binding.seekReadPage.progress = ReadBook.durPageIndex
+            binding.seekReadPage.progress = ReadBook.durPageIndex()
             binding.tvPre.isEnabled = ReadBook.durChapterIndex != 0
             binding.tvNext.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
         } ?: let {

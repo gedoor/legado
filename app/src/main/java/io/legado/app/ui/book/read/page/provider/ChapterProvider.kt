@@ -83,8 +83,6 @@ object ChapterProvider {
         imageStyle: String?,
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
-        val pageLines = arrayListOf<Int>()
-        val pageLengths = arrayListOf<Int>()
         val stringBuilder = StringBuilder()
         var durY = 0f
         var paint = Pair(titlePaint, contentPaint)
@@ -109,21 +107,12 @@ object ChapterProvider {
                 val isTitle = index == 0
                 val textPaint = if (isTitle) paint.first else paint.second
                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
-                    durY = setTypeText(
-                        text, durY, textPages, pageLines,
-                        pageLengths, stringBuilder, isTitle, textPaint
-                    )
+                    durY = setTypeText(text, durY, textPages, stringBuilder, isTitle, textPaint)
                 }
             }
         }
         textPages.last().height = durY + 20.dp
         textPages.last().text = stringBuilder.toString()
-        if (pageLines.size < textPages.size) {
-            pageLines.add(textPages.last().textLines.size)
-        }
-        if (pageLengths.size < textPages.size) {
-            pageLengths.add(textPages.last().text.length)
-        }
         textPages.forEachIndexed { index, item ->
             item.index = index
             item.pageSize = textPages.size
@@ -136,7 +125,7 @@ object ChapterProvider {
         return TextChapter(
             bookChapter.index, bookChapter.title,
             bookChapter.getAbsoluteURL().substringBefore(","),
-            textPages, pageLines, pageLengths, chapterSize, paint.first, paint.second
+            textPages, chapterSize, paint.first, paint.second
         )
     }
 
@@ -211,8 +200,6 @@ object ChapterProvider {
         text: String,
         y: Float,
         textPages: ArrayList<TextPage>,
-        pageLines: ArrayList<Int>,
-        pageLengths: ArrayList<Int>,
         stringBuilder: StringBuilder,
         isTitle: Boolean,
         textPaint: TextPaint
@@ -247,8 +234,6 @@ object ChapterProvider {
             if (durY + textPaint.textHeight > visibleHeight) {
                 //当前页面结束,设置各种值
                 textPages.last().text = stringBuilder.toString()
-                pageLines.add(textPages.last().textLines.size)
-                pageLengths.add(textPages.last().text.length)
                 textPages.last().height = durY
                 //新建页面
                 textPages.add(TextPage())

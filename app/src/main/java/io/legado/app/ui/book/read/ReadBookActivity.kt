@@ -500,7 +500,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         autoPageProgress = 0
         launch {
             binding.pageView.upContent(relativePosition, resetPageOffset)
-            binding.readMenu.setSeekPage(ReadBook.durPageIndex)
+            binding.readMenu.setSeekPage(ReadBook.durPageIndex())
         }
         loadStates = false
     }
@@ -526,7 +526,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun pageChanged() {
         autoPageProgress = 0
         launch {
-            binding.readMenu.setSeekPage(ReadBook.durPageIndex)
+            binding.readMenu.setSeekPage(ReadBook.durPageIndex())
         }
     }
 
@@ -741,13 +741,12 @@ class ReadBookActivity : ReadBookBaseActivity(),
                                 delay(100L)
                                 pages = ReadBook.curTextChapter?.pages
                             }
-                            val positions =
-                                ReadBook.searchResultPositions(
-                                    pages,
-                                    indexWithinChapter,
-                                    viewModel.searchContentQuery
-                                )
-                            while (ReadBook.durPageIndex != positions[0]) {
+                            val positions = ReadBook.searchResultPositions(
+                                pages,
+                                indexWithinChapter,
+                                viewModel.searchContentQuery
+                            )
+                            while (ReadBook.durPageIndex() != positions[0]) {
                                 delay(100L)
                                 ReadBook.skipToPage(positions[0])
                             }
@@ -817,7 +816,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         observeEvent<String>(EventBus.TIME_CHANGED) { binding.pageView.upTime() }
         observeEvent<Int>(EventBus.BATTERY_CHANGED) { binding.pageView.upBattery(it) }
         observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
-            viewModel.openChapter(it.index, ReadBook.durPageIndex)
+            viewModel.openChapter(it.index, ReadBook.durChapterPos)
             binding.pageView.upContent()
         }
         observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
@@ -841,7 +840,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         observeEvent<Int>(EventBus.ALOUD_STATE) {
             if (it == Status.STOP || it == Status.PAUSE) {
                 ReadBook.curTextChapter?.let { textChapter ->
-                    val page = textChapter.page(ReadBook.durPageIndex)
+                    val page = textChapter.getPageByReadPos(ReadBook.durChapterPos)
                     if (page != null) {
                         page.removePageAloudSpan()
                         binding.pageView.upContent(resetPageOffset = false)
@@ -853,9 +852,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
             launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->
-                        val pageStart =
-                            chapterStart - textChapter.getReadLength(ReadBook.durPageIndex)
-                        textChapter.page(ReadBook.durPageIndex)?.upPageAloudSpan(pageStart)
+                        val pageStart = chapterStart - ReadBook.durChapterPos
+                        textChapter.getPageByReadPos(ReadBook.durChapterPos)
+                            ?.upPageAloudSpan(pageStart)
                         upContent()
                     }
                 }

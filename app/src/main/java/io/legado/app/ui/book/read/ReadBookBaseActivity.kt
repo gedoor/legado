@@ -214,7 +214,7 @@ abstract class ReadBookBaseActivity :
                             bookUrl = book.bookUrl,
                             bookName = book.name,
                             chapterIndex = ReadBook.durChapterIndex,
-                            pageIndex = ReadBook.durPageIndex,
+                            pageIndex = ReadBook.durChapterPos,
                             chapterName = textChapter.title,
                             content = editContent
                         )
