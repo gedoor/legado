@@ -1,6 +1,8 @@
-package io.legado.app.ui.book.read.page
+package io.legado.app.ui.book.read.page.provider
 
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.page.api.DataSource
+import io.legado.app.ui.book.read.page.api.PageFactory
 import io.legado.app.ui.book.read.page.entities.PageData
 import io.legado.app.ui.book.read.page.entities.TextPage
 

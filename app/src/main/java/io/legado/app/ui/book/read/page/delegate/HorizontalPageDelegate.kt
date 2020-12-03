@@ -2,11 +2,11 @@ package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Bitmap
 import android.view.MotionEvent
-import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.utils.screenshot
 
-abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageView) {
+abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     protected var curBitmap: Bitmap? = null
     protected var prevBitmap: Bitmap? = null
@@ -44,7 +44,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
                 onScroll(event)
             }
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                onAnimStart(pageView.defaultAnimationSpeed)
+                onAnimStart(readView.defaultAnimationSpeed)
             }
         }
     }
@@ -72,7 +72,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             val deltaX = (focusX - startX).toInt()
             val deltaY = (focusY - startY).toInt()
             val distance = deltaX * deltaX + deltaY * deltaY
-            isMoved = distance > pageView.slopSquare
+            isMoved = distance > readView.slopSquare
             if (isMoved) {
                 if (sumX - startX > 0) {
                     //如果上一页不存在
@@ -95,7 +95,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
             isCancel = if (mDirection == PageDirection.NEXT) sumX > lastX else sumX < lastX
             isRunning = true
             //设置触摸点
-            pageView.setTouchPoint(sumX, sumY)
+            readView.setTouchPoint(sumX, sumY)
         }
     }
 
@@ -104,14 +104,14 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         isMoved = false
         isRunning = false
         if (!scroller.isFinished) {
-            pageView.isAbortAnim = true
+            readView.isAbortAnim = true
             scroller.abortAnimation()
             if (!isCancel) {
-                pageView.fillPage(mDirection)
-                pageView.invalidate()
+                readView.fillPage(mDirection)
+                readView.invalidate()
             }
         } else {
-            pageView.isAbortAnim = false
+            readView.isAbortAnim = false
         }
     }
 
@@ -119,7 +119,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         abortAnim()
         if (!hasNext()) return
         setDirection(PageDirection.NEXT)
-        pageView.setTouchPoint(viewWidth.toFloat(), 0f, false)
+        readView.setTouchPoint(viewWidth.toFloat(), 0f, false)
         onAnimStart(animationSpeed)
     }
 
@@ -127,7 +127,7 @@ abstract class HorizontalPageDelegate(pageView: PageView) : PageDelegate(pageVie
         abortAnim()
         if (!hasPrev()) return
         setDirection(PageDirection.PREV)
-        pageView.setTouchPoint(0f, 0f)
+        readView.setTouchPoint(0f, 0f)
         onAnimStart(animationSpeed)
     }
 

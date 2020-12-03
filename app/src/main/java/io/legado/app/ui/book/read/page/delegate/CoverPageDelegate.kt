@@ -3,10 +3,10 @@ package io.legado.app.ui.book.read.page.delegate
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.drawable.GradientDrawable
-import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
 
-class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
+class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
     private val bitmapMatrix = Matrix()
     private val shadowDrawableR: GradientDrawable
 
@@ -54,7 +54,7 @@ class CoverPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
     override fun onAnimStop() {
         if (!isCancel) {
-            pageView.fillPage(mDirection)
+            readView.fillPage(mDirection)
         }
     }
 

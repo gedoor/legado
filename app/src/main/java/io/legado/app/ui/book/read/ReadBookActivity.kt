@@ -37,9 +37,9 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_COLOR
 import io.legado.app.ui.book.read.page.ContentTextView
-import io.legado.app.ui.book.read.page.PageView
-import io.legado.app.ui.book.read.page.TextPageFactory
+import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
+import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.ChapterListActivity
@@ -60,7 +60,7 @@ import org.jetbrains.anko.toast
 
 class ReadBookActivity : ReadBookBaseActivity(),
     View.OnTouchListener,
-    PageView.CallBack,
+    ReadView.CallBack,
     TextActionMenu.CallBack,
     ContentTextView.CallBack,
     ReadMenu.CallBack,
@@ -79,7 +79,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override val scope: CoroutineScope get() = this
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
-    override val isScroll: Boolean get() = binding.pageView.isScroll
+    override val isScroll: Boolean get() = binding.readView.isScroll
     private val mHandler = Handler(Looper.getMainLooper())
     private val keepScreenRunnable: Runnable =
         Runnable { keepScreenOn(window, false) }
@@ -89,8 +89,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private var screenTimeOut: Long = 0
     private var timeBatteryReceiver: TimeBatteryReceiver? = null
     private var loadStates: Boolean = false
-    override val pageFactory: TextPageFactory get() = binding.pageView.pageFactory
-    override val headerHeight: Int get() = binding.pageView.curPage.headerHeight
+    override val pageFactory: TextPageFactory get() = binding.readView.pageFactory
+    override val headerHeight: Int get() = binding.readView.curPage.headerHeight
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -116,7 +116,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        binding.pageView.upStatusBar()
+        binding.readView.upStatusBar()
         ReadBook.loadContent(resetPageOffset = false)
     }
 
@@ -125,7 +125,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         ReadBook.readStartTime = System.currentTimeMillis()
         upSystemUiVisibility()
         timeBatteryReceiver = TimeBatteryReceiver.register(this)
-        binding.pageView.upTime()
+        binding.readView.upTime()
     }
 
     override fun onPause() {
@@ -190,7 +190,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             R.id.menu_refresh -> {
                 ReadBook.book?.let {
                     ReadBook.curTextChapter = null
-                    binding.pageView.upContent()
+                    binding.readView.upContent()
                     viewModel.refreshContent(it)
                 }
             }
@@ -212,7 +212,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 ReadBook.loadContent(false)
             }
             R.id.menu_page_anim -> showPageAnimConfig {
-                binding.pageView.upPageAnim()
+                binding.readView.upPageAnim()
             }
             R.id.menu_book_info -> ReadBook.book?.let {
                 startActivity<BookInfoActivity>(
@@ -264,13 +264,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
         when {
             isPrevKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    binding.pageView.pageDelegate?.keyTurnPage(PageDirection.PREV)
+                    binding.readView.pageDelegate?.keyTurnPage(PageDirection.PREV)
                     return true
                 }
             }
             isNextKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
-                    binding.pageView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
+                    binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                     return true
                 }
             }
@@ -285,7 +285,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 }
             }
             keyCode == KeyEvent.KEYCODE_SPACE -> {
-                binding.pageView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
+                binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
             }
         }
@@ -346,11 +346,11 @@ class ReadBookActivity : ReadBookBaseActivity(),
             MotionEvent.ACTION_DOWN -> textActionMenu?.dismiss()
             MotionEvent.ACTION_MOVE -> {
                 when (v.id) {
-                    R.id.cursor_left -> binding.pageView.curPage.selectStartMove(
+                    R.id.cursor_left -> binding.readView.curPage.selectStartMove(
                         event.rawX + binding.cursorLeft.width,
                         event.rawY - binding.cursorLeft.height
                     )
-                    R.id.cursor_right -> binding.pageView.curPage.selectEndMove(
+                    R.id.cursor_right -> binding.readView.curPage.selectEndMove(
                         event.rawX - binding.cursorRight.width,
                         event.rawY - binding.cursorRight.height
                     )
@@ -419,7 +419,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     /**
      * 当前选择的文本
      */
-    override val selectedText: String get() = binding.pageView.curPage.selectedText
+    override val selectedText: String get() = binding.readView.curPage.selectedText
 
     /**
      * 文本选择菜单操作
@@ -455,8 +455,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
      */
     override fun onMenuActionFinally() {
         textActionMenu?.dismiss()
-        binding.pageView.curPage.cancelSelect()
-        binding.pageView.isTextSelected = false
+        binding.readView.curPage.cancelSelect()
+        binding.readView.isTextSelected = false
     }
 
     /**
@@ -468,8 +468,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 if (getPrefBoolean("volumeKeyPageOnPlay")
                     || BaseReadAloudService.pause
                 ) {
-                    binding.pageView.pageDelegate?.isCancel = false
-                    binding.pageView.pageDelegate?.keyTurnPage(direction)
+                    binding.readView.pageDelegate?.isCancel = false
+                    binding.readView.pageDelegate?.keyTurnPage(direction)
                     return true
                 }
             }
@@ -499,7 +499,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
         autoPageProgress = 0
         launch {
-            binding.pageView.upContent(relativePosition, resetPageOffset)
+            binding.readView.upContent(relativePosition, resetPageOffset)
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
         }
         loadStates = false
@@ -516,7 +516,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun upPageAnim() {
         launch {
-            binding.pageView.upPageAnim()
+            binding.readView.upPageAnim()
         }
     }
 
@@ -579,8 +579,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
             autoPageStop()
         } else {
             isAutoPage = true
-            binding.pageView.upContent()
-            binding.pageView.upContent(1)
+            binding.readView.upContent()
+            binding.readView.upContent(1)
             autoPagePlus()
         }
         binding.readMenu.setAutoPage(isAutoPage)
@@ -589,20 +589,20 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun autoPageStop() {
         isAutoPage = false
         mHandler.removeCallbacks(autoPageRunnable)
-        binding.pageView.upContent()
+        binding.readView.upContent()
     }
 
     private fun autoPagePlus() {
         mHandler.removeCallbacks(autoPageRunnable)
-        if (binding.pageView.isScroll) {
-            binding.pageView.curPage.scroll(-binding.pageView.height / ReadBookConfig.autoReadSpeed / 50)
+        if (binding.readView.isScroll) {
+            binding.readView.curPage.scroll(-binding.readView.height / ReadBookConfig.autoReadSpeed / 50)
         } else {
             autoPageProgress++
             if (autoPageProgress >= ReadBookConfig.autoReadSpeed * 50) {
                 autoPageProgress = 0
-                binding.pageView.fillPage(PageDirection.NEXT)
+                binding.readView.fillPage(PageDirection.NEXT)
             } else {
-                binding.pageView.invalidate()
+                binding.readView.invalidate()
             }
         }
         mHandler.postDelayed(autoPageRunnable, 20)
@@ -751,28 +751,28 @@ class ReadBookActivity : ReadBookBaseActivity(),
                                 ReadBook.skipToPage(positions[0])
                             }
                             withContext(Main) {
-                                binding.pageView.curPage.selectStartMoveIndex(
+                                binding.readView.curPage.selectStartMoveIndex(
                                     0,
                                     positions[1],
                                     positions[2]
                                 )
                                 delay(20L)
                                 when (positions[3]) {
-                                    0 -> binding.pageView.curPage.selectEndMoveIndex(
+                                    0 -> binding.readView.curPage.selectEndMoveIndex(
                                         0,
                                         positions[1],
                                         positions[2] + viewModel.searchContentQuery.length - 1
                                     )
-                                    1 -> binding.pageView.curPage.selectEndMoveIndex(
+                                    1 -> binding.readView.curPage.selectEndMoveIndex(
                                         0,
                                         positions[1] + 1,
                                         positions[4]
                                     )
                                     //consider change page, jump to scroll position
-                                    -1 -> binding.pageView.curPage
+                                    -1 -> binding.readView.curPage
                                         .selectEndMoveIndex(1, 0, positions[4])
                                 }
-                                binding.pageView.isTextSelected = true
+                                binding.readView.isTextSelected = true
                                 delay(100L)
                             }
                         }
@@ -803,7 +803,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         super.onDestroy()
         mHandler.removeCallbacks(keepScreenRunnable)
         textActionMenu?.dismiss()
-        binding.pageView.onDestroy()
+        binding.readView.onDestroy()
         ReadBook.msg = null
         if (!BuildConfig.DEBUG) {
             SyncBookProgress.uploadBookProgress()
@@ -813,11 +813,11 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<String>(EventBus.TIME_CHANGED) { binding.pageView.upTime() }
-        observeEvent<Int>(EventBus.BATTERY_CHANGED) { binding.pageView.upBattery(it) }
+        observeEvent<String>(EventBus.TIME_CHANGED) { binding.readView.upTime() }
+        observeEvent<Int>(EventBus.BATTERY_CHANGED) { binding.readView.upBattery(it) }
         observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
             viewModel.openChapter(it.index, ReadBook.durChapterPos)
-            binding.pageView.upContent()
+            binding.readView.upContent()
         }
         observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
@@ -828,13 +828,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
-            binding.pageView.upBg()
-            binding.pageView.upTipStyle()
-            binding.pageView.upStyle()
+            binding.readView.upBg()
+            binding.readView.upTipStyle()
+            binding.readView.upStyle()
             if (it) {
                 ReadBook.loadContent(resetPageOffset = false)
             } else {
-                binding.pageView.upContent(resetPageOffset = false)
+                binding.readView.upContent(resetPageOffset = false)
             }
         }
         observeEvent<Int>(EventBus.ALOUD_STATE) {
@@ -843,7 +843,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     val page = textChapter.getPageByReadPos(ReadBook.durChapterPos)
                     if (page != null) {
                         page.removePageAloudSpan()
-                        binding.pageView.upContent(resetPageOffset = false)
+                        binding.readView.upContent(resetPageOffset = false)
                     }
                 }
             }
@@ -864,7 +864,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             upScreenTimeOut()
         }
         observeEvent<Boolean>(PreferKey.textSelectAble) {
-            binding.pageView.curPage.upSelectAble(it)
+            binding.readView.curPage.upSelectAble(it)
         }
         observeEvent<String>(PreferKey.showBrightnessView) {
             binding.readMenu.upBrightnessState()

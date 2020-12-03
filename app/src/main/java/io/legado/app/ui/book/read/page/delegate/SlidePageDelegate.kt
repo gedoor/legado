@@ -2,10 +2,10 @@ package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
 import android.graphics.Matrix
-import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
 
-class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
+class SlidePageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
 
     private val bitmapMatrix = Matrix()
 
@@ -55,7 +55,7 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
     override fun onAnimStop() {
         if (!isCancel) {
-            pageView.fillPage(mDirection)
+            readView.fillPage(mDirection)
         }
     }
 }

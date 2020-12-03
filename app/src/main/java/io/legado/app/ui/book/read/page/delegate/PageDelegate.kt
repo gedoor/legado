@@ -8,40 +8,40 @@ import android.widget.Scroller
 import androidx.annotation.CallSuper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
-import io.legado.app.ui.book.read.page.ContentView
 import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import kotlin.math.abs
 
-abstract class PageDelegate(protected val pageView: PageView) {
+abstract class PageDelegate(protected val readView: ReadView) {
 
-    protected val context: Context = pageView.context
+    protected val context: Context = readView.context
 
     //起始点
-    protected val startX: Float get() = pageView.startX
-    protected val startY: Float get() = pageView.startY
+    protected val startX: Float get() = readView.startX
+    protected val startY: Float get() = readView.startY
 
     //上一个触碰点
-    protected val lastX: Float get() = pageView.lastX
-    protected val lastY: Float get() = pageView.lastY
+    protected val lastX: Float get() = readView.lastX
+    protected val lastY: Float get() = readView.lastY
 
     //触碰点
-    protected val touchX: Float get() = pageView.touchX
-    protected val touchY: Float get() = pageView.touchY
+    protected val touchX: Float get() = readView.touchX
+    protected val touchY: Float get() = readView.touchY
 
-    protected val nextPage: ContentView get() = pageView.nextPage
-    protected val curPage: ContentView get() = pageView.curPage
-    protected val prevPage: ContentView get() = pageView.prevPage
+    protected val nextPage: PageView get() = readView.nextPage
+    protected val curPage: PageView get() = readView.curPage
+    protected val prevPage: PageView get() = readView.prevPage
 
-    protected var viewWidth: Int = pageView.width
-    protected var viewHeight: Int = pageView.height
+    protected var viewWidth: Int = readView.width
+    protected var viewHeight: Int = readView.height
 
     protected val scroller: Scroller by lazy {
-        Scroller(pageView.context, DecelerateInterpolator())
+        Scroller(readView.context, DecelerateInterpolator())
     }
 
     private val snackBar: Snackbar by lazy {
-        Snackbar.make(pageView, "", Snackbar.LENGTH_SHORT)
+        Snackbar.make(readView, "", Snackbar.LENGTH_SHORT)
     }
 
     var isMoved = false
@@ -66,7 +66,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
         scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY)
         isRunning = true
         isStarted = true
-        pageView.invalidate()
+        readView.invalidate()
     }
 
     protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int, animationSpeed: Int) {
@@ -78,15 +78,15 @@ abstract class PageDelegate(protected val pageView: PageView) {
         scroller.startScroll(startX, startY, dx, dy, duration)
         isRunning = true
         isStarted = true
-        pageView.invalidate()
+        readView.invalidate()
     }
 
     protected fun stopScroll() {
         isStarted = false
-        pageView.post {
+        readView.post {
             isMoved = false
             isRunning = false
-            pageView.invalidate()
+            readView.invalidate()
         }
     }
 
@@ -97,7 +97,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
 
     fun scroll() {
         if (scroller.computeScrollOffset()) {
-            pageView.setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
+            readView.setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {
             onAnimStop()
             stopScroll()
@@ -157,7 +157,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
      * 判断是否有上一页
      */
     fun hasPrev(): Boolean {
-        val hasPrev = pageView.pageFactory.hasPrev()
+        val hasPrev = readView.pageFactory.hasPrev()
         if (!hasPrev) {
             if (!snackBar.isShown) {
                 snackBar.setText(R.string.no_prev_page)
@@ -171,7 +171,7 @@ abstract class PageDelegate(protected val pageView: PageView) {
      * 判断是否有下一页
      */
     fun hasNext(): Boolean {
-        val hasNext = pageView.pageFactory.hasNext()
+        val hasNext = readView.pageFactory.hasNext()
         if (!hasNext) {
             if (!snackBar.isShown) {
                 snackBar.setText(R.string.no_next_page)

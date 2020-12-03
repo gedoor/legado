@@ -2,457 +2,278 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.RectF
-import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.ViewConfiguration
+import android.graphics.drawable.Drawable
+import android.view.LayoutInflater
 import android.widget.FrameLayout
-import io.legado.app.help.AppConfig
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import io.legado.app.App
+import io.legado.app.R
+import io.legado.app.base.BaseActivity
+import io.legado.app.constant.AppConst.timeFormat
+import io.legado.app.databinding.ViewBookPageBinding
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.theme.accentColor
+import io.legado.app.help.ReadTipConfig
 import io.legado.app.service.help.ReadBook
-import io.legado.app.ui.book.read.page.delegate.*
-import io.legado.app.ui.book.read.page.entities.PageDirection
-import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.PageData
+import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
-import io.legado.app.utils.activity
-import io.legado.app.utils.screenshot
-import kotlin.math.abs
+import io.legado.app.ui.widget.BatteryView
+import io.legado.app.utils.*
+import org.jetbrains.anko.topPadding
+import java.util.*
 
-class PageView(context: Context, attrs: AttributeSet) :
-    FrameLayout(context, attrs),
-    DataSource {
+/**
+ * 阅读界面
+ */
+class PageView(context: Context) : FrameLayout(context) {
+    private val binding = ViewBookPageBinding.inflate(LayoutInflater.from(context), this, true)
+    private var battery = 100
+    private var tvTitle: BatteryView? = null
+    private var tvTime: BatteryView? = null
+    private var tvBattery: BatteryView? = null
+    private var tvPage: BatteryView? = null
+    private var tvTotalProgress: BatteryView? = null
+    private var tvPageAndTotal: BatteryView? = null
+    private var tvBookName: BatteryView? = null
+    private var tvTimeBattery: BatteryView? = null
 
-    val callBack: CallBack get() = activity as CallBack
-    var pageFactory: TextPageFactory = TextPageFactory(this)
-    var pageDelegate: PageDelegate? = null
-        private set(value) {
-            field?.onDestroy()
-            field = null
-            field = value
-            upContent()
+    val headerHeight: Int
+        get() {
+            val h1 = if (ReadBookConfig.hideStatusBar) 0 else context.statusBarHeight
+            val h2 = if (binding.llHeader.isGone) 0 else binding.llHeader.height
+            return h1 + h2
         }
-    var isScroll = false
-    var prevPage: ContentView = ContentView(context)
-    var curPage: ContentView = ContentView(context)
-    var nextPage: ContentView = ContentView(context)
-    val defaultAnimationSpeed = 300
-    private var pressDown = false
-    private var isMove = false
-
-    //起始点
-    var startX: Float = 0f
-    var startY: Float = 0f
-
-    //上一个触碰点
-    var lastX: Float = 0f
-    var lastY: Float = 0f
-
-    //触碰点
-    var touchX: Float = 0f
-    var touchY: Float = 0f
-
-    //是否停止动画动作
-    var isAbortAnim = false
-
-    //长按
-    private var longPressed = false
-    private val longPressTimeout = 600L
-    private val longPressRunnable = Runnable {
-        longPressed = true
-        onLongPress()
-    }
-    var isTextSelected = false
-    private var pressOnTextSelected = false
-    private var firstRelativePage = 0
-    private var firstLineIndex: Int = 0
-    private var firstCharIndex: Int = 0
-
-    val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
-    private val tlRect = RectF(10F, 10F, width * 0.33f, height * 0.33f)
-    private val tcRect = RectF(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
-    private val trRect = RectF(width * 0.36f, 10F, width - 10f, height * 0.33f)
-    private val mlRect = RectF(10F, height * 0.33f, width * 0.33f, height * 0.66f)
-    private val mcRect = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-    private val mrRect = RectF(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
-    private val blRect = RectF(10F, height * 0.66f, width * 0.33f, height - 10f)
-    private val bcRect = RectF(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
-    private val brRect = RectF(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
-    private val autoPageRect by lazy {
-        Rect()
-    }
-    private val autoPagePint by lazy {
-        Paint().apply {
-            color = context.accentColor
-        }
-    }
 
     init {
-        addView(nextPage)
-        addView(curPage)
-        addView(prevPage)
         if (!isInEditMode) {
-            upBg()
-            setWillNotDraw(false)
-            upPageAnim()
-        }
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        tlRect.set(10F, 10F, width * 0.33f, height * 0.33f)
-        tcRect.set(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
-        trRect.set(width * 0.36f, 10F, width - 10f, height * 0.33f)
-        mlRect.set(10F, height * 0.33f, width * 0.33f, height * 0.66f)
-        mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-        mrRect.set(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
-        blRect.set(10F, height * 0.66f, width * 0.33f, height - 10f)
-        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
-        brRect.set(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
-        prevPage.x = -w.toFloat()
-        pageDelegate?.setViewSize(w, h)
-    }
-
-    override fun dispatchDraw(canvas: Canvas) {
-        super.dispatchDraw(canvas)
-        pageDelegate?.onDraw(canvas)
-        if (!isInEditMode && callBack.isAutoPage && !isScroll) {
-            nextPage.screenshot()?.let {
-                val bottom =
-                    height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 50)
-                autoPageRect.set(0, 0, width, bottom)
-                canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
-                canvas.drawRect(
-                    0f,
-                    bottom.toFloat() - 1,
-                    width.toFloat(),
-                    bottom.toFloat(),
-                    autoPagePint
-                )
+            //设置背景防止切换背景时文字重叠
+            setBackgroundColor(context.getCompatColor(R.color.background))
+            upTipStyle()
+            upStyle()
+            binding.contentTextView.upView = {
+                setProgress(it)
             }
         }
     }
 
-    override fun computeScroll() {
-        pageDelegate?.scroll()
-    }
-
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return true
+    fun upStyle() = with(binding) {
+        ChapterProvider.let {
+            bvHeaderLeft.typeface = it.typeface
+            tvHeaderLeft.typeface = it.typeface
+            tvHeaderMiddle.typeface = it.typeface
+            tvHeaderRight.typeface = it.typeface
+            bvFooterLeft.typeface = it.typeface
+            tvFooterLeft.typeface = it.typeface
+            tvFooterMiddle.typeface = it.typeface
+            tvFooterRight.typeface = it.typeface
+        }
+        ReadBookConfig.let {
+            val tipColor = with(ReadTipConfig) {
+                if (tipColor == 0) it.textColor else tipColor
+            }
+            bvHeaderLeft.setColor(tipColor)
+            tvHeaderLeft.setColor(tipColor)
+            tvHeaderMiddle.setColor(tipColor)
+            tvHeaderRight.setColor(tipColor)
+            bvFooterLeft.setColor(tipColor)
+            tvFooterLeft.setColor(tipColor)
+            tvFooterMiddle.setColor(tipColor)
+            tvFooterRight.setColor(tipColor)
+            upStatusBar()
+            llHeader.setPadding(
+                it.headerPaddingLeft.dp,
+                it.headerPaddingTop.dp,
+                it.headerPaddingRight.dp,
+                it.headerPaddingBottom.dp
+            )
+            llFooter.setPadding(
+                it.footerPaddingLeft.dp,
+                it.footerPaddingTop.dp,
+                it.footerPaddingRight.dp,
+                it.footerPaddingBottom.dp
+            )
+            vwTopDivider.visible(it.showHeaderLine)
+            vwBottomDivider.visible(it.showFooterLine)
+            pageNvBar.layoutParams = pageNvBar.layoutParams.apply {
+                height = if (it.hideNavigationBar) 0 else App.navigationBarHeight
+            }
+        }
+        contentTextView.upVisibleRect()
+        upTime()
+        upBattery(battery)
     }
 
     /**
-     * 触摸事件
+     * 显示状态栏时隐藏header
      */
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        callBack.screenOffTimerStart()
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                if (isTextSelected) {
-                    curPage.cancelSelect()
-                    isTextSelected = false
-                    pressOnTextSelected = true
-                } else {
-                    pressOnTextSelected = false
-                }
-                longPressed = false
-                postDelayed(longPressRunnable, longPressTimeout)
-                pressDown = true
-                isMove = false
-                pageDelegate?.onTouch(event)
-                pageDelegate?.onDown()
-                setStartPoint(event.x, event.y)
-            }
-            MotionEvent.ACTION_MOVE -> {
-                if (!isMove) {
-                    isMove =
-                        abs(startX - event.x) > slopSquare || abs(startY - event.y) > slopSquare
-                }
-                if (isMove) {
-                    longPressed = false
-                    removeCallbacks(longPressRunnable)
-                    if (isTextSelected) {
-                        selectText(event.x, event.y)
-                    } else {
-                        pageDelegate?.onTouch(event)
-                    }
-                }
-            }
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                removeCallbacks(longPressRunnable)
-                if (!pressDown) return true
-                pressDown = false
-                if (!isMove) {
-                    if (!longPressed && !pressOnTextSelected) {
-                        onSingleTapUp()
-                        return true
-                    }
-                }
-                if (isTextSelected) {
-                    callBack.showTextActionMenu()
-                } else if (isMove) {
-                    pageDelegate?.onTouch(event)
-                }
-                pressOnTextSelected = false
-            }
-        }
-        return true
-    }
-
     fun upStatusBar() {
-        curPage.upStatusBar()
-        prevPage.upStatusBar()
-        nextPage.upStatusBar()
+        binding.vwStatusBar.topPadding = context.statusBarHeight
+        binding.vwStatusBar.isGone =
+            ReadBookConfig.hideStatusBar || (activity as? BaseActivity<*>)?.isInMultiWindow == true
     }
 
-    /**
-     * 保存开始位置
-     */
-    fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
-        startX = x
-        startY = y
-        lastX = x
-        lastY = y
-        touchX = x
-        touchY = y
-
-        if (invalidate) {
-            invalidate()
+    fun upTipStyle() = with(binding) {
+        ReadTipConfig.apply {
+            tvHeaderLeft.isInvisible = tipHeaderLeft != chapterTitle
+            bvHeaderLeft.isInvisible =
+                tipHeaderLeft == none || !tvHeaderLeft.isInvisible
+            tvHeaderRight.isGone = tipHeaderRight == none
+            tvHeaderMiddle.isGone = tipHeaderMiddle == none
+            tvFooterLeft.isInvisible = tipFooterLeft != chapterTitle
+            bvFooterLeft.isInvisible =
+                tipFooterLeft == none || !tvFooterLeft.isInvisible
+            tvFooterRight.isGone = tipFooterRight == none
+            tvFooterMiddle.isGone = tipFooterMiddle == none
+            llHeader.isGone = when (headerMode) {
+                1 -> false
+                2 -> true
+                else -> !ReadBookConfig.hideStatusBar
+            }
+            llFooter.isGone = when (footerMode) {
+                1 -> true
+                else -> false
+            }
+        }
+        tvTitle = getTipView(ReadTipConfig.chapterTitle)
+        tvTitle?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvTime = getTipView(ReadTipConfig.time)
+        tvTime?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvBattery = getTipView(ReadTipConfig.battery)
+        tvBattery?.apply {
+            isBattery = true
+            textSize = 10f
+        }
+        tvPage = getTipView(ReadTipConfig.page)
+        tvPage?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvTotalProgress = getTipView(ReadTipConfig.totalProgress)
+        tvTotalProgress?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvPageAndTotal = getTipView(ReadTipConfig.pageAndTotal)
+        tvPageAndTotal?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvBookName = getTipView(ReadTipConfig.bookName)
+        tvBookName?.apply {
+            isBattery = false
+            textSize = 12f
+        }
+        tvTimeBattery = getTipView(ReadTipConfig.timeBattery)
+        tvTimeBattery?.apply {
+            isBattery = false
+            textSize = 12f
         }
     }
 
-    /**
-     * 保存当前位置
-     */
-    fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
-        lastX = touchX
-        lastY = touchY
-        touchX = x
-        touchY = y
-        if (invalidate) {
-            invalidate()
-        }
-        pageDelegate?.onScroll()
-    }
-
-    /**
-     * 长按选择
-     */
-    private fun onLongPress() {
-        curPage.selectText(startX, startY) { relativePage, lineIndex, charIndex ->
-            isTextSelected = true
-            firstRelativePage = relativePage
-            firstLineIndex = lineIndex
-            firstCharIndex = charIndex
-            curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-            curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+    private fun getTipView(tip: Int): BatteryView? = with(binding) {
+        return when (tip) {
+            ReadTipConfig.tipHeaderLeft ->
+                if (tip == ReadTipConfig.chapterTitle) tvHeaderLeft else bvHeaderLeft
+            ReadTipConfig.tipHeaderMiddle -> tvHeaderMiddle
+            ReadTipConfig.tipHeaderRight -> tvHeaderRight
+            ReadTipConfig.tipFooterLeft ->
+                if (tip == ReadTipConfig.chapterTitle) tvFooterLeft else bvFooterLeft
+            ReadTipConfig.tipFooterMiddle -> tvFooterMiddle
+            ReadTipConfig.tipFooterRight -> tvFooterRight
+            else -> null
         }
     }
 
-    /**
-     * 单击
-     */
-    private fun onSingleTapUp() {
-        when {
-            isTextSelected -> isTextSelected = false
-            mcRect.contains(startX, startY) -> if (!isAbortAnim) {
-                click(AppConfig.clickActionMC)
-            }
-            bcRect.contains(startX, startY) -> {
-                click(AppConfig.clickActionBC)
-            }
-            blRect.contains(startX, startY) -> {
-                click(AppConfig.clickActionBL)
-            }
-            brRect.contains(startX, startY) -> {
-                click(AppConfig.clickActionBR)
-            }
-            mlRect.contains(startX, startY) -> {
-                click(AppConfig.clickActionML)
-            }
-            mrRect.contains(startX, startY) -> {
-                click(AppConfig.clickActionMR)
-            }
-            tlRect.contains(startX, startY) -> {
-                click(AppConfig.clickActionTL)
-            }
-            tcRect.contains(startX, startY) -> {
-                click(AppConfig.clickActionTC)
-            }
-            trRect.contains(startX, startY) -> {
-                click(AppConfig.clickActionTR)
-            }
-        }
-    }
-
-    private fun click(action: Int) {
-        when (action) {
-            0 -> callBack.showActionMenu()
-            1 -> pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
-            2 -> pageDelegate?.prevPageByAnim(defaultAnimationSpeed)
-            3 -> ReadBook.moveToNextChapter(true)
-            4 -> ReadBook.moveToPrevChapter(upContent = true, toLast = false)
-        }
-    }
-
-    /**
-     * 选择文本
-     */
-    private fun selectText(x: Float, y: Float) {
-        curPage.selectText(x, y) { relativePage, lineIndex, charIndex ->
-            when {
-                relativePage > firstRelativePage -> {
-                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                relativePage < firstRelativePage -> {
-                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                lineIndex > firstLineIndex -> {
-                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                lineIndex < firstLineIndex -> {
-                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                charIndex > firstCharIndex -> {
-                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                else -> {
-                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
-                }
-            }
-        }
-    }
-
-    fun onDestroy() {
-        pageDelegate?.onDestroy()
-        curPage.cancelSelect()
-    }
-
-    fun fillPage(direction: PageDirection) {
-        when (direction) {
-            PageDirection.PREV -> {
-                pageFactory.moveToPrev(true)
-            }
-            PageDirection.NEXT -> {
-                pageFactory.moveToNext(true)
-            }
-            else -> Unit
-        }
-    }
-
-    fun upPageAnim() {
-        isScroll = ReadBook.pageAnim() == 3
-        when (ReadBook.pageAnim()) {
-            0 -> if (pageDelegate !is CoverPageDelegate) {
-                pageDelegate = CoverPageDelegate(this)
-            }
-            1 -> if (pageDelegate !is SlidePageDelegate) {
-                pageDelegate = SlidePageDelegate(this)
-            }
-            2 -> if (pageDelegate !is SimulationPageDelegate) {
-                pageDelegate = SimulationPageDelegate(this)
-            }
-            3 -> if (pageDelegate !is ScrollPageDelegate) {
-                pageDelegate = ScrollPageDelegate(this)
-            }
-            else -> if (pageDelegate !is NoAnimPageDelegate) {
-                pageDelegate = NoAnimPageDelegate(this)
-            }
-        }
-    }
-
-    override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
-        curPage.setContentDescription(pageFactory.curData.textPage.text)
-        if (isScroll && !callBack.isAutoPage) {
-            curPage.setContent(pageFactory.curData, resetPageOffset)
-        } else {
-            curPage.resetPageOffset()
-            when (relativePosition) {
-                -1 -> prevPage.setContent(pageFactory.prevData)
-                1 -> nextPage.setContent(pageFactory.nextData)
-                else -> {
-                    curPage.setContent(pageFactory.curData)
-                    nextPage.setContent(pageFactory.nextData)
-                    prevPage.setContent(pageFactory.prevData)
-                }
-            }
-        }
-        callBack.screenOffTimerStart()
-    }
-
-    fun upTipStyle() {
-        curPage.upTipStyle()
-        prevPage.upTipStyle()
-        nextPage.upTipStyle()
-    }
-
-    fun upStyle() {
-        ChapterProvider.upStyle()
-        curPage.upStyle()
-        prevPage.upStyle()
-        nextPage.upStyle()
-    }
-
-    fun upBg() {
-        ReadBookConfig.bg ?: let {
-            ReadBookConfig.upBg()
-        }
-        curPage.setBg(ReadBookConfig.bg)
-        prevPage.setBg(ReadBookConfig.bg)
-        nextPage.setBg(ReadBookConfig.bg)
+    fun setBg(bg: Drawable?) {
+        binding.pagePanel.background = bg
     }
 
     fun upTime() {
-        curPage.upTime()
-        prevPage.upTime()
-        nextPage.upTime()
+        tvTime?.text = timeFormat.format(Date(System.currentTimeMillis()))
+        upTimeBattery()
     }
 
     fun upBattery(battery: Int) {
-        curPage.upBattery(battery)
-        prevPage.upBattery(battery)
-        nextPage.upBattery(battery)
+        this.battery = battery
+        tvBattery?.setBattery(battery)
+        upTimeBattery()
     }
 
-    override val currentChapter: TextChapter?
-        get() {
-            return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
+    @SuppressLint("SetTextI18n")
+    private fun upTimeBattery() {
+        tvTimeBattery?.let {
+            val time = timeFormat.format(Date(System.currentTimeMillis()))
+            it.text = "$time $battery%"
         }
+    }
 
-    override val nextChapter: TextChapter?
-        get() {
-            return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
+    fun setContent(pageData: PageData, resetPageOffset: Boolean = true) {
+        setProgress(pageData.textPage)
+        if (resetPageOffset) {
+            resetPageOffset()
         }
-
-    override val prevChapter: TextChapter?
-        get() {
-            return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
-        }
-
-    override fun hasNextChapter(): Boolean {
-        return ReadBook.durChapterIndex < ReadBook.chapterSize - 1
+        binding.contentTextView.setContent(pageData)
     }
 
-    override fun hasPrevChapter(): Boolean {
-        return ReadBook.durChapterIndex > 0
+    fun setContentDescription(content: String) {
+        binding.contentTextView.contentDescription = content
     }
 
-    interface CallBack {
-        val isInitFinish: Boolean
-        val isAutoPage: Boolean
-        val autoPageProgress: Int
-        fun showActionMenu()
-        fun screenOffTimerStart()
-        fun showTextActionMenu()
+    fun resetPageOffset() {
+        binding.contentTextView.resetPageOffset()
     }
+
+    @SuppressLint("SetTextI18n")
+    fun setProgress(textPage: TextPage) = textPage.apply {
+        tvBookName?.text = ReadBook.book?.name
+        tvTitle?.text = textPage.title
+        tvPage?.text = "${index.plus(1)}/$pageSize"
+        tvTotalProgress?.text = readProgress
+        tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
+    }
+
+    fun scroll(offset: Int) {
+        binding.contentTextView.scroll(offset)
+    }
+
+    fun upSelectAble(selectAble: Boolean) {
+        binding.contentTextView.selectAble = selectAble
+    }
+
+    fun selectText(
+        x: Float, y: Float,
+        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
+    ) {
+        return binding.contentTextView.selectText(x, y - headerHeight, select)
+    }
+
+    fun selectStartMove(x: Float, y: Float) {
+        binding.contentTextView.selectStartMove(x, y - headerHeight)
+    }
+
+    fun selectStartMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
+        binding.contentTextView.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+    }
+
+    fun selectEndMove(x: Float, y: Float) {
+        binding.contentTextView.selectEndMove(x, y - headerHeight)
+    }
+
+    fun selectEndMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
+        binding.contentTextView.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+    }
+
+    fun cancelSelect() {
+        binding.contentTextView.cancelSelect()
+    }
+
+    val selectedText: String get() = binding.contentTextView.selectedText
+
 }

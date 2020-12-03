@@ -1,13 +1,13 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
-import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.ReadView
 
-class NoAnimPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
+class NoAnimPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
 
     override fun onAnimStart(animationSpeed: Int) {
         if (!isCancel) {
-            pageView.fillPage(mDirection)
+            readView.fillPage(mDirection)
         }
         stopScroll()
     }

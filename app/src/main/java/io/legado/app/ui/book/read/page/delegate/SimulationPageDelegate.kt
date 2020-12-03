@@ -5,20 +5,22 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.MotionEvent
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import kotlin.math.*
 
 @Suppress("DEPRECATION")
-class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
+class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
     //不让x,y为0,否则在点计算时会有问题
     private var mTouchX = 0.1f
     private var mTouchY = 0.1f
+
     // 拖拽点对应的页脚
     private var mCornerX = 1
     private var mCornerY = 1
     private val mPath0: Path = Path()
     private val mPath1: Path = Path()
+
     // 贝塞尔曲线起始点
     private val mBezierStart1 = PointF()
     // 贝塞尔曲线控制点
@@ -126,13 +128,13 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
                 if ((startY > viewHeight / 3 && startY < viewHeight * 2 / 3)
                     || mDirection == PageDirection.PREV
                 ) {
-                    pageView.touchY = viewHeight.toFloat()
+                    readView.touchY = viewHeight.toFloat()
                 }
 
                 if (startY > viewHeight / 3 && startY < viewHeight / 2
                     && mDirection == PageDirection.NEXT
                 ) {
-                    pageView.touchY = 1f
+                    readView.touchY = 1f
                 }
             }
         }
@@ -191,7 +193,7 @@ class SimulationPageDelegate(pageView: PageView) : HorizontalPageDelegate(pageVi
 
     override fun onAnimStop() {
         if (!isCancel) {
-            pageView.fillPage(mDirection)
+            readView.fillPage(mDirection)
         }
     }
 

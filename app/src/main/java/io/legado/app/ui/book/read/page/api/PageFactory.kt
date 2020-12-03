@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.read.page
+package io.legado.app.ui.book.read.page.api
 
 abstract class PageFactory<DATA>(protected val dataSource: DataSource) {
 
