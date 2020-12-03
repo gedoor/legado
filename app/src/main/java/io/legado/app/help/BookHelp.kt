@@ -225,7 +225,8 @@ object BookHelp {
         oldDurChapterName: String?,
         newChapterList: List<BookChapter>
     ): Int {
-        if (oldChapterListSize == 0) return 0
+        if (oldChapterListSize == 0) return oldDurChapterIndex
+        if (newChapterList.isEmpty()) return oldDurChapterIndex
         val oldChapterNum = getChapterNum(oldDurChapterName)
         val oldName = getPureChapterName(oldDurChapterName)
         val newChapterSize = newChapterList.size
