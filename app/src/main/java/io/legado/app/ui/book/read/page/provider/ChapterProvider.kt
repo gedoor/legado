@@ -8,6 +8,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import io.legado.app.App
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
@@ -423,10 +424,11 @@ object ChapterProvider {
      * 更新View尺寸
      */
     fun upViewSize(width: Int, height: Int) {
-        if (width > 0 && height > 0) {
+        if (width > 0 && height > 0 && (width != viewWidth || height != viewHeight)) {
             viewWidth = width
             viewHeight = height
             upVisibleSize()
+            postEvent(EventBus.UP_CONFIG, true)
         }
     }
 
