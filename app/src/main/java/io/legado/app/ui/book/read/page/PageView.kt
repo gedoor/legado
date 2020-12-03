@@ -51,9 +51,9 @@ class PageView(context: Context) : FrameLayout(context) {
             setBackgroundColor(context.getCompatColor(R.color.background))
             upTipStyle()
             upStyle()
-            binding.contentTextView.upView = {
-                setProgress(it)
-            }
+        }
+        binding.contentTextView.upView = {
+            setProgress(it)
         }
     }
 
