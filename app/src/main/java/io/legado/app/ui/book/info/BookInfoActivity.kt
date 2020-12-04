@@ -135,20 +135,20 @@ class BookInfoActivity :
         return super.onMenuOpened(featureId, menu)
     }
 
-    private fun showBook(book: Book) {
+    private fun showBook(book: Book) = with(binding) {
         showCover(book)
-        binding.tvName.text = book.name
-        binding.tvAuthor.text = getString(R.string.author_show, book.getRealAuthor())
-        binding.tvOrigin.text = getString(R.string.origin_show, book.originName)
-        binding.tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
-        binding.tvIntro.text = book.getDisplayIntro()
+        tvName.text = book.name
+        tvAuthor.text = getString(R.string.author_show, book.getRealAuthor())
+        tvOrigin.text = getString(R.string.origin_show, book.originName)
+        tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
+        tvIntro.text = book.getDisplayIntro()
         upTvBookshelf()
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {
-            binding.lbKind.gone()
+            lbKind.gone()
         } else {
-            binding.lbKind.visible()
-            binding.lbKind.setLabels(kinds)
+            lbKind.visible()
+            lbKind.setLabels(kinds)
         }
         upGroup(book.group)
     }
@@ -206,18 +206,18 @@ class BookInfoActivity :
         }
     }
 
-    private fun initOnClick() {
-        binding.ivCover.onClick {
+    private fun initOnClick() = with(binding) {
+        ivCover.onClick {
             viewModel.bookData.value?.let {
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        binding.tvRead.onClick {
+        tvRead.onClick {
             viewModel.bookData.value?.let {
                 readBook(it)
             }
         }
-        binding.tvShelf.onClick {
+        tvShelf.onClick {
             if (viewModel.inBookshelf) {
                 deleteBook()
             } else {
@@ -226,17 +226,17 @@ class BookInfoActivity :
                 }
             }
         }
-        binding.tvOrigin.onClick {
+        tvOrigin.onClick {
             viewModel.bookData.value?.let {
                 startActivity<BookSourceEditActivity>(Pair("data", it.origin))
             }
         }
-        binding.tvChangeSource.onClick {
+        tvChangeSource.onClick {
             viewModel.bookData.value?.let {
                 ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        binding.tvTocView.onClick {
+        tvTocView.onClick {
             if (!viewModel.inBookshelf) {
                 viewModel.saveBook {
                     viewModel.saveChapterList {
@@ -247,15 +247,15 @@ class BookInfoActivity :
                 openChapterList()
             }
         }
-        binding.tvChangeGroup.onClick {
+        tvChangeGroup.onClick {
             viewModel.bookData.value?.let {
                 GroupSelectDialog.show(supportFragmentManager, it.group)
             }
         }
-        binding.tvAuthor.onClick {
+        tvAuthor.onClick {
             startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.author))
         }
-        binding.tvName.onClick {
+        tvName.onClick {
             startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.name))
         }
     }
