@@ -54,26 +54,26 @@ class BookInfoEditActivity :
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun initEvent() {
-        binding.tvChangeCover.onClick {
+    private fun initEvent() = with(binding) {
+        tvChangeCover.onClick {
             viewModel.bookData.value?.let {
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        binding.tvSelectCover.onClick {
+        tvSelectCover.onClick {
             selectImage()
         }
-        binding.tvRefreshCover.onClick {
-            viewModel.book?.customCoverUrl = binding.tieCoverUrl.text?.toString()
+        tvRefreshCover.onClick {
+            viewModel.book?.customCoverUrl = tieCoverUrl.text?.toString()
             upCover()
         }
     }
 
-    private fun upView(book: Book) {
-        binding.tieBookName.setText(book.name)
-        binding.tieBookAuthor.setText(book.author)
-        binding.tieCoverUrl.setText(book.getDisplayCover())
-        binding.tieBookIntro.setText(book.getDisplayIntro())
+    private fun upView(book: Book) = with(binding) {
+        tieBookName.setText(book.name)
+        tieBookAuthor.setText(book.author)
+        tieCoverUrl.setText(book.getDisplayCover())
+        tieBookIntro.setText(book.getDisplayIntro())
         upCover()
     }
 
@@ -83,13 +83,13 @@ class BookInfoEditActivity :
         }
     }
 
-    private fun saveData() {
+    private fun saveData() = with(binding) {
         viewModel.book?.let { book ->
-            book.name = binding.tieBookName.text?.toString() ?: ""
-            book.author = binding.tieBookAuthor.text?.toString() ?: ""
-            val customCoverUrl = binding.tieCoverUrl.text?.toString()
+            book.name = tieBookName.text?.toString() ?: ""
+            book.author = tieBookAuthor.text?.toString() ?: ""
+            val customCoverUrl = tieCoverUrl.text?.toString()
             book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
-            book.customIntro = binding.tieBookIntro.text?.toString()
+            book.customIntro = tieBookIntro.text?.toString()
             viewModel.saveBook(book) {
                 setResult(Activity.RESULT_OK)
                 finish()
