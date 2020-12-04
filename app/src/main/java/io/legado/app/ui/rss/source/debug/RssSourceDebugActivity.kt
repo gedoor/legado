@@ -1,6 +1,8 @@
 package io.legado.app.ui.rss.source.debug
 
 import android.os.Bundle
+import android.widget.SearchView
+import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivitySourceDebugBinding
 import io.legado.app.lib.theme.ATH
@@ -46,7 +48,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
     }
 
     private fun initSearchView() {
-        binding.recyclerView.gone()
+        binding.titleBar.findViewById<SearchView>(R.id.search_view).gone()
     }
 
     private fun startSearch() {
