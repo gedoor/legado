@@ -17,9 +17,11 @@ import io.legado.app.ui.rss.favorites.RssFavoritesActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.ui.rss.source.manage.RssSourceViewModel
+import io.legado.app.ui.rss.subscription.SourceSubscription
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import org.jetbrains.anko.sdk27.listeners.onClick
 
 /**
  * 订阅界面
@@ -55,8 +57,11 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         binding.recyclerView.adapter = adapter
         adapter.addHeaderView {
             ItemRssBinding.inflate(layoutInflater, it, false).apply {
-                tvName.text = "订阅源"
+                tvName.setText(R.string.source_subscription)
                 ivIcon.setImageResource(R.mipmap.ic_launcher)
+                root.onClick {
+                    startActivity<SourceSubscription>()
+                }
             }
         }
     }

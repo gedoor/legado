@@ -171,6 +171,10 @@
         <activity
             android:name=".ui.qrcode.QrCodeActivity"
             android:launchMode="singleTask" />
+        <!-- 源订阅 -->
+        <activity
+            android:name=".ui.rss.subscription.SourceSubscription"
+            android:launchMode="singleTask" />
         <!-- 书源编辑 -->
         <activity
             android:name=".ui.book.source.edit.BookSourceEditActivity"
