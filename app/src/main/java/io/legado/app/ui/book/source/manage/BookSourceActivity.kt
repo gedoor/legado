@@ -63,7 +63,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
     private var groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
-    private var sort = 0
+    private var sort = Sort.Default
     private var sortAscending = 0
     private var snackBar: Snackbar? = null
 
@@ -108,27 +108,27 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_sort_manual -> {
                 item.isChecked = true
-                sortCheck(0)
+                sortCheck(Sort.Default)
                 initLiveDataBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_auto -> {
                 item.isChecked = true
-                sortCheck(1)
+                sortCheck(Sort.Weight)
                 initLiveDataBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_pin_yin -> {
                 item.isChecked = true
-                sortCheck(2)
+                sortCheck(Sort.Name)
                 initLiveDataBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_url -> {
                 item.isChecked = true
-                sortCheck(3)
+                sortCheck(Sort.Url)
                 initLiveDataBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_time -> {
                 item.isChecked = true
-                sortCheck(4)
+                sortCheck(Sort.Update)
                 initLiveDataBookSource(searchView.query?.toString())
             }
             R.id.menu_enabled_group -> {
@@ -189,17 +189,21 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         bookSourceLiveDate?.observe(this, { data ->
             val sourceList = when (sortAscending % 2) {
                 0 -> when (sort) {
-                    1 -> data.sortedBy { it.weight }
-                    2 -> data.sortedBy { it.bookSourceName }
-                    3 -> data.sortedBy { it.bookSourceUrl }
-                    4 -> data.sortedByDescending { it.lastUpdateTime }
+                    Sort.Weight -> data.sortedBy { it.weight }
+                    Sort.Name -> data.sortedWith { o1, o2 ->
+                        o1.bookSourceName.cnCompare(o2.bookSourceName)
+                    }
+                    Sort.Url -> data.sortedBy { it.bookSourceUrl }
+                    Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
                     else -> data
                 }
                 else -> when (sort) {
-                    1 -> data.sortedByDescending { it.weight }
-                    2 -> data.sortedByDescending { it.bookSourceName }
-                    3 -> data.sortedByDescending { it.bookSourceUrl }
-                    4 -> data.sortedBy { it.lastUpdateTime }
+                    Sort.Weight -> data.sortedByDescending { it.weight }
+                    Sort.Name -> data.sortedWith { o1, o2 ->
+                        o2.bookSourceName.cnCompare(o1.bookSourceName)
+                    }
+                    Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
+                    Sort.Update -> data.sortedBy { it.lastUpdateTime }
                     else -> data.reversed()
                 }
             }
@@ -215,12 +219,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         TextDialog.show(supportFragmentManager, text, TextDialog.MD)
     }
 
-    private fun sortCheck(sortId: Int) {
-        if (sort == sortId) {
+    private fun sortCheck(sort: Sort) {
+        if (this.sort == sort) {
             sortAscending += 1
         } else {
             sortAscending = 0
-            sort = sortId
+            this.sort = sort
         }
     }
 
@@ -479,4 +483,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
+    enum class Sort {
+        Default, Name, Url, Weight, Update
+    }
 }
