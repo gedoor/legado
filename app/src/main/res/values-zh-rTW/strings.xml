@@ -348,7 +348,7 @@
     <string name="sort">排序</string>
     <string name="sort_auto">智慧排序</string>
     <string name="sort_manual">手動排序</string>
-    <string name="sort_pin_yin">拼音排序</string>
+    <string name="sort_name">名稱排序</string>
     <string name="go_to_top">滾動到頂部</string>
     <string name="go_to_bottom">滾動到底部</string>
     <string name="read_y">已讀: %s</string>

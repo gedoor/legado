@@ -116,7 +116,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 sortCheck(Sort.Weight)
                 initLiveDataBookSource(searchView.query?.toString())
             }
-            R.id.menu_sort_pin_yin -> {
+            R.id.menu_sort_name -> {
                 item.isChecked = true
                 sortCheck(Sort.Name)
                 initLiveDataBookSource(searchView.query?.toString())
