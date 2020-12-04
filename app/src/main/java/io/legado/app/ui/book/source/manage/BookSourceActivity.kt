@@ -64,7 +64,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var sort = Sort.Default
-    private var sortAscending = 0
+    private var sortAscending = true
     private var snackBar: Snackbar? = null
 
     override fun getViewBinding(): ActivityBookSourceBinding {
@@ -187,8 +187,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
         }
         bookSourceLiveDate?.observe(this, { data ->
-            val sourceList = when (sortAscending % 2) {
-                0 -> when (sort) {
+            val sourceList =
+                if (sortAscending) when (sort) {
                     Sort.Weight -> data.sortedBy { it.weight }
                     Sort.Name -> data.sortedWith { o1, o2 ->
                         o1.bookSourceName.cnCompare(o2.bookSourceName)
@@ -197,7 +197,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
                     else -> data
                 }
-                else -> when (sort) {
+                else when (sort) {
                     Sort.Weight -> data.sortedByDescending { it.weight }
                     Sort.Name -> data.sortedWith { o1, o2 ->
                         o2.bookSourceName.cnCompare(o1.bookSourceName)
@@ -206,7 +206,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     Sort.Update -> data.sortedBy { it.lastUpdateTime }
                     else -> data.reversed()
                 }
-            }
             val diffResult = DiffUtil
                 .calculateDiff(DiffCallBack(ArrayList(adapter.getItems()), sourceList))
             adapter.setItems(sourceList, diffResult)
@@ -221,9 +220,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun sortCheck(sort: Sort) {
         if (this.sort == sort) {
-            sortAscending += 1
+            sortAscending = !sortAscending
         } else {
-            sortAscending = 0
+            sortAscending = true
             this.sort = sort
         }
     }
