@@ -100,7 +100,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         when (item.itemId) {
             R.id.menu_add_book_source -> startActivity<BookSourceEditActivity>()
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
-            R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection())
+            R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection()) {
+                startActivity(Intent.createChooser(it, getString(R.string.share_selected_source)))
+            }
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_source_local -> FilePicker
