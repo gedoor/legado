@@ -10,10 +10,7 @@ import io.legado.app.BuildConfig
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.splitNotBlank
-import io.legado.app.utils.writeText
+import io.legado.app.utils.*
 import org.jetbrains.anko.longToast
 import java.io.File
 
@@ -183,6 +180,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             intent
         }.onSuccess {
             success.invoke(it)
+        }.onError {
+            toast(it.msg)
         }
     }
 
