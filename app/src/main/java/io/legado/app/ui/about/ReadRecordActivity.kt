@@ -31,11 +31,11 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         initData()
     }
 
-    private fun initView() {
-        binding.readRecord.tvBookName.setText(R.string.all_read_time)
-        adapter = RecordAdapter(this)
-        binding.recyclerView.adapter = adapter
-        binding.readRecord.ivRemove.onClick {
+    private fun initView() = with(binding) {
+        readRecord.tvBookName.setText(R.string.all_read_time)
+        adapter = RecordAdapter(this@ReadRecordActivity)
+        recyclerView.adapter = adapter
+        readRecord.ivRemove.onClick {
             alert(R.string.delete, R.string.sure_del) {
                 okButton {
                     App.db.readRecordDao().clear()
