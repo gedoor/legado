@@ -25,10 +25,7 @@ import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getViewModelOfActivity
-import io.legado.app.utils.observeEvent
-import io.legado.app.utils.startActivity
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.math.max
 
@@ -114,7 +111,9 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> list.sortedByDescending { it.latestChapterTime }
-                    2 -> list.sortedBy { it.name }
+                    2 -> list.sortedWith { o1, o2 ->
+                        o1.name.cnCompare(o2.name)
+                    }
                     3 -> list.sortedBy { it.order }
                     else -> list.sortedByDescending { it.durChapterTime }
                 }

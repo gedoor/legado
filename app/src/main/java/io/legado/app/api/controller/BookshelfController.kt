@@ -7,6 +7,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
+import io.legado.app.utils.cnCompare
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefInt
 import io.legado.app.web.utils.ReturnData
@@ -23,7 +24,9 @@ object BookshelfController {
             } else {
                 val data = when (App.INSTANCE.getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> books.sortedByDescending { it.latestChapterTime }
-                    2 -> books.sortedBy { it.name }
+                    2 -> books.sortedWith { o1, o2 ->
+                        o1.name.cnCompare(o2.name)
+                    }
                     3 -> books.sortedBy { it.order }
                     else -> books.sortedByDescending { it.durChapterTime }
                 }
