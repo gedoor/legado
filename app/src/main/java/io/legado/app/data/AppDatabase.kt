@@ -17,8 +17,9 @@ import java.util.*
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
-        RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class],
-    version = 24,
+        RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
+        SourceSub::class],
+    version = 25,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -39,6 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun readRecordDao(): ReadRecordDao
     abstract fun httpTTSDao(): HttpTTSDao
     abstract fun cacheDao(): CacheDao
+    abstract fun sourceSubDao(): SourceSubDao
 
     companion object {
 
@@ -48,19 +50,10 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .addMigrations(
-                    migration_10_11,
-                    migration_11_12,
-                    migration_12_13,
-                    migration_13_14,
-                    migration_14_15,
-                    migration_15_17,
-                    migration_17_18,
-                    migration_18_19,
-                    migration_19_20,
-                    migration_20_21,
-                    migration_21_22,
-                    migration_22_23,
-                    migration_23_24
+                    migration_10_11, migration_11_12, migration_12_13, migration_13_14,
+                    migration_14_15, migration_15_17, migration_17_18, migration_18_19,
+                    migration_19_20, migration_20_21, migration_21_22, migration_22_23,
+                    migration_23_24, migration_24_25
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -208,6 +201,12 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `caches` (`key` TEXT NOT NULL, `value` TEXT, `deadline` INTEGER NOT NULL, PRIMARY KEY(`key`))")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_caches_key` ON `caches` (`key`)")
+            }
+        }
+
+        private val migration_24_25 = object : Migration(24, 25) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `sourceSubs` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))")
             }
         }
     }

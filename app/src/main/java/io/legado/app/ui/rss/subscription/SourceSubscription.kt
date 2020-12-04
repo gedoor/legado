@@ -14,7 +14,8 @@ class SourceSubscription : BaseActivity<ActivitySourceSubBinding>() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-
+        initView()
+        initData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -27,6 +28,14 @@ class SourceSubscription : BaseActivity<ActivitySourceSubBinding>() {
             R.id.menu_add -> editSubscription()
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    private fun initView() {
+        binding.recyclerView
+    }
+
+    private fun initData() {
+
     }
 
     private fun editSubscription() {
