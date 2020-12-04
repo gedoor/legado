@@ -71,7 +71,9 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         }
         refreshRecyclerView.recyclerView.adapter = adapter
         loadMoreView = LoadMoreView(requireContext())
-        adapter.addFooterView(ViewLoadMoreBinding.bind(loadMoreView))
+        adapter.addFooterView {
+            ViewLoadMoreBinding.bind(loadMoreView)
+        }
         refreshRecyclerView.onRefreshStart = {
             activityViewModel.rssSource?.let {
                 viewModel.loadContent(it)

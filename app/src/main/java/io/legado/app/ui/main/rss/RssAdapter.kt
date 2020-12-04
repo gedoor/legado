@@ -39,12 +39,12 @@ class RssAdapter(context: Context, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemRssBinding) {
         binding.apply {
             root.onClick {
-                getItem(holder.layoutPosition)?.let {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
                     callBack.openRss(it)
                 }
             }
             root.onLongClick {
-                getItem(holder.layoutPosition)?.let {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
                     showMenu(ivIcon, it)
                 }
                 true

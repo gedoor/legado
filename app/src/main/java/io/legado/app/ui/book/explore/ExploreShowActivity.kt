@@ -41,7 +41,9 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
         loadMoreView = LoadMoreView(this)
-        adapter.addFooterView(ViewLoadMoreBinding.bind(loadMoreView))
+        adapter.addFooterView {
+            ViewLoadMoreBinding.bind(loadMoreView)
+        }
         loadMoreView.startLoad()
         loadMoreView.setOnClickListener {
             if (!isLoading) {

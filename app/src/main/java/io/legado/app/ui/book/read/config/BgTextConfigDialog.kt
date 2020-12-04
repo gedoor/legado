@@ -103,17 +103,15 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         binding.swDarkStatusIcon.isChecked = curStatusIconDark()
         adapter = BgAdapter(requireContext(), secondaryTextColor)
         binding.recyclerView.adapter = adapter
-        val headerView = ItemBgImageBinding.inflate(
-            layoutInflater,
-            binding.recyclerView,
-            false
-        )
-        adapter.addHeaderView(headerView)
-        headerView.tvName.setTextColor(secondaryTextColor)
-        headerView.tvName.text = getString(R.string.select_image)
-        headerView.ivBg.setImageResource(R.drawable.ic_image)
-        headerView.ivBg.setColorFilter(primaryTextColor)
-        headerView.root.onClick { selectImage() }
+        adapter.addHeaderView {
+            ItemBgImageBinding.inflate(layoutInflater, it, false).apply {
+                tvName.setTextColor(secondaryTextColor)
+                tvName.text = getString(R.string.select_image)
+                ivBg.setImageResource(R.drawable.ic_image)
+                ivBg.setColorFilter(primaryTextColor)
+                root.onClick { selectImage() }
+            }
+        }
         requireContext().assets.list("bg")?.let {
             adapter.setItems(it.toList())
         }

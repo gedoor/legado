@@ -32,8 +32,8 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
 
     val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    private var headerItems: SparseArray<ViewBinding>? = null
-    private var footerItems: SparseArray<ViewBinding>? = null
+    private val headerItems: SparseArray<(parent: ViewGroup) -> ViewBinding> by lazy { SparseArray() }
+    private val footerItems: SparseArray<(parent: ViewGroup) -> ViewBinding> by lazy { SparseArray() }
 
     private val itemDelegates: HashMap<Int, ItemViewDelegate<ITEM, VB>> = hashMapOf()
     private val items: MutableList<ITEM> = mutableListOf()
@@ -80,51 +80,37 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             addItemViewDelegate(it.first, it.second)
         }
 
-    fun addHeaderView(header: ViewBinding) {
+    fun addHeaderView(header: ((parent: ViewGroup) -> ViewBinding)) {
         synchronized(lock) {
-            if (headerItems == null) {
-                headerItems = SparseArray()
-            }
-            headerItems?.let {
-                val index = it.size()
-                it.put(TYPE_HEADER_VIEW + it.size(), header)
-                notifyItemInserted(index)
-            }
+            val index = headerItems.size()
+            headerItems.put(TYPE_HEADER_VIEW + headerItems.size(), header)
+            notifyItemInserted(index)
         }
     }
 
-    fun addFooterView(footer: ViewBinding) =
+    fun addFooterView(footer: ((parent: ViewGroup) -> ViewBinding)) =
         synchronized(lock) {
-            if (footerItems == null) {
-                footerItems = SparseArray()
-            }
-            footerItems?.let {
-                val index = getActualItemCount() + it.size()
-                it.put(TYPE_FOOTER_VIEW + it.size(), footer)
-                notifyItemInserted(index)
-            }
+            val index = getActualItemCount() + footerItems.size()
+            footerItems.put(TYPE_FOOTER_VIEW + footerItems.size(), footer)
+            notifyItemInserted(index)
         }
 
 
-    fun removeHeaderView(header: ViewBinding) =
+    fun removeHeaderView(header: ((parent: ViewGroup) -> ViewBinding)) =
         synchronized(lock) {
-            headerItems?.let {
-                val index = it.indexOfValue(header)
-                if (index >= 0) {
-                    it.remove(index)
-                    notifyItemRemoved(index)
-                }
+            val index = headerItems.indexOfValue(header)
+            if (index >= 0) {
+                headerItems.remove(index)
+                notifyItemRemoved(index)
             }
         }
 
-    fun removeFooterView(footer: ViewBinding) =
+    fun removeFooterView(footer: ((parent: ViewGroup) -> ViewBinding)) =
         synchronized(lock) {
-            footerItems?.let {
-                val index = it.indexOfValue(footer)
-                if (index >= 0) {
-                    it.remove(index)
-                    notifyItemRemoved(getActualItemCount() + index - 2)
-                }
+            val index = footerItems.indexOfValue(footer)
+            if (index >= 0) {
+                footerItems.remove(index)
+                notifyItemRemoved(getActualItemCount() + index - 2)
             }
         }
 
@@ -274,10 +260,10 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
     fun getActualItemCount() = items.size
 
 
-    fun getHeaderCount() = headerItems?.size() ?: 0
+    fun getHeaderCount() = headerItems.size()
 
 
-    fun getFooterCount() = footerItems?.size() ?: 0
+    fun getFooterCount() = footerItems.size()
 
     fun getItem(position: Int): ITEM? = items.getOrNull(position)
 
@@ -290,7 +276,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
     /**
      * grid 模式下使用
      */
-    protected open fun getSpanSize(item: ITEM, viewType: Int, position: Int) = 1
+    protected open fun getSpanSize(viewType: Int, position: Int) = 1
 
     final override fun getItemCount() = getActualItemCount() + getHeaderCount() + getFooterCount()
 
@@ -304,11 +290,11 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when {
         viewType < TYPE_HEADER_VIEW + getHeaderCount() -> {
-            ItemViewHolder(headerItems!!.get(viewType))
+            ItemViewHolder(headerItems.get(viewType).invoke(parent))
         }
 
         viewType >= TYPE_FOOTER_VIEW -> {
-            ItemViewHolder(footerItems!!.get(viewType))
+            ItemViewHolder(footerItems.get(viewType).invoke(parent))
         }
 
         else -> {
@@ -369,11 +355,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
         if (manager is GridLayoutManager) {
             manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return getItem(position)?.let {
-                        if (isHeader(position) || isFooter(position)) manager.spanCount else getSpanSize(
-                            it, getItemViewType(position), position
-                        )
-                    } ?: manager.spanCount
+                    return getSpanSize(getItemViewType(position), position)
                 }
             }
         }

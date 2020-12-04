@@ -86,17 +86,18 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         dsbParagraphSpacing.valueFormat = { (it / 10f).toString() }
         styleAdapter = StyleAdapter()
         rvStyle.adapter = styleAdapter
-        val footerBinding =
-            ItemReadStyleBinding.inflate(layoutInflater, rvStyle, false)
-        footerBinding.ivStyle.setPadding(6.dp, 6.dp, 6.dp, 6.dp)
-        footerBinding.ivStyle.setText(null)
-        footerBinding.ivStyle.setColorFilter(textColor)
-        footerBinding.ivStyle.borderColor = textColor
-        footerBinding.ivStyle.setImageResource(R.drawable.ic_add)
-        styleAdapter.addFooterView(footerBinding)
-        footerBinding.root.onClick {
-            ReadBookConfig.configList.add(ReadBookConfig.Config())
-            showBgTextConfig(ReadBookConfig.configList.lastIndex)
+        styleAdapter.addFooterView {
+            ItemReadStyleBinding.inflate(layoutInflater, it, false).apply {
+                ivStyle.setPadding(6.dp, 6.dp, 6.dp, 6.dp)
+                ivStyle.setText(null)
+                ivStyle.setColorFilter(textColor)
+                ivStyle.borderColor = textColor
+                ivStyle.setImageResource(R.drawable.ic_add)
+                root.onClick {
+                    ReadBookConfig.configList.add(ReadBookConfig.Config())
+                    showBgTextConfig(ReadBookConfig.configList.lastIndex)
+                }
+            }
         }
     }
 
