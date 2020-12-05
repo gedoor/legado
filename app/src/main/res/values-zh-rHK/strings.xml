@@ -788,5 +788,6 @@
     <string name="show_hide">显示/隐藏</string>
     <string name="header_footer">页眉<![CDATA[&]]>页脚</string>
     <string name="source_subscription">源订阅</string>
+    <string name="source_sub_empty_msg">添加大佬们提供的源导入地址,添加后点击可导入源</string>
 
 </resources>

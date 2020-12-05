@@ -3,6 +3,7 @@ package io.legado.app.ui.rss.subscription
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.view.isGone
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.App
@@ -61,6 +62,7 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
         liveData?.removeObservers(this)
         liveData = App.db.sourceSubDao().observeAll()
         liveData?.observe(this) {
+            binding.tvEmptyMsg.isGone = it.isNotEmpty()
             adapter.setItems(it)
         }
     }

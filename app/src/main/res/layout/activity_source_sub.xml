@@ -12,12 +12,31 @@
         android:layout_height="wrap_content"
         app:title="@string/source_subscription" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_source_sub" />
+        android:layout_height="match_parent">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_source_sub" />
+
+        <TextView
+            android:id="@+id/tv_empty_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/source_sub_empty_msg"
+            app:layout_constraintTop_toBottomOf="@+id/title_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="TextView" />
+
+    </FrameLayout>
 
 </LinearLayout>
