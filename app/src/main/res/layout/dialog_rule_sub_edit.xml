@@ -3,28 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <RadioGroup
-        android:id="@+id/rg_type"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <io.legado.app.lib.theme.view.ATERadioButton
-            android:id="@+id/rb_book_source"
+        <io.legado.app.ui.widget.text.AccentTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/book_source" />
+            android:text="@string/book_type"
+            android:padding="3dp"
+            tools:ignore="RtlHardcoded" />
 
-        <io.legado.app.lib.theme.view.ATERadioButton
-            android:id="@+id/rb_rss_source"
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/sp_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rss_source" />
+            android:entries="@array/rule_type"
+            app:theme="@style/Spinner" />
 
-    </RadioGroup>
+    </LinearLayout>
 
     <io.legado.app.ui.widget.text.TextInputLayout
         android:id="@+id/til_name"

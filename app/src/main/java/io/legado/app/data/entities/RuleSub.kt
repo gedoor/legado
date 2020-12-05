@@ -13,13 +13,4 @@ data class RuleSub(
     var customOrder: Int = 0,
     var autoUpdate: Boolean = false,
     var update: Long = System.currentTimeMillis()
-) {
-
-    fun setType(type: Type) {
-        this.type = type.ordinal
-    }
-
-    enum class Type {
-        BookSource, RssSource, ReplaceRule
-    }
-}
+)

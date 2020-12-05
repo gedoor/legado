@@ -603,8 +603,6 @@
     <string name="change_cover_source">Change origin</string>
     <string name="select_local_image">Local image</string>
     <string name="book_type">Type:</string>
-    <string name="book_type_text">Text</string>
-    <string name="book_type_audio">Audio</string>
     <string name="to_backstage">Background</string>
     <string name="importing">Importing</string>
     <string name="exporting">Exporting</string>

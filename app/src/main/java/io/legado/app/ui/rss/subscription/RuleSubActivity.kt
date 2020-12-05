@@ -11,7 +11,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.RuleSub
 import io.legado.app.databinding.ActivityRuleSubBinding
-import io.legado.app.databinding.DialogSourceSubEditBinding
+import io.legado.app.databinding.DialogRuleSubEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.association.ImportBookSourceActivity
 import io.legado.app.ui.association.ImportRssSourceActivity
@@ -20,6 +20,9 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
+/**
+ * 规则订阅界面
+ */
 class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     RuleSubAdapter.Callback {
 
@@ -69,7 +72,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     override fun openSubscription(ruleSub: RuleSub) {
         when (ruleSub.type) {
-            RuleSub.Type.RssSource.ordinal -> {
+            1 -> {
                 startActivity<ImportRssSourceActivity>("source" to ruleSub.url)
             }
             else -> {
@@ -80,20 +83,14 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     override fun editSubscription(ruleSub: RuleSub) {
         alert(R.string.rule_subscription) {
-            val alertBinding = DialogSourceSubEditBinding.inflate(layoutInflater).apply {
-                when (ruleSub.type) {
-                    RuleSub.Type.RssSource.ordinal -> rgType.check(R.id.rb_rss_source)
-                    else -> rgType.check(R.id.rb_book_source)
-                }
+            val alertBinding = DialogRuleSubEditBinding.inflate(layoutInflater).apply {
+                spType.setSelection(ruleSub.type)
                 etName.setText(ruleSub.name)
                 etUrl.setText(ruleSub.url)
             }
             customView = alertBinding.root
             okButton {
-                when (alertBinding.rgType.checkedRadioButtonId) {
-                    R.id.rb_rss_source -> ruleSub.setType(RuleSub.Type.RssSource)
-                    else -> ruleSub.setType(RuleSub.Type.BookSource)
-                }
+                ruleSub.type = alertBinding.spType.selectedItemPosition
                 ruleSub.name = alertBinding.etName.text?.toString() ?: ""
                 ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
                 launch(IO) {

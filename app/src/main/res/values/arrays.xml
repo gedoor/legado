@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string-array name="book_type">
-		<item>@string/book_type_text</item>
-		<item>@string/book_type_audio</item>
+		<item>Text</item>
+		<item>Audio</item>
 	</string-array>
 
 	<string-array name="indent">
@@ -99,6 +99,11 @@
 		<item>Simplified_Chinese</item>
 		<item>Traditional_Chinese</item>
 		<item>English</item>
+	</string-array>
+
+	<string-array name="rule_type">
+		<item>BookSource</item>
+		<item>RssSource</item>
 	</string-array>
 
 </resources>

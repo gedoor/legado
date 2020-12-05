@@ -594,8 +594,6 @@
     <string name="change_cover_source">封面換源</string>
     <string name="select_local_image">選擇本機圖片</string>
     <string name="book_type">類型:</string>
-    <string name="book_type_text">文字</string>
-    <string name="book_type_audio">音訊</string>
     <string name="to_backstage">後台</string>
     <string name="importing">正在匯入</string>
     <string name="exporting">正在匯出</string>

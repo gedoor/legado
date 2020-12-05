@@ -602,8 +602,6 @@
     <string name="change_cover_source">封面换源</string>
     <string name="select_local_image">选择本地图片</string>
     <string name="book_type">类型:</string>
-    <string name="book_type_text">文本</string>
-    <string name="book_type_audio">音频</string>
     <string name="to_backstage">后台</string>
     <string name="importing">正在导入</string>
     <string name="exporting">正在导出</string>

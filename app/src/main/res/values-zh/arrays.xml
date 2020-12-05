@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="book_type">
-        <item>@string/book_type_text</item>
-        <item>@string/book_type_audio</item>
+        <item>文本</item>
+        <item>音频</item>
     </string-array>
 
     <string-array name="indent">
@@ -99,6 +99,11 @@
         <item>简体中文</item>
         <item>繁体中文</item>
         <item>英文</item>
+    </string-array>
+
+    <string-array name="rule_type">
+        <item>书源</item>
+        <item>订阅源</item>
     </string-array>
 
 </resources>
