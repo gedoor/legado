@@ -44,7 +44,7 @@ class SourceSubAdapter(context: Context, val callBack: Callback) :
     private fun showMenu(view: View, position: Int) {
         val source = getItem(position) ?: return
         val popupMenu = PopupMenu(context, view)
-        popupMenu.inflate(R.menu.rss_source_item)
+        popupMenu.inflate(R.menu.source_sub_item)
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_del -> callBack.delSubscription(source)

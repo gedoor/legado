@@ -41,7 +41,10 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_add -> editSubscription(SourceSub())
+            R.id.menu_add -> {
+                val order = App.db.sourceSubDao().maxOrder + 1
+                editSubscription(SourceSub(customOrder = order))
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
