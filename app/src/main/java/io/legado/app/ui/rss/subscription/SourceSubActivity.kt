@@ -10,7 +10,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.SourceSub
 import io.legado.app.databinding.ActivitySourceSubBinding
 
-class SourceSubscriptionActivity : BaseActivity<ActivitySourceSubBinding>() {
+class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>() {
 
     private lateinit var adapter: SourceSubAdapter
     private var liveData: LiveData<List<SourceSub>>? = null
