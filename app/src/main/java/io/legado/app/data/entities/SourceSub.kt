@@ -9,7 +9,8 @@ data class SourceSub(
     val id: Long = System.currentTimeMillis(),
     var name: String = "",
     var url: String = "",
-    var type: Int = 0
+    var type: Int = 0,
+    var customOrder: Int = 0
 ) {
 
     fun setType(type: Type) {

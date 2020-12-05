@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -13,6 +14,7 @@ import io.legado.app.databinding.DialogSourceSubEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.association.ImportBookSourceActivity
 import io.legado.app.ui.association.ImportRssSourceActivity
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
@@ -47,6 +49,9 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
     private fun initView() {
         adapter = SourceSubAdapter(this, this)
         binding.recyclerView.adapter = adapter
+        val itemTouchCallback = ItemTouchCallback(adapter)
+        itemTouchCallback.isCanDrag = true
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
     }
 
     private fun initData() {
@@ -99,4 +104,21 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
             App.db.sourceSubDao().delete(sourceSub)
         }
     }
+
+    override fun updateSourceSub(vararg sourceSub: SourceSub) {
+        launch(IO) {
+            App.db.sourceSubDao().update(*sourceSub)
+        }
+    }
+
+    override fun upOrder() {
+        launch(IO) {
+            val sourceSubs = App.db.sourceSubDao().all
+            for ((index: Int, sourceSub: SourceSub) in sourceSubs.withIndex()) {
+                sourceSub.customOrder = index + 1
+            }
+            App.db.sourceSubDao().update(*sourceSubs.toTypedArray())
+        }
+    }
+
 }

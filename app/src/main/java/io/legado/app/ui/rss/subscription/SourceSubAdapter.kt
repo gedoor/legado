@@ -4,16 +4,19 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SourceSub
 import io.legado.app.databinding.ItemSourceSubBinding
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import org.jetbrains.anko.sdk27.listeners.onClick
+import java.util.*
 
 class SourceSubAdapter(context: Context, val callBack: Callback) :
-    SimpleRecyclerAdapter<SourceSub, ItemSourceSubBinding>(context) {
-
+    SimpleRecyclerAdapter<SourceSub, ItemSourceSubBinding>(context),
+    ItemTouchCallback.Callback {
 
     override fun convert(
         holder: ItemViewHolder,
@@ -55,10 +58,40 @@ class SourceSubAdapter(context: Context, val callBack: Callback) :
         return ItemSourceSubBinding.inflate(inflater, parent, false)
     }
 
+    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        val srcItem = getItem(srcPosition)
+        val targetItem = getItem(targetPosition)
+        if (srcItem != null && targetItem != null) {
+            if (srcItem.customOrder == targetItem.customOrder) {
+                callBack.upOrder()
+            } else {
+                val srcOrder = srcItem.customOrder
+                srcItem.customOrder = targetItem.customOrder
+                targetItem.customOrder = srcOrder
+                movedItems.add(srcItem)
+                movedItems.add(targetItem)
+            }
+        }
+        Collections.swap(getItems(), srcPosition, targetPosition)
+        notifyItemMoved(srcPosition, targetPosition)
+        return true
+    }
+
+    private val movedItems = hashSetOf<SourceSub>()
+
+    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        if (movedItems.isNotEmpty()) {
+            callBack.updateSourceSub(*movedItems.toTypedArray())
+            movedItems.clear()
+        }
+    }
+
     interface Callback {
         fun openSubscription(sourceSub: SourceSub)
         fun editSubscription(sourceSub: SourceSub)
         fun delSubscription(sourceSub: SourceSub)
+        fun updateSourceSub(vararg sourceSub: SourceSub)
+        fun upOrder()
     }
 
 }
