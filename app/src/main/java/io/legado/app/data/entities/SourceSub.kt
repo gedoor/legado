@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class SourceSub(
     @PrimaryKey
     val id: Long = System.currentTimeMillis(),
-    var name: String,
-    var url: String,
+    var name: String = "",
+    var url: String = "",
     var type: Int = 0
 ) {
 

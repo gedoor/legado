@@ -9,6 +9,8 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.entities.SourceSub
 import io.legado.app.databinding.ActivitySourceSubBinding
+import io.legado.app.databinding.DialogSourceSubEditBinding
+import io.legado.app.lib.dialogs.alert
 
 class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>() {
 
@@ -31,7 +33,7 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>() {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_add -> editSubscription()
+            R.id.menu_add -> editSubscription(SourceSub())
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -49,8 +51,28 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>() {
         }
     }
 
-    private fun editSubscription() {
-
+    private fun editSubscription(sourceSub: SourceSub) {
+        alert(R.string.source_subscription) {
+            val alertBinding = DialogSourceSubEditBinding.inflate(layoutInflater).apply {
+                when (sourceSub.type) {
+                    SourceSub.Type.RssSource.ordinal -> rgType.check(R.id.rb_rss_source)
+                    else -> rgType.check(R.id.rb_book_source)
+                }
+                etName.setText(sourceSub.name)
+                etUrl.setText(sourceSub.url)
+            }
+            customView = alertBinding.root
+            okButton {
+                when (alertBinding.rgType.checkedRadioButtonId) {
+                    R.id.rb_rss_source -> sourceSub.setType(SourceSub.Type.RssSource)
+                    else -> sourceSub.setType(SourceSub.Type.BookSource)
+                }
+                sourceSub.name = alertBinding.etName.text?.toString() ?: ""
+                sourceSub.url = alertBinding.etUrl.text?.toString() ?: ""
+                App.db.sourceSubDao().insert(sourceSub)
+            }
+            cancelButton()
+        }.show()
     }
 
 
