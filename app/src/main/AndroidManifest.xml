@@ -171,9 +171,9 @@
         <activity
             android:name=".ui.qrcode.QrCodeActivity"
             android:launchMode="singleTask" />
-        <!-- 源订阅 -->
+        <!-- 规则订阅 -->
         <activity
-            android:name=".ui.rss.subscription.SourceSubActivity"
+            android:name=".ui.rss.subscription.RuleSubActivity"
             android:launchMode="singleTask" />
         <!-- 书源编辑 -->
         <activity

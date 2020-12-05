@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import io.legado.app.data.entities.SourceSub
-import io.legado.app.databinding.ActivitySourceSubBinding
+import io.legado.app.data.entities.RuleSub
+import io.legado.app.databinding.ActivityRuleSubBinding
 import io.legado.app.databinding.DialogSourceSubEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.association.ImportBookSourceActivity
@@ -20,14 +20,14 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
-class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
-    SourceSubAdapter.Callback {
+class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
+    RuleSubAdapter.Callback {
 
-    private lateinit var adapter: SourceSubAdapter
-    private var liveData: LiveData<List<SourceSub>>? = null
+    private lateinit var adapter: RuleSubAdapter
+    private var liveData: LiveData<List<RuleSub>>? = null
 
-    override fun getViewBinding(): ActivitySourceSubBinding {
-        return ActivitySourceSubBinding.inflate(layoutInflater)
+    override fun getViewBinding(): ActivityRuleSubBinding {
+        return ActivityRuleSubBinding.inflate(layoutInflater)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -43,15 +43,15 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> {
-                val order = App.db.sourceSubDao().maxOrder + 1
-                editSubscription(SourceSub(customOrder = order))
+                val order = App.db.ruleSubDao().maxOrder + 1
+                editSubscription(RuleSub(customOrder = order))
             }
         }
         return super.onCompatOptionsItemSelected(item)
     }
 
     private fun initView() {
-        adapter = SourceSubAdapter(this, this)
+        adapter = RuleSubAdapter(this, this)
         binding.recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
@@ -60,69 +60,69 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
 
     private fun initData() {
         liveData?.removeObservers(this)
-        liveData = App.db.sourceSubDao().observeAll()
+        liveData = App.db.ruleSubDao().observeAll()
         liveData?.observe(this) {
             binding.tvEmptyMsg.isGone = it.isNotEmpty()
             adapter.setItems(it)
         }
     }
 
-    override fun openSubscription(sourceSub: SourceSub) {
-        when (sourceSub.type) {
-            SourceSub.Type.RssSource.ordinal -> {
-                startActivity<ImportRssSourceActivity>("source" to sourceSub.url)
+    override fun openSubscription(ruleSub: RuleSub) {
+        when (ruleSub.type) {
+            RuleSub.Type.RssSource.ordinal -> {
+                startActivity<ImportRssSourceActivity>("source" to ruleSub.url)
             }
             else -> {
-                startActivity<ImportBookSourceActivity>("source" to sourceSub.url)
+                startActivity<ImportBookSourceActivity>("source" to ruleSub.url)
             }
         }
     }
 
-    override fun editSubscription(sourceSub: SourceSub) {
-        alert(R.string.source_subscription) {
+    override fun editSubscription(ruleSub: RuleSub) {
+        alert(R.string.rule_subscription) {
             val alertBinding = DialogSourceSubEditBinding.inflate(layoutInflater).apply {
-                when (sourceSub.type) {
-                    SourceSub.Type.RssSource.ordinal -> rgType.check(R.id.rb_rss_source)
+                when (ruleSub.type) {
+                    RuleSub.Type.RssSource.ordinal -> rgType.check(R.id.rb_rss_source)
                     else -> rgType.check(R.id.rb_book_source)
                 }
-                etName.setText(sourceSub.name)
-                etUrl.setText(sourceSub.url)
+                etName.setText(ruleSub.name)
+                etUrl.setText(ruleSub.url)
             }
             customView = alertBinding.root
             okButton {
                 when (alertBinding.rgType.checkedRadioButtonId) {
-                    R.id.rb_rss_source -> sourceSub.setType(SourceSub.Type.RssSource)
-                    else -> sourceSub.setType(SourceSub.Type.BookSource)
+                    R.id.rb_rss_source -> ruleSub.setType(RuleSub.Type.RssSource)
+                    else -> ruleSub.setType(RuleSub.Type.BookSource)
                 }
-                sourceSub.name = alertBinding.etName.text?.toString() ?: ""
-                sourceSub.url = alertBinding.etUrl.text?.toString() ?: ""
+                ruleSub.name = alertBinding.etName.text?.toString() ?: ""
+                ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
                 launch(IO) {
-                    App.db.sourceSubDao().insert(sourceSub)
+                    App.db.ruleSubDao().insert(ruleSub)
                 }
             }
             cancelButton()
         }.show()
     }
 
-    override fun delSubscription(sourceSub: SourceSub) {
+    override fun delSubscription(ruleSub: RuleSub) {
         launch(IO) {
-            App.db.sourceSubDao().delete(sourceSub)
+            App.db.ruleSubDao().delete(ruleSub)
         }
     }
 
-    override fun updateSourceSub(vararg sourceSub: SourceSub) {
+    override fun updateSourceSub(vararg ruleSub: RuleSub) {
         launch(IO) {
-            App.db.sourceSubDao().update(*sourceSub)
+            App.db.ruleSubDao().update(*ruleSub)
         }
     }
 
     override fun upOrder() {
         launch(IO) {
-            val sourceSubs = App.db.sourceSubDao().all
-            for ((index: Int, sourceSub: SourceSub) in sourceSubs.withIndex()) {
-                sourceSub.customOrder = index + 1
+            val sourceSubs = App.db.ruleSubDao().all
+            for ((index: Int, ruleSub: RuleSub) in sourceSubs.withIndex()) {
+                ruleSub.customOrder = index + 1
             }
-            App.db.sourceSubDao().update(*sourceSubs.toTypedArray())
+            App.db.ruleSubDao().update(*sourceSubs.toTypedArray())
         }
     }
 

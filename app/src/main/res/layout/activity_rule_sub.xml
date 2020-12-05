@@ -10,7 +10,7 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/source_subscription" />
+        app:title="@string/rule_subscription" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:visibility="gone"
-            android:text="@string/source_sub_empty_msg"
+            android:text="@string/rule_sub_empty_msg"
             app:layout_constraintTop_toBottomOf="@+id/title_bar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

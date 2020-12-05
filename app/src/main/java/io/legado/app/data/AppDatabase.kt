@@ -18,8 +18,8 @@ import java.util.*
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
-        SourceSub::class],
-    version = 25,
+        RuleSub::class],
+    version = 26,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -40,7 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun readRecordDao(): ReadRecordDao
     abstract fun httpTTSDao(): HttpTTSDao
     abstract fun cacheDao(): CacheDao
-    abstract fun sourceSubDao(): SourceSubDao
+    abstract fun ruleSubDao(): RuleSubDao
 
     companion object {
 
@@ -53,7 +53,7 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_10_11, migration_11_12, migration_12_13, migration_13_14,
                     migration_14_15, migration_15_17, migration_17_18, migration_18_19,
                     migration_19_20, migration_20_21, migration_21_22, migration_22_23,
-                    migration_23_24, migration_24_25
+                    migration_23_24, migration_24_25, migration_25_26
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -213,6 +213,23 @@ abstract class AppDatabase : RoomDatabase() {
                     PRIMARY KEY(`id`))
                 """
                 )
+            }
+        }
+
+        private val migration_25_26 = object : Migration(25, 26) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `ruleSubs` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, `type` INTEGER NOT NULL, 
+                    `customOrder` INTEGER NOT NULL, `autoUpdate` INTEGER NOT NULL, `update` INTEGER NOT NULL, PRIMARY KEY(`id`))
+                """
+                )
+                database.execSQL(
+                    """
+                    insert into `ruleSubs` select *, 0, 0 from `sourceSubs`
+                """
+                )
+                database.execSQL("DROP TABLE `sourceSubs`")
             }
         }
     }
