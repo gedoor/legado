@@ -4,26 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="12dp">
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="3dp"
         android:textSize="16sp"
         android:textColor="@color/primaryText"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         tools:text="name" />
 
+    <io.legado.app.ui.widget.text.AccentBgTextView
+        android:id="@+id/tv_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:textSize="12sp"
+        app:radius="2dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:text="type" />
+
     <TextView
         android:id="@+id/tv_url"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="3dp"
         android:textSize="12sp"
         android:textColor="@color/secondaryText"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/tv_type"
         tools:text="url" />
 
 
