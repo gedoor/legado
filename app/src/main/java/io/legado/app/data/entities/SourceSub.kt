@@ -7,6 +7,16 @@ import androidx.room.PrimaryKey
 data class SourceSub(
     @PrimaryKey
     val id: Long = System.currentTimeMillis(),
-    val name: String,
-    val url: String,
-)
+    var name: String,
+    var url: String,
+    var type: Int = 0
+) {
+
+    fun setType(type: Type) {
+        this.type = type.ordinal
+    }
+
+    enum class Type {
+        BookSource, RssSource
+    }
+}

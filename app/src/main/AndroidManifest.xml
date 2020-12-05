@@ -173,7 +173,7 @@
             android:launchMode="singleTask" />
         <!-- 源订阅 -->
         <activity
-            android:name=".ui.rss.subscription.SourceSubscription"
+            android:name=".ui.rss.subscription.SourceSubscriptionActivity"
             android:launchMode="singleTask" />
         <!-- 书源编辑 -->
         <activity
