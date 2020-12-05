@@ -24,8 +24,14 @@ class SourceSubAdapter(context: Context, val callBack: Callback) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemSourceSubBinding) {
+        binding.root.onClick {
+            callBack.openSubscription(getItem(holder.layoutPosition)!!)
+        }
         binding.ivEdit.onClick {
             callBack.editSubscription(getItem(holder.layoutPosition)!!)
+        }
+        binding.ivMenuMore.onClick {
+
         }
     }
 
@@ -34,6 +40,7 @@ class SourceSubAdapter(context: Context, val callBack: Callback) :
     }
 
     interface Callback {
+        fun openSubscription(sourceSub: SourceSub)
         fun editSubscription(sourceSub: SourceSub)
         fun delSubscription(sourceSub: SourceSub)
     }

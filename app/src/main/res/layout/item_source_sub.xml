@@ -37,6 +37,7 @@
         android:textSize="12sp"
         android:textColor="@color/secondaryText"
         android:ellipsize="middle"
+        android:singleLine="true"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
         app:layout_constraintLeft_toRightOf="@+id/tv_type"
         app:layout_constraintRight_toLeftOf="@+id/iv_edit"

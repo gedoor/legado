@@ -11,6 +11,11 @@ import io.legado.app.data.entities.SourceSub
 import io.legado.app.databinding.ActivitySourceSubBinding
 import io.legado.app.databinding.DialogSourceSubEditBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.ui.association.ImportBookSourceActivity
+import io.legado.app.ui.association.ImportRssSourceActivity
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import org.jetbrains.anko.startActivity
 
 class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
     SourceSubAdapter.Callback {
@@ -52,6 +57,17 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
         }
     }
 
+    override fun openSubscription(sourceSub: SourceSub) {
+        when (sourceSub.type) {
+            SourceSub.Type.RssSource.ordinal -> {
+                startActivity<ImportRssSourceActivity>("source" to sourceSub.url)
+            }
+            else -> {
+                startActivity<ImportBookSourceActivity>("source" to sourceSub.url)
+            }
+        }
+    }
+
     override fun editSubscription(sourceSub: SourceSub) {
         alert(R.string.source_subscription) {
             val alertBinding = DialogSourceSubEditBinding.inflate(layoutInflater).apply {
@@ -70,13 +86,17 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
                 }
                 sourceSub.name = alertBinding.etName.text?.toString() ?: ""
                 sourceSub.url = alertBinding.etUrl.text?.toString() ?: ""
-                App.db.sourceSubDao().insert(sourceSub)
+                launch(IO) {
+                    App.db.sourceSubDao().insert(sourceSub)
+                }
             }
             cancelButton()
         }.show()
     }
 
     override fun delSubscription(sourceSub: SourceSub) {
-
+        launch(IO) {
+            App.db.sourceSubDao().delete(sourceSub)
+        }
     }
 }

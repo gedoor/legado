@@ -1,10 +1,7 @@
 package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.data.entities.SourceSub
 
 @Dao
@@ -18,5 +15,8 @@ interface SourceSubDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg sourceSub: SourceSub)
+
+    @Delete
+    fun delete(vararg sourceSub: SourceSub)
 
 }
