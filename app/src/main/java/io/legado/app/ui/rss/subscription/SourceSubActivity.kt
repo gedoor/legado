@@ -12,7 +12,8 @@ import io.legado.app.databinding.ActivitySourceSubBinding
 import io.legado.app.databinding.DialogSourceSubEditBinding
 import io.legado.app.lib.dialogs.alert
 
-class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>() {
+class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>(),
+    SourceSubAdapter.Callback {
 
     private lateinit var adapter: SourceSubAdapter
     private var liveData: LiveData<List<SourceSub>>? = null
@@ -39,7 +40,7 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>() {
     }
 
     private fun initView() {
-        adapter = SourceSubAdapter(this)
+        adapter = SourceSubAdapter(this, this)
         binding.recyclerView.adapter = adapter
     }
 
@@ -51,7 +52,7 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>() {
         }
     }
 
-    private fun editSubscription(sourceSub: SourceSub) {
+    override fun editSubscription(sourceSub: SourceSub) {
         alert(R.string.source_subscription) {
             val alertBinding = DialogSourceSubEditBinding.inflate(layoutInflater).apply {
                 when (sourceSub.type) {
@@ -75,5 +76,7 @@ class SourceSubActivity : BaseActivity<ActivitySourceSubBinding>() {
         }.show()
     }
 
+    override fun delSubscription(sourceSub: SourceSub) {
 
+    }
 }

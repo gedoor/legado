@@ -6,8 +6,9 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SourceSub
 import io.legado.app.databinding.ItemSourceSubBinding
+import org.jetbrains.anko.sdk27.listeners.onClick
 
-class SourceSubAdapter(context: Context) :
+class SourceSubAdapter(context: Context, val callBack: Callback) :
     SimpleRecyclerAdapter<SourceSub, ItemSourceSubBinding>(context) {
 
 
@@ -17,16 +18,24 @@ class SourceSubAdapter(context: Context) :
         item: SourceSub,
         payloads: MutableList<Any>
     ) {
+        binding.tvType.text = SourceSub.Type.values()[item.type].name
         binding.tvName.text = item.name
         binding.tvUrl.text = item.url
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemSourceSubBinding) {
-
+        binding.ivEdit.onClick {
+            callBack.editSubscription(getItem(holder.layoutPosition)!!)
+        }
     }
 
     override fun getViewBinding(parent: ViewGroup): ItemSourceSubBinding {
         return ItemSourceSubBinding.inflate(inflater, parent, false)
+    }
+
+    interface Callback {
+        fun editSubscription(sourceSub: SourceSub)
+        fun delSubscription(sourceSub: SourceSub)
     }
 
 }

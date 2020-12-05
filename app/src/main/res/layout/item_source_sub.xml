@@ -15,6 +15,7 @@
         android:textColor="@color/primaryText"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/iv_edit"
         tools:text="name" />
 
     <io.legado.app.ui.widget.text.AccentBgTextView
@@ -35,10 +36,11 @@
         android:padding="3dp"
         android:textSize="12sp"
         android:textColor="@color/secondaryText"
+        android:ellipsize="middle"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
         app:layout_constraintLeft_toRightOf="@+id/tv_type"
+        app:layout_constraintRight_toLeftOf="@+id/iv_edit"
         tools:text="url" />
-
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_edit"
