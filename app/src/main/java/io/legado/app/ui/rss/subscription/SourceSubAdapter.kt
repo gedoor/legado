@@ -1,7 +1,10 @@
 package io.legado.app.ui.rss.subscription
 
 import android.content.Context
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SourceSub
@@ -31,8 +34,21 @@ class SourceSubAdapter(context: Context, val callBack: Callback) :
             callBack.editSubscription(getItem(holder.layoutPosition)!!)
         }
         binding.ivMenuMore.onClick {
-
+            showMenu(binding.ivMenuMore, holder.layoutPosition)
         }
+    }
+
+    private fun showMenu(view: View, position: Int) {
+        val source = getItem(position) ?: return
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.inflate(R.menu.rss_source_item)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_del -> callBack.delSubscription(source)
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     override fun getViewBinding(parent: ViewGroup): ItemSourceSubBinding {
