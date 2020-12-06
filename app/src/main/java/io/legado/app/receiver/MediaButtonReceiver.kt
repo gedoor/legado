@@ -43,8 +43,10 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 if (action == KeyEvent.ACTION_DOWN) {
                     when (keycode) {
                         KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+                            ReadAloud.prevParagraph(context)
                         }
                         KeyEvent.KEYCODE_MEDIA_NEXT -> {
+                            ReadAloud.nextParagraph(context)
                         }
                         else -> readAloud(context)
                     }
