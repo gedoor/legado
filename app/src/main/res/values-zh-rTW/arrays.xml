@@ -104,6 +104,7 @@
     <string-array name="rule_type">
         <item>書源</item>
         <item>訂閲源</item>
+        <item>替換規則</item>
     </string-array>
 
 </resources>

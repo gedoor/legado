@@ -14,6 +14,7 @@ import io.legado.app.databinding.ActivityRuleSubBinding
 import io.legado.app.databinding.DialogRuleSubEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.association.ImportBookSourceActivity
+import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.association.ImportRssSourceActivity
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import kotlinx.coroutines.Dispatchers.IO
@@ -72,11 +73,14 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     override fun openSubscription(ruleSub: RuleSub) {
         when (ruleSub.type) {
+            0 -> {
+                startActivity<ImportBookSourceActivity>("source" to ruleSub.url)
+            }
             1 -> {
                 startActivity<ImportRssSourceActivity>("source" to ruleSub.url)
             }
-            else -> {
-                startActivity<ImportBookSourceActivity>("source" to ruleSub.url)
+            2 -> {
+                startActivity<ImportReplaceRuleActivity>("source" to ruleSub.url)
             }
         }
     }
