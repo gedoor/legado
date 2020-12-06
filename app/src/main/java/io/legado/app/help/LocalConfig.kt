@@ -62,4 +62,13 @@ object LocalConfig {
             }
             return value
         }
+
+    val isFirstOpenDebug: Boolean
+        get() {
+            val value = localConfig.getBoolean("firstOpenDebug", true)
+            if (value) {
+                localConfig.edit { putBoolean("firstOpenDebug", false) }
+            }
+            return value
+        }
 }

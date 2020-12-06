@@ -8,9 +8,11 @@ import androidx.appcompat.widget.SearchView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivitySourceDebugBinding
+import io.legado.app.help.LocalConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivityForResult
@@ -41,6 +43,13 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
                     binding.rotateLoading.hide()
                 }
             }
+        }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        if (LocalConfig.isFirstOpenDebug) {
+            showHelp()
         }
     }
 
@@ -88,8 +97,14 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             R.id.menu_scan -> {
                 startActivityForResult<QrCodeActivity>(qrRequestCode)
             }
+            R.id.menu_help -> showHelp()
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    private fun showHelp() {
+        val text = String(assets.open("help/debugHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
