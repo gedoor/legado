@@ -455,7 +455,7 @@
     <string name="source_http_header">请求头(header)</string>
     <string name="debug_source">调试源</string>
     <string name="import_by_qr_code">二维码导入</string>
-    <string name="share_selected_source">分享选中书源</string>
+    <string name="share_selected_source">分享选中源</string>
     <string name="scan_qr_code">扫描二维码</string>
     <string name="click_on_selected_show_menu">选中时点击可弹出菜单</string>
     <string name="theme">主题</string>

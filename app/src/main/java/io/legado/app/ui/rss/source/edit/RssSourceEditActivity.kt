@@ -84,6 +84,7 @@ class RssSourceEditActivity :
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.source_edit, menu)
+        menu.findItem(R.id.menu_login).isVisible = false
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -110,7 +111,11 @@ class RssSourceEditActivity :
             R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_share_str -> share(GSON.toJson(getRssSource()))
-            R.id.menu_share_qr -> shareWithQr(getString(R.string.share_rss_source), GSON.toJson(getRssSource()))
+            R.id.menu_share_qr -> shareWithQr(
+                getString(R.string.share_rss_source),
+                GSON.toJson(getRssSource())
+            )
+            R.id.menu_help -> showRuleHelp()
         }
         return super.onCompatOptionsItemSelected(item)
     }

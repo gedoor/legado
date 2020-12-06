@@ -3,7 +3,6 @@ package io.legado.app.ui.book.source.edit
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
@@ -102,15 +101,7 @@ class BookSourceEditActivity :
                 getString(R.string.share_book_source),
                 GSON.toJson(getSource())
             )
-            R.id.menu_rule_summary -> {
-                try {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(getString(R.string.source_rule_url))
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    toast(R.string.can_not_open)
-                }
-            }
+            R.id.menu_help -> showRuleHelp()
             R.id.menu_login -> getSource().let {
                 if (checkSource(it)) {
                     if (it.loginUrl.isNullOrEmpty()) {

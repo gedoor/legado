@@ -762,7 +762,7 @@
     <string name="theme_list">主題列表</string>
     <string name="theme_list_summary">使用儲存主題,匯入,分享主題</string>
     <string name="select_theme">切換預設主題</string>
-    <string name="share_selected_source">分享選中書源</string>
+    <string name="share_selected_source">分享選中源</string>
     <string name="sort_by_lastUpdateTime">時間排序</string>
     <string name="search_content">全文搜尋</string>
     <string name="rss_source_empty">關注公眾號[开源阅读]獲取訂閱源!</string>

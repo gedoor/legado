@@ -45,13 +45,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_share_wifi"
-        android:title="@string/wifi_share"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_rule_summary"
-        android:title="@string/rule_summary"
+        android:id="@+id/menu_help"
+        android:title="@string/help"
         app:showAsAction="never" />
 
 </menu>

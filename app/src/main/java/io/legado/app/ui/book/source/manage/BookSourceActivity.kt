@@ -216,7 +216,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun showHelp() {
-        val text = String(assets.open("help/bookSourcesHelp.md").readBytes())
+        val text = String(assets.open("help/SourceMBookHelp.md").readBytes())
         TextDialog.show(supportFragmentManager, text, TextDialog.MD)
     }
 

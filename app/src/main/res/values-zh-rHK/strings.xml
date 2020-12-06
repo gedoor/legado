@@ -761,7 +761,7 @@
     <string name="theme_list">主题列表</string>
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
     <string name="select_theme">切換默認主題</string>
-    <string name="share_selected_source">分享選中書源</string>
+    <string name="share_selected_source">分享選中源</string>
     <string name="sort_by_lastUpdateTime">時間排序</string>
     <string name="search_content">全文搜索</string>
     <string name="rss_source_empty">关注公众号[开源阅读]获取订阅源!</string>
