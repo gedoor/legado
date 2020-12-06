@@ -242,7 +242,7 @@ class ReadMenu @JvmOverloads constructor(
                 binding.vwNavigationBar.layoutParams = binding.vwNavigationBar.layoutParams.apply {
                     height = activity!!.navigationBarHeight
                 }
-                if (LocalConfig.isFirstReadMenuShow) {
+                if (!LocalConfig.readMenuHelpVersionIsLast) {
                     callBack.showReadMenuHelp()
                 }
             }

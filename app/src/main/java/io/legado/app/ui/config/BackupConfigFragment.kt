@@ -61,7 +61,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         ATH.applyEdgeEffectColor(listView)
         setHasOptionsMenu(true)
-        if (LocalConfig.isFirstOpenBackup) {
+        if (!LocalConfig.backupHelpVersionIsLast) {
             showHelp()
         }
     }

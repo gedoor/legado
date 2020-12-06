@@ -56,7 +56,7 @@ abstract class ReadBookBaseActivity :
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        if (LocalConfig.isFirstRead) {
+        if (!LocalConfig.readHelpVersionIsLast) {
             showClickRegionalConfig()
         }
     }

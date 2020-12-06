@@ -48,7 +48,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        if (LocalConfig.isFirstOpenDebug) {
+        if (!LocalConfig.debugHelpVersionIsLast) {
             showHelp()
         }
     }

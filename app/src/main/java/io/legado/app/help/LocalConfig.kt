@@ -27,48 +27,38 @@ object LocalConfig {
             return value
         }
 
-    val isFirstRead: Boolean
-        get() {
-            val value = localConfig.getBoolean("firstRead", true)
-            if (value) {
-                localConfig.edit { putBoolean("firstRead", false) }
+    @Suppress("SameParameterValue")
+    private fun isLastVersion(lastVersion: Int, versionKey: String, firstOpenKey: String): Boolean {
+        var version = localConfig.getInt(versionKey, 0)
+        if (version == 0) {
+            if (!localConfig.getBoolean(firstOpenKey, true)) {
+                version = 1
             }
-            return value
         }
+        if (version < lastVersion) {
+            localConfig.edit { putInt(versionKey, lastVersion) }
+            return false
+        }
+        return true
+    }
 
-    val isFirstOpenBackup: Boolean
-        get() {
-            val value = localConfig.getBoolean("firstBackup", true)
-            if (value) {
-                localConfig.edit { putBoolean("firstBackup", false) }
-            }
-            return value
-        }
+    val readHelpVersionIsLast: Boolean by lazy {
+        isLastVersion(1, "readHelpVersion", "firstRead")
+    }
 
-    val isFirstReadMenuShow: Boolean
-        get() {
-            val value = localConfig.getBoolean("firstReadMenu", true)
-            if (value) {
-                localConfig.edit { putBoolean("firstReadMenu", false) }
-            }
-            return value
-        }
+    val backupHelpVersionIsLast: Boolean by lazy {
+        isLastVersion(1, "backupHelpVersion", "firstBackup")
+    }
 
-    val isFirstOpenBookSources: Boolean
-        get() {
-            val value = localConfig.getBoolean("firstOpenBookSources", true)
-            if (value) {
-                localConfig.edit { putBoolean("firstOpenBookSources", false) }
-            }
-            return value
-        }
+    val readMenuHelpVersionIsLast: Boolean by lazy {
+        isLastVersion(1, "readMenuHelpVersion", "firstReadMenu")
+    }
 
-    val isFirstOpenDebug: Boolean
-        get() {
-            val value = localConfig.getBoolean("firstOpenDebug", true)
-            if (value) {
-                localConfig.edit { putBoolean("firstOpenDebug", false) }
-            }
-            return value
-        }
+    val bookSourcesHelpVersionIsLast: Boolean by lazy {
+        isLastVersion(1, "bookSourceHelpVersion", "firstOpenBookSources")
+    }
+
+    val debugHelpVersionIsLast: Boolean by lazy {
+        isLastVersion(1, "debugHelpVersion", "firstOpenDebug")
+    }
 }

@@ -78,7 +78,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         initLiveDataBookSource()
         initLiveDataGroup()
         initSelectActionBar()
-        if (LocalConfig.isFirstOpenBookSources) {
+        if (!LocalConfig.bookSourcesHelpVersionIsLast) {
             showHelp()
         }
     }
