@@ -1,15 +1,15 @@
 package io.legado.app.ui.rss.source.manage
 
 import android.app.Application
+import android.content.Intent
 import android.text.TextUtils
+import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
+import io.legado.app.BuildConfig
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.splitNotBlank
-import io.legado.app.utils.writeText
+import io.legado.app.utils.*
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -101,6 +101,28 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             context.toast("成功导出至\n${doc.uri.path}")
         }.onError {
             context.toast("导出失败\n${it.localizedMessage}")
+        }
+    }
+
+    fun shareSelection(sources: List<RssSource>, success: ((intent: Intent) -> Unit)) {
+        execute {
+            val intent = Intent(Intent.ACTION_SEND)
+            val file = FileUtils.createFileWithReplace("${context.filesDir}/shareRssSource.json")
+            file.writeText(GSON.toJson(sources))
+            val fileUri = FileProvider.getUriForFile(
+                context,
+                BuildConfig.APPLICATION_ID + ".fileProvider",
+                file
+            )
+            intent.type = "text/*"
+            intent.putExtra(Intent.EXTRA_STREAM, fileUri)
+            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent
+        }.onSuccess {
+            success.invoke(it)
+        }.onError {
+            toast(it.msg)
         }
     }
 

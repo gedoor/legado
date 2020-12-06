@@ -93,7 +93,8 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(supportFragmentManager, "rssGroupManage")
-            R.id.menu_share_source -> {
+            R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection()) {
+                startActivity(Intent.createChooser(it, getString(R.string.share_selected_source)))
             }
             R.id.menu_help -> showHelp()
             else -> if (item.groupId == R.id.source_group) {
