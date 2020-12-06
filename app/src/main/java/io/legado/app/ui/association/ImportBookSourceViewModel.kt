@@ -41,6 +41,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                         checkSources[index]?.let {
                             source.bookSourceName = it.bookSourceName
                             source.bookSourceGroup = it.bookSourceGroup
+                            source.customOrder = it.customOrder
                         }
                     }
                     selectSource.add(source)
