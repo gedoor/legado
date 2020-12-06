@@ -4,20 +4,40 @@
 * [订阅源帮助文档](https://alanskycn.gitee.io/teachme/Rule/rss.html)
 
 * 规则标志, {{......}}内使用规则必须有明显的规则标志,没有规则标志当作js执行
-  * @@ 默认规则,直接写时可以省略@@
-  * @XPath: xpath规则,直接写时以//开头可省略@XPath
-  * @Json: json规则,直接写时以$.开头可省略@Json
-  * : regex规则,不可省略,只可以用在书籍列表和目录列表
+```
+@@ 默认规则,直接写时可以省略@@
+@XPath: xpath规则,直接写时以//开头可省略@XPath
+@Json: json规则,直接写时以$.开头可省略@Json
+: regex规则,不可省略,只可以用在书籍列表和目录列表
+```
+* 请求头,支持http代理,socks4 socks5代理设置
+```
+socks5代理
+{
+  "proxy":"socks5://127.0.0.1:1080"
+}
+http代理
+{
+  "proxy":"http://127.0.0.1:1080"
+}
+支持代理服务器验证
+{
+  "proxy":"socks5://127.0.0.1:1080@用户名@密码"
+}
+注意:这些请求头是无意义的,会被忽略掉
+```
   
 * js 变量和函数
-  * java 变量-当前类
-  * baseUrl 变量-当前url,String
-  * result 变量-上一步的结果
-  * book 变量-书籍类,方法见 io.legado.app.data.entities.Book
-  * cookie 变量-cookie操作类,方法见 io.legado.app.help.http.CookieStore
-  * cache 变量-缓存操作类,方法见 io.legado.app.help.CacheManager
-  * chapter 变量-当前目录类,方法见 io.legado.app.data.entities.BookChapter
-  * title 变量-当前标题,String
+```
+java 变量-当前类
+baseUrl 变量-当前url,String
+result 变量-上一步的结果
+book 变量-书籍类,方法见 io.legado.app.data.entities.Book
+cookie 变量-cookie操作类,方法见 io.legado.app.help.http.CookieStore
+cache 变量-缓存操作类,方法见 io.legado.app.help.CacheManager
+chapter 变量-当前目录类,方法见 io.legado.app.data.entities.BookChapter
+title 变量-当前标题,String
+```
 
  ## 部分js对象属性说明
 上述js变量与函数中，一些js的对象属性用的频率较高，在此列举。方便写源的时候快速翻阅。

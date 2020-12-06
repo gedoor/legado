@@ -28,9 +28,13 @@ object LocalConfig {
         }
 
     @Suppress("SameParameterValue")
-    private fun isLastVersion(lastVersion: Int, versionKey: String, firstOpenKey: String): Boolean {
+    private fun isLastVersion(
+        lastVersion: Int,
+        versionKey: String,
+        firstOpenKey: String? = null
+    ): Boolean {
         var version = localConfig.getInt(versionKey, 0)
-        if (version == 0) {
+        if (version == 0 && firstOpenKey != null) {
             if (!localConfig.getBoolean(firstOpenKey, true)) {
                 version = 1
             }
@@ -42,23 +46,21 @@ object LocalConfig {
         return true
     }
 
-    val readHelpVersionIsLast: Boolean by lazy {
-        isLastVersion(1, "readHelpVersion", "firstRead")
-    }
+    val readHelpVersionIsLast: Boolean
+        get() = isLastVersion(1, "readHelpVersion", "firstRead")
 
-    val backupHelpVersionIsLast: Boolean by lazy {
-        isLastVersion(1, "backupHelpVersion", "firstBackup")
-    }
+    val backupHelpVersionIsLast: Boolean
+        get() = isLastVersion(1, "backupHelpVersion", "firstBackup")
 
-    val readMenuHelpVersionIsLast: Boolean by lazy {
-        isLastVersion(1, "readMenuHelpVersion", "firstReadMenu")
-    }
+    val readMenuHelpVersionIsLast: Boolean
+        get() = isLastVersion(1, "readMenuHelpVersion", "firstReadMenu")
 
-    val bookSourcesHelpVersionIsLast: Boolean by lazy {
-        isLastVersion(1, "bookSourceHelpVersion", "firstOpenBookSources")
-    }
+    val bookSourcesHelpVersionIsLast: Boolean
+        get() = isLastVersion(1, "bookSourceHelpVersion", "firstOpenBookSources")
 
-    val debugHelpVersionIsLast: Boolean by lazy {
-        isLastVersion(1, "debugHelpVersion", "firstOpenDebug")
-    }
+    val debugHelpVersionIsLast: Boolean
+        get() = isLastVersion(1, "debugHelpVersion")
+
+    val ruleHelpVersionIsLast: Boolean
+        get() = isLastVersion(1, "ruleHelpVersion")
 }

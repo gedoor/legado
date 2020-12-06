@@ -19,6 +19,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.databinding.ActivityBookSourceEditBinding
+import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
@@ -61,6 +62,13 @@ class BookSourceEditActivity :
         initView()
         viewModel.initData(intent) {
             upRecyclerView()
+        }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        if (!LocalConfig.ruleHelpVersionIsLast) {
+            showRuleHelp()
         }
     }
 
@@ -392,15 +400,15 @@ class BookSourceEditActivity :
         selector(getString(R.string.help), items) { _, index ->
             when (index) {
                 0 -> insertText(AppConst.urlOption)
-                1 -> showSourceHelp()
+                1 -> showRuleHelp()
                 2 -> showRegexHelp()
                 3 -> FilePicker.selectFile(this, selectPathRequestCode)
             }
         }
     }
 
-    private fun showSourceHelp() {
-        val mdText = String(assets.open("help/sourceHelp.md").readBytes())
+    private fun showRuleHelp() {
+        val mdText = String(assets.open("help/ruleHelp.md").readBytes())
         TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
     }
 

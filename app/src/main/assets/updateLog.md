@@ -239,21 +239,6 @@ getTxtInFolder(unzipPath: String): String
 **功能介绍**
 * 修改订阅中自动添加style的情景<br>
   订阅源的内容规则中存在`<style>`或`style=`时，直接显示内容规则的原始内容
-* 请求头,支持http代理,socks4 socks5代理设置 by [10bits](https://github.com/10bits)
-```
-socks5代理
-{
-  "proxy":"socks5://127.0.0.1:1080"
-}
-http代理
-{
-  "proxy":"http://127.0.0.1:1080"
-}
-支持代理服务器验证
-{
-  "proxy":"socks5://127.0.0.1:1080@用户名@密码"
-}
-注意:这些请求头是无意义的,会被忽略掉
 ```
 * 对于搜索重定向的源，可以使用此方法获得重定向后的url
 ```
