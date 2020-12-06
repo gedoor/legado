@@ -300,15 +300,15 @@ class ReadMenu @JvmOverloads constructor(
         binding.seekReadPage.progress = seek
     }
 
-    fun setAutoPage(autoPage: Boolean) {
+    fun setAutoPage(autoPage: Boolean) = with(binding) {
         if (autoPage) {
-            binding.fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop)
-            binding.fabAutoPage.contentDescription = context.getString(R.string.auto_next_page_stop)
+            fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop)
+            fabAutoPage.contentDescription = context.getString(R.string.auto_next_page_stop)
         } else {
-            binding.fabAutoPage.setImageResource(R.drawable.ic_auto_page)
-            binding.fabAutoPage.contentDescription = context.getString(R.string.auto_next_page)
+            fabAutoPage.setImageResource(R.drawable.ic_auto_page)
+            fabAutoPage.contentDescription = context.getString(R.string.auto_next_page)
         }
-        binding.fabAutoPage.setColorFilter(textColor)
+        fabAutoPage.setColorFilter(textColor)
     }
 
     interface CallBack {

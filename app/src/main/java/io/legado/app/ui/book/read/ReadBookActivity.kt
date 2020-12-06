@@ -153,22 +153,22 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     private fun upMenu() {
-        menu?.let { menu ->
-            ReadBook.book?.let { book ->
-                val onLine = !book.isLocalBook()
-                for (i in 0 until menu.size) {
-                    val item = menu[i]
-                    when (item.groupId) {
-                        R.id.menu_group_on_line,
-                        R.id.menu_group_on_line_ns -> item.isVisible = onLine
-                        R.id.menu_group_local -> item.isVisible = !onLine
-                        R.id.menu_group_text -> item.isVisible = book.isLocalTxt()
-                        R.id.menu_group_login ->
-                            item.isVisible = !ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
-                        else -> when (item.itemId) {
-                            R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
-                            R.id.menu_re_segment -> item.isChecked = book.getReSegment()
-                        }
+        val menu = menu
+        val book = ReadBook.book
+        if (menu != null && book != null) {
+            val onLine = !book.isLocalBook()
+            for (i in 0 until menu.size) {
+                val item = menu[i]
+                when (item.groupId) {
+                    R.id.menu_group_on_line,
+                    R.id.menu_group_on_line_ns -> item.isVisible = onLine
+                    R.id.menu_group_local -> item.isVisible = !onLine
+                    R.id.menu_group_text -> item.isVisible = book.isLocalTxt()
+                    R.id.menu_group_login ->
+                        item.isVisible = !ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
+                    else -> when (item.itemId) {
+                        R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
+                        R.id.menu_re_segment -> item.isChecked = book.getReSegment()
                     }
                 }
             }
@@ -581,14 +581,15 @@ class ReadBookActivity : ReadBookBaseActivity(),
             binding.readView.upContent()
             binding.readView.upContent(1)
             autoPagePlus()
+            binding.readMenu.setAutoPage(true)
         }
-        binding.readMenu.setAutoPage(isAutoPage)
     }
 
     override fun autoPageStop() {
         isAutoPage = false
         mHandler.removeCallbacks(autoPageRunnable)
         binding.readView.upContent()
+        binding.readMenu.setAutoPage(false)
     }
 
     private fun autoPagePlus() {
