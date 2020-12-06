@@ -235,18 +235,3 @@ getTxtInFolder(unzipPath: String): String
 * 修复滑动选择,选择数量不更新的bug
 * 字体跟随背景,每个背景对应一个字体
 * 优化图片下载
-
-**功能介绍**
-* 修改订阅中自动添加style的情景<br>
-  订阅源的内容规则中存在`<style>`或`style=`时，直接显示内容规则的原始内容
-```
-* 对于搜索重定向的源，可以使用此方法获得重定向后的url
-```
-<js>
-var url='https://www.yooread.net/e/search/index.php,'+JSON.stringify({
-"method":"POST",
-"body":"show=title&tempid=1&keyboard="+key
-});
-String(java.connect(url).raw().request().url())
-</js>
-```
