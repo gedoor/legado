@@ -69,9 +69,9 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 } else {
                     AudioPlay.pause(context)
                 }
-                ActivityHelp.isExist(AudioPlayActivity::class.java) ->
-                    postEvent(EventBus.MEDIA_BUTTON, true)
                 ActivityHelp.isExist(ReadBookActivity::class.java) ->
+                    postEvent(EventBus.MEDIA_BUTTON, true)
+                ActivityHelp.isExist(AudioPlayActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
                 else -> if (context.getPrefBoolean("mediaButtonOnExit", true)) {
                     GlobalScope.launch(Main) {
