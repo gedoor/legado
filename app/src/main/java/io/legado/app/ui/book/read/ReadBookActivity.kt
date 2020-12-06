@@ -75,7 +75,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private val requestCodeSearchResult = 123
     private val requestCodeEditSource = 111
     private var menu: Menu? = null
-    private var textActionMenu: TextActionMenu? = null
+    private val textActionMenu: TextActionMenu by lazy {
+        TextActionMenu(this, this)
+    }
 
     override val scope: CoroutineScope get() = this
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
@@ -340,18 +342,18 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * view触摸,文字选择
      */
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(v: View, event: MotionEvent): Boolean {
+    override fun onTouch(v: View, event: MotionEvent): Boolean = with(binding) {
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> textActionMenu?.dismiss()
+            MotionEvent.ACTION_DOWN -> textActionMenu.dismiss()
             MotionEvent.ACTION_MOVE -> {
                 when (v.id) {
-                    R.id.cursor_left -> binding.readView.curPage.selectStartMove(
-                        event.rawX + binding.cursorLeft.width,
-                        event.rawY - binding.cursorLeft.height
+                    R.id.cursor_left -> readView.curPage.selectStartMove(
+                        event.rawX + cursorLeft.width,
+                        event.rawY - cursorLeft.height
                     )
-                    R.id.cursor_right -> binding.readView.curPage.selectEndMove(
-                        event.rawX - binding.cursorRight.width,
-                        event.rawY - binding.cursorRight.height
+                    R.id.cursor_right -> readView.curPage.selectEndMove(
+                        event.rawX - cursorRight.width,
+                        event.rawY - cursorRight.height
                     )
                 }
             }
@@ -363,55 +365,55 @@ class ReadBookActivity : ReadBookBaseActivity(),
     /**
      * 更新文字选择开始位置
      */
-    override fun upSelectedStart(x: Float, y: Float, top: Float) {
-        binding.cursorLeft.x = x - binding.cursorLeft.width
-        binding.cursorLeft.y = y
-        binding.cursorLeft.visible(true)
-        binding.textMenuPosition.x = x
-        binding.textMenuPosition.y = top
+    override fun upSelectedStart(x: Float, y: Float, top: Float) = with(binding) {
+        cursorLeft.x = x - cursorLeft.width
+        cursorLeft.y = y
+        cursorLeft.visible(true)
+        textMenuPosition.x = x
+        textMenuPosition.y = top
     }
 
     /**
      * 更新文字选择结束位置
      */
-    override fun upSelectedEnd(x: Float, y: Float) {
-        binding.cursorRight.x = x
-        binding.cursorRight.y = y
-        binding.cursorRight.visible(true)
+    override fun upSelectedEnd(x: Float, y: Float) = with(binding) {
+        cursorRight.x = x
+        cursorRight.y = y
+        cursorRight.visible(true)
     }
 
     /**
      * 取消文字选择
      */
-    override fun onCancelSelect() {
-        binding.cursorLeft.invisible()
-        binding.cursorRight.invisible()
-        textActionMenu?.dismiss()
+    override fun onCancelSelect() = with(binding) {
+        cursorLeft.invisible()
+        cursorRight.invisible()
+        textActionMenu.dismiss()
     }
 
     /**
      * 显示文本操作菜单
      */
-    override fun showTextActionMenu() {
-        textActionMenu ?: let {
-            textActionMenu = TextActionMenu(this, this)
+    override fun showTextActionMenu() = with(binding) {
+        textActionMenu.contentView.measure(
+            View.MeasureSpec.UNSPECIFIED,
+            View.MeasureSpec.UNSPECIFIED
+        )
+        val popupHeight = textActionMenu.contentView.measuredHeight
+        val x = textMenuPosition.x.toInt()
+        var y = textMenuPosition.y.toInt() - popupHeight
+        if (y < statusBarHeight) {
+            y = (cursorLeft.y + cursorLeft.height).toInt()
         }
-        textActionMenu?.let { popup ->
-            popup.contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-            val popupHeight = popup.contentView.measuredHeight
-            val x = binding.textMenuPosition.x.toInt()
-            var y = binding.textMenuPosition.y.toInt() - popupHeight
-            if (y < statusBarHeight) {
-                y = (binding.cursorLeft.y + binding.cursorLeft.height).toInt()
-            }
-            if (binding.cursorRight.y > y && binding.cursorRight.y < y + popupHeight) {
-                y = (binding.cursorRight.y + binding.cursorRight.height).toInt()
-            }
-            if (!popup.isShowing) {
-                popup.showAtLocation(binding.textMenuPosition, Gravity.TOP or Gravity.START, x, y)
-            } else {
-                popup.update(x, y, WRAP_CONTENT, WRAP_CONTENT)
-            }
+        if (cursorRight.y > y && cursorRight.y < y + popupHeight) {
+            y = (cursorRight.y + cursorRight.height).toInt()
+        }
+        if (!textActionMenu.isShowing) {
+            textActionMenu.showAtLocation(
+                textMenuPosition, Gravity.TOP or Gravity.START, x, y
+            )
+        } else {
+            textActionMenu.update(x, y, WRAP_CONTENT, WRAP_CONTENT)
         }
     }
 
@@ -452,10 +454,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
     /**
      * 文本选择菜单操作完成
      */
-    override fun onMenuActionFinally() {
-        textActionMenu?.dismiss()
-        binding.readView.curPage.cancelSelect()
-        binding.readView.isTextSelected = false
+    override fun onMenuActionFinally() = with(binding) {
+        textActionMenu.dismiss()
+        readView.curPage.cancelSelect()
+        readView.isTextSelected = false
     }
 
     /**
@@ -731,53 +733,53 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     }
                 requestCodeSearchResult ->
                     data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
-                        launch(IO) {
-                            val indexWithinChapter = data.getIntExtra("indexWithinChapter", 0)
-                            viewModel.searchContentQuery = data.getStringExtra("query") ?: ""
-                            viewModel.openChapter(index)
-                            // block until load correct chapter and pages
-                            var pages = ReadBook.curTextChapter?.pages
-                            while (ReadBook.durChapterIndex != index || pages == null) {
-                                delay(100L)
-                                pages = ReadBook.curTextChapter?.pages
-                            }
-                            val positions = ReadBook.searchResultPositions(
-                                pages,
-                                indexWithinChapter,
-                                viewModel.searchContentQuery
-                            )
-                            while (ReadBook.durPageIndex() != positions[0]) {
-                                delay(100L)
-                                ReadBook.skipToPage(positions[0])
-                            }
-                            withContext(Main) {
-                                binding.readView.curPage.selectStartMoveIndex(
-                                    0,
-                                    positions[1],
-                                    positions[2]
-                                )
-                                delay(20L)
-                                when (positions[3]) {
-                                    0 -> binding.readView.curPage.selectEndMoveIndex(
-                                        0,
-                                        positions[1],
-                                        positions[2] + viewModel.searchContentQuery.length - 1
-                                    )
-                                    1 -> binding.readView.curPage.selectEndMoveIndex(
-                                        0,
-                                        positions[1] + 1,
-                                        positions[4]
-                                    )
-                                    //consider change page, jump to scroll position
-                                    -1 -> binding.readView.curPage
-                                        .selectEndMoveIndex(1, 0, positions[4])
-                                }
-                                binding.readView.isTextSelected = true
-                                delay(100L)
-                            }
-                        }
+                        viewModel.searchContentQuery = data.getStringExtra("query") ?: ""
+                        val indexWithinChapter = data.getIntExtra("indexWithinChapter", 0)
+                        skipToSearch(index, indexWithinChapter)
                     }
                 requestCodeReplace -> viewModel.replaceRuleChanged()
+            }
+        }
+    }
+
+    private fun skipToSearch(index: Int, indexWithinChapter: Int) {
+        launch(IO) {
+            viewModel.openChapter(index)
+            // block until load correct chapter and pages
+            var pages = ReadBook.curTextChapter?.pages
+            while (ReadBook.durChapterIndex != index || pages == null) {
+                delay(100L)
+                pages = ReadBook.curTextChapter?.pages
+            }
+            val positions = ReadBook.searchResultPositions(
+                pages,
+                indexWithinChapter,
+                viewModel.searchContentQuery
+            )
+            while (ReadBook.durPageIndex() != positions[0]) {
+                delay(100L)
+                ReadBook.skipToPage(positions[0])
+            }
+            withContext(Main) {
+                binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
+                delay(20L)
+                when (positions[3]) {
+                    0 -> binding.readView.curPage.selectEndMoveIndex(
+                        0,
+                        positions[1],
+                        positions[2] + viewModel.searchContentQuery.length - 1
+                    )
+                    1 -> binding.readView.curPage.selectEndMoveIndex(
+                        0,
+                        positions[1] + 1,
+                        positions[4]
+                    )
+                    //consider change page, jump to scroll position
+                    -1 -> binding.readView.curPage
+                        .selectEndMoveIndex(1, 0, positions[4])
+                }
+                binding.readView.isTextSelected = true
+                delay(100L)
             }
         }
     }
@@ -802,7 +804,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun onDestroy() {
         super.onDestroy()
         mHandler.removeCallbacks(keepScreenRunnable)
-        textActionMenu?.dismiss()
+        textActionMenu.dismiss()
         binding.readView.onDestroy()
         ReadBook.msg = null
         if (!BuildConfig.DEBUG) {
@@ -811,13 +813,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
     }
 
-    override fun observeLiveBus() {
+    override fun observeLiveBus() = with(binding) {
         super.observeLiveBus()
-        observeEvent<String>(EventBus.TIME_CHANGED) { binding.readView.upTime() }
-        observeEvent<Int>(EventBus.BATTERY_CHANGED) { binding.readView.upBattery(it) }
+        observeEvent<String>(EventBus.TIME_CHANGED) { readView.upTime() }
+        observeEvent<Int>(EventBus.BATTERY_CHANGED) { readView.upBattery(it) }
         observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
             viewModel.openChapter(it.index, ReadBook.durChapterPos)
-            binding.readView.upContent()
+            readView.upContent()
         }
         observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
@@ -828,13 +830,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
-            binding.readView.upBg()
-            binding.readView.upTipStyle()
-            binding.readView.upStyle()
+            readView.upBg()
+            readView.upTipStyle()
+            readView.upStyle()
             if (it) {
                 ReadBook.loadContent(resetPageOffset = false)
             } else {
-                binding.readView.upContent(resetPageOffset = false)
+                readView.upContent(resetPageOffset = false)
             }
         }
         observeEvent<Int>(EventBus.ALOUD_STATE) {
@@ -843,7 +845,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     val page = textChapter.getPageByReadPos(ReadBook.durChapterPos)
                     if (page != null) {
                         page.removePageAloudSpan()
-                        binding.readView.upContent(resetPageOffset = false)
+                        readView.upContent(resetPageOffset = false)
                     }
                 }
             }
@@ -864,10 +866,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
             upScreenTimeOut()
         }
         observeEvent<Boolean>(PreferKey.textSelectAble) {
-            binding.readView.curPage.upSelectAble(it)
+            readView.curPage.upSelectAble(it)
         }
         observeEvent<String>(PreferKey.showBrightnessView) {
-            binding.readMenu.upBrightnessState()
+            readMenu.upBrightnessState()
         }
         observeEvent<String>(EventBus.REPLACE_RULE_SAVE) {
             viewModel.replaceRuleChanged()
