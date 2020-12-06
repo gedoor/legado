@@ -2,7 +2,7 @@
 
 * [书源帮助文档](https://alanskycn.gitee.io/teachme/Rule/source.html)
 * [订阅源帮助文档](https://alanskycn.gitee.io/teachme/Rule/rss.html)
-
+* 辅助键盘❓中可插入URL参数模板,打开帮助,选择文件
 * 规则标志, {{......}}内使用规则必须有明显的规则标志,没有规则标志当作js执行
 ```
 @@ 默认规则,直接写时可以省略@@
@@ -10,6 +10,7 @@
 @Json: json规则,直接写时以$.开头可省略@Json
 : regex规则,不可省略,只可以用在书籍列表和目录列表
 ```
+
 * 请求头,支持http代理,socks4 socks5代理设置
 ```
 socks5代理
