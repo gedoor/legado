@@ -152,6 +152,7 @@
     <string name="set_timer">定时</string>
     <string name="read_aloud_pause">朗读暂停</string>
     <string name="read_aloud_timer">正在朗读(还剩%d分钟)</string>
+    <string name="playing_timer">正在播放(还剩%d分钟)</string>
     <string name="ps_hide_navigation_bar">阅读界面隐藏虚拟按键</string>
     <string name="pt_hide_navigation_bar">隐藏导航栏</string>
     <string name="re_navigation_bar_color">导航栏颜色</string>

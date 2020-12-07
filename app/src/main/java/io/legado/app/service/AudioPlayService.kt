@@ -438,7 +438,7 @@ class AudioPlayService : BaseService(),
         var nTitle: String = when {
             pause -> getString(R.string.audio_pause)
             timeMinute in 1..60 -> getString(
-                R.string.read_aloud_timer,
+                R.string.playing_timer,
                 timeMinute
             )
             else -> getString(R.string.audio_play_t)
