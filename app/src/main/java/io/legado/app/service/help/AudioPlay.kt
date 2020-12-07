@@ -21,7 +21,6 @@ object AudioPlay {
     var book: Book? = null
     var durChapter: BookChapter? = null
     var inBookshelf = false
-    var chapterSize = 0
     var durChapterIndex = 0
     var durChapterPos = 0
     var webBook: WebBook? = null

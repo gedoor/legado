@@ -51,7 +51,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         }
                         durChapter = App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
                         upDurChapter(book)
-                        chapterSize = count
                     }
                 }
                 saveRead()
@@ -81,7 +80,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                     if (cList.isNotEmpty()) {
                         if (changeDruChapterIndex == null) {
                             App.db.bookChapterDao.insert(*cList.toTypedArray())
-                            AudioPlay.chapterSize = cList.size
                         } else {
                             changeDruChapterIndex(cList)
                         }
@@ -132,7 +130,6 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             book.durChapterTitle = chapters[AudioPlay.durChapterIndex].title
             App.db.bookDao.update(book)
             App.db.bookChapterDao.insert(*chapters.toTypedArray())
-            AudioPlay.chapterSize = chapters.size
         }
     }
 
