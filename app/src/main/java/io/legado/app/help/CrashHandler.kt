@@ -8,7 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import io.legado.app.service.TTSReadAloudService
+import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.FileUtils
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -49,7 +49,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
      * uncaughtException 回调函数
      */
     override fun uncaughtException(thread: Thread, ex: Throwable) {
-        TTSReadAloudService.clearTTS()
+        ReadAloud.stop(context)
         handleException(ex)
         mDefaultHandler?.uncaughtException(thread, ex)
     }

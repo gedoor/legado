@@ -19,20 +19,8 @@ import java.util.*
 
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
 
-    companion object {
-        private var textToSpeech: TextToSpeech? = null
-        private var ttsInitFinish = false
-
-        fun clearTTS() {
-            textToSpeech?.let {
-                it.stop()
-                it.shutdown()
-            }
-            textToSpeech = null
-            ttsInitFinish = false
-        }
-    }
-
+    private var textToSpeech: TextToSpeech? = null
+    private var ttsInitFinish = false
     private val ttsUtteranceListener = TTSUtteranceListener()
 
     override fun onCreate() {
@@ -47,14 +35,23 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         stopSelf()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        clearTTS()
+    }
+
+    @Synchronized
     private fun initTts() {
         ttsInitFinish = false
         textToSpeech = TextToSpeech(this, this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        clearTTS()
+    @Synchronized
+    fun clearTTS() {
+        textToSpeech?.stop()
+        textToSpeech?.shutdown()
+        textToSpeech = null
+        ttsInitFinish = false
     }
 
     override fun onInit(status: Int) {
