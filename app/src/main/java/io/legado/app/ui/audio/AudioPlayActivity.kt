@@ -115,6 +115,9 @@ class AudioPlayActivity :
         binding.ivFastRewind.onClick {
             AudioPlay.adjustSpeed(this, -0.1f)
         }
+        binding.ivTimer.onClick {
+            AudioPlay.addTimer(this)
+        }
     }
 
     private fun upCover(path: String?) {

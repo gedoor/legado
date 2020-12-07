@@ -131,6 +131,12 @@ object AudioPlay {
         }
     }
 
+    fun addTimer(context: Context) {
+        val intent = Intent(context, AudioPlayService::class.java)
+        intent.action = IntentAction.addTimer
+        context.startService(intent)
+    }
+
     fun saveRead() {
         Coroutine.async {
             book?.let { book ->
