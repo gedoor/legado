@@ -17,37 +17,37 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
 
     fun update(vararg rule: ReplaceRule) {
         execute {
-            App.db.replaceRuleDao().update(*rule)
+            App.db.replaceRuleDao.update(*rule)
         }
     }
 
     fun delete(rule: ReplaceRule) {
         execute {
-            App.db.replaceRuleDao().delete(rule)
+            App.db.replaceRuleDao.delete(rule)
         }
     }
 
     fun toTop(rule: ReplaceRule) {
         execute {
-            rule.order = App.db.replaceRuleDao().minOrder - 1
-            App.db.replaceRuleDao().update(rule)
+            rule.order = App.db.replaceRuleDao.minOrder - 1
+            App.db.replaceRuleDao.update(rule)
         }
     }
 
     fun toBottom(rule: ReplaceRule) {
         execute {
-            rule.order = App.db.replaceRuleDao().maxOrder + 1
-            App.db.replaceRuleDao().update(rule)
+            rule.order = App.db.replaceRuleDao.maxOrder + 1
+            App.db.replaceRuleDao.update(rule)
         }
     }
 
     fun upOrder() {
         execute {
-            val rules = App.db.replaceRuleDao().all
+            val rules = App.db.replaceRuleDao.all
             for ((index, rule) in rules.withIndex()) {
                 rule.order = index + 1
             }
-            App.db.replaceRuleDao().update(*rules.toTypedArray())
+            App.db.replaceRuleDao.update(*rules.toTypedArray())
         }
     }
 
@@ -57,7 +57,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             rules.forEach {
                 list.add(it.copy(isEnabled = true))
             }
-            App.db.replaceRuleDao().update(*list.toTypedArray())
+            App.db.replaceRuleDao.update(*list.toTypedArray())
         }
     }
 
@@ -67,13 +67,13 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             rules.forEach {
                 list.add(it.copy(isEnabled = false))
             }
-            App.db.replaceRuleDao().update(*list.toTypedArray())
+            App.db.replaceRuleDao.update(*list.toTypedArray())
         }
     }
 
     fun delSelection(rules: LinkedHashSet<ReplaceRule>) {
         execute {
-            App.db.replaceRuleDao().delete(*rules.toTypedArray())
+            App.db.replaceRuleDao.delete(*rules.toTypedArray())
         }
     }
 
@@ -104,17 +104,17 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
 
     fun addGroup(group: String) {
         execute {
-            val sources = App.db.replaceRuleDao().noGroup
+            val sources = App.db.replaceRuleDao.noGroup
             sources.map { source ->
                 source.group = group
             }
-            App.db.replaceRuleDao().update(*sources.toTypedArray())
+            App.db.replaceRuleDao.update(*sources.toTypedArray())
         }
     }
 
     fun upGroup(oldGroup: String, newGroup: String?) {
         execute {
-            val sources = App.db.replaceRuleDao().getByGroup(oldGroup)
+            val sources = App.db.replaceRuleDao.getByGroup(oldGroup)
             sources.map { source ->
                 source.group?.splitNotBlank(",")?.toHashSet()?.let {
                     it.remove(oldGroup)
@@ -123,21 +123,21 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
                     source.group = TextUtils.join(",", it)
                 }
             }
-            App.db.replaceRuleDao().update(*sources.toTypedArray())
+            App.db.replaceRuleDao.update(*sources.toTypedArray())
         }
     }
 
     fun delGroup(group: String) {
         execute {
             execute {
-                val sources = App.db.replaceRuleDao().getByGroup(group)
+                val sources = App.db.replaceRuleDao.getByGroup(group)
                 sources.map { source ->
                     source.group?.splitNotBlank(",")?.toHashSet()?.let {
                         it.remove(group)
                         source.group = TextUtils.join(",", it)
                     }
                 }
-                App.db.replaceRuleDao().update(*sources.toTypedArray())
+                App.db.replaceRuleDao.update(*sources.toTypedArray())
             }
         }
     }

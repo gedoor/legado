@@ -60,7 +60,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun loadDbSearchBook() {
         execute {
-            App.db.searchBookDao().getByNameAuthorEnable(name, author).let {
+            App.db.searchBookDao.getByNameAuthorEnable(name, author).let {
                 searchBooks.addAll(it)
                 if (it.size <= 1) {
                     upAdapter()
@@ -86,7 +86,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun searchFinish(searchBook: SearchBook) {
-        App.db.searchBookDao().insert(searchBook)
+        App.db.searchBookDao.insert(searchBook)
         if (screenKey.isEmpty()) {
             searchBooks.add(searchBook)
         } else if (searchBook.name.contains(screenKey)) {
@@ -98,7 +98,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private fun startSearch() {
         execute {
             bookSourceList.clear()
-            bookSourceList.addAll(App.db.bookSourceDao().allEnabled)
+            bookSourceList.addAll(App.db.bookSourceDao.allEnabled)
             searchStateData.postValue(true)
             initSearchPool()
             for (i in 0 until threadCount) {
@@ -191,7 +191,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             if (key.isNullOrEmpty()) {
                 loadDbSearchBook()
             } else {
-                val items = App.db.searchBookDao().getChangeSourceSearch(name, author, screenKey)
+                val items = App.db.searchBookDao.getChangeSourceSearch(name, author, screenKey)
                 searchBooks.clear()
                 searchBooks.addAll(items)
                 upAdapter()
@@ -216,9 +216,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     fun disableSource(searchBook: SearchBook) {
         execute {
-            App.db.bookSourceDao().getBookSource(searchBook.origin)?.let { source ->
+            App.db.bookSourceDao.getBookSource(searchBook.origin)?.let { source ->
                 source.enabled = false
-                App.db.bookSourceDao().update(source)
+                App.db.bookSourceDao.update(source)
             }
             searchBooks.remove(searchBook)
             upAdapter()

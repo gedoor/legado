@@ -13,19 +13,19 @@ class ArrangeBookViewModel(application: Application) : BaseViewModel(application
             books.forEach {
                 it.canUpdate = canUpdate
             }
-            App.db.bookDao().update(*books)
+            App.db.bookDao.update(*books)
         }
     }
 
     fun updateBook(vararg book: Book) {
         execute {
-            App.db.bookDao().update(*book)
+            App.db.bookDao.update(*book)
         }
     }
 
     fun deleteBook(vararg book: Book) {
         execute {
-            App.db.bookDao().delete(*book)
+            App.db.bookDao.delete(*book)
         }
     }
 

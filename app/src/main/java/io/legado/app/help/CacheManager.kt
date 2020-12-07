@@ -22,13 +22,13 @@ object CacheManager {
             is ByteArray -> ACache.get(App.INSTANCE).put(key, value, saveTime)
             else -> {
                 val cache = Cache(key, value.toString(), deadline)
-                App.db.cacheDao().insert(cache)
+                App.db.cacheDao.insert(cache)
             }
         }
     }
 
     fun get(key: String): String? {
-        return App.db.cacheDao().get(key, System.currentTimeMillis())
+        return App.db.cacheDao.get(key, System.currentTimeMillis())
     }
 
     fun getInt(key: String): Int? {

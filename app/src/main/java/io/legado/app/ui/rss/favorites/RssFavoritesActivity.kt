@@ -38,7 +38,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
 
     private fun initData() {
         liveData?.removeObservers(this)
-        liveData = App.db.rssStarDao().liveAll()
+        liveData = App.db.rssStarDao.liveAll()
         liveData?.observe(this, {
             adapter.setItems(it)
         })

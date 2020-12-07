@@ -61,7 +61,7 @@ class ReadAloudConfigDialog : DialogFragment() {
         private val speakEngineSummary: String
             get() {
                 val eid = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
-                val ht = App.db.httpTTSDao().get(eid)
+                val ht = App.db.httpTTSDao.get(eid)
                 return ht?.name ?: getString(R.string.local_tts)
             }
 

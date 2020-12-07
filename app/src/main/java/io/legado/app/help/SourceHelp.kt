@@ -29,7 +29,7 @@ object SourceHelp {
                     App.INSTANCE.toast("${rssSource.sourceName}是18+网址,禁止导入.")
                 }
             } else {
-                App.db.rssSourceDao().insert(rssSource)
+                App.db.rssSourceDao.insert(rssSource)
             }
         }
     }
@@ -41,7 +41,7 @@ object SourceHelp {
                     App.INSTANCE.toast("${bookSource.bookSourceName}是18+网址,禁止导入.")
                 }
             } else {
-                App.db.bookSourceDao().insert(bookSource)
+                App.db.bookSourceDao.insert(bookSource)
             }
         }
     }

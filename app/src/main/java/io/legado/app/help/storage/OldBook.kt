@@ -14,7 +14,7 @@ object OldBook {
     fun toNewBook(json: String): List<Book> {
         val books = mutableListOf<Book>()
         val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
-        val existingBooks = App.db.bookDao().allBookUrls.toSet()
+        val existingBooks = App.db.bookDao.allBookUrls.toSet()
         for (item in items) {
             val jsonItem = Restore.jsonPath.parse(item)
             val book = Book()

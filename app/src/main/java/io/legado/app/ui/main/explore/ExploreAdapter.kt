@@ -137,7 +137,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     notifyItemChanged(position)
                 }
                 R.id.menu_del -> Coroutine.async(scope) {
-                    App.db.bookSourceDao().delete(source)
+                    App.db.bookSourceDao.delete(source)
                 }
             }
             true

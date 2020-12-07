@@ -47,7 +47,7 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
                 }
                 getItem(holder.layoutPosition)?.let {
                     GlobalScope.launch(IO) {
-                        App.db.searchKeywordDao().delete(it)
+                        App.db.searchKeywordDao.delete(it)
                     }
                 }
                 true

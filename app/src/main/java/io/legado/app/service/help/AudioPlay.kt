@@ -8,6 +8,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.AudioPlayService
@@ -18,6 +19,7 @@ object AudioPlay {
     var coverData = MutableLiveData<String>()
     var status = Status.STOP
     var book: Book? = null
+    var durChapter: BookChapter? = null
     var inBookshelf = false
     var chapterSize = 0
     var durChapterIndex = 0
@@ -85,7 +87,7 @@ object AudioPlay {
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
-                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+                App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
                     postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
                 }
                 play(context)
@@ -104,7 +106,7 @@ object AudioPlay {
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
-                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+                App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
                     postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
                 }
                 play(context)
@@ -123,7 +125,7 @@ object AudioPlay {
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
-                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
+                App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
                     postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
                 }
                 play(context)
@@ -144,10 +146,10 @@ object AudioPlay {
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durChapterPos
-                App.db.bookChapterDao().getChapter(book.bookUrl, book.durChapterIndex)?.let {
+                App.db.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }
-                App.db.bookDao().update(book)
+                App.db.bookDao.update(book)
             }
         }
     }

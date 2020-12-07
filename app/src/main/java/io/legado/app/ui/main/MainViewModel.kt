@@ -43,7 +43,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upAllBookToc() {
         execute {
-            upToc(App.db.bookDao().hasUpdateBooks)
+            upToc(App.db.bookDao.hasUpdateBooks)
         }
     }
 
@@ -72,14 +72,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     updateList.add(book.bookUrl)
                     postEvent(EventBus.UP_BOOK, book.bookUrl)
                 }
-                App.db.bookSourceDao().getBookSource(book.origin)?.let { bookSource ->
+                App.db.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
                     val webBook = WebBook(bookSource)
                     webBook.getChapterList(book, context = upTocPool)
                         .timeout(300000)
                         .onSuccess(IO) {
-                            App.db.bookDao().update(book)
-                            App.db.bookChapterDao().delByBook(book.bookUrl)
-                            App.db.bookChapterDao().insert(*it.toTypedArray())
+                            App.db.bookDao.update(book)
+                            App.db.bookChapterDao.delByBook(book.bookUrl)
+                            App.db.bookChapterDao.insert(*it.toTypedArray())
                             cacheBook(webBook, book)
                         }
                         .onError {
@@ -109,7 +109,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             if (book.totalChapterNum > book.durChapterIndex) {
                 val downloadToIndex = min(book.totalChapterNum, book.durChapterIndex.plus(10))
                 for (i in book.durChapterIndex until downloadToIndex) {
-                    App.db.bookChapterDao().getChapter(book.bookUrl, i)?.let { chapter ->
+                    App.db.bookChapterDao.getChapter(book.bookUrl, i)?.let { chapter ->
                         if (!BookHelp.hasContent(book, chapter)) {
                             var addToCache = false
                             while (!addToCache) {
@@ -138,9 +138,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun postLoad() {
         execute {
             FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
-            if (App.db.httpTTSDao().count == 0) {
+            if (App.db.httpTTSDao.count == 0) {
                 DefaultData.httpTTS.let {
-                    App.db.httpTTSDao().insert(*it.toTypedArray())
+                    App.db.httpTTSDao.insert(*it.toTypedArray())
                 }
             }
         }

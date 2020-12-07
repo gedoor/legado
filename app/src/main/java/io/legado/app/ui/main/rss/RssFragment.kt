@@ -66,7 +66,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     }
 
     private fun initData() {
-        App.db.rssSourceDao().liveEnabled().observe(viewLifecycleOwner, {
+        App.db.rssSourceDao.liveEnabled().observe(viewLifecycleOwner, {
             adapter.setItems(it)
         })
     }

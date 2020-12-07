@@ -87,7 +87,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private fun initData() {
         httpTTSData?.removeObservers(this)
-        httpTTSData = App.db.httpTTSDao().observeAll()
+        httpTTSData = App.db.httpTTSDao.observeAll()
         httpTTSData?.observe(this, {
             adapter.setItems(it)
         })
@@ -114,7 +114,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 alertBinding.apply {
                     httpTTS.name = tvName.text.toString()
                     httpTTS.url = tvUrl.text.toString()
-                    App.db.httpTTSDao().insert(httpTTS)
+                    App.db.httpTTSDao.insert(httpTTS)
                     ReadAloud.upReadAloudClass()
                 }
             }
@@ -159,7 +159,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 }
                 ivMenuDelete.onClick {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
-                        App.db.httpTTSDao().delete(httpTTS)
+                        App.db.httpTTSDao.delete(httpTTS)
                     }
                 }
             }

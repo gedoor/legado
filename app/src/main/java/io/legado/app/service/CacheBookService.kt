@@ -95,7 +95,7 @@ class CacheBookService : BaseService() {
             synchronized(this) {
                 book = bookMap[bookUrl]
                 if (book == null) {
-                    book = App.db.bookDao().getBook(bookUrl)
+                    book = App.db.bookDao.getBook(bookUrl)
                     if (book == null) {
                         removeDownload(bookUrl)
                     }
@@ -111,7 +111,7 @@ class CacheBookService : BaseService() {
             synchronized(this) {
                 webBook = webBookMap[origin]
                 if (webBook == null) {
-                    App.db.bookSourceDao().getBookSource(origin)?.let {
+                    App.db.bookSourceDao.getBookSource(origin)?.let {
                         webBook = WebBook(it)
                     }
                     if (webBook == null) {
@@ -132,7 +132,7 @@ class CacheBookService : BaseService() {
         }
         downloadCount[bookUrl] = DownloadCount()
         execute {
-            App.db.bookChapterDao().getChapterList(bookUrl, start, end).let {
+            App.db.bookChapterDao.getChapterList(bookUrl, start, end).let {
                 if (it.isNotEmpty()) {
                     val chapters = CopyOnWriteArraySet<BookChapter>()
                     chapters.addAll(it)

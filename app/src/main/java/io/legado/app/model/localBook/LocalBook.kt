@@ -82,7 +82,7 @@ object LocalBook {
                 "${MD5Utils.md5Encode16(path)}.jpg"
             )
         )
-        App.db.bookDao().insert(book)
+        App.db.bookDao.insert(book)
         return book
     }
 

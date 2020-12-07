@@ -88,7 +88,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     private fun initDoc() {
         tocLiveData?.removeObservers(this@ChapterListFragment)
-        tocLiveData = App.db.bookChapterDao().observeByBook(viewModel.bookUrl)
+        tocLiveData = App.db.bookChapterDao.observeByBook(viewModel.bookUrl)
         tocLiveData?.observe(viewLifecycleOwner, {
             adapter.setItems(it)
             if (!scrollToDurChapter) {
@@ -123,7 +123,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             initDoc()
         } else {
             tocLiveData?.removeObservers(this)
-            tocLiveData = App.db.bookChapterDao().liveDataSearch(viewModel.bookUrl, newText)
+            tocLiveData = App.db.bookChapterDao.liveDataSearch(viewModel.bookUrl, newText)
             tocLiveData?.observe(viewLifecycleOwner, {
                 adapter.setItems(it)
             })

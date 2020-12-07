@@ -16,7 +16,7 @@ object SyncBookProgress {
 
     fun uploadBookProgress() {
         Coroutine.async {
-            val value = App.db.bookDao().allBookProgress
+            val value = App.db.bookDao.allBookProgress
             if (value.isNotEmpty()) {
                 val json = GSON.toJson(value)
                 file.writeText(json)
@@ -34,7 +34,7 @@ object SyncBookProgress {
                 if (file.exists()) {
                     val json = file.readText()
                     GSON.fromJsonArray<BookProgress>(json)?.forEach {
-                        App.db.bookDao().upBookProgress(
+                        App.db.bookDao.upBookProgress(
                             bookUrl = it.bookUrl,
                             durChapterIndex = it.durChapterIndex,
                             durChapterPos = it.durChapterPos,

@@ -46,9 +46,9 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             val origin = intent.getStringExtra("origin")
             val link = intent.getStringExtra("link")
             if (origin != null && link != null) {
-                rssSource = App.db.rssSourceDao().getByKey(origin)
-                rssStar = App.db.rssStarDao().get(origin, link)
-                rssArticle = rssStar?.toRssArticle() ?: App.db.rssArticleDao().get(origin, link)
+                rssSource = App.db.rssSourceDao.getByKey(origin)
+                rssStar = App.db.rssStarDao.get(origin, link)
+                rssArticle = rssStar?.toRssArticle() ?: App.db.rssArticleDao.get(origin, link)
                 rssArticle?.let { rssArticle ->
                     if (!rssArticle.description.isNullOrBlank()) {
                         contentLiveData.postValue(rssArticle.description)
@@ -83,10 +83,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         Rss.getContent(rssArticle, ruleContent, rssSource, this)
             .onSuccess(IO) { body ->
                 rssArticle.description = body
-                App.db.rssArticleDao().insert(rssArticle)
+                App.db.rssArticleDao.insert(rssArticle)
                 rssStar?.let {
                     it.description = body
-                    App.db.rssStarDao().insert(it)
+                    App.db.rssStarDao.insert(it)
                 }
                 contentLiveData.postValue(body)
             }
@@ -95,10 +95,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     fun favorite() {
         execute {
             rssStar?.let {
-                App.db.rssStarDao().delete(it.origin, it.link)
+                App.db.rssStarDao.delete(it.origin, it.link)
                 rssStar = null
             } ?: rssArticle?.toStar()?.let {
-                App.db.rssStarDao().insert(it)
+                App.db.rssStarDao.insert(it)
                 rssStar = it
             }
         }.onSuccess {

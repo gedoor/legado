@@ -24,23 +24,23 @@ import java.util.*
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun bookDao(): BookDao
-    abstract fun bookGroupDao(): BookGroupDao
-    abstract fun bookSourceDao(): BookSourceDao
-    abstract fun bookChapterDao(): BookChapterDao
-    abstract fun replaceRuleDao(): ReplaceRuleDao
-    abstract fun searchBookDao(): SearchBookDao
-    abstract fun searchKeywordDao(): SearchKeywordDao
-    abstract fun rssSourceDao(): RssSourceDao
-    abstract fun bookmarkDao(): BookmarkDao
-    abstract fun rssArticleDao(): RssArticleDao
-    abstract fun rssStarDao(): RssStarDao
-    abstract fun cookieDao(): CookieDao
-    abstract fun txtTocRule(): TxtTocRuleDao
-    abstract fun readRecordDao(): ReadRecordDao
-    abstract fun httpTTSDao(): HttpTTSDao
-    abstract fun cacheDao(): CacheDao
-    abstract fun ruleSubDao(): RuleSubDao
+    abstract val bookDao: BookDao
+    abstract val bookGroupDao: BookGroupDao
+    abstract val bookSourceDao: BookSourceDao
+    abstract val bookChapterDao: BookChapterDao
+    abstract val replaceRuleDao: ReplaceRuleDao
+    abstract val searchBookDao: SearchBookDao
+    abstract val searchKeywordDao: SearchKeywordDao
+    abstract val rssSourceDao: RssSourceDao
+    abstract val bookmarkDao: BookmarkDao
+    abstract val rssArticleDao: RssArticleDao
+    abstract val rssStarDao: RssStarDao
+    abstract val cookieDao: CookieDao
+    abstract val txtTocRule: TxtTocRuleDao
+    abstract val readRecordDao: ReadRecordDao
+    abstract val httpTTSDao: HttpTTSDao
+    abstract val cacheDao: CacheDao
+    abstract val ruleSubDao: RuleSubDao
 
     companion object {
 

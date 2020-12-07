@@ -128,7 +128,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = App.db.rssSourceDao().getByKey(it.sourceUrl)
+                val has = App.db.rssSourceDao.getByKey(it.sourceUrl)
                 checkSources.add(has)
                 selectStatus.add(has == null)
             }

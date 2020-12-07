@@ -176,16 +176,16 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         bookSourceLiveDate?.removeObservers(this)
         bookSourceLiveDate = when {
             searchKey.isNullOrEmpty() -> {
-                App.db.bookSourceDao().liveDataAll()
+                App.db.bookSourceDao.liveDataAll()
             }
             searchKey == getString(R.string.enabled) -> {
-                App.db.bookSourceDao().liveDataEnabled()
+                App.db.bookSourceDao.liveDataEnabled()
             }
             searchKey == getString(R.string.disabled) -> {
-                App.db.bookSourceDao().liveDataDisabled()
+                App.db.bookSourceDao.liveDataDisabled()
             }
             else -> {
-                App.db.bookSourceDao().liveDataSearch("%$searchKey%")
+                App.db.bookSourceDao.liveDataSearch("%$searchKey%")
             }
         }
         bookSourceLiveDate?.observe(this, { data ->
@@ -230,7 +230,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun initLiveDataGroup() {
-        App.db.bookSourceDao().liveGroup().observe(this, {
+        App.db.bookSourceDao.liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

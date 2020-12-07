@@ -15,7 +15,7 @@ class ChapterListViewModel(application: Application) : BaseViewModel(application
     fun initBook(bookUrl: String, success: () -> Unit) {
         this.bookUrl = bookUrl
         execute {
-            book = App.db.bookDao().getBook(bookUrl)
+            book = App.db.bookDao.getBook(bookUrl)
         }.onSuccess {
             success.invoke()
         }

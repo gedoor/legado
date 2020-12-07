@@ -87,7 +87,7 @@ object ImportOldData {
 
     private fun importOldBookshelf(json: String): Int {
         val books = OldBook.toNewBook(json)
-        App.db.bookDao().insert(*books.toTypedArray())
+        App.db.bookDao.insert(*books.toTypedArray())
         return books.size
     }
 
@@ -100,13 +100,13 @@ object ImportOldData {
                 bookSources.add(it)
             }
         }
-        App.db.bookSourceDao().insert(*bookSources.toTypedArray())
+        App.db.bookSourceDao.insert(*bookSources.toTypedArray())
         return bookSources.size
     }
 
     private fun importOldReplaceRule(json: String): Int {
         val rules = OldReplace.jsonToReplaceRules(json)
-        App.db.replaceRuleDao().insert(*rules.toTypedArray())
+        App.db.replaceRuleDao.insert(*rules.toTypedArray())
         return rules.size
     }
 }

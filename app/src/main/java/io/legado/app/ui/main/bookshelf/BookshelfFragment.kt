@@ -105,7 +105,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     private fun initBookGroupData() {
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
-        bookGroupLiveData = App.db.bookGroupDao().liveDataShow().apply {
+        bookGroupLiveData = App.db.bookGroupDao.liveDataShow().apply {
             observe(viewLifecycleOwner) {
                 viewModel.checkGroup(it)
                 upGroup(it)
@@ -125,7 +125,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     @Synchronized
     private fun upGroup(data: List<BookGroup>) {
         if (data.isEmpty()) {
-            App.db.bookGroupDao().enableGroup(AppConst.bookGroupAllId)
+            App.db.bookGroupDao.enableGroup(AppConst.bookGroupAllId)
         } else {
             if (data != bookGroups) {
                 bookGroups.clear()

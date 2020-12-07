@@ -21,7 +21,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             val key = intent.getStringExtra("data")
             var source: BookSource? = null
             if (key != null) {
-                source = App.db.bookSourceDao().getBookSource(key)
+                source = App.db.bookSourceDao.getBookSource(key)
             }
             source?.let {
                 oldSourceUrl = it.bookSourceUrl
@@ -36,11 +36,11 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         execute {
             oldSourceUrl?.let {
                 if (oldSourceUrl != source.bookSourceUrl) {
-                    App.db.bookSourceDao().delete(it)
+                    App.db.bookSourceDao.delete(it)
                 }
             }
             oldSourceUrl = source.bookSourceUrl
-            App.db.bookSourceDao().insert(source)
+            App.db.bookSourceDao.insert(source)
             bookSource = source
         }.onSuccess {
             success?.invoke()

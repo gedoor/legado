@@ -46,9 +46,9 @@ object DefaultData {
     }
 
     fun importDefaultTocRules() {
-        App.db.txtTocRule().deleteDefault()
+        App.db.txtTocRule.deleteDefault()
         txtTocRules.let {
-            App.db.txtTocRule().insert(*it.toTypedArray())
+            App.db.txtTocRule.insert(*it.toTypedArray())
         }
     }
 }

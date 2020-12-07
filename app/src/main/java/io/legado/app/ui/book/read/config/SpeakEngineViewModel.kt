@@ -14,7 +14,7 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
     fun importDefault() {
         execute {
             DefaultData.httpTTS.let {
-                App.db.httpTTSDao().insert(*it.toTypedArray())
+                App.db.httpTTSDao.insert(*it.toTypedArray())
             }
         }
     }
@@ -23,7 +23,7 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
         execute {
             HttpHelper.simpleGetAsync(url)?.let { json ->
                 GSON.fromJsonArray<HttpTTS>(json)?.let {
-                    App.db.httpTTSDao().insert(*it.toTypedArray())
+                    App.db.httpTTSDao.insert(*it.toTypedArray())
                 }
             }
         }.onSuccess {

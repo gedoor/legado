@@ -119,7 +119,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     private fun initData() {
         localUriLiveData?.removeObservers(this)
-        localUriLiveData = App.db.bookDao().observeLocalUri()
+        localUriLiveData = App.db.bookDao.observeLocalUri()
         localUriLiveData?.observe(this, {
             adapter.upBookHas(it)
         })

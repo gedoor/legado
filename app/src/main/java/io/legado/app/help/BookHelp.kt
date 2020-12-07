@@ -43,7 +43,7 @@ object BookHelp {
     fun clearRemovedCache() {
         Coroutine.async {
             val bookFolderNames = arrayListOf<String>()
-            App.db.bookDao().all.forEach {
+            App.db.bookDao.all.forEach {
                 bookFolderNames.add(it.getFolderName())
             }
             val file = FileUtils.getFile(downloadDir, cacheFolderName)

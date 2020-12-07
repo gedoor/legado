@@ -49,7 +49,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
 
     fun loadDbSearchBook() {
         execute {
-            App.db.searchBookDao().getEnableHasCover(name, author).let {
+            App.db.searchBookDao.getEnableHasCover(name, author).let {
                 searchBooks.addAll(it)
                 if (it.size <= 1) {
                     searchBooksLiveData.postValue(searchBooks)
@@ -64,7 +64,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private fun startSearch() {
         execute {
             bookSourceList.clear()
-            bookSourceList.addAll(App.db.bookSourceDao().allEnabled)
+            bookSourceList.addAll(App.db.bookSourceDao.allEnabled)
             searchStateData.postValue(true)
             initSearchPool()
             for (i in 0 until threadCount) {
@@ -90,7 +90,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                         if (searchBook.name == name && searchBook.author == author
                             && !searchBook.coverUrl.isNullOrEmpty()
                         ) {
-                            App.db.searchBookDao().insert(searchBook)
+                            App.db.searchBookDao.insert(searchBook)
                             if (!searchBooks.contains(searchBook)) {
                                 searchBooks.add(searchBook)
                                 searchBooksLiveData.postValue(searchBooks)

@@ -145,9 +145,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         dataInit = false
         replaceRuleLiveData?.removeObservers(this)
         replaceRuleLiveData = if (key.isNullOrEmpty()) {
-            App.db.replaceRuleDao().liveDataAll()
+            App.db.replaceRuleDao.liveDataAll()
         } else {
-            App.db.replaceRuleDao().liveDataSearch(key)
+            App.db.replaceRuleDao.liveDataSearch(key)
         }
         replaceRuleLiveData?.observe(this, {
             if (dataInit) {
@@ -162,7 +162,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     private fun observeGroupData() {
-        App.db.replaceRuleDao().liveGroup().observe(this, {
+        App.db.replaceRuleDao.liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

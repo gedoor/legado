@@ -19,7 +19,7 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
     @Synchronized
     fun upReplaceRules() {
         replaceRules.clear()
-        replaceRules.addAll(App.db.replaceRuleDao().findEnabledByScope(bookName, bookOrigin))
+        replaceRules.addAll(App.db.replaceRuleDao.findEnabledByScope(bookName, bookOrigin))
     }
 
     suspend fun getContent(

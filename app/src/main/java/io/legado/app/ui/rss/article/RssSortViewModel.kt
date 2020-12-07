@@ -21,7 +21,7 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
         execute {
             url = intent.getStringExtra("url")
             url?.let { url ->
-                rssSource = App.db.rssSourceDao().getByKey(url)
+                rssSource = App.db.rssSourceDao.getByKey(url)
                 rssSource?.let {
                     titleLiveData.postValue(it.sourceName)
                 } ?: let {
@@ -41,21 +41,21 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
                 it.articleStyle = 0
             }
             execute {
-                App.db.rssSourceDao().update(it)
+                App.db.rssSourceDao.update(it)
             }
         }
     }
 
     fun read(rssArticle: RssArticle) {
         execute {
-            App.db.rssArticleDao().insertRecord(RssReadRecord(rssArticle.link))
+            App.db.rssArticleDao.insertRecord(RssReadRecord(rssArticle.link))
         }
     }
 
     fun clearArticles() {
         execute {
             url?.let {
-                App.db.rssArticleDao().delete(it)
+                App.db.rssArticleDao.delete(it)
             }
             order = System.currentTimeMillis()
         }.onSuccess {

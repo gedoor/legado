@@ -20,7 +20,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         execute {
             val key = intent.getStringExtra("data")
             if (key != null) {
-                App.db.rssSourceDao().getByKey(key)?.let {
+                App.db.rssSourceDao.getByKey(key)?.let {
                     rssSource = it
                 }
             }
@@ -33,10 +33,10 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     fun save(source: RssSource, success: (() -> Unit)) {
         execute {
             if (oldSourceUrl != source.sourceUrl) {
-                App.db.rssSourceDao().delete(oldSourceUrl)
+                App.db.rssSourceDao.delete(oldSourceUrl)
                 oldSourceUrl = source.sourceUrl
             }
-            App.db.rssSourceDao().insert(source)
+            App.db.rssSourceDao.insert(source)
         }.onSuccess {
             success()
         }.onError {

@@ -23,22 +23,22 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 stop(context)
                 inBookshelf = intent.getBooleanExtra("inBookshelf", true)
                 book = if (!bookUrl.isNullOrEmpty()) {
-                    App.db.bookDao().getBook(bookUrl)
+                    App.db.bookDao.getBook(bookUrl)
                 } else {
-                    App.db.bookDao().lastReadBook
+                    App.db.bookDao.lastReadBook
                 }
                 book?.let { book ->
                     titleData.postValue(book.name)
                     coverData.postValue(book.getDisplayCover())
                     durChapterIndex = book.durChapterIndex
                     durChapterPos = book.durChapterPos
-                    App.db.bookChapterDao().getChapter(book.bookUrl, book.durChapterIndex)?.let {
+                    App.db.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
                         postEvent(EventBus.AUDIO_SUB_TITLE, it.title)
                     }
-                    App.db.bookSourceDao().getBookSource(book.origin)?.let {
+                    App.db.bookSourceDao.getBookSource(book.origin)?.let {
                         webBook = WebBook(it)
                     }
-                    val count = App.db.bookChapterDao().getChapterCount(book.bookUrl)
+                    val count = App.db.bookChapterDao.getChapterCount(book.bookUrl)
                     if (count == 0) {
                         if (book.tocUrl.isEmpty()) {
                             loadBookInfo(book)
@@ -49,6 +49,8 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         if (durChapterIndex > count - 1) {
                             durChapterIndex = count - 1
                         }
+                        durChapter = App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
+
                         chapterSize = count
                     }
                 }
@@ -78,7 +80,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 ?.onSuccess(Dispatchers.IO) { cList ->
                     if (cList.isNotEmpty()) {
                         if (changeDruChapterIndex == null) {
-                            App.db.bookChapterDao().insert(*cList.toTypedArray())
+                            App.db.bookChapterDao.insert(*cList.toTypedArray())
                             AudioPlay.chapterSize = cList.size
                         } else {
                             changeDruChapterIndex(cList)
@@ -98,11 +100,11 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             AudioPlay.book?.let {
                 oldTocSize = it.totalChapterNum
                 book1.order = it.order
-                App.db.bookDao().delete(it)
+                App.db.bookDao.delete(it)
             }
-            App.db.bookDao().insert(book1)
+            App.db.bookDao.insert(book1)
             AudioPlay.book = book1
-            App.db.bookSourceDao().getBookSource(book1.origin)?.let {
+            App.db.bookSourceDao.getBookSource(book1.origin)?.let {
                 AudioPlay.webBook = WebBook(it)
             }
             if (book1.tocUrl.isEmpty()) {
@@ -127,8 +129,8 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             )
             book.durChapterIndex = AudioPlay.durChapterIndex
             book.durChapterTitle = chapters[AudioPlay.durChapterIndex].title
-            App.db.bookDao().update(book)
-            App.db.bookChapterDao().insert(*chapters.toTypedArray())
+            App.db.bookDao.update(book)
+            App.db.bookChapterDao.insert(*chapters.toTypedArray())
             AudioPlay.chapterSize = chapters.size
         }
     }
@@ -136,7 +138,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
             AudioPlay.book?.let {
-                App.db.bookDao().delete(it)
+                App.db.bookDao.delete(it)
             }
         }.onSuccess {
             success?.invoke()

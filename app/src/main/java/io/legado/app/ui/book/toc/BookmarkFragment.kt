@@ -51,7 +51,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
             bookmarkLiveData?.removeObservers(viewLifecycleOwner)
             bookmarkLiveData =
                 LivePagedListBuilder(
-                    App.db.bookmarkDao().observeByBook(book.bookUrl, book.name, book.author), 20
+                    App.db.bookmarkDao.observeByBook(book.bookUrl, book.name, book.author), 20
                 ).build()
             bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.submitList(it) })
         }
@@ -63,7 +63,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
         } else {
             bookmarkLiveData?.removeObservers(viewLifecycleOwner)
             bookmarkLiveData = LivePagedListBuilder(
-                App.db.bookmarkDao().liveDataSearch(
+                App.db.bookmarkDao.liveDataSearch(
                     viewModel.bookUrl,
                     newText
                 ), 20
@@ -96,12 +96,12 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
                 yesButton {
                     alertBinding.editView.text?.toString()?.let { editContent ->
                         bookmark.content = editContent
-                        App.db.bookmarkDao().update(bookmark)
+                        App.db.bookmarkDao.update(bookmark)
                     }
                 }
                 noButton()
                 neutralButton(R.string.delete) {
-                    App.db.bookmarkDao().delete(bookmark)
+                    App.db.bookmarkDao.delete(bookmark)
                 }
             }.show().requestInputMethod()
         }

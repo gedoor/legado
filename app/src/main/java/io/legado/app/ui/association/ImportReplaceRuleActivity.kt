@@ -85,7 +85,7 @@ class ImportReplaceRuleActivity :
     private fun successDialog(allSource: ArrayList<ReplaceRule>) {
         alert("解析结果", "共${allSource.size}个替换规则,是否确认导入?") {
             okButton {
-                App.db.replaceRuleDao().insert(*allSource.toTypedArray())
+                App.db.replaceRuleDao.insert(*allSource.toTypedArray())
             }
             noButton()
             onDismiss {

@@ -90,7 +90,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         stringBuilder.append(book.name)
             .append("\n")
             .append(context.getString(R.string.author_show, book.author))
-        App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
+        App.db.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 val content1 = contentProcessor
                     .getContent(book, chapter.title, content ?: "null", false)
@@ -104,7 +104,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     private fun getSrcList(book: Book): ArrayList<Triple<String, Int, String>> {
         val srcList = arrayListOf<Triple<String, Int, String>>()
-        App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
+        App.db.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter)?.let { content ->
                 content.split("\n").forEachIndexed { index, text ->
                     val matcher = AppPattern.imgPattern.matcher(text)

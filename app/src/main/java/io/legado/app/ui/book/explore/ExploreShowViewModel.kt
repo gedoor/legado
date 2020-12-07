@@ -23,7 +23,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
             val sourceUrl = intent.getStringExtra("sourceUrl")
             exploreUrl = intent.getStringExtra("exploreUrl")
             if (bookSource == null && sourceUrl != null) {
-                bookSource = App.db.bookSourceDao().getBookSource(sourceUrl)
+                bookSource = App.db.bookSourceDao.getBookSource(sourceUrl)
             }
             explore()
         }
@@ -37,7 +37,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
                 .timeout(30000L)
                 .onSuccess(IO) { searchBooks ->
                     booksData.postValue(searchBooks)
-                    App.db.searchBookDao().insert(*searchBooks.toTypedArray())
+                    App.db.searchBookDao.insert(*searchBooks.toTypedArray())
                     page++
                 }
         }

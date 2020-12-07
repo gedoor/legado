@@ -65,7 +65,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
         if (context.getPrefBoolean(PreferKey.precisionSearch)) {
             precisionSearch(this, searchBooks)
         } else {
-            App.db.searchBookDao().insert(*searchBooks.toTypedArray())
+            App.db.searchBookDao.insert(*searchBooks.toTypedArray())
             mergeItems(this, searchBooks)
         }
     }
@@ -90,7 +90,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
                 || searchBook.author.contains(searchKey, true)
             ) books.add(searchBook)
         }
-        App.db.searchBookDao().insert(*books.toTypedArray())
+        App.db.searchBookDao.insert(*books.toTypedArray())
         if (scope.isActive) {
             mergeItems(scope, books)
         }
@@ -188,7 +188,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun getSearchBook(name: String, author: String, success: ((searchBook: SearchBook?) -> Unit)?) {
         execute {
-            val searchBook = App.db.searchBookDao().getFirstByNameAuthor(name, author)
+            val searchBook = App.db.searchBookDao.getFirstByNameAuthor(name, author)
             success?.invoke(searchBook)
         }
     }
@@ -198,10 +198,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun saveSearchKey(key: String) {
         execute {
-            App.db.searchKeywordDao().get(key)?.let {
+            App.db.searchKeywordDao.get(key)?.let {
                 it.usage = it.usage + 1
-                App.db.searchKeywordDao().update(it)
-            } ?: App.db.searchKeywordDao().insert(SearchKeyword(key, 1))
+                App.db.searchKeywordDao.update(it)
+            } ?: App.db.searchKeywordDao.insert(SearchKeyword(key, 1))
         }
     }
 
@@ -210,7 +210,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun clearHistory() {
         execute {
-            App.db.searchKeywordDao().deleteAll()
+            App.db.searchKeywordDao.deleteAll()
         }
     }
 

@@ -48,7 +48,7 @@ object ReadBook {
         this.book = book
         contentProcessor = ContentProcessor(book.name, book.origin)
         readRecord.bookName = book.name
-        readRecord.readTime = App.db.readRecordDao().getReadTime(book.name) ?: 0
+        readRecord.readTime = App.db.readRecordDao.getReadTime(book.name) ?: 0
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
         isLocalBook = book.origin == BookType.local
@@ -70,7 +70,7 @@ object ReadBook {
             bookSource = null
             webBook = null
         } else {
-            App.db.bookSourceDao().getBookSource(book.origin)?.let {
+            App.db.bookSourceDao.getBookSource(book.origin)?.let {
                 bookSource = it
                 webBook = WebBook(it)
             } ?: let {
@@ -84,7 +84,7 @@ object ReadBook {
         Coroutine.async {
             readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
             readStartTime = System.currentTimeMillis()
-            App.db.readRecordDao().insert(readRecord)
+            App.db.readRecordDao.insert(readRecord)
         }
     }
 
@@ -228,7 +228,7 @@ object ReadBook {
         book?.let { book ->
             if (addLoading(index)) {
                 Coroutine.async {
-                    App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                    App.db.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                         BookHelp.getContent(book, chapter)?.let {
                             contentLoadFinish(book, chapter, it, upContent, resetPageOffset)
                             removeLoading(chapter.index)
@@ -246,7 +246,7 @@ object ReadBook {
             if (book.isLocalBook()) return
             if (addLoading(index)) {
                 Coroutine.async {
-                    App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                    App.db.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                         if (BookHelp.hasContent(book, chapter)) {
                             removeLoading(chapter.index)
                         } else {
@@ -428,10 +428,10 @@ object ReadBook {
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durChapterPos
-                App.db.bookChapterDao().getChapter(book.bookUrl, durChapterIndex)?.let {
+                App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }
-                App.db.bookDao().update(book)
+                App.db.bookDao.update(book)
             }
         }
     }

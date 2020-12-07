@@ -101,7 +101,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
             else -> if (item.groupId == R.id.menu_group) {
                 binding.titleBar.subtitle = item.title
-                groupId = App.db.bookGroupDao().getByName(item.title.toString())?.groupId ?: 0
+                groupId = App.db.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
                 initBookData()
             }
         }
@@ -117,11 +117,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun initBookData() {
         booksLiveData?.removeObservers(this)
         booksLiveData = when (groupId) {
-            AppConst.bookGroupAllId -> App.db.bookDao().observeAll()
-            AppConst.bookGroupLocalId -> App.db.bookDao().observeLocal()
-            AppConst.bookGroupAudioId -> App.db.bookDao().observeAudio()
-            AppConst.bookGroupNoneId -> App.db.bookDao().observeNoGroup()
-            else -> App.db.bookDao().observeByGroup(groupId)
+            AppConst.bookGroupAllId -> App.db.bookDao.observeAll()
+            AppConst.bookGroupLocalId -> App.db.bookDao.observeLocal()
+            AppConst.bookGroupAudioId -> App.db.bookDao.observeAudio()
+            AppConst.bookGroupNoneId -> App.db.bookDao.observeNoGroup()
+            else -> App.db.bookDao.observeByGroup(groupId)
         }
         booksLiveData?.observe(this, { list ->
             val booksDownload = list.filter {
@@ -140,7 +140,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     private fun initGroupData() {
         groupLiveData?.removeObservers(this)
-        groupLiveData = App.db.bookGroupDao().liveDataAll()
+        groupLiveData = App.db.bookGroupDao.liveDataAll()
         groupLiveData?.observe(this, {
             groupList.clear()
             groupList.addAll(it)
@@ -154,7 +154,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             books.forEach { book ->
                 val chapterCaches = hashSetOf<String>()
                 val cacheNames = BookHelp.getChapterFiles(book)
-                App.db.bookChapterDao().getChapterList(book.bookUrl).forEach { chapter ->
+                App.db.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
                     if (cacheNames.contains(chapter.getFileName())) {
                         chapterCaches.add(chapter.url)
                     }

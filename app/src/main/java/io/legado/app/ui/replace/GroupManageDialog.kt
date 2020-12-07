@@ -62,7 +62,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         recyclerView.adapter = adapter
-        App.db.replaceRuleDao().liveGroup().observe(viewLifecycleOwner, {
+        App.db.replaceRuleDao.liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

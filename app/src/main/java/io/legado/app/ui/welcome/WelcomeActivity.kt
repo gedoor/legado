@@ -37,10 +37,10 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
     private fun init() {
         Coroutine.async {
-            App.db.cacheDao().clearDeadline(System.currentTimeMillis())
+            App.db.cacheDao.clearDeadline(System.currentTimeMillis())
             //清除过期数据
             if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
-                App.db.searchBookDao()
+                App.db.searchBookDao
                     .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
             }
             //初始化简繁转换引擎

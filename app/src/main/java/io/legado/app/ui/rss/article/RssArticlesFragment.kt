@@ -93,7 +93,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     private fun initData() {
         activityViewModel.url?.let {
             rssArticlesData?.removeObservers(this)
-            rssArticlesData = App.db.rssArticleDao().liveByOriginSort(it, viewModel.sortName)
+            rssArticlesData = App.db.rssArticleDao.liveByOriginSort(it, viewModel.sortName)
             rssArticlesData?.observe(viewLifecycleOwner, { list ->
                 adapter.setItems(list)
             })

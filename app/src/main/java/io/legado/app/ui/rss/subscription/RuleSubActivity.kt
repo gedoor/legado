@@ -47,7 +47,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> {
-                val order = App.db.ruleSubDao().maxOrder + 1
+                val order = App.db.ruleSubDao.maxOrder + 1
                 editSubscription(RuleSub(customOrder = order))
             }
         }
@@ -64,7 +64,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     private fun initData() {
         liveData?.removeObservers(this)
-        liveData = App.db.ruleSubDao().observeAll()
+        liveData = App.db.ruleSubDao.observeAll()
         liveData?.observe(this) {
             binding.tvEmptyMsg.isGone = it.isNotEmpty()
             adapter.setItems(it)
@@ -98,7 +98,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                 ruleSub.name = alertBinding.etName.text?.toString() ?: ""
                 ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
                 launch(IO) {
-                    App.db.ruleSubDao().insert(ruleSub)
+                    App.db.ruleSubDao.insert(ruleSub)
                 }
             }
             cancelButton()
@@ -107,23 +107,23 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     override fun delSubscription(ruleSub: RuleSub) {
         launch(IO) {
-            App.db.ruleSubDao().delete(ruleSub)
+            App.db.ruleSubDao.delete(ruleSub)
         }
     }
 
     override fun updateSourceSub(vararg ruleSub: RuleSub) {
         launch(IO) {
-            App.db.ruleSubDao().update(*ruleSub)
+            App.db.ruleSubDao.update(*ruleSub)
         }
     }
 
     override fun upOrder() {
         launch(IO) {
-            val sourceSubs = App.db.ruleSubDao().all
+            val sourceSubs = App.db.ruleSubDao.all
             for ((index: Int, ruleSub: RuleSub) in sourceSubs.withIndex()) {
                 ruleSub.customOrder = index + 1
             }
-            App.db.ruleSubDao().update(*sourceSubs.toTypedArray())
+            App.db.ruleSubDao.update(*sourceSubs.toTypedArray())
         }
     }
 

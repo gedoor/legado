@@ -97,7 +97,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     private fun initGroupData() {
         liveGroup?.removeObservers(viewLifecycleOwner)
-        liveGroup = App.db.bookSourceDao().liveGroupExplore()
+        liveGroup = App.db.bookSourceDao.liveGroupExplore()
         liveGroup?.observe(viewLifecycleOwner, {
             groups.clear()
             it.map { group ->
@@ -110,9 +110,9 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private fun initExploreData(key: String? = null) {
         liveExplore?.removeObservers(viewLifecycleOwner)
         liveExplore = if (key.isNullOrBlank()) {
-            App.db.bookSourceDao().liveExplore()
+            App.db.bookSourceDao.liveExplore()
         } else {
-            App.db.bookSourceDao().liveExplore("%$key%")
+            App.db.bookSourceDao.liveExplore("%$key%")
         }
         liveExplore?.observe(viewLifecycleOwner, {
             binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()

@@ -16,7 +16,7 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
     fun initData(sourceUrl: String?, finally: () -> Unit) {
         sourceUrl?.let {
             execute {
-                rssSource = App.db.rssSourceDao().getByKey(sourceUrl)
+                rssSource = App.db.rssSourceDao.getByKey(sourceUrl)
             }.onFinally {
                 finally()
             }

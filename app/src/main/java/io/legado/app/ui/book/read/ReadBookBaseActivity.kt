@@ -218,7 +218,7 @@ abstract class ReadBookBaseActivity :
                             chapterName = textChapter.title,
                             content = editContent
                         )
-                        App.db.bookmarkDao().insert(bookmark)
+                        App.db.bookmarkDao.insert(bookmark)
                     }
                 }
             }

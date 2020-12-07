@@ -136,7 +136,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = App.db.bookSourceDao().getBookSource(it.bookSourceUrl)
+                val has = App.db.bookSourceDao.getBookSource(it.bookSourceUrl)
                 checkSources.add(has)
                 selectStatus.add(has == null)
             }

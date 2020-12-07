@@ -182,14 +182,14 @@ data class Book(
         newBook.canUpdate = canUpdate
         newBook.readConfig = readConfig
         delete()
-        App.db.bookDao().insert(newBook)
+        App.db.bookDao.insert(newBook)
     }
 
     fun delete() {
         if (ReadBook.book?.bookUrl == bookUrl) {
             ReadBook.book = null
         }
-        App.db.bookDao().delete(this)
+        App.db.bookDao.delete(this)
     }
 
     fun upInfoFromOld(oldBook: Book?) {

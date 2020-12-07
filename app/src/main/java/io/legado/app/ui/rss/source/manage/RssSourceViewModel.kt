@@ -17,39 +17,39 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
 
     fun topSource(vararg sources: RssSource) {
         execute {
-            val minOrder = App.db.rssSourceDao().minOrder - 1
+            val minOrder = App.db.rssSourceDao.minOrder - 1
             sources.forEachIndexed { index, rssSource ->
                 rssSource.customOrder = minOrder - index
             }
-            App.db.rssSourceDao().update(*sources)
+            App.db.rssSourceDao.update(*sources)
         }
     }
 
     fun bottomSource(vararg sources: RssSource) {
         execute {
-            val maxOrder = App.db.rssSourceDao().maxOrder + 1
+            val maxOrder = App.db.rssSourceDao.maxOrder + 1
             sources.forEachIndexed { index, rssSource ->
                 rssSource.customOrder = maxOrder + index
             }
-            App.db.rssSourceDao().update(*sources)
+            App.db.rssSourceDao.update(*sources)
         }
     }
 
     fun del(rssSource: RssSource) {
-        execute { App.db.rssSourceDao().delete(rssSource) }
+        execute { App.db.rssSourceDao.delete(rssSource) }
     }
 
     fun update(vararg rssSource: RssSource) {
-        execute { App.db.rssSourceDao().update(*rssSource) }
+        execute { App.db.rssSourceDao.update(*rssSource) }
     }
 
     fun upOrder() {
         execute {
-            val sources = App.db.rssSourceDao().all
+            val sources = App.db.rssSourceDao.all
             for ((index: Int, source: RssSource) in sources.withIndex()) {
                 source.customOrder = index + 1
             }
-            App.db.rssSourceDao().update(*sources.toTypedArray())
+            App.db.rssSourceDao.update(*sources.toTypedArray())
         }
     }
 
@@ -59,7 +59,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             sources.forEach {
                 list.add(it.copy(enabled = true))
             }
-            App.db.rssSourceDao().update(*list.toTypedArray())
+            App.db.rssSourceDao.update(*list.toTypedArray())
         }
     }
 
@@ -69,13 +69,13 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             sources.forEach {
                 list.add(it.copy(enabled = false))
             }
-            App.db.rssSourceDao().update(*list.toTypedArray())
+            App.db.rssSourceDao.update(*list.toTypedArray())
         }
     }
 
     fun delSelection(sources: List<RssSource>) {
         execute {
-            App.db.rssSourceDao().delete(*sources.toTypedArray())
+            App.db.rssSourceDao.delete(*sources.toTypedArray())
         }
     }
 
@@ -128,17 +128,17 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
 
     fun addGroup(group: String) {
         execute {
-            val sources = App.db.rssSourceDao().noGroup
+            val sources = App.db.rssSourceDao.noGroup
             sources.map { source ->
                 source.sourceGroup = group
             }
-            App.db.rssSourceDao().update(*sources.toTypedArray())
+            App.db.rssSourceDao.update(*sources.toTypedArray())
         }
     }
 
     fun upGroup(oldGroup: String, newGroup: String?) {
         execute {
-            val sources = App.db.rssSourceDao().getByGroup(oldGroup)
+            val sources = App.db.rssSourceDao.getByGroup(oldGroup)
             sources.map { source ->
                 source.sourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
                     it.remove(oldGroup)
@@ -147,21 +147,21 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
                     source.sourceGroup = TextUtils.join(",", it)
                 }
             }
-            App.db.rssSourceDao().update(*sources.toTypedArray())
+            App.db.rssSourceDao.update(*sources.toTypedArray())
         }
     }
 
     fun delGroup(group: String) {
         execute {
             execute {
-                val sources = App.db.rssSourceDao().getByGroup(group)
+                val sources = App.db.rssSourceDao.getByGroup(group)
                 sources.map { source ->
                     source.sourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
                         it.remove(group)
                         source.sourceGroup = TextUtils.join(",", it)
                     }
                 }
-                App.db.rssSourceDao().update(*sources.toTypedArray())
+                App.db.rssSourceDao.update(*sources.toTypedArray())
             }
         }
     }

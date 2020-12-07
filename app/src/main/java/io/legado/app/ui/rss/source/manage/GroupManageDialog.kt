@@ -59,7 +59,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tvOk.setTextColor(requireContext().accentColor)
         tvOk.visible()
         tvOk.onClick { dismiss() }
-        App.db.rssSourceDao().liveGroup().observe(viewLifecycleOwner, {
+        App.db.rssSourceDao.liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

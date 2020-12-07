@@ -48,9 +48,9 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
             val searchGroup = App.INSTANCE.getPrefString("searchGroup") ?: ""
             bookSourceList.clear()
             if (searchGroup.isBlank()) {
-                bookSourceList.addAll(App.db.bookSourceDao().allEnabled)
+                bookSourceList.addAll(App.db.bookSourceDao.allEnabled)
             } else {
-                bookSourceList.addAll(App.db.bookSourceDao().getEnabledByGroup(searchGroup))
+                bookSourceList.addAll(App.db.bookSourceDao.getEnabledByGroup(searchGroup))
             }
         } else {
             searchPage++

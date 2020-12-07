@@ -76,7 +76,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 else -> if (context.getPrefBoolean("mediaButtonOnExit", true)) {
                     GlobalScope.launch(Main) {
                         val lastBook: Book? = withContext(IO) {
-                            App.db.bookDao().lastReadBook
+                            App.db.bookDao.lastReadBook
                         }
                         lastBook?.let {
                             if (!ActivityHelp.isExist(MainActivity::class.java)) {

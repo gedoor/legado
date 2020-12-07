@@ -144,7 +144,7 @@ class SearchContentActivity :
             viewModel.lastQuery = newText
             var searchResults = listOf<SearchResult>()
             launch(Dispatchers.Main) {
-                App.db.bookChapterDao().getChapterList(viewModel.bookUrl).map { chapter ->
+                App.db.bookChapterDao.getChapterList(viewModel.bookUrl).map { chapter ->
                     withContext(Dispatchers.IO) {
                         if (isLocalBook
                             || adapter.cacheFileNames.contains(chapter.getFileName())

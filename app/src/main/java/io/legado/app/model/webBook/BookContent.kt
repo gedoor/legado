@@ -45,7 +45,7 @@ object BookContent {
             val nextChapterUrl = if (!nextChapterUrlF.isNullOrEmpty())
                 nextChapterUrlF
             else
-                App.db.bookChapterDao().getChapter(book.bookUrl, bookChapter.index + 1)?.url
+                App.db.bookChapterDao.getChapter(book.bookUrl, bookChapter.index + 1)?.url
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 if (!nextChapterUrl.isNullOrEmpty()
                     && NetworkUtils.getAbsoluteURL(baseUrl, nextUrl)

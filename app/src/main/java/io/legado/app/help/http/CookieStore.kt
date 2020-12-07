@@ -14,7 +14,7 @@ object CookieStore : CookiePersistor, CookieManager {
 
     override fun setCookie(url: String, cookie: String?) {
         val cookieBean = Cookie(NetworkUtils.getSubDomain(url), cookie ?: "")
-        App.db.cookieDao().insert(cookieBean)
+        App.db.cookieDao.insert(cookieBean)
     }
 
     override fun replaceCookie(url: String, cookie: String) {
@@ -33,12 +33,12 @@ object CookieStore : CookiePersistor, CookieManager {
     }
 
     override fun getCookie(url: String): String {
-        val cookieBean = App.db.cookieDao().get(NetworkUtils.getSubDomain(url))
+        val cookieBean = App.db.cookieDao.get(NetworkUtils.getSubDomain(url))
         return cookieBean?.cookie ?: ""
     }
 
     override fun removeCookie(url: String) {
-        App.db.cookieDao().delete(NetworkUtils.getSubDomain(url))
+        App.db.cookieDao.delete(NetworkUtils.getSubDomain(url))
     }
 
     override fun cookieToMap(cookie: String): MutableMap<String, String> {
@@ -80,7 +80,7 @@ object CookieStore : CookiePersistor, CookieManager {
 
     override fun loadAll(): MutableList<okhttp3.Cookie> {
         val cookies = arrayListOf<okhttp3.Cookie>()
-        App.db.cookieDao().getOkHttpCookies().forEach {
+        App.db.cookieDao.getOkHttpCookies().forEach {
             val serializedCookie = it.cookie
             SerializableCookie().decode(serializedCookie)?.let { ck ->
                 cookies.add(ck)
@@ -94,17 +94,17 @@ object CookieStore : CookiePersistor, CookieManager {
         cookies?.forEach {
             mCookies.add(Cookie(createCookieKey(it), SerializableCookie().encode(it)))
         }
-        App.db.cookieDao().insert(*mCookies.toTypedArray())
+        App.db.cookieDao.insert(*mCookies.toTypedArray())
     }
 
     override fun removeAll(cookies: MutableCollection<okhttp3.Cookie>?) {
         cookies?.forEach {
-            App.db.cookieDao().delete(createCookieKey(it))
+            App.db.cookieDao.delete(createCookieKey(it))
         }
     }
 
     override fun clear() {
-        App.db.cookieDao().deleteOkHttp()
+        App.db.cookieDao.deleteOkHttp()
     }
 
     private fun createCookieKey(cookie: okhttp3.Cookie): String {

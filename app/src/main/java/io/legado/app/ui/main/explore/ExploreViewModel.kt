@@ -9,9 +9,9 @@ class ExploreViewModel(application: Application) : BaseViewModel(application) {
 
     fun topSource(bookSource: BookSource) {
         execute {
-            val minXh = App.db.bookSourceDao().minOrder
+            val minXh = App.db.bookSourceDao.minOrder
             bookSource.customOrder = minXh - 1
-            App.db.bookSourceDao().insert(bookSource)
+            App.db.bookSourceDao.insert(bookSource)
         }
     }
 

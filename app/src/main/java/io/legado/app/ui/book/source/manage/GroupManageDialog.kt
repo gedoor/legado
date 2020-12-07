@@ -62,7 +62,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private fun initData() {
-        App.db.bookSourceDao().liveGroup().observe(viewLifecycleOwner, {
+        App.db.bookSourceDao.liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

@@ -130,6 +130,7 @@ class AudioPlayService : BaseService(),
                 val uri = Uri.parse(analyzeUrl.url)
                 mediaPlayer.setDataSource(this, uri, analyzeUrl.headerMap)
                 mediaPlayer.prepareAsync()
+                handler.removeCallbacks(mpRunnable)
             } catch (e: Exception) {
                 e.printStackTrace()
                 launch {
@@ -203,15 +204,18 @@ class AudioPlayService : BaseService(),
         } else {
             mediaPlayer.start()
         }
+        mediaPlayer.seekTo(position)
         AudioPlay.status = Status.PLAY
         postEvent(EventBus.AUDIO_STATE, Status.PLAY)
-        mediaPlayer.seekTo(position)
         postEvent(EventBus.AUDIO_SIZE, mediaPlayer.duration)
-        bookChapter?.let {
-            it.end = mediaPlayer.duration.toLong()
-        }
         handler.removeCallbacks(mpRunnable)
         handler.post(mpRunnable)
+        execute {
+            bookChapter?.let {
+                it.end = mediaPlayer.duration.toLong()
+                App.db.bookChapterDao.insert(it)
+            }
+        }
     }
 
     /**
@@ -271,7 +275,7 @@ class AudioPlayService : BaseService(),
         AudioPlay.book?.let { book ->
             if (addLoading(index)) {
                 launch(IO) {
-                    App.db.bookChapterDao().getChapter(book.bookUrl, index)?.let { chapter ->
+                    App.db.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                         if (index == AudioPlay.durChapterIndex) {
                             bookChapter = chapter
                             subtitle = chapter.title
@@ -334,9 +338,10 @@ class AudioPlayService : BaseService(),
     }
 
     private fun saveProgress() {
-        launch(IO) {
+        execute {
             AudioPlay.book?.let {
-                App.db.bookDao().upProgress(it.bookUrl, AudioPlay.durChapterPos)
+                AudioPlay.durChapterPos = mediaPlayer.currentPosition
+                App.db.bookDao.upProgress(it.bookUrl, AudioPlay.durChapterPos)
             }
         }
     }

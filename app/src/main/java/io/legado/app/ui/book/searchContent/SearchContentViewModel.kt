@@ -16,7 +16,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
     fun initBook(bookUrl: String, success: () -> Unit) {
         this.bookUrl = bookUrl
         execute {
-            book = App.db.bookDao().getBook(bookUrl)
+            book = App.db.bookDao.getBook(bookUrl)
             book?.let {
                 contentProcessor = ContentProcessor(it.name, it.origin)
             }
