@@ -62,6 +62,7 @@
         android:id="@+id/iv_explore"
         android:layout_width="8dp"
         android:layout_height="8dp"
+        android:scaleType="centerCrop"
         android:contentDescription="@string/more_menu"
         android:src="@color/md_green_600"
         app:layout_constraintRight_toRightOf="parent"

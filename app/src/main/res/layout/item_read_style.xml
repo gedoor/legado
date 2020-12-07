@@ -6,6 +6,7 @@
     android:layout_height="48dp"
     android:layout_marginLeft="6dp"
     android:layout_marginRight="6dp"
+    android:scaleType="centerCrop"
     android:src="@drawable/image_cover_default"
     app:civ_border_color="@color/primaryText"
     app:civ_border_width="1dp"
