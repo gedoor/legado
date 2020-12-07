@@ -68,6 +68,7 @@ class AudioPlayService : BaseService(),
     override fun onCreate() {
         super.onCreate()
         isRun = true
+        upNotification()
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         mFocusRequest = MediaHelp.getFocusRequest(this)
         mediaPlayer.setOnErrorListener(this)
@@ -75,7 +76,6 @@ class AudioPlayService : BaseService(),
         mediaPlayer.setOnCompletionListener(this)
         initMediaSession()
         initBroadcastReceiver()
-        upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
     }
 
