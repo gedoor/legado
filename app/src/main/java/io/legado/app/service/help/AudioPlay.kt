@@ -32,9 +32,22 @@ object AudioPlay {
     }
 
     fun play(context: Context) {
-        val intent = Intent(context, AudioPlayService::class.java)
-        intent.action = IntentAction.play
-        context.startService(intent)
+        book?.let {
+            if (durChapter == null) {
+                upDurChapter(it)
+            }
+            durChapter?.let {
+                val intent = Intent(context, AudioPlayService::class.java)
+                intent.action = IntentAction.play
+                context.startService(intent)
+            }
+        }
+    }
+
+    fun upDurChapter(book: Book) {
+        durChapter = App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
+        postEvent(EventBus.AUDIO_SIZE, durChapter?.end?.toInt() ?: 0)
+        postEvent(EventBus.AUDIO_PROGRESS, durChapterPos)
     }
 
     fun pause(context: Context) {
@@ -84,6 +97,7 @@ object AudioPlay {
             book?.let { book ->
                 durChapterIndex = index
                 durChapterPos = 0
+                durChapter = null
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
@@ -103,6 +117,7 @@ object AudioPlay {
                 }
                 durChapterIndex--
                 durChapterPos = 0
+                durChapter = null
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
@@ -122,6 +137,7 @@ object AudioPlay {
                 }
                 durChapterIndex++
                 durChapterPos = 0
+                durChapter = null
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
@@ -154,4 +170,12 @@ object AudioPlay {
         }
     }
 
+    fun saveDurChapter(audioSize: Long) {
+        Coroutine.async {
+            durChapter?.let {
+                it.end = audioSize
+                App.db.bookChapterDao.insert(it)
+            }
+        }
+    }
 }

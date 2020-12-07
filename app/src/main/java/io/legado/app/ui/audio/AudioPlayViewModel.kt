@@ -50,7 +50,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                             durChapterIndex = count - 1
                         }
                         durChapter = App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
-
+                        upDurChapter(book)
                         chapterSize = count
                     }
                 }
@@ -85,6 +85,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         } else {
                             changeDruChapterIndex(cList)
                         }
+                        AudioPlay.upDurChapter(book)
                     } else {
                         toast(R.string.error_load_toc)
                     }
