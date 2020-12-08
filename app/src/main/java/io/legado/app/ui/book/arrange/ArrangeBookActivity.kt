@@ -23,6 +23,7 @@ import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getViewModel
 
@@ -123,7 +124,9 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         booksLiveData?.observe(this, { list ->
             val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                 1 -> list.sortedByDescending { it.latestChapterTime }
-                2 -> list.sortedBy { it.name }
+                2 -> list.sortedWith { o1, o2 ->
+                    o1.name.cnCompare(o2.name)
+                }
                 3 -> list.sortedBy { it.order }
                 else -> list.sortedByDescending { it.durChapterTime }
             }
