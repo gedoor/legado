@@ -2,15 +2,15 @@
 
 package io.legado.app.utils
 
+import android.icu.text.Collator
+import android.icu.util.ULocale
 import android.net.Uri
 import java.io.File
-import java.text.Collator
 import java.util.*
 
 val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
 val imgRegex = "<img[^>]*>".toRegex()
 val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
-val cnCollator: Collator = Collator.getInstance(Locale.CHINA)
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
@@ -71,7 +71,11 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
 }
 
 fun String.cnCompare(other: String): Int {
-    return cnCollator.compare(this, other)
+    return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        Collator.getInstance(ULocale.SIMPLIFIED_CHINESE).compare(this, other)
+    } else {
+        java.text.Collator.getInstance(Locale.CHINA).compare(this, other)
+    }
 }
 
 /**
