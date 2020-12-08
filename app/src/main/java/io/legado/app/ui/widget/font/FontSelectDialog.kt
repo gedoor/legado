@@ -199,7 +199,7 @@ class FontSelectDialog : BaseDialogFragment(),
     private fun mergeFontItems(
         items1: ArrayList<DocItem>,
         items2: ArrayList<DocItem>
-    ): ArrayList<DocItem> {
+    ): List<DocItem> {
         val items = ArrayList(items1)
         items2.forEach { item2 ->
             var isInFirst = false
@@ -213,8 +213,9 @@ class FontSelectDialog : BaseDialogFragment(),
                 items.add(item2)
             }
         }
-        items.sortBy { it.name }
-        return items
+        return items.sortedWith { o1, o2 ->
+            o1.name.cnCompare(o2.name)
+        }
     }
 
     override fun onClick(docItem: DocItem) {
