@@ -710,7 +710,7 @@ object FileUtils {
                     val s1 = f1.name
                     val s2 = f2.name
                     if (caseSensitive) {
-                        s1.compareTo(s2)
+                        s1.cnCompare(s2)
                     } else {
                         s1.compareTo(s2, ignoreCase = true)
                     }

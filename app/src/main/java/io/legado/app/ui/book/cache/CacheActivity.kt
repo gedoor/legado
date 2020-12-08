@@ -129,7 +129,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
             val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                 1 -> booksDownload.sortedByDescending { it.latestChapterTime }
-                2 -> booksDownload.sortedBy { it.name }
+                2 -> booksDownload.sortedWith { o1, o2 ->
+                    o1.name.cnCompare(o2.name)
+                }
                 3 -> booksDownload.sortedBy { it.order }
                 else -> booksDownload.sortedByDescending { it.durChapterTime }
             }
