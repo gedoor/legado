@@ -77,23 +77,23 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
 
     fun importSource(text: String) {
         execute {
-            val text1 = text.trim()
+            val mText = text.trim()
             when {
-                text1.isJsonObject() -> {
-                    val json = JsonPath.parse(text1)
+                mText.isJsonObject() -> {
+                    val json = JsonPath.parse(mText)
                     val urls = json.read<List<String>>("$.sourceUrls")
                     if (!urls.isNullOrEmpty()) {
                         urls.forEach {
                             importSourceUrl(it)
                         }
                     } else {
-                        GSON.fromJsonArray<RssSource>(text1)?.let {
+                        GSON.fromJsonArray<RssSource>(mText)?.let {
                             allSources.addAll(it)
                         }
                     }
                 }
-                text1.isJsonArray() -> {
-                    val items: List<Map<String, Any>> = Restore.jsonPath.parse(text1).read("$")
+                mText.isJsonArray() -> {
+                    val items: List<Map<String, Any>> = Restore.jsonPath.parse(mText).read("$")
                     for (item in items) {
                         val jsonItem = Restore.jsonPath.parse(item)
                         GSON.fromJsonObject<RssSource>(jsonItem.jsonString())?.let {
@@ -101,8 +101,8 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                         }
                     }
                 }
-                text1.isAbsUrl() -> {
-                    importSourceUrl(text1)
+                mText.isAbsUrl() -> {
+                    importSourceUrl(mText)
                 }
                 else -> throw Exception(context.getString(R.string.wrong_format))
             }
