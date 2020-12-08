@@ -595,19 +595,25 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     private fun autoPagePlus() {
+        var delayMillis = ReadBookConfig.autoReadSpeed * 1000L / binding.readView.height
+        var scrollOffset = 1
+        if (delayMillis < 20) {
+            scrollOffset = 20 / delayMillis.toInt()
+            delayMillis = 20
+        }
         mHandler.removeCallbacks(autoPageRunnable)
         if (binding.readView.isScroll) {
-            binding.readView.curPage.scroll(-binding.readView.height / ReadBookConfig.autoReadSpeed / 50)
+            binding.readView.curPage.scroll(-scrollOffset)
         } else {
-            autoPageProgress++
-            if (autoPageProgress >= ReadBookConfig.autoReadSpeed * 50) {
+            autoPageProgress += scrollOffset
+            if (autoPageProgress >= binding.readView.height) {
                 autoPageProgress = 0
                 binding.readView.fillPage(PageDirection.NEXT)
             } else {
                 binding.readView.invalidate()
             }
         }
-        mHandler.postDelayed(autoPageRunnable, 20)
+        mHandler.postDelayed(autoPageRunnable, delayMillis)
     }
 
     override fun openSourceEditActivity() {

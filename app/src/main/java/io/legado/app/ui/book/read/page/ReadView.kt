@@ -122,9 +122,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         super.dispatchDraw(canvas)
         pageDelegate?.onDraw(canvas)
         if (!isInEditMode && callBack.isAutoPage && !isScroll) {
+            // TODO 自动翻页
             nextPage.screenshot()?.let {
-                val bottom =
-                    height * callBack.autoPageProgress / (ReadBookConfig.autoReadSpeed * 50)
+                val bottom = callBack.autoPageProgress
                 autoPageRect.set(0, 0, width, bottom)
                 canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
                 canvas.drawRect(
