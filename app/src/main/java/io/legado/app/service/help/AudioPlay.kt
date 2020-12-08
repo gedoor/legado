@@ -45,6 +45,7 @@ object AudioPlay {
 
     fun upDurChapter(book: Book) {
         durChapter = App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
+        postEvent(EventBus.AUDIO_SUB_TITLE, durChapter?.title ?: "")
         postEvent(EventBus.AUDIO_SIZE, durChapter?.end?.toInt() ?: 0)
         postEvent(EventBus.AUDIO_PROGRESS, durChapterPos)
     }
@@ -100,9 +101,6 @@ object AudioPlay {
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
-                App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
-                    postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
-                }
                 play(context)
             }
         }
@@ -120,9 +118,6 @@ object AudioPlay {
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
-                App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
-                    postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
-                }
                 play(context)
             }
         }
@@ -140,9 +135,6 @@ object AudioPlay {
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = 0
                 saveRead()
-                App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let { chapter ->
-                    postEvent(EventBus.AUDIO_SUB_TITLE, chapter.title)
-                }
                 play(context)
             }
         }
