@@ -218,12 +218,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
         override fun getItem(position: Int): Fragment {
             val group = bookGroups[position]
-            var fragment = fragmentMap[group.groupId]
-            if (fragment == null) {
-                fragment = BooksFragment.newInstance(position, group.groupId)
-                fragmentMap[group.groupId] = fragment
-            }
-            return fragment
+            return BooksFragment.newInstance(position, group.groupId)
         }
 
         override fun getCount(): Int {
