@@ -40,7 +40,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val selectStart = arrayOf(0, 0, 0)
     private val selectEnd = arrayOf(0, 0, 0)
     private var textChapter: TextChapter? = null
-    private var textPage: TextPage = TextPage()
+    var textPage: TextPage = TextPage()
+        private set
 
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
