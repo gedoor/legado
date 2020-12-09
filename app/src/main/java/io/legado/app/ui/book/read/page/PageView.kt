@@ -259,11 +259,7 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun selectStartMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
-        try {
-            binding.contentTextView.selectStartMoveIndex(relativePage, lineIndex, charIndex)
-        } catch (e: Exception) {
-            print("selectStartMoveIndex($relativePage, $lineIndex, $charIndex)")
-        }
+        binding.contentTextView.selectStartMoveIndex(relativePage, lineIndex, charIndex)
     }
 
     fun selectEndMove(x: Float, y: Float) {
@@ -271,11 +267,7 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun selectEndMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
-        try {
-            binding.contentTextView.selectEndMoveIndex(relativePage, lineIndex, charIndex)
-        } catch (e: Exception) {
-            print("selectEndMoveIndex($relativePage, $lineIndex, $charIndex)")
-        }
+        binding.contentTextView.selectEndMoveIndex(relativePage, lineIndex, charIndex)
     }
 
     fun cancelSelect() {
