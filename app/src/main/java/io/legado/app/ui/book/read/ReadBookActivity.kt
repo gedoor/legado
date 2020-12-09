@@ -138,7 +138,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
         upSystemUiVisibility()
         if (!BuildConfig.DEBUG) {
-            SyncBookProgress.uploadBookProgress()
+            ReadBook.book?.let {
+                SyncBookProgress.uploadBookProgress(it)
+            }
             Backup.autoBack(this)
         }
     }
@@ -814,7 +816,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
         binding.readView.onDestroy()
         ReadBook.msg = null
         if (!BuildConfig.DEBUG) {
-            SyncBookProgress.uploadBookProgress()
             Backup.autoBack(this)
         }
     }

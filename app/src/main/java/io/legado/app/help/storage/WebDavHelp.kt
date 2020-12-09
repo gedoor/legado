@@ -18,7 +18,6 @@ import org.jetbrains.anko.toast
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.min
 
 object WebDavHelp {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
@@ -55,9 +54,10 @@ object WebDavHelp {
         if (initWebDav()) {
             var files = WebDav(url).listFiles()
             files = files.reversed()
-            for (index: Int in 0 until min(10, files.size)) {
-                files[index].displayName?.let {
-                    names.add(it)
+            files.forEach {
+                val name = it.displayName
+                if (name?.startsWith("backup") == true) {
+                    names.add(name)
                 }
             }
         }
@@ -85,16 +85,12 @@ object WebDavHelp {
     private fun restoreWebDav(name: String) {
         Coroutine.async {
             rootWebDavUrl.let {
-                if (name == SyncBookProgress.fileName) {
-                    SyncBookProgress.downloadBookProgress()
-                } else {
-                    val webDav = WebDav(it + name)
-                    webDav.downloadTo(zipFilePath, true)
-                    @Suppress("BlockingMethodInNonBlockingContext")
-                    ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
-                    Restore.restoreDatabase()
-                    Restore.restoreConfig()
-                }
+                val webDav = WebDav(it + name)
+                webDav.downloadTo(zipFilePath, true)
+                @Suppress("BlockingMethodInNonBlockingContext")
+                ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
+                Restore.restoreDatabase()
+                Restore.restoreConfig()
             }
         }.onError {
             App.INSTANCE.toast("WebDavError:${it.localizedMessage}")
@@ -122,6 +118,7 @@ object WebDavHelp {
             }
         }
     }
+
     fun exportWebDav(path: String, fileName: String) {
         try {
             if (initWebDav()) {
@@ -131,7 +128,7 @@ object WebDavHelp {
                 WebDav(exportsWebDavUrl).makeAsDir()
                 val file = File("${path}${File.separator}${fileName}")
                 // 如果导出的本地文件存在,开始上传
-                if(file.exists()) {
+                if (file.exists()) {
                     val putUrl = exportsWebDavUrl + fileName
                     WebDav(putUrl).upload("${path}${File.separator}${fileName}")
                 }

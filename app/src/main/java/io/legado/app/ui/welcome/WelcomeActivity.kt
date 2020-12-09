@@ -10,7 +10,6 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ActivityWelcomeBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.storage.SyncBookProgress
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
@@ -50,7 +49,6 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
                 else -> null
             }
         }
-        SyncBookProgress.downloadBookProgress()
         binding.root.postDelayed({ startMainActivity() }, 500)
     }
 

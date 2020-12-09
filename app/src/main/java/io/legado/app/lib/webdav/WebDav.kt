@@ -50,6 +50,7 @@ class WebDav(urlStr: String) {
     var exists = false
     var parent = ""
     var urlName = ""
+    var contentType = ""
 
     /**
      * 填充文件信息。实例化WebDAVFile对象时，并没有将远程文件的信息填充到实例中。需要手动填充！
@@ -139,6 +140,9 @@ class WebDav(urlStr: String) {
                     try {
                         webDavFile = WebDav(baseUrl + fileName)
                         webDavFile.displayName = fileName
+                        webDavFile.contentType = element
+                            .getElementsByTag("d:getcontenttype")
+                            .getOrNull(0)?.text() ?: ""
                         if (href.isEmpty()) {
                             webDavFile.urlName =
                                 if (parent.isEmpty()) url.file.replace("/", "")
@@ -188,6 +192,11 @@ class WebDav(urlStr: String) {
         return true
     }
 
+    fun download(): ByteArray? {
+        val inputS = getInputStream() ?: return null
+        return inputS.readBytes()
+    }
+
     /**
      * 上传文件
      */
@@ -198,6 +207,19 @@ class WebDav(urlStr: String) {
         val mediaType = contentType?.let { MediaType.parse(it) }
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = RequestBody.create(mediaType, file)
+        httpUrl?.let {
+            val request = Request.Builder()
+                .url(it)
+                .put(fileBody)
+            return execRequest(request)
+        }
+        return false
+    }
+
+    fun upload(byteArray: ByteArray, contentType: String? = null): Boolean {
+        val mediaType = contentType?.let { MediaType.parse(it) }
+        // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
+        val fileBody = RequestBody.create(mediaType, byteArray)
         httpUrl?.let {
             val request = Request.Builder()
                 .url(it)
