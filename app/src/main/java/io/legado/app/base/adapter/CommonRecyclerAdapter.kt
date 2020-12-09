@@ -43,7 +43,6 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
     private var itemClickListener: ((holder: ItemViewHolder, item: ITEM) -> Unit)? = null
     private var itemLongClickListener: ((holder: ItemViewHolder, item: ITEM) -> Boolean)? = null
 
-    // 这个用Kotlin的setter就行了, 不需要手动开一个函数进行设置
     var itemAnimation: ItemAnimation? = null
 
     fun setOnItemClickListener(listener: (holder: ItemViewHolder, item: ITEM) -> Unit) {
