@@ -22,7 +22,10 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.screenshot
+import java.text.BreakIterator
+import java.util.*
 import kotlin.math.abs
+
 
 class ReadView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
@@ -250,8 +253,21 @@ class ReadView(context: Context, attrs: AttributeSet) :
             firstRelativePage = relativePage
             firstLineIndex = lineIndex
             firstCharIndex = charIndex
+            val boundary = BreakIterator.getWordInstance(Locale.getDefault())
+            val lineText = curPage.textPage.textLines[lineIndex].text
+            boundary.setText(lineText)
+            var start = boundary.first()
+            var end = boundary.next()
+            while (end != BreakIterator.DONE) {
+                if (charIndex in start until end) {
+                    firstCharIndex = start
+                    break
+                }
+                start = end
+                end = boundary.next()
+            }
             curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-            curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
+            curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, end - 1)
         }
     }
 
