@@ -338,8 +338,17 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 }
                 end -= 1
             }
-            curPage.selectStartMoveIndex(firstRelativePage, lineStart, start)
-            curPage.selectEndMoveIndex(firstRelativePage, lineEnd, end)
+            try {
+                curPage.selectStartMoveIndex(firstRelativePage, lineStart, start)
+                curPage.selectEndMoveIndex(firstRelativePage, lineEnd, end)
+            } catch (e: Exception) {
+                print(
+                    """
+                    curPage.selectStartMoveIndex($firstRelativePage, $lineStart, $start)
+                    curPage.selectEndMoveIndex($firstRelativePage, $lineEnd, $end)
+                """.trimIndent()
+                )
+            }
         }
     }
 
