@@ -205,10 +205,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
         override fun getItem(position: Int): Fragment {
             return when (getId(position)) {
-                0 -> fragmentMap[0] ?: BookshelfFragment()
-                1 -> fragmentMap[1] ?: ExploreFragment()
-                2 -> fragmentMap[2] ?: RssFragment()
-                else -> fragmentMap[3] ?: MyFragment()
+                0 -> BookshelfFragment()
+                1 -> ExploreFragment()
+                2 -> RssFragment()
+                else -> MyFragment()
             }
         }
 
