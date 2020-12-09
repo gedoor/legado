@@ -7,7 +7,7 @@
  *
  */
 
-package io.legado.app.utils.icu4j;
+package io.legado.app.lib.icu4j;
 
 
 /**

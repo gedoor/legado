@@ -1,7 +1,7 @@
 package io.legado.app.utils
 
 import android.text.TextUtils
-import io.legado.app.utils.icu4j.CharsetDetector
+import io.legado.app.lib.icu4j.CharsetDetector
 import org.jsoup.Jsoup
 import java.io.File
 import java.io.FileInputStream
