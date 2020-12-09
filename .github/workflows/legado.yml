@@ -57,7 +57,7 @@ jobs:
           echo "开始进行release构建"
           chmod +x gradlew
           ./gradlew assembleAppRelease
-      - name: upload apk
+      - name: Upload App To Artifact
         if: ${{ env.UPLOAD_ARTIFACT != 'false' }}
         uses: actions/upload-artifact@v2
         with:
@@ -83,7 +83,7 @@ jobs:
             f.write(res.content)
         env:
           FILEPATH: ${{ github.workspace }}/.github/lzy.py
-      - name: Upload App
+      - name: Upload App To Lanzou
         if: ${{ env.LANZOU_PSD }}
         run: python $GITHUB_WORKSPACE/.github/lzy.py
         env:
