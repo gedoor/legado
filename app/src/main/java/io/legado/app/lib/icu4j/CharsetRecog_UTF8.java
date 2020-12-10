@@ -1,4 +1,5 @@
-/* GENERATED SOURCE. DO NOT MODIFY. */
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /**
  * ******************************************************************************
  * Copyright (C) 2005 - 2014, International Business Machines Corporation and  *
@@ -7,12 +8,12 @@
  */
 package io.legado.app.lib.icu4j;
 
-
 /**
  * Charset recognizer for UTF-8
  */
 class CharsetRecog_UTF8 extends CharsetRecognizer {
 
+    @Override
     String getName() {
         return "UTF-8";
     }
@@ -20,11 +21,12 @@ class CharsetRecog_UTF8 extends CharsetRecognizer {
     /* (non-Javadoc)
      * @see com.ibm.icu.text.CharsetRecognizer#match(com.ibm.icu.text.CharsetDetector)
      */
+    @Override
     CharsetMatch match(CharsetDetector det) {
         boolean hasBOM = false;
         int numValid = 0;
         int numInvalid = 0;
-        byte input[] = det.fRawInput;
+        byte[] input = det.fRawInput;
         int i;
         int trailBytes = 0;
         int confidence;

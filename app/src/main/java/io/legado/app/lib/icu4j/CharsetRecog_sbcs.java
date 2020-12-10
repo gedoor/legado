@@ -1,4 +1,5 @@
-/* GENERATED SOURCE. DO NOT MODIFY. */
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  ****************************************************************************
  * Copyright (C) 2005-2013, International Business Machines Corporation and *
@@ -9,7 +10,6 @@
 
 package io.legado.app.lib.icu4j;
 
-
 /**
  * This class recognizes single-byte encodings. Because the encoding scheme is so
  * simple, language statistics are used to do the matching.
@@ -19,6 +19,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
     /* (non-Javadoc)
      * @see com.ibm.icu.text.CharsetRecognizer#getName()
      */
+    @Override
     abstract String getName();
 
     static class NGramParser {
@@ -219,6 +220,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
             return next;
         }
 
+        @Override
         protected void parseCharacters(CharsetDetector det) {
             int b;
             boolean ignoreSpace = false;
@@ -406,6 +408,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
         };
 
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             String name = det.fC1Bytes ? "windows-1252" : "ISO-8859-1";
             int bestConfidenceSoFar = -1;
@@ -421,6 +424,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
         }
 
 
+        @Override
         public String getName() {
             return "ISO-8859-1";
         }
@@ -498,6 +502,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                         })
         };
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             String name = det.fC1Bytes ? "windows-1250" : "ISO-8859-2";
             int bestConfidenceSoFar = -1;
@@ -512,6 +517,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
             return bestConfidenceSoFar <= 0 ? null : new CharsetMatch(det, this, bestConfidenceSoFar, name, lang);
         }
 
+        @Override
         public String getName() {
             return "ISO-8859-2";
         }
@@ -555,6 +561,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 (byte) 0xF8, (byte) 0xF9, (byte) 0xFA, (byte) 0xFB, (byte) 0xFC, (byte) 0x20, (byte) 0xFE, (byte) 0xFF,
         };
 
+        @Override
         public String getName() {
             return "ISO-8859-5";
         }
@@ -568,10 +575,12 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0xDFDEDB, 0xDFE0D5, 0xDFE0D8, 0xDFE0DE, 0xE0D0D2, 0xE0D5D4, 0xE1E2D0, 0xE1E2D2, 0xE1E2D8, 0xE1EF20, 0xE2D5DB, 0xE2DE20, 0xE2DEE0, 0xE2EC20, 0xE7E2DE, 0xEBE520,
         };
 
+        @Override
         public String getLanguage() {
             return "ru";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, ngrams, byteMap);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -614,6 +623,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 (byte) 0x20, (byte) 0x20, (byte) 0x20, (byte) 0x20, (byte) 0x20, (byte) 0x20, (byte) 0x20, (byte) 0x20,
         };
 
+        @Override
         public String getName() {
             return "ISO-8859-6";
         }
@@ -627,10 +637,12 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0xE520C7, 0xE5C720, 0xE5C920, 0xE5E620, 0xE620C7, 0xE720C7, 0xE7C720, 0xE8C7E4, 0xE8E620, 0xE920C7, 0xEA20C7, 0xEA20E5, 0xEA20E8, 0xEAC920, 0xEAD120, 0xEAE620,
         };
 
+        @Override
         public String getLanguage() {
             return "ar";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, ngrams, byteMap);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -673,6 +685,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 (byte) 0xF8, (byte) 0xF9, (byte) 0xFA, (byte) 0xFB, (byte) 0xFC, (byte) 0xFD, (byte) 0xFE, (byte) 0x20,
         };
 
+        @Override
         public String getName() {
             return "ISO-8859-7";
         }
@@ -686,10 +699,12 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0xF220EA, 0xF220F0, 0xF220F4, 0xF3E520, 0xF3E720, 0xF3F4EF, 0xF4E120, 0xF4E1E9, 0xF4E7ED, 0xF4E7F2, 0xF4E9EA, 0xF4EF20, 0xF4EFF5, 0xF4F9ED, 0xF9ED20, 0xFEED20,
         };
 
+        @Override
         public String getLanguage() {
             return "el";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             String name = det.fC1Bytes ? "windows-1253" : "ISO-8859-7";
             int confidence = match(det, ngrams, byteMap);
@@ -733,6 +748,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 (byte) 0xF8, (byte) 0xF9, (byte) 0xFA, (byte) 0x20, (byte) 0x20, (byte) 0x20, (byte) 0x20, (byte) 0x20,
         };
 
+        @Override
         public String getName() {
             return "ISO-8859-8";
         }
@@ -746,14 +762,17 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0xED20F9, 0xEEE420, 0xEF20E4, 0xF0E420, 0xF0E920, 0xF0E9ED, 0xF2EC20, 0xF820E4, 0xF8E9ED, 0xF9EC20, 0xFA20E0, 0xFA20E1, 0xFA20E4, 0xFA20EC, 0xFA20EE, 0xFA20F9,
         };
 
+        @Override
         public String getName() {
             return "ISO-8859-8-I";
         }
 
+        @Override
         public String getLanguage() {
             return "he";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             String name = det.fC1Bytes ? "windows-1255" : "ISO-8859-8-I";
             int confidence = match(det, ngrams, byteMap);
@@ -769,10 +788,12 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0xEDE9E9, 0xEDE9F0, 0xEDE9F8, 0xEE20E4, 0xEE20ED, 0xEE20FA, 0xEEE120, 0xEEE420, 0xF2E420, 0xF920E4, 0xF920ED, 0xF920FA, 0xF9E420, 0xFAE020, 0xFAE420, 0xFAE5E9,
         };
 
+        @Override
         public String getLanguage() {
             return "he";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             String name = det.fC1Bytes ? "windows-1255" : "ISO-8859-8";
             int confidence = match(det, ngrams, byteMap);
@@ -817,6 +838,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 (byte) 0xF8, (byte) 0xF9, (byte) 0xFA, (byte) 0xFB, (byte) 0xFC, (byte) 0xFD, (byte) 0xFE, (byte) 0xFF,
         };
 
+        @Override
         public String getName() {
             return "ISO-8859-9";
         }
@@ -830,10 +852,12 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0x6E206B, 0x6E6461, 0x6E6465, 0x6E6520, 0x6E6920, 0x6E696E, 0x6EFD20, 0x72696E, 0x72FD6E, 0x766520, 0x796120, 0x796F72, 0xFD6E20, 0xFD6E64, 0xFD6EFD, 0xFDF0FD,
         };
 
+        @Override
         public String getLanguage() {
             return "tr";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             String name = det.fC1Bytes ? "windows-1254" : "ISO-8859-9";
             int confidence = match(det, ngrams, byteMap);
@@ -884,14 +908,17 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 (byte) 0xF8, (byte) 0xF9, (byte) 0xFA, (byte) 0xFB, (byte) 0xFC, (byte) 0xFD, (byte) 0xFE, (byte) 0xFF,
         };
 
+        @Override
         public String getName() {
             return "windows-1251";
         }
 
+        @Override
         public String getLanguage() {
             return "ru";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, ngrams, byteMap);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -941,14 +968,17 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 (byte) 0x20, (byte) 0xF9, (byte) 0x20, (byte) 0xFB, (byte) 0xFC, (byte) 0x20, (byte) 0x20, (byte) 0xFF,
         };
 
+        @Override
         public String getName() {
             return "windows-1256";
         }
 
+        @Override
         public String getLanguage() {
             return "ar";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, ngrams, byteMap);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -998,14 +1028,17 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 (byte) 0xD8, (byte) 0xD9, (byte) 0xDA, (byte) 0xDB, (byte) 0xDC, (byte) 0xDD, (byte) 0xDE, (byte) 0xDF,
         };
 
+        @Override
         public String getName() {
             return "KOI8-R";
         }
 
+        @Override
         public String getLanguage() {
             return "ru";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, ngrams, byteMap);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -1033,12 +1066,14 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
 /* F- */    (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40, (byte) 0x40,
         };
 
+        @Override
         public String getLanguage() {
             return "he";
         }
     }
 
     static class CharsetRecog_IBM424_he_rtl extends CharsetRecog_IBM424_he {
+        @Override
         public String getName() {
             return "IBM424_rtl";
         }
@@ -1050,6 +1085,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0x554069, 0x564540, 0x574045, 0x584540, 0x585140, 0x585155, 0x625440, 0x684045, 0x685155, 0x695440, 0x714041, 0x714042, 0x714045, 0x714054, 0x714056, 0x714069,
         };
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, ngrams, byteMap, (byte) 0x40);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -1057,6 +1093,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
     }
 
     static class CharsetRecog_IBM424_he_ltr extends CharsetRecog_IBM424_he {
+        @Override
         public String getName() {
             return "IBM424_ltr";
         }
@@ -1069,6 +1106,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
 
         };
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, ngrams, byteMap, (byte) 0x40);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -1098,6 +1136,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
         };
 
 
+        @Override
         public String getLanguage() {
             return "ar";
         }
@@ -1112,10 +1151,12 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0xBB4056, 0xBB5640, 0xBB6240, 0xBBBD40, 0xBD4056, 0xBF4056, 0xBF5640, 0xCF56B1, 0xCFBD40, 0xDA4056, 0xDC4056, 0xDC40BB, 0xDC40CF, 0xDC6240, 0xDC7540, 0xDCBD40,
         };
 
+        @Override
         public String getName() {
             return "IBM420_rtl";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = matchIBM420(det, ngrams, byteMap, (byte) 0x40);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -1131,10 +1172,12 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
                 0xB14062, 0xB15640, 0xB156CF, 0xB19A40, 0xB1B140, 0xBB4062, 0xBB40DC, 0xBBB156, 0xBD5640, 0xBDBB40, 0xCF4062, 0xCF40DC, 0xCFB156, 0xDAB19A, 0xDCAB40, 0xDCB156
         };
 
+        @Override
         public String getName() {
             return "IBM420_ltr";
         }
 
+        @Override
         public CharsetMatch match(CharsetDetector det) {
             int confidence = matchIBM420(det, ngrams, byteMap, (byte) 0x40);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);

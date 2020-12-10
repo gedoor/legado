@@ -1,4 +1,5 @@
-/* GENERATED SOURCE. DO NOT MODIFY. */
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
  * Copyright (C) 1996-2013, International Business Machines Corporation and    *
@@ -9,7 +10,6 @@
 
 package io.legado.app.lib.icu4j;
 
-
 /**
  * This class matches UTF-16 and UTF-32, both big- and little-endian. The
  * BOM will be used if it is present.
@@ -19,11 +19,13 @@ abstract class CharsetRecog_Unicode extends CharsetRecognizer {
     /* (non-Javadoc)
      * @see com.ibm.icu.text.CharsetRecognizer#getName()
      */
+    @Override
     abstract String getName();
 
     /* (non-Javadoc)
      * @see com.ibm.icu.text.CharsetRecognizer#match(com.ibm.icu.text.CharsetDetector)
      */
+    @Override
     abstract CharsetMatch match(CharsetDetector det);
 
     static int codeUnit16FromBytes(byte hi, byte lo) {
@@ -34,7 +36,7 @@ abstract class CharsetRecog_Unicode extends CharsetRecognizer {
     //   Any 8 bit non-control characters bump the confidence up. These have a zero high byte,
     //     and are very likely to be UTF-16, although they could also be part of a UTF-32 code.
     //   NULs are a contra-indication, they will appear commonly if the actual encoding is UTF-32.
-    //   NULs should be rare in actual text. 
+    //   NULs should be rare in actual text.
     static int adjustConfidence(int codeUnit, int confidence) {
         if (codeUnit == 0) {
             confidence -= 10;
@@ -50,10 +52,12 @@ abstract class CharsetRecog_Unicode extends CharsetRecognizer {
     }
 
     static class CharsetRecog_UTF_16_BE extends CharsetRecog_Unicode {
+        @Override
         String getName() {
             return "UTF-16BE";
         }
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             byte[] input = det.fRawInput;
             int confidence = 10;
@@ -81,10 +85,12 @@ abstract class CharsetRecog_Unicode extends CharsetRecognizer {
     }
 
     static class CharsetRecog_UTF_16_LE extends CharsetRecog_Unicode {
+        @Override
         String getName() {
             return "UTF-16LE";
         }
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             byte[] input = det.fRawInput;
             int confidence = 10;
@@ -114,8 +120,10 @@ abstract class CharsetRecog_Unicode extends CharsetRecognizer {
     static abstract class CharsetRecog_UTF_32 extends CharsetRecog_Unicode {
         abstract int getChar(byte[] input, int index);
 
+        @Override
         abstract String getName();
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             byte[] input = det.fRawInput;
             int limit = (det.fRawLength / 4) * 4;
@@ -162,11 +170,13 @@ abstract class CharsetRecog_Unicode extends CharsetRecognizer {
     }
 
     static class CharsetRecog_UTF_32_BE extends CharsetRecog_UTF_32 {
+        @Override
         int getChar(byte[] input, int index) {
             return (input[index + 0] & 0xFF) << 24 | (input[index + 1] & 0xFF) << 16 |
                     (input[index + 2] & 0xFF) << 8 | (input[index + 3] & 0xFF);
         }
 
+        @Override
         String getName() {
             return "UTF-32BE";
         }
@@ -174,11 +184,13 @@ abstract class CharsetRecog_Unicode extends CharsetRecognizer {
 
 
     static class CharsetRecog_UTF_32_LE extends CharsetRecog_UTF_32 {
+        @Override
         int getChar(byte[] input, int index) {
             return (input[index + 3] & 0xFF) << 24 | (input[index + 2] & 0xFF) << 16 |
                     (input[index + 1] & 0xFF) << 8 | (input[index + 0] & 0xFF);
         }
 
+        @Override
         String getName() {
             return "UTF-32LE";
         }

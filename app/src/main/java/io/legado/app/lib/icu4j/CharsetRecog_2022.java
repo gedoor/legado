@@ -1,4 +1,5 @@
-/* GENERATED SOURCE. DO NOT MODIFY. */
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
  * Copyright (C) 2005 - 2012, International Business Machines Corporation and  *
@@ -6,7 +7,6 @@
  *******************************************************************************
  */
 package io.legado.app.lib.icu4j;
-
 
 /**
  * class CharsetRecog_2022  part of the ICU charset detection imlementation.
@@ -74,7 +74,7 @@ abstract class CharsetRecog_2022 extends CharsetRecognizer {
 
         //
         // Initial quality is based on relative proportion of recongized vs.
-        //   unrecognized escape sequences. 
+        //   unrecognized escape sequences.
         //   All good:  quality = 100;
         //   half or less good: quality = 0;
         //   linear inbetween.
@@ -110,10 +110,12 @@ abstract class CharsetRecog_2022 extends CharsetRecognizer {
                 {0x1b, 0x2e, 0x46}          // ISO 8859-7
         };
 
+        @Override
         String getName() {
             return "ISO-2022-JP";
         }
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             int confidence = match(det.fInputBytes, det.fInputLen, escapeSequences);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -125,10 +127,12 @@ abstract class CharsetRecog_2022 extends CharsetRecognizer {
                 {0x1b, 0x24, 0x29, 0x43}
         };
 
+        @Override
         String getName() {
             return "ISO-2022-KR";
         }
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             int confidence = match(det.fInputBytes, det.fInputLen, escapeSequences);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
@@ -150,10 +154,12 @@ abstract class CharsetRecog_2022 extends CharsetRecognizer {
                 {0x1b, 0x4f},               // SS3
         };
 
+        @Override
         String getName() {
             return "ISO-2022-CN";
         }
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             int confidence = match(det.fInputBytes, det.fInputLen, escapeSequences);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);

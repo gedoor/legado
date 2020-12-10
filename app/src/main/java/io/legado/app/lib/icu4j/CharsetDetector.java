@@ -1,7 +1,8 @@
-/* GENERATED SOURCE. DO NOT MODIFY. */
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /**
  * ******************************************************************************
- * Copyright (C) 2005-2014, International Business Machines Corporation and    *
+ * Copyright (C) 2005-2016, International Business Machines Corporation and    *
  * others. All Rights Reserved.                                                *
  * ******************************************************************************
  */
@@ -23,21 +24,21 @@ import java.util.List;
  * The result of the detection operation is a list of possibly matching
  * charsets, or, for simple use, you can just ask for a Java Reader that
  * will will work over the input data.
- * <p/>
+ * <p>
  * Character set detection is at best an imprecise operation.  The detection
  * process will attempt to identify the charset that best matches the characteristics
  * of the byte data, but the process is partly statistical in nature, and
  * the results can not be guaranteed to always be correct.
- * <p/>
+ * <p>
  * For best accuracy in charset detection, the input data should be primarily
  * in a single language, and a minimum of a few hundred bytes worth of plain text
  * in the language are needed.  The detection process will attempt to
  * ignore html or xml style markup that could otherwise obscure the content.
- * <p/>
+ * <p>
  *
  * @stable ICU 3.4
- * @hide All android.icu classes are currently hidden
  */
+@SuppressWarnings({"JavaDoc", "unused", "RedundantSuppression"})
 public class CharsetDetector {
 
 //   Question: Should we have getters corresponding to the setters for input text
@@ -51,7 +52,7 @@ public class CharsetDetector {
 //   wants the data, and doesn't care about a char set name.
 
     /**
-     * Constructor
+     *   Constructor
      *
      * @stable ICU 3.4
      */
@@ -60,17 +61,18 @@ public class CharsetDetector {
 
     /**
      * Set the declared encoding for charset detection.
-     * The declared encoding of an input text is an encoding obtained
-     * from an http header or xml declaration or similar source that
-     * can be provided as additional information to the charset detector.
-     * A match between a declared encoding and a possible detected encoding
-     * will raise the quality of that detected encoding by a small delta,
-     * and will also appear as a "reason" for the match.
-     * <p/>
+     *  The declared encoding of an input text is an encoding obtained
+     *  from an http header or xml declaration or similar source that
+     *  can be provided as additional information to the charset detector.  
+     *  A match between a declared encoding and a possible detected encoding
+     *  will raise the quality of that detected encoding by a small delta,
+     *  and will also appear as a "reason" for the match.
+     * <p>
      * A declared encoding that is incompatible with the input data being
      * analyzed will not be added to the list of possible encodings.
      *
-     * @param encoding The declared encoding
+     *  @param encoding The declared encoding 
+     *
      * @stable ICU 3.4
      */
     public CharsetDetector setDeclaredEncoding(String encoding) {
@@ -82,7 +84,9 @@ public class CharsetDetector {
      * Set the input text (byte) data whose charset is to be detected.
      *
      * @param in the input text of unknown encoding
+     *
      * @return This CharsetDetector
+     *
      * @stable ICU 3.4
      */
     public CharsetDetector setText(byte[] in) {
@@ -96,15 +100,17 @@ public class CharsetDetector {
 
     /**
      * Set the input text (byte) data whose charset is to be detected.
-     * <p/>
-     * The input stream that supplies the character data must have markSupported()
-     * == true; the charset detection process will read a small amount of data,
-     * then return the stream to its original position via
-     * the InputStream.reset() operation.  The exact amount that will
-     * be read depends on the characteristics of the data itself.
+     *  <p>
+     *   The input stream that supplies the character data must have markSupported()
+     *   == true; the charset detection process will read a small amount of data,
+     *   then return the stream to its original position via
+     *   the InputStream.reset() operation.  The exact amount that will
+     *   be read depends on the characteristics of the data itself.
      *
      * @param in the input text of unknown encoding
+     *
      * @return This CharsetDetector
+     *
      * @stable ICU 3.4
      */
 
@@ -133,20 +139,21 @@ public class CharsetDetector {
 
     /**
      * Return the charset that best matches the supplied input data.
-     * <p>
-     * Note though, that because the detection
+     *
+     * Note though, that because the detection 
      * only looks at the start of the input data,
      * there is a possibility that the returned charset will fail to handle
      * the full set of input data.
-     * p/>
-     * aise an exception if
-     * <ul>
-     *   <li>no charset appears to match the data.</li>
-     *   <li>no input text has been provided</li>
-     * </ul>
+     * <p>
+     * Raise an exception if 
+     *  <ul>
+     *    <li>no charset appears to match the data.</li>
+     *    <li>no input text has been provided</li>
+     *  </ul>
      *
      * @return a CharsetMatch object representing the best matching charset, or
-     * <code>null</code> if there are no matches.
+     *         <code>null</code> if there are no matches.
+     *
      * @stable ICU 3.4
      */
     public CharsetMatch detect() {
@@ -154,7 +161,7 @@ public class CharsetDetector {
 //          detectAll(), and cut it short as soon as a match with a high confidence
 //          is found.  This is something to be done later, after things are otherwise
 //          working.
-        CharsetMatch matches[] = detectAll();
+        CharsetMatch[] matches = detectAll();
 
         if (matches == null || matches.length == 0) {
             return null;
@@ -164,21 +171,22 @@ public class CharsetDetector {
     }
 
     /**
-     * Return an array of all charsets that appear to be plausible
-     * matches with the input data.  The array is ordered with the
-     * best quality match first.
-     * <p/>
-     * aise an exception if
-     * <ul>
-     *   <li>no charsets appear to match the input data.</li>
-     *   <li>no input text has been provided</li>
-     * </ul>
+     *  Return an array of all charsets that appear to be plausible
+     *  matches with the input data.  The array is ordered with the
+     *  best quality match first.
+     * <p>
+     * Raise an exception if 
+     *  <ul>
+     *    <li>no charsets appear to match the input data.</li>
+     *    <li>no input text has been provided</li>
+     *  </ul>
      *
      * @return An array of CharsetMatch objects representing possibly matching charsets.
+     *
      * @stable ICU 3.4
      */
     public CharsetMatch[] detectAll() {
-        ArrayList<CharsetMatch> matches = new ArrayList<CharsetMatch>();
+        ArrayList<CharsetMatch> matches = new ArrayList<>();
 
         MungeInput();  // Strip html markup, collect byte stats.
 
@@ -205,21 +213,23 @@ public class CharsetDetector {
     /**
      * Autodetect the charset of an inputStream, and return a Java Reader
      * to access the converted input data.
-     * <p/>
+     * <p>
      * This is a convenience method that is equivalent to
-     * <code>this.setDeclaredEncoding(declaredEncoding).setText(in).detect().getReader();</code>
-     * <p/>
-     * For the input stream that supplies the character data, markSupported()
-     * must be true; the  charset detection will read a small amount of data,
-     * then return the stream to its original position via
-     * the InputStream.reset() operation.  The exact amount that will
-     * be read depends on the characteristics of the data itself.
-     * <p/>
+     *   <code>this.setDeclaredEncoding(declaredEncoding).setText(in).detect().getReader();</code>
+     * <p>
+     *   For the input stream that supplies the character data, markSupported()
+     *   must be true; the  charset detection will read a small amount of data,
+     *   then return the stream to its original position via
+     *   the InputStream.reset() operation.  The exact amount that will
+     *    be read depends on the characteristics of the data itself.
+     *<p>
      * Raise an exception if no charsets appear to match the input data.
      *
-     * @param in               The source of the byte data in the unknown charset.
-     * @param declaredEncoding A declared encoding for the data, if available,
-     *                         or null or an empty string if none is available.
+     * @param in The source of the byte data in the unknown charset.
+     *
+     * @param declaredEncoding  A declared encoding for the data, if available,
+     *           or null or an empty string if none is available.
+     *
      * @stable ICU 3.4
      */
     public Reader getReader(InputStream in, String declaredEncoding) {
@@ -243,15 +253,17 @@ public class CharsetDetector {
     /**
      * Autodetect the charset of an inputStream, and return a String
      * containing the converted input data.
-     * <p/>
+     * <p>
      * This is a convenience method that is equivalent to
-     * <code>this.setDeclaredEncoding(declaredEncoding).setText(in).detect().getString();</code>
-     * <p/>
+     *   <code>this.setDeclaredEncoding(declaredEncoding).setText(in).detect().getString();</code>
+     *<p>
      * Raise an exception if no charsets appear to match the input data.
      *
-     * @param in               The source of the byte data in the unknown charset.
-     * @param declaredEncoding A declared encoding for the data, if available,
-     *                         or null or an empty string if none is available.
+     * @param in The source of the byte data in the unknown charset.
+     *
+     * @param declaredEncoding  A declared encoding for the data, if available,
+     *           or null or an empty string if none is available.
+     *
      * @stable ICU 3.4
      */
     public String getString(byte[] in, String declaredEncoding) {
@@ -285,6 +297,7 @@ public class CharsetDetector {
      *
      * @return an array of the names of all charsets supported by
      * <code>CharsetDetector</code> class.
+     *
      * @stable ICU 3.4
      */
     public static String[] getAllDetectableCharsets() {
@@ -299,8 +312,10 @@ public class CharsetDetector {
      * Test whether or not input filtering is enabled.
      *
      * @return <code>true</code> if input text will be filtered.
-     * @stable ICU 3.4
+     *
      * @see #enableInputFilter
+     *
+     * @stable ICU 3.4
      */
     public boolean inputFilterEnabled() {
         return fStripTags;
@@ -308,11 +323,13 @@ public class CharsetDetector {
 
     /**
      * Enable filtering of input text. If filtering is enabled,
-     * text within angle brackets ("<" and ">") will be removed
+     * text within angle brackets ("&lt;" and "&gt;") will be removed
      * before detection.
      *
      * @param filter <code>true</code> to enable input text filtering.
+     *
      * @return The previous setting.
+     *
      * @stable ICU 3.4
      */
     public boolean enableInputFilter(boolean filter) {
@@ -412,7 +429,7 @@ public class CharsetDetector {
 
     int fInputLen;          // Length of the byte data in fInputBytes.
 
-    short fByteStats[] =      // byte frequency statistics for the input text.
+    short[] fByteStats =      // byte frequency statistics for the input text.
             new short[256];  //   Value is percent, not absolute.
     //   Value is rounded up, so zero really means zero occurences.
 
@@ -457,7 +474,7 @@ public class CharsetDetector {
     private static final List<CSRecognizerInfo> ALL_CS_RECOGNIZERS;
 
     static {
-        List<CSRecognizerInfo> list = new ArrayList<CSRecognizerInfo>();
+        List<CSRecognizerInfo> list = new ArrayList<>();
 
         list.add(new CSRecognizerInfo(new CharsetRecog_UTF8(), true));
         list.add(new CSRecognizerInfo(new CharsetRecog_Unicode.CharsetRecog_UTF_16_BE(), true));
@@ -500,13 +517,13 @@ public class CharsetDetector {
      *
      * @return an array of the names of charsets that can be recognized by this CharsetDetector
      * instance.
-     * <p>
-     * {@literal @}internal
+     *
+     * @internal
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
     public String[] getDetectableCharsets() {
-        List<String> csnames = new ArrayList<String>(ALL_CS_RECOGNIZERS.size());
+        List<String> csnames = new ArrayList<>(ALL_CS_RECOGNIZERS.size());
         for (int i = 0; i < ALL_CS_RECOGNIZERS.size(); i++) {
             CSRecognizerInfo rcinfo = ALL_CS_RECOGNIZERS.get(i);
             boolean active = (fEnabledRecognizers == null) ? rcinfo.isDefaultEnabled : fEnabledRecognizers[i];
@@ -514,7 +531,7 @@ public class CharsetDetector {
                 csnames.add(rcinfo.recognizer.getName());
             }
         }
-        return csnames.toArray(new String[csnames.size()]);
+        return csnames.toArray(new String[0]);
     }
 
     /**
@@ -523,13 +540,13 @@ public class CharsetDetector {
      * {@link #getAllDetectableCharsets()}.
      *
      * @param encoding the name of charset encoding.
-     * @param enabled  <code>true</code> to enable, or <code>false</code> to disable the
-     *                 charset encoding.
+     * @param enabled <code>true</code> to enable, or <code>false</code> to disable the
+     * charset encoding.
      * @return A reference to this <code>CharsetDetector</code>.
      * @throws IllegalArgumentException when the name of charset encoding is
-     *                                  not supported.
-     *                                  <p>
-     *                                  {@literal @}internal
+     * not supported.
+     *
+     * @internal
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
