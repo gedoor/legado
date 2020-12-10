@@ -11,7 +11,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.help.storage.SyncBookProgress
+import io.legado.app.help.storage.BookWebDav
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
@@ -47,12 +47,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
-            SyncBookProgress.getBookProgress(book)?.let {
-                book.durChapterIndex = it.durChapterIndex
-                book.durChapterPos = it.durChapterPos
-                book.durChapterTime = it.durChapterTime
-                book.durChapterTitle = it.durChapterTitle
-            }
+            downloadProgress(book)
             ReadBook.resetData(book)
             isInitFinish = true
             if (!book.isLocalBook() && ReadBook.webBook == null) {
@@ -102,6 +97,15 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.loadContent(resetPageOffset = true)
                 }
             }
+        }
+    }
+
+    private fun downloadProgress(book: Book) {
+        BookWebDav.getBookProgress(book)?.let {
+            book.durChapterIndex = it.durChapterIndex
+            book.durChapterPos = it.durChapterPos
+            book.durChapterTime = it.durChapterTime
+            book.durChapterTitle = it.durChapterTitle
         }
     }
 
@@ -159,6 +163,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }?.onError {
                     ReadBook.upMsg(context.getString(R.string.error_load_toc))
                 }
+        }
+    }
+
+    fun syncBookProgress(book: Book) {
+        execute {
+            downloadProgress(book)
+            ReadBook.durChapterIndex = book.durChapterIndex
+            ReadBook.durChapterPos = book.durChapterPos
+            ReadBook.prevTextChapter = null
+            ReadBook.clearTextChapter()
+            ReadBook.loadContent(resetPageOffset = true)
         }
     }
 

@@ -52,10 +52,8 @@ object ReadBook {
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
         isLocalBook = book.origin == BookType.local
-        chapterSize = 0
-        prevTextChapter = null
-        curTextChapter = null
-        nextTextChapter = null
+        chapterSize = book.totalChapterNum
+        clearTextChapter()
         titleDate.postValue(book.name)
         callBack?.upPageAnim()
         upWebBook(book)
@@ -78,6 +76,12 @@ object ReadBook {
                 webBook = null
             }
         }
+    }
+
+    fun clearTextChapter() {
+        prevTextChapter = null
+        curTextChapter = null
+        nextTextChapter = null
     }
 
     fun upReadStartTime() {

@@ -95,7 +95,7 @@ object Backup {
                     }
                     edit.commit()
                 }
-                WebDavHelp.backUpWebDav(backupPath)
+                BookWebDav.backUpWebDav(backupPath)
                 if (path.isContentScheme()) {
                     copyBackup(context, Uri.parse(path), isAuto)
                 } else {
