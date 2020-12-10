@@ -38,6 +38,7 @@ cookie 变量-cookie操作类,方法见 io.legado.app.help.http.CookieStore
 cache 变量-缓存操作类,方法见 io.legado.app.help.CacheManager
 chapter 变量-当前目录类,方法见 io.legado.app.data.entities.BookChapter
 title 变量-当前标题,String
+src 内容,源码
 ```
 
  ## 部分js对象属性说明
