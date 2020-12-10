@@ -6,6 +6,8 @@ import android.os.Looper
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookProgress
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.webdav.HttpAuth
@@ -19,8 +21,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-object WebDavHelp {
+object BookWebDav {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
+    private val bookProgressUrl = "${rootWebDavUrl}bookProgress/"
     private val zipFilePath = "${FileUtils.getCachePath()}${File.separator}backup.zip"
 
     val rootWebDavUrl: String
@@ -42,6 +45,7 @@ object WebDavHelp {
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
             HttpAuth.auth = HttpAuth.Auth(account, password)
             WebDav(rootWebDavUrl).makeAsDir()
+            WebDav(bookProgressUrl).makeAsDir()
             return true
         }
         return false
@@ -138,5 +142,40 @@ object WebDavHelp {
                 App.INSTANCE.toast("WebDav导出\n${e.localizedMessage}")
             }
         }
+    }
+
+    fun uploadBookProgress(book: Book) {
+        Coroutine.async {
+            val bookProgress = BookProgress(
+                name = book.name,
+                author = book.author,
+                durChapterIndex = book.durChapterIndex,
+                durChapterPos = book.durChapterPos,
+                durChapterTime = book.durChapterTime,
+                durChapterTitle = book.durChapterTitle
+            )
+            val json = GSON.toJson(bookProgress)
+            val url = getUrl(book)
+            if (initWebDav()) {
+                WebDav(url).upload(json.toByteArray())
+            }
+        }
+    }
+
+    fun getBookProgress(book: Book): BookProgress? {
+        if (initWebDav()) {
+            val url = getUrl(book)
+            WebDav(url).download()?.let { byteArray ->
+                val json = String(byteArray)
+                GSON.fromJsonObject<BookProgress>(json)?.let {
+                    return it
+                }
+            }
+        }
+        return null
+    }
+
+    private fun getUrl(book: Book): String {
+        return bookProgressUrl + book.name + "_" + book.author + ".json"
     }
 }

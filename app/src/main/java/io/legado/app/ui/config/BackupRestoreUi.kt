@@ -13,9 +13,9 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
+import io.legado.app.help.storage.BookWebDav
 import io.legado.app.help.storage.ImportOldData
 import io.legado.app.help.storage.Restore
-import io.legado.app.help.storage.WebDavHelp
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentScheme
@@ -77,7 +77,7 @@ object BackupRestoreUi {
 
     fun restore(fragment: Fragment) {
         Coroutine.async(context = Main) {
-            WebDavHelp.showRestoreDialog(fragment.requireContext())
+            BookWebDav.showRestoreDialog(fragment.requireContext())
         }.onError {
             fragment.longToast("WebDavError:${it.localizedMessage}\n将从本地备份恢复。")
             val backupPath = fragment.getPrefString(PreferKey.backupPath)
