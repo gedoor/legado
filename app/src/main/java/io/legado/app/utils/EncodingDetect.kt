@@ -69,7 +69,7 @@ object EncodingDetect {
 
     private fun getFileBytes(testFile: File?): ByteArray {
         val fis: FileInputStream
-        val byteArray: ByteArray = ByteArray(2000)
+        val byteArray = ByteArray(2000)
         try {
             fis = FileInputStream(testFile)
             fis.read(byteArray)
