@@ -1,4 +1,5 @@
-/* GENERATED SOURCE. DO NOT MODIFY. */
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  ****************************************************************************
  * Copyright (C) 2005-2012, International Business Machines Corporation and *
@@ -7,7 +8,6 @@
  *
  */
 package io.legado.app.lib.icu4j;
-
 
 import java.util.Arrays;
 
@@ -30,6 +30,7 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
      *
      * @return the charset name.
      */
+    @Override
     abstract String getName();
 
 
@@ -142,14 +143,12 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
     //
     static class iteratedChar {
         int charValue = 0;             // 1-4 bytes from the raw input data
-        int index = 0;
         int nextIndex = 0;
         boolean error = false;
         boolean done = false;
 
         void reset() {
             charValue = 0;
-            index = -1;
             nextIndex = 0;
             error = false;
             done = false;
@@ -160,7 +159,7 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                 done = true;
                 return -1;
             }
-            int byteValue = (int) det.fRawInput[nextIndex++] & 0x00ff;
+            int byteValue = det.fRawInput[nextIndex++] & 0x00ff;
             return byteValue;
         }
     }
@@ -196,8 +195,8 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                         0x8343, 0x834e, 0x834f, 0x8358, 0x835e, 0x8362, 0x8367, 0x8375, 0x8376, 0x8389,
                         0x838a, 0x838b, 0x838d, 0x8393, 0x8e96, 0x93fa, 0x95aa};
 
+        @Override
         boolean nextChar(iteratedChar it, CharsetDetector det) {
-            it.index = it.nextIndex;
             it.error = false;
             int firstByte;
             firstByte = it.charValue = it.nextByte(det);
@@ -221,15 +220,18 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
             return true;
         }
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, commonChars);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
         }
 
+        @Override
         String getName() {
             return "Shift_JIS";
         }
 
+        @Override
         public String getLanguage() {
             return "ja";
         }
@@ -257,8 +259,8 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                         0xb5a5, 0xb5bd, 0xb5d0, 0xb5d8, 0xb671, 0xb7ed, 0xb867, 0xb944, 0xbad8, 0xbb44,
                         0xbba1, 0xbdd1, 0xc2c4, 0xc3b9, 0xc440, 0xc45f};
 
+        @Override
         boolean nextChar(iteratedChar it, CharsetDetector det) {
-            it.index = it.nextIndex;
             it.error = false;
             int firstByte;
             firstByte = it.charValue = it.nextByte(det);
@@ -285,16 +287,19 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
             return true;
         }
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, commonChars);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
         }
 
+        @Override
         String getName() {
             return "Big5";
         }
 
 
+        @Override
         public String getLanguage() {
             return "zh";
         }
@@ -314,8 +319,8 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
          *  Character "value" is simply the raw bytes that make up the character
          *     packed into an int.
          */
+        @Override
         boolean nextChar(iteratedChar it, CharsetDetector det) {
-            it.index = it.nextIndex;
             it.error = false;
             int firstByte = 0;
             int secondByte = 0;
@@ -392,15 +397,18 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                             0xa5e5, 0xa5e9, 0xa5ea, 0xa5eb, 0xa5ec, 0xa5ed, 0xa5f3, 0xb8a9, 0xb9d4, 0xbaee,
                             0xbbc8, 0xbef0, 0xbfb7, 0xc4ea, 0xc6fc, 0xc7bd, 0xcab8, 0xcaf3, 0xcbdc, 0xcdd1};
 
+            @Override
             String getName() {
                 return "EUC-JP";
             }
 
+            @Override
             CharsetMatch match(CharsetDetector det) {
                 int confidence = match(det, commonChars);
                 return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
             }
 
+            @Override
             public String getLanguage() {
                 return "ja";
             }
@@ -426,15 +434,18 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                             0xc0da, 0xc0e5, 0xc0fb, 0xc0fc, 0xc1a4, 0xc1a6, 0xc1b6, 0xc1d6, 0xc1df, 0xc1f6,
                             0xc1f8, 0xc4a1, 0xc5cd, 0xc6ae, 0xc7cf, 0xc7d1, 0xc7d2, 0xc7d8, 0xc7e5, 0xc8ad};
 
+            @Override
             String getName() {
                 return "EUC-KR";
             }
 
+            @Override
             CharsetMatch match(CharsetDetector det) {
                 int confidence = match(det, commonChars);
                 return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
             }
 
+            @Override
             public String getLanguage() {
                 return "ko";
             }
@@ -452,8 +463,8 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
          *  Character "value" is simply the raw bytes that make up the character
          *     packed into an int.
          */
+        @Override
         boolean nextChar(iteratedChar it, CharsetDetector det) {
-            it.index = it.nextIndex;
             it.error = false;
             int firstByte = 0;
             int secondByte = 0;
@@ -522,15 +533,18 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                         0xd2b5, 0xd2bb, 0xd2d4, 0xd3c3, 0xd3d0, 0xd3fd, 0xd4c2, 0xd4da, 0xd5e2, 0xd6d0};
 
 
+        @Override
         String getName() {
             return "GB18030";
         }
 
+        @Override
         CharsetMatch match(CharsetDetector det) {
             int confidence = match(det, commonChars);
             return confidence == 0 ? null : new CharsetMatch(det, this, confidence);
         }
 
+        @Override
         public String getLanguage() {
             return "zh";
         }
