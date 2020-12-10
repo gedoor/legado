@@ -26,7 +26,7 @@ object BookWebDav {
     private val bookProgressUrl = "${rootWebDavUrl}bookProgress/"
     private val zipFilePath = "${FileUtils.getCachePath()}${File.separator}backup.zip"
 
-    val rootWebDavUrl: String
+    private val rootWebDavUrl: String
         get() {
             var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
             if (url.isNullOrEmpty()) {
