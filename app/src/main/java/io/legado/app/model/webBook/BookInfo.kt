@@ -44,7 +44,7 @@ object BookInfo {
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取作者")
         BookHelp.formatBookAuthor(analyzeRule.getString(infoRule.author)).let {
-            if (it.isNotEmpty() && (mCanReName || book.name.isEmpty())) {
+            if (it.isNotEmpty() && (mCanReName || book.author.isEmpty())) {
                 book.author = it
             }
             Debug.log(bookSource.bookSourceUrl, "└${it}")
