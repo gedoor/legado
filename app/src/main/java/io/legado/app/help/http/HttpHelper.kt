@@ -7,8 +7,8 @@ import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
 import retrofit2.Retrofit
-import rxhttp.toStr
 import rxhttp.wrapper.param.RxHttp
+import rxhttp.wrapper.param.toText
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.TimeUnit
@@ -44,7 +44,7 @@ object HttpHelper {
     suspend fun simpleGetAsync(url: String): String {
         val str = RxHttp.get(url)
             .addHeader(AppConst.UA_NAME, AppConfig.userAgent)
-            .toStr()
+            .toText()
         return str.await()
     }
 
