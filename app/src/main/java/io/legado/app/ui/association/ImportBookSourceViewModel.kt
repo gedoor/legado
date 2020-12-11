@@ -118,11 +118,8 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
-    private fun importSourceUrl(url: String) {
-        HttpHelper.simpleGet(url, "UTF-8").let { body ->
-            if (body == null) {
-                throw Exception(context.getString(R.string.error_get_data))
-            }
+    private suspend fun importSourceUrl(url: String) {
+        HttpHelper.simpleGetAsync(url).let { body ->
             val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
             for (item in items) {
                 val jsonItem = Restore.jsonPath.parse(item)

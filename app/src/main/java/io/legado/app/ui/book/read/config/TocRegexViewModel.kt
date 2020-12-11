@@ -28,7 +28,7 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
 
     fun importOnLine(url: String, finally: (msg: String) -> Unit) {
         execute {
-            HttpHelper.simpleGetAsync(url)?.let { json ->
+            HttpHelper.simpleGetAsync(url).let { json ->
                 GSON.fromJsonArray<TxtTocRule>(json)?.let {
                     App.db.txtTocRule.insert(*it.toTypedArray())
                 }

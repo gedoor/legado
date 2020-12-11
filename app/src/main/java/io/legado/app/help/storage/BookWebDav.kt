@@ -26,7 +26,7 @@ object BookWebDav {
     private val bookProgressUrl = "${rootWebDavUrl}bookProgress/"
     private val zipFilePath = "${FileUtils.getCachePath()}${File.separator}backup.zip"
 
-    val rootWebDavUrl: String
+    private val rootWebDavUrl: String
         get() {
             var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
             if (url.isNullOrEmpty()) {
@@ -155,7 +155,7 @@ object BookWebDav {
                 durChapterTitle = book.durChapterTitle
             )
             val json = GSON.toJson(bookProgress)
-            val url = getUrl(book)
+            val url = geProtresstUrl(book)
             if (initWebDav()) {
                 WebDav(url).upload(json.toByteArray())
             }
@@ -164,7 +164,7 @@ object BookWebDav {
 
     fun getBookProgress(book: Book): BookProgress? {
         if (initWebDav()) {
-            val url = getUrl(book)
+            val url = geProtresstUrl(book)
             WebDav(url).download()?.let { byteArray ->
                 val json = String(byteArray)
                 GSON.fromJsonObject<BookProgress>(json)?.let {
@@ -175,7 +175,7 @@ object BookWebDav {
         return null
     }
 
-    private fun getUrl(book: Book): String {
+    private fun geProtresstUrl(book: Book): String {
         return bookProgressUrl + book.name + "_" + book.author + ".json"
     }
 }

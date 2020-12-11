@@ -7,6 +7,8 @@ import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
 import retrofit2.Retrofit
+import rxhttp.toStr
+import rxhttp.wrapper.param.RxHttp
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.TimeUnit
@@ -39,23 +41,11 @@ object HttpHelper {
         builder.build()
     }
 
-    fun simpleGet(url: String, encode: String? = null): String? {
-        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
-            val response = getApiService<HttpGetApi>(baseUrl, encode)
-                .get(url, mapOf(Pair(AppConst.UA_NAME, AppConfig.userAgent)))
-                .execute()
-            return response.body()
-        }
-        return null
-    }
-
-    suspend fun simpleGetAsync(url: String, encode: String? = null): String? {
-        NetworkUtils.getBaseUrl(url)?.let { baseUrl ->
-            val response = getApiService<HttpGetApi>(baseUrl, encode)
-                .getAsync(url, mapOf(Pair(AppConst.UA_NAME, AppConfig.userAgent)))
-            return response.body()
-        }
-        return null
+    suspend fun simpleGetAsync(url: String): String {
+        val str = RxHttp.get(url)
+            .addHeader(AppConst.UA_NAME, AppConfig.userAgent)
+            .toStr()
+        return str.await()
     }
 
     suspend fun simpleGetBytesAsync(url: String): ByteArray? {

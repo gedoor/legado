@@ -48,7 +48,7 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     fun import(text: String) {
         execute {
             if (text.isAbsUrl()) {
-                HttpHelper.simpleGet(text)?.let {
+                HttpHelper.simpleGetAsync(text).let {
                     val rules = OldReplace.jsonToReplaceRules(it)
                     allRules.addAll(rules)
                 }
