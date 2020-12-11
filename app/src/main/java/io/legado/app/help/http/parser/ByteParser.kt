@@ -7,7 +7,7 @@ import rxhttp.wrapper.annotation.Parser
 class ByteParser : rxhttp.wrapper.parse.Parser<ByteArray> {
 
     override fun onParse(response: Response): ByteArray {
-        return response.body()!!.bytes()
+        return response.body!!.bytes()
     }
 
 }
