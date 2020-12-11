@@ -11,10 +11,11 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.SourceHelp
-import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.*
+import rxhttp.wrapper.param.RxHttp
+import rxhttp.wrapper.param.toText
 import java.io.File
 
 class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
@@ -119,7 +120,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importSourceUrl(url: String) {
-        HttpHelper.simpleGetAsync(url).let { body ->
+        RxHttp.get(url).toText("utf-8").await().let { body ->
             val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
             for (item in items) {
                 val jsonItem = Restore.jsonPath.parse(item)

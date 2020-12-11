@@ -76,7 +76,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                             it.url,
                             speakText = contentList[index],
                             speakSpeed = AppConfig.ttsSpeechRate
-                        ).getResponseBytes()?.let { bytes ->
+                        ).getByteArray().let { bytes ->
                             if (isActive) {
                                 val file = getSpeakFile(index)
                                 file.writeBytes(bytes)

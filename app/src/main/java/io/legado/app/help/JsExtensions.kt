@@ -6,7 +6,6 @@ import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.help.http.CookieStore
-import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -15,6 +14,8 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
 import org.jsoup.Jsoup
+import rxhttp.wrapper.param.RxHttp
+import rxhttp.wrapper.param.toByteArray
 import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.Charset
@@ -250,8 +251,8 @@ interface JsExtensions {
             str.isAbsUrl() -> runBlocking {
                 var x = CacheManager.getByteArray(key)
                 if (x == null) {
-                    x = HttpHelper.simpleGetBytesAsync(str)
-                    x?.let {
+                    x = RxHttp.get(str).toByteArray().await()
+                    x.let {
                         CacheManager.put(key, it)
                     }
                 }

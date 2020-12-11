@@ -9,6 +9,7 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import com.jeremyliao.liveeventbus.LiveEventBus
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
@@ -47,6 +48,9 @@ class App : MultiDexApplication() {
         LanguageUtils.setConfiguration(this)
         db = AppDatabase.createDatabase(INSTANCE)
         RxHttp.init(HttpHelper.client, BuildConfig.DEBUG)
+        RxHttp.setOnParamAssembly {
+            it.addHeader(AppConst.UA_NAME, AppConfig.userAgent)
+        }
         packageManager.getPackageInfo(packageName, 0)?.let {
             versionCode = it.versionCode
             versionName = it.versionName

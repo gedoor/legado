@@ -22,6 +22,8 @@ import okhttp3.FormBody
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Call
+import rxhttp.wrapper.param.RxHttp
+import rxhttp.wrapper.param.toByteArray
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -315,13 +317,13 @@ class AnalyzeUrl(
         }
     }
 
-    suspend fun getResponseAwait(
+    suspend fun getRes(
         tag: String,
         jsStr: String? = null,
         sourceRegex: String? = null,
     ): Res {
         if (type != null) {
-            return Res(url, StringUtils.byteToHexString(getResponseBytes(tag)))
+            return Res(url, StringUtils.byteToHexString(getByteArray(tag)))
         }
         val cookie = CookieStore.getCookie(tag)
         if (cookie.isNotEmpty()) {
@@ -369,7 +371,7 @@ class AnalyzeUrl(
         return Res(NetworkUtils.getUrl(res), res.body())
     }
 
-    suspend fun getResponseBytes(tag: String? = null): ByteArray? {
+    suspend fun getByteArray(tag: String? = null): ByteArray {
         if (tag != null) {
             val cookie = CookieStore.getCookie(tag)
             if (cookie.isNotEmpty()) {
@@ -382,26 +384,24 @@ class AnalyzeUrl(
                 }
             }
         }
-        val response = when {
-            method == RequestMethod.POST -> {
+        return when (method) {
+            RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
-                    HttpHelper
-                        .getBytesApiService<HttpPostApi>(baseUrl)
-                        .postMapByteAsync(url, fieldMap, headerMap)
+                    RxHttp.postForm(url)
+                        .addAll(fieldMap)
+                        .addAllHeader(headerMap)
+                        .toByteArray().await()
                 } else {
-                    HttpHelper
-                        .getBytesApiService<HttpPostApi>(baseUrl)
-                        .postBodyByteAsync(url, requestBody!!, headerMap)
+                    RxHttp.postJson(url)
+                        .addAll(body)
+                        .addAllHeader(headerMap)
+                        .toByteArray().await()
                 }
             }
-            fieldMap.isEmpty() -> HttpHelper
-                .getBytesApiService<HttpGetApi>(baseUrl)
-                .getByteAsync(url, headerMap)
-            else -> HttpHelper
-                .getBytesApiService<HttpGetApi>(baseUrl)
-                .getMapByteAsync(url, fieldMap, headerMap)
+            else -> RxHttp.get(url)
+                .addAll(fieldMap)
+                .toByteArray().await()
         }
-        return response.body()
     }
 
     fun getGlideUrl(): GlideUrl {
