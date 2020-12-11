@@ -47,7 +47,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
-            downloadProgress(book)
             ReadBook.resetData(book)
             isInitFinish = true
             if (!book.isLocalBook() && ReadBook.webBook == null) {
@@ -67,6 +66,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
                 ReadBook.loadContent(resetPageOffset = true)
             }
+            syncBookProgress(book)
         } else {
             ReadBook.book = book
             if (ReadBook.durChapterIndex != book.durChapterIndex) {
@@ -97,15 +97,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.loadContent(resetPageOffset = true)
                 }
             }
-        }
-    }
-
-    private fun downloadProgress(book: Book) {
-        BookWebDav.getBookProgress(book)?.let {
-            book.durChapterIndex = it.durChapterIndex
-            book.durChapterPos = it.durChapterPos
-            book.durChapterTime = it.durChapterTime
-            book.durChapterTitle = it.durChapterTitle
         }
     }
 
@@ -168,12 +159,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun syncBookProgress(book: Book) {
         execute {
-            downloadProgress(book)
-            ReadBook.durChapterIndex = book.durChapterIndex
-            ReadBook.durChapterPos = book.durChapterPos
-            ReadBook.prevTextChapter = null
-            ReadBook.clearTextChapter()
-            ReadBook.loadContent(resetPageOffset = true)
+            BookWebDav.getBookProgress(book)?.let {
+                book.durChapterIndex = it.durChapterIndex
+                book.durChapterPos = it.durChapterPos
+                book.durChapterTime = it.durChapterTime
+                book.durChapterTitle = it.durChapterTitle
+                ReadBook.clearTextChapter()
+                ReadBook.loadContent(resetPageOffset = true)
+            }
         }
     }
 

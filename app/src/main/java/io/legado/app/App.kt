@@ -15,9 +15,11 @@ import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.constant.EventBus
 import io.legado.app.data.AppDatabase
 import io.legado.app.help.*
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.utils.LanguageUtils
 import io.legado.app.utils.postEvent
 import org.jetbrains.anko.defaultSharedPreferences
+import rxhttp.wrapper.param.RxHttp
 
 @Suppress("DEPRECATION")
 class App : MultiDexApplication() {
@@ -44,14 +46,14 @@ class App : MultiDexApplication() {
         CrashHandler(this)
         LanguageUtils.setConfiguration(this)
         db = AppDatabase.createDatabase(INSTANCE)
+        RxHttp.init(HttpHelper.client, BuildConfig.DEBUG)
         packageManager.getPackageInfo(packageName, 0)?.let {
             versionCode = it.versionCode
             versionName = it.versionName
         }
         createNotificationChannels()
         applyDayNight()
-        LiveEventBus
-            .config()
+        LiveEventBus.config()
             .supportBroadcast(this)
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)

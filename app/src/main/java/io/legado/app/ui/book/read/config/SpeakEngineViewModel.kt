@@ -21,7 +21,7 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
 
     fun importOnLine(url: String, finally: (msg: String) -> Unit) {
         execute {
-            HttpHelper.simpleGetAsync(url)?.let { json ->
+            HttpHelper.simpleGetAsync(url).let { json ->
                 GSON.fromJsonArray<HttpTTS>(json)?.let {
                     App.db.httpTTSDao.insert(*it.toTypedArray())
                 }
