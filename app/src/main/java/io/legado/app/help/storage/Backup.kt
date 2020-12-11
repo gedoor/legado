@@ -56,54 +56,52 @@ object Backup {
     suspend fun backup(context: Context, path: String, isAuto: Boolean = false) {
         context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
         withContext(IO) {
-            synchronized(this@Backup) {
-                FileUtils.deleteFile(backupPath)
-                writeListToJson(App.db.bookDao.all, "bookshelf.json", backupPath)
-                writeListToJson(App.db.bookmarkDao.all, "bookmark.json", backupPath)
-                writeListToJson(App.db.bookGroupDao.all, "bookGroup.json", backupPath)
-                writeListToJson(App.db.bookSourceDao.all, "bookSource.json", backupPath)
-                writeListToJson(App.db.rssSourceDao.all, "rssSource.json", backupPath)
-                writeListToJson(App.db.rssStarDao.all, "rssStar.json", backupPath)
-                writeListToJson(App.db.replaceRuleDao.all, "replaceRule.json", backupPath)
-                writeListToJson(App.db.readRecordDao.all, "readRecord.json", backupPath)
-                writeListToJson(App.db.searchKeywordDao.all, "searchHistory.json", backupPath)
-                writeListToJson(App.db.ruleSubDao.all, "sourceSub.json", backupPath)
-                writeListToJson(App.db.txtTocRule.all, DefaultData.txtTocRuleFileName, backupPath)
-                writeListToJson(App.db.httpTTSDao.all, DefaultData.httpTtsFileName, backupPath)
-                GSON.toJson(ReadBookConfig.configList).let {
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
-                        .writeText(it)
-                }
-                GSON.toJson(ReadBookConfig.shareConfig).let {
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.shareConfigFileName)
-                }
-                GSON.toJson(ThemeConfig.configList).let {
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + ThemeConfig.configFileName)
-                        .writeText(it)
-                }
-                Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
-                    val edit = sp.edit()
-                    App.INSTANCE.defaultSharedPreferences.all.map {
-                        when (val value = it.value) {
-                            is Int -> edit.putInt(it.key, value)
-                            is Boolean -> edit.putBoolean(it.key, value)
-                            is Long -> edit.putLong(it.key, value)
-                            is Float -> edit.putFloat(it.key, value)
-                            is String -> edit.putString(it.key, value)
-                            else -> Unit
-                        }
+            FileUtils.deleteFile(backupPath)
+            writeListToJson(App.db.bookDao.all, "bookshelf.json", backupPath)
+            writeListToJson(App.db.bookmarkDao.all, "bookmark.json", backupPath)
+            writeListToJson(App.db.bookGroupDao.all, "bookGroup.json", backupPath)
+            writeListToJson(App.db.bookSourceDao.all, "bookSource.json", backupPath)
+            writeListToJson(App.db.rssSourceDao.all, "rssSource.json", backupPath)
+            writeListToJson(App.db.rssStarDao.all, "rssStar.json", backupPath)
+            writeListToJson(App.db.replaceRuleDao.all, "replaceRule.json", backupPath)
+            writeListToJson(App.db.readRecordDao.all, "readRecord.json", backupPath)
+            writeListToJson(App.db.searchKeywordDao.all, "searchHistory.json", backupPath)
+            writeListToJson(App.db.ruleSubDao.all, "sourceSub.json", backupPath)
+            writeListToJson(App.db.txtTocRule.all, DefaultData.txtTocRuleFileName, backupPath)
+            writeListToJson(App.db.httpTTSDao.all, DefaultData.httpTtsFileName, backupPath)
+            GSON.toJson(ReadBookConfig.configList).let {
+                FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
+                    .writeText(it)
+            }
+            GSON.toJson(ReadBookConfig.shareConfig).let {
+                FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.shareConfigFileName)
+            }
+            GSON.toJson(ThemeConfig.configList).let {
+                FileUtils.createFileIfNotExist(backupPath + File.separator + ThemeConfig.configFileName)
+                    .writeText(it)
+            }
+            Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
+                val edit = sp.edit()
+                App.INSTANCE.defaultSharedPreferences.all.map {
+                    when (val value = it.value) {
+                        is Int -> edit.putInt(it.key, value)
+                        is Boolean -> edit.putBoolean(it.key, value)
+                        is Long -> edit.putLong(it.key, value)
+                        is Float -> edit.putFloat(it.key, value)
+                        is String -> edit.putString(it.key, value)
+                        else -> Unit
                     }
-                    edit.commit()
                 }
-                BookWebDav.backUpWebDav(backupPath)
-                if (path.isContentScheme()) {
-                    copyBackup(context, Uri.parse(path), isAuto)
+                edit.commit()
+            }
+            BookWebDav.backUpWebDav(backupPath)
+            if (path.isContentScheme()) {
+                copyBackup(context, Uri.parse(path), isAuto)
+            } else {
+                if (path.isEmpty()) {
+                    copyBackup(context.getExternalFilesDir(null)!!, false)
                 } else {
-                    if (path.isEmpty()) {
-                        copyBackup(context.getExternalFilesDir(null)!!, false)
-                    } else {
-                        copyBackup(File(path), isAuto)
-                    }
+                    copyBackup(File(path), isAuto)
                 }
             }
         }

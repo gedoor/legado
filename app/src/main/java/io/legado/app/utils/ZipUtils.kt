@@ -18,8 +18,7 @@ object ZipUtils {
      * @return `true`: success<br></br>`false`: fail
      * @throws IOException if an I/O error has occurred
      */
-    @Throws(IOException::class)
-    fun zipFiles(
+    suspend fun zipFiles(
         srcFiles: Collection<String>,
         zipFilePath: String
     ): Boolean {
@@ -35,8 +34,7 @@ object ZipUtils {
      * @return `true`: success<br></br>`false`: fail
      * @throws IOException if an I/O error has occurred
      */
-    @Throws(IOException::class)
-    fun zipFiles(
+    suspend fun zipFiles(
         srcFilePaths: Collection<String>?,
         zipFilePath: String?,
         comment: String?
