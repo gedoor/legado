@@ -46,7 +46,7 @@ class WebBook(val bookSource: BookSource) {
                 headerMapF = bookSource.getHeaderMap(),
                 book = variableBook
             )
-            val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
+            val res = analyzeUrl.getRes(bookSource.bookSourceUrl)
             return BookList.analyzeBookList(
                 scope,
                 res.body,
@@ -77,7 +77,7 @@ class WebBook(val bookSource: BookSource) {
                 baseUrl = sourceUrl,
                 headerMapF = bookSource.getHeaderMap()
             )
-            val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
+            val res = analyzeUrl.getRes(bookSource.bookSourceUrl)
             BookList.analyzeBookList(
                 scope,
                 res.body,
@@ -110,7 +110,7 @@ class WebBook(val bookSource: BookSource) {
                     baseUrl = sourceUrl,
                     headerMapF = bookSource.getHeaderMap(),
                     book = book
-                ).getResponseAwait(bookSource.bookSourceUrl)
+                ).getRes(bookSource.bookSourceUrl)
                 BookInfo.analyzeBookInfo(book, res.body, bookSource, book.bookUrl, canReName)
             }
             book
@@ -141,7 +141,7 @@ class WebBook(val bookSource: BookSource) {
                     ruleUrl = book.tocUrl,
                     baseUrl = book.bookUrl,
                     headerMapF = bookSource.getHeaderMap()
-                ).getResponseAwait(bookSource.bookSourceUrl)
+                ).getRes(bookSource.bookSourceUrl)
                 BookChapterList.analyzeChapterList(
                     this,
                     book,
@@ -201,7 +201,7 @@ class WebBook(val bookSource: BookSource) {
                 headerMapF = bookSource.getHeaderMap(),
                 book = book,
                 chapter = bookChapter
-            ).getResponseAwait(
+            ).getRes(
                 bookSource.bookSourceUrl,
                 jsStr = bookSource.getContentRule().webJs,
                 sourceRegex = bookSource.getContentRule().sourceRegex

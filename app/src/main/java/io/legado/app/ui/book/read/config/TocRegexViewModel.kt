@@ -5,9 +5,10 @@ import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
-import io.legado.app.help.http.HttpHelper
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
+import rxhttp.wrapper.param.RxHttp
+import rxhttp.wrapper.param.toText
 
 class TocRegexViewModel(application: Application) : BaseViewModel(application) {
 
@@ -28,7 +29,7 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
 
     fun importOnLine(url: String, finally: (msg: String) -> Unit) {
         execute {
-            HttpHelper.simpleGetAsync(url).let { json ->
+            RxHttp.get(url).toText("utf-8").await().let { json ->
                 GSON.fromJsonArray<TxtTocRule>(json)?.let {
                     App.db.txtTocRule.insert(*it.toTypedArray())
                 }

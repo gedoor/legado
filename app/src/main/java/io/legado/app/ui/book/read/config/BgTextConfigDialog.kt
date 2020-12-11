@@ -17,7 +17,6 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogReadBgTextBinding
 import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
@@ -31,6 +30,8 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.jetbrains.anko.sdk27.listeners.onCheckedChange
 import org.jetbrains.anko.sdk27.listeners.onClick
+import rxhttp.wrapper.param.RxHttp
+import rxhttp.wrapper.param.toByteArray
 import java.io.File
 
 class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
@@ -286,9 +287,9 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
 
     private fun importNetConfig(url: String) {
         execute {
-            HttpHelper.simpleGetBytesAsync(url)?.let {
+            RxHttp.get(url).toByteArray().await()?.let {
                 importConfig(it)
-            } ?: throw Exception("获取失败")
+            }
         }.onError {
             longToast(it.msg)
         }
