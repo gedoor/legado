@@ -1,6 +1,5 @@
 package io.legado.app.utils
 
-import retrofit2.Response
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -10,13 +9,6 @@ import java.util.regex.Pattern
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object NetworkUtils {
-
-    fun getUrl(response: Response<*>): String {
-        response.raw().networkResponse()?.let {
-            return it.request().url().toString()
-        }
-        return response.raw().request().url().toString()
-    }
 
     private val notNeedEncoding: BitSet by lazy {
         val bitSet = BitSet(256)

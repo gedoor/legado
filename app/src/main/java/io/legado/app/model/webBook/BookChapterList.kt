@@ -63,7 +63,7 @@ object BookChapterList {
                                 ruleUrl = nextUrl,
                                 book = book,
                                 headerMapF = bookSource.getHeaderMap()
-                            ).getRes(bookSource.bookSourceUrl)
+                            ).getStrResponse(bookSource.bookSourceUrl)
                                 .body?.let { nextBody ->
                                     chapterData = analyzeChapterList(
                                         book, nextUrl, nextBody, tocRule, listRule, bookSource
@@ -132,7 +132,7 @@ object BookChapterList {
                 ruleUrl = chapterData.nextUrl,
                 book = book,
                 headerMapF = bookSource.getHeaderMap()
-            ).getRes(bookSource.bookSourceUrl).body
+            ).getStrResponse(bookSource.bookSourceUrl).body
                 ?: throw Exception("${chapterData.nextUrl}, 下载失败")
             val nextChapterData = analyzeChapterList(
                 book, chapterData.nextUrl, nextBody, tocRule, listRule, bookSource,

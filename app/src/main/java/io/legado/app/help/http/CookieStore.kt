@@ -108,6 +108,6 @@ object CookieStore : CookiePersistor, CookieManager {
     }
 
     private fun createCookieKey(cookie: okhttp3.Cookie): String {
-        return (if (cookie.secure()) "https" else "http") + "://" + cookie.domain() + cookie.path() + "|" + cookie.name()
+        return (if (cookie.secure) "https" else "http") + "://" + cookie.domain + cookie.path + "|" + cookie.name
     }
 }

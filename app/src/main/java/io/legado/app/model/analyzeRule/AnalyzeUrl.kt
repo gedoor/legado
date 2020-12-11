@@ -15,15 +15,10 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
-import io.legado.app.help.http.api.HttpGetApi
-import io.legado.app.help.http.api.HttpPostApi
 import io.legado.app.utils.*
-import okhttp3.FormBody
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import retrofit2.Call
 import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toByteArray
+import rxhttp.wrapper.param.toStrResponse
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -50,7 +45,6 @@ class AnalyzeUrl(
     companion object {
         val splitUrlRegex = Regex(",\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
-        private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }
 
     var url: String = ""
@@ -61,7 +55,6 @@ class AnalyzeUrl(
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
     private var charset: String? = null
-    private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
     private var proxy: String? = null
 
@@ -172,7 +165,7 @@ class AnalyzeUrl(
      */
     private fun initUrl() {
         var urlArray = ruleUrl.split(splitUrlRegex, 2)
-        url = urlArray[0]
+        url = NetworkUtils.getAbsoluteURL(baseUrl, urlArray[0])!!
         urlHasQuery = urlArray[0]
         NetworkUtils.getBaseUrl(url)?.let {
             baseUrl = it
@@ -223,13 +216,9 @@ class AnalyzeUrl(
             }
             RequestMethod.POST -> {
                 body?.let {
-                    if (it.isJson()) {
-                        requestBody = RequestBody.create(jsonType, it)
-                    } else {
+                    if (!it.isJson()) {
                         analyzeFields(it)
                     }
-                } ?: let {
-                    requestBody = FormBody.Builder().build()
                 }
             }
         }
@@ -285,56 +274,15 @@ class AnalyzeUrl(
         return book?.variableMap?.get(key) ?: ""
     }
 
-    fun getResponse(tag: String): Call<String> {
-        val cookie = CookieStore.getCookie(tag)
-        if (cookie.isNotEmpty()) {
-            val cookieMap = CookieStore.cookieToMap(cookie)
-            val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
-            cookieMap.putAll(customCookieMap)
-            val newCookie = CookieStore.mapToCookie(cookieMap)
-            newCookie?.let {
-                headerMap.put("Cookie", it)
-            }
-        }
-        return when {
-            method == RequestMethod.POST -> {
-                if (fieldMap.isNotEmpty()) {
-                    HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl, charset, proxy)
-                        .postMap(url, fieldMap, headerMap)
-                } else {
-                    HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl, charset, proxy)
-                        .postBody(url, requestBody!!, headerMap)
-                }
-            }
-            fieldMap.isEmpty() -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl, charset, proxy)
-                .get(url, headerMap)
-            else -> HttpHelper
-                .getApiService<HttpGetApi>(baseUrl, charset, proxy)
-                .getMap(url, fieldMap, headerMap)
-        }
-    }
-
-    suspend fun getRes(
+    suspend fun getStrResponse(
         tag: String,
         jsStr: String? = null,
         sourceRegex: String? = null,
-    ): Res {
+    ): StrResponse {
         if (type != null) {
-            return Res(url, StringUtils.byteToHexString(getByteArray(tag)))
+            return StrResponse.success(StringUtils.byteToHexString(getByteArray(tag)), url)
         }
-        val cookie = CookieStore.getCookie(tag)
-        if (cookie.isNotEmpty()) {
-            val cookieMap = CookieStore.cookieToMap(cookie)
-            val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
-            cookieMap.putAll(customCookieMap)
-            val newCookie = CookieStore.mapToCookie(cookieMap)
-            newCookie?.let {
-                headerMap.put("Cookie", it)
-            }
-        }
+        setCookie(tag)
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
             params.headerMap = headerMap
@@ -345,33 +293,55 @@ class AnalyzeUrl(
             params.tag = tag
             return HttpHelper.ajax(params)
         }
-        val res = when {
-            method == RequestMethod.POST -> {
+        return when (method) {
+            RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
-                    HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl, charset, proxy)
-                        .postMapAsync(url, fieldMap, headerMap)
+                    RxHttp.postForm(url)
+                        .setOkClient(HttpHelper.getProxyClient(proxy))
+                        .addAll(fieldMap)
+                        .addAllHeader(headerMap)
+                        .toStrResponse().await()
                 } else {
-                    HttpHelper
-                        .getApiService<HttpPostApi>(baseUrl, charset, proxy)
-                        .postBodyAsync(url, requestBody!!, headerMap)
+                    RxHttp.postJson(url)
+                        .setOkClient(HttpHelper.getProxyClient(proxy))
+                        .addAll(body)
+                        .addAllHeader(headerMap)
+                        .toStrResponse().await()
                 }
             }
-            fieldMap.isEmpty() -> {
-                HttpHelper
-                    .getApiService<HttpGetApi>(baseUrl, charset, proxy)
-                    .getAsync(url, headerMap)
-            }
-            else -> {
-                HttpHelper
-                    .getApiService<HttpGetApi>(baseUrl, charset, proxy)
-                    .getMapAsync(url, fieldMap, headerMap)
-            }
+            else -> RxHttp.get(url)
+                .setOkClient(HttpHelper.getProxyClient(proxy))
+                .addAll(fieldMap)
+                .toStrResponse().await()
         }
-        return Res(NetworkUtils.getUrl(res), res.body())
     }
 
     suspend fun getByteArray(tag: String? = null): ByteArray {
+        setCookie(tag)
+        return when (method) {
+            RequestMethod.POST -> {
+                if (fieldMap.isNotEmpty()) {
+                    RxHttp.postForm(url)
+                        .setOkClient(HttpHelper.getProxyClient(proxy))
+                        .addAll(fieldMap)
+                        .addAllHeader(headerMap)
+                        .toByteArray().await()
+                } else {
+                    RxHttp.postJson(url)
+                        .setOkClient(HttpHelper.getProxyClient(proxy))
+                        .addAll(body)
+                        .addAllHeader(headerMap)
+                        .toByteArray().await()
+                }
+            }
+            else -> RxHttp.get(url)
+                .setOkClient(HttpHelper.getProxyClient(proxy))
+                .addAll(fieldMap)
+                .toByteArray().await()
+        }
+    }
+
+    private fun setCookie(tag: String?) {
         if (tag != null) {
             val cookie = CookieStore.getCookie(tag)
             if (cookie.isNotEmpty()) {
@@ -383,24 +353,6 @@ class AnalyzeUrl(
                     headerMap.put("Cookie", it)
                 }
             }
-        }
-        return when (method) {
-            RequestMethod.POST -> {
-                if (fieldMap.isNotEmpty()) {
-                    RxHttp.postForm(url)
-                        .addAll(fieldMap)
-                        .addAllHeader(headerMap)
-                        .toByteArray().await()
-                } else {
-                    RxHttp.postJson(url)
-                        .addAll(body)
-                        .addAllHeader(headerMap)
-                        .toByteArray().await()
-                }
-            }
-            else -> RxHttp.get(url)
-                .addAll(fieldMap)
-                .toByteArray().await()
         }
     }
 

@@ -1,8 +1,8 @@
 package io.legado.app.help.http
 
+import io.legado.app.utils.msg
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
-import retrofit2.Retrofit
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -55,26 +55,6 @@ object HttpHelper {
         })
     }
 
-    inline fun <reified T> getApiService(
-        baseUrl: String,
-        encode: String? = null,
-        proxy: String? = null
-    ): T {
-        return getRetrofit(baseUrl, encode, proxy).create(T::class.java)
-    }
-
-    fun getRetrofit(
-        baseUrl: String,
-        encode: String? = null,
-        proxy: String? = null
-    ): Retrofit {
-        return Retrofit.Builder().baseUrl(baseUrl)
-            //增加返回值为字符串的支持(以实体类返回)
-            .addConverterFactory(EncodeConverter(encode))
-            .client(getProxyClient(proxy))
-            .build()
-    }
-
     fun getProxyClient(proxy: String? = null): OkHttpClient {
         if (proxy.isNullOrBlank()) {
             return client
@@ -108,7 +88,7 @@ object HttpHelper {
             if (username != "" && password != "") {
                 builder.proxyAuthenticator { _, response -> //设置代理服务器账号密码
                     val credential: String = Credentials.basic(username, password)
-                    response.request().newBuilder()
+                    response.request.newBuilder()
                         .header("Proxy-Authorization", credential)
                         .build()
                 }
@@ -130,21 +110,22 @@ object HttpHelper {
         }
     }
 
-    suspend fun ajax(params: AjaxWebView.AjaxParams): Res =
+    suspend fun ajax(params: AjaxWebView.AjaxParams): StrResponse =
         suspendCancellableCoroutine { block ->
             val webView = AjaxWebView()
             block.invokeOnCancellation {
                 webView.destroyWebView()
             }
             webView.callback = object : AjaxWebView.Callback() {
-                override fun onResult(response: Res) {
+                override fun onResult(response: StrResponse) {
+
                     if (!block.isCompleted)
                         block.resume(response)
                 }
 
                 override fun onError(error: Throwable) {
                     if (!block.isCompleted)
-                        block.resume(Res(params.url, error.localizedMessage))
+                        block.resume(StrResponse.success(error.msg, params.url))
                 }
             }
             webView.load(params)

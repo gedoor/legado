@@ -8,7 +8,7 @@ import java.io.InputStream
 class InputStreamParser : rxhttp.wrapper.parse.Parser<InputStream> {
 
     override fun onParse(response: Response): InputStream {
-        return response.body()!!.byteStream()
+        return response.body!!.byteStream()
     }
 
 }

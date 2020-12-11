@@ -31,9 +31,9 @@ interface JsExtensions {
     fun ajax(urlStr: String): String? {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr)
-            val call = analyzeUrl.getResponse(urlStr)
-            val response = call.execute()
-            response.body()
+            runBlocking {
+                analyzeUrl.getStrResponse(urlStr).body
+            }
         } catch (e: Exception) {
             e.msg
         }
@@ -45,9 +45,9 @@ interface JsExtensions {
     fun connect(urlStr: String): Any {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr)
-            val call = analyzeUrl.getResponse(urlStr)
-            val response = call.execute()
-            response
+            runBlocking {
+                analyzeUrl.getStrResponse(urlStr)
+            }
         } catch (e: Exception) {
             e.msg
         }
