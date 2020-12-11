@@ -10,6 +10,7 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.*
+import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
 import java.net.URL
@@ -645,9 +646,9 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
     override fun ajax(urlStr: String): String? {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr, book = book)
-            val call = analyzeUrl.getResponse(urlStr)
-            val response = call.execute()
-            response.body()
+            runBlocking {
+                analyzeUrl.getRes(urlStr).body
+            }
         } catch (e: Exception) {
             e.localizedMessage
         }

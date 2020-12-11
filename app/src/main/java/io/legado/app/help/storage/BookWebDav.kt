@@ -39,7 +39,7 @@ object BookWebDav {
             return url
         }
 
-    fun initWebDav(): Boolean {
+    suspend fun initWebDav(): Boolean {
         val account = App.INSTANCE.getPrefString(PreferKey.webDavAccount)
         val password = App.INSTANCE.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
@@ -52,7 +52,7 @@ object BookWebDav {
     }
 
     @Throws(Exception::class)
-    private fun getWebDavFileNames(): ArrayList<String> {
+    private suspend fun getWebDavFileNames(): ArrayList<String> {
         val url = rootWebDavUrl
         val names = arrayListOf<String>()
         if (initWebDav()) {
@@ -77,7 +77,11 @@ object BookWebDav {
                     items = names
                 ) { _, index ->
                     if (index in 0 until names.size) {
-                        restoreWebDav(names[index])
+                        Coroutine.async {
+                            restoreWebDav(names[index])
+                        }.onError {
+                            App.INSTANCE.toast("WebDavError:${it.localizedMessage}")
+                        }
                     }
                 }
             }
@@ -86,22 +90,18 @@ object BookWebDav {
         }
     }
 
-    private fun restoreWebDav(name: String) {
-        Coroutine.async {
-            rootWebDavUrl.let {
-                val webDav = WebDav(it + name)
-                webDav.downloadTo(zipFilePath, true)
-                @Suppress("BlockingMethodInNonBlockingContext")
-                ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
-                Restore.restoreDatabase()
-                Restore.restoreConfig()
-            }
-        }.onError {
-            App.INSTANCE.toast("WebDavError:${it.localizedMessage}")
+    private suspend fun restoreWebDav(name: String) {
+        rootWebDavUrl.let {
+            val webDav = WebDav(it + name)
+            webDav.downloadTo(zipFilePath, true)
+            @Suppress("BlockingMethodInNonBlockingContext")
+            ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
+            Restore.restoreDatabase()
+            Restore.restoreConfig()
         }
     }
 
-    fun backUpWebDav(path: String) {
+    suspend fun backUpWebDav(path: String) {
         try {
             if (initWebDav()) {
                 val paths = arrayListOf(*Backup.backupFileNames)
@@ -123,7 +123,7 @@ object BookWebDav {
         }
     }
 
-    fun exportWebDav(path: String, fileName: String) {
+    suspend fun exportWebDav(path: String, fileName: String) {
         try {
             if (initWebDav()) {
                 // 默认导出到legado文件夹下exports目录
@@ -155,16 +155,16 @@ object BookWebDav {
                 durChapterTitle = book.durChapterTitle
             )
             val json = GSON.toJson(bookProgress)
-            val url = geProtresstUrl(book)
+            val url = getProgressUrl(book)
             if (initWebDav()) {
                 WebDav(url).upload(json.toByteArray())
             }
         }
     }
 
-    fun getBookProgress(book: Book): BookProgress? {
+    suspend fun getBookProgress(book: Book): BookProgress? {
         if (initWebDav()) {
-            val url = geProtresstUrl(book)
+            val url = getProgressUrl(book)
             WebDav(url).download()?.let { byteArray ->
                 val json = String(byteArray)
                 GSON.fromJsonObject<BookProgress>(json)?.let {
@@ -175,7 +175,7 @@ object BookWebDav {
         return null
     }
 
-    private fun geProtresstUrl(book: Book): String {
+    private fun getProgressUrl(book: Book): String {
         return bookProgressUrl + book.name + "_" + book.author + ".json"
     }
 }

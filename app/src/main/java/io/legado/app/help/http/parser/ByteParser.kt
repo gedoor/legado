@@ -1,4 +1,4 @@
-package io.legado.app.help.http
+package io.legado.app.help.http.parser
 
 import okhttp3.Response
 import rxhttp.wrapper.annotation.Parser

@@ -3,6 +3,8 @@ package io.legado.app.lib.webdav
 import io.legado.app.help.http.HttpHelper
 import okhttp3.*
 import org.jsoup.Jsoup
+import rxhttp.wrapper.param.RxHttp
+import rxhttp.wrapper.param.toInputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -54,17 +56,16 @@ class WebDav(urlStr: String) {
 
     /**
      * 填充文件信息。实例化WebDAVFile对象时，并没有将远程文件的信息填充到实例中。需要手动填充！
-     *
      * @return 远程文件是否存在
      */
-    @Throws(IOException::class)
-    fun indexFileInfo(): Boolean {
+    suspend fun indexFileInfo(): Boolean {
         propFindResponse(ArrayList())?.let { response ->
             if (!response.isSuccessful) {
                 this.exists = false
                 return false
             }
             response.body()?.let {
+                @Suppress("BlockingMethodInNonBlockingContext")
                 if (it.string().isNotEmpty()) {
                     return true
                 }
@@ -79,12 +80,11 @@ class WebDav(urlStr: String) {
      * @param propsList 指定列出文件的哪些属性
      * @return 文件列表
      */
-    @Throws(IOException::class)
-    @JvmOverloads
-    fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
+    suspend fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
         propFindResponse(propsList)?.let { response ->
             if (response.isSuccessful) {
                 response.body()?.let { body ->
+                    @Suppress("BlockingMethodInNonBlockingContext")
                     return parseDir(body.string())
                 }
             }
@@ -93,7 +93,7 @@ class WebDav(urlStr: String) {
     }
 
     @Throws(IOException::class)
-    private fun propFindResponse(propsList: ArrayList<String>, depth: Int = 1): Response? {
+    private suspend fun propFindResponse(propsList: ArrayList<String>, depth: Int = 1): Response? {
         val requestProps = StringBuilder()
         for (p in propsList) {
             requestProps.append("<a:").append(p).append("/>\n")
@@ -105,23 +105,18 @@ class WebDav(urlStr: String) {
             String.format(DIR, requestProps.toString() + "\n")
         }
         httpUrl?.let { url ->
+            // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
+            // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
+            val requestBody = RequestBody.create(MediaType.parse("text/plain"), requestPropsStr)
             val request = Request.Builder()
                 .url(url)
-                // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
-                // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
-                .method(
-                    "PROPFIND",
-                    RequestBody.create(MediaType.parse("text/plain"), requestPropsStr)
-                )
+                .method("PROPFIND", requestBody)
 
             HttpAuth.auth?.let {
-                request.header(
-                    "Authorization",
-                    Credentials.basic(it.user, it.pass)
-                )
+                request.header("Authorization", Credentials.basic(it.user, it.pass))
             }
             request.header("Depth", if (depth < 0) "infinity" else depth.toString())
-            return HttpHelper.client.newCall(request.build()).execute()
+            return HttpHelper.awaitResponse(request.build())
         }
         return null
     }
@@ -165,8 +160,7 @@ class WebDav(urlStr: String) {
      *
      * @return 是否创建成功
      */
-    @Throws(IOException::class)
-    fun makeAsDir(): Boolean {
+    suspend fun makeAsDir(): Boolean {
         httpUrl?.let { url ->
             val request = Request.Builder()
                 .url(url)
@@ -183,7 +177,7 @@ class WebDav(urlStr: String) {
      * @param replaceExisting 是否替换本地的同名文件
      * @return 下载是否成功
      */
-    fun downloadTo(savedPath: String, replaceExisting: Boolean): Boolean {
+    suspend fun downloadTo(savedPath: String, replaceExisting: Boolean): Boolean {
         if (File(savedPath).exists()) {
             if (!replaceExisting) return false
         }
@@ -192,7 +186,7 @@ class WebDav(urlStr: String) {
         return true
     }
 
-    fun download(): ByteArray? {
+    suspend fun download(): ByteArray? {
         val inputS = getInputStream() ?: return null
         return inputS.readBytes()
     }
@@ -200,8 +194,7 @@ class WebDav(urlStr: String) {
     /**
      * 上传文件
      */
-    @Throws(IOException::class)
-    fun upload(localPath: String, contentType: String? = null): Boolean {
+    suspend fun upload(localPath: String, contentType: String? = null): Boolean {
         val file = File(localPath)
         if (!file.exists()) return false
         val mediaType = contentType?.let { MediaType.parse(it) }
@@ -216,7 +209,7 @@ class WebDav(urlStr: String) {
         return false
     }
 
-    fun upload(byteArray: ByteArray, contentType: String? = null): Boolean {
+    suspend fun upload(byteArray: ByteArray, contentType: String? = null): Boolean {
         val mediaType = contentType?.let { MediaType.parse(it) }
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = RequestBody.create(mediaType, byteArray)
@@ -235,30 +228,22 @@ class WebDav(urlStr: String) {
      * @return 请求执行的结果
      */
     @Throws(IOException::class)
-    private fun execRequest(requestBuilder: Request.Builder): Boolean {
+    private suspend fun execRequest(requestBuilder: Request.Builder): Boolean {
         HttpAuth.auth?.let {
-            requestBuilder.header(
-                "Authorization",
-                Credentials.basic(it.user, it.pass)
-            )
+            requestBuilder.header("Authorization", Credentials.basic(it.user, it.pass))
         }
-        val response = HttpHelper.client.newCall(requestBuilder.build()).execute()
+        val response = HttpHelper.awaitResponse(requestBuilder.build())
         return response.isSuccessful
     }
 
-    private fun getInputStream(): InputStream? {
-        httpUrl?.let { url ->
-            val request = Request.Builder().url(url)
-            HttpAuth.auth?.let {
-                request.header("Authorization", Credentials.basic(it.user, it.pass))
-            }
-            try {
-                return HttpHelper.client.newCall(request.build()).execute().body()?.byteStream()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
+    @Throws(IOException::class)
+    private suspend fun getInputStream(): InputStream? {
+        val url = httpUrl
+        val auth = HttpAuth.auth
+        if (url != null && auth != null) {
+            return RxHttp.get(url)
+                .addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                .toInputStream().await()
         }
         return null
     }

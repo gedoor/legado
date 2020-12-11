@@ -1,4 +1,4 @@
-package io.legado.app.help.http
+package io.legado.app.help.http.parser
 
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.UTF8BOMFighter
