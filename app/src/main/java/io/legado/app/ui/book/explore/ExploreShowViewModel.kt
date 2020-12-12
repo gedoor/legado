@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers.IO
 class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
 
     val booksData = MutableLiveData<List<SearchBook>>()
+    val errorLiveData = MutableLiveData<String>()
     private var bookSource: BookSource? = null
     private val variableBook = SearchBook()
     private var exploreUrl: String? = null
@@ -42,7 +43,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
                     page++
                 }.onError {
                     it.printStackTrace()
-                    toast(it.msg)
+                    errorLiveData.postValue(it.msg)
                 }
         }
     }
