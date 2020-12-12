@@ -3,13 +3,11 @@ package io.legado.app.help.http
 import io.legado.app.utils.msg
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
-import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @Suppress("unused")
 object HttpHelper {
@@ -40,24 +38,6 @@ object HttpHelper {
             .addInterceptor(getHeaderInterceptor())
 
         builder.build()
-    }
-
-    suspend fun awaitResponse(request: Request): Response = suspendCancellableCoroutine { block ->
-        val call = client.newCall(request)
-
-        block.invokeOnCancellation {
-            call.cancel()
-        }
-
-        call.enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                block.resumeWithException(e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                block.resume(response)
-            }
-        })
     }
 
     /**

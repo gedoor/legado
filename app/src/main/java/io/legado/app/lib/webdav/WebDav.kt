@@ -1,6 +1,7 @@
 package io.legado.app.lib.webdav
 
 import io.legado.app.help.http.HttpHelper
+import io.legado.app.utils.await
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -119,7 +120,7 @@ class WebDav(urlStr: String) {
                 request.header("Authorization", Credentials.basic(it.user, it.pass))
             }
             request.header("Depth", if (depth < 0) "infinity" else depth.toString())
-            return HttpHelper.awaitResponse(request.build())
+            return HttpHelper.client.newCall(request.build()).await()
         }
         return null
     }
@@ -233,7 +234,7 @@ class WebDav(urlStr: String) {
         HttpAuth.auth?.let {
             requestBuilder.header("Authorization", Credentials.basic(it.user, it.pass))
         }
-        val response = HttpHelper.awaitResponse(requestBuilder.build())
+        val response = HttpHelper.client.newCall(requestBuilder.build()).await()
         return response.isSuccessful
     }
 
