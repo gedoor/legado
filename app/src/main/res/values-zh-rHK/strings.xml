@@ -789,5 +789,6 @@
     <string name="rule_subscription">规则订阅</string>
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">拉取云端进度</string>
+    <string name="current_progress_exceeds_cloud">当前进度超过云端进度,是否同步?</string>
 
 </resources>
