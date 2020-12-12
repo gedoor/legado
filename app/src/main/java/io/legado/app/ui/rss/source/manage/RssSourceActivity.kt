@@ -40,8 +40,6 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.File
-import java.text.Collator
-import java.util.*
 
 
 class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceViewModel>(),
@@ -197,10 +195,11 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun upGroupMenu() {
         groupMenu?.removeGroup(R.id.source_group)
-        groups.sortedWith(Collator.getInstance(Locale.CHINESE))
-            .map {
-                groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-            }
+        groups.sortedWith { o1, o2 ->
+            o1.cnCompare(o2)
+        }.map {
+            groupMenu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+        }
     }
 
     private fun initLiveDataSource(key: String? = null) {
