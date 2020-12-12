@@ -297,12 +297,14 @@ class AnalyzeUrl(
             RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     RxHttp.postForm(url)
+                        .setAssemblyEnabled(false)
                         .setOkClient(HttpHelper.getProxyClient(proxy))
                         .addAllEncoded(fieldMap)
                         .addAllHeader(headerMap)
                         .toStrResponse().await()
                 } else {
                     RxHttp.postJson(url)
+                        .setAssemblyEnabled(false)
                         .setOkClient(HttpHelper.getProxyClient(proxy))
                         .addAll(body)
                         .addAllHeader(headerMap)
@@ -310,6 +312,7 @@ class AnalyzeUrl(
                 }
             }
             else -> RxHttp.get(url)
+                .setAssemblyEnabled(false)
                 .setOkClient(HttpHelper.getProxyClient(proxy))
                 .addAllEncoded(fieldMap)
                 .addAllHeader(headerMap)
@@ -323,12 +326,14 @@ class AnalyzeUrl(
             RequestMethod.POST -> {
                 if (fieldMap.isNotEmpty()) {
                     RxHttp.postForm(url)
+                        .setAssemblyEnabled(false)
                         .setOkClient(HttpHelper.getProxyClient(proxy))
                         .addAllEncoded(fieldMap)
                         .addAllHeader(headerMap)
                         .toByteArray().await()
                 } else {
                     RxHttp.postJson(url)
+                        .setAssemblyEnabled(false)
                         .setOkClient(HttpHelper.getProxyClient(proxy))
                         .addAll(body)
                         .addAllHeader(headerMap)
@@ -336,6 +341,7 @@ class AnalyzeUrl(
                 }
             }
             else -> RxHttp.get(url)
+                .setAssemblyEnabled(false)
                 .setOkClient(HttpHelper.getProxyClient(proxy))
                 .addAllEncoded(fieldMap)
                 .toByteArray().await()
