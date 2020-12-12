@@ -190,7 +190,6 @@ dependencies {
     implementation 'com.jaredrummler:colorpicker:1.1.0'
 
     //apache
-    implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'org.apache.commons:commons-text:1.9'
 
     //字符串比较
