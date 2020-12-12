@@ -63,7 +63,7 @@ data class BookChapter(
 
     fun getAbsoluteURL(): String {
         val urlArray = url.split(AnalyzeUrl.splitUrlRegex)
-        var absoluteUrl = NetworkUtils.getAbsoluteURL(baseUrl, urlArray[0])!!
+        var absoluteUrl = NetworkUtils.getAbsoluteURL(baseUrl, urlArray[0])
         if (urlArray.size > 1) {
             absoluteUrl = "$absoluteUrl,${urlArray[1]}"
         }

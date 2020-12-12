@@ -69,9 +69,8 @@ object NetworkUtils {
     /**
      * 获取绝对地址
      */
-    fun getAbsoluteURL(baseURL: String?, relativePath: String?): String? {
+    fun getAbsoluteURL(baseURL: String?, relativePath: String): String {
         if (baseURL.isNullOrEmpty()) return relativePath
-        if (relativePath.isNullOrEmpty()) return baseURL
         if (relativePath.isAbsUrl()) return relativePath
         var relativeUrl = relativePath
         try {
@@ -88,7 +87,7 @@ object NetworkUtils {
     /**
      * 获取绝对地址
      */
-    fun getAbsoluteURL(baseURL: URL?, relativePath: String): String? {
+    fun getAbsoluteURL(baseURL: URL?, relativePath: String): String {
         if (baseURL == null) return relativePath
         var relativeUrl = relativePath
         try {

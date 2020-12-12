@@ -95,14 +95,13 @@ object ChapterProvider {
         contents.forEachIndexed { index, text ->
             val matcher = AppPattern.imgPattern.matcher(text)
             if (matcher.find()) {
-                var src = matcher.group(1)
-                if (!book.isEpub()) {
-                    src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                }
-                src?.let {
-                    durY = setTypeImage(
-                        book, bookChapter, src, durY, textPages, imageStyle
-                    )
+                matcher.group(1)?.let {
+                    if (!book.isEpub()) {
+                        val src = NetworkUtils.getAbsoluteURL(bookChapter.url, it)
+                        durY = setTypeImage(
+                            book, bookChapter, src, durY, textPages, imageStyle
+                        )
+                    }
                 }
             } else {
                 val isTitle = index == 0
