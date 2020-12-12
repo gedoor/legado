@@ -174,7 +174,6 @@ dependencies {
     //网络
     implementation 'com.ljx.rxhttp:rxhttp:2.4.4-beta3'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     kapt 'com.ljx.rxhttp:rxhttp-compiler:2.4.4-beta3'
 
     //Glide
