@@ -733,7 +733,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     private fun sureSyncProgress(progress: BookProgress) {
         alert(R.string.get_book_progress) {
-            message = "当前进度超过云端进度,是否同步?"
+            message = getString(R.string.current_progress_exceeds_cloud)
             okButton {
                 ReadBook.upProgress(progress)
             }
