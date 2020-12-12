@@ -166,7 +166,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.13.1'
     //noinspection GradleDependency
     implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
-    implementation 'com.jayway.jsonpath:json-path:2.4.0'
+    implementation 'com.jayway.jsonpath:json-path:2.5.0'
 
     //JS rhino
     implementation 'com.github.gedoor:rhino-android:1.4'
