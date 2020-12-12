@@ -4,10 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.constant.BookType
-import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.BookSource
-import io.legado.app.data.entities.ReadRecord
+import io.legado.app.data.entities.*
 import io.legado.app.help.*
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
@@ -76,6 +73,13 @@ object ReadBook {
                 webBook = null
             }
         }
+    }
+
+    fun upProgress(progress: BookProgress) {
+        durChapterIndex = progress.durChapterIndex
+        durChapterPos = progress.durChapterPos
+        clearTextChapter()
+        loadContent(resetPageOffset = true)
     }
 
     fun clearTextChapter() {

@@ -2,11 +2,13 @@ package io.legado.app.ui.book.read
 
 import android.app.Application
 import android.content.Intent
+import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
@@ -22,9 +24,9 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
-
     var isInitFinish = false
     var searchContentQuery = ""
+    val processLiveData = MutableLiveData<BookProgress>()
 
     fun initData(intent: Intent) {
         execute {
@@ -162,13 +164,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun syncBookProgress(book: Book) {
         execute {
-            BookWebDav.getBookProgress(book)?.let {
-                book.durChapterIndex = it.durChapterIndex
-                book.durChapterPos = it.durChapterPos
-                book.durChapterTime = it.durChapterTime
-                book.durChapterTitle = it.durChapterTitle
-                ReadBook.clearTextChapter()
-                ReadBook.loadContent(resetPageOffset = true)
+            BookWebDav.getBookProgress(book)?.let { progress ->
+                if (progress.durChapterIndex < book.durChapterIndex ||
+                    (progress.durChapterIndex == book.durChapterIndex && progress.durChapterPos < book.durChapterPos)
+                ) {
+                    processLiveData.postValue(progress)
+                } else {
+                    ReadBook.upProgress(progress)
+                }
             }
         }
     }

@@ -20,6 +20,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookProgress
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.help.storage.Backup
@@ -107,6 +108,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
             binding.readMenu.setTitle(it)
             upMenu()
             upView()
+        }
+        viewModel.processLiveData.observe(this) {
+            sureSyncProgress(it)
         }
         viewModel.initData(intent)
     }
@@ -728,6 +732,16 @@ class ReadBookActivity : ReadBookBaseActivity(),
             it.tocUrl = tocRegex
             viewModel.loadChapterList(it)
         }
+    }
+
+    private fun sureSyncProgress(progress: BookProgress) {
+        alert(R.string.get_book_progress) {
+            message = "当前进度超过云端进度,是否同步?"
+            okButton {
+                ReadBook.upProgress(progress)
+            }
+            noButton()
+        }.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
