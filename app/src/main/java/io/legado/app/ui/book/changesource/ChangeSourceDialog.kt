@@ -182,6 +182,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
                         putPrefString("searchGroup", item.title.toString())
                     }
                     viewModel.stopSearch()
+                    viewModel.loadDbSearchBook()
                 }
             }
         }
