@@ -141,12 +141,12 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
             binding.apply {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
                 cbSourceName.text = item.bookSourceName
-                tvSourceState.text =
-                    if (viewModel.checkSources[holder.layoutPosition] != null) {
-                        "已存在"
-                    } else {
-                        "新书源"
-                    }
+                val localSource = viewModel.checkSources[holder.layoutPosition]
+                tvSourceState.text = when {
+                    localSource == null -> "新书源"
+                    item.lastUpdateTime > localSource.lastUpdateTime -> "更新"
+                    else -> "已存在"
+                }
             }
 
         }
