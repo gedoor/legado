@@ -19,6 +19,11 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
+        android:id="@+id/book_source_manage"
+        android:title="@string/book_source_manage"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_load_info"
         android:title="@string/load_info"
         android:checkable="true"

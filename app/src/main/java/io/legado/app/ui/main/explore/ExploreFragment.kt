@@ -22,11 +22,11 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import java.text.Collator
 
 /**
  * 发现界面
@@ -126,10 +126,11 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private fun upGroupsMenu() {
         groupsMenu?.let { subMenu ->
             subMenu.removeGroup(R.id.menu_group_text)
-            groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
-                .forEach {
-                    subMenu.add(R.id.menu_group_text, Menu.NONE, Menu.NONE, it)
-                }
+            groups.sortedWith { o1, o2 ->
+                o1.cnCompare(o2)
+            }.forEach {
+                subMenu.add(R.id.menu_group_text, Menu.NONE, Menu.NONE, it)
+            }
         }
     }
 

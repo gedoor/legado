@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.startActivity
-import java.text.Collator
 
 
 class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
@@ -245,13 +244,14 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         if (selectedGroup == "") {
             item?.isChecked = true
         }
-        groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
-            .map {
-                item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-                if (it == selectedGroup) {
-                    item?.isChecked = true
-                }
+        groups.sortedWith { o1, o2 ->
+            o1.cnCompare(o2)
+        }.map {
+            item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            if (it == selectedGroup) {
+                item?.isChecked = true
             }
+        }
         menu?.setGroupCheckable(R.id.source_group, true, true)
     }
 
