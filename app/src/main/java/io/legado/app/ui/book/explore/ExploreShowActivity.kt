@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.explore
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -37,7 +36,6 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
 
     private fun initRecyclerView() {
         adapter = ExploreShowAdapter(this, this)
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
         loadMoreView = LoadMoreView(this)

@@ -109,9 +109,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 content.split("\n").forEachIndexed { index, text ->
                     val matcher = AppPattern.imgPattern.matcher(text)
                     if (matcher.find()) {
-                        var src = matcher.group(1)
-                        src = NetworkUtils.getAbsoluteURL(chapter.url, src)
-                        src?.let {
+                        matcher.group(1)?.let {
+                            val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
                             srcList.add(Triple(chapter.title, index, src))
                         }
                     }

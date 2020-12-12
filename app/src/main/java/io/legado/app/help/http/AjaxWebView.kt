@@ -39,7 +39,7 @@ class AjaxWebView {
                     mWebView = createAjaxWebView(params, this)
                 }
                 MSG_SUCCESS -> {
-                    ajaxWebView.callback?.onResult(msg.obj as Res)
+                    ajaxWebView.callback?.onResult(msg.obj as StrResponse)
                     destroyWebView()
                 }
                 MSG_ERROR -> {
@@ -160,7 +160,7 @@ class AjaxWebView {
                 if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
                         .replace("^\"|\"$".toRegex(), "")
-                    handler.obtainMessage(MSG_SUCCESS, Res(url, content))
+                    handler.obtainMessage(MSG_SUCCESS, StrResponse.success(content, url))
                         .sendToTarget()
                     handler.removeCallbacks(this)
                     return@evaluateJavascript
@@ -186,8 +186,10 @@ class AjaxWebView {
         override fun onLoadResource(view: WebView, url: String) {
             params.sourceRegex?.let {
                 if (url.matches(it.toRegex())) {
-                    handler.obtainMessage(MSG_SUCCESS, Res(view.url ?: params.url, url))
-                        .sendToTarget()
+                    handler.obtainMessage(
+                        MSG_SUCCESS,
+                        StrResponse.success(url, view.url ?: params.url)
+                    ).sendToTarget()
                 }
             }
         }
@@ -226,7 +228,7 @@ class AjaxWebView {
     }
 
     abstract class Callback {
-        abstract fun onResult(response: Res)
+        abstract fun onResult(response: StrResponse)
         abstract fun onError(error: Throwable)
     }
 }

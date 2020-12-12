@@ -647,7 +647,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
         return try {
             val analyzeUrl = AnalyzeUrl(urlStr, book = book)
             runBlocking {
-                analyzeUrl.getRes(urlStr).body
+                analyzeUrl.getStrResponse(urlStr).body
             }
         } catch (e: Exception) {
             e.localizedMessage

@@ -26,7 +26,7 @@ object Rss {
                 page = page,
                 headerMapF = rssSource.getHeaderMap()
             )
-            val body = analyzeUrl.getRes(rssSource.sourceUrl).body
+            val body = analyzeUrl.getStrResponse(rssSource.sourceUrl).body
             RssParserByRule.parseXML(sortName, sortUrl, body, rssSource)
         }
     }
@@ -42,7 +42,7 @@ object Rss {
             val body = AnalyzeUrl(
                 rssArticle.link, baseUrl = rssArticle.origin,
                 headerMapF = rssSource?.getHeaderMap()
-            ).getRes(rssArticle.origin)
+            ).getStrResponse(rssArticle.origin)
                 .body
             val analyzeRule = AnalyzeRule()
             analyzeRule.setContent(body)
