@@ -222,10 +222,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 binding.readView.upPageAnim()
             }
             R.id.menu_book_info -> ReadBook.book?.let {
-                startActivity<BookInfoActivity>(
-                    Pair("name", it.name),
-                    Pair("author", it.author)
-                )
+                startActivity<BookInfoActivity>(Pair("name", it.name), Pair("author", it.author))
             }
             R.id.menu_toc_regex -> TocRegexDialog.show(
                 supportFragmentManager,
