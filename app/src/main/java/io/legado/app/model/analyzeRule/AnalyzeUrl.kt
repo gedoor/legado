@@ -165,7 +165,7 @@ class AnalyzeUrl(
      */
     private fun initUrl() {
         var urlArray = ruleUrl.split(splitUrlRegex, 2)
-        url = NetworkUtils.getAbsoluteURL(baseUrl, urlArray[0])!!
+        url = NetworkUtils.getAbsoluteURL(baseUrl, urlArray[0])
         urlHasQuery = urlArray[0]
         NetworkUtils.getBaseUrl(url)?.let {
             baseUrl = it
