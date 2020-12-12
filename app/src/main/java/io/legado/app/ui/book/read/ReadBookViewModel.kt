@@ -97,6 +97,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.loadContent(resetPageOffset = true)
                 }
             }
+            if (!BaseReadAloudService.isRun) {
+                syncBookProgress(book)
+            }
         }
     }
 
