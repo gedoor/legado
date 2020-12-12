@@ -312,6 +312,7 @@ class AnalyzeUrl(
             else -> RxHttp.get(url)
                 .setOkClient(HttpHelper.getProxyClient(proxy))
                 .addAll(fieldMap)
+                .addAllHeader(headerMap)
                 .toStrResponse().await()
         }
     }
