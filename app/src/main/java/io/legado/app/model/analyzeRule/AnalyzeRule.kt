@@ -163,7 +163,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             if (result is List<*>) {
                 for (url in result as List<*>) {
                     val absoluteURL = NetworkUtils.getAbsoluteURL(baseURL, url.toString())
-                    if (!absoluteURL.isNullOrEmpty() && !urlList.contains(absoluteURL)) {
+                    if (absoluteURL.isNotEmpty() && !urlList.contains(absoluteURL)) {
                         urlList.add(absoluteURL)
                     }
                 }
@@ -231,7 +231,7 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
             return if (str.isBlank()) {
                 baseUrl ?: ""
             } else {
-                NetworkUtils.getAbsoluteURL(baseURL, str) ?: ""
+                NetworkUtils.getAbsoluteURL(baseURL, str)
             }
         }
         return str
@@ -573,8 +573,8 @@ class AnalyzeRule(var book: BaseBook? = null) : JsExtensions {
                 rule = infoVal.toString()
             }
             //分离正则表达式
-            val ruleStrS = rule.trim { it <= ' ' }.split("##")
-            rule = ruleStrS[0]
+            val ruleStrS = rule.split("##")
+            rule = ruleStrS[0].trim()
             if (ruleStrS.size > 1) {
                 replaceRegex = ruleStrS[1]
             }
