@@ -12,7 +12,8 @@ import java.nio.charset.Charset
 class StrResponseParser(val encode: String? = null) : rxhttp.wrapper.parse.Parser<StrResponse> {
 
     override fun onParse(response: Response): StrResponse {
-        return StrResponse.success(getString(response), response)
+        val body = getString(response)
+        return StrResponse.success(body, response)
     }
 
     private fun getString(response: Response): String {
