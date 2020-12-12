@@ -3,6 +3,7 @@ package io.legado.app.ui.audio
 import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -27,12 +28,14 @@ import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
-import org.apache.commons.lang3.time.DateFormatUtils
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.sdk27.listeners.onLongClick
 import org.jetbrains.anko.startActivityForResult
+import java.util.*
 
-
+/**
+ * 音频播放
+ */
 class AudioPlayActivity :
     VMBaseActivity<ActivityAudioPlayBinding, AudioPlayViewModel>(toolBarTheme = Theme.Dark),
     ChangeSourceDialog.CallBack {
@@ -42,6 +45,13 @@ class AudioPlayActivity :
 
     private var requestCodeChapter = 8461
     private var adjustProgress = false
+    private val progressTimeFormat by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            SimpleDateFormat("mm:ss", Locale.getDefault())
+        } else {
+            java.text.SimpleDateFormat("mm:ss", Locale.getDefault())
+        }
+    }
 
     override fun getViewBinding(): ActivityAudioPlayBinding {
         return ActivityAudioPlayBinding.inflate(layoutInflater)
@@ -85,7 +95,7 @@ class AudioPlayActivity :
         }
         binding.playerProgress.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                binding.tvDurTime.text = DateFormatUtils.format(progress.toLong(), "mm:ss")
+                binding.tvDurTime.text = progressTimeFormat.format(progress.toLong())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -208,12 +218,12 @@ class AudioPlayActivity :
         }
         observeEventSticky<Int>(EventBus.AUDIO_SIZE) {
             binding.playerProgress.max = it
-            binding.tvAllTime.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+            binding.tvAllTime.text = progressTimeFormat.format(it.toLong())
         }
         observeEventSticky<Int>(EventBus.AUDIO_PROGRESS) {
             AudioPlay.durChapterPos = it
             if (!adjustProgress) binding.playerProgress.progress = it
-            binding.tvDurTime.text = DateFormatUtils.format(it.toLong(), "mm:ss")
+            binding.tvDurTime.text = progressTimeFormat.format(it.toLong())
         }
         observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
             binding.tvSpeed.text = String.format("%.1fX", it)

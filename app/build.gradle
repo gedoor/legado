@@ -172,8 +172,8 @@ dependencies {
     implementation 'com.github.gedoor:rhino-android:1.4'
 
     //网络
-    implementation 'com.ljx.rxhttp:rxhttp:2.4.4-beta3'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.ljx.rxhttp:rxhttp:2.4.4-beta3'
     kapt 'com.ljx.rxhttp:rxhttp-compiler:2.4.4-beta3'
 
     //Glide
@@ -190,7 +190,6 @@ dependencies {
     implementation 'com.jaredrummler:colorpicker:1.1.0'
 
     //apache
-    implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'org.apache.commons:commons-text:1.9'
 
     //字符串比较
