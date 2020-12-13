@@ -20,7 +20,7 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="immNavigationBar"
         android:summary="@string/imm_navigation_bar_s"
         android:title="@string/imm_navigation_bar"

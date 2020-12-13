@@ -74,10 +74,10 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     val isTransparentStatusBar: Boolean
-        get() = context.getPrefBoolean(PreferKey.transparentStatusBar)
+        get() = context.getPrefBoolean(PreferKey.transparentStatusBar, true)
 
     val immNavigationBar: Boolean
-        get() = context.getPrefBoolean(PreferKey.immNavigationBar)
+        get() = context.getPrefBoolean(PreferKey.immNavigationBar, true)
 
     val screenDirection: String?
         get() = context.getPrefString(PreferKey.screenDirection)
