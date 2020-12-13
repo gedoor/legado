@@ -61,6 +61,7 @@ object PreferKey {
     const val autoClearExpired = "autoClearExpired"
     const val autoChangeSource = "autoChangeSource"
     const val importKeepName = "importKeepName"
+    const val screenDirection = "screenDirection"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

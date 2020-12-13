@@ -53,9 +53,6 @@ fun Context.putPrefLong(key: String, value: Long) =
 fun Context.getPrefString(key: String, defValue: String? = null) =
     defaultSharedPreferences.getString(key, defValue)
 
-fun Context.getPrefString(@StringRes keyId: Int, defValue: String? = null) =
-    defaultSharedPreferences.getString(getString(keyId), defValue)
-
 fun Context.putPrefString(key: String, value: String?) =
     defaultSharedPreferences.edit { putString(key, value) }
 

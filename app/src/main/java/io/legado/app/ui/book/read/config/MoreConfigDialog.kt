@@ -41,7 +41,7 @@ class MoreConfigDialog : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         (activity as ReadBookActivity).bottomDialog++
         val view = LinearLayout(context)
         view.setBackgroundColor(requireContext().bottomBackground)
@@ -107,7 +107,7 @@ class MoreConfigDialog : DialogFragment() {
                 }
                 PreferKey.keepLight -> postEvent(key, true)
                 PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
-                getString(R.string.pk_requested_direction) -> {
+                PreferKey.screenDirection -> {
                     (activity as? ReadBookActivity)?.setOrientation()
                 }
                 PreferKey.textFullJustify,

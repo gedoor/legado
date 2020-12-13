@@ -79,8 +79,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             context.putPrefBoolean(PreferKey.transparentStatusBar, value)
         }
 
-    val requestedDirection: String?
-        get() = context.getPrefString(R.string.pk_requested_direction)
+    val screenDirection: String?
+        get() = context.getPrefString(PreferKey.screenDirection)
 
     var backupPath: String?
         get() = context.getPrefString(PreferKey.backupPath)
