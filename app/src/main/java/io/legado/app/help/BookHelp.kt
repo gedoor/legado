@@ -10,8 +10,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
-import net.ricecode.similarity.JaroWinklerStrategy
-import net.ricecode.similarity.StringSimilarityServiceImpl
+import org.apache.commons.text.similarity.JaccardSimilarity
 import java.io.File
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.regex.Matcher
@@ -68,16 +67,16 @@ object BookHelp {
         content.split("\n").forEach {
             val matcher = AppPattern.imgPattern.matcher(it)
             if (matcher.find()) {
-                var src = matcher.group(1)
-                src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                src?.let {
-                    saveImage(book, src)
+                matcher.group(1)?.let { src ->
+                    val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
+                    saveImage(book, mSrc)
                 }
             }
         }
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
+    @Suppress("unused")
     fun saveFont(book: Book, bookChapter: BookChapter, font: ByteArray) {
         FileUtils.createFileIfNotExist(
             downloadDir,
@@ -216,6 +215,10 @@ object BookHelp {
             .trim { it <= ' ' }
     }
 
+    private val jaccardSimilarity by lazy {
+        JaccardSimilarity()
+    }
+
     /**
      * 根据目录名获取当前章节
      */
@@ -248,10 +251,9 @@ object BookHelp {
         var newIndex = 0
         var newNum = 0
         if (oldName.isNotEmpty()) {
-            val service = StringSimilarityServiceImpl(JaroWinklerStrategy())
             for (i in min..max) {
                 val newName = getPureChapterName(newChapterList[i].title)
-                val temp = service.score(oldName, newName)
+                val temp = jaccardSimilarity.apply(oldName, newName)
                 if (temp > nameSim) {
                     nameSim = temp
                     newIndex = i

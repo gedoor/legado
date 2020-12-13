@@ -192,9 +192,6 @@ dependencies {
     //apache
     implementation 'org.apache.commons:commons-text:1.9'
 
-    //字符串比较
-    implementation 'net.ricecode:string-similarity:1.0.0'
-
     //MarkDown
     implementation 'io.noties.markwon:core:4.6.0'
     implementation 'io.noties.markwon:image-glide:4.6.0'
