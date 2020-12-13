@@ -145,7 +145,7 @@ abstract class ReadBookBaseActivity :
         when {
             binding.readMenu.isVisible -> super.upNavigationBarColor()
             bottomDialog > 0 -> super.upNavigationBarColor()
-            else -> if (AppConfig.isTransparentStatusBar) {
+            else -> if (AppConfig.immNavigationBar) {
                 ATH.setNavigationBarColorAuto(this, Color.TRANSPARENT)
             } else {
                 ATH.setNavigationBarColorAuto(this, Color.parseColor("#20000000"))

@@ -133,6 +133,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         when (key) {
             PreferKey.launcherIcon -> LauncherIconHelp.changeIcon(getPrefString(key))
             PreferKey.transparentStatusBar -> recreateActivities()
+            PreferKey.immNavigationBar -> recreateActivities()
             PreferKey.cPrimary,
             PreferKey.cAccent,
             PreferKey.cBackground,

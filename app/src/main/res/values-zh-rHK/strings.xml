@@ -361,8 +361,8 @@
     <string name="finish_book">完結書籍</string>
     <string name="local_book">本地書籍</string>
     <string name="status_bar_immersion">狀態欄顏色透明</string>
-    <string name="navigation_bar_color_change">導航欄變色</string>
-    <string name="navigation_bar_color_change_s">導航欄根據夜間模式變化</string>
+    <string name="imm_navigation_bar">沉浸式导航栏</string>
+    <string name="imm_navigation_bar_s">导航栏颜色透明</string>
     <string name="add_to_shelf">放入書架</string>
     <string name="continue_read">繼續閲讀</string>
     <string name="cover_path">封面地址</string>
