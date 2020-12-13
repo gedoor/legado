@@ -365,8 +365,8 @@
     <string name="finish_book">Finished books</string>
     <string name="local_book">Local books</string>
     <string name="status_bar_immersion">The status bar color becomes transparent</string>
-    <string name="navigation_bar_color_change">Discolored navigation bar</string>
-    <string name="navigation_bar_color_change_s">The navigation bar changes color following the dark mode</string>
+    <string name="imm_navigation_bar">immersion navigation bar</string>
+    <string name="imm_navigation_bar_s">The navigation bar becomes transparent</string>
     <string name="add_to_shelf">Add to Bookshelf</string>
     <string name="continue_read">Continue reading</string>
     <string name="cover_path">Cover path</string>

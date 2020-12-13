@@ -20,10 +20,10 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
-        android:defaultValue="false"
-        android:key="navigationBarColorChange"
-        android:summary="@string/navigation_bar_color_change_s"
-        android:title="@string/navigation_bar_color_change"
+        android:defaultValue="true"
+        android:key="immNavigationBar"
+        android:summary="@string/imm_navigation_bar_s"
+        android:title="@string/imm_navigation_bar"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
