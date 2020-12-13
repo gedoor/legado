@@ -852,7 +852,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
             readView.upBg()
-            readView.upTipStyle()
             readView.upStyle()
             if (it) {
                 ReadBook.loadContent(resetPageOffset = false)

@@ -16,19 +16,26 @@ class BatteryView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : AppCompatTextView(context, attrs) {
+    private val batteryTypeface by lazy {
+        Typeface.createFromAsset(context.assets, "font${File.separator}number.ttf")
+    }
     private val batteryPaint = Paint()
     private val outFrame = Rect()
     private val polar = Rect()
     var isBattery = false
+        set(value) {
+            field = value
+            if (value) {
+                typeface = batteryTypeface
+                postInvalidate()
+            }
+        }
 
     init {
         setPadding(4.dp, 0, 6.dp, 0)
         batteryPaint.strokeWidth = 1.dp.toFloat()
         batteryPaint.isAntiAlias = true
         batteryPaint.color = paint.color
-        if (!isInEditMode) {
-            typeface = Typeface.createFromAsset(context.assets, "font${File.separator}number.ttf")
-        }
     }
 
     fun setColor(@ColorInt color: Int) {

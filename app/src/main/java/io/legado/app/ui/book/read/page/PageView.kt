@@ -49,7 +49,6 @@ class PageView(context: Context) : FrameLayout(context) {
         if (!isInEditMode) {
             //设置背景防止切换背景时文字重叠
             setBackgroundColor(context.getCompatColor(R.color.background))
-            upTipStyle()
             upStyle()
         }
         binding.contentTextView.upView = {
@@ -58,16 +57,7 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun upStyle() = with(binding) {
-        ChapterProvider.let {
-            bvHeaderLeft.typeface = it.typeface
-            tvHeaderLeft.typeface = it.typeface
-            tvHeaderMiddle.typeface = it.typeface
-            tvHeaderRight.typeface = it.typeface
-            bvFooterLeft.typeface = it.typeface
-            tvFooterLeft.typeface = it.typeface
-            tvFooterMiddle.typeface = it.typeface
-            tvFooterRight.typeface = it.typeface
-        }
+        upTipStyle()
         ReadBookConfig.let {
             val tipColor = with(ReadTipConfig) {
                 if (tipColor == 0) it.textColor else tipColor
@@ -113,7 +103,7 @@ class PageView(context: Context) : FrameLayout(context) {
             ReadBookConfig.hideStatusBar || (activity as? BaseActivity<*>)?.isInMultiWindow == true
     }
 
-    fun upTipStyle() = with(binding) {
+    private fun upTipStyle() = with(binding) {
         ReadTipConfig.apply {
             tvHeaderLeft.isInvisible = tipHeaderLeft != chapterTitle
             bvHeaderLeft.isInvisible =
@@ -138,11 +128,13 @@ class PageView(context: Context) : FrameLayout(context) {
         tvTitle = getTipView(ReadTipConfig.chapterTitle)
         tvTitle?.apply {
             isBattery = false
+            typeface = ChapterProvider.typeface
             textSize = 12f
         }
         tvTime = getTipView(ReadTipConfig.time)
         tvTime?.apply {
             isBattery = false
+            typeface = ChapterProvider.typeface
             textSize = 12f
         }
         tvBattery = getTipView(ReadTipConfig.battery)
@@ -153,26 +145,31 @@ class PageView(context: Context) : FrameLayout(context) {
         tvPage = getTipView(ReadTipConfig.page)
         tvPage?.apply {
             isBattery = false
+            typeface = ChapterProvider.typeface
             textSize = 12f
         }
         tvTotalProgress = getTipView(ReadTipConfig.totalProgress)
         tvTotalProgress?.apply {
             isBattery = false
+            typeface = ChapterProvider.typeface
             textSize = 12f
         }
         tvPageAndTotal = getTipView(ReadTipConfig.pageAndTotal)
         tvPageAndTotal?.apply {
             isBattery = false
+            typeface = ChapterProvider.typeface
             textSize = 12f
         }
         tvBookName = getTipView(ReadTipConfig.bookName)
         tvBookName?.apply {
             isBattery = false
+            typeface = ChapterProvider.typeface
             textSize = 12f
         }
         tvTimeBattery = getTipView(ReadTipConfig.timeBattery)
         tvTimeBattery?.apply {
             isBattery = false
+            typeface = ChapterProvider.typeface
             textSize = 12f
         }
     }
