@@ -68,16 +68,16 @@ object BookHelp {
         content.split("\n").forEach {
             val matcher = AppPattern.imgPattern.matcher(it)
             if (matcher.find()) {
-                var src = matcher.group(1)
-                src = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                src?.let {
-                    saveImage(book, src)
+                matcher.group(1)?.let { src ->
+                    val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
+                    saveImage(book, mSrc)
                 }
             }
         }
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
+    @Suppress("unused")
     fun saveFont(book: Book, bookChapter: BookChapter, font: ByteArray) {
         FileUtils.createFileIfNotExist(
             downloadDir,
