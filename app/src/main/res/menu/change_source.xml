@@ -19,7 +19,7 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/book_source_manage"
+        android:id="@+id/menu_source_manage"
         android:title="@string/book_source_manage"
         app:showAsAction="never" />
 
