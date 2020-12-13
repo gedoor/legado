@@ -15,7 +15,9 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.TitleBar
@@ -165,7 +167,12 @@ abstract class BaseActivity<VB : ViewBinding>(
     }
 
     open fun upNavigationBarColor() {
-        ATH.setNavigationBarColorAuto(this)
+        if (AppConfig.isTransparentStatusBar) {
+            ATH.setNavigationBarColorAuto(this, ThemeStore.navigationBarColor(this))
+        } else {
+            val nbColor = ColorUtils.darkenColor(ThemeStore.navigationBarColor(this))
+            ATH.setNavigationBarColorAuto(this, nbColor)
+        }
     }
 
     open fun observeLiveBus() {

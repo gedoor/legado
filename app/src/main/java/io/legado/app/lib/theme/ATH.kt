@@ -123,7 +123,7 @@ object ATH {
 
     fun setNavigationBarColorAuto(
         activity: Activity,
-        color: Int = ThemeStore.navigationBarColor(activity)
+        color: Int,
     ) {
         activity.window.navigationBarColor = color
         setLightNavigationBar(activity, ColorUtils.isColorLight(color))
