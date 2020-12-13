@@ -12,6 +12,7 @@
     <color name="night_mask">#69000000</color>
 
     <color name="transparent10">#10ffffff</color>
+    <color name="transparent20">#20ffffff</color>
     <color name="transparent30">#30ffffff</color>
     <color name="transparent50">#50ffffff</color>
 
