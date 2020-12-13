@@ -77,7 +77,7 @@ abstract class ReadBookBaseActivity :
      */
     @SuppressLint("SourceLockedOrientationActivity")
     fun setOrientation() {
-        when (AppConfig.requestedDirection) {
+        when (AppConfig.screenDirection) {
             "0" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             "1" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             "2" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
