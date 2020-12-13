@@ -489,12 +489,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         callBack.screenOffTimerStart()
     }
 
-    fun upTipStyle() {
-        curPage.upTipStyle()
-        prevPage.upTipStyle()
-        nextPage.upTipStyle()
-    }
-
     fun upStyle() {
         ChapterProvider.upStyle()
         curPage.upStyle()
