@@ -547,5 +547,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun showActionMenu()
         fun screenOffTimerStart()
         fun showTextActionMenu()
+        fun autoPageStop()
     }
 }

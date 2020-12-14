@@ -173,6 +173,7 @@ abstract class PageDelegate(protected val readView: ReadView) {
     fun hasNext(): Boolean {
         val hasNext = readView.pageFactory.hasNext()
         if (!hasNext) {
+            readView.callBack.autoPageStop()
             if (!snackBar.isShown) {
                 snackBar.setText(R.string.no_next_page)
                 snackBar.show()
