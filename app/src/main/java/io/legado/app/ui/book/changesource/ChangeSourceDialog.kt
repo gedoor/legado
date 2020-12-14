@@ -208,21 +208,24 @@ class ChangeSourceDialog : BaseDialogFragment(),
      */
     private fun upGroupMenu() {
         val menu: Menu = binding.toolBar.menu
-        val selectedGroup = getPrefString("searchGroup") ?: ""
+        val selectedGroup = getPrefString("searchGroup")
         menu.removeGroup(R.id.source_group)
-        var item = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
-        if (selectedGroup == "") {
-            item?.isChecked = true
-        }
+        val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
+        var hasSelectedGroup = false
         groups.sortedWith { o1, o2 ->
             o1.cnCompare(o2)
-        }.map {
-            item = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-            if (it == selectedGroup) {
-                item.isChecked = true
+        }.forEach { group ->
+            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
+                if (group == selectedGroup) {
+                    it.isChecked = true
+                    hasSelectedGroup = true
+                }
             }
         }
         menu.setGroupCheckable(R.id.source_group, true, true)
+        if (!hasSelectedGroup) {
+            allItem.isChecked = true
+        }
     }
 
     interface CallBack {
