@@ -13,14 +13,14 @@ class StrResponse private constructor(
     val body: String?,
     val errorBody: ResponseBody?
 ) {
-    val raw get() = rawResponse
+    fun raw() = rawResponse
 
     val url: String
         get() {
-            raw.networkResponse?.let {
+            rawResponse.networkResponse?.let {
                 return it.request.url.toString()
             }
-            return raw.request.url.toString()
+            return rawResponse.request.url.toString()
         }
 
     fun code(): Int {
