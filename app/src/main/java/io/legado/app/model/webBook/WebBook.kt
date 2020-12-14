@@ -52,7 +52,7 @@ class WebBook(val bookSource: BookSource) {
                 res.body,
                 bookSource,
                 analyzeUrl,
-                res.url,
+                res.url(),
                 variableBook,
                 true
             )
@@ -83,7 +83,7 @@ class WebBook(val bookSource: BookSource) {
                 res.body,
                 bookSource,
                 analyzeUrl,
-                res.url,
+                res.url(),
                 variableBook,
                 false
             )
