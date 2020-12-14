@@ -10,14 +10,13 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.utils.dp
-import java.io.File
 
 class BatteryView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : AppCompatTextView(context, attrs) {
     private val batteryTypeface by lazy {
-        Typeface.createFromAsset(context.assets, "font${File.separator}number.ttf")
+        Typeface.createFromAsset(context.assets, "font/number.ttf")
     }
     private val batteryPaint = Paint()
     private val outFrame = Rect()
@@ -26,16 +25,22 @@ class BatteryView @JvmOverloads constructor(
         set(value) {
             field = value
             if (value) {
-                typeface = batteryTypeface
+                super.setTypeface(batteryTypeface)
                 postInvalidate()
             }
         }
 
     init {
-        setPadding(4.dp, 0, 6.dp, 0)
+        setPadding(4.dp, 2.dp, 6.dp, 2.dp)
         batteryPaint.strokeWidth = 1.dp.toFloat()
         batteryPaint.isAntiAlias = true
         batteryPaint.color = paint.color
+    }
+
+    override fun setTypeface(tf: Typeface?) {
+        if (!isBattery) {
+            super.setTypeface(tf)
+        }
     }
 
     fun setColor(@ColorInt color: Int) {
@@ -54,9 +59,9 @@ class BatteryView @JvmOverloads constructor(
         if (!isBattery) return
         outFrame.set(
             1.dp,
-            layout.getLineBaseline(0) + layout.getLineAscent(0) + 2.dp,
+            1.dp,
             width - 3.dp,
-            layout.getLineBaseline(0) + 2.dp
+            height - 1.dp
         )
         val dj = (outFrame.bottom - outFrame.top) / 3
         polar.set(
