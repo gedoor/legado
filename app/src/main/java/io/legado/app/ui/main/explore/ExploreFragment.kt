@@ -123,14 +123,12 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         })
     }
 
-    private fun upGroupsMenu() {
-        groupsMenu?.let { subMenu ->
-            subMenu.removeGroup(R.id.menu_group_text)
-            groups.sortedWith { o1, o2 ->
-                o1.cnCompare(o2)
-            }.forEach {
-                subMenu.add(R.id.menu_group_text, Menu.NONE, Menu.NONE, it)
-            }
+    private fun upGroupsMenu() = groupsMenu?.let { subMenu ->
+        subMenu.removeGroup(R.id.menu_group_text)
+        groups.sortedWith { o1, o2 ->
+            o1.cnCompare(o2)
+        }.forEach {
+            subMenu.add(R.id.menu_group_text, Menu.NONE, Menu.NONE, it)
         }
     }
 

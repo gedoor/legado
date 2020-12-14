@@ -204,8 +204,8 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    fun initDragSelectTouchHelperCallback(): DragSelectTouchHelper.Callback {
-        return object : DragSelectTouchHelper.AdvanceCallback<BookSource>(Mode.ToggleAndReverse) {
+    val dragSelectCallback: DragSelectTouchHelper.Callback =
+        object : DragSelectTouchHelper.AdvanceCallback<BookSource>(Mode.ToggleAndReverse) {
             override fun currentSelectedId(): MutableSet<BookSource> {
                 return selected
             }
@@ -228,7 +228,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 return false
             }
         }
-    }
 
     interface CallBack {
         fun del(bookSource: BookSource)
