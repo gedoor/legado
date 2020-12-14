@@ -25,7 +25,7 @@ class BatteryView @JvmOverloads constructor(
         set(value) {
             field = value
             if (value) {
-                typeface = batteryTypeface
+                super.setTypeface(batteryTypeface)
                 postInvalidate()
             }
         }
@@ -35,6 +35,12 @@ class BatteryView @JvmOverloads constructor(
         batteryPaint.strokeWidth = 1.dp.toFloat()
         batteryPaint.isAntiAlias = true
         batteryPaint.color = paint.color
+    }
+
+    override fun setTypeface(tf: Typeface?) {
+        if (!isBattery) {
+            super.setTypeface(tf)
+        }
     }
 
     fun setColor(@ColorInt color: Int) {
