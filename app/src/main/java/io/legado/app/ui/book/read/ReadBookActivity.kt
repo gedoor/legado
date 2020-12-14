@@ -611,7 +611,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
             autoPageProgress += scrollOffset
             if (autoPageProgress >= binding.readView.height) {
                 autoPageProgress = 0
-                binding.readView.fillPage(PageDirection.NEXT)
+                if (!binding.readView.fillPage(PageDirection.NEXT)) {
+                    autoPageStop()
+                }
             } else {
                 binding.readView.invalidate()
             }
