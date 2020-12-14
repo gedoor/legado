@@ -160,8 +160,12 @@ class AjaxWebView {
                 if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
                         .replace("^\"|\"$".toRegex(), "")
-                    handler.obtainMessage(MSG_SUCCESS, StrResponse(url, content))
-                        .sendToTarget()
+                    try {
+                        val response = StrResponse(url, content)
+                        handler.obtainMessage(MSG_SUCCESS, response).sendToTarget()
+                    } catch (e: Exception) {
+                        handler.obtainMessage(MSG_ERROR, e).sendToTarget()
+                    }
                     handler.removeCallbacks(this)
                     return@evaluateJavascript
                 }
@@ -186,10 +190,12 @@ class AjaxWebView {
         override fun onLoadResource(view: WebView, url: String) {
             params.sourceRegex?.let {
                 if (url.matches(it.toRegex())) {
-                    handler.obtainMessage(
-                        MSG_SUCCESS,
-                        StrResponse(view.url ?: params.url, url)
-                    ).sendToTarget()
+                    try {
+                        val response = StrResponse(view.url ?: params.url, url)
+                        handler.obtainMessage(MSG_SUCCESS, response).sendToTarget()
+                    } catch (e: Exception) {
+                        handler.obtainMessage(MSG_ERROR, e).sendToTarget()
+                    }
                 }
             }
         }
