@@ -9,11 +9,12 @@ import rxhttp.wrapper.exception.HttpStatusCodeException
 import java.nio.charset.Charset
 
 @Parser(name = "StrResponse")
-class StrResponseParser(val encode: String? = null) : rxhttp.wrapper.parse.Parser<StrResponse> {
+class StrResponseParser(private val encode: String? = null) :
+    rxhttp.wrapper.parse.Parser<StrResponse> {
 
     override fun onParse(response: Response): StrResponse {
         val body = getString(response)
-        return StrResponse.success(body, response)
+        return StrResponse(response, body)
     }
 
     private fun getString(response: Response): String {

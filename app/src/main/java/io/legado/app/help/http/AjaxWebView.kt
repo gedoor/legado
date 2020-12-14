@@ -160,7 +160,7 @@ class AjaxWebView {
                 if (it.isNotEmpty() && it != "null") {
                     val content = StringEscapeUtils.unescapeJson(it)
                         .replace("^\"|\"$".toRegex(), "")
-                    handler.obtainMessage(MSG_SUCCESS, StrResponse.success(content, url))
+                    handler.obtainMessage(MSG_SUCCESS, StrResponse(url, content))
                         .sendToTarget()
                     handler.removeCallbacks(this)
                     return@evaluateJavascript
@@ -188,7 +188,7 @@ class AjaxWebView {
                 if (url.matches(it.toRegex())) {
                     handler.obtainMessage(
                         MSG_SUCCESS,
-                        StrResponse.success(url, view.url ?: params.url)
+                        StrResponse(view.url ?: params.url, url)
                     ).sendToTarget()
                 }
             }

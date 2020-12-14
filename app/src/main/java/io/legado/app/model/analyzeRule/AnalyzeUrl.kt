@@ -280,7 +280,7 @@ class AnalyzeUrl(
         sourceRegex: String? = null,
     ): StrResponse {
         if (type != null) {
-            return StrResponse.success(StringUtils.byteToHexString(getByteArray(tag)), url)
+            return StrResponse(url, StringUtils.byteToHexString(getByteArray(tag)))
         }
         setCookie(tag)
         if (useWebView) {
