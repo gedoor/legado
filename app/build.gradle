@@ -169,7 +169,7 @@ dependencies {
     implementation 'com.jayway.jsonpath:json-path:2.5.0'
 
     //JS rhino
-    implementation 'com.github.gedoor:rhino-android:1.4'
+    implementation 'com.github.gedoor:rhino-android:1.5'
 
     //网络
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
