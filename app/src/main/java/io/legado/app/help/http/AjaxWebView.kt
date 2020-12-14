@@ -191,7 +191,7 @@ class AjaxWebView {
             params.sourceRegex?.let {
                 if (url.matches(it.toRegex())) {
                     try {
-                        val response = StrResponse(view.url ?: params.url, url)
+                        val response = StrResponse(params.url, url)
                         handler.obtainMessage(MSG_SUCCESS, response).sendToTarget()
                     } catch (e: Exception) {
                         handler.obtainMessage(MSG_ERROR, e).sendToTarget()
