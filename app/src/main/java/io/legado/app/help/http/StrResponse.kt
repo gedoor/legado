@@ -13,15 +13,14 @@ class StrResponse private constructor(
     val body: String?,
     val errorBody: ResponseBody?
 ) {
-    val raw get() = rawResponse
+    fun raw() = rawResponse
 
-    val url: String
-        get() {
-            raw.networkResponse?.let {
-                return it.request.url.toString()
-            }
-            return raw.request.url.toString()
+    fun url(): String {
+        rawResponse.networkResponse?.let {
+            return it.request.url.toString()
         }
+        return rawResponse.request.url.toString()
+    }
 
     fun code(): Int {
         return rawResponse.code
@@ -35,8 +34,7 @@ class StrResponse private constructor(
         return rawResponse.headers
     }
 
-    val isSuccessful: Boolean
-        get() = rawResponse.isSuccessful
+    fun isSuccessful(): Boolean = rawResponse.isSuccessful
 
     fun errorBody(): ResponseBody? {
         return errorBody
