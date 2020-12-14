@@ -111,7 +111,7 @@ object HttpHelper {
 
                 override fun onError(error: Throwable) {
                     if (!block.isCompleted)
-                        block.resume(StrResponse.success(error.msg, params.url))
+                        block.resume(StrResponse(params.url, error.msg))
                 }
             }
             webView.load(params)

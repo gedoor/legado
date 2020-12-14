@@ -437,15 +437,15 @@ class ReadView(context: Context, attrs: AttributeSet) :
         curPage.cancelSelect()
     }
 
-    fun fillPage(direction: PageDirection) {
-        when (direction) {
+    fun fillPage(direction: PageDirection): Boolean {
+        return when (direction) {
             PageDirection.PREV -> {
                 pageFactory.moveToPrev(true)
             }
             PageDirection.NEXT -> {
                 pageFactory.moveToNext(true)
             }
-            else -> Unit
+            else -> false
         }
     }
 
@@ -547,5 +547,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun showActionMenu()
         fun screenOffTimerStart()
         fun showTextActionMenu()
+        fun autoPageStop()
     }
 }
