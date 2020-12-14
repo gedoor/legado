@@ -90,7 +90,7 @@ object ReadBook {
         nextTextChapter = null
     }
 
-    fun upProgress() {
+    fun uploadProgress() {
         book?.let {
             BookWebDav.uploadBookProgress(it)
         }

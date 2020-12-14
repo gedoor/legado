@@ -141,7 +141,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
         upSystemUiVisibility()
         if (!BuildConfig.DEBUG) {
-            ReadBook.upProgress()
+            ReadBook.uploadProgress()
             Backup.autoBack(this)
         }
     }
