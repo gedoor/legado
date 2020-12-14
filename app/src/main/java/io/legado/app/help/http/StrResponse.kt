@@ -8,17 +8,20 @@ import okhttp3.Response.Builder
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class StrResponse {
-    var rawResponse: Response
+    var raw: Response
+        private set
     var body: String? = null
+        private set
     var errorBody: ResponseBody? = null
+        private set
 
     constructor(rawResponse: Response, body: String?) {
-        this.rawResponse = rawResponse
+        this.raw = rawResponse
         this.body = body
     }
 
     constructor(url: String, body: String?) {
-        rawResponse = Builder()
+        raw = Builder()
             .code(200)
             .message("OK")
             .protocol(Protocol.HTTP_1_1)
@@ -28,39 +31,43 @@ class StrResponse {
     }
 
     constructor(rawResponse: Response, errorBody: ResponseBody?) {
-        this.rawResponse = rawResponse
+        this.raw = rawResponse
         this.errorBody = errorBody
     }
 
-    fun raw() = rawResponse
+    fun raw() = raw
 
     fun url(): String {
-        rawResponse.networkResponse?.let {
+        raw.networkResponse?.let {
             return it.request.url.toString()
         }
-        return rawResponse.request.url.toString()
+        return raw.request.url.toString()
     }
 
+    val url: String get() = url()
+
+    fun body() = body
+
     fun code(): Int {
-        return rawResponse.code
+        return raw.code
     }
 
     fun message(): String {
-        return rawResponse.message
+        return raw.message
     }
 
     fun headers(): Headers {
-        return rawResponse.headers
+        return raw.headers
     }
 
-    fun isSuccessful(): Boolean = rawResponse.isSuccessful
+    fun isSuccessful(): Boolean = raw.isSuccessful
 
     fun errorBody(): ResponseBody? {
         return errorBody
     }
 
     override fun toString(): String {
-        return rawResponse.toString()
+        return raw.toString()
     }
 
 }
