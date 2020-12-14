@@ -170,7 +170,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ) {
                     processLiveData.postValue(progress)
                 } else {
-                    ReadBook.upProgress(progress)
+                    ReadBook.setProgress(progress)
                 }
             }
         }
