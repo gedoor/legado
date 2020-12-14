@@ -170,8 +170,8 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    fun initDragSelectTouchHelperCallback(): DragSelectTouchHelper.Callback {
-        return object : DragSelectTouchHelper.AdvanceCallback<RssSource>(Mode.ToggleAndReverse) {
+    val dragSelectCallback: DragSelectTouchHelper.Callback =
+        object : DragSelectTouchHelper.AdvanceCallback<RssSource>(Mode.ToggleAndReverse) {
             override fun currentSelectedId(): MutableSet<RssSource> {
                 return selected
             }
@@ -194,7 +194,6 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 return false
             }
         }
-    }
 
     interface CallBack {
         fun del(source: RssSource)

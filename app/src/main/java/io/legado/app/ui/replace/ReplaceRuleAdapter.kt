@@ -167,8 +167,8 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    fun initDragSelectTouchHelperCallback(): DragSelectTouchHelper.Callback {
-        return object : DragSelectTouchHelper.AdvanceCallback<ReplaceRule>(Mode.ToggleAndReverse) {
+    val dragSelectCallback: DragSelectTouchHelper.Callback =
+        object : DragSelectTouchHelper.AdvanceCallback<ReplaceRule>(Mode.ToggleAndReverse) {
             override fun currentSelectedId(): MutableSet<ReplaceRule> {
                 return selected
             }
@@ -191,7 +191,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 return false
             }
         }
-    }
 
     interface CallBack {
         fun update(vararg rule: ReplaceRule)

@@ -237,22 +237,22 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     /**
      * 更新分组菜单
      */
-    private fun upGroupMenu() {
+    private fun upGroupMenu() = menu?.let { menu ->
         val selectedGroup = getPrefString("searchGroup") ?: ""
-        menu?.removeGroup(R.id.source_group)
-        var item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
+        menu.removeGroup(R.id.source_group)
+        var item = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
         if (selectedGroup == "") {
             item?.isChecked = true
         }
         groups.sortedWith { o1, o2 ->
             o1.cnCompare(o2)
         }.map {
-            item = menu?.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+            item = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
             if (it == selectedGroup) {
                 item?.isChecked = true
             }
         }
-        menu?.setGroupCheckable(R.id.source_group, true, true)
+        menu.setGroupCheckable(R.id.source_group, true, true)
     }
 
     /**
