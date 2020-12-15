@@ -12,7 +12,6 @@ import io.legado.app.data.entities.RuleSub
 import io.legado.app.databinding.ItemRuleSubBinding
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import org.jetbrains.anko.sdk27.listeners.onClick
-import java.util.*
 
 class RuleSubAdapter(context: Context, val callBack: Callback) :
     SimpleRecyclerAdapter<RuleSub, ItemRuleSubBinding>(context),
@@ -74,8 +73,7 @@ class RuleSubAdapter(context: Context, val callBack: Callback) :
                 movedItems.add(targetItem)
             }
         }
-        Collections.swap(getItems(), srcPosition, targetPosition)
-        notifyItemMoved(srcPosition, targetPosition)
+        swapItem(srcPosition, targetPosition)
         return true
     }
 

@@ -17,7 +17,6 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import org.jetbrains.anko.sdk27.listeners.onClick
-import java.util.*
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource, ItemRssSourceBinding>(context),
@@ -160,8 +159,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                 movedItems.add(targetItem)
             }
         }
-        Collections.swap(getItems(), srcPosition, targetPosition)
-        notifyItemMoved(srcPosition, targetPosition)
+        swapItem(srcPosition, targetPosition)
         return true
     }
 

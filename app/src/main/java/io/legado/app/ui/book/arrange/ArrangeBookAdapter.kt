@@ -141,8 +141,6 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
-        Collections.swap(getItems(), srcPosition, targetPosition)
-        notifyItemMoved(srcPosition, targetPosition)
         if (srcItem != null && targetItem != null) {
             if (srcItem.order == targetItem.order) {
                 for ((index, item) in getItems().withIndex()) {
@@ -154,6 +152,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                 targetItem.order = pos
             }
         }
+        swapItem(srcPosition, targetPosition)
         isMoved = true
         return true
     }
