@@ -94,7 +94,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     private fun upCheckableCount() {
         checkableCount = 0
         getItems().forEach {
-            if (!it.isDir && !bookFileNames.contains(it.uri.toString())) {
+            if (!it.isDir && !bookFileNames.contains(it.name)) {
                 checkableCount++
             }
         }
@@ -104,7 +104,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     fun selectAll(selectAll: Boolean) {
         if (selectAll) {
             getItems().forEach {
-                if (!it.isDir && !bookFileNames.contains(it.uri.toString())) {
+                if (!it.isDir && !bookFileNames.contains(it.name)) {
                     selectedUris.add(it.uri.toString())
                 }
             }
