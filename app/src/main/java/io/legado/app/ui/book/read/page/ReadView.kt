@@ -77,15 +77,15 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private var firstCharIndex: Int = 0
 
     val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
-    private val tlRect = RectF(10F, 10F, width * 0.33f, height * 0.33f)
-    private val tcRect = RectF(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
-    private val trRect = RectF(width * 0.36f, 10F, width - 10f, height * 0.33f)
-    private val mlRect = RectF(10F, height * 0.33f, width * 0.33f, height * 0.66f)
+    private val tlRect = RectF(0f, 0f, width * 0.33f, height * 0.33f)
+    private val tcRect = RectF(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
+    private val trRect = RectF(width * 0.36f, 0f, width - 0f, height * 0.33f)
+    private val mlRect = RectF(0f, height * 0.33f, width * 0.33f, height * 0.66f)
     private val mcRect = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-    private val mrRect = RectF(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
-    private val blRect = RectF(10F, height * 0.66f, width * 0.33f, height - 10f)
-    private val bcRect = RectF(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
-    private val brRect = RectF(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
+    private val mrRect = RectF(width * 0.66f, height * 0.33f, width - 0f, height * 0.66f)
+    private val blRect = RectF(0f, height * 0.66f, width * 0.33f, height - 0f)
+    private val bcRect = RectF(width * 0.33f, height * 0.66f, width * 0.66f, height - 0f)
+    private val brRect = RectF(width * 0.66f, height * 0.66f, width - 0f, height - 0f)
     private val autoPageRect by lazy { Rect() }
     private val autoPagePint by lazy { Paint().apply { color = context.accentColor } }
     private val boundary by lazy { BreakIterator.getWordInstance(Locale.getDefault()) }
@@ -103,15 +103,15 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        tlRect.set(10F, 10F, width * 0.33f, height * 0.33f)
-        tcRect.set(width * 0.33f, 10F, width * 0.66f, height * 0.33f)
-        trRect.set(width * 0.36f, 10F, width - 10f, height * 0.33f)
-        mlRect.set(10F, height * 0.33f, width * 0.33f, height * 0.66f)
+        tlRect.set(0f, 0f, width * 0.33f, height * 0.33f)
+        tcRect.set(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
+        trRect.set(width * 0.36f, 0f, width - 0f, height * 0.33f)
+        mlRect.set(0f, height * 0.33f, width * 0.33f, height * 0.66f)
         mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-        mrRect.set(width * 0.66f, height * 0.33f, width - 10f, height * 0.66f)
-        blRect.set(10F, height * 0.66f, width * 0.33f, height - 10f)
-        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 10f)
-        brRect.set(width * 0.66f, height * 0.66f, width - 10f, height - 10f)
+        mrRect.set(width * 0.66f, height * 0.33f, width - 0f, height * 0.66f)
+        blRect.set(0f, height * 0.66f, width * 0.33f, height - 10f)
+        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 0f)
+        brRect.set(width * 0.66f, height * 0.66f, width - 0f, height - 0f)
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
     }
