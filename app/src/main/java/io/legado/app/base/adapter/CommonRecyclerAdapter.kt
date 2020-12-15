@@ -4,11 +4,13 @@ import android.content.Context
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by Invincible on 2017/11/24.
@@ -36,7 +38,10 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
     private val footerItems: SparseArray<(parent: ViewGroup) -> ViewBinding> by lazy { SparseArray() }
 
     private val itemDelegates: HashMap<Int, ItemViewDelegate<ITEM, VB>> = hashMapOf()
-    private val items: MutableList<ITEM> = mutableListOf()
+
+    private val asyncListDiffer: AsyncListDiffer<ITEM> by lazy {
+        AsyncListDiffer(this, diffItemCallback)
+    }
 
     private val lock = Object()
 
@@ -44,6 +49,19 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
     private var itemLongClickListener: ((holder: ItemViewHolder, item: ITEM) -> Boolean)? = null
 
     var itemAnimation: ItemAnimation? = null
+
+    open val diffItemCallback: DiffUtil.ItemCallback<ITEM> =
+        object : DiffUtil.ItemCallback<ITEM>() {
+
+            override fun areItemsTheSame(oldItem: ITEM, newItem: ITEM): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(oldItem: ITEM, newItem: ITEM): Boolean {
+                return true
+            }
+
+        }
 
     fun setOnItemClickListener(listener: (holder: ItemViewHolder, item: ITEM) -> Unit) {
         itemClickListener = listener
@@ -115,88 +133,65 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
 
     fun setItems(items: List<ITEM>?) {
         synchronized(lock) {
-            if (this.items.isNotEmpty()) {
-                this.items.clear()
-            }
-            if (items != null) {
-                this.items.addAll(items)
-            }
-            notifyDataSetChanged()
-        }
-    }
-
-    fun setItems(items: List<ITEM>?, diffResult: DiffUtil.DiffResult) {
-        synchronized(lock) {
-            if (this.items.isNotEmpty()) {
-                this.items.clear()
-            }
-            if (items != null) {
-                this.items.addAll(items)
-            }
-            diffResult.dispatchUpdatesTo(this)
+            asyncListDiffer.submitList(items)
         }
     }
 
     fun setItem(position: Int, item: ITEM) {
         synchronized(lock) {
-            val oldSize = getActualItemCount()
-            if (position in 0 until oldSize) {
-                this.items[position] = item
-                notifyItemChanged(position + getHeaderCount())
-            }
+            val list = ArrayList(asyncListDiffer.currentList)
+            list[position] = item
+            asyncListDiffer.submitList(list)
         }
     }
 
     fun addItem(item: ITEM) {
         synchronized(lock) {
-            val oldSize = getActualItemCount()
-            if (this.items.add(item)) {
-                notifyItemInserted(oldSize + getHeaderCount())
-            }
+            val list = ArrayList(asyncListDiffer.currentList)
+            list.add(item)
+            asyncListDiffer.submitList(list)
         }
     }
 
     fun addItems(position: Int, newItems: List<ITEM>) {
         synchronized(lock) {
-            if (this.items.addAll(position, newItems)) {
-                notifyItemRangeInserted(position + getHeaderCount(), newItems.size)
-            }
+            val list = ArrayList(asyncListDiffer.currentList)
+            list.addAll(position, newItems)
+            asyncListDiffer.submitList(list)
         }
     }
 
     fun addItems(newItems: List<ITEM>) {
         synchronized(lock) {
-            val oldSize = getActualItemCount()
-            if (this.items.addAll(newItems)) {
-                if (oldSize == 0 && getHeaderCount() == 0) {
-                    notifyDataSetChanged()
-                } else {
-                    notifyItemRangeInserted(oldSize + getHeaderCount(), newItems.size)
-                }
-            }
+            val list = ArrayList(asyncListDiffer.currentList)
+            list.addAll(newItems)
+            asyncListDiffer.submitList(list)
         }
     }
 
     fun removeItem(position: Int) {
         synchronized(lock) {
-            if (this.items.removeAt(position) != null) {
-                notifyItemRemoved(position + getHeaderCount())
+            val list = ArrayList(asyncListDiffer.currentList)
+            if (list.removeAt(position) != null) {
+                asyncListDiffer.submitList(list)
             }
         }
     }
 
     fun removeItem(item: ITEM) {
         synchronized(lock) {
-            if (this.items.remove(item)) {
-                notifyItemRemoved(this.items.indexOf(item) + getHeaderCount())
+            val list = ArrayList(asyncListDiffer.currentList)
+            if (list.remove(item)) {
+                asyncListDiffer.submitList(list)
             }
         }
     }
 
     fun removeItems(items: List<ITEM>) {
         synchronized(lock) {
-            if (this.items.removeAll(items)) {
-                notifyDataSetChanged()
+            val list = ArrayList(asyncListDiffer.currentList)
+            if (list.removeAll(items)) {
+                asyncListDiffer.submitList(list)
             }
         }
     }
@@ -207,7 +202,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             if (oldPosition in 0 until size && newPosition in 0 until size) {
                 val srcPosition = oldPosition + getHeaderCount()
                 val targetPosition = newPosition + getHeaderCount()
-                Collections.swap(this.items, srcPosition, targetPosition)
+                Collections.swap(asyncListDiffer.currentList, srcPosition, targetPosition)
                 notifyItemChanged(srcPosition)
                 notifyItemChanged(targetPosition)
             }
@@ -216,9 +211,9 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
 
     fun updateItem(item: ITEM) =
         synchronized(lock) {
-            val index = this.items.indexOf(item)
+            val index = asyncListDiffer.currentList.indexOf(item)
             if (index >= 0) {
-                this.items[index] = item
+                asyncListDiffer.currentList[index] = item
                 notifyItemChanged(index)
             }
         }
@@ -245,18 +240,17 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
 
     fun clearItems() =
         synchronized(lock) {
-            this.items.clear()
-            notifyDataSetChanged()
+            asyncListDiffer.submitList(arrayListOf())
         }
 
-    fun isEmpty() = items.isEmpty()
+    fun isEmpty() = asyncListDiffer.currentList.isEmpty()
 
-    fun isNotEmpty() = items.isNotEmpty()
+    fun isNotEmpty() = asyncListDiffer.currentList.isNotEmpty()
 
     /**
      * 除去header和footer
      */
-    fun getActualItemCount() = items.size
+    fun getActualItemCount() = asyncListDiffer.currentList.size
 
 
     fun getHeaderCount() = headerItems.size()
@@ -264,11 +258,12 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
 
     fun getFooterCount() = footerItems.size()
 
-    fun getItem(position: Int): ITEM? = items.getOrNull(position)
+    fun getItem(position: Int): ITEM? = asyncListDiffer.currentList.getOrNull(position)
 
-    fun getItemByLayoutPosition(position: Int) = items.getOrNull(position - getHeaderCount())
+    fun getItemByLayoutPosition(position: Int) =
+        asyncListDiffer.currentList.getOrNull(position - getHeaderCount())
 
-    fun getItems(): List<ITEM> = items
+    fun getItems(): List<ITEM> = asyncListDiffer.currentList
 
     protected open fun getItemViewType(item: ITEM, position: Int) = 0
 

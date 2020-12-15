@@ -173,8 +173,8 @@ dependencies {
 
     //网络
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.ljx.rxhttp:rxhttp:2.4.4-beta4'
-    kapt 'com.ljx.rxhttp:rxhttp-compiler:2.4.4-beta4'
+    implementation 'com.ljx.rxhttp:rxhttp:2.5.1'
+    kapt 'com.ljx.rxhttp:rxhttp-compiler:2.5.1'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'

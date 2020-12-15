@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -25,6 +26,9 @@ import java.util.*
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
     Callback {
+
+    override val diffItemCallback: DiffUtil.ItemCallback<BookSource>
+        get() = DiffCallBack()
 
     private val selected = linkedSetOf<BookSource>()
 
