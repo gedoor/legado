@@ -163,17 +163,18 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun syncBookProgress(book: Book) {
-        execute {
-            BookWebDav.getBookProgress(book)?.let { progress ->
-                if (progress.durChapterIndex < book.durChapterIndex ||
-                    (progress.durChapterIndex == book.durChapterIndex && progress.durChapterPos < book.durChapterPos)
-                ) {
-                    processLiveData.postValue(progress)
-                } else {
-                    ReadBook.setProgress(progress)
+        if (!AppConfig.syncBookProgress)
+            execute {
+                BookWebDav.getBookProgress(book)?.let { progress ->
+                    if (progress.durChapterIndex < book.durChapterIndex ||
+                        (progress.durChapterIndex == book.durChapterIndex && progress.durChapterPos < book.durChapterPos)
+                    ) {
+                        processLiveData.postValue(progress)
+                    } else {
+                        ReadBook.setProgress(progress)
+                    }
                 }
             }
-        }
     }
 
     fun changeTo(newBook: Book) {

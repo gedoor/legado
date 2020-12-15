@@ -794,5 +794,7 @@
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">拉取云端进度</string>
     <string name="current_progress_exceeds_cloud">当前进度超过云端进度,是否同步?</string>
+    <string name="sync_book_progress_t">同步阅读进度</string>
+    <string name="sync_book_progress_s">进入退出阅读界面时同步阅读进度</string>
 
 </resources>

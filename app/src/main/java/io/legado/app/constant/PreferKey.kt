@@ -63,6 +63,7 @@ object PreferKey {
     const val autoChangeSource = "autoChangeSource"
     const val importKeepName = "importKeepName"
     const val screenDirection = "screenDirection"
+    const val syncBookProgress = "syncBookProgress"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

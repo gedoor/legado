@@ -151,7 +151,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 cbName.onClick {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
                         engineId = httpTTS.id
-                        notifyItemRangeChanged(0, getActualItemCount())
+                        notifyItemRangeChanged(0, itemCount)
                     }
                 }
                 ivEdit.onClick {

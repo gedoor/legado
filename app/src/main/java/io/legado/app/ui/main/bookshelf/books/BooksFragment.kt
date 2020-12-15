@@ -134,7 +134,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     fun getBooksCount(): Int {
-        return booksAdapter.getActualItemCount()
+        return booksAdapter.itemCount
     }
 
     override fun open(book: Book) {
