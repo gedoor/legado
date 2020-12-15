@@ -39,7 +39,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
         payloads: MutableList<Any>
     ) {
         with(binding) {
-            if (holder.layoutPosition == getActualItemCount() - 1) {
+            if (holder.layoutPosition == itemCount - 1) {
                 root.setPadding(16.dp, 12.dp, 16.dp, 12.dp)
             } else {
                 root.setPadding(16.dp, 12.dp, 16.dp, 0)

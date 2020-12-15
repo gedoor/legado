@@ -399,7 +399,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun upCountView() {
         binding.selectActionBar
-            .upCountView(adapter.getSelection().size, adapter.getActualItemCount())
+            .upCountView(adapter.getSelection().size, adapter.itemCount)
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {

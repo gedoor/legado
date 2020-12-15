@@ -281,7 +281,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     override fun upCountView() {
         binding.selectActionBar.upCountView(
             adapter.getSelection().size,
-            adapter.getActualItemCount()
+            adapter.itemCount
         )
     }
 

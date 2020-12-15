@@ -221,7 +221,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     override fun upCountView() {
         binding.selectActionBar.upCountView(
             adapter.getSelection().size,
-            adapter.getActualItemCount()
+            adapter.itemCount
         )
     }
 

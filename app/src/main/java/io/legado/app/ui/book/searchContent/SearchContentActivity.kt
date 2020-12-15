@@ -117,7 +117,7 @@ class SearchContentActivity :
         launch(Dispatchers.IO) {
             adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
             withContext(Dispatchers.Main) {
-                adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+                adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
             }
         }
     }

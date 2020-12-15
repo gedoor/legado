@@ -102,7 +102,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
         launch(IO) {
             adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
             withContext(Main) {
-                adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+                adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
             }
         }
     }

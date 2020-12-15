@@ -163,7 +163,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
                 adapter.cacheChapters[book.bookUrl] = chapterCaches
                 withContext(Dispatchers.Main) {
-                    adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+                    adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
                 }
             }
         }
@@ -179,7 +179,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 menu?.applyTint(this)
             }
             adapter.downloadMap = it
-            adapter.notifyItemRangeChanged(0, adapter.getActualItemCount(), true)
+            adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
         }
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
             adapter.cacheChapters[it.bookUrl]?.add(it.url)
