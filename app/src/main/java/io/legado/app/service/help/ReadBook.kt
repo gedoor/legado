@@ -91,6 +91,7 @@ object ReadBook {
     }
 
     fun uploadProgress() {
+        if (!AppConfig.syncBookProgress) return
         book?.let {
             BookWebDav.uploadBookProgress(it)
         }

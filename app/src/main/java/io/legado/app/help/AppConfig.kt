@@ -147,6 +147,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val importKeepName get() = context.getPrefBoolean(PreferKey.importKeepName)
 
+    val syncBookProgress get() = context.getPrefBoolean(PreferKey.syncBookProgress, true)
+
     private fun getPrefUserAgent(): String {
         val ua = context.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {
