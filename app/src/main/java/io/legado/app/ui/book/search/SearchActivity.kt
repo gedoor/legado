@@ -299,7 +299,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     /**
      * 更新搜索结果
      */
-    @Synchronized
     private fun upSearchItems(items: List<SearchBook>) {
         adapter.setItems(items)
     }

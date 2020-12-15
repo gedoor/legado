@@ -17,7 +17,16 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
 
     override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
-        get() = DiffCallBack()
+        get() = object : DiffUtil.ItemCallback<SearchBook>() {
+
+            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return true
+            }
+
+            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return false
+            }
+        }
 
     override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
         return ItemSearchBinding.inflate(inflater, parent, false)
