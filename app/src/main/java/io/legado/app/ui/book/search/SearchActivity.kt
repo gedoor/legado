@@ -44,7 +44,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private lateinit var bookAdapter: BookAdapter
     private lateinit var historyKeyAdapter: HistoryKeyAdapter
     private lateinit var loadMoreView: LoadMoreView
-    private lateinit var serchView: SearchView
+    private lateinit var searchView: SearchView
     private var historyData: LiveData<List<SearchKeyword>>? = null
     private var bookData: LiveData<List<Book>>? = null
     private var menu: Menu? = null
@@ -57,7 +57,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.llHistory.setBackgroundColor(backgroundColor)
-        serchView = binding.titleBar.findViewById(R.id.search_view)
+        searchView = binding.titleBar.findViewById(R.id.search_view)
         initRecyclerView()
         initSearchView()
         initOtherView()
@@ -87,8 +87,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                     !getPrefBoolean(PreferKey.precisionSearch)
                 )
                 precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
-                serchView.query?.toString()?.trim()?.let {
-                    serchView.setQuery(it, true)
+                searchView.query?.toString()?.trim()?.let {
+                    searchView.setQuery(it, true)
                 }
             }
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
@@ -99,8 +99,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 } else {
                     putPrefString("searchGroup", item.title.toString())
                 }
-                serchView.query?.toString()?.trim()?.let {
-                    serchView.setQuery(it, true)
+                searchView.query?.toString()?.trim()?.let {
+                    searchView.setQuery(it, true)
                 }
             }
         }
@@ -108,14 +108,14 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun initSearchView() {
-        ATH.setTint(serchView, primaryTextColor)
-        serchView.onActionViewExpanded()
-        serchView.isSubmitButtonEnabled = true
-        serchView.queryHint = getString(R.string.search_book_key)
-        serchView.clearFocus()
-        serchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        ATH.setTint(searchView, primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.queryHint = getString(R.string.search_book_key)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                serchView.clearFocus()
+                searchView.clearFocus()
                 query?.let {
                     viewModel.saveSearchKey(query)
                     viewModel.search(it)
@@ -130,8 +130,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 return false
             }
         })
-        serchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && serchView.query.toString().trim().isEmpty()) {
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && searchView.query.toString().trim().isEmpty()) {
                 finish()
             } else {
                 openOrCloseHistory(hasFocus)
@@ -207,9 +207,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     private fun receiptIntent(intent: Intent? = null) {
         intent?.getStringExtra("key")?.let {
-            serchView.setQuery(it, true)
+            searchView.setQuery(it, true)
         } ?: let {
-            serchView.requestFocus()
+            searchView.requestFocus()
         }
     }
 
@@ -227,7 +227,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      */
     private fun openOrCloseHistory(open: Boolean) {
         if (open) {
-            upHistory(serchView.query.toString())
+            upHistory(searchView.query.toString())
             binding.llHistory.visibility = VISIBLE
         } else {
             binding.llHistory.visibility = GONE
@@ -299,7 +299,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     /**
      * 更新搜索结果
      */
-    @Synchronized
     private fun upSearchItems(items: List<SearchBook>) {
         adapter.setItems(items)
     }
@@ -351,14 +350,14 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override fun searchHistory(key: String) {
         launch {
             when {
-                serchView.query.toString() == key -> {
-                    serchView.setQuery(key, true)
+                searchView.query.toString() == key -> {
+                    searchView.setQuery(key, true)
                 }
                 withContext(IO) { App.db.bookDao.findByName(key).isEmpty() } -> {
-                    serchView.setQuery(key, true)
+                    searchView.setQuery(key, true)
                 }
                 else -> {
-                    serchView.setQuery(key, false)
+                    searchView.setQuery(key, false)
                 }
             }
         }
