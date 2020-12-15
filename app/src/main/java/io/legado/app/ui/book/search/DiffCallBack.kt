@@ -4,20 +4,9 @@ import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.SearchBook
 
-class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems: List<SearchBook>) :
-    DiffUtil.Callback() {
+class DiffCallBack : DiffUtil.ItemCallback<SearchBook>() {
 
-    override fun getNewListSize(): Int {
-        return newItems.size
-    }
-
-    override fun getOldListSize(): Int {
-        return oldItems.size
-    }
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldItems[oldItemPosition]
-        val newItem = newItems[newItemPosition]
+    override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
         return when {
             oldItem.name != newItem.name -> false
             oldItem.author != newItem.author -> false
@@ -25,9 +14,7 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         }
     }
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldItems[oldItemPosition]
-        val newItem = newItems[newItemPosition]
+    override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
         return when {
             oldItem.origins.size != newItem.origins.size -> false
             oldItem.coverUrl != newItem.coverUrl -> false
@@ -38,10 +25,8 @@ class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems:
         }
     }
 
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+    override fun getChangePayload(oldItem: SearchBook, newItem: SearchBook): Any? {
         val payload = Bundle()
-        val newItem = newItems[newItemPosition]
-        val oldItem = oldItems[oldItemPosition]
         if (oldItem.name != newItem.name) payload.putString("name", newItem.name)
         if (oldItem.author != newItem.author) payload.putString("author", newItem.author)
         if (oldItem.origins.size != newItem.origins.size)
