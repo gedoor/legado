@@ -287,7 +287,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
 
     private fun importNetConfig(url: String) {
         execute {
-            RxHttp.get(url).toByteArray().await()?.let {
+            RxHttp.get(url).toByteArray().await().let {
                 importConfig(it)
             }
         }.onError {

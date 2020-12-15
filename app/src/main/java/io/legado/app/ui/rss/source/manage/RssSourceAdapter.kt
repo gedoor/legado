@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -21,6 +22,9 @@ import java.util.*
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<RssSource, ItemRssSourceBinding>(context),
     ItemTouchCallback.Callback {
+
+    override val diffItemCallback: DiffUtil.ItemCallback<RssSource>
+        get() = DiffCallBack()
 
     private val selected = linkedSetOf<RssSource>()
 

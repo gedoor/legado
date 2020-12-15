@@ -4,28 +4,13 @@ import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.BookSource
 
-class DiffCallBack(
-    private val oldItems: List<BookSource>,
-    private val newItems: List<BookSource>
-) : DiffUtil.Callback() {
+class DiffCallBack : DiffUtil.ItemCallback<BookSource>() {
 
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldItems[oldItemPosition]
-        val newItem = newItems[newItemPosition]
+    override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
         return oldItem.bookSourceUrl == newItem.bookSourceUrl
     }
 
-    override fun getOldListSize(): Int {
-        return oldItems.size
-    }
-
-    override fun getNewListSize(): Int {
-        return newItems.size
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldItems[oldItemPosition]
-        val newItem = newItems[newItemPosition]
+    override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
         if (oldItem.bookSourceName != newItem.bookSourceName)
             return false
         if (oldItem.bookSourceGroup != newItem.bookSourceGroup)
@@ -40,9 +25,7 @@ class DiffCallBack(
         return true
     }
 
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        val oldItem = oldItems[oldItemPosition]
-        val newItem = newItems[newItemPosition]
+    override fun getChangePayload(oldItem: BookSource, newItem: BookSource): Any? {
         val payload = Bundle()
         if (oldItem.bookSourceName != newItem.bookSourceName) {
             payload.putString("name", newItem.bookSourceName)
