@@ -153,8 +153,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 movedItems.add(targetItem)
             }
         }
-        Collections.swap(getItems(), srcPosition, targetPosition)
-        notifyItemMoved(srcPosition, targetPosition)
+        swapItem(srcPosition, targetPosition)
         return true
     }
 

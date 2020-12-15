@@ -21,7 +21,6 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
-import java.util.*
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
@@ -194,8 +193,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 movedItems.add(targetItem)
             }
         }
-        Collections.swap(getItems(), srcPosition, targetPosition)
-        notifyItemMoved(srcPosition, targetPosition)
+        swapItem(srcPosition, targetPosition)
         return true
     }
 

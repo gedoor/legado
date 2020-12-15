@@ -121,14 +121,11 @@ abstract class SimpleRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
         }
     }
 
-    fun swapItem(oldPosition: Int, newPosition: Int) {
+    fun swapItem(srcPosition: Int, targetPosition: Int) {
         synchronized(lock) {
-            val size = itemCount
-            if (oldPosition in 0 until size && newPosition in 0 until size) {
-                Collections.swap(asyncListDiffer.currentList, oldPosition, newPosition)
-                notifyItemChanged(oldPosition)
-                notifyItemChanged(newPosition)
-            }
+            val list = ArrayList(getItems())
+            Collections.swap(list, srcPosition, targetPosition)
+            setItems(list)
         }
     }
 

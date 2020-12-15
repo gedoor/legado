@@ -248,8 +248,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         private var isMoved = false
 
         override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-            Collections.swap(getItems(), srcPosition, targetPosition)
-            notifyItemMoved(srcPosition, targetPosition)
+            swapItem(srcPosition, targetPosition)
             isMoved = true
             return super.onMove(srcPosition, targetPosition)
         }
