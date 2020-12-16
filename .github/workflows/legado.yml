@@ -28,7 +28,7 @@ jobs:
       # 蓝奏云里的文件夹名（需手动在蓝奏云创建）
       LANZOU_FOLDER: '阅读3测试版'
       # 是否上传到artifact
-      UPLOAD_ARTIFACT: 'true'
+      UPLOAD_ARTIFACT: 'false'
     steps:
       - uses: actions/checkout@v2
       - name: set up JDK 1.8
