@@ -3,9 +3,10 @@ package io.legado.app.ui.book.search
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
+import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.utils.gone
@@ -13,7 +14,38 @@ import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
+    DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
+
+    override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
+        get() = object : DiffUtil.ItemCallback<SearchBook>() {
+
+            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return when {
+                    oldItem.name != newItem.name -> false
+                    oldItem.author != newItem.author -> false
+                    else -> true
+                }
+            }
+
+            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return false
+            }
+
+            override fun getChangePayload(oldItem: SearchBook, newItem: SearchBook): Any {
+                val payload = Bundle()
+                payload.putInt("origins", newItem.origins.size)
+                if (oldItem.coverUrl != newItem.coverUrl)
+                    payload.putString("cover", newItem.coverUrl)
+                if (oldItem.kind != newItem.kind)
+                    payload.putString("kind", newItem.kind)
+                if (oldItem.latestChapterTitle != newItem.latestChapterTitle)
+                    payload.putString("last", newItem.latestChapterTitle)
+                if (oldItem.intro != newItem.intro)
+                    payload.putString("intro", newItem.intro)
+                return payload
+            }
+
+        }
 
     override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
         return ItemSearchBinding.inflate(inflater, parent, false)
@@ -66,9 +98,6 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         with(binding) {
             bundle.keySet().map {
                 when (it) {
-                    "name" -> tvName.text = searchBook.name
-                    "author" -> tvAuthor.text =
-                        context.getString(R.string.author_show, searchBook.author)
                     "origins" -> bvOriginCount.setBadgeCount(searchBook.origins.size)
                     "last" -> upLasted(binding, searchBook.latestChapterTitle)
                     "intro" -> {

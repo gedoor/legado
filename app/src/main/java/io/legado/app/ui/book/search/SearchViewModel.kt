@@ -62,12 +62,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
     }
 
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
-        if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-            precisionSearch(this, searchBooks)
-        } else {
-            App.db.searchBookDao.insert(*searchBooks.toTypedArray())
-            mergeItems(this, searchBooks)
-        }
+        val precision = context.getPrefBoolean(PreferKey.precisionSearch)
+        mergeItems(this, searchBooks, precision)
     }
 
     override fun onSearchFinish() {
@@ -81,97 +77,58 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
     }
 
     /**
-     * 精确搜索处理
-     */
-    private fun precisionSearch(scope: CoroutineScope, searchBooks: List<SearchBook>) {
-        val books = arrayListOf<SearchBook>()
-        searchBooks.forEach { searchBook ->
-            if (searchBook.name.contains(searchKey, true)
-                || searchBook.author.contains(searchKey, true)
-            ) books.add(searchBook)
-        }
-        App.db.searchBookDao.insert(*books.toTypedArray())
-        if (scope.isActive) {
-            mergeItems(scope, books)
-        }
-    }
-
-    /**
      * 合并搜索结果并排序
      */
     @Synchronized
-    private fun mergeItems(scope: CoroutineScope, newDataS: List<SearchBook>) {
+    private fun mergeItems(scope: CoroutineScope, newDataS: List<SearchBook>, precision: Boolean) {
         if (newDataS.isNotEmpty()) {
-            val copyDataS = ArrayList(searchBooks)
-            val searchBooksAdd = ArrayList<SearchBook>()
-            if (copyDataS.size == 0) {
-                copyDataS.addAll(newDataS)
-            } else {
-                //存在
-                newDataS.forEach { item ->
+            val prevData = ArrayList(searchBooks)
+            val precisionData = arrayListOf<SearchBook>()
+            prevData.forEach {
+                if (!scope.isActive) return
+                if (it.name == searchKey || it.author == searchKey) {
+                    precisionData.add(it)
+                }
+            }
+            repeat(precisionData.size) {
+                if (!scope.isActive) return
+                prevData.removeAt(0)
+            }
+            newDataS.forEach { nBook ->
+                if (!scope.isActive) return
+                if (nBook.name == searchKey || nBook.author == searchKey) {
                     var hasSame = false
-                    for (searchBook in copyDataS) {
-                        if (item.name == searchBook.name
-                            && item.author == searchBook.author
-                        ) {
+                    precisionData.forEach { pBook ->
+                        if (!scope.isActive) return
+                        if (pBook.name == nBook.name && pBook.author == nBook.author) {
+                            pBook.addOrigin(nBook.origin)
                             hasSame = true
-                            searchBook.addOrigin(item.origin)
-                            break
                         }
                     }
                     if (!hasSame) {
-                        searchBooksAdd.add(item)
+                        precisionData.add(nBook)
                     }
-                }
-                //添加
-                searchBooksAdd.forEach { item ->
-                    if (searchKey == item.name) {
-                        for ((index, searchBook) in copyDataS.withIndex()) {
-                            if (searchKey != searchBook.name) {
-                                copyDataS.add(index, item)
-                                break
-                            }
+                } else if (!precision) {
+                    var hasSame = false
+                    prevData.forEach { pBook ->
+                        if (!scope.isActive) return
+                        if (pBook.name == nBook.name && pBook.author == nBook.author) {
+                            pBook.addOrigin(nBook.origin)
+                            hasSame = true
                         }
-                    } else if (searchKey == item.author) {
-                        for ((index, searchBook) in copyDataS.withIndex()) {
-                            if (searchKey != searchBook.name && searchKey == searchBook.author) {
-                                copyDataS.add(index, item)
-                                break
-                            }
-                        }
-                    } else {
-                        copyDataS.add(item)
+                    }
+                    if (!hasSame) {
+                        prevData.add(nBook)
                     }
                 }
             }
             if (!scope.isActive) return
-            searchBooks.sortWith { o1, o2 ->
-                if (o1.name == searchKey && o2.name != searchKey) {
-                    1
-                } else if (o1.name != searchKey && o2.name == searchKey) {
-                    -1
-                } else if (o1.author == searchKey && o2.author != searchKey) {
-                    1
-                } else if (o1.author != searchKey && o2.author == searchKey) {
-                    -1
-                } else if (o1.name == o2.name) {
-                    when {
-                        o1.origins.size > o2.origins.size -> {
-                            1
-                        }
-                        o1.origins.size < o2.origins.size -> {
-                            -1
-                        }
-                        else -> {
-                            0
-                        }
-                    }
-                } else {
-                    0
-                }
-            }
+            precisionData.sortByDescending { it.origins.size }
             if (!scope.isActive) return
-            searchBooks = copyDataS
+            if (!precision) {
+                precisionData.addAll(prevData)
+            }
+            searchBooks = precisionData
             upAdapter()
         }
     }
