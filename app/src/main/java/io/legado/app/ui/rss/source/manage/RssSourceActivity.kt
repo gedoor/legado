@@ -209,7 +209,6 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             }
         sourceLiveData?.observe(this, {
             adapter.setItems(it)
-            upCountView()
         })
     }
 
