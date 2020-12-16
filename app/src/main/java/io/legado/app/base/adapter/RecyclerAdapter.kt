@@ -16,7 +16,7 @@ import java.util.*
  * 通用的adapter 可添加header，footer，以及不同类型item
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
+abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
     RecyclerView.Adapter<ItemViewHolder>() {
 
     val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -88,6 +88,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
                 this.items.addAll(items)
             }
             notifyDataSetChanged()
+            onCurrentListChanged()
         }
     }
 
@@ -100,6 +101,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
                 this.items.addAll(items)
             }
             diffResult.dispatchUpdatesTo(this)
+            onCurrentListChanged()
         }
     }
 
@@ -110,6 +112,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
                 this.items[position] = item
                 notifyItemChanged(position + getHeaderCount())
             }
+            onCurrentListChanged()
         }
     }
 
@@ -119,6 +122,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             if (this.items.add(item)) {
                 notifyItemInserted(oldSize + getHeaderCount())
             }
+            onCurrentListChanged()
         }
     }
 
@@ -127,6 +131,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             if (this.items.addAll(position, newItems)) {
                 notifyItemRangeInserted(position + getHeaderCount(), newItems.size)
             }
+            onCurrentListChanged()
         }
     }
 
@@ -140,6 +145,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
                     notifyItemRangeInserted(oldSize + getHeaderCount(), newItems.size)
                 }
             }
+            onCurrentListChanged()
         }
     }
 
@@ -148,6 +154,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             if (this.items.removeAt(position) != null) {
                 notifyItemRemoved(position + getHeaderCount())
             }
+            onCurrentListChanged()
         }
     }
 
@@ -156,6 +163,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             if (this.items.remove(item)) {
                 notifyItemRemoved(this.items.indexOf(item) + getHeaderCount())
             }
+            onCurrentListChanged()
         }
     }
 
@@ -164,6 +172,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             if (this.items.removeAll(items)) {
                 notifyDataSetChanged()
             }
+            onCurrentListChanged()
         }
     }
 
@@ -176,6 +185,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
                 Collections.swap(this.items, srcPosition, targetPosition)
                 notifyItemMoved(srcPosition, targetPosition)
             }
+            onCurrentListChanged()
         }
     }
 
@@ -186,6 +196,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
                 this.items[index] = item
                 notifyItemChanged(index)
             }
+            onCurrentListChanged()
         }
 
     fun updateItem(position: Int, payload: Any) =
@@ -208,11 +219,11 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             }
         }
 
-    fun clearItems() =
-        synchronized(lock) {
-            this.items.clear()
-            notifyDataSetChanged()
-        }
+    fun clearItems() = synchronized(lock) {
+        this.items.clear()
+        notifyDataSetChanged()
+        onCurrentListChanged()
+    }
 
     fun isEmpty() = items.isEmpty()
 
@@ -250,6 +261,10 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
         else -> getItem(getActualPosition(position))?.let {
             getItemViewType(it, getActualPosition(position))
         } ?: 0
+    }
+
+    open fun onCurrentListChanged() {
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when {

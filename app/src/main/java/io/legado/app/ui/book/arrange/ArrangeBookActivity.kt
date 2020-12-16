@@ -131,7 +131,6 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
                 else -> list.sortedByDescending { it.durChapterTime }
             }
             adapter.setItems(books)
-            upSelectCount()
         })
     }
 

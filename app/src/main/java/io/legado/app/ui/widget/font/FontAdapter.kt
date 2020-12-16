@@ -4,8 +4,8 @@ import android.content.Context
 import android.graphics.Typeface
 import android.os.Build
 import android.view.ViewGroup
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemFontBinding
 import io.legado.app.utils.DocItem
 import io.legado.app.utils.RealPathUtil
@@ -16,7 +16,7 @@ import org.jetbrains.anko.toast
 import java.io.File
 
 class FontAdapter(context: Context, val callBack: CallBack) :
-    CommonRecyclerAdapter<DocItem, ItemFontBinding>(context) {
+    RecyclerAdapter<DocItem, ItemFontBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemFontBinding {
         return ItemFontBinding.inflate(inflater, parent, false)

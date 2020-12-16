@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.PopupKeyboardToolBinding
 import org.jetbrains.anko.sdk27.listeners.onClick
@@ -40,7 +40,7 @@ class KeyboardToolPop(
     }
 
     inner class Adapter(context: Context) :
-        CommonRecyclerAdapter<String, ItemFilletTextBinding>(context) {
+        RecyclerAdapter<String, ItemFilletTextBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
             return ItemFilletTextBinding.inflate(inflater, parent, false)

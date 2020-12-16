@@ -12,8 +12,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppPattern
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
@@ -114,7 +114,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private inner class GroupAdapter(context: Context) :
-        CommonRecyclerAdapter<String, ItemGroupManageBinding>(context) {
+        RecyclerAdapter<String, ItemGroupManageBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemGroupManageBinding {
             return ItemGroupManageBinding.inflate(inflater, parent, false)

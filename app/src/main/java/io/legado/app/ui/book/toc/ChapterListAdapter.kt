@@ -3,8 +3,8 @@ package io.legado.app.ui.book.toc
 import android.content.Context
 import android.view.ViewGroup
 import io.legado.app.R
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.lib.theme.accentColor
@@ -13,7 +13,7 @@ import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
-    CommonRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
+    RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
 

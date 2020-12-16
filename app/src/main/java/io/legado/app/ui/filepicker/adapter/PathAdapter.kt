@@ -3,8 +3,8 @@ package io.legado.app.ui.filepicker.adapter
 import android.content.Context
 import android.os.Environment
 import android.view.ViewGroup
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemPathFilepickerBinding
 import io.legado.app.ui.filepicker.utils.ConvertUtils
 import io.legado.app.ui.filepicker.utils.FilePickerIcon
@@ -13,7 +13,7 @@ import java.util.*
 
 
 class PathAdapter(context: Context, val callBack: CallBack) :
-    CommonRecyclerAdapter<String, ItemPathFilepickerBinding>(context) {
+    RecyclerAdapter<String, ItemPathFilepickerBinding>(context) {
     private val paths = LinkedList<String>()
     private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getArrow())
 

@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ItemArrangeBookBinding
@@ -18,7 +18,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import java.util.*
 
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
-    CommonRecyclerAdapter<Book, ItemArrangeBookBinding>(context),
+    RecyclerAdapter<Book, ItemArrangeBookBinding>(context),
 
     ItemTouchCallback.Callback {
     val groupRequestCode = 12
@@ -27,6 +27,10 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
 
     override fun getViewBinding(parent: ViewGroup): ItemArrangeBookBinding {
         return ItemArrangeBookBinding.inflate(inflater, parent, false)
+    }
+
+    override fun onCurrentListChanged() {
+        callBack.upSelectCount()
     }
 
     override fun convert(

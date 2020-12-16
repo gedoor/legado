@@ -196,7 +196,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             }
             docList.sortWith(compareBy({ !it.isDir }, { it.name }))
             withContext(Main) {
-                adapter.setData(docList)
+                adapter.setItems(docList)
             }
         }
     }
@@ -232,7 +232,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             }
         }
         docList.sortWith(compareBy({ !it.isDir }, { it.name }))
-        adapter.setData(docList)
+        adapter.setItems(docList)
     }
 
     /**

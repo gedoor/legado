@@ -6,8 +6,8 @@ import android.view.*
 import androidx.core.view.get
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.EventBus
 import io.legado.app.databinding.DialogReadBookStyleBinding
 import io.legado.app.databinding.ItemReadStyleBinding
@@ -207,7 +207,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     inner class StyleAdapter :
-        CommonRecyclerAdapter<ReadBookConfig.Config, ItemReadStyleBinding>(requireContext()) {
+        RecyclerAdapter<ReadBookConfig.Config, ItemReadStyleBinding>(requireContext()) {
 
         override fun getViewBinding(parent: ViewGroup): ItemReadStyleBinding {
             return ItemReadStyleBinding.inflate(inflater, parent, false)

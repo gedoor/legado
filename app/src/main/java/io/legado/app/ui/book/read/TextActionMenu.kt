@@ -19,8 +19,8 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.isVisible
 import io.legado.app.R
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
@@ -89,7 +89,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     }
 
     inner class Adapter(context: Context) :
-        CommonRecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
+        RecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
             return ItemTextBinding.inflate(inflater, parent, false)

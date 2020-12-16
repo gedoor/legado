@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import io.legado.app.R
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.utils.gone
@@ -13,7 +13,7 @@ import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
-    CommonRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
+    RecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
         return ItemSearchBinding.inflate(inflater, parent, false)
