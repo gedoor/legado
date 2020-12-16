@@ -36,9 +36,8 @@ object AppConst {
 
     val keyboardToolChars: List<String> by lazy {
         arrayListOf(
-            "❓", "@", "&", "|", "%", "/", "\\", ":", "[", "]", "{", "}", "<", ">",
-            "$", "#", "!", ".", "+", "-", "*", "=", "href", "src", "textNodes", "xpath", "json",
-            "css", "id", "class", "tag"
+            "❓", "@css:", "<js></js>", "{{}}", "&&", "%%", "||", "//", "$.", "@", "class", "id", "href",
+            "textNodes", "ownText", "all", "html", "[", "]", "<", ">","#", "!", ".", "+", "-", "*", "="
         )
     }
 
