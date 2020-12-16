@@ -63,6 +63,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
 
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
         val precision = context.getPrefBoolean(PreferKey.precisionSearch)
+        App.db.searchBookDao.insert(*searchBooks.toTypedArray())
         mergeItems(this, searchBooks, precision)
     }
 
