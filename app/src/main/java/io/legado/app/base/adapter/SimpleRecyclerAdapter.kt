@@ -35,7 +35,7 @@ abstract class SimpleRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
         object : DiffUtil.ItemCallback<ITEM>() {
 
             override fun areItemsTheSame(oldItem: ITEM, newItem: ITEM): Boolean {
-                return oldItem == newItem
+                return false
             }
 
             override fun areContentsTheSame(oldItem: ITEM, newItem: ITEM): Boolean {
@@ -67,57 +67,6 @@ abstract class SimpleRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
             val list = ArrayList(asyncListDiffer.currentList)
             list[position] = item
             asyncListDiffer.submitList(list)
-        }
-    }
-
-    fun addItem(item: ITEM) {
-        synchronized(lock) {
-            val list = ArrayList(asyncListDiffer.currentList)
-            list.add(item)
-            asyncListDiffer.submitList(list)
-        }
-    }
-
-    fun addItems(position: Int, newItems: List<ITEM>) {
-        synchronized(lock) {
-            val list = ArrayList(asyncListDiffer.currentList)
-            list.addAll(position, newItems)
-            asyncListDiffer.submitList(list)
-        }
-    }
-
-    fun addItems(newItems: List<ITEM>) {
-        synchronized(lock) {
-            val list = ArrayList(asyncListDiffer.currentList)
-            list.addAll(newItems)
-            asyncListDiffer.submitList(list)
-        }
-    }
-
-    fun removeItem(position: Int) {
-        synchronized(lock) {
-            val list = ArrayList(asyncListDiffer.currentList)
-            if (list.removeAt(position) != null) {
-                asyncListDiffer.submitList(list)
-            }
-        }
-    }
-
-    fun removeItem(item: ITEM) {
-        synchronized(lock) {
-            val list = ArrayList(asyncListDiffer.currentList)
-            if (list.remove(item)) {
-                asyncListDiffer.submitList(list)
-            }
-        }
-    }
-
-    fun removeItems(items: List<ITEM>) {
-        synchronized(lock) {
-            val list = ArrayList(asyncListDiffer.currentList)
-            if (list.removeAll(items)) {
-                asyncListDiffer.submitList(list)
-            }
         }
     }
 
@@ -156,11 +105,6 @@ abstract class SimpleRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
                     payloads
                 )
             }
-        }
-
-    fun clearItems() =
-        synchronized(lock) {
-            asyncListDiffer.submitList(arrayListOf())
         }
 
     fun isEmpty() = asyncListDiffer.currentList.isEmpty()

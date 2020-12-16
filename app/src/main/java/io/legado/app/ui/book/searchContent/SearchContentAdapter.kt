@@ -3,8 +3,8 @@ package io.legado.app.ui.book.searchContent
 import android.content.Context
 import android.view.ViewGroup
 import io.legado.app.R
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.databinding.ItemSearchListBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
@@ -12,7 +12,7 @@ import io.legado.app.utils.hexString
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchContentAdapter(context: Context, val callback: Callback) :
-    SimpleRecyclerAdapter<SearchResult, ItemSearchListBinding>(context) {
+    CommonRecyclerAdapter<SearchResult, ItemSearchListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
     val textColor = context.getCompatColor(R.color.primaryText).hexString.substring(2)
