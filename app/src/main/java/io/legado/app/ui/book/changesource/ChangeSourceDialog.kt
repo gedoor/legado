@@ -5,7 +5,6 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
@@ -145,9 +144,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
             binding.toolBar.menu.applyTint(requireContext())
         })
         viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
-            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it)
-            diffResult.dispatchUpdatesTo(adapter)
         })
         App.db.bookSourceDao.liveGroupEnabled().observe(this, {
             groups.clear()

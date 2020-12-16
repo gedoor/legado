@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -93,9 +92,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
             binding.toolBar.menu.applyTint(requireContext(), Theme.getTheme())
         })
         viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
-            val diffResult = DiffUtil.calculateDiff(DiffCallBack(adapter.getItems(), it))
             adapter.setItems(it)
-            diffResult.dispatchUpdatesTo(adapter)
         })
     }
 
