@@ -66,11 +66,9 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
-        holder.itemView.apply {
-            onClick {
-                getItem(holder.layoutPosition)?.let {
-                    callBack.showBookInfo(it.name, it.author)
-                }
+        binding.root.onClick {
+            getItem(holder.layoutPosition)?.let {
+                callBack.showBookInfo(it.name, it.author)
             }
         }
     }
