@@ -170,7 +170,7 @@ class AjaxWebView {
                     return@evaluateJavascript
                 }
                 if (retry > 30) {
-                    handler.obtainMessage(MSG_ERROR, Exception("time out"))
+                    handler.obtainMessage(MSG_ERROR, Exception("js执行超时"))
                         .sendToTarget()
                     handler.removeCallbacks(this)
                     return@evaluateJavascript
