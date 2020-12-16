@@ -9,8 +9,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemThemeConfigBinding
 import io.legado.app.help.ThemeConfig
@@ -96,7 +96,7 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     inner class Adapter :
-        SimpleRecyclerAdapter<ThemeConfig.Config, ItemThemeConfigBinding>(requireContext()) {
+        CommonRecyclerAdapter<ThemeConfig.Config, ItemThemeConfigBinding>(requireContext()) {
 
         override fun getViewBinding(parent: ViewGroup): ItemThemeConfigBinding {
             return ItemThemeConfigBinding.inflate(inflater, parent, false)

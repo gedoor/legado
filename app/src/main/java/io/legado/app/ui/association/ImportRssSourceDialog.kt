@@ -12,8 +12,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.DialogEditTextBinding
@@ -126,7 +126,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
     }
 
     inner class SourcesAdapter(context: Context) :
-        SimpleRecyclerAdapter<RssSource, ItemSourceImportBinding>(context) {
+        CommonRecyclerAdapter<RssSource, ItemSourceImportBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding {
             return ItemSourceImportBinding.inflate(inflater, parent, false)

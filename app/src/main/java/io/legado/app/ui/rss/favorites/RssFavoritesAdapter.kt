@@ -7,8 +7,8 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.RssStar
 import io.legado.app.databinding.ItemRssArticleBinding
 import io.legado.app.help.ImageLoader
@@ -17,7 +17,7 @@ import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class RssFavoritesAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<RssStar, ItemRssArticleBinding>(context) {
+    CommonRecyclerAdapter<RssStar, ItemRssArticleBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemRssArticleBinding {
         return ItemRssArticleBinding.inflate(inflater, parent, false)

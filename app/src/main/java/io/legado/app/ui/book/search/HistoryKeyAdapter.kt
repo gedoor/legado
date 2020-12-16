@@ -2,8 +2,8 @@ package io.legado.app.ui.book.search
 
 import android.view.ViewGroup
 import io.legado.app.App
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.ui.widget.anima.explosion_field.ExplosionField
@@ -15,7 +15,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 
 class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
-    SimpleRecyclerAdapter<SearchKeyword, ItemFilletTextBinding>(activity) {
+    CommonRecyclerAdapter<SearchKeyword, ItemFilletTextBinding>(activity) {
 
     private val explosionField = ExplosionField.attach2Window(activity)
 

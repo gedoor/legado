@@ -8,8 +8,8 @@ import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ItemReplaceRuleBinding
 import io.legado.app.lib.theme.backgroundColor
@@ -20,7 +20,7 @@ import java.util.*
 
 
 class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
-    SimpleRecyclerAdapter<ReplaceRule, ItemReplaceRuleBinding>(context),
+    CommonRecyclerAdapter<ReplaceRule, ItemReplaceRuleBinding>(context),
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<ReplaceRule>()

@@ -31,18 +31,7 @@ abstract class SimpleRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
 
     var itemAnimation: ItemAnimation? = null
 
-    open val diffItemCallback: DiffUtil.ItemCallback<ITEM> =
-        object : DiffUtil.ItemCallback<ITEM>() {
-
-            override fun areItemsTheSame(oldItem: ITEM, newItem: ITEM): Boolean {
-                return false
-            }
-
-            override fun areContentsTheSame(oldItem: ITEM, newItem: ITEM): Boolean {
-                return true
-            }
-
-        }
+    abstract val diffItemCallback: DiffUtil.ItemCallback<ITEM>
 
     fun setOnItemClickListener(listener: (holder: ItemViewHolder, item: ITEM) -> Unit) {
         itemClickListener = listener
