@@ -2,14 +2,14 @@ package io.legado.app.ui.book.search
 
 import android.content.Context
 import android.view.ViewGroup
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemFilletTextBinding
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class BookAdapter(context: Context, val callBack: CallBack) :
-    CommonRecyclerAdapter<Book, ItemFilletTextBinding>(context) {
+    RecyclerAdapter<Book, ItemFilletTextBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
         return ItemFilletTextBinding.inflate(inflater, parent, false)

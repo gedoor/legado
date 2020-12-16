@@ -3,8 +3,8 @@ package io.legado.app.ui.filepicker.adapter
 
 import android.content.Context
 import android.view.ViewGroup
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemFileFilepickerBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.getPrimaryDisabledTextColor
@@ -19,7 +19,7 @@ import java.util.*
 
 
 class FileAdapter(context: Context, val callBack: CallBack) :
-    CommonRecyclerAdapter<FileItem, ItemFileFilepickerBinding>(context) {
+    RecyclerAdapter<FileItem, ItemFileFilepickerBinding>(context) {
     private var rootPath: String? = null
     var currentPath: String? = null
         private set

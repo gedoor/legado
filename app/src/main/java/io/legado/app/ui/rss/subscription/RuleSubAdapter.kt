@@ -6,15 +6,15 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RuleSub
 import io.legado.app.databinding.ItemRuleSubBinding
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class RuleSubAdapter(context: Context, val callBack: Callback) :
-    CommonRecyclerAdapter<RuleSub, ItemRuleSubBinding>(context),
+    RecyclerAdapter<RuleSub, ItemRuleSubBinding>(context),
     ItemTouchCallback.Callback {
 
     private val typeArray = context.resources.getStringArray(R.array.rule_type)

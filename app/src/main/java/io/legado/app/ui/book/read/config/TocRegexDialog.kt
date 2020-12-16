@@ -17,8 +17,8 @@ import com.google.android.material.snackbar.Snackbar
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogTocRegexBinding
@@ -189,7 +189,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     inner class TocRegexAdapter(context: Context) :
-        CommonRecyclerAdapter<TxtTocRule, ItemTocRegexBinding>(context),
+        RecyclerAdapter<TxtTocRule, ItemTocRegexBinding>(context),
         ItemTouchCallback.Callback {
 
         override fun getViewBinding(parent: ViewGroup): ItemTocRegexBinding {

@@ -4,8 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.view.ViewGroup
 import io.legado.app.R
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ItemImportBookBinding
 import io.legado.app.utils.*
@@ -13,7 +13,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
-    CommonRecyclerAdapter<DocItem, ItemImportBookBinding>(context) {
+    RecyclerAdapter<DocItem, ItemImportBookBinding>(context) {
     var selectedUris = hashSetOf<String>()
     var checkableCount = 0
     private var bookFileNames = arrayListOf<String>()

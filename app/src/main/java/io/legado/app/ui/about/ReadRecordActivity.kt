@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.ReadRecordShow
 import io.legado.app.databinding.ActivityReadRecordBinding
 import io.legado.app.databinding.ItemReadRecordBinding
@@ -92,7 +92,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     }
 
     inner class RecordAdapter(context: Context) :
-        CommonRecyclerAdapter<ReadRecordShow, ItemReadRecordBinding>(context) {
+        RecyclerAdapter<ReadRecordShow, ItemReadRecordBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemReadRecordBinding {
             return ItemReadRecordBinding.inflate(inflater, parent, false)

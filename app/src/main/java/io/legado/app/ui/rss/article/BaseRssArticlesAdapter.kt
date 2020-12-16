@@ -2,12 +2,12 @@ package io.legado.app.ui.rss.article
 
 import android.content.Context
 import androidx.viewbinding.ViewBinding
-import io.legado.app.base.adapter.CommonRecyclerAdapter
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RssArticle
 
 
 abstract class BaseRssArticlesAdapter<VB : ViewBinding>(context: Context, val callBack: CallBack) :
-    CommonRecyclerAdapter<RssArticle, VB>(context) {
+    RecyclerAdapter<RssArticle, VB>(context) {
 
     interface CallBack {
         val isGridLayout: Boolean

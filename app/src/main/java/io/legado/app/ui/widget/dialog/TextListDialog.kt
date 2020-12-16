@@ -9,8 +9,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemLogBinding
 import io.legado.app.utils.getSize
@@ -59,7 +59,7 @@ class TextListDialog : BaseDialogFragment() {
     }
 
     class TextAdapter(context: Context) :
-        CommonRecyclerAdapter<String, ItemLogBinding>(context) {
+        RecyclerAdapter<String, ItemLogBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemLogBinding {
             return ItemLogBinding.inflate(inflater, parent, false)

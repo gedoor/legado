@@ -4,8 +4,8 @@ import android.content.Context
 import android.view.ViewGroup
 import android.widget.ImageView
 import io.legado.app.R
-import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemDownloadBinding
@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 
 class CacheAdapter(context: Context, private val callBack: CallBack) :
-    CommonRecyclerAdapter<Book, ItemDownloadBinding>(context) {
+    RecyclerAdapter<Book, ItemDownloadBinding>(context) {
 
     val cacheChapters = hashMapOf<String, HashSet<String>>()
     var downloadMap: ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>? = null
