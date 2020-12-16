@@ -128,10 +128,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun onCurrentListChanged(
-        previousList: MutableList<RssSource>,
-        currentList: MutableList<RssSource>
-    ) {
+    override fun onCurrentListChanged() {
         callBack.upCountView()
     }
 

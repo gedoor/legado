@@ -22,6 +22,10 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         return ItemImportBookBinding.inflate(inflater, parent, false)
     }
 
+    override fun onCurrentListChanged() {
+        upCheckableCount()
+    }
+
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemImportBookBinding,
@@ -83,11 +87,6 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
             bookFileNames.add(FileUtils.getName(path))
         }
         notifyDataSetChanged()
-        upCheckableCount()
-    }
-
-    fun setData(data: List<DocItem>) {
-        setItems(data)
         upCheckableCount()
     }
 

@@ -59,6 +59,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         return ItemReplaceRuleBinding.inflate(inflater, parent, false)
     }
 
+    override fun onCurrentListChanged() {
+        callBack.upCountView()
+    }
+
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemReplaceRuleBinding,

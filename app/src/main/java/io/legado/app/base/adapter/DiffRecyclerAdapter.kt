@@ -14,15 +14,17 @@ import kotlin.collections.ArrayList
 /**
  * Created by Invincible on 2017/12/15.
  */
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
-    RecyclerView.Adapter<ItemViewHolder>(), AsyncListDiffer.ListListener<ITEM> {
+    RecyclerView.Adapter<ItemViewHolder>() {
 
     val inflater: LayoutInflater = LayoutInflater.from(context)
 
     private val asyncListDiffer: AsyncListDiffer<ITEM> by lazy {
         AsyncListDiffer(this, diffItemCallback).apply {
-            addListListener(this@DiffRecyclerAdapter)
+            addListListener { _, _ ->
+                onCurrentListChanged()
+            }
         }
     }
 
@@ -146,10 +148,7 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
 
     final override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {}
 
-    override fun onCurrentListChanged(
-        previousList: MutableList<ITEM>,
-        currentList: MutableList<ITEM>
-    ) {
+    open fun onCurrentListChanged() {
 
     }
 

@@ -154,7 +154,6 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             }
             adapter.setItems(it)
             dataInit = true
-            upCountView()
         })
     }
 

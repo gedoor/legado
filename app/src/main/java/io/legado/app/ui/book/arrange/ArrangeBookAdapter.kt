@@ -29,6 +29,10 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         return ItemArrangeBookBinding.inflate(inflater, parent, false)
     }
 
+    override fun onCurrentListChanged() {
+        callBack.upSelectCount()
+    }
+
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemArrangeBookBinding,

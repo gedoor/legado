@@ -147,10 +147,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun onCurrentListChanged(
-        previousList: MutableList<BookSource>,
-        currentList: MutableList<BookSource>
-    ) {
+    override fun onCurrentListChanged() {
         callBack.upCountView()
     }
 
