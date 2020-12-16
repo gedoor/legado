@@ -70,7 +70,7 @@ object BookInfo {
         analyzeRule.getString(infoRule.intro).let {
             if (it.isNotEmpty()) book.intro = it.htmlFormat()
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.intro}", isHtml = true)
+        Debug.log(bookSource.bookSourceUrl, "└${book.intro}")
 
         Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
         analyzeRule.getString(infoRule.coverUrl).let {
