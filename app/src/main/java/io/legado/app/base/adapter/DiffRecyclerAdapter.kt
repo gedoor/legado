@@ -15,7 +15,7 @@ import kotlin.collections.ArrayList
  * Created by Invincible on 2017/12/15.
  */
 @Suppress("unused")
-abstract class SimpleRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
+abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
     RecyclerView.Adapter<ItemViewHolder>() {
 
     val inflater: LayoutInflater = LayoutInflater.from(context)
