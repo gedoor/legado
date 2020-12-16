@@ -15,8 +15,8 @@ import androidx.preference.PreferenceViewHolder
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemIconPreferenceBinding
 import io.legado.app.lib.theme.primaryColor
@@ -156,7 +156,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
 
         inner class Adapter(context: Context) :
-            SimpleRecyclerAdapter<CharSequence, ItemIconPreferenceBinding>(context) {
+            CommonRecyclerAdapter<CharSequence, ItemIconPreferenceBinding>(context) {
 
             override fun getViewBinding(parent: ViewGroup): ItemIconPreferenceBinding {
                 return ItemIconPreferenceBinding.inflate(inflater, parent, false)

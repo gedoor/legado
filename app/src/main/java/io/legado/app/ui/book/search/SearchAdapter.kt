@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
+import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.utils.gone
@@ -14,7 +14,7 @@ import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
+    DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
 
     override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
         get() = object : DiffUtil.ItemCallback<SearchBook>() {

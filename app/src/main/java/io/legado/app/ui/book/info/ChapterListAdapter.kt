@@ -3,8 +3,8 @@ package io.legado.app.ui.book.info
 import android.content.Context
 import android.view.ViewGroup
 import io.legado.app.R
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.lib.theme.accentColor
@@ -12,7 +12,7 @@ import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.textColorResource
 
 class ChapterListAdapter(context: Context, var callBack: CallBack) :
-    SimpleRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
+    CommonRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding {
         return ItemChapterListBinding.inflate(inflater, parent, false)

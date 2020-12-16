@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemFindBookBinding
@@ -24,7 +24,7 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 
 class ExploreAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
-    SimpleRecyclerAdapter<BookSource, ItemFindBookBinding>(context) {
+    CommonRecyclerAdapter<BookSource, ItemFindBookBinding>(context) {
     private var exIndex = -1
     private var scrollTo = -1
 

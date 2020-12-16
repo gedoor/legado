@@ -15,7 +15,7 @@ import kotlin.collections.ArrayList
  * Created by Invincible on 2017/12/15.
  */
 @Suppress("unused")
-abstract class SimpleRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
+abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
     RecyclerView.Adapter<ItemViewHolder>() {
 
     val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -31,18 +31,7 @@ abstract class SimpleRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
 
     var itemAnimation: ItemAnimation? = null
 
-    open val diffItemCallback: DiffUtil.ItemCallback<ITEM> =
-        object : DiffUtil.ItemCallback<ITEM>() {
-
-            override fun areItemsTheSame(oldItem: ITEM, newItem: ITEM): Boolean {
-                return false
-            }
-
-            override fun areContentsTheSame(oldItem: ITEM, newItem: ITEM): Boolean {
-                return true
-            }
-
-        }
+    abstract val diffItemCallback: DiffUtil.ItemCallback<ITEM>
 
     fun setOnItemClickListener(listener: (holder: ItemViewHolder, item: ITEM) -> Unit) {
         itemClickListener = listener
