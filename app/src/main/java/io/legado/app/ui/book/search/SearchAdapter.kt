@@ -31,7 +31,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                 return false
             }
 
-            override fun getChangePayload(oldItem: SearchBook, newItem: SearchBook): Any? {
+            override fun getChangePayload(oldItem: SearchBook, newItem: SearchBook): Any {
                 val payload = Bundle()
                 payload.putInt("origins", newItem.origins.size)
                 if (oldItem.coverUrl != newItem.coverUrl)
