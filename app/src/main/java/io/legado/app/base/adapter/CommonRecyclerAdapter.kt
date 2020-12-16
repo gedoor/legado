@@ -174,8 +174,7 @@ abstract class CommonRecyclerAdapter<ITEM, VB : ViewBinding>(protected val conte
                 val srcPosition = oldPosition + getHeaderCount()
                 val targetPosition = newPosition + getHeaderCount()
                 Collections.swap(this.items, srcPosition, targetPosition)
-                notifyItemChanged(srcPosition)
-                notifyItemChanged(targetPosition)
+                notifyItemMoved(srcPosition, targetPosition)
             }
         }
     }
