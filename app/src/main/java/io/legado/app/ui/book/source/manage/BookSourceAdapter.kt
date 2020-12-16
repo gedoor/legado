@@ -147,6 +147,13 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
+    override fun onCurrentListChanged(
+        previousList: MutableList<BookSource>,
+        currentList: MutableList<BookSource>
+    ) {
+        callBack.upCountView()
+    }
+
     private fun showMenu(view: View, position: Int) {
         val source = getItem(position) ?: return
         val popupMenu = PopupMenu(context, view)

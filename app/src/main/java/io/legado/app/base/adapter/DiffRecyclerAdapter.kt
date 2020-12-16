@@ -16,12 +16,14 @@ import kotlin.collections.ArrayList
  */
 @Suppress("unused")
 abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
-    RecyclerView.Adapter<ItemViewHolder>() {
+    RecyclerView.Adapter<ItemViewHolder>(), AsyncListDiffer.ListListener<ITEM> {
 
     val inflater: LayoutInflater = LayoutInflater.from(context)
 
     private val asyncListDiffer: AsyncListDiffer<ITEM> by lazy {
-        AsyncListDiffer(this, diffItemCallback)
+        AsyncListDiffer(this, diffItemCallback).apply {
+            addListListener(this@DiffRecyclerAdapter)
+        }
     }
 
     private val lock = Object()
@@ -143,6 +145,13 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
     protected abstract fun getViewBinding(parent: ViewGroup): VB
 
     final override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {}
+
+    override fun onCurrentListChanged(
+        previousList: MutableList<ITEM>,
+        currentList: MutableList<ITEM>
+    ) {
+
+    }
 
     @Suppress("UNCHECKED_CAST")
     final override fun onBindViewHolder(

@@ -152,7 +152,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         adapter = BookSourceAdapter(this, this)
         binding.recyclerView.adapter = adapter
         // When this page is opened, it is in selection mode
-        val dragSelectTouchHelper: DragSelectTouchHelper =
+        val dragSelectTouchHelper =
             DragSelectTouchHelper(adapter.dragSelectCallback).setSlideArea(16, 50)
         dragSelectTouchHelper.attachToRecyclerView(binding.recyclerView)
         dragSelectTouchHelper.activeSlideSelect()
@@ -207,7 +207,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     else -> data.reversed()
                 }
             adapter.setItems(sourceList)
-            upCountView()
         })
     }
 
