@@ -54,7 +54,7 @@ interface JsExtensions {
     }
 
     /**
-     * 实现文件下载,返回路径
+     * 实现16进制字符串转文件
      */
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url).type ?: return ""
