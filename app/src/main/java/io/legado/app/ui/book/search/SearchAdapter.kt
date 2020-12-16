@@ -28,20 +28,12 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
             }
 
             override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-                return when {
-                    oldItem.origins.size != newItem.origins.size -> false
-                    oldItem.coverUrl != newItem.coverUrl -> false
-                    oldItem.kind != newItem.kind -> false
-                    oldItem.latestChapterTitle != newItem.latestChapterTitle -> false
-                    oldItem.intro != newItem.intro -> false
-                    else -> true
-                }
+                return false
             }
 
             override fun getChangePayload(oldItem: SearchBook, newItem: SearchBook): Any? {
                 val payload = Bundle()
-                if (oldItem.origins.size != newItem.origins.size)
-                    payload.putInt("origins", newItem.origins.size)
+                payload.putInt("origins", newItem.origins.size)
                 if (oldItem.coverUrl != newItem.coverUrl)
                     payload.putString("cover", newItem.coverUrl)
                 if (oldItem.kind != newItem.kind)
@@ -50,7 +42,6 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                     payload.putString("last", newItem.latestChapterTitle)
                 if (oldItem.intro != newItem.intro)
                     payload.putString("intro", newItem.intro)
-                if (payload.isEmpty) return null
                 return payload
             }
 
