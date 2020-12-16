@@ -3,9 +3,10 @@ package io.legado.app.ui.book.search
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
+import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.utils.gone
@@ -13,7 +14,46 @@ import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
+    DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
+
+    override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
+        get() = object : DiffUtil.ItemCallback<SearchBook>() {
+
+            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return when {
+                    oldItem.name != newItem.name -> false
+                    oldItem.author != newItem.author -> false
+                    else -> true
+                }
+            }
+
+            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return when {
+                    oldItem.origins.size != newItem.origins.size -> false
+                    oldItem.coverUrl != newItem.coverUrl -> false
+                    oldItem.kind != newItem.kind -> false
+                    oldItem.latestChapterTitle != newItem.latestChapterTitle -> false
+                    oldItem.intro != newItem.intro -> false
+                    else -> true
+                }
+            }
+
+            override fun getChangePayload(oldItem: SearchBook, newItem: SearchBook): Any? {
+                val payload = Bundle()
+                if (oldItem.name != newItem.name) payload.putString("name", newItem.name)
+                if (oldItem.author != newItem.author) payload.putString("author", newItem.author)
+                if (oldItem.origins.size != newItem.origins.size)
+                    payload.putInt("origins", newItem.origins.size)
+                if (oldItem.coverUrl != newItem.coverUrl) payload.putString("cover", newItem.coverUrl)
+                if (oldItem.kind != newItem.kind) payload.putString("kind", newItem.kind)
+                if (oldItem.latestChapterTitle != newItem.latestChapterTitle)
+                    payload.putString("last", newItem.latestChapterTitle)
+                if (oldItem.intro != newItem.intro) payload.putString("intro", newItem.intro)
+                if (payload.isEmpty) return null
+                return payload
+            }
+
+        }
 
     override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
         return ItemSearchBinding.inflate(inflater, parent, false)
