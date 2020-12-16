@@ -85,7 +85,18 @@ class ItemTouchCallback(private val callback: Callback) : ItemTouchHelper.Callba
         srcViewHolder: RecyclerView.ViewHolder,
         targetViewHolder: RecyclerView.ViewHolder
     ): Boolean {
-        return callback.onMove(srcViewHolder.adapterPosition, targetViewHolder.adapterPosition)
+        val fromPosition: Int = srcViewHolder.adapterPosition
+        val toPosition: Int = targetViewHolder.adapterPosition
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                callback.swap(i, i + 1)
+            }
+        } else {
+            for (i in fromPosition downTo toPosition + 1) {
+                callback.swap(i, i - 1)
+            }
+        }
+        return true
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -122,7 +133,7 @@ class ItemTouchCallback(private val callback: Callback) : ItemTouchHelper.Callba
          * @param targetPosition 目的地的Item的position
          * @return 开发者处理了操作应该返回true，开发者没有处理就返回false
          */
-        fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        fun swap(srcPosition: Int, targetPosition: Int): Boolean {
             return true
         }
 

@@ -145,7 +145,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         popupMenu.show()
     }
 
-    override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+    override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
         if (srcItem != null && targetItem != null) {

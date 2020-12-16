@@ -192,7 +192,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             }
         }
 
-        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
             swapItem(srcPosition, targetPosition)
             isMoved = true
             return true

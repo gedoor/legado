@@ -247,10 +247,10 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
         private var isMoved = false
 
-        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
             swapItem(srcPosition, targetPosition)
             isMoved = true
-            return super.onMove(srcPosition, targetPosition)
+            return super.swap(srcPosition, targetPosition)
         }
 
         override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
