@@ -102,7 +102,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private fun startSearch() {
         execute {
             bookSourceList.clear()
-            if (searchGroup.isNullOrBlank()) {
+            if (searchGroup.isBlank()) {
                 bookSourceList.addAll(App.db.bookSourceDao.allEnabled)
             } else {
                 bookSourceList.addAll(App.db.bookSourceDao.getEnabledByGroup(searchGroup))

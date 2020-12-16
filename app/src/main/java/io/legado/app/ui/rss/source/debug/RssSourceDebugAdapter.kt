@@ -4,12 +4,12 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
+import io.legado.app.base.adapter.CommonRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.databinding.ItemLogBinding
 
 class RssSourceDebugAdapter(context: Context) :
-    SimpleRecyclerAdapter<String, ItemLogBinding>(context) {
+    CommonRecyclerAdapter<String, ItemLogBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemLogBinding {
         return ItemLogBinding.inflate(inflater, parent, false)
