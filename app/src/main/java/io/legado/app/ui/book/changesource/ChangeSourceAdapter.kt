@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.SimpleRecyclerAdapter
@@ -18,6 +19,19 @@ import org.jetbrains.anko.sdk27.listeners.onLongClick
 
 class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
     SimpleRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
+
+    override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
+        get() = object : DiffUtil.ItemCallback<SearchBook>() {
+            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return oldItem.bookUrl == newItem.bookUrl
+            }
+
+            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return oldItem.originName == newItem.originName
+                        && oldItem.getDisplayLastChapterTitle() == newItem.getDisplayLastChapterTitle()
+            }
+
+        }
 
     override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding {
         return ItemChangeSourceBinding.inflate(inflater, parent, false)
