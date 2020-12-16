@@ -117,22 +117,26 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemBookSourceBinding) {
         binding.apply {
             swtEnabled.setOnCheckedChangeListener { view, checked ->
-                getItem(holder.layoutPosition)?.let {
-                    if (view.isPressed) {
-                        it.enabled = checked
-                        callBack.update(it)
+                if (view.isPressed) {
+                    getItem(holder.layoutPosition)?.let {
+                        if (view.isPressed) {
+                            it.enabled = checked
+                            callBack.update(it)
+                        }
                     }
                 }
             }
             cbBookSource.setOnCheckedChangeListener { view, checked ->
-                getItem(holder.layoutPosition)?.let {
-                    if (view.isPressed) {
-                        if (checked) {
-                            selected.add(it)
-                        } else {
-                            selected.remove(it)
+                if (view.isPressed) {
+                    getItem(holder.layoutPosition)?.let {
+                        if (view.isPressed) {
+                            if (checked) {
+                                selected.add(it)
+                            } else {
+                                selected.remove(it)
+                            }
+                            callBack.upCountView()
                         }
-                        callBack.upCountView()
                     }
                 }
             }

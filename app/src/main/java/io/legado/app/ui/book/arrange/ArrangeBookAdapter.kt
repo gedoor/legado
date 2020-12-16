@@ -52,16 +52,17 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemArrangeBookBinding) {
         binding.apply {
             checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                getItem(holder.layoutPosition)?.let {
-                    if (buttonView.isPressed) {
-                        if (isChecked) {
-                            selectedBooks.add(it)
-                        } else {
-                            selectedBooks.remove(it)
+                if (buttonView.isPressed) {
+                    getItem(holder.layoutPosition)?.let {
+                        if (buttonView.isPressed) {
+                            if (isChecked) {
+                                selectedBooks.add(it)
+                            } else {
+                                selectedBooks.remove(it)
+                            }
+                            callBack.upSelectCount()
                         }
-                        callBack.upSelectCount()
                     }
-
                 }
             }
             root.onClick {

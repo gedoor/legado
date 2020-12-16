@@ -177,8 +177,8 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         override fun registerListener(holder: ItemViewHolder, binding: ItemGroupSelectBinding) {
             with(binding) {
                 cbGroup.setOnCheckedChangeListener { buttonView, isChecked ->
-                    getItem(holder.layoutPosition)?.let {
-                        if (buttonView.isPressed) {
+                    if (buttonView.isPressed) {
+                        getItem(holder.layoutPosition)?.let {
                             groupId = if (isChecked) {
                                 groupId + it.groupId
                             } else {
