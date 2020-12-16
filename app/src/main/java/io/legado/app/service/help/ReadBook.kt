@@ -90,10 +90,11 @@ object ReadBook {
         nextTextChapter = null
     }
 
-    fun uploadProgress() {
-        if (!AppConfig.syncBookProgress) return
-        book?.let {
-            BookWebDav.uploadBookProgress(it)
+    fun uploadProgress(syncBookProgress: Boolean = AppConfig.syncBookProgress) {
+        if (syncBookProgress) {
+            book?.let {
+                BookWebDav.uploadBookProgress(it)
+            }
         }
     }
 

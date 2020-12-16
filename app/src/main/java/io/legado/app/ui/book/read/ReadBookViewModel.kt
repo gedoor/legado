@@ -162,8 +162,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun syncBookProgress(book: Book) {
-        if (!AppConfig.syncBookProgress)
+    fun syncBookProgress(book: Book, syncBookProgress: Boolean = AppConfig.syncBookProgress) {
+        if (syncBookProgress)
             execute {
                 BookWebDav.getBookProgress(book)?.let { progress ->
                     if (progress.durChapterIndex < book.durChapterIndex ||
