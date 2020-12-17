@@ -62,7 +62,7 @@ object PreferKey {
     const val autoClearExpired = "autoClearExpired"
     const val autoChangeSource = "autoChangeSource"
     const val importKeepName = "importKeepName"
-    const val screenDirection = "screenDirection"
+    const val screenOrientation = "screenOrientation"
     const val syncBookProgress = "syncBookProgress"
 
     const val cPrimary = "colorPrimary"

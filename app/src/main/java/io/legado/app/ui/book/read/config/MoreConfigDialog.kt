@@ -107,7 +107,7 @@ class MoreConfigDialog : DialogFragment() {
                 }
                 PreferKey.keepLight -> postEvent(key, true)
                 PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
-                PreferKey.screenDirection -> {
+                PreferKey.screenOrientation -> {
                     (activity as? ReadBookActivity)?.setOrientation()
                 }
                 PreferKey.textFullJustify,

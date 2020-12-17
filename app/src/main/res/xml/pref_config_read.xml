@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <io.legado.app.ui.widget.prefs.NameListPreference
-        android:key="screenDirection"
+        android:key="screenOrientation"
         android:defaultValue="0"
         android:title="@string/screen_direction"
         android:entries="@array/screen_direction_title"

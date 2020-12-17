@@ -79,8 +79,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val immNavigationBar: Boolean
         get() = context.getPrefBoolean(PreferKey.immNavigationBar, true)
 
-    val screenDirection: String?
-        get() = context.getPrefString(PreferKey.screenDirection)
+    val screenOrientation: String?
+        get() = context.getPrefString(PreferKey.screenOrientation)
 
     var backupPath: String?
         get() = context.getPrefString(PreferKey.backupPath)
