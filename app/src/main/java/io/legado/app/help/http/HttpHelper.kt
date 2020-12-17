@@ -1,6 +1,5 @@
 package io.legado.app.help.http
 
-import io.legado.app.utils.msg
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
 import java.net.InetSocketAddress
@@ -111,7 +110,7 @@ object HttpHelper {
 
                 override fun onError(error: Throwable) {
                     if (!block.isCompleted)
-                        block.resume(StrResponse(params.url, error.msg))
+                        block.cancel(error)
                 }
             }
             webView.load(params)
