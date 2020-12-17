@@ -5,24 +5,10 @@
         <item>音訊</item>
     </string-array>
 
-    <string-array name="indent">
-        <item>@string/indent_0</item>
-        <item>@string/indent_1</item>
-        <item>@string/indent_2</item>
-        <item>@string/indent_3</item>
-        <item>@string/indent_4</item>
-    </string-array>
-
     <string-array name="text_suffix">
         <item>.txt</item>
         <item>.json</item>
         <item>.xml</item>
-    </string-array>
-
-    <string-array name="convert_s">
-        <item>@string/jf_convert_o</item>
-        <item>@string/jf_convert_j</item>
-        <item>@string/jf_convert_f</item>
     </string-array>
 
     <string-array name="theme_mode">
@@ -45,13 +31,6 @@
         <item>2分鐘</item>
         <item>3分鐘</item>
         <item>常亮</item>
-    </string-array>
-
-    <string-array name="screen_direction_title">
-        <item>@string/screen_unspecified</item>
-        <item>@string/screen_portrait</item>
-        <item>@string/screen_landscape</item>
-        <item>@string/screen_sensor</item>
     </string-array>
 
     <string-array name="icon_names">
