@@ -26,6 +26,7 @@ class CheckSourceService : BaseService() {
     private val allIds = ArrayList<String>()
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
+    private var notificationMsg = ""
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_network_check)
@@ -44,7 +45,8 @@ class CheckSourceService : BaseService() {
 
     override fun onCreate() {
         super.onCreate()
-        updateNotification(0, getString(R.string.start))
+        notificationMsg = getString(R.string.start)
+        upNotification()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,7 +77,8 @@ class CheckSourceService : BaseService() {
         allIds.addAll(ids)
         processIndex = 0
         threadCount = min(allIds.size, threadCount)
-        updateNotification(0, getString(R.string.progress_show, "", 0, allIds.size))
+        notificationMsg = getString(R.string.progress_show, "", 0, allIds.size)
+        upNotification()
         for (i in 0 until threadCount) {
             check()
         }
@@ -109,10 +112,9 @@ class CheckSourceService : BaseService() {
         synchronized(this) {
             check()
             checkedIds.add(sourceUrl)
-            updateNotification(
-                checkedIds.size,
+            notificationMsg =
                 getString(R.string.progress_show, sourceName, checkedIds.size, allIds.size)
-            )
+            upNotification()
             if (processIndex >= allIds.size + threadCount - 1) {
                 stopSelf()
             }
@@ -122,10 +124,10 @@ class CheckSourceService : BaseService() {
     /**
      * 更新通知
      */
-    private fun updateNotification(state: Int, msg: String) {
-        notificationBuilder.setContentText(msg)
-        notificationBuilder.setProgress(allIds.size, state, false)
-        postEvent(EventBus.CHECK_SOURCE, msg)
+    private fun upNotification() {
+        notificationBuilder.setContentText(notificationMsg)
+        notificationBuilder.setProgress(allIds.size, checkedIds.size, false)
+        postEvent(EventBus.CHECK_SOURCE, notificationMsg)
         startForeground(112202, notificationBuilder.build())
     }
 

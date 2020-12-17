@@ -42,11 +42,13 @@ class WebService : BaseService() {
 
     private var httpServer: HttpServer? = null
     private var webSocketServer: WebSocketServer? = null
+    private var notificationContent = ""
 
     override fun onCreate() {
         super.onCreate()
         isRun = true
-        updateNotification(getString(R.string.service_starting))
+        notificationContent = getString(R.string.service_starting)
+        upNotification()
     }
 
     override fun onDestroy() {
@@ -87,7 +89,8 @@ class WebService : BaseService() {
                 hostAddress = getString(R.string.http_ip, address.hostAddress, port)
                 isRun = true
                 postEvent(EventBus.WEB_SERVICE, hostAddress)
-                updateNotification(hostAddress)
+                notificationContent = hostAddress
+                upNotification()
             } catch (e: IOException) {
                 launch {
                     toast(e.localizedMessage ?: "")
@@ -110,12 +113,12 @@ class WebService : BaseService() {
     /**
      * 更新通知
      */
-    private fun updateNotification(content: String) {
+    private fun upNotification() {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdWeb)
             .setSmallIcon(R.drawable.ic_web_service_noti)
             .setOngoing(true)
             .setContentTitle(getString(R.string.web_service))
-            .setContentText(content)
+            .setContentText(notificationContent)
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
