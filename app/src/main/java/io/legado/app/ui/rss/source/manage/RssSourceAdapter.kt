@@ -6,11 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ItemRssSourceBinding
 import io.legado.app.lib.theme.backgroundColor
@@ -19,39 +18,8 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
-    DiffRecyclerAdapter<RssSource, ItemRssSourceBinding>(context),
+    RecyclerAdapter<RssSource, ItemRssSourceBinding>(context),
     ItemTouchCallback.Callback {
-
-    override val diffItemCallback: DiffUtil.ItemCallback<RssSource>
-        get() = object : DiffUtil.ItemCallback<RssSource>() {
-
-            override fun areItemsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
-                return oldItem.sourceUrl == newItem.sourceUrl
-            }
-
-            override fun areContentsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
-                return oldItem.sourceName == newItem.sourceName
-                        && oldItem.sourceGroup == newItem.sourceGroup
-                        && oldItem.enabled == newItem.enabled
-            }
-
-            override fun getChangePayload(oldItem: RssSource, newItem: RssSource): Any? {
-                val payload = Bundle()
-                if (oldItem.sourceName != newItem.sourceName) {
-                    payload.putString("name", newItem.sourceName)
-                }
-                if (oldItem.sourceGroup != newItem.sourceGroup) {
-                    payload.putString("group", newItem.sourceGroup)
-                }
-                if (oldItem.enabled != newItem.enabled) {
-                    payload.putBoolean("enabled", newItem.enabled)
-                }
-                if (payload.isEmpty) {
-                    return null
-                }
-                return payload
-            }
-        }
 
     private val selected = linkedSetOf<RssSource>()
 
@@ -80,15 +48,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
             } else {
                 bundle.keySet().map {
                     when (it) {
-                        "name", "group" ->
-                            if (item.sourceGroup.isNullOrEmpty()) {
-                                cbSource.text = item.sourceName
-                            } else {
-                                cbSource.text =
-                                    String.format("%s (%s)", item.sourceName, item.sourceGroup)
-                            }
                         "selected" -> cbSource.isChecked = selected.contains(item)
-                        "enabled" -> cbSource.isChecked = item.enabled
                     }
                 }
             }

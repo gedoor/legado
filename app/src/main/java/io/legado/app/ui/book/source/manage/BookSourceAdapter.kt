@@ -8,11 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ItemBookSourceBinding
 import io.legado.app.lib.theme.backgroundColor
@@ -23,53 +22,8 @@ import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
-    DiffRecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
+    RecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
     Callback {
-
-    override val diffItemCallback: DiffUtil.ItemCallback<BookSource>
-        get() = object : DiffUtil.ItemCallback<BookSource>() {
-
-            override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
-                return oldItem.bookSourceUrl == newItem.bookSourceUrl
-            }
-
-            override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
-                if (oldItem.bookSourceName != newItem.bookSourceName)
-                    return false
-                if (oldItem.bookSourceGroup != newItem.bookSourceGroup)
-                    return false
-                if (oldItem.enabled != newItem.enabled)
-                    return false
-                if (oldItem.enabledExplore != newItem.enabledExplore
-                    || oldItem.exploreUrl != newItem.exploreUrl
-                ) {
-                    return false
-                }
-                return true
-            }
-
-            override fun getChangePayload(oldItem: BookSource, newItem: BookSource): Any? {
-                val payload = Bundle()
-                if (oldItem.bookSourceName != newItem.bookSourceName) {
-                    payload.putString("name", newItem.bookSourceName)
-                }
-                if (oldItem.bookSourceGroup != newItem.bookSourceGroup) {
-                    payload.putString("group", newItem.bookSourceGroup)
-                }
-                if (oldItem.enabled != newItem.enabled) {
-                    payload.putBoolean("enabled", newItem.enabled)
-                }
-                if (oldItem.enabledExplore != newItem.enabledExplore
-                    || oldItem.exploreUrl != newItem.exploreUrl
-                ) {
-                    payload.putBoolean("showExplore", true)
-                }
-                if (payload.isEmpty) {
-                    return null
-                }
-                return payload
-            }
-        }
 
     private val selected = linkedSetOf<BookSource>()
 
@@ -100,14 +54,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 payload.keySet().map {
                     when (it) {
                         "selected" -> cbBookSource.isChecked = selected.contains(item)
-                        "name", "group" -> if (item.bookSourceGroup.isNullOrEmpty()) {
-                            cbBookSource.text = item.bookSourceName
-                        } else {
-                            cbBookSource.text =
-                                String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
-                        }
-                        "enabled" -> swtEnabled.isChecked = payload.getBoolean(it)
-                        "showExplore" -> upShowExplore(ivExplore, item)
                     }
                 }
             }

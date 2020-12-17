@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Created by Invincible on 2017/12/15.
@@ -60,14 +58,6 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
             val list = ArrayList(asyncListDiffer.currentList)
             list[position] = item
             asyncListDiffer.submitList(list)
-        }
-    }
-
-    fun swapItem(srcPosition: Int, targetPosition: Int) {
-        synchronized(lock) {
-            val list = ArrayList(getItems())
-            Collections.swap(list, srcPosition, targetPosition)
-            setItems(list)
         }
     }
 
