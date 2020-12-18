@@ -482,12 +482,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     val selectStartPos: Int
         get() {
-            for (i in 0 until selectStart[0]) {
-
+            val page = relativePage(selectStart[0])
+            page.getTextChapter()?.let {
+                return it.getReadLength(page.index) +
+                        page.getSelectStartLength(selectStart[1], selectStart[2])
             }
-
-
-
             return 0
         }
 

@@ -16,6 +16,8 @@ data class TextLine(
     var isReadAloud: Boolean = false
 ) {
 
+    val charSize: Int get() = textChars.size
+
     fun upTopBottom(durY: Float, textPaint: TextPaint) {
         lineTop = ChapterProvider.paddingTop + durY
         lineBottom = lineTop + textPaint.textHeight

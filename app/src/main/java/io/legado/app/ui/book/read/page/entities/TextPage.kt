@@ -8,6 +8,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import java.text.DecimalFormat
+import kotlin.math.min
 
 @Suppress("unused")
 data class TextPage(
@@ -123,6 +124,15 @@ data class TextPage(
             }
             return percent
         }
+
+    fun getSelectStartLength(lineIndex: Int, charIndex: Int): Int {
+        var length = 0
+        val maxIndex = min(lineIndex, lineSize)
+        for (index in 0 until maxIndex) {
+            length += textLines[index].charSize
+        }
+        return length + charIndex
+    }
 
     fun getTextChapter(): TextChapter? {
         ReadBook.curTextChapter?.let {

@@ -272,5 +272,7 @@ class PageView(context: Context) : FrameLayout(context) {
 
     val selectedText: String get() = binding.contentTextView.selectedText
 
+    val selectStartPos get() = binding.contentTextView.selectStartPos
+
     val textPage get() = binding.contentTextView.textPage
 }
