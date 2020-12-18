@@ -430,7 +430,12 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun onMenuItemSelected(itemId: Int): Boolean {
         when (itemId) {
             R.id.menu_bookmark -> binding.readView.curPage.let {
-                showBookMark(it.selectStartPos, it.selectedText)
+                val bookmark = it.createBookmark()
+                if (bookmark == null) {
+                    toast(R.string.create_bookmark_error)
+                } else {
+                    showBookMark(bookmark)
+                }
                 return true
             }
             R.id.menu_replace -> {

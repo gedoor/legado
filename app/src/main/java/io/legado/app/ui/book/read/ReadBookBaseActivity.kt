@@ -199,7 +199,7 @@ abstract class ReadBookBaseActivity :
     }
 
     @SuppressLint("InflateParams")
-    fun showBookMark(chapterPos: Int, bookText: String) {
+    fun showBookMark(bookmark: Bookmark) {
         val book = ReadBook.book ?: return
         val textChapter = ReadBook.curTextChapter ?: return
         alert(title = getString(R.string.bookmark_add)) {
@@ -211,15 +211,7 @@ abstract class ReadBookBaseActivity :
             yesButton {
                 alertBinding.editView.text?.toString()?.let { editContent ->
                     Coroutine.async {
-                        val bookmark = Bookmark(
-                            bookUrl = book.bookUrl,
-                            bookName = book.name,
-                            chapterIndex = ReadBook.durChapterIndex,
-                            chapterPos = chapterPos,
-                            chapterName = textChapter.title,
-                            bookText = bookText,
-                            content = editContent
-                        )
+                        bookmark.content = editContent
                         App.db.bookmarkDao.insert(bookmark)
                     }
                 }

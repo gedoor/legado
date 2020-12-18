@@ -11,6 +11,7 @@ import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppConst.timeFormat
+import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ViewBookPageBinding
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
@@ -270,9 +271,11 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.cancelSelect()
     }
 
-    val selectedText: String get() = binding.contentTextView.selectedText
+    fun createBookmark(): Bookmark? {
+        return binding.contentTextView.createBookmark()
+    }
 
-    val selectStartPos get() = binding.contentTextView.selectStartPos
+    val selectedText: String get() = binding.contentTextView.selectedText
 
     val textPage get() = binding.contentTextView.textPage
 }

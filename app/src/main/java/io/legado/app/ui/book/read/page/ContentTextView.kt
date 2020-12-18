@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.service.help.ReadBook
@@ -480,15 +481,24 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             return stringBuilder.toString()
         }
 
-    val selectStartPos: Int
-        get() {
-            val page = relativePage(selectStart[0])
-            page.getTextChapter()?.let {
-                return it.getReadLength(page.index) +
-                        page.getSelectStartLength(selectStart[1], selectStart[2])
+    fun createBookmark(): Bookmark? {
+        val page = relativePage(selectStart[0])
+        page.getTextChapter()?.let { chapter ->
+            val chapterPos = chapter.getReadLength(page.index) +
+                    page.getSelectStartLength(selectStart[1], selectStart[2])
+            ReadBook.book?.let { book ->
+                return Bookmark(
+                    bookUrl = book.bookUrl,
+                    bookName = book.name,
+                    chapterIndex = page.chapterIndex,
+                    chapterPos = chapterPos,
+                    chapterName = chapter.title,
+                    bookText = selectedText
+                )
             }
-            return 0
         }
+        return null
+    }
 
     private fun selectToInt(page: Int, line: Int, char: Int): Int {
         return page * 10000000 + line * 100000 + char
