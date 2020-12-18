@@ -19,7 +19,7 @@ import java.util.*
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
         RuleSub::class],
-    version = 26,
+    version = 27,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -53,7 +53,7 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_10_11, migration_11_12, migration_12_13, migration_13_14,
                     migration_14_15, migration_15_17, migration_17_18, migration_18_19,
                     migration_19_20, migration_20_21, migration_21_22, migration_22_23,
-                    migration_23_24, migration_24_25, migration_25_26
+                    migration_23_24, migration_24_25, migration_25_26, migration_26_27
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -230,6 +230,31 @@ abstract class AppDatabase : RoomDatabase() {
                 """
                 )
                 database.execSQL("DROP TABLE `sourceSubs`")
+            }
+        }
+
+        private val migration_26_27 = object : Migration(26, 27) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        ALTER TABLE rssSources ADD singleUrl INTEGER NOT NULL DEFAULT 0
+                    """
+                )
+                database.execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `bookmarks1` (`time` INTEGER NOT NULL, `bookUrl` TEXT NOT NULL, `bookName` TEXT NOT NULL, 
+                        `bookAuthor` TEXT NOT NULL, `chapterIndex` INTEGER NOT NULL, `chapterPos` INTEGER NOT NULL, `chapterName` TEXT NOT NULL, 
+                        `bookText` TEXT NOT NULL, `content` TEXT NOT NULL, PRIMARY KEY(`time`))
+                    """
+                )
+                database.execSQL(
+                    """
+                        insert into `bookmarks1` select `time`, `bookUrl`, `bookName`, `bookAuthor`, `chapterIndex`, `pageIndex`, `chapterName`, '', `content` from bookmarks
+                    """
+                )
+                database.execSQL(""" DROP TABLE `bookmarks` """)
+                database.execSQL(""" ALTER TABLE bookmarks1 RENAME TO bookmarks """)
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_bookmarks_time` ON `bookmarks` (`time`)")
             }
         }
     }
