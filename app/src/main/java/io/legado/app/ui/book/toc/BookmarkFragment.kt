@@ -76,7 +76,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     override fun onClick(bookmark: Bookmark) {
         val bookmarkData = Intent()
         bookmarkData.putExtra("index", bookmark.chapterIndex)
-        bookmarkData.putExtra("pageIndex", bookmark.pageIndex)
+        bookmarkData.putExtra("chapterPos", bookmark.chapterPos)
         activity?.setResult(Activity.RESULT_OK, bookmarkData)
         activity?.finish()
     }

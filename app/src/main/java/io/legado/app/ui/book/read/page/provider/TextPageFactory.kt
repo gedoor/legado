@@ -3,10 +3,9 @@ package io.legado.app.ui.book.read.page.provider
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.api.DataSource
 import io.legado.app.ui.book.read.page.api.PageFactory
-import io.legado.app.ui.book.read.page.entities.PageData
 import io.legado.app.ui.book.read.page.entities.TextPage
 
-class TextPageFactory(dataSource: DataSource) : PageFactory<PageData>(dataSource) {
+class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
 
     override fun hasPrev(): Boolean = with(dataSource) {
         return hasPrevChapter() || pageIndex > 0
@@ -60,81 +59,73 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<PageData>(dataSource
             false
     }
 
-    override val curData: PageData
+    override val curPage: TextPage
         get() = with(dataSource) {
             ReadBook.msg?.let {
-                return@with PageData(TextPage(text = it).format())
+                return@with TextPage(text = it).format()
             }
             currentChapter?.let {
-                val page = it.page(pageIndex) ?: TextPage(title = it.title).format()
-                return@with PageData(page, it)
+                return@with it.page(pageIndex) ?: TextPage(title = it.title).format()
             }
-            return PageData(TextPage().format())
+            return TextPage().format()
         }
 
-    override val nextData: PageData
+    override val nextPage: TextPage
         get() = with(dataSource) {
             ReadBook.msg?.let {
-                return@with PageData(TextPage(text = it).format())
+                return@with TextPage(text = it).format()
             }
             currentChapter?.let {
                 if (pageIndex < it.pageSize - 1) {
-                    val page = it.page(pageIndex + 1)?.removePageAloudSpan()
+                    return@with it.page(pageIndex + 1)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
-                    return@with PageData(page, it)
                 }
             }
             if (!hasNextChapter()) {
-                return@with PageData(TextPage(text = ""))
+                return@with TextPage(text = "")
             }
             nextChapter?.let {
-                val page = it.page(0)?.removePageAloudSpan()
+                return@with it.page(0)?.removePageAloudSpan()
                     ?: TextPage(title = it.title).format()
-                return@with PageData(page, it)
             }
-            return PageData(TextPage().format())
+            return TextPage().format()
         }
 
-    override val prevData: PageData
+    override val prevPage: TextPage
         get() = with(dataSource) {
             ReadBook.msg?.let {
-                return@with PageData(TextPage(text = it).format())
+                return@with TextPage(text = it).format()
             }
             if (pageIndex > 0) {
                 currentChapter?.let {
-                    val page = it.page(pageIndex - 1)?.removePageAloudSpan()
+                    return@with it.page(pageIndex - 1)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
-                    return@with PageData(page, it)
                 }
             }
             prevChapter?.let {
-                val page = it.lastPage?.removePageAloudSpan()
+                return@with it.lastPage?.removePageAloudSpan()
                     ?: TextPage(title = it.title).format()
-                return@with PageData(page, it)
             }
-            return PageData(TextPage().format())
+            return TextPage().format()
         }
 
-    override val nextPlusData: PageData
+    override val nextPlusPage: TextPage
         get() = with(dataSource) {
             currentChapter?.let {
                 if (pageIndex < it.pageSize - 2) {
-                    val page = it.page(pageIndex + 2)?.removePageAloudSpan()
+                    return@with it.page(pageIndex + 2)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
-                    return@with PageData(page, it)
                 }
                 nextChapter?.let { nc ->
                     if (pageIndex < it.pageSize - 1) {
-                        val page = nc.page(0)?.removePageAloudSpan()
+                        return@with nc.page(0)?.removePageAloudSpan()
                             ?: TextPage(title = nc.title).format()
-                        return@with PageData(page, nc)
                     }
-                    val page = nc.page(1)?.removePageAloudSpan()
+                    return@with nc.page(1)?.removePageAloudSpan()
                         ?: TextPage(title = nc.title).format()
-                    return@with PageData(page, nc)
                 }
 
             }
-            return PageData(TextPage().format())
+            return TextPage().format()
         }
 }

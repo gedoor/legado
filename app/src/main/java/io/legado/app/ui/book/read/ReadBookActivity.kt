@@ -199,7 +199,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 }
             }
             R.id.menu_download -> showDownloadDialog()
-            R.id.menu_add_bookmark -> showBookMark()
             R.id.menu_copy_text ->
                 TextDialog.show(supportFragmentManager, ReadBook.curTextChapter?.getContent())
             R.id.menu_update_toc -> ReadBook.book?.let {
@@ -430,6 +429,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
      */
     override fun onMenuItemSelected(itemId: Int): Boolean {
         when (itemId) {
+            R.id.menu_bookmark -> binding.readView.curPage.let {
+                showBookMark(0, it.selectedText)
+                return true
+            }
             R.id.menu_replace -> {
                 val scopes = arrayListOf<String>()
                 ReadBook.book?.name?.let {
@@ -748,8 +751,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 requestCodeChapterList ->
                     data?.getIntExtra("index", ReadBook.durChapterIndex)?.let { index ->
                         if (index != ReadBook.durChapterIndex) {
-                            val pageIndex = data.getIntExtra("pageIndex", 0)
-                            viewModel.openChapter(index, pageIndex)
+                            val chapterPos = data.getIntExtra("chapterPos", 0)
+                            viewModel.openChapter(index, chapterPos)
                         }
                     }
                 requestCodeSearchResult ->

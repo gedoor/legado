@@ -199,7 +199,7 @@ abstract class ReadBookBaseActivity :
     }
 
     @SuppressLint("InflateParams")
-    fun showBookMark() {
+    fun showBookMark(chapterPos: Int, bookText: String) {
         val book = ReadBook.book ?: return
         val textChapter = ReadBook.curTextChapter ?: return
         alert(title = getString(R.string.bookmark_add)) {
@@ -215,8 +215,9 @@ abstract class ReadBookBaseActivity :
                             bookUrl = book.bookUrl,
                             bookName = book.name,
                             chapterIndex = ReadBook.durChapterIndex,
-                            pageIndex = ReadBook.durChapterPos,
+                            chapterPos = chapterPos,
                             chapterName = textChapter.title,
+                            bookText = bookText,
                             content = editContent
                         )
                         App.db.bookmarkDao.insert(bookmark)

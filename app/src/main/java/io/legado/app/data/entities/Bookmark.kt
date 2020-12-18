@@ -15,8 +15,9 @@ data class Bookmark(
     var bookName: String = "",
     val bookAuthor: String = "",
     var chapterIndex: Int = 0,
-    var pageIndex: Int = 0,
+    var chapterPos: Int = 0,
     var chapterName: String = "",
+    var bookText: String = "",
     var content: String = ""
 
 ) : Parcelable

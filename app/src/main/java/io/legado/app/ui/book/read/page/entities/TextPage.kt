@@ -5,6 +5,7 @@ import android.text.StaticLayout
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import java.text.DecimalFormat
 
@@ -123,4 +124,22 @@ data class TextPage(
             return percent
         }
 
+    fun getTextChapter(): TextChapter? {
+        ReadBook.curTextChapter?.let {
+            if (it.position == chapterIndex) {
+                return it
+            }
+        }
+        ReadBook.nextTextChapter?.let {
+            if (it.position == chapterIndex) {
+                return it
+            }
+        }
+        ReadBook.prevTextChapter?.let {
+            if (it.position == chapterIndex) {
+                return it
+            }
+        }
+        return null
+    }
 }

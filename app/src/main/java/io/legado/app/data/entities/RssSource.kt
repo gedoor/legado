@@ -25,6 +25,7 @@ data class RssSource(
     var sourceGroup: String? = null,
     var enabled: Boolean = true,
     var sortUrl: String? = null,
+    var singleUrl: Boolean = false,
     var articleStyle: Int = 0,
     //列表规则
     var ruleArticles: String? = null,

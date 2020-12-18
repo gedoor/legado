@@ -12,7 +12,6 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
-import io.legado.app.help.BookHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextChar
@@ -86,11 +85,6 @@ object ChapterProvider {
         val textPages = arrayListOf<TextPage>()
         val stringBuilder = StringBuilder()
         var durY = 0f
-        var paint = Pair(titlePaint, contentPaint)
-        BookHelp.getFontPath(book, bookChapter)?.let {
-            val typeface = getTypeface(it)
-            paint = getPaint(typeface)
-        }
         textPages.add(TextPage())
         contents.forEachIndexed { index, text ->
             val matcher = AppPattern.imgPattern.matcher(text)
@@ -105,7 +99,7 @@ object ChapterProvider {
                 }
             } else {
                 val isTitle = index == 0
-                val textPaint = if (isTitle) paint.first else paint.second
+                val textPaint = if (isTitle) titlePaint else contentPaint
                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                     durY = setTypeText(text, durY, textPages, stringBuilder, isTitle, textPaint)
                 }
@@ -125,7 +119,7 @@ object ChapterProvider {
         return TextChapter(
             bookChapter.index, bookChapter.title,
             bookChapter.getAbsoluteURL().substringBefore(","),
-            textPages, chapterSize, paint.first, paint.second
+            textPages, chapterSize
         )
     }
 

@@ -471,18 +471,18 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
 
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
-        curPage.setContentDescription(pageFactory.curData.textPage.text)
+        curPage.setContentDescription(pageFactory.curPage.text)
         if (isScroll && !callBack.isAutoPage) {
-            curPage.setContent(pageFactory.curData, resetPageOffset)
+            curPage.setContent(pageFactory.curPage, resetPageOffset)
         } else {
             curPage.resetPageOffset()
             when (relativePosition) {
-                -1 -> prevPage.setContent(pageFactory.prevData)
-                1 -> nextPage.setContent(pageFactory.nextData)
+                -1 -> prevPage.setContent(pageFactory.prevPage)
+                1 -> nextPage.setContent(pageFactory.nextPage)
                 else -> {
-                    curPage.setContent(pageFactory.curData)
-                    nextPage.setContent(pageFactory.nextData)
-                    prevPage.setContent(pageFactory.prevData)
+                    curPage.setContent(pageFactory.curPage)
+                    nextPage.setContent(pageFactory.nextPage)
+                    prevPage.setContent(pageFactory.prevPage)
                 }
             }
         }
