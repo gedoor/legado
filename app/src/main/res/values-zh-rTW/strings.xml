@@ -476,6 +476,7 @@
     <string name="no">否</string>
     <string name="sure">確認</string>
     <string name="sure_del">是否確認刪除？</string>
+    <string name="sure_del_any">是否確認刪除 %s？</string>
     <string name="sure_del_all_book">是否刪除全部書籍？</string>
     <string name="sure_del_download_book">是否同時刪除已下載的書籍目錄？</string>
     <string name="qr_per">掃描二維碼需相機權限</string>

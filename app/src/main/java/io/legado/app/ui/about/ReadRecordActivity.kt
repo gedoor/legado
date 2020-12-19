@@ -113,17 +113,22 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         override fun registerListener(holder: ItemViewHolder, binding: ItemReadRecordBinding) {
             binding.apply {
                 ivRemove.onClick {
-                    alert(R.string.delete, R.string.sure_del) {
-                        okButton {
-                            getItem(holder.layoutPosition)?.let {
-                                App.db.readRecordDao.deleteByName(it.bookName)
-                                initData()
-                            }
-                        }
-                        noButton()
-                    }.show()
+                    getItem(holder.layoutPosition)?.let { item ->
+                        sureDelAlert(item)
+                    }
                 }
             }
+        }
+
+        private fun sureDelAlert(item: ReadRecordShow) {
+            alert(R.string.delete) {
+                message = getString(R.string.sure_del_any, item.bookName)
+                okButton {
+                    App.db.readRecordDao.deleteByName(item.bookName)
+                    initData()
+                }
+                noButton()
+            }.show()
         }
 
     }

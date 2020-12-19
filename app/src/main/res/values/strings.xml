@@ -485,6 +485,7 @@
     <string name="no">No</string>
     <string name="sure">OK</string>
     <string name="sure_del">Are you sure to delete it?</string>
+    <string name="sure_del_any">Are you sure to delete %s?</string>
     <string name="sure_del_all_book">Are you sure to delete all books？</string>
     <string name="sure_del_download_book">Do you want to delete the downloaded book chapters at the same time?</string>
     <string name="qr_per">Scan QR code requires Camera permissions</string>
