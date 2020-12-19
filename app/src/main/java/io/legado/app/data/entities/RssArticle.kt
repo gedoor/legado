@@ -2,7 +2,7 @@ package io.legado.app.data.entities
 
 import androidx.room.Entity
 import androidx.room.Ignore
-import io.legado.app.model.analyzeRule.RuleData
+import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
@@ -24,7 +24,7 @@ data class RssArticle(
     var image: String? = null,
     var read: Boolean = false,
     var variable: String? = null
-) : RuleData {
+) : RuleDataInterface {
 
     override fun hashCode() = link.hashCode()
 

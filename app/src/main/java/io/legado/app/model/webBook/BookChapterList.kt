@@ -211,6 +211,7 @@ object BookChapterList {
     ): ChapterData<List<String>> {
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
+        analyzeRule.book = book
         val chapterList = arrayListOf<BookChapter>()
         val nextUrlList = arrayListOf<String>()
         val nextTocRule = tocRule.nextTocUrl

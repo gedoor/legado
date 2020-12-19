@@ -1,9 +1,9 @@
 package io.legado.app.data.entities
 
-import io.legado.app.model.analyzeRule.RuleData
+import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.splitNotBlank
 
-interface BaseBook : RuleData {
+interface BaseBook : RuleDataInterface {
     var name: String
     var author: String
     var bookUrl: String

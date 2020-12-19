@@ -7,6 +7,8 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.RuleDataInterface
+import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
 import java.util.*
 
@@ -18,16 +20,14 @@ object RssParserByRule {
         sortName: String,
         sortUrl: String,
         body: String?,
-        rssSource: RssSource
+        rssSource: RssSource,
+        ruleData: RuleDataInterface
     ): RssResult {
         val sourceUrl = rssSource.sourceUrl
         var nextUrl: String? = null
         if (body.isNullOrBlank()) {
             throw Exception(
-                App.INSTANCE.getString(
-                    R.string.error_get_web_content,
-                    rssSource.sourceUrl
-                )
+                App.INSTANCE.getString(R.string.error_get_web_content, rssSource.sourceUrl)
             )
         }
         Debug.log(sourceUrl, "≡获取成功:$sourceUrl")
@@ -37,7 +37,7 @@ object RssParserByRule {
             return RssParserDefault.parseXML(sortName, body, sourceUrl)
         } else {
             val articleList = mutableListOf<RssArticle>()
-            val analyzeRule = AnalyzeRule()
+            val analyzeRule = AnalyzeRule(ruleData)
             analyzeRule.setContent(body).setBaseUrl(sortUrl)
             var reverse = false
             if (ruleArticles.startsWith("-")) {
@@ -114,6 +114,7 @@ object RssParserByRule {
         Debug.log(sourceUrl, "┌获取文章链接", log)
         rssArticle.link = NetworkUtils.getAbsoluteURL(sourceUrl, analyzeRule.getString(ruleLink))
         Debug.log(sourceUrl, "└${rssArticle.link}", log)
+        rssArticle.variable = GSON.toJson(analyzeRule.ruleData.variableMap)
         if (rssArticle.title.isBlank()) {
             return null
         }

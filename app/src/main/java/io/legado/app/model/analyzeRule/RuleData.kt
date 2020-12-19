@@ -1,9 +1,13 @@
 package io.legado.app.model.analyzeRule
 
-interface RuleData {
+class RuleData : RuleDataInterface {
 
-    val variableMap: HashMap<String, String>
+    override val variableMap by lazy {
+        hashMapOf<String, String>()
+    }
 
-    fun putVariable(key: String, value: String)
+    override fun putVariable(key: String, value: String) {
+        variableMap[key] = value
+    }
 
 }
