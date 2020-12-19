@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -124,13 +123,13 @@ class RssSourceEditActivity :
         ATH.applyEdgeEffectColor(binding.recyclerView)
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }
 
     private fun upRecyclerView(rssSource: RssSource? = viewModel.rssSource) {
         rssSource?.let {
             binding.cbIsEnable.isChecked = rssSource.enabled
+            binding.cbSingleUrl.isChecked = rssSource.singleUrl
             binding.cbEnableJs.isChecked = rssSource.enableJs
             binding.cbEnableBaseUrl.isChecked = rssSource.loadWithBaseUrl
         }
@@ -158,6 +157,7 @@ class RssSourceEditActivity :
     private fun getRssSource(): RssSource {
         val source = viewModel.rssSource
         source.enabled = binding.cbIsEnable.isChecked
+        source.singleUrl = binding.cbSingleUrl.isChecked
         source.enableJs = binding.cbEnableJs.isChecked
         source.loadWithBaseUrl = binding.cbEnableBaseUrl.isChecked
         sourceEntities.forEach {

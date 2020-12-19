@@ -227,34 +227,24 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initLiveData() {
-        viewModel.contentLiveData.observe(this, { content ->
+        viewModel.contentLiveData.observe(this) { content ->
             viewModel.rssArticle?.let {
                 upJavaScriptEnable()
                 val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
                 val html = viewModel.clHtml(content)
                 if (viewModel.rssSource?.loadWithBaseUrl == true) {
-                    binding.webView.loadDataWithBaseURL(
-                        url,
-                        html,
-                        "text/html",
-                        "utf-8",
-                        url
-                    )//不想用baseUrl进else
+                    binding.webView
+                        .loadDataWithBaseURL(url, html, "text/html", "utf-8", url)//不想用baseUrl进else
                 } else {
-                    binding.webView.loadDataWithBaseURL(
-                        null,
-                        html,
-                        "text/html;charset=utf-8",
-                        "utf-8",
-                        url
-                    )
+                    binding.webView
+                        .loadDataWithBaseURL(null, html, "text/html;charset=utf-8", "utf-8", url)
                 }
             }
-        })
-        viewModel.urlLiveData.observe(this, {
+        }
+        viewModel.urlLiveData.observe(this) {
             upJavaScriptEnable()
             binding.webView.loadUrl(it.url, it.headerMap)
-        })
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")

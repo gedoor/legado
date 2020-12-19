@@ -13,6 +13,7 @@ import io.legado.app.databinding.ItemRssBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.article.RssSortActivity
 import io.legado.app.ui.rss.favorites.RssFavoritesActivity
+import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.ui.rss.source.manage.RssSourceViewModel
@@ -72,7 +73,11 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     }
 
     override fun openRss(rssSource: RssSource) {
-        startActivity<RssSortActivity>(Pair("url", rssSource.sourceUrl))
+        if (rssSource.singleUrl) {
+            startActivity<ReadRssActivity>(Pair("origin", rssSource.sourceUrl))
+        } else {
+            startActivity<RssSortActivity>(Pair("url", rssSource.sourceUrl))
+        }
     }
 
     override fun toTop(rssSource: RssSource) {

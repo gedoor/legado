@@ -794,5 +794,6 @@
     <string name="sync_book_progress_t">同步阅读进度</string>
     <string name="sync_book_progress_s">进入退出阅读界面时同步阅读进度</string>
     <string name="create_bookmark_error">创建书签失败</string>
+    <string name="single_url">单URL</string>
 
 </resources>
