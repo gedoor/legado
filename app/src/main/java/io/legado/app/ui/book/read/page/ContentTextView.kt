@@ -30,7 +30,7 @@ import kotlin.math.min
  * 阅读内容界面
  */
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
-    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble)
+    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble, true)
     var upView: ((TextPage) -> Unit)? = null
     private val selectedPaint by lazy {
         Paint().apply {

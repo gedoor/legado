@@ -77,7 +77,7 @@
         app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:title="@string/selectText"
         android:key="selectText"
         app:iconSpaceReserved="false"
