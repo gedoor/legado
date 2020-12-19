@@ -34,11 +34,9 @@ class CoverAdapter(context: Context, val callBack: CallBack) :
         binding: ItemCoverBinding,
         item: SearchBook,
         payloads: MutableList<Any>
-    ) {
-        binding.apply {
-            ivCover.load(item.coverUrl, item.name, item.author)
-            tvSource.text = item.originName
-        }
+    ) = with(binding) {
+        ivCover.load(item.coverUrl, item.name, item.author)
+        tvSource.text = item.originName
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemCoverBinding) {

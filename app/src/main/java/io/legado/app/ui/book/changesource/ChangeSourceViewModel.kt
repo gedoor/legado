@@ -66,11 +66,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             upAdapter()
             App.db.searchBookDao.getChangeSourceSearch(name, author, searchGroup).let {
                 searchBooks.addAll(it)
+                searchBooksLiveData.postValue(searchBooks.toList())
                 if (it.size <= 1) {
-                    upAdapter()
                     startSearch()
-                } else {
-                    upAdapter()
                 }
             }
         }
@@ -85,7 +83,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
         } else {
             handler.removeCallbacks(sendRunnable)
-            handler.postDelayed(sendRunnable, 500 - System.currentTimeMillis() + postTime)
+            handler.postDelayed(sendRunnable, 500)
         }
     }
 
