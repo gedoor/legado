@@ -44,6 +44,7 @@ class BookmarkAdapter(val callback: Callback) : PagedListAdapter<Bookmark, Bookm
 
         fun bind(bookmark: Bookmark, callback: Callback?) = with(binding) {
             tvChapterName.text = bookmark.chapterName
+            tvBookText.text = bookmark.bookText
             tvContent.text = bookmark.content
             itemView.onClick {
                 callback?.onClick(bookmark)
