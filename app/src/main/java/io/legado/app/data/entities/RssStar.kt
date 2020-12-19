@@ -1,6 +1,11 @@
 package io.legado.app.data.entities
 
 import androidx.room.Entity
+import androidx.room.Ignore
+import io.legado.app.model.analyzeRule.RuleData
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
+import kotlinx.parcelize.IgnoredOnParcel
 
 
 @Entity(
@@ -16,16 +21,30 @@ data class RssStar(
     var pubDate: String? = null,
     var description: String? = null,
     var content: String? = null,
-    var image: String? = null
-) {
+    var image: String? = null,
+    var variable: String? = null
+) : RuleData {
+
+    @delegate:Transient
+    @delegate:Ignore
+    @IgnoredOnParcel
+    override val variableMap by lazy {
+        GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
+    }
+
+    override fun putVariable(key: String, value: String) {
+        variableMap[key] = value
+        variable = GSON.toJson(variableMap)
+    }
+
     fun toRssArticle() = RssArticle(
-            origin = origin,
-            sort = sort,
-            title = title,
-            link = link,
-            pubDate = pubDate,
-            description = description,
-            content = content,
-            image = image
-        )
+        origin = origin,
+        sort = sort,
+        title = title,
+        link = link,
+        pubDate = pubDate,
+        description = description,
+        content = content,
+        image = image
+    )
 }

@@ -12,7 +12,7 @@ interface RssArticleDao {
     fun get(origin: String, link: String): RssArticle?
 
     @Query(
-        """select t1.link, t1.sort, t1.origin, t1.`order`, t1.title, t1.content, t1.description, t1.image, t1.pubDate, ifNull(t2.read, 0) as read
+        """select t1.link, t1.sort, t1.origin, t1.`order`, t1.title, t1.content, t1.description, t1.image, t1.pubDate, t1.variable, ifNull(t2.read, 0) as read
         from rssArticles as t1 left join rssReadRecords as t2
         on t1.link = t2.record  where origin = :origin and sort = :sort
         order by `order` desc"""
