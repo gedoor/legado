@@ -1,7 +1,10 @@
 package io.legado.app.model
 
 import android.annotation.SuppressLint
-import io.legado.app.data.entities.*
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.RssArticle
+import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
@@ -142,8 +145,7 @@ object Debug {
 
     private fun exploreDebug(webBook: WebBook, url: String) {
         log(debugSource, "︾开始解析发现页")
-        val variableBook = SearchBook()
-        val explore = webBook.exploreBook(url, 1, variableBook)
+        val explore = webBook.exploreBook(url, 1)
             .onSuccess { exploreBooks ->
                 if (exploreBooks.isNotEmpty()) {
                     log(debugSource, "︽发现页解析完成")
@@ -161,8 +163,7 @@ object Debug {
 
     private fun searchDebug(webBook: WebBook, key: String) {
         log(debugSource, "︾开始解析搜索页")
-        val variableBook = SearchBook()
-        val search = webBook.searchBook(key, 1, variableBook)
+        val search = webBook.searchBook(key, 1)
             .onSuccess { searchBooks ->
                 if (searchBooks.isNotEmpty()) {
                     log(debugSource, "︽搜索页解析完成")

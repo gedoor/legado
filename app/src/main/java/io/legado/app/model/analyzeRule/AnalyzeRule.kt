@@ -41,6 +41,12 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     private var objectChangedJS = false
     private var objectChangedJP = false
 
+    init {
+        if (ruleData is BaseBook) {
+            book = ruleData
+        }
+    }
+
     @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
         if (content == null) throw AssertionError("Content cannot be null")

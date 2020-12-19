@@ -27,7 +27,6 @@ object BookInfo {
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         val infoRule = bookSource.getBookInfoRule()
         val analyzeRule = AnalyzeRule(book)
-        analyzeRule.book = book
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         infoRule.init?.let {
             if (it.isNotBlank()) {

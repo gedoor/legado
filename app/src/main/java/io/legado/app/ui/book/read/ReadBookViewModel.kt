@@ -8,7 +8,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
-import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
@@ -216,9 +215,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookSourceDao.allTextEnabled.forEach { source ->
                 try {
-                    val variableBook = SearchBook()
                     WebBook(source)
-                        .searchBookSuspend(this, name, variableBook = variableBook)
+                        .searchBookSuspend(this, name)
                         .getOrNull(0)?.let {
                             if (it.name == name && (it.author == author || author == "")) {
                                 val book = it.toBook()

@@ -35,7 +35,6 @@ object BookContent {
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
         val analyzeRule = AnalyzeRule(book).setContent(body, baseUrl)
-        analyzeRule.book = book
         var contentData = analyzeContent(
             book, baseUrl, body, contentRule, bookChapter, bookSource
         )
@@ -119,7 +118,6 @@ object BookContent {
     ): ContentData<List<String>> {
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
-        analyzeRule.book = book
         val nextUrlList = arrayListOf<String>()
         analyzeRule.chapter = chapter
         val nextUrlRule = contentRule.nextContentUrl

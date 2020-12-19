@@ -22,12 +22,11 @@ class WebBook(val bookSource: BookSource) {
     fun searchBook(
         key: String,
         page: Int? = 1,
-        variableBook: SearchBook,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<ArrayList<SearchBook>> {
         return Coroutine.async(scope, context) {
-            searchBookSuspend(scope, key, page, variableBook)
+            searchBookSuspend(scope, key, page)
         }
     }
 
@@ -35,8 +34,8 @@ class WebBook(val bookSource: BookSource) {
         scope: CoroutineScope,
         key: String,
         page: Int? = 1,
-        variableBook: SearchBook,
     ): ArrayList<SearchBook> {
+        val variableBook = SearchBook()
         bookSource.searchUrl?.let { searchUrl ->
             val analyzeUrl = AnalyzeUrl(
                 ruleUrl = searchUrl,
@@ -66,15 +65,16 @@ class WebBook(val bookSource: BookSource) {
     fun exploreBook(
         url: String,
         page: Int? = 1,
-        variableBook: SearchBook,
         scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<List<SearchBook>> {
+        val variableBook = SearchBook()
         return Coroutine.async(scope, context) {
             val analyzeUrl = AnalyzeUrl(
                 ruleUrl = url,
                 page = page,
                 baseUrl = sourceUrl,
+                book = variableBook,
                 headerMapF = bookSource.getHeaderMap()
             )
             val res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)

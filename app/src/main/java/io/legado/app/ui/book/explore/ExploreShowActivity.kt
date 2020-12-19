@@ -30,8 +30,11 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.title = intent.getStringExtra("exploreName")
         initRecyclerView()
-        viewModel.booksData.observe(this, { upData(it) })
+        viewModel.booksData.observe(this) { upData(it) }
         viewModel.initData(intent)
+        viewModel.errorLiveData.observe(this) {
+            loadMoreView.error(it)
+        }
     }
 
     private fun initRecyclerView() {
@@ -74,7 +77,9 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
             loadMoreView.noMore(getString(R.string.empty))
         } else if (books.isEmpty()) {
             loadMoreView.noMore()
-        } else if (adapter.getItems().contains(books.first()) && adapter.getItems().contains(books.last())) {
+        } else if (adapter.getItems().contains(books.first()) && adapter.getItems()
+                .contains(books.last())
+        ) {
             loadMoreView.noMore()
         } else {
             adapter.addItems(books)
