@@ -74,7 +74,10 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     override fun openRss(rssSource: RssSource) {
         if (rssSource.singleUrl) {
-            startActivity<ReadRssActivity>(Pair("origin", rssSource.sourceUrl))
+            startActivity<ReadRssActivity>(
+                Pair("title", rssSource.sourceName),
+                Pair("origin", rssSource.sourceUrl)
+            )
         } else {
             startActivity<RssSortActivity>(Pair("url", rssSource.sourceUrl))
         }
