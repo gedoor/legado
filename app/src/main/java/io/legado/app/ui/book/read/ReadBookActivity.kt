@@ -108,9 +108,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
             upMenu()
             upView()
         }
-        viewModel.processLiveData.observe(this) {
-            sureSyncProgress(it)
-        }
         viewModel.initData(intent)
     }
 
@@ -232,7 +229,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
             R.id.menu_set_charset -> showCharsetConfig()
             R.id.menu_get_progress -> ReadBook.book?.let {
-                viewModel.syncBookProgress(it)
+                viewModel.syncBookProgress(it) { progress ->
+                    sureSyncProgress(progress)
+                }
             }
             R.id.menu_help -> showReadMenuHelp()
         }
