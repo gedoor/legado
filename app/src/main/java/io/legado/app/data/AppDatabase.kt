@@ -208,11 +208,9 @@ abstract class AppDatabase : RoomDatabase() {
         private val migration_24_25 = object : Migration(24, 25) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    """
-                    CREATE TABLE IF NOT EXISTS `sourceSubs` 
+                    """CREATE TABLE IF NOT EXISTS `sourceSubs` 
                     (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, `type` INTEGER NOT NULL, `customOrder` INTEGER NOT NULL, 
-                    PRIMARY KEY(`id`))
-                """
+                    PRIMARY KEY(`id`))"""
                 )
             }
         }
@@ -220,41 +218,29 @@ abstract class AppDatabase : RoomDatabase() {
         private val migration_25_26 = object : Migration(25, 26) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    """
-                    CREATE TABLE IF NOT EXISTS `ruleSubs` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, `type` INTEGER NOT NULL, 
-                    `customOrder` INTEGER NOT NULL, `autoUpdate` INTEGER NOT NULL, `update` INTEGER NOT NULL, PRIMARY KEY(`id`))
-                """
+                    """CREATE TABLE IF NOT EXISTS `ruleSubs` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, `type` INTEGER NOT NULL, 
+                    `customOrder` INTEGER NOT NULL, `autoUpdate` INTEGER NOT NULL, `update` INTEGER NOT NULL, PRIMARY KEY(`id`))"""
                 )
-                database.execSQL(
-                    """
-                    insert into `ruleSubs` select *, 0, 0 from `sourceSubs`
-                """
-                )
+                database.execSQL(" insert into `ruleSubs` select *, 0, 0 from `sourceSubs` ")
                 database.execSQL("DROP TABLE `sourceSubs`")
             }
         }
 
         private val migration_26_27 = object : Migration(26, 27) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(" ALTER TABLE rssSources ADD singleUrl INTEGER NOT NULL DEFAULT 0 ")
                 database.execSQL(
-                    """
-                        ALTER TABLE rssSources ADD singleUrl INTEGER NOT NULL DEFAULT 0
-                    """
-                )
-                database.execSQL(
-                    """
-                        CREATE TABLE IF NOT EXISTS `bookmarks1` (`time` INTEGER NOT NULL, `bookUrl` TEXT NOT NULL, `bookName` TEXT NOT NULL, 
+                    """CREATE TABLE IF NOT EXISTS `bookmarks1` (`time` INTEGER NOT NULL, `bookUrl` TEXT NOT NULL, `bookName` TEXT NOT NULL, 
                         `bookAuthor` TEXT NOT NULL, `chapterIndex` INTEGER NOT NULL, `chapterPos` INTEGER NOT NULL, `chapterName` TEXT NOT NULL, 
-                        `bookText` TEXT NOT NULL, `content` TEXT NOT NULL, PRIMARY KEY(`time`))
-                    """
+                        `bookText` TEXT NOT NULL, `content` TEXT NOT NULL, PRIMARY KEY(`time`))"""
                 )
                 database.execSQL(
-                    """
-                        insert into `bookmarks1` select `time`, `bookUrl`, `bookName`, `bookAuthor`, `chapterIndex`, `pageIndex`, `chapterName`, '', `content` from bookmarks
-                    """
+                    """insert into `bookmarks1` 
+                        select `time`, `bookUrl`, `bookName`, `bookAuthor`, `chapterIndex`, `pageIndex`, `chapterName`, '', `content` 
+                        from bookmarks"""
                 )
-                database.execSQL(""" DROP TABLE `bookmarks` """)
-                database.execSQL(""" ALTER TABLE bookmarks1 RENAME TO bookmarks """)
+                database.execSQL(" DROP TABLE `bookmarks` ")
+                database.execSQL(" ALTER TABLE bookmarks1 RENAME TO bookmarks ")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_bookmarks_time` ON `bookmarks` (`time`)")
             }
         }
