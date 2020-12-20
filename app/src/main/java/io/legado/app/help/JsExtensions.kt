@@ -279,8 +279,8 @@ interface JsExtensions {
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
             val oldCode = s.toInt()
-            if (font1.InLimit(s)) {
-                val code = font2.GetCodeByGlyf(font1.GetGlyfByCode(oldCode))
+            if (font1.inLimit(s)) {
+                val code = font2.getCodeByGlyf(font1.getGlyfByCode(oldCode))
                 if (code != 0) contentArray[index] = code.toChar()
             }
         }
