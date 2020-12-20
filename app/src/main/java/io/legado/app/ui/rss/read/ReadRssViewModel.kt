@@ -66,7 +66,16 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                         }
                     }
                 } else {
-                    loadUrl(origin, origin)
+                    val ruleContent = rssSource?.ruleContent
+                    if (ruleContent.isNullOrBlank()) {
+                        loadUrl(origin, origin)
+                    } else {
+                        val rssArticle = RssArticle()
+                        rssArticle.origin = origin
+                        rssArticle.link = origin
+                        rssArticle.title = rssSource!!.sourceName
+                        loadContent(rssArticle, ruleContent)
+                    }
                 }
             }
         }.onFinally {
