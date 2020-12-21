@@ -13,7 +13,7 @@
 ## 感谢
 ```
 org.jsoup:jsoup
-cn.wanghaomiao:JsoupXpath'
+cn.wanghaomiao:JsoupXpath
 com.jayway.jsonpath:json-path
 com.github.gedoor:rhino-android
 com.squareup.okhttp3:okhttp
