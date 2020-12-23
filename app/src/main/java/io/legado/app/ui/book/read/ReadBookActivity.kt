@@ -70,6 +70,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     AutoReadDialog.CallBack,
     TocRegexDialog.CallBack,
     ColorPickerDialogListener {
+
     private val requestCodeChapterList = 568
     private val requestCodeReplace = 312
     private val requestCodeSearchResult = 123
@@ -154,6 +155,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
         return super.onPrepareOptionsMenu(menu)
     }
 
+    /**
+     * 更新菜单
+     */
     private fun upMenu() {
         val menu = menu
         val book = ReadBook.book
@@ -189,10 +193,14 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 }
             }
             R.id.menu_refresh -> {
-                ReadBook.book?.let {
-                    ReadBook.curTextChapter = null
-                    binding.readView.upContent()
-                    viewModel.refreshContent(it)
+                if (ReadBook.bookSource == null) {
+                    upContent()
+                } else {
+                    ReadBook.book?.let {
+                        ReadBook.curTextChapter = null
+                        binding.readView.upContent()
+                        viewModel.refreshContent(it)
+                    }
                 }
             }
             R.id.menu_download -> showDownloadDialog()

@@ -11,7 +11,7 @@ interface RssSourceDao {
     fun getByKey(key: String): RssSource?
 
     @Query("select * from rssSources where sourceUrl in (:sourceUrls)")
-    fun getRssSources(vararg sourceUrls: String):List<RssSource>
+    fun getRssSources(vararg sourceUrls: String): List<RssSource>
 
     @get:Query("SELECT * FROM rssSources")
     val all: List<RssSource>
@@ -25,8 +25,8 @@ interface RssSourceDao {
     @Query("SELECT * FROM rssSources where sourceName like :key or sourceUrl like :key or sourceGroup like :key order by customOrder")
     fun liveSearch(key: String): LiveData<List<RssSource>>
 
-    @Query("SELECT * FROM rssSources where enabled = 1 order by customOrder")
-    fun liveEnabled(): LiveData<List<RssSource>>
+    @Query("SELECT * FROM rssSources where enabled = 1 and (sourceName like '%'||:searchKey||'%' or sourceGroup like '%'||:searchKey||'%' or sourceUrl like '%'||:searchKey||'%') order by customOrder")
+    fun liveEnabled(searchKey: String): LiveData<List<RssSource>>
 
     @Query("select sourceGroup from rssSources where trim(sourceGroup) <> ''")
     fun liveGroup(): LiveData<List<String>>
