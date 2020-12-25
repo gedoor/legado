@@ -12,6 +12,8 @@ import io.legado.app.utils.getSize
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.noties.markwon.Markwon
 import io.noties.markwon.image.glide.GlideImagesPlugin
+import io.noties.markwon.ext.tables.TablePlugin
+import io.noties.markwon.html.HtmlPlugin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -66,6 +68,8 @@ class TextDialog : BaseDialogFragment() {
                 MD -> binding.textView.post {
                     Markwon.builder(requireContext())
                         .usePlugin(GlideImagesPlugin.create(requireContext()))
+                        .usePlugin(HtmlPlugin.create())
+                        .usePlugin(TablePlugin.create(requireContext()))
                         .build()
                         .setMarkdown(binding.textView, content)
                 }
