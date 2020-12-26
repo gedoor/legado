@@ -653,13 +653,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      * js实现跨域访问,不能删
      */
     override fun ajax(urlStr: String): String? {
-        return try {
-            val analyzeUrl = AnalyzeUrl(urlStr, book = book)
-            runBlocking {
+        return runBlocking {
+            try {
+                val analyzeUrl = AnalyzeUrl(urlStr, book = book)
                 analyzeUrl.getStrResponse(urlStr).body
+            } catch (e: Exception) {
+                e.printStackTrace()
+                e.msg
             }
-        } catch (e: Exception) {
-            e.localizedMessage
         }
     }
 

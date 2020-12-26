@@ -29,13 +29,14 @@ interface JsExtensions {
      * 访问网络,返回String
      */
     fun ajax(urlStr: String): String? {
-        return try {
-            val analyzeUrl = AnalyzeUrl(urlStr)
-            runBlocking {
+        return runBlocking {
+            try {
+                val analyzeUrl = AnalyzeUrl(urlStr)
                 analyzeUrl.getStrResponse(urlStr).body
+            } catch (e: Exception) {
+                e.printStackTrace()
+                e.msg
             }
-        } catch (e: Exception) {
-            e.msg
         }
     }
 

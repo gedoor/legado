@@ -8,7 +8,7 @@ import rxhttp.wrapper.exception.HttpStatusCodeException
 import java.nio.charset.Charset
 
 @Parser(name = "Text")
-class TextParser(val encode: String? = null) : rxhttp.wrapper.parse.Parser<String> {
+class TextParser(private val encode: String? = null) : rxhttp.wrapper.parse.Parser<String> {
 
     override fun onParse(response: Response): String {
 
