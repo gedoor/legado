@@ -1,13 +1,15 @@
 package io.legado.app.utils
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
-@Suppress("unused")
+@Suppress("unused", "BlockingMethodInNonBlockingContext")
 object ZipUtils {
 
     /**
@@ -38,20 +40,14 @@ object ZipUtils {
         srcFilePaths: Collection<String>?,
         zipFilePath: String?,
         comment: String?
-    ): Boolean {
-        if (srcFilePaths == null || zipFilePath == null) return false
-        var zos: ZipOutputStream? = null
-        try {
-            zos = ZipOutputStream(FileOutputStream(zipFilePath))
+    ): Boolean = withContext(IO) {
+        if (srcFilePaths == null || zipFilePath == null) return@withContext false
+        ZipOutputStream(FileOutputStream(zipFilePath)).use {
             for (srcFile in srcFilePaths) {
-                if (!zipFile(getFileByPath(srcFile)!!, "", zos, comment)) return false
+                if (!zipFile(getFileByPath(srcFile)!!, "", it, comment))
+                    return@withContext false
             }
-            return true
-        } finally {
-            zos?.let {
-                zos.finish()
-                zos.close()
-            }
+            return@withContext true
         }
     }
 
@@ -72,18 +68,11 @@ object ZipUtils {
         comment: String? = null
     ): Boolean {
         if (srcFiles == null || zipFile == null) return false
-        var zos: ZipOutputStream? = null
-        try {
-            zos = ZipOutputStream(FileOutputStream(zipFile))
+        ZipOutputStream(FileOutputStream(zipFile)).use {
             for (srcFile in srcFiles) {
-                if (!zipFile(srcFile, "", zos, comment)) return false
+                if (!zipFile(srcFile, "", it, comment)) return false
             }
             return true
-        } finally {
-            zos?.let {
-                zos.finish()
-                zos.close()
-            }
         }
     }
 
@@ -139,12 +128,7 @@ object ZipUtils {
     ): Boolean {
         if (srcFile == null || zipFile == null) return false
         ZipOutputStream(FileOutputStream(zipFile)).use { zos ->
-            return zipFile(
-                srcFile,
-                "",
-                zos,
-                comment
-            )
+            return zipFile(srcFile, "", zos, comment)
         }
     }
 
