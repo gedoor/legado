@@ -47,39 +47,46 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         recyclerView.adapter = this
     }
 
+    @Synchronized
     fun setItems(items: List<ITEM>?) {
-        synchronized(lock) {
+        kotlin.runCatching {
             asyncListDiffer.submitList(items)
         }
     }
 
+    @Synchronized
     fun setItem(position: Int, item: ITEM) {
-        synchronized(lock) {
+        kotlin.runCatching {
             val list = ArrayList(asyncListDiffer.currentList)
             list[position] = item
             asyncListDiffer.submitList(list)
         }
     }
 
-    fun updateItem(item: ITEM) =
-        synchronized(lock) {
+    @Synchronized
+    fun updateItem(item: ITEM) {
+        kotlin.runCatching {
             val index = asyncListDiffer.currentList.indexOf(item)
             if (index >= 0) {
                 asyncListDiffer.currentList[index] = item
                 notifyItemChanged(index)
             }
         }
+    }
 
-    fun updateItem(position: Int, payload: Any) =
-        synchronized(lock) {
+    @Synchronized
+    fun updateItem(position: Int, payload: Any) {
+        kotlin.runCatching {
             val size = itemCount
             if (position in 0 until size) {
                 notifyItemChanged(position, payload)
             }
         }
+    }
 
-    fun updateItems(fromPosition: Int, toPosition: Int, payloads: Any) =
-        synchronized(lock) {
+    @Synchronized
+    fun updateItems(fromPosition: Int, toPosition: Int, payloads: Any) {
+        kotlin.runCatching {
             val size = itemCount
             if (fromPosition in 0 until size && toPosition in 0 until size) {
                 notifyItemRangeChanged(
@@ -89,6 +96,7 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
                 )
             }
         }
+    }
 
     fun isEmpty() = asyncListDiffer.currentList.isEmpty()
 
