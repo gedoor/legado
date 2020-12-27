@@ -26,8 +26,6 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
     private val items: MutableList<ITEM> = mutableListOf()
 
-    private val lock = Object()
-
     private var itemClickListener: ((holder: ItemViewHolder, item: ITEM) -> Unit)? = null
     private var itemLongClickListener: ((holder: ItemViewHolder, item: ITEM) -> Boolean)? = null
 
