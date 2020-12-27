@@ -200,7 +200,7 @@
         <!-- 搜索界面 -->
         <activity
             android:name=".ui.book.search.SearchActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="standard" />
         <!-- 关于界面 -->
         <activity
             android:name=".ui.about.AboutActivity"
