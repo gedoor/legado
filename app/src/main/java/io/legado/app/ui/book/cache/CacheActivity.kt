@@ -82,7 +82,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_download -> launch(IO) {
+            R.id.menu_download -> {
                 if (adapter.downloadMap.isNullOrEmpty()) {
                     adapter.getItems().forEach { book ->
                         CacheBook.start(
