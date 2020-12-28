@@ -28,13 +28,13 @@ jobs:
       # 蓝奏云里的文件夹名（需手动在蓝奏云创建）
       LANZOU_FOLDER: '阅读3测试版'
       # 是否上传到artifact
-      UPLOAD_ARTIFACT: 'false'
+      UPLOAD_ARTIFACT: 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: set up JDK 1.8
+      - name: set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 14
       - name: clear 18PlusList.txt
         run: |
           echo "清空18PlusList.txt"

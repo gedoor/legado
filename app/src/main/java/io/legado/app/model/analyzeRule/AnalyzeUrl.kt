@@ -358,6 +358,7 @@ class AnalyzeUrl(
                 .setAssemblyEnabled(false)
                 .setOkClient(HttpHelper.getProxyClient(proxy))
                 .addAllEncoded(fieldMap)
+                .addAllHeader(headerMap)
                 .toByteArray().await()
         }
     }

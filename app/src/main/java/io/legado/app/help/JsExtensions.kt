@@ -66,7 +66,7 @@ interface JsExtensions {
         FileUtils.deleteFile(zipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
         StringUtils.hexStringToByte(content).let {
-            if (it != null) {
+            if (it.isNotEmpty()) {
                 zipFile.writeBytes(it)
             }
         }
