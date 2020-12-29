@@ -34,4 +34,9 @@
         android:src="@drawable/ic_clear_all"
         android:tint="@color/primaryText"
         tools:ignore="RtlHardcoded" />
+
+    <View
+        android:layout_width="12dp"
+        android:layout_height="36dp" />
+
 </LinearLayout>
