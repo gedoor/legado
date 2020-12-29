@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -59,6 +60,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         toolBar.setBackgroundColor(primaryColor)
         toolBar.setTitle(R.string.speak_engine)
         adapter = Adapter(requireContext())
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
         tvFooterLeft.setText(R.string.local_tts)
         tvFooterLeft.visible()
