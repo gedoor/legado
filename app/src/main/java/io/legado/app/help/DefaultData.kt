@@ -46,6 +46,7 @@ object DefaultData {
     }
 
     fun importDefaultHttpTTS() {
+        App.db.httpTTSDao.deleteDefault()
         httpTTS.let {
             App.db.httpTTSDao.insert(*it.toTypedArray())
         }
