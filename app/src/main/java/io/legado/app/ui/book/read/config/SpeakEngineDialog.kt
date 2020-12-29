@@ -21,6 +21,7 @@ import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -59,8 +60,9 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun initView() = with(binding) {
         toolBar.setBackgroundColor(primaryColor)
         toolBar.setTitle(R.string.speak_engine)
-        adapter = Adapter(requireContext())
+        ATH.applyEdgeEffectColor(recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter = Adapter(requireContext())
         recyclerView.adapter = adapter
         tvFooterLeft.setText(R.string.local_tts)
         tvFooterLeft.visible()
