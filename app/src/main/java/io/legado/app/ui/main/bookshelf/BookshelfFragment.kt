@@ -86,6 +86,17 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 Pair("groupId", selectedGroup?.groupId ?: 0),
                 Pair("groupName", selectedGroup?.groupName ?: 0)
             )
+            R.id.menu_export_bookshelf -> {
+                val group = bookGroups[tabLayout.selectedTabPosition]
+                val fragment = fragmentMap[group.groupId]
+                fragment?.getBooks()?.let {
+
+                }
+            }
+            R.id.menu_import_bookshelf -> {
+                val group = bookGroups[tabLayout.selectedTabPosition]
+
+            }
         }
     }
 
