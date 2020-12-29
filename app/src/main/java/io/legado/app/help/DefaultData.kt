@@ -45,6 +45,12 @@ object DefaultData {
         GSON.fromJsonArray<ThemeConfig.Config>(json)!!
     }
 
+    fun importDefaultHttpTTS() {
+        httpTTS.let {
+            App.db.httpTTSDao.insert(*it.toTypedArray())
+        }
+    }
+
     fun importDefaultTocRules() {
         App.db.txtTocRule.deleteDefault()
         txtTocRules.let {

@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
+import io.legado.app.help.LocalConfig
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.FileUtils
@@ -148,7 +149,12 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upVersion() {
         execute {
-            DefaultData.importDefaultTocRules()
+            if (LocalConfig.hasUpHttpTTS) {
+                DefaultData.importDefaultHttpTTS()
+            }
+            if (LocalConfig.hasUpTxtTocRule) {
+                DefaultData.importDefaultTocRules()
+            }
         }
     }
 }

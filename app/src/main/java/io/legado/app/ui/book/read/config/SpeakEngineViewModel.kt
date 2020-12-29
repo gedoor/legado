@@ -14,9 +14,7 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
 
     fun importDefault() {
         execute {
-            DefaultData.httpTTS.let {
-                App.db.httpTTSDao.insert(*it.toTypedArray())
-            }
+            DefaultData.importDefaultHttpTTS()
         }
     }
 
