@@ -796,5 +796,7 @@
     <string name="sync_book_progress_s">進入退出閱讀介面時同步閱讀進度</string>
     <string name="create_bookmark_error">创建书签失败</string>
     <string name="single_url">单URL</string>
+    <string name="export_bookshelf">导出书单</string>
+    <string name="import_bookshelf">导入书单</string>
 
 </resources>

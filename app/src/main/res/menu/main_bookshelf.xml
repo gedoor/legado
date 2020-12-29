@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
 
     <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"
         android:title="@string/search"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_update_toc"
@@ -49,4 +51,17 @@
         android:icon="@drawable/ic_arrange"
         android:title="@string/arrange_bookshelf"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export_bookshelf"
+        android:icon="@drawable/ic_export"
+        android:title="@string/export_bookshelf"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_bookshelf"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_bookshelf"
+        app:showAsAction="never" />
+
 </menu>
