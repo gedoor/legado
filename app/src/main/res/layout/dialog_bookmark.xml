@@ -22,7 +22,7 @@
                 android:id="@+id/edit_book_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/bookmark" />
+                android:hint="@string/content" />
 
         </io.legado.app.ui.widget.text.TextInputLayout>
 
