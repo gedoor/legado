@@ -98,8 +98,39 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     }
 
     @Synchronized
-    fun setItems(items: List<ITEM>?, diffResult: DiffUtil.DiffResult) {
+    fun setItems(items: List<ITEM>?, itemCallback: DiffUtil.ItemCallback<ITEM>) {
         kotlin.runCatching {
+            val callback = object : DiffUtil.Callback() {
+                override fun getOldListSize(): Int {
+                    return itemCount
+                }
+
+                override fun getNewListSize(): Int {
+                    return items?.size ?: 0
+                }
+
+                override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                    val oldItem = getItem(oldItemPosition) ?: return false
+                    val newItem = items?.getOrNull(newItemPosition) ?: return false
+                    return itemCallback.areItemsTheSame(oldItem, newItem)
+                }
+
+                override fun areContentsTheSame(
+                    oldItemPosition: Int,
+                    newItemPosition: Int
+                ): Boolean {
+                    val oldItem = getItem(oldItemPosition) ?: return false
+                    val newItem = items?.getOrNull(newItemPosition) ?: return false
+                    return itemCallback.areContentsTheSame(oldItem, newItem)
+                }
+
+                override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+                    val oldItem = getItem(oldItemPosition) ?: return null
+                    val newItem = items?.getOrNull(newItemPosition) ?: return null
+                    return itemCallback.getChangePayload(oldItem, newItem)
+                }
+            }
+            val diffResult = DiffUtil.calculateDiff(callback)
             if (this.items.isNotEmpty()) {
                 this.items.clear()
             }

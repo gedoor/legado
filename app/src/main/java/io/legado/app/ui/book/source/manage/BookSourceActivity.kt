@@ -204,7 +204,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     Sort.Update -> data.sortedBy { it.lastUpdateTime }
                     else -> data.reversed()
                 }
-            adapter.setItems(sourceList)
+            adapter.setItems(sourceList, adapter.diffItemCallback)
         })
     }
 

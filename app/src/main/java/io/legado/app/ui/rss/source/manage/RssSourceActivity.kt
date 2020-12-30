@@ -206,7 +206,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 App.db.rssSourceDao.liveSearch("%$key%")
             }
         sourceLiveData?.observe(this, {
-            adapter.setItems(it)
+            adapter.setItems(it, adapter.diffItemCallback)
         })
     }
 
