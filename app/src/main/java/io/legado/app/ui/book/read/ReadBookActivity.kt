@@ -215,7 +215,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                         chapterIndex = ReadBook.durChapterIndex,
                         chapterPos = ReadBook.durChapterPos,
                         chapterName = page.title,
-                        bookText = page.text
+                        bookText = page.text.trim()
                     )
                     showBookMark(bookmark)
                 }

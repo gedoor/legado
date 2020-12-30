@@ -13,6 +13,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ActivityBookReadBinding
+import io.legado.app.databinding.DialogBookmarkBinding
 import io.legado.app.databinding.DialogDownloadChoiceBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
@@ -200,18 +201,18 @@ abstract class ReadBookBaseActivity :
 
     @SuppressLint("InflateParams")
     fun showBookMark(bookmark: Bookmark) {
-        val book = ReadBook.book ?: return
-        val textChapter = ReadBook.curTextChapter ?: return
         alert(title = getString(R.string.bookmark_add)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.note_content)
+            message = bookmark.chapterName
+            val alertBinding = DialogBookmarkBinding.inflate(layoutInflater).apply {
+                editBookText.setText(bookmark.bookText)
+                editView.setText(bookmark.content)
             }
-            message = bookmark.bookText
             customView = alertBinding.root
             yesButton {
-                alertBinding.editView.text?.toString()?.let { editContent ->
+                alertBinding.apply {
                     Coroutine.async {
-                        bookmark.content = editContent
+                        bookmark.bookText = editBookText.text.toString()
+                        bookmark.content = editView.text.toString()
                         App.db.bookmarkDao.insert(bookmark)
                     }
                 }
