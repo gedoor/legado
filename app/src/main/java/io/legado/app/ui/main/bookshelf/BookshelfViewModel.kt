@@ -72,6 +72,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 bookMap["name"] = it.name
                 bookMap["author"] = it.author
                 bookMap["bookUrl"] = it.bookUrl
+                bookMap["coverUrl"] = it.coverUrl
                 bookMap["tocUrl"] = it.tocUrl
                 bookMap["kind"] = it.kind
                 bookMap["intro"] = it.getDisplayIntro()
@@ -88,29 +89,36 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     fun importBookshelf(str: String, groupId: Long) {
         execute {
             val text = str.trim()
-            if (text.isAbsUrl()) {
-                RxHttp.get(text).toText().await().let {
-                    importBookshelf(it, groupId)
-                }
-            } else if (text.isJsonArray()) {
-                GSON.fromJsonArray<Map<String, String?>>(text)?.forEach {
-                    val book = Book(
-                        bookUrl = it["bookUrl"] ?: "",
-                        name = it["name"] ?: "",
-                        author = it["author"] ?: "",
-                        tocUrl = it["tocUrl"] ?: "",
-                        kind = it["kind"],
-                        intro = it["intro"] ?: "",
-                        origin = it["origin"] ?: "",
-                        originName = it["originName"] ?: ""
-                    )
-                    if (groupId > 0) {
-                        book.group = groupId
+            when {
+                text.isAbsUrl() -> {
+                    RxHttp.get(text).toText().await().let {
+                        importBookshelf(it, groupId)
                     }
-                    App.db.bookDao.insert(book)
                 }
-            } else {
-                throw Exception("格式不对")
+                text.isJsonArray() -> {
+                    GSON.fromJsonArray<Map<String, String?>>(text)?.forEach {
+                        val book = Book(
+                            bookUrl = it["bookUrl"] ?: "",
+                            name = it["name"] ?: "",
+                            author = it["author"] ?: "",
+                            coverUrl = it["coverUrl"],
+                            tocUrl = it["tocUrl"] ?: "",
+                            kind = it["kind"],
+                            intro = it["intro"] ?: "",
+                            origin = it["origin"] ?: "",
+                            originName = it["originName"] ?: ""
+                        )
+                        if (groupId > 0) {
+                            book.group = groupId
+                        }
+                        if (App.db.bookDao.getBook(book.name, book.author) == null) {
+                            App.db.bookDao.insert(book)
+                        }
+                    }
+                }
+                else -> {
+                    throw Exception("格式不对")
+                }
             }
         }.onError {
             toast(it.localizedMessage ?: "ERROR")
