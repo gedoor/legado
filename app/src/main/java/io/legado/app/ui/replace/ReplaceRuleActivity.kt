@@ -152,7 +152,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             if (dataInit) {
                 setResult(Activity.RESULT_OK)
             }
-            adapter.setItems(it)
+            adapter.setItems(it, adapter.diffItemCallBack)
             dataInit = true
         })
     }
