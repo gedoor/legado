@@ -106,12 +106,14 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
                 }
 
                 override fun getNewListSize(): Int {
-                    return items?.size ?: 0
+                    return (items?.size ?: 0) + getHeaderCount() + getFooterCount()
                 }
 
                 override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                    val oldItem = getItem(oldItemPosition) ?: return false
-                    val newItem = items?.getOrNull(newItemPosition) ?: return false
+                    val oldItem = getItem(oldItemPosition - getHeaderCount())
+                        ?: return true
+                    val newItem = items?.getOrNull(newItemPosition - getHeaderCount())
+                        ?: return true
                     return itemCallback.areItemsTheSame(oldItem, newItem)
                 }
 
@@ -119,14 +121,18 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
                     oldItemPosition: Int,
                     newItemPosition: Int
                 ): Boolean {
-                    val oldItem = getItem(oldItemPosition) ?: return false
-                    val newItem = items?.getOrNull(newItemPosition) ?: return false
+                    val oldItem = getItem(oldItemPosition - getHeaderCount())
+                        ?: return true
+                    val newItem = items?.getOrNull(newItemPosition - getHeaderCount())
+                        ?: return true
                     return itemCallback.areContentsTheSame(oldItem, newItem)
                 }
 
                 override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-                    val oldItem = getItem(oldItemPosition) ?: return null
-                    val newItem = items?.getOrNull(newItemPosition) ?: return null
+                    val oldItem = getItem(oldItemPosition - getHeaderCount())
+                        ?: return null
+                    val newItem = items?.getOrNull(newItemPosition - getHeaderCount())
+                        ?: return null
                     return itemCallback.getChangePayload(oldItem, newItem)
                 }
             }
