@@ -44,6 +44,11 @@
 
     </group>
 
+    <item
+        android:id="@+id/menu_add_bookmark"
+        android:title="@string/bookmark_add"
+        app:showAsAction="never" />
+
     <group android:id="@+id/menu_group_login">
         <item
             android:id="@+id/menu_login"
