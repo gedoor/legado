@@ -8,8 +8,10 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
+import rxhttp.wrapper.param.RxHttp
+import rxhttp.wrapper.param.toText
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
 
@@ -56,6 +58,59 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 toast(R.string.success)
             } else {
                 toast("ERROR")
+            }
+        }.onError {
+            toast(it.localizedMessage ?: "ERROR")
+        }
+    }
+
+    fun exportBookshelf(books: List<Book>?, success: (json: String) -> Unit) {
+        execute {
+            val exportList = arrayListOf<Map<String, String?>>()
+            books?.forEach {
+                val bookMap = hashMapOf<String, String?>()
+                bookMap["name"] = it.name
+                bookMap["author"] = it.author
+                bookMap["bookUrl"] = it.bookUrl
+                bookMap["tocUrl"] = it.tocUrl
+                bookMap["kind"] = it.kind
+                bookMap["intro"] = it.getDisplayIntro()
+                bookMap["origin"] = it.origin
+                bookMap["originName"] = it.originName
+                exportList.add(bookMap)
+            }
+            GSON.toJson(exportList)
+        }.onSuccess {
+            success(it)
+        }
+    }
+
+    fun importBookshelf(str: String, groupId: Long) {
+        execute {
+            val text = str.trim()
+            if (text.isAbsUrl()) {
+                RxHttp.get(text).toText().await().let {
+                    importBookshelf(it, groupId)
+                }
+            } else if (text.isJsonArray()) {
+                GSON.fromJsonArray<Map<String, String?>>(text)?.forEach {
+                    val book = Book(
+                        bookUrl = it["bookUrl"] ?: "",
+                        name = it["name"] ?: "",
+                        author = it["author"] ?: "",
+                        tocUrl = it["tocUrl"] ?: "",
+                        kind = it["kind"],
+                        intro = it["intro"] ?: "",
+                        origin = it["origin"] ?: "",
+                        originName = it["originName"] ?: ""
+                    )
+                    if (groupId > 0) {
+                        book.group = groupId
+                    }
+                    App.db.bookDao.insert(book)
+                }
+            } else {
+                throw Exception("格式不对")
             }
         }.onError {
             toast(it.localizedMessage ?: "ERROR")

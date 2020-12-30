@@ -1,6 +1,8 @@
 package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -29,17 +31,23 @@ import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.filepicker.FilePicker
+import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.main.bookshelf.books.BooksFragment
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import org.jetbrains.anko.share
 
 /**
  * 书架界面
  */
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     TabLayout.OnTabSelectedListener,
+    FilePickerDialog.CallBack,
     SearchView.OnQueryTextListener {
+
+    private val requestCodeImportBookshelf = 312
     private val binding by viewBinding(FragmentBookshelfBinding::bind)
     override val viewModel: BookshelfViewModel
         get() = getViewModel(BookshelfViewModel::class.java)
@@ -67,8 +75,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         when (item.itemId) {
             R.id.menu_search -> startActivity<SearchActivity>()
             R.id.menu_update_toc -> {
-                val group = bookGroups[tabLayout.selectedTabPosition]
-                val fragment = fragmentMap[group.groupId]
+                val fragment = fragmentMap[selectedGroup.groupId]
                 fragment?.getBooks()?.let {
                     activityViewModel.upToc(it)
                 }
@@ -79,29 +86,25 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
             R.id.menu_add_url -> addBookByUrl()
             R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity>(
-                Pair("groupId", selectedGroup?.groupId ?: 0),
-                Pair("groupName", selectedGroup?.groupName ?: 0)
+                Pair("groupId", selectedGroup.groupId ?: 0),
+                Pair("groupName", selectedGroup.groupName ?: 0)
             )
             R.id.menu_download -> startActivity<CacheActivity>(
-                Pair("groupId", selectedGroup?.groupId ?: 0),
-                Pair("groupName", selectedGroup?.groupName ?: 0)
+                Pair("groupId", selectedGroup.groupId ?: 0),
+                Pair("groupName", selectedGroup.groupName ?: 0)
             )
             R.id.menu_export_bookshelf -> {
-                val group = bookGroups[tabLayout.selectedTabPosition]
-                val fragment = fragmentMap[group.groupId]
-                fragment?.getBooks()?.let {
-
+                val fragment = fragmentMap[selectedGroup.groupId]
+                viewModel.exportBookshelf(fragment?.getBooks()) {
+                    activity?.share(it)
                 }
             }
-            R.id.menu_import_bookshelf -> {
-                val group = bookGroups[tabLayout.selectedTabPosition]
-
-            }
+            R.id.menu_import_bookshelf -> importBookshelfAlert()
         }
     }
 
-    private val selectedGroup: BookGroup?
-        get() = bookGroups.getOrNull(binding.viewPagerBookshelf.currentItem)
+    private val selectedGroup: BookGroup
+        get() = bookGroups[tabLayout.selectedTabPosition]
 
     private fun initView() {
         ATH.applyEdgeEffectColor(binding.viewPagerBookshelf)
@@ -201,8 +204,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     override fun onTabReselected(tab: TabLayout.Tab) {
-        fragmentMap[selectedGroup?.groupId]?.let {
-            toast("${selectedGroup?.groupName}(${it.getBooksCount()})")
+        fragmentMap[selectedGroup.groupId]?.let {
+            toast("${selectedGroup.groupName}(${it.getBooksCount()})")
         }
     }
 
@@ -213,7 +216,42 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     fun gotoTop() {
-        fragmentMap[selectedGroup?.groupId]?.gotoTop()
+        fragmentMap[selectedGroup.groupId]?.gotoTop()
+    }
+
+    private fun importBookshelfAlert() {
+        alert(titleResource = R.string.import_bookshelf) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = "url/json"
+            }
+            customView = alertBinding.root
+            okButton {
+                alertBinding.editView.text?.toString()?.let {
+                    viewModel.importBookshelf(it, selectedGroup.groupId)
+                }
+            }
+            noButton()
+            neutralButton(R.string.select_file) {
+                FilePicker.selectFile(
+                    this@BookshelfFragment,
+                    requestCodeImportBookshelf,
+                    allowExtensions = arrayOf("txt", "json")
+                )
+            }
+        }.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            requestCodeImportBookshelf -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    uri.readText(requireContext())?.let {
+                        viewModel.importBookshelf(it, selectedGroup.groupId)
+                    }
+                }
+            }
+        }
     }
 
     private inner class TabFragmentPageAdapter(fm: FragmentManager) :
