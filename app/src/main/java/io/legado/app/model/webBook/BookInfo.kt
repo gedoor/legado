@@ -10,11 +10,13 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StringUtils.wordCountFormat
 import io.legado.app.utils.htmlFormat
+import kotlinx.coroutines.CoroutineScope
 
 object BookInfo {
 
     @Throws(Exception::class)
     fun analyzeBookInfo(
+        scope: CoroutineScope,
         book: Book,
         body: String?,
         bookSource: BookSource,
