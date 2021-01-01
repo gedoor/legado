@@ -231,7 +231,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         if (result == null) result = ""
         val str = kotlin.runCatching {
             Entities.unescape(result.toString())
-        }.getOrDefault(result.toString())
+        }.getOrElse {
+            result.toString()
+        }
         if (isUrl) {
             return if (str.isBlank()) {
                 baseUrl ?: ""

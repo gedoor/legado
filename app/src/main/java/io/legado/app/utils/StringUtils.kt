@@ -214,12 +214,11 @@ object StringUtils {
     fun stringToInt(str: String?): Int {
         if (str != null) {
             val num = fullToHalf(str).replace("\\s+".toRegex(), "")
-            return try {
+            return kotlin.runCatching {
                 Integer.parseInt(num)
-            } catch (e: Exception) {
+            }.getOrElse {
                 chineseNumToInt(num)
             }
-
         }
         return -1
     }
