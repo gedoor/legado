@@ -19,7 +19,7 @@ object BookContent {
 
     @Throws(Exception::class)
     suspend fun analyzeContent(
-        coroutineScope: CoroutineScope,
+        scope: CoroutineScope,
         body: String?,
         book: Book,
         bookChapter: BookChapter,
@@ -73,7 +73,7 @@ object BookContent {
                     contentDataList.add(ContentData(nextUrl = item))
             }
             for (item in contentDataList) {
-                withContext(coroutineScope.coroutineContext) {
+                withContext(scope.coroutineContext) {
                     AnalyzeUrl(
                         ruleUrl = item.nextUrl,
                         book = book,
