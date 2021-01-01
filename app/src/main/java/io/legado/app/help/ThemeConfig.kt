@@ -61,11 +61,11 @@ object ThemeConfig {
     private fun getConfigs(): List<Config>? {
         val configFile = File(configFilePath)
         if (configFile.exists()) {
-            try {
+            kotlin.runCatching {
                 val json = configFile.readText()
                 return GSON.fromJsonArray(json)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            }.onFailure {
+                it.printStackTrace()
             }
         }
         return null
