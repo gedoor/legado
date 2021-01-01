@@ -21,9 +21,9 @@ class WebBook(val bookSource: BookSource) {
      * 搜索
      */
     fun searchBook(
+        scope: CoroutineScope,
         key: String,
         page: Int? = 1,
-        scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<ArrayList<SearchBook>> {
         return Coroutine.async(scope, context) {
@@ -64,20 +64,20 @@ class WebBook(val bookSource: BookSource) {
      * 发现
      */
     fun exploreBook(
+        scope: CoroutineScope,
         url: String,
         page: Int? = 1,
-        scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<List<SearchBook>> {
         return Coroutine.async(scope, context) {
-            exploreBookAwait(url, page, scope)
+            exploreBookAwait(scope, url, page)
         }
     }
 
     suspend fun exploreBookAwait(
+        scope: CoroutineScope = Coroutine.DEFAULT,
         url: String,
         page: Int? = 1,
-        scope: CoroutineScope = Coroutine.DEFAULT
     ): ArrayList<SearchBook> {
         val variableBook = SearchBook()
         val analyzeUrl = AnalyzeUrl(
@@ -103,19 +103,19 @@ class WebBook(val bookSource: BookSource) {
      * 书籍信息
      */
     fun getBookInfo(
+        scope: CoroutineScope,
         book: Book,
-        scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO,
         canReName: Boolean = true,
     ): Coroutine<Book> {
         return Coroutine.async(scope, context) {
-            getBookInfoAwait(book, scope, canReName)
+            getBookInfoAwait(scope, book, canReName)
         }
     }
 
     suspend fun getBookInfoAwait(
-        book: Book,
         scope: CoroutineScope = Coroutine.DEFAULT,
+        book: Book,
         canReName: Boolean = true,
     ): Book {
         book.type = bookSource.bookSourceType
@@ -145,18 +145,18 @@ class WebBook(val bookSource: BookSource) {
      * 目录
      */
     fun getChapterList(
+        scope: CoroutineScope,
         book: Book,
-        scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<List<BookChapter>> {
         return Coroutine.async(scope, context) {
-            getChapterListAwait(book, scope)
+            getChapterListAwait(scope, book)
         }
     }
 
     suspend fun getChapterListAwait(
+        scope: CoroutineScope = Coroutine.DEFAULT,
         book: Book,
-        scope: CoroutineScope = Coroutine.DEFAULT
     ): List<BookChapter> {
         book.type = bookSource.bookSourceType
         return if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
@@ -176,22 +176,22 @@ class WebBook(val bookSource: BookSource) {
      * 章节内容
      */
     fun getContent(
+        scope: CoroutineScope,
         book: Book,
         bookChapter: BookChapter,
         nextChapterUrl: String? = null,
-        scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
-            getContentAwait(book, bookChapter, nextChapterUrl, scope)
+            getContentAwait(scope, book, bookChapter, nextChapterUrl)
         }
     }
 
     suspend fun getContentAwait(
+        scope: CoroutineScope,
         book: Book,
         bookChapter: BookChapter,
         nextChapterUrl: String? = null,
-        scope: CoroutineScope = Coroutine.DEFAULT
     ): String {
         if (bookSource.getContentRule().content.isNullOrEmpty()) {
             Debug.log(sourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")

@@ -34,7 +34,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         val source = bookSource
         val url = exploreUrl
         if (source != null && url != null) {
-            WebBook(source).exploreBook(url, page, this)
+            WebBook(source).exploreBook(this, url, page)
                 .timeout(30000L)
                 .onSuccess(IO) { searchBooks ->
                     booksData.postValue(searchBooks)

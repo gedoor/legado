@@ -28,11 +28,14 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
     }
 
     fun startDebug(key: String, start: (() -> Unit)? = null, error: (() -> Unit)? = null) {
-        webBook?.let {
+        execute {
+            Debug.callback = this@BookSourceDebugModel
+            Debug.startDebug(this, webBook!!, key)
+        }.onStart {
             start?.invoke()
-            Debug.callback = this
-            Debug.startDebug(it, key)
-        } ?: error?.invoke()
+        }.onError {
+            error?.invoke()
+        }
     }
 
     override fun printLog(state: Int, msg: String) {

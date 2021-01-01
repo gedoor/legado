@@ -270,7 +270,7 @@ class AudioPlayService : BaseService(),
                 val book = AudioPlay.book
                 val webBook = AudioPlay.webBook
                 if (book != null && webBook != null) {
-                    webBook.getContent(book, chapter, scope = this@AudioPlayService)
+                    webBook.getContent(this@AudioPlayService, book, chapter)
                         .onSuccess { content ->
                             if (content.isEmpty()) {
                                 withContext(Main) {

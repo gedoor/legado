@@ -109,7 +109,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (book.isLocalBook()) {
             loadChapterList(book, changeDruChapterIndex)
         } else {
-            ReadBook.webBook?.getBookInfo(book, this, canReName = false)
+            ReadBook.webBook?.getBookInfo(this, book, canReName = false)
                 ?.onSuccess {
                     loadChapterList(book, changeDruChapterIndex)
                 }
@@ -138,7 +138,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
             }
         } else {
-            ReadBook.webBook?.getChapterList(book, this)
+            ReadBook.webBook?.getChapterList(this, book)
                 ?.onSuccess(IO) { cList ->
                     if (cList.isNotEmpty()) {
                         if (changeDruChapterIndex == null) {
@@ -215,8 +215,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             App.db.bookSourceDao.allTextEnabled.forEach { source ->
                 try {
-                    WebBook(source)
-                        .searchBookAwait(this, name)
+                    WebBook(source).searchBookAwait(this, name)
                         .getOrNull(0)?.let {
                             if (it.name == name && (it.author == author || author == "")) {
                                 val book = it.toBook()

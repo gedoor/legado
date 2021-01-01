@@ -57,7 +57,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 loadChapter(book, changeDruChapterIndex)
             } else {
                 App.db.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
-                    WebBook(bookSource).getBookInfo(book, this, canReName = canReName)
+                    WebBook(bookSource).getBookInfo(this, book, canReName = canReName)
                         .onSuccess(IO) {
                             bookData.postValue(book)
                             if (inBookshelf) {
@@ -88,7 +88,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 }
             } else {
                 App.db.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
-                    WebBook(bookSource).getChapterList(book, this)
+                    WebBook(bookSource).getChapterList(this, book)
                         .onSuccess(IO) {
                             if (it.isNotEmpty()) {
                                 if (inBookshelf) {

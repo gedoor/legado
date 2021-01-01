@@ -75,7 +75,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 }
                 App.db.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
                     val webBook = WebBook(bookSource)
-                    webBook.getChapterList(book, context = upTocPool)
+                    webBook.getChapterList(this, book, context = upTocPool)
                         .timeout(300000)
                         .onSuccess(IO) {
                             App.db.bookDao.update(book)
@@ -115,7 +115,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                             var addToCache = false
                             while (!addToCache) {
                                 if (CacheBook.downloadCount() < 5) {
-                                    CacheBook.download(webBook, book, chapter)
+                                    CacheBook.download(this, webBook, book, chapter)
                                     addToCache = true
                                 } else {
                                     delay(1000)

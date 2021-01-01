@@ -282,7 +282,7 @@ object ReadBook {
         val book = book
         val webBook = webBook
         if (book != null && webBook != null) {
-            CacheBook.download(webBook, book, chapter)
+            CacheBook.download(Coroutine.DEFAULT, webBook, book, chapter)
         } else if (book != null) {
             contentLoadFinish(
                 book, chapter, "没有书源", resetPageOffset = resetPageOffset

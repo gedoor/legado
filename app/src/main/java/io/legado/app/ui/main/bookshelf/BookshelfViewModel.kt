@@ -43,7 +43,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                         origin = bookSource.bookSourceUrl,
                         originName = bookSource.bookSourceName
                     )
-                    WebBook(bookSource).getBookInfo(book, this)
+                    WebBook(bookSource).getBookInfo(this, book)
                         .onSuccess(IO) {
                             it.order = App.db.bookDao.maxOrder + 1
                             App.db.bookDao.insert(it)
@@ -71,13 +71,6 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 val bookMap = hashMapOf<String, String?>()
                 bookMap["name"] = it.name
                 bookMap["author"] = it.author
-                bookMap["bookUrl"] = it.bookUrl
-                bookMap["coverUrl"] = it.coverUrl
-                bookMap["tocUrl"] = it.tocUrl
-                bookMap["kind"] = it.kind
-                bookMap["intro"] = it.getDisplayIntro()
-                bookMap["origin"] = it.origin
-                bookMap["originName"] = it.originName
                 exportList.add(bookMap)
             }
             GSON.toJson(exportList)
@@ -96,23 +89,20 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                     }
                 }
                 text.isJsonArray() -> {
+                    val bookSources = App.db.bookSourceDao.allEnabled
                     GSON.fromJsonArray<Map<String, String?>>(text)?.forEach {
-                        val book = Book(
-                            bookUrl = it["bookUrl"] ?: "",
-                            name = it["name"] ?: "",
-                            author = it["author"] ?: "",
-                            coverUrl = it["coverUrl"],
-                            tocUrl = it["tocUrl"] ?: "",
-                            kind = it["kind"],
-                            intro = it["intro"] ?: "",
-                            origin = it["origin"] ?: "",
-                            originName = it["originName"] ?: ""
-                        )
-                        if (groupId > 0) {
-                            book.group = groupId
-                        }
-                        if (App.db.bookDao.getBook(book.name, book.author) == null) {
-                            App.db.bookDao.insert(book)
+                        val name = it["name"] ?: ""
+                        val author = it["author"] ?: ""
+                        bookSources.forEach { bookSource ->
+                            runCatching {
+                                val webBook = WebBook(bookSource)
+                                val searchBooks = webBook.searchBookAwait(this, name)
+                                val searchBook = searchBooks.firstOrNull()
+                                if (searchBook != null && searchBook.name == name && searchBook.author == author) {
+                                    val book = webBook.getBookInfoAwait(this, searchBook.toBook())
+                                    App.db.bookDao.insert(book)
+                                }
+                            }
                         }
                     }
                 }

@@ -57,7 +57,7 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                 }
                 App.db.bookSourceDao.getBookSource(tag)?.let {
                     Debug.callback = this
-                    Debug.startDebug(WebBook(it), key)
+                    Debug.startDebug(this, WebBook(it), key)
                 }
             }
         }

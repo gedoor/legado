@@ -98,7 +98,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             searchIndex++
             val source = bookSourceList[searchIndex]
             val task = WebBook(source)
-                .searchBook(name, scope = this, context = searchPool!!)
+                .searchBook(this, name, context = searchPool!!)
                 .timeout(60000L)
                 .onSuccess(Dispatchers.IO) {
                     if (it.isNotEmpty()) {

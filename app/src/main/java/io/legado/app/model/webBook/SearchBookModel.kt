@@ -68,9 +68,9 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
             searchIndex++
             val source = bookSourceList[searchIndex]
             val task = WebBook(source).searchBook(
+                scope,
                 searchKey,
                 searchPage,
-                scope = scope,
                 context = searchPool!!
             ).timeout(30000L)
                 .onSuccess(IO) {

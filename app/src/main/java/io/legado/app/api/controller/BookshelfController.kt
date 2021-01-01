@@ -66,7 +66,7 @@ object BookshelfController {
             } else {
                 App.db.bookSourceDao.getBookSource(book.origin)?.let { source ->
                     runBlocking {
-                        WebBook(source).getContentAwait(book, chapter)
+                        WebBook(source).getContentAwait(this, book, chapter)
                     }.let {
                         saveBookReadIndex(book, index)
                         returnData.setData(it)
