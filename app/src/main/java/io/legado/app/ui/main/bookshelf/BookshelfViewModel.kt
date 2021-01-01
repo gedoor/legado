@@ -114,6 +114,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                         if (groupId > 0) {
                             book.group = groupId
                         }
+                        App.db.bookDao.insert(book)
                     }
                 }
             }
