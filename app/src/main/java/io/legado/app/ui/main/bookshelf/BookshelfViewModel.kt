@@ -7,6 +7,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
+import io.legado.app.model.webBook.PreciseSearch
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -89,22 +90,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                     }
                 }
                 text.isJsonArray() -> {
-                    val bookSources = App.db.bookSourceDao.allEnabled
-                    GSON.fromJsonArray<Map<String, String?>>(text)?.forEach {
-                        val name = it["name"] ?: ""
-                        val author = it["author"] ?: ""
-                        bookSources.forEach { bookSource ->
-                            runCatching {
-                                val webBook = WebBook(bookSource)
-                                val searchBooks = webBook.searchBookAwait(this, name)
-                                val searchBook = searchBooks.firstOrNull()
-                                if (searchBook != null && searchBook.name == name && searchBook.author == author) {
-                                    val book = webBook.getBookInfoAwait(this, searchBook.toBook())
-                                    App.db.bookDao.insert(book)
-                                }
-                            }
-                        }
-                    }
+                    importBookshelfByJson(text, groupId)
                 }
                 else -> {
                     throw Exception("格式不对")
@@ -112,6 +98,27 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             }
         }.onError {
             toast(it.localizedMessage ?: "ERROR")
+        }
+    }
+
+    private fun importBookshelfByJson(json: String, groupId: Long) {
+        execute {
+            val bookSources = App.db.bookSourceDao.allEnabled
+            GSON.fromJsonArray<Map<String, String?>>(json)?.forEach {
+                val name = it["name"] ?: ""
+                val author = it["author"] ?: ""
+                if (name.isNotEmpty() && App.db.bookDao.getBook(name, author) == null) {
+                    val book = PreciseSearch
+                        .searchFirstBook(this, bookSources, name, author)
+                    book?.let {
+                        if (groupId > 0) {
+                            book.group = groupId
+                        }
+                    }
+                }
+            }
+        }.onFinally {
+            toast(R.string.success)
         }
     }
 

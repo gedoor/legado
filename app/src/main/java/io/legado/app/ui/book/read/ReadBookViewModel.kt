@@ -13,10 +13,12 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.model.webBook.PreciseSearch
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
+import io.legado.app.utils.msg
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
@@ -213,23 +215,18 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun autoChangeSource(name: String, author: String) {
         if (!AppConfig.autoChangeSource) return
         execute {
-            App.db.bookSourceDao.allTextEnabled.forEach { source ->
-                try {
-                    WebBook(source).searchBookAwait(this, name)
-                        .getOrNull(0)?.let {
-                            if (it.name == name && (it.author == author || author == "")) {
-                                val book = it.toBook()
-                                book.upInfoFromOld(ReadBook.book)
-                                changeTo(book)
-                                return@execute
-                            }
-                        }
-                } catch (e: Exception) {
-                    //nothing
-                }
+            val sources = App.db.bookSourceDao.allTextEnabled
+            val book = PreciseSearch.searchFirstBook(this, sources, name, author)
+            if (book != null) {
+                book.upInfoFromOld(ReadBook.book)
+                changeTo(book)
+            } else {
+                throw Exception("自动换源失败")
             }
         }.onStart {
             ReadBook.upMsg(context.getString(R.string.source_auto_changing))
+        }.onError {
+            toast(it.msg)
         }.onFinally {
             ReadBook.upMsg(null)
         }
