@@ -11,6 +11,7 @@ import io.legado.app.model.webBook.PreciseSearch
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.isActive
 import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toText
 
@@ -105,6 +106,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
         execute {
             val bookSources = App.db.bookSourceDao.allEnabled
             GSON.fromJsonArray<Map<String, String?>>(json)?.forEach {
+                if (!isActive) return@execute
                 val name = it["name"] ?: ""
                 val author = it["author"] ?: ""
                 if (name.isNotEmpty() && App.db.bookDao.getBook(name, author) == null) {
