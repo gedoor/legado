@@ -30,12 +30,13 @@ interface JsExtensions {
      */
     fun ajax(urlStr: String): String? {
         return runBlocking {
-            try {
+            kotlin.runCatching {
                 val analyzeUrl = AnalyzeUrl(urlStr)
                 analyzeUrl.getStrResponse(urlStr).body
-            } catch (e: Exception) {
-                e.printStackTrace()
-                e.msg
+            }.onFailure {
+                it.printStackTrace()
+            }.getOrElse {
+                it.msg
             }
         }
     }
@@ -44,13 +45,15 @@ interface JsExtensions {
      * 访问网络,返回Response<String>
      */
     fun connect(urlStr: String): Any {
-        return try {
-            val analyzeUrl = AnalyzeUrl(urlStr)
-            runBlocking {
+        return runBlocking {
+            kotlin.runCatching {
+                val analyzeUrl = AnalyzeUrl(urlStr)
                 analyzeUrl.getStrResponse(urlStr)
+            }.onFailure {
+                it.printStackTrace()
+            }.getOrElse {
+                it.msg
             }
-        } catch (e: Exception) {
-            e.msg
         }
     }
 
