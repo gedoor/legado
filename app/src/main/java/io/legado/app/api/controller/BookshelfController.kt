@@ -1,6 +1,7 @@
 package io.legado.app.api.controller
 
 import io.legado.app.App
+import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
@@ -10,7 +11,6 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefInt
-import io.legado.app.web.utils.ReturnData
 import kotlinx.coroutines.runBlocking
 
 object BookshelfController {

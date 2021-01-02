@@ -3,11 +3,12 @@ package io.legado.app.api.controller
 
 import android.text.TextUtils
 import io.legado.app.App
+import io.legado.app.api.ReturnData
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
-import io.legado.app.web.utils.ReturnData
+import io.legado.app.utils.msg
 
 object SourceController {
 
@@ -22,7 +23,7 @@ object SourceController {
 
     fun saveSource(postData: String?): ReturnData {
         val returnData = ReturnData()
-        try {
+        kotlin.runCatching {
             val bookSource = GSON.fromJsonObject<BookSource>(postData)
             if (bookSource != null) {
                 if (TextUtils.isEmpty(bookSource.bookSourceName) || TextUtils.isEmpty(bookSource.bookSourceUrl)) {
@@ -34,8 +35,8 @@ object SourceController {
             } else {
                 returnData.setErrorMsg("转换书源失败")
             }
-        } catch (e: Exception) {
-            returnData.setErrorMsg(e.localizedMessage)
+        }.onFailure {
+            returnData.setErrorMsg(it.msg)
         }
         return returnData
     }
