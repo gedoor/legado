@@ -30,7 +30,7 @@ class AboutActivity : BaseActivity<ActivityAboutBinding>() {
             .replace(R.id.fl_fragment, aboutFragment, fTag)
             .commit()
         binding.tvAppSummary.post {
-            try {
+            kotlin.runCatching {
                 val span = ForegroundColorSpan(accentColor)
                 val spannableString = SpannableString(binding.tvAppSummary.text)
                 val gzh = getString(R.string.legado_gzh)
@@ -40,8 +40,6 @@ class AboutActivity : BaseActivity<ActivityAboutBinding>() {
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
                 binding.tvAppSummary.text = spannableString
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
     }

@@ -352,7 +352,7 @@ object ChapterProvider {
     }
 
     private fun getTypeface(fontPath: String): Typeface {
-        return try {
+        return kotlin.runCatching {
             when {
                 fontPath.isContentScheme() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
                     val fd = App.INSTANCE.contentResolver
@@ -370,7 +370,7 @@ object ChapterProvider {
                     else -> Typeface.SANS_SERIF
                 }
             }
-        } catch (e: Exception) {
+        }.getOrElse {
             ReadBookConfig.textFont = ""
             ReadBookConfig.save()
             Typeface.SANS_SERIF

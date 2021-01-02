@@ -30,11 +30,10 @@ object FilePicker {
             items(selectList) { _, index ->
                 when (index) {
                     0 -> {
-                        try {
+                        kotlin.runCatching {
                             val intent = createSelectDirIntent()
                             activity.startActivityForResult(intent, requestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
+                        }.onFailure {
                             checkPermissions(activity) {
                                 FilePickerDialog.show(
                                     activity.supportFragmentManager,
@@ -81,11 +80,10 @@ object FilePicker {
             items(selectList) { _, index ->
                 when (index) {
                     0 -> {
-                        try {
+                        kotlin.runCatching {
                             val intent = createSelectDirIntent()
                             fragment.startActivityForResult(intent, requestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
+                        }.onFailure {
                             checkPermissions(fragment) {
                                 FilePickerDialog.show(
                                     fragment.childFragmentManager,
@@ -133,15 +131,14 @@ object FilePicker {
             items(selectList) { _, index ->
                 when (index) {
                     0 -> {
-                        try {
+                        kotlin.runCatching {
                             val intent = createSelectFileIntent()
                             intent.putExtra(
                                 Intent.EXTRA_MIME_TYPES,
                                 typesOfExtensions(allowExtensions)
                             )
                             activity.startActivityForResult(intent, requestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
+                        }.onFailure {
                             checkPermissions(activity) {
                                 FilePickerDialog.show(
                                     activity.supportFragmentManager,
@@ -191,15 +188,14 @@ object FilePicker {
             items(selectList) { _, index ->
                 when (index) {
                     0 -> {
-                        try {
+                        kotlin.runCatching {
                             val intent = createSelectFileIntent()
                             intent.putExtra(
                                 Intent.EXTRA_MIME_TYPES,
                                 typesOfExtensions(allowExtensions)
                             )
                             fragment.startActivityForResult(intent, requestCode)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
+                        }.onFailure {
                             checkPermissions(fragment) {
                                 FilePickerDialog.show(
                                     fragment.childFragmentManager,

@@ -246,13 +246,13 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         when (requestCode) {
             importRequestCode -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    try {
+                    kotlin.runCatching {
                         uri.readText(this)?.let {
                             val dataKey = IntentDataHelp.putData(it)
                             startActivity<ImportReplaceRuleActivity>("dataKey" to dataKey)
                         }
-                    } catch (e: Exception) {
-                        toast("readTextError:${e.localizedMessage}")
+                    }.onFailure {
+                        toast("readTextError:${it.localizedMessage}")
                     }
                 }
             }

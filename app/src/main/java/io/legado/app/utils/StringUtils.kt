@@ -3,7 +3,6 @@ package io.legado.app.utils
 import android.annotation.SuppressLint
 import android.text.TextUtils.isEmpty
 import java.text.DecimalFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
@@ -56,7 +55,7 @@ object StringUtils {
         @SuppressLint("SimpleDateFormat")
         val format = SimpleDateFormat(pattern)
         val calendar = Calendar.getInstance()
-        try {
+        kotlin.runCatching {
             val date = format.parse(source) ?: return ""
             val curTime = calendar.timeInMillis
             calendar.time = date
@@ -95,8 +94,8 @@ object StringUtils {
                     convertFormat.format(date)
                 }
             }
-        } catch (e: ParseException) {
-            e.printStackTrace()
+        }.onFailure {
+            it.printStackTrace()
         }
 
         return ""
@@ -173,7 +172,7 @@ object StringUtils {
         }
 
         // "一千零二十五", "一千二" 形式
-        try {
+        return kotlin.runCatching {
             for (i in cn.indices) {
                 val tmpNum = ChnMap[cn[i]]!!
                 when {
@@ -204,11 +203,8 @@ object StringUtils {
                 }
             }
             result += tmp + billion
-            return result
-        } catch (e: Exception) {
-            return -1
-        }
-
+            result
+        }.getOrDefault(-1)
     }
 
     fun stringToInt(str: String?): Int {
