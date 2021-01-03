@@ -139,7 +139,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_help -> showHelp()
         }
         if (item.groupId == R.id.source_group) {
-            searchView.setQuery(item.title, true)
+            searchView.setQuery("group:${item.title}", true)
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -179,6 +179,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
             searchKey == getString(R.string.disabled) -> {
                 App.db.bookSourceDao.liveDataDisabled()
+            }
+            searchKey.startsWith("group:") -> {
+                val key = searchKey.substringAfter("group:")
+                App.db.bookSourceDao.liveDataGroupSearch("%$key%")
             }
             else -> {
                 App.db.bookSourceDao.liveDataSearch("%$searchKey%")
