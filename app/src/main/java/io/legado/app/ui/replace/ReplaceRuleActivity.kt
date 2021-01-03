@@ -54,6 +54,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private val importRequestCode = 132
     private val exportRequestCode = 65
     private lateinit var adapter: ReplaceRuleAdapter
+    private lateinit var searchView: SearchView
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var replaceRuleLiveData: LiveData<List<ReplaceRule>>? = null
@@ -64,6 +65,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        searchView = binding.titleBar.findViewById(R.id.search_view)
         initRecyclerView()
         initSearchView()
         initSelectActionView()
@@ -101,13 +103,11 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     private fun initSearchView() {
-        binding.titleBar.findViewById<SearchView>(R.id.search_view).let {
-            ATH.setTint(it, primaryTextColor)
-            it.onActionViewExpanded()
-            it.queryHint = getString(R.string.replace_purify_search)
-            it.clearFocus()
-            it.setOnQueryTextListener(this)
-        }
+        ATH.setTint(searchView, primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.queryHint = getString(R.string.replace_purify_search)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(this)
     }
 
     override fun selectAll(selectAll: Boolean) {
@@ -140,13 +140,20 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         }.show()
     }
 
-    private fun observeReplaceRuleData(key: String? = null) {
+    private fun observeReplaceRuleData(searchKey: String? = null) {
         dataInit = false
         replaceRuleLiveData?.removeObservers(this)
-        replaceRuleLiveData = if (key.isNullOrEmpty()) {
-            App.db.replaceRuleDao.liveDataAll()
-        } else {
-            App.db.replaceRuleDao.liveDataSearch(key)
+        replaceRuleLiveData = when {
+            searchKey.isNullOrEmpty() -> {
+                App.db.replaceRuleDao.liveDataAll()
+            }
+            searchKey.startsWith("group:") -> {
+                val key = searchKey.substringAfter("group:")
+                App.db.replaceRuleDao.liveDataGroupSearch("%$key%")
+            }
+            else -> {
+                App.db.replaceRuleDao.liveDataSearch("%$searchKey%")
+            }
         }
         replaceRuleLiveData?.observe(this, {
             if (dataInit) {
@@ -179,8 +186,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_import_source_local -> FilePicker
                 .selectFile(this, importRequestCode, allowExtensions = arrayOf("txt", "json"))
             else -> if (item.groupId == R.id.replace_group) {
-                binding.titleBar.findViewById<SearchView>(R.id.search_view)
-                    .setQuery(item.title, true)
+                searchView.setQuery("group:${item.title}", true)
             }
         }
         return super.onCompatOptionsItemSelected(item)
