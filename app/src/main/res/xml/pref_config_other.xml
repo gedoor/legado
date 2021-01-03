@@ -57,6 +57,12 @@
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
+            android:key="preDownload"
+            android:title="@string/pre_download"
+            android:summary="@string/pre_download_s" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
             android:key="replaceEnableDefault"
             android:title="@string/replace_enable_default_t"
             android:summary="@string/replace_enable_default_s"

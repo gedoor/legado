@@ -81,7 +81,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                             App.db.bookDao.update(book)
                             App.db.bookChapterDao.delByBook(book.bookUrl)
                             App.db.bookChapterDao.insert(*it.toTypedArray())
-                            cacheBook(webBook, book)
+                            if (AppConfig.preDownload) {
+                                cacheBook(webBook, book)
+                            }
                         }
                         .onError {
                             it.printStackTrace()

@@ -133,10 +133,12 @@ object ReadBook {
                     callBack?.upContent()
                 }
                 loadContent(durChapterIndex.plus(1), upContent, false)
-                GlobalScope.launch(Dispatchers.IO) {
-                    for (i in 2..10) {
-                        delay(100)
-                        download(durChapterIndex + i)
+                if (AppConfig.preDownload) {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        for (i in 2..9) {
+                            delay(1000)
+                            download(durChapterIndex + i)
+                        }
                     }
                 }
             }
@@ -163,10 +165,12 @@ object ReadBook {
                     callBack?.upContent()
                 }
                 loadContent(durChapterIndex.minus(1), upContent, false)
-                GlobalScope.launch(Dispatchers.IO) {
-                    for (i in -5..-2) {
-                        delay(100)
-                        download(durChapterIndex + i)
+                if (AppConfig.preDownload) {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        for (i in 2..9) {
+                            delay(1000)
+                            download(durChapterIndex - i)
+                        }
                     }
                 }
             }
