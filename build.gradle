@@ -5,17 +5,17 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'https://s3.amazonaws.com/fabric-artifacts/public' }
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://s3.amazonaws.com/fabric-artifacts/public" }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath "com.android.tools.build:gradle:4.1.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'de.timfreiheit.resourceplaceholders:placeholders:0.3'
-        classpath 'com.google.gms:google-services:4.3.4'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
+        classpath "de.timfreiheit.resourceplaceholders:placeholders:0.3"
+        classpath "com.google.gms:google-services:4.3.4"
+        classpath "com.google.firebase:firebase-crashlytics-gradle:2.4.1"
     }
 }
 
@@ -23,10 +23,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
         maven { url "https://jitpack.io" }
-        maven { url 'https://maven.google.com/' }
-        maven { url 'https://github.com/psiegman/mvn-repo/raw/master/releases' }
+        maven { url "https://maven.google.com/" }
+        maven { url "https://github.com/psiegman/mvn-repo/raw/master/releases" }
     }
 }
 
