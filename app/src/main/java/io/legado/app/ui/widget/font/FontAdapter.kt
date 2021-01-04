@@ -29,7 +29,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         with(binding) {
-            try {
+            kotlin.runCatching {
                 val typeface: Typeface? = if (item.isContentPath) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         context.contentResolver
@@ -44,9 +44,9 @@ class FontAdapter(context: Context, val callBack: CallBack) :
                     Typeface.createFromFile(item.uri.toString())
                 }
                 tvFont.typeface = typeface
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.toast("Read ${item.name} Error: ${e.localizedMessage}")
+            }.onFailure {
+                it.printStackTrace()
+                context.toast("Read ${item.name} Error: ${it.localizedMessage}")
             }
             tvFont.text = item.name
             root.onClick { callBack.onClick(item) }

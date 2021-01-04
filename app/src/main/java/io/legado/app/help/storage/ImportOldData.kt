@@ -15,61 +15,61 @@ object ImportOldData {
 
     fun importUri(context: Context, uri: Uri) {
         if (uri.isContentScheme()) {
-            DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach {
-                when (it.name) {
+            DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach { doc ->
+                when (doc.name) {
                     "myBookShelf.json" ->
-                        try {
-                            DocumentUtils.readText(context, it.uri)?.let { json ->
+                        kotlin.runCatching {
+                            DocumentUtils.readText(context, doc.uri)?.let { json ->
                                 val importCount = importOldBookshelf(json)
                                 context.toast("成功导入书籍${importCount}")
                             }
-                        } catch (e: java.lang.Exception) {
-                            context.toast("导入书籍失败\n${e.localizedMessage}")
+                        }.onFailure {
+                            context.toast("导入书籍失败\n${it.localizedMessage}")
                         }
                     "myBookSource.json" ->
-                        try {
-                            DocumentUtils.readText(context, it.uri)?.let { json ->
+                        kotlin.runCatching {
+                            DocumentUtils.readText(context, doc.uri)?.let { json ->
                                 val importCount = importOldSource(json)
                                 context.toast("成功导入书源${importCount}")
                             }
-                        } catch (e: Exception) {
-                            context.toast("导入源失败\n${e.localizedMessage}")
+                        }.onFailure {
+                            context.toast("导入源失败\n${it.localizedMessage}")
                         }
                     "myBookReplaceRule.json" ->
-                        try {
-                            DocumentUtils.readText(context, it.uri)?.let { json ->
+                        kotlin.runCatching {
+                            DocumentUtils.readText(context, doc.uri)?.let { json ->
                                 val importCount = importOldReplaceRule(json)
                                 context.toast("成功导入替换规则${importCount}")
                             }
-                        } catch (e: Exception) {
-                            context.toast("导入替换规则失败\n${e.localizedMessage}")
+                        }.onFailure {
+                            context.toast("导入替换规则失败\n${it.localizedMessage}")
                         }
                 }
             }
         } else {
-            uri.path?.let {
-                val file = File(it)
-                try {// 导入书架
+            uri.path?.let { path ->
+                val file = File(path)
+                kotlin.runCatching {// 导入书架
                     val shelfFile =
                         FileUtils.createFileIfNotExist(file, "myBookShelf.json")
                     val json = shelfFile.readText()
                     val importCount = importOldBookshelf(json)
                     context.toast("成功导入书籍${importCount}")
-                } catch (e: Exception) {
-                    context.toast("导入书籍失败\n${e.localizedMessage}")
+                }.onFailure {
+                    context.toast("导入书籍失败\n${it.localizedMessage}")
                 }
 
-                try {// Book source
+                kotlin.runCatching {// Book source
                     val sourceFile =
                         FileUtils.getFile(file, "myBookSource.json")
                     val json = sourceFile.readText()
                     val importCount = importOldSource(json)
                     context.toast("成功导入书源${importCount}")
-                } catch (e: Exception) {
-                    context.toast("导入源失败\n${e.localizedMessage}")
+                }.onFailure {
+                    context.toast("导入源失败\n${it.localizedMessage}")
                 }
 
-                try {// Replace rules
+                kotlin.runCatching {// Replace rules
                     val ruleFile = FileUtils.getFile(file, "myBookReplaceRule.json")
                     if (ruleFile.exists()) {
                         val json = ruleFile.readText()
@@ -78,8 +78,8 @@ object ImportOldData {
                     } else {
                         context.toast("未找到替换规则")
                     }
-                } catch (e: Exception) {
-                    context.toast("导入替换规则失败\n${e.localizedMessage}")
+                }.onFailure {
+                    context.toast("导入替换规则失败\n${it.localizedMessage}")
                 }
             }
         }

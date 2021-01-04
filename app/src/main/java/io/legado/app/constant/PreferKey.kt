@@ -64,6 +64,7 @@ object PreferKey {
     const val importKeepName = "importKeepName"
     const val screenOrientation = "screenOrientation"
     const val syncBookProgress = "syncBookProgress"
+    const val preDownload = "preDownload"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

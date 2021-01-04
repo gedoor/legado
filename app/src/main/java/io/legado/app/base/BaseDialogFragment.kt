@@ -32,13 +32,10 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
     abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
 
     override fun show(manager: FragmentManager, tag: String?) {
-        try {
+        kotlin.runCatching {
             //在每个add事务前增加一个remove事务，防止连续的add
             manager.beginTransaction().remove(this).commit()
             super.show(manager, tag)
-        } catch (e: Exception) {
-            //同一实例使用不同的tag会异常,这里捕获一下
-            e.printStackTrace()
         }
     }
 

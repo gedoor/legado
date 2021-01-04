@@ -3,7 +3,6 @@ package io.legado.app.utils
 import android.annotation.SuppressLint
 import android.text.TextUtils.isEmpty
 import java.text.DecimalFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
@@ -56,7 +55,7 @@ object StringUtils {
         @SuppressLint("SimpleDateFormat")
         val format = SimpleDateFormat(pattern)
         val calendar = Calendar.getInstance()
-        try {
+        kotlin.runCatching {
             val date = format.parse(source) ?: return ""
             val curTime = calendar.timeInMillis
             calendar.time = date
@@ -95,8 +94,8 @@ object StringUtils {
                     convertFormat.format(date)
                 }
             }
-        } catch (e: ParseException) {
-            e.printStackTrace()
+        }.onFailure {
+            it.printStackTrace()
         }
 
         return ""
@@ -106,10 +105,8 @@ object StringUtils {
         if (length <= 0) return "0"
         val units = arrayOf("b", "kb", "M", "G", "T")
         //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
-        //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
         val digitGroups =
             (log10(length.toDouble()) / log10(1024.0)).toInt()
-        //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
         //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
         return DecimalFormat("#,##0.##")
             .format(length / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
@@ -175,7 +172,7 @@ object StringUtils {
         }
 
         // "一千零二十五", "一千二" 形式
-        try {
+        return kotlin.runCatching {
             for (i in cn.indices) {
                 val tmpNum = ChnMap[cn[i]]!!
                 when {
@@ -206,22 +203,18 @@ object StringUtils {
                 }
             }
             result += tmp + billion
-            return result
-        } catch (e: Exception) {
-            return -1
-        }
-
+            result
+        }.getOrDefault(-1)
     }
 
     fun stringToInt(str: String?): Int {
         if (str != null) {
             val num = fullToHalf(str).replace("\\s+".toRegex(), "")
-            return try {
+            return kotlin.runCatching {
                 Integer.parseInt(num)
-            } catch (e: Exception) {
+            }.getOrElse {
                 chineseNumToInt(num)
             }
-
         }
         return -1
     }
@@ -306,7 +299,7 @@ object StringUtils {
         return sb.toString()
     }
 
-    fun hexStringToByte(hexString: String): ByteArray? {
+    fun hexStringToByte(hexString: String): ByteArray {
         val hexStr = hexString.replace(" ", "")
         val len = hexStr.length
         val bytes = ByteArray(len / 2)

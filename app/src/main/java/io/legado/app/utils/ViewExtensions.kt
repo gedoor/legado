@@ -107,13 +107,11 @@ fun RadioGroup.checkByIndex(index: Int) {
 
 @SuppressLint("RestrictedApi")
 fun PopupMenu.show(x: Int, y: Int) {
-    try {
+    kotlin.runCatching {
         val field: Field = this.javaClass.getDeclaredField("mPopup")
         field.isAccessible = true
         (field.get(this) as MenuPopupHelper).show(x, y)
-    } catch (e: NoSuchFieldException) {
-        e.printStackTrace()
-    } catch (e: IllegalAccessException) {
-        e.printStackTrace()
+    }.onFailure {
+        it.printStackTrace()
     }
 }

@@ -29,13 +29,15 @@ interface JsExtensions {
      * 访问网络,返回String
      */
     fun ajax(urlStr: String): String? {
-        return try {
-            val analyzeUrl = AnalyzeUrl(urlStr)
-            runBlocking {
+        return runBlocking {
+            kotlin.runCatching {
+                val analyzeUrl = AnalyzeUrl(urlStr)
                 analyzeUrl.getStrResponse(urlStr).body
+            }.onFailure {
+                it.printStackTrace()
+            }.getOrElse {
+                it.msg
             }
-        } catch (e: Exception) {
-            e.msg
         }
     }
 
@@ -43,13 +45,15 @@ interface JsExtensions {
      * 访问网络,返回Response<String>
      */
     fun connect(urlStr: String): Any {
-        return try {
-            val analyzeUrl = AnalyzeUrl(urlStr)
-            runBlocking {
+        return runBlocking {
+            kotlin.runCatching {
+                val analyzeUrl = AnalyzeUrl(urlStr)
                 analyzeUrl.getStrResponse(urlStr)
+            }.onFailure {
+                it.printStackTrace()
+            }.getOrElse {
+                it.msg
             }
-        } catch (e: Exception) {
-            e.msg
         }
     }
 
@@ -65,7 +69,7 @@ interface JsExtensions {
         FileUtils.deleteFile(zipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
         StringUtils.hexStringToByte(content).let {
-            if (it != null) {
+            if (it.isNotEmpty()) {
                 zipFile.writeBytes(it)
             }
         }

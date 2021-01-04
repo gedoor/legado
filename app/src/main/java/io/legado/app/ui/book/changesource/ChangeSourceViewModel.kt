@@ -123,7 +123,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         val source = bookSourceList[searchIndex]
         val webBook = WebBook(source)
         val task = webBook
-            .searchBook(name, scope = this, context = searchPool!!)
+            .searchBook(this, name, context = searchPool!!)
             .timeout(60000L)
             .onSuccess(IO) {
                 it.forEach { searchBook ->
@@ -159,7 +159,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun loadBookInfo(webBook: WebBook, book: Book) {
-        webBook.getBookInfo(book, this)
+        webBook.getBookInfo(this, book)
             .onSuccess {
                 if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
                     loadBookToc(webBook, book)
@@ -175,7 +175,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun loadBookToc(webBook: WebBook, book: Book) {
-        webBook.getChapterList(book, this)
+        webBook.getChapterList(this, book)
             .onSuccess(IO) { chapters ->
                 if (chapters.isNotEmpty()) {
                     book.latestChapterTitle = chapters.last().title

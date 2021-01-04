@@ -149,6 +149,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val syncBookProgress get() = context.getPrefBoolean(PreferKey.syncBookProgress, true)
 
+    val preDownload get() = context.getPrefBoolean(PreferKey.preDownload, true)
+
     private fun getPrefUserAgent(): String {
         val ua = context.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {

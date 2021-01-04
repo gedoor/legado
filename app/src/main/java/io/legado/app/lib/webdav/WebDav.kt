@@ -12,7 +12,6 @@ import rxhttp.wrapper.param.toInputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.io.UnsupportedEncodingException
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLEncoder
@@ -39,15 +38,12 @@ class WebDav(urlStr: String) {
     private val url: URL = URL(urlStr)
     private val httpUrl: String? by lazy {
         val raw = url.toString().replace("davs://", "https://").replace("dav://", "http://")
-        try {
-            return@lazy URLEncoder.encode(raw, "UTF-8")
+        return@lazy kotlin.runCatching {
+            URLEncoder.encode(raw, "UTF-8")
                 .replace("\\+".toRegex(), "%20")
                 .replace("%3A".toRegex(), ":")
                 .replace("%2F".toRegex(), "/")
-        } catch (e: UnsupportedEncodingException) {
-            e.printStackTrace()
-            return@lazy null
-        }
+        }.getOrNull()
     }
     val host: String? get() = url.host
     val path get() = url.toString()

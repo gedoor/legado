@@ -160,6 +160,13 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                     binding.recyclerView.scrollToPosition(0)
                 }
             }
+
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+                if (toPosition == 0) {
+                    binding.recyclerView.scrollToPosition(0)
+                }
+            }
         })
         loadMoreView = LoadMoreView(this)
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

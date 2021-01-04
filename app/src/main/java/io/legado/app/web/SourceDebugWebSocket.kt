@@ -1,4 +1,4 @@
-package io.legado.app.web.utils
+package io.legado.app.web
 
 
 import fi.iki.elonen.NanoHTTPD
@@ -20,13 +20,12 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     CoroutineScope by MainScope(),
     Debug.Callback {
 
-
     override fun onOpen() {
         launch(IO) {
             do {
                 delay(30000)
                 runCatching {
-                    ping(byteArrayOf("ping".toByte()))
+                    ping("ping".toByteArray())
                 }
             } while (isOpen)
         }
@@ -57,7 +56,7 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                 }
                 App.db.bookSourceDao.getBookSource(tag)?.let {
                     Debug.callback = this
-                    Debug.startDebug(WebBook(it), key)
+                    Debug.startDebug(this, WebBook(it), key)
                 }
             }
         }

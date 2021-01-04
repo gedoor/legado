@@ -120,7 +120,7 @@ class AudioPlayService : BaseService(),
     private fun play() {
         upNotification()
         if (requestFocus()) {
-            try {
+            kotlin.runCatching {
                 AudioPlay.status = Status.STOP
                 postEvent(EventBus.AUDIO_STATE, Status.STOP)
                 mediaPlayer.reset()
@@ -130,10 +130,10 @@ class AudioPlayService : BaseService(),
                 mediaPlayer.setDataSource(this, uri, analyzeUrl.headerMap)
                 mediaPlayer.prepareAsync()
                 handler.removeCallbacks(mpRunnable)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            }.onFailure {
+                it.printStackTrace()
                 launch {
-                    toast("$url ${e.localizedMessage}")
+                    toast("$url ${it.localizedMessage}")
                     stopSelf()
                 }
             }
@@ -270,7 +270,7 @@ class AudioPlayService : BaseService(),
                 val book = AudioPlay.book
                 val webBook = AudioPlay.webBook
                 if (book != null && webBook != null) {
-                    webBook.getContent(book, chapter, scope = this@AudioPlayService)
+                    webBook.getContent(this@AudioPlayService, book, chapter)
                         .onSuccess { content ->
                             if (content.isEmpty()) {
                                 withContext(Main) {

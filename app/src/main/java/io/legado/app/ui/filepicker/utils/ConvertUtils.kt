@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import java.io.BufferedReader
-import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.text.DecimalFormat
@@ -24,11 +23,9 @@ object ConvertUtils {
     const val KB: Long = 1024
 
     fun toInt(obj: Any): Int {
-        return try {
+        return kotlin.runCatching {
             Integer.parseInt(obj.toString())
-        } catch (e: NumberFormatException) {
-            -1
-        }
+        }.getOrDefault(-1)
     }
 
     fun toInt(bytes: ByteArray): Int {
@@ -42,11 +39,9 @@ object ConvertUtils {
     }
 
     fun toFloat(obj: Any): Float {
-        return try {
+        return kotlin.runCatching {
             java.lang.Float.parseFloat(obj.toString())
-        } catch (e: NumberFormatException) {
-            -1f
-        }
+        }.getOrDefault(-1f)
     }
 
     fun toString(objects: Array<Any>, tag: String): String {
@@ -62,7 +57,7 @@ object ConvertUtils {
     fun toBitmap(bytes: ByteArray, width: Int = -1, height: Int = -1): Bitmap? {
         var bitmap: Bitmap? = null
         if (bytes.isNotEmpty()) {
-            try {
+            kotlin.runCatching {
                 val options = BitmapFactory.Options()
                 // 设置让解码器以最佳方式解码
                 options.inPreferredConfig = null
@@ -72,7 +67,6 @@ object ConvertUtils {
                 }
                 bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
                 bitmap!!.density = 96// 96 dpi
-            } catch (e: Exception) {
             }
         }
         return bitmap
@@ -101,7 +95,7 @@ object ConvertUtils {
     @JvmOverloads
     fun toString(`is`: InputStream, charset: String = "utf-8"): String {
         val sb = StringBuilder()
-        try {
+        kotlin.runCatching {
             val reader = BufferedReader(InputStreamReader(`is`, charset))
             while (true) {
                 val line = reader.readLine()
@@ -113,9 +107,7 @@ object ConvertUtils {
             }
             reader.close()
             `is`.close()
-        } catch (e: IOException) {
         }
-
         return sb.toString()
     }
 

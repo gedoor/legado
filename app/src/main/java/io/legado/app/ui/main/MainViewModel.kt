@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
+import io.legado.app.help.LocalConfig
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.FileUtils
@@ -74,13 +75,15 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 }
                 App.db.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
                     val webBook = WebBook(bookSource)
-                    webBook.getChapterList(book, context = upTocPool)
+                    webBook.getChapterList(this, book, context = upTocPool)
                         .timeout(300000)
                         .onSuccess(IO) {
                             App.db.bookDao.update(book)
                             App.db.bookChapterDao.delByBook(book.bookUrl)
                             App.db.bookChapterDao.insert(*it.toTypedArray())
-                            cacheBook(webBook, book)
+                            if (AppConfig.preDownload) {
+                                cacheBook(webBook, book)
+                            }
                         }
                         .onError {
                             it.printStackTrace()
@@ -114,7 +117,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                             var addToCache = false
                             while (!addToCache) {
                                 if (CacheBook.downloadCount() < 5) {
-                                    CacheBook.download(webBook, book, chapter)
+                                    CacheBook.download(this, webBook, book, chapter)
                                     addToCache = true
                                 } else {
                                     delay(1000)
@@ -148,7 +151,12 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upVersion() {
         execute {
-            DefaultData.importDefaultTocRules()
+            if (LocalConfig.hasUpHttpTTS) {
+                DefaultData.importDefaultHttpTTS()
+            }
+            if (LocalConfig.hasUpTxtTocRule) {
+                DefaultData.importDefaultTocRules()
+            }
         }
     }
 }

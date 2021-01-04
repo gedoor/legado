@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -24,6 +25,43 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<ReplaceRule>()
+
+    val diffItemCallBack = object : DiffUtil.ItemCallback<ReplaceRule>() {
+
+        override fun areItemsTheSame(oldItem: ReplaceRule, newItem: ReplaceRule): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: ReplaceRule, newItem: ReplaceRule): Boolean {
+            if (oldItem.name != newItem.name) {
+                return false
+            }
+            if (oldItem.group != newItem.group) {
+                return false
+            }
+            if (oldItem.isEnabled != newItem.isEnabled) {
+                return false
+            }
+            return true
+        }
+
+        override fun getChangePayload(oldItem: ReplaceRule, newItem: ReplaceRule): Any? {
+            val payload = Bundle()
+            if (oldItem.name != newItem.name) {
+                payload.putString("name", newItem.name)
+            }
+            if (oldItem.group != newItem.group) {
+                payload.putString("group", newItem.group)
+            }
+            if (oldItem.isEnabled != newItem.isEnabled) {
+                payload.putBoolean("enabled", newItem.isEnabled)
+            }
+            if (payload.isEmpty) {
+                return null
+            }
+            return payload
+        }
+    }
 
     fun selectAll() {
         getItems().forEach {

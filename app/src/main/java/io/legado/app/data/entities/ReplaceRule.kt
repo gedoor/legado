@@ -49,8 +49,7 @@ data class ReplaceRule(
         if (isRegex){
             try {
                 Pattern.compile(pattern)
-            }
-            catch (ex: PatternSyntaxException){
+            } catch (ex: PatternSyntaxException) {
                 return false
             }
         }

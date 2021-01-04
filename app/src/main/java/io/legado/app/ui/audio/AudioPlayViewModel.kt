@@ -53,7 +53,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            AudioPlay.webBook?.getBookInfo(book, this)
+            AudioPlay.webBook?.getBookInfo(this, book)
                 ?.onSuccess {
                     loadChapterList(book, changeDruChapterIndex)
                 }
@@ -65,7 +65,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            AudioPlay.webBook?.getChapterList(book, this)
+            AudioPlay.webBook?.getChapterList(this, book)
                 ?.onSuccess(Dispatchers.IO) { cList ->
                     if (cList.isNotEmpty()) {
                         if (changeDruChapterIndex == null) {

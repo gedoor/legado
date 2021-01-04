@@ -22,9 +22,9 @@ object ImageLoader {
             path.isNullOrEmpty() -> Glide.with(context).load(path)
             path.isAbsUrl() -> Glide.with(context).load(AnalyzeUrl(path).getGlideUrl())
             path.isContentScheme() -> Glide.with(context).load(Uri.parse(path))
-            else -> try {
+            else -> kotlin.runCatching {
                 Glide.with(context).load(File(path))
-            } catch (e: Exception) {
+            }.getOrElse {
                 Glide.with(context).load(path)
             }
         }

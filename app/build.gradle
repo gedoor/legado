@@ -97,6 +97,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildToolsVersion '30.0.3'
 }
 
 resourcePlaceholders {
@@ -195,6 +196,8 @@ dependencies {
     //MarkDown
     implementation 'io.noties.markwon:core:4.6.0'
     implementation 'io.noties.markwon:image-glide:4.6.0'
+    implementation 'io.noties.markwon:ext-tables:4.6.0'
+    implementation 'io.noties.markwon:html:4.6.0'
 
     //转换繁体
     implementation 'com.hankcs:hanlp:portable-1.7.8'

@@ -1,4 +1,4 @@
-package io.legado.app.web.utils
+package io.legado.app.api
 
 
 class ReturnData {
@@ -6,18 +6,13 @@ class ReturnData {
     var isSuccess: Boolean = false
         private set
 
-    var errorMsg: String? = null
+    var errorMsg: String = "未知错误,请联系开发者!"
         private set
 
     var data: Any? = null
         private set
 
-    init {
-        this.isSuccess = false
-        this.errorMsg = "未知错误,请联系开发者!"
-    }
-
-    fun setErrorMsg(errorMsg: String?): ReturnData {
+    fun setErrorMsg(errorMsg: String): ReturnData {
         this.isSuccess = false
         this.errorMsg = errorMsg
         return this

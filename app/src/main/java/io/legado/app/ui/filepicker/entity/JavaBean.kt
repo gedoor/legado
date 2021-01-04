@@ -34,15 +34,13 @@ open class JavaBean : Serializable {
         val fields = list.toTypedArray()
         for (field in fields) {
             val fieldName = field.name
-            try {
+            kotlin.runCatching {
                 val obj = field.get(this)
                 sb.append(fieldName)
                 sb.append("=")
                 sb.append(obj)
                 sb.append("\n")
-            } catch (ignored: IllegalAccessException) {
             }
-
         }
         return sb.toString()
     }

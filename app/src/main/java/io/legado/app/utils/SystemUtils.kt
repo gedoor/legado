@@ -19,13 +19,13 @@ object SystemUtils {
 
     fun getScreenOffTime(context: Context): Int {
         var screenOffTime = 0
-        try {
+        kotlin.runCatching {
             screenOffTime = Settings.System.getInt(
                 context.contentResolver,
                 Settings.System.SCREEN_OFF_TIMEOUT
             )
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }.onFailure {
+            it.printStackTrace()
         }
 
         return screenOffTime

@@ -62,10 +62,10 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     fun setBaseUrl(baseUrl: String?): AnalyzeRule {
         baseUrl?.let {
             this.baseUrl = baseUrl
-            try {
+            kotlin.runCatching {
                 baseURL = URL(baseUrl.substringBefore(","))
-            } catch (e: Exception) {
-                e.printStackTrace()
+            }.onFailure {
+                it.printStackTrace()
             }
         }
         return this
@@ -229,9 +229,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             }
         }
         if (result == null) result = ""
-        val str = try {
+        val str = kotlin.runCatching {
             Entities.unescape(result.toString())
-        } catch (e: Exception) {
+        }.getOrElse {
             result.toString()
         }
         if (isUrl) {
@@ -653,13 +653,15 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      * js实现跨域访问,不能删
      */
     override fun ajax(urlStr: String): String? {
-        return try {
-            val analyzeUrl = AnalyzeUrl(urlStr, book = book)
-            runBlocking {
+        return runBlocking {
+            kotlin.runCatching {
+                val analyzeUrl = AnalyzeUrl(urlStr, book = book)
                 analyzeUrl.getStrResponse(urlStr).body
+            }.onFailure {
+                it.printStackTrace()
+            }.getOrElse {
+                it.msg
             }
-        } catch (e: Exception) {
-            e.localizedMessage
         }
     }
 

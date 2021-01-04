@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -22,6 +23,37 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<RssSource>()
+
+    val diffItemCallback: DiffUtil.ItemCallback<RssSource>
+        get() = object : DiffUtil.ItemCallback<RssSource>() {
+
+            override fun areItemsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
+                return oldItem.sourceUrl == newItem.sourceUrl
+            }
+
+            override fun areContentsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
+                return oldItem.sourceName == newItem.sourceName
+                        && oldItem.sourceGroup == newItem.sourceGroup
+                        && oldItem.enabled == newItem.enabled
+            }
+
+            override fun getChangePayload(oldItem: RssSource, newItem: RssSource): Any? {
+                val payload = Bundle()
+                if (oldItem.sourceName != newItem.sourceName) {
+                    payload.putString("name", newItem.sourceName)
+                }
+                if (oldItem.sourceGroup != newItem.sourceGroup) {
+                    payload.putString("group", newItem.sourceGroup)
+                }
+                if (oldItem.enabled != newItem.enabled) {
+                    payload.putBoolean("enabled", newItem.enabled)
+                }
+                if (payload.isEmpty) {
+                    return null
+                }
+                return payload
+            }
+        }
 
     override fun getViewBinding(parent: ViewGroup): ItemRssSourceBinding {
         return ItemRssSourceBinding.inflate(inflater, parent, false)

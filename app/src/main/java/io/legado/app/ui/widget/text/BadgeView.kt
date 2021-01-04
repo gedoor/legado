@@ -43,12 +43,9 @@ class BadgeView @JvmOverloads constructor(
                 return null
             }
             val text = text.toString()
-            return try {
+            return kotlin.runCatching {
                 Integer.parseInt(text)
-            } catch (e: NumberFormatException) {
-                null
-            }
-
+            }.getOrNull()
         }
 
     var badgeGravity: Int

@@ -28,18 +28,23 @@ jobs:
       # 蓝奏云里的文件夹名（需手动在蓝奏云创建）
       LANZOU_FOLDER: '阅读3测试版'
       # 是否上传到artifact
-      UPLOAD_ARTIFACT: 'false'
+      UPLOAD_ARTIFACT: 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: set up JDK 1.8
+      - name: Set Up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
-      - name: clear 18PlusList.txt
+          java-version: 14
+      - name: Clear 18PlusList.txt
         run: |
           echo "清空18PlusList.txt"
           echo "">$GITHUB_WORKSPACE/app/src/main/assets/18PlusList.txt
-      - name: release apk sign
+      - name: App Minify
+        if: ${{ github.event_name == 'release'}}
+        run: |
+          sed '/minifyEnabled/i\            shrinkResources true' $GITHUB_WORKSPACE/app/build.gradle -i
+          sed 's/minifyEnabled false/minifyEnabled true/'         $GITHUB_WORKSPACE/app/build.gradle -i
+      - name: Release Apk Sign
         run: |
           echo "给apk增加签名"
           cp $GITHUB_WORKSPACE/.github/workflows/legado.jks $GITHUB_WORKSPACE/app/legado.jks
@@ -47,12 +52,12 @@ jobs:
           sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
-      - name: apk live together
+      - name: Apk Live Together
         run: |
           echo "设置apk共存"
           sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
           sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
-      - name: build with gradle
+      - name: Build With Gradle
         run: |
           echo "开始进行release构建"
           chmod +x gradlew
@@ -63,12 +68,12 @@ jobs:
         with:
           name: legado apk
           path: ${{ github.workspace }}/app/build/outputs/apk/app/release/*.apk
-      - name: Set up Python 3.8
+      - name: Set Up Python 3
         if: ${{ env.LANZOU_PSD }}
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
-      - name: Set up lanzou-api
+          python-version: 3.x
+      - name: Dependence Install
         if: ${{ env.LANZOU_PSD }}
         run: |
           pip install requests
@@ -79,10 +84,10 @@ jobs:
         run: |
           import requests,os
           res = requests.get('https://raw.githubusercontent.com/Celeter/build/master/.github/scripts/API_lanzou.py')
-          with open(os.environ["FILEPATH"], 'wb') as f:
+          with open(os.environ["FILE_PATH"], 'wb') as f:
             f.write(res.content)
         env:
-          FILEPATH: ${{ github.workspace }}/.github/lzy.py
+          FILE_PATH: ${{ github.workspace }}/.github/lzy.py
       - name: Upload App To Lanzou
         if: ${{ env.LANZOU_PSD }}
         run: python $GITHUB_WORKSPACE/.github/lzy.py
