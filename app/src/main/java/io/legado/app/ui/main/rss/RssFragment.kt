@@ -105,7 +105,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         adapter.addHeaderView {
             ItemRssBinding.inflate(layoutInflater, it, false).apply {
                 tvName.setText(R.string.rule_subscription)
-                ivIcon.setImageResource(R.drawable.image_rss_article)
+                ivIcon.setImageResource(R.drawable.image_legado)
                 root.onClick {
                     startActivity<RuleSubActivity>()
                 }
