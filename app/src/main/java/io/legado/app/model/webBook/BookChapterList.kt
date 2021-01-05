@@ -93,9 +93,12 @@ object BookChapterList {
                     for (item in chapterDataList) {
                         downloadToc(
                             scope, item, book, bookSource,
-                            tocRule, listRule, chapterList, chapterDataList
+                            tocRule, listRule, chapterList, chapterDataList,
+                            {
+                                block.resume(finish(book, chapterList, reverse))
+                            }
                         ) {
-                            block.resume(finish(book, chapterList, reverse))
+                            throw it
                         }
                     }
                 }
@@ -114,7 +117,8 @@ object BookChapterList {
         listRule: String,
         chapterList: ArrayList<BookChapter>,
         chapterDataList: ArrayList<ChapterData<String>>,
-        onFinish: () -> Unit
+        onFinish: () -> Unit,
+        onError: (error: Throwable) -> Unit
     ) {
         Coroutine.async(scope = scope) {
             val nextBody = AnalyzeUrl(
@@ -142,7 +146,7 @@ object BookChapterList {
                 }
             }
         }.onError {
-            throw it
+            onError.invoke(it)
         }
     }
 
