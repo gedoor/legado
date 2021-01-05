@@ -98,13 +98,13 @@ object BookChapterList {
                                 block.resume(finish(book, chapterList, reverse))
                             }
                         ) {
-                            block.resumeWithException(it)
+                            block.cancel(it)
                         }
                     }
                 }
             }
         }.onFailure {
-            block.resumeWithException(it)
+            block.cancel(it)
         }
     }
 
