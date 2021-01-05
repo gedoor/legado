@@ -98,7 +98,7 @@ object BookChapterList {
                                 block.resume(finish(book, chapterList, reverse))
                             }
                         ) {
-                            throw it
+                            block.resumeWithException(it)
                         }
                     }
                 }
