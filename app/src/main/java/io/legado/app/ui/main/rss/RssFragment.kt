@@ -92,7 +92,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                initData(newText ?: "")
+                initData(newText)
                 return false
             }
         })
@@ -113,9 +113,16 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         }
     }
 
-    private fun initData(searchKey: String = "") {
+    private fun initData(searchKey: String? = null) {
         liveRssData?.removeObservers(this)
-        liveRssData = App.db.rssSourceDao.liveEnabled(searchKey).apply {
+        liveRssData = when {
+            searchKey.isNullOrEmpty() -> App.db.rssSourceDao.liveEnabled()
+            searchKey.startsWith("group:") -> {
+                val key = searchKey.substringAfter("group:")
+                App.db.rssSourceDao.liveEnabledByGroup("%$key%")
+            }
+            else -> App.db.rssSourceDao.liveEnabled("%$searchKey%")
+        }.apply {
             observe(viewLifecycleOwner, {
                 adapter.setItems(it)
             })

@@ -199,22 +199,22 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun initLiveDataSource(searchKey: String? = null) {
         sourceLiveData?.removeObservers(this)
-        sourceLiveData =
-            when {
-                searchKey.isNullOrBlank() -> {
-                    App.db.rssSourceDao.liveAll()
-                }
-                searchKey.startsWith("group:") -> {
-                    val key = searchKey.substringAfter("group:")
-                    App.db.rssSourceDao.liveGroupSearch("%$key%")
-                }
-                else -> {
-                    App.db.rssSourceDao.liveSearch("%$searchKey%")
-                }
+        sourceLiveData = when {
+            searchKey.isNullOrBlank() -> {
+                App.db.rssSourceDao.liveAll()
             }
-        sourceLiveData?.observe(this, {
-            adapter.setItems(it, adapter.diffItemCallback)
-        })
+            searchKey.startsWith("group:") -> {
+                val key = searchKey.substringAfter("group:")
+                App.db.rssSourceDao.liveGroupSearch("%$key%")
+            }
+            else -> {
+                App.db.rssSourceDao.liveSearch("%$searchKey%")
+            }
+        }.apply {
+            observe(this@RssSourceActivity, {
+                adapter.setItems(it, adapter.diffItemCallback)
+            })
+        }
     }
 
     private fun showHelp() {
