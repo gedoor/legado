@@ -50,6 +50,12 @@
                             android:id="@+id/menu_sort_time"
                             android:checkable="true"
                             android:title="@string/sort_by_lastUpdateTime" />
+
+                        <item
+                            android:id="@+id/menu_sort_enable"
+                            android:checkable="true"
+                            android:title="@string/sort_enable" />
+
                     </group>
 
                 </menu>

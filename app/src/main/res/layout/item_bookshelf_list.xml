@@ -11,8 +11,8 @@
 
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
-        android:layout_width="60dp"
-        android:layout_height="80dp"
+        android:layout_width="66dp"
+        android:layout_height="90dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="12dp"
@@ -97,7 +97,7 @@
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_read"
         app:layout_constraintLeft_toRightOf="@+id/iv_author"
-        app:layout_constraintRight_toLeftOf="@id/fl_has_new"
+        app:layout_constraintRight_toRightOf="@id/fl_has_new"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
         tools:ignore="RtlSymmetry" />
 
@@ -126,7 +126,7 @@
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@id/tv_last"
         app:layout_constraintLeft_toRightOf="@+id/iv_read"
-        app:layout_constraintRight_toLeftOf="@id/fl_has_new"
+        app:layout_constraintRight_toRightOf="@+id/fl_has_new"
         app:layout_constraintTop_toBottomOf="@+id/tv_author" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -154,7 +154,7 @@
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/iv_last"
-        app:layout_constraintRight_toLeftOf="@id/fl_has_new"
+        app:layout_constraintRight_toRightOf="@id/fl_has_new"
         app:layout_constraintTop_toBottomOf="@+id/tv_read" />
 
     <View
