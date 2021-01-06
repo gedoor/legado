@@ -84,10 +84,10 @@ class ChangeSourceDialog : BaseDialogFragment(),
         binding.toolBar.inflateMenu(R.menu.change_source)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
-        binding.toolBar.menu.findItem(R.id.menu_load_info)?.isChecked =
-            AppConfig.changeSourceLoadInfo
-        binding.toolBar.menu.findItem(R.id.menu_load_toc)?.isChecked = AppConfig.changeSourceLoadToc
-
+        binding.toolBar.menu.findItem(R.id.menu_load_info)
+            ?.isChecked = AppConfig.changeSourceLoadInfo
+        binding.toolBar.menu.findItem(R.id.menu_load_toc)
+            ?.isChecked = AppConfig.changeSourceLoadToc
     }
 
     private fun initRecyclerView() {
