@@ -14,9 +14,7 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 import java.io.File
 import java.io.FileDescriptor
@@ -115,6 +113,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                                             val fis = FileInputStream(file)
                                             playAudio(fis.fd)
                                         }
+                                    } else {
+                                        removeSpeakCacheFile(fileName)
                                     }
                                 }
                             } catch (e: SocketTimeoutException) {
