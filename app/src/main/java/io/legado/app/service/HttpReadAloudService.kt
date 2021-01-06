@@ -109,7 +109,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                         val file = getSpeakFileAsMd5(fileName)
                                         //val file = getSpeakFile(index)
                                         file.writeBytes(bytes)
-
+                                        removeSpeakCacheFile(fileName)
                                         if (index == nowSpeak) {
                                             @Suppress("BlockingMethodInNonBlockingContext")
                                             val fis = FileInputStream(file)
