@@ -14,6 +14,7 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.postEvent
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import org.jetbrains.anko.collections.forEachWithIndex
 import java.io.File
@@ -103,18 +104,15 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     speakText = item,
                                     speakSpeed = AppConfig.ttsSpeechRate
                                 ).getByteArray().let { bytes ->
-                                    if (isActive) {
-                                        val file = getSpeakFileAsMd5(fileName)
-                                        //val file = getSpeakFile(index)
-                                        file.writeBytes(bytes)
-                                        removeSpeakCacheFile(fileName)
-                                        if (index == nowSpeak) {
-                                            @Suppress("BlockingMethodInNonBlockingContext")
-                                            val fis = FileInputStream(file)
-                                            playAudio(fis.fd)
-                                        }
-                                    } else {
-                                        removeSpeakCacheFile(fileName)
+                                    ensureActive()
+                                    val file = getSpeakFileAsMd5(fileName)
+                                    //val file = getSpeakFile(index)
+                                    file.writeBytes(bytes)
+                                    removeSpeakCacheFile(fileName)
+                                    if (index == nowSpeak) {
+                                        @Suppress("BlockingMethodInNonBlockingContext")
+                                        val fis = FileInputStream(file)
+                                        playAudio(fis.fd)
                                     }
                                 }
                             } catch (e: SocketTimeoutException) {
