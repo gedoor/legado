@@ -37,6 +37,7 @@ class ReadMenu @JvmOverloads constructor(
     private lateinit var menuTopOut: Animation
     private lateinit var menuBottomIn: Animation
     private lateinit var menuBottomOut: Animation
+    private val accentColor: Int = context.accentColor
     private val bgColor: Int = context.bottomBackground
     private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
     private val bottomBackgroundList: ColorStateList = Selector.colorBuild()
@@ -65,13 +66,13 @@ class ReadMenu @JvmOverloads constructor(
         llBrightness.background = brightnessBackground
         llBottomBg.setBackgroundColor(bgColor)
         fabSearch.backgroundTintList = bottomBackgroundList
-        fabSearch.setColorFilter(textColor)
+        fabSearch.setColorFilter(accentColor)
         fabAutoPage.backgroundTintList = bottomBackgroundList
-        fabAutoPage.setColorFilter(textColor)
+        fabAutoPage.setColorFilter(accentColor)
         fabReplaceRule.backgroundTintList = bottomBackgroundList
-        fabReplaceRule.setColorFilter(textColor)
+        fabReplaceRule.setColorFilter(accentColor)
         fabNightTheme.backgroundTintList = bottomBackgroundList
-        fabNightTheme.setColorFilter(textColor)
+        fabNightTheme.setColorFilter(accentColor)
         tvPre.setTextColor(textColor)
         tvNext.setTextColor(textColor)
         ivCatalog.setColorFilter(textColor)
@@ -308,7 +309,7 @@ class ReadMenu @JvmOverloads constructor(
             fabAutoPage.setImageResource(R.drawable.ic_auto_page)
             fabAutoPage.contentDescription = context.getString(R.string.auto_next_page)
         }
-        fabAutoPage.setColorFilter(textColor)
+        fabAutoPage.setColorFilter(accentColor)
     }
 
     interface CallBack {
