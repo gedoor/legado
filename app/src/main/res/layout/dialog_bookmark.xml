@@ -22,6 +22,7 @@
                 android:id="@+id/edit_book_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="6"
                 android:hint="@string/content" />
 
         </io.legado.app.ui.widget.text.TextInputLayout>
@@ -37,6 +38,7 @@
                 android:id="@+id/edit_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="6"
                 android:hint="@string/note_content" />
 
         </io.legado.app.ui.widget.text.TextInputLayout>
