@@ -51,10 +51,14 @@
                 app:layout_constraintRight_toLeftOf="@+id/tv_login"
                 app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name" />
 
-            <TextView
+            <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_login"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/login"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_chapter_url"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

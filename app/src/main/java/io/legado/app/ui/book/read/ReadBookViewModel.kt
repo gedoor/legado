@@ -271,13 +271,15 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun upBookSource() {
+    fun upBookSource(success: (() -> Unit)?) {
         execute {
             ReadBook.book?.let { book ->
                 App.db.bookSourceDao.getBookSource(book.origin)?.let {
                     ReadBook.webBook = WebBook(it)
                 }
             }
+        }.onSuccess {
+            success?.invoke()
         }
     }
 
