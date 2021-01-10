@@ -140,6 +140,9 @@ class ReadMenu @JvmOverloads constructor(
         tvChapterUrl.onClick {
             context.openUrl(binding.tvChapterUrl.text.toString())
         }
+        tvLogin.onClick {
+            callBack.showLogin()
+        }
         ivBrightnessAuto.onClick {
             context.putPrefBoolean("brightnessAuto", !brightnessAuto())
             upBrightnessState()
@@ -277,6 +280,7 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     fun upBookView() {
+        binding.tvLogin.visible(!ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty())
         ReadBook.curTextChapter?.let {
             binding.tvChapterName.text = it.title
             binding.tvChapterName.visible()
@@ -323,6 +327,7 @@ class ReadMenu @JvmOverloads constructor(
         fun upSystemUiVisibility()
         fun onClickReadAloud()
         fun showReadMenuHelp()
+        fun showLogin()
     }
 
 }
