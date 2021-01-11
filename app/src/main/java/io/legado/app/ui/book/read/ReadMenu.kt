@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.App
 import io.legado.app.R
@@ -280,7 +281,7 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     fun upBookView() {
-        binding.tvLogin.visible(!ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty())
+        binding.tvLogin.isGone = ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
         ReadBook.curTextChapter?.let {
             binding.tvChapterName.text = it.title
             binding.tvChapterName.visible()
