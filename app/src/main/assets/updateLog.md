@@ -7,6 +7,7 @@
 * 修复bug
 * 朗读时翻页防止重复发送请求 by [litcc](https://github.com/litcc)
 * 换源刷新之前删除原搜索记录
+* 优化web调试
 
 **2021/01/05**
 * 修复崩溃bug
