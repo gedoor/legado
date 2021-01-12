@@ -48,10 +48,8 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                 val tag = debugBean["tag"]
                 val key = debugBean["key"]
                 if (tag.isNullOrBlank() || key.isNullOrBlank()) {
-                    kotlin.runCatching {
-                        send(App.INSTANCE.getString(R.string.cannot_empty))
-                        close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
-                    }
+                    send(App.INSTANCE.getString(R.string.cannot_empty))
+                    close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
                     return
                 }
                 App.db.bookSourceDao.getBookSource(tag)?.let {
@@ -75,6 +73,7 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
             send(msg)
             if (state == -1 || state == 1000) {
                 Debug.cancelDebug(true)
+                close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
             }
         }
     }
