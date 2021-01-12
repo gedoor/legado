@@ -22,12 +22,12 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
 
     override fun onOpen() {
         launch(IO) {
-            do {
-                delay(30000)
-                runCatching {
+            kotlin.runCatching {
+                while (isOpen) {
                     ping("ping".toByteArray())
+                    delay(30000)
                 }
-            } while (isOpen)
+            }
         }
     }
 
@@ -42,19 +42,21 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
 
     override fun onMessage(message: NanoWSD.WebSocketFrame) {
         if (!message.textPayload.isJson()) return
-        kotlin.runCatching {
-            val debugBean = GSON.fromJsonObject<Map<String, String>>(message.textPayload)
-            if (debugBean != null) {
-                val tag = debugBean["tag"]
-                val key = debugBean["key"]
-                if (tag.isNullOrBlank() || key.isNullOrBlank()) {
-                    send(App.INSTANCE.getString(R.string.cannot_empty))
-                    close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
-                    return
-                }
-                App.db.bookSourceDao.getBookSource(tag)?.let {
-                    Debug.callback = this
-                    Debug.startDebug(this, WebBook(it), key)
+        launch(IO) {
+            kotlin.runCatching {
+                val debugBean = GSON.fromJsonObject<Map<String, String>>(message.textPayload)
+                if (debugBean != null) {
+                    val tag = debugBean["tag"]
+                    val key = debugBean["key"]
+                    if (tag.isNullOrBlank() || key.isNullOrBlank()) {
+                        send(App.INSTANCE.getString(R.string.cannot_empty))
+                        close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
+                        return@launch
+                    }
+                    App.db.bookSourceDao.getBookSource(tag)?.let {
+                        Debug.callback = this@SourceDebugWebSocket
+                        Debug.startDebug(this, WebBook(it), key)
+                    }
                 }
             }
         }
@@ -69,11 +71,15 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     }
 
     override fun printLog(state: Int, msg: String) {
-        kotlin.runCatching {
-            send(msg)
-            if (state == -1 || state == 1000) {
-                Debug.cancelDebug(true)
-                close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
+        launch(IO) {
+            runCatching {
+                send(msg)
+                if (state == -1 || state == 1000) {
+                    Debug.cancelDebug(true)
+                    close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
+                }
+            }.onFailure {
+                it.printStackTrace()
             }
         }
     }
