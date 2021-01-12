@@ -100,6 +100,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private fun startSearch() {
         execute {
             App.db.searchBookDao.clear(name, author)
+            searchBooks.clear()
+            upAdapter()
             bookSourceList.clear()
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(App.db.bookSourceDao.allEnabled)
