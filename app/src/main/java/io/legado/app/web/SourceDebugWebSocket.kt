@@ -1,6 +1,7 @@
 package io.legado.app.web
 
 
+import android.os.Looper
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoWSD
 import io.legado.app.App
@@ -71,7 +72,19 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     }
 
     override fun printLog(state: Int, msg: String) {
-        launch(IO) {
+        if (Looper.getMainLooper() == Looper.myLooper()) {
+            launch(IO) {
+                runCatching {
+                    send(msg)
+                    if (state == -1 || state == 1000) {
+                        Debug.cancelDebug(true)
+                        close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
+                    }
+                }.onFailure {
+                    it.printStackTrace()
+                }
+            }
+        } else {
             runCatching {
                 send(msg)
                 if (state == -1 || state == 1000) {
