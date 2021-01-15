@@ -31,7 +31,7 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
         rssSource?.let {
             start?.invoke()
             Debug.callback = this
-            Debug.startDebug(it)
+            Debug.startDebug(this, it)
         } ?: error?.invoke()
     }
 

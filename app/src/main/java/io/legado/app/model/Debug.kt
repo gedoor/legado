@@ -16,8 +16,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object Debug {
-    private var debugSource: String? = null
     var callback: Callback? = null
+    private var debugSource: String? = null
     private val tasks: CompositeCoroutine = CompositeCoroutine()
 
     @SuppressLint("ConstantLocale")
@@ -59,12 +59,12 @@ object Debug {
         }
     }
 
-    fun startDebug(rssSource: RssSource) {
+    fun startDebug(scope: CoroutineScope, rssSource: RssSource) {
         cancelDebug()
         debugSource = rssSource.sourceUrl
         log(debugSource, "︾开始解析")
         val sort = rssSource.sortUrls().entries.first()
-        Rss.getArticles(sort.key, sort.value, rssSource, 1)
+        Rss.getArticles(scope, sort.key, sort.value, rssSource, 1)
             .onSuccess {
                 if (it.articles.isEmpty()) {
                     log(debugSource, "⇒列表页解析成功，为空")
@@ -77,7 +77,7 @@ object Debug {
                         if (ruleContent.isNullOrEmpty()) {
                             log(debugSource, "⇒内容规则为空，默认获取整个网页", state = 1000)
                         } else {
-                            rssContentDebug(it.articles[0], ruleContent, rssSource)
+                            rssContentDebug(scope, it.articles[0], ruleContent, rssSource)
                         }
                     } else {
                         log(debugSource, "⇒存在描述规则，不解析内容页")
@@ -90,9 +90,14 @@ object Debug {
             }
     }
 
-    private fun rssContentDebug(rssArticle: RssArticle, ruleContent: String, rssSource: RssSource) {
+    private fun rssContentDebug(
+        scope: CoroutineScope,
+        rssArticle: RssArticle,
+        ruleContent: String,
+        rssSource: RssSource
+    ) {
         log(debugSource, "︾开始解析内容页")
-        Rss.getContent(rssArticle, ruleContent, rssSource)
+        Rss.getContent(scope, rssArticle, ruleContent, rssSource)
             .onSuccess {
                 log(debugSource, it)
                 log(debugSource, "︽内容页解析完成", state = 1000)
