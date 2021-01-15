@@ -302,6 +302,14 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     return true
                 }
             }
+            keyCode == KeyEvent.KEYCODE_PAGE_UP -> {
+                binding.readView.pageDelegate?.keyTurnPage(PageDirection.PREV)
+                return true
+            }
+            keyCode == KeyEvent.KEYCODE_PAGE_DOWN -> {
+                binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
+                return true
+            }
             keyCode == KeyEvent.KEYCODE_SPACE -> {
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
