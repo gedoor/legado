@@ -383,15 +383,15 @@ $('.menu').addEventListener('click', e => {
 						ws.send(`{"tag":"${saveRule[0].bookSourceUrl}", "key":"${sKey}"}`);
 					};
 					ws.onmessage = (msg) => {
-						DebugPrint(msg.data == 'finish' ? `\n[${Date().split(' ')[4]}] 调试任务已完成!` : msg.data);
-						if (msg.data == 'finish') setRule(saveRule[0]);
+					    console.log('[调试]', msg);
+						DebugPrint(msg.data);
 					};
 					ws.onerror = (err) => {
 						throw `${err.data}`;
 					}
 					ws.onclose = () => {
 						thisNode.setAttribute('class', '');
-						DebugPrint(`[${Date().split(' ')[4]}] 调试服务已关闭!`);
+						DebugPrint(`\n调试服务已关闭!`);
 					}
 				} else throw `${sResult.errorMsg}`;
 			}).catch(err => {
