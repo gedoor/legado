@@ -58,7 +58,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private lateinit var adapter: BookSourceAdapter
     private lateinit var searchView: SearchView
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
-    private var groups = linkedSetOf<String>()
+    private val groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var sort = Sort.Default
     private var sortAscending = true
@@ -249,7 +249,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun initLiveDataGroup() {
         App.db.bookSourceDao.liveGroup().observe(this, {
             groups.clear()
-            it.map { group ->
+            it.forEach { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
             }
             upGroupMenu()
