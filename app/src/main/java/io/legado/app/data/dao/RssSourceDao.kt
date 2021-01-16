@@ -37,8 +37,11 @@ interface RssSourceDao {
     @Query("SELECT * FROM rssSources where enabled = 1 and sourceGroup like :searchKey order by customOrder")
     fun liveEnabledByGroup(searchKey: String): LiveData<List<RssSource>>
 
-    @Query("select sourceGroup from rssSources where trim(sourceGroup) <> ''")
+    @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
     fun liveGroup(): LiveData<List<String>>
+
+    @get:Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
+    val allGroup: List<String>
 
     @get:Query("select min(customOrder) from rssSources")
     val minOrder: Int
