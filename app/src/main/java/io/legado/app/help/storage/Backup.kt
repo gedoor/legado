@@ -29,7 +29,7 @@ object Backup {
             "bookmark.json",
             "bookGroup.json",
             "bookSource.json",
-            "rssSource.json",
+            "rssSources.json",
             "rssStar.json",
             "replaceRule.json",
             "readRecord.json",
@@ -61,7 +61,7 @@ object Backup {
             writeListToJson(App.db.bookmarkDao.all, "bookmark.json", backupPath)
             writeListToJson(App.db.bookGroupDao.all, "bookGroup.json", backupPath)
             writeListToJson(App.db.bookSourceDao.all, "bookSource.json", backupPath)
-            writeListToJson(App.db.rssSourceDao.all, "rssSource.json", backupPath)
+            writeListToJson(App.db.rssSourceDao.all, "rssSources.json", backupPath)
             writeListToJson(App.db.rssStarDao.all, "rssStar.json", backupPath)
             writeListToJson(App.db.replaceRuleDao.all, "replaceRule.json", backupPath)
             writeListToJson(App.db.readRecordDao.all, "readRecord.json", backupPath)

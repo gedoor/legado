@@ -122,7 +122,7 @@ object Restore {
             fileToListT<BookSource>(path, "bookSource.json")?.let {
                 App.db.bookSourceDao.insert(*it.toTypedArray())
             }
-            fileToListT<RssSource>(path, "rssSource.json")?.let {
+            fileToListT<RssSource>(path, "rssSources.json")?.let {
                 App.db.rssSourceDao.insert(*it.toTypedArray())
             }
             fileToListT<RssStar>(path, "rssStar.json")?.let {
