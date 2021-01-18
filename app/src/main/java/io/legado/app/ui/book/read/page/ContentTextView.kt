@@ -365,7 +365,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         selectEnd[1] = lineIndex
         selectEnd[2] = charIndex
         val textLine = relativePage(relativePage).getLine(lineIndex)
-        val textChar = textLine.getTextChar(lineIndex)
+        val textChar = textLine.getTextChar(charIndex)
         upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset(relativePage))
         upSelectChars()
     }
