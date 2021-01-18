@@ -338,17 +338,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 }
                 end -= 1
             }
-            kotlin.runCatching {
-                curPage.selectStartMoveIndex(firstRelativePage, lineStart, start)
-                curPage.selectEndMoveIndex(firstRelativePage, lineEnd, end)
-            }.onFailure {
-                print(
-                    """
-                    curPage.selectStartMoveIndex($firstRelativePage, $lineStart, $start)
-                    curPage.selectEndMoveIndex($firstRelativePage, $lineEnd, $end)
-                """.trimIndent()
-                )
-            }
+            curPage.selectStartMoveIndex(firstRelativePage, lineStart, start)
+            curPage.selectEndMoveIndex(firstRelativePage, lineEnd, end)
         }
     }
 
