@@ -51,10 +51,8 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
@@ -531,13 +529,18 @@ class ReadBookActivity : ReadBookBaseActivity(),
     /**
      * 更新内容
      */
-    override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
-        autoPageProgress = 0
+    override fun upContent(
+        relativePosition: Int,
+        resetPageOffset: Boolean,
+        success: (() -> Unit)?
+    ) {
         launch {
+            autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
+            loadStates = false
+            success?.invoke()
         }
-        loadStates = false
     }
 
     /**
@@ -807,18 +810,14 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     private fun skipToSearch(index: Int, indexWithinChapter: Int) {
         viewModel.openChapter(index) {
-            launch(IO) {
-                val pages = ReadBook.curTextChapter?.pages ?: return@launch
-                val positions = ReadBook.searchResultPositions(
-                    pages,
-                    indexWithinChapter,
-                    viewModel.searchContentQuery
-                )
-                while (ReadBook.durPageIndex() != positions[0]) {
-                    delay(100L)
-                    ReadBook.skipToPage(positions[0])
-                }
-                withContext(Main) {
+            val pages = ReadBook.curTextChapter?.pages ?: return@openChapter
+            val positions = ReadBook.searchResultPositions(
+                pages,
+                indexWithinChapter,
+                viewModel.searchContentQuery
+            )
+            ReadBook.skipToPage(positions[0]) {
+                launch {
                     binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
                     delay(20L)
                     when (positions[3]) {

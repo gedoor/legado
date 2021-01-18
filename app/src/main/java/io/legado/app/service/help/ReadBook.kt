@@ -183,9 +183,11 @@ object ReadBook {
         }
     }
 
-    fun skipToPage(index: Int) {
+    fun skipToPage(index: Int, success: (() -> Unit)? = null) {
         durChapterPos = curTextChapter?.getReadLength(index) ?: index
-        callBack?.upContent()
+        callBack?.upContent() {
+            success?.invoke()
+        }
         curPageChanged()
         saveRead()
     }
@@ -478,10 +480,19 @@ object ReadBook {
 
     interface CallBack {
         fun loadChapterList(book: Book)
-        fun upContent(relativePosition: Int = 0, resetPageOffset: Boolean = true)
+
+        fun upContent(
+            relativePosition: Int = 0,
+            resetPageOffset: Boolean = true,
+            success: (() -> Unit)? = null
+        )
+
         fun upView()
+
         fun pageChanged()
+
         fun contentLoadFinish()
+
         fun upPageAnim()
     }
 
