@@ -63,6 +63,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
             "tg" -> openUrl(R.string.tg_url)
+            "discord" -> openUrl(R.string.discord_url)
         }
         return super.onPreferenceTreeClick(preference)
     }
