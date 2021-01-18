@@ -240,19 +240,28 @@ object ReadBook {
     /**
      * 加载章节内容
      */
-    fun loadContent(resetPageOffset: Boolean) {
-        loadContent(durChapterIndex, resetPageOffset = resetPageOffset)
+    fun loadContent(resetPageOffset: Boolean, success: (() -> Unit)? = null) {
+        loadContent(durChapterIndex, resetPageOffset = resetPageOffset) {
+            success?.invoke()
+        }
         loadContent(durChapterIndex + 1, resetPageOffset = resetPageOffset)
         loadContent(durChapterIndex - 1, resetPageOffset = resetPageOffset)
     }
 
-    fun loadContent(index: Int, upContent: Boolean = true, resetPageOffset: Boolean) {
+    fun loadContent(
+        index: Int,
+        upContent: Boolean = true,
+        resetPageOffset: Boolean,
+        success: (() -> Unit)? = null
+    ) {
         book?.let { book ->
             if (addLoading(index)) {
                 Coroutine.async {
                     App.db.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                         BookHelp.getContent(book, chapter)?.let {
-                            contentLoadFinish(book, chapter, it, upContent, resetPageOffset)
+                            contentLoadFinish(book, chapter, it, upContent, resetPageOffset) {
+                                success?.invoke()
+                            }
                             removeLoading(chapter.index)
                         } ?: download(chapter, resetPageOffset = resetPageOffset)
                     } ?: removeLoading(index)
@@ -282,7 +291,11 @@ object ReadBook {
         }
     }
 
-    private fun download(chapter: BookChapter, resetPageOffset: Boolean) {
+    private fun download(
+        chapter: BookChapter,
+        resetPageOffset: Boolean,
+        success: (() -> Unit)? = null
+    ) {
         val book = book
         val webBook = webBook
         if (book != null && webBook != null) {
@@ -290,7 +303,9 @@ object ReadBook {
         } else if (book != null) {
             contentLoadFinish(
                 book, chapter, "没有书源", resetPageOffset = resetPageOffset
-            )
+            ) {
+                success?.invoke()
+            }
             removeLoading(chapter.index)
         } else {
             removeLoading(chapter.index)
@@ -379,7 +394,8 @@ object ReadBook {
         chapter: BookChapter,
         content: String,
         upContent: Boolean = true,
-        resetPageOffset: Boolean
+        resetPageOffset: Boolean,
+        success: (() -> Unit)? = null
     ) {
         Coroutine.async {
             ImageProvider.clearOut(durChapterIndex)
@@ -420,6 +436,8 @@ object ReadBook {
         }.onError {
             it.printStackTrace()
             App.INSTANCE.toast("ChapterProvider ERROR:\n${it.getStackTraceString()}")
+        }.onSuccess {
+            success?.invoke()
         }
     }
 

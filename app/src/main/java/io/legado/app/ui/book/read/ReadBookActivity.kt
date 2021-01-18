@@ -806,43 +806,39 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     private fun skipToSearch(index: Int, indexWithinChapter: Int) {
-        launch(IO) {
-            viewModel.openChapter(index)
-            // block until load correct chapter and pages
-            var pages = ReadBook.curTextChapter?.pages
-            while (ReadBook.durChapterIndex != index || pages == null) {
-                delay(100L)
-                pages = ReadBook.curTextChapter?.pages
-            }
-            val positions = ReadBook.searchResultPositions(
-                pages,
-                indexWithinChapter,
-                viewModel.searchContentQuery
-            )
-            while (ReadBook.durPageIndex() != positions[0]) {
-                delay(100L)
-                ReadBook.skipToPage(positions[0])
-            }
-            withContext(Main) {
-                binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
-                delay(20L)
-                when (positions[3]) {
-                    0 -> binding.readView.curPage.selectEndMoveIndex(
-                        0,
-                        positions[1],
-                        positions[2] + viewModel.searchContentQuery.length - 1
-                    )
-                    1 -> binding.readView.curPage.selectEndMoveIndex(
-                        0,
-                        positions[1] + 1,
-                        positions[4]
-                    )
-                    //consider change page, jump to scroll position
-                    -1 -> binding.readView.curPage
-                        .selectEndMoveIndex(1, 0, positions[4])
+        viewModel.openChapter(index) {
+            launch(IO) {
+                val pages = ReadBook.curTextChapter?.pages ?: return@launch
+                val positions = ReadBook.searchResultPositions(
+                    pages,
+                    indexWithinChapter,
+                    viewModel.searchContentQuery
+                )
+                while (ReadBook.durPageIndex() != positions[0]) {
+                    delay(100L)
+                    ReadBook.skipToPage(positions[0])
                 }
-                binding.readView.isTextSelected = true
-                delay(100L)
+                withContext(Main) {
+                    binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
+                    delay(20L)
+                    when (positions[3]) {
+                        0 -> binding.readView.curPage.selectEndMoveIndex(
+                            0,
+                            positions[1],
+                            positions[2] + viewModel.searchContentQuery.length - 1
+                        )
+                        1 -> binding.readView.curPage.selectEndMoveIndex(
+                            0,
+                            positions[1] + 1,
+                            positions[4]
+                        )
+                        //consider change page, jump to scroll position
+                        -1 -> binding.readView.curPage
+                            .selectEndMoveIndex(1, 0, positions[4])
+                    }
+                    binding.readView.isTextSelected = true
+                    delay(100L)
+                }
             }
         }
     }
