@@ -32,7 +32,8 @@ class AboutFragment : PreferenceFragmentCompat() {
         Pair("(QQ群4)256929088", "czEJPLDnT4Pd9SKQ6RoRVzKhDxLchZrO"),
         Pair("(QQ群5)811843556", "zKZ2UYGZ7o5CzcA6ylxzlqi21si_iqaX"),
         Pair("(QQ群6)870270970", "FeCF8iSxfQbe90HPvGsvcqs5P5oSeY5n"),
-        Pair("(QQ群7)15987187", "S2g2TMD0LGd3sefUADd1AbyPEW2o2XfC")
+        Pair("(QQ群7)15987187", "S2g2TMD0LGd3sefUADd1AbyPEW2o2XfC"),
+        Pair("(QQ群8)1079926194", "gg2qFH8q9IPFaCHV3H7CqCN-YljvazE1"),
     )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
