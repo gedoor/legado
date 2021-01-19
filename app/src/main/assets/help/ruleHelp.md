@@ -93,3 +93,18 @@ variable // 自定义书籍变量信息(用于书源规则检索书籍信息)
  variable //变量
  ```
 
+### 字体解析使用
+
+ > 使用方法,在正文替换规则中使用,原理根据f1字体的字形数据到f2中查找字形对应的编码
+```
+@js:
+var b64=String(src).match(/ttf;base64,([^\)]+)/);
+if (b64) {
+    var f1 = java.queryBase64TTF(b64[1])
+    var f2 = java.queryTTF("/storage/emulated/0/Fonts/Source Han Sans CN Regular.ttf")
+    java.replaceFont(result, f1, f2)
+}else{
+    result
+}
+```
+

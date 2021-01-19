@@ -79,18 +79,7 @@
 * 阅读进度从页数改为字数,排版变化时定位更准确
 * 修改viewBinding
 * 修复中文排序
-* 去掉FontJs规则,可以写在替换规则里,例:f2为正确的字体,根据文字数据去正确的字体里面查找,可以把错误的文字替换为正确的文字
-```
-@js:
-var b64=String(src).match(/ttf;base64,([^\)]+)/);
-if (b64) {
-    var f1 = java.queryBase64TTF(b64[1])
-    var f2 = java.queryTTF("/storage/emulated/0/Fonts/Source Han Sans CN Regular.ttf")
-    java.replaceFont(result, f1, f2)
-}else{
-    result
-}
-```
+* 去掉FontJs规则,可以写在替换规则里,示例可在帮助文档查看
 
 **2020/11/30**
 * 优化阅读界面设置
