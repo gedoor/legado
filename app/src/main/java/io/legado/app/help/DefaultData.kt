@@ -56,16 +56,12 @@ object DefaultData {
 
     fun importDefaultHttpTTS() {
         App.db.httpTTSDao.deleteDefault()
-        httpTTS.let {
-            App.db.httpTTSDao.insert(*it.toTypedArray())
-        }
+        App.db.httpTTSDao.insert(*httpTTS.toTypedArray())
     }
 
     fun importDefaultTocRules() {
         App.db.txtTocRule.deleteDefault()
-        txtTocRules.let {
-            App.db.txtTocRule.insert(*it.toTypedArray())
-        }
+        App.db.txtTocRule.insert(*txtTocRules.toTypedArray())
     }
 
     fun importDefaultRssSources() {
