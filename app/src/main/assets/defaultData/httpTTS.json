@@ -142,6 +142,6 @@
   {
     "id": -29,
     "name": "阿里云语音",
-    "url": "<js>/*播音人Aiting可改其他，详见https://ai.aliyun.com/nls/tts*/;eval(''+java.ajax('https://cdn.jsdelivr.net/gh/Celeter/build/.github/scripts/ttsDemo.js'));ttsDemo(speakText,speakSpeed,'Aiting')</js>"
+    "url": "<js>/*播音人Aiting可改其他https://cdn.jsdelivr.net/gh/Celeter/build/.github/scripts/speaker.json，详见https://ai.aliyun.com/nls/tts*/;eval(''+java.ajax('https://cdn.jsdelivr.net/gh/Celeter/build/.github/scripts/ttsDemo.js'));ttsDemo(speakText,speakSpeed,'Aiting')</js>"
   }
 ]
