@@ -138,5 +138,10 @@
     "id": -28,
     "name": "百度评书②",
     "url": "http://tsn.baidu.com/text2audio,{\n    \"method\": \"POST\",\n    \"body\": \"tex={{java.encodeURI(java.encodeURI(speakText))}}&spd={{(speakSpeed + 5) / 10 + 4}}&per=4114&cuid=baidu_speech_demo&idx=1&cod=2&lan=zh&ctp=1&pdt=301&vol=5&pit=5&_res_tag_=audio\"\n}"
+  },
+  {
+    "id": -29,
+    "name": "阿里云语音",
+    "url": "<js>/*播音人Aiting可改其他，详见https://ai.aliyun.com/nls/tts*/;eval(''+java.ajax('https://cdn.jsdelivr.net/gh/Celeter/build/.github/scripts/ttsDemo.js'));ttsDemo(speakText,speakSpeed,'Aiting')</js>"
   }
 ]
