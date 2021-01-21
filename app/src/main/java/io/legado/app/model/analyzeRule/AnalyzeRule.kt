@@ -636,17 +636,17 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any?): Any? {
+        val bindings = SimpleBindings()
+        bindings["java"] = this
+        bindings["cookie"] = CookieStore
+        bindings["cache"] = CacheManager
+        bindings["book"] = book
+        bindings["result"] = result
+        bindings["baseUrl"] = baseUrl
+        bindings["chapter"] = chapter
+        bindings["title"] = chapter?.title
+        bindings["src"] = content
         return runBlocking {
-            val bindings = SimpleBindings()
-            bindings["java"] = this
-            bindings["cookie"] = CookieStore
-            bindings["cache"] = CacheManager
-            bindings["book"] = book
-            bindings["result"] = result
-            bindings["baseUrl"] = baseUrl
-            bindings["chapter"] = chapter
-            bindings["title"] = chapter?.title
-            bindings["src"] = content
             SCRIPT_ENGINE.eval(jsStr, bindings)
         }
     }
