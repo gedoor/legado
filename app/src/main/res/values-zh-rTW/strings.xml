@@ -13,6 +13,7 @@
     <string name="webdav_cache_backup">離線快取書籍備份</string>
     <string name="webdav_cache_backup_s">匯出本機同時備份到legado資料夾下exports目錄</string>
     <string name="backup_path">備份路徑</string>
+    <string name="select_backup_path">請選擇備份路徑</string>
     <string name="menu_import_old_version">匯入舊版資料</string>
     <string name="menu_import_github">匯入Github資料</string>
     <string name="menu_replace_rule">淨化取代</string>
