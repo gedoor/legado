@@ -30,6 +30,7 @@
     <string name="draw">提醒</string>
     <string name="edit">編輯</string>
     <string name="delete">刪除</string>
+    <string name="delete_all">刪除所有</string>
     <string name="replace">取代</string>
     <string name="replace_purify">取代淨化</string>
     <string name="replace_purify_desc">配置取代淨化規則</string>
