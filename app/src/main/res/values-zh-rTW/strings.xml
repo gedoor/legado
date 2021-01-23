@@ -13,6 +13,7 @@
     <string name="webdav_cache_backup">離線快取書籍備份</string>
     <string name="webdav_cache_backup_s">匯出本機同時備份到legado資料夾下exports目錄</string>
     <string name="backup_path">備份路徑</string>
+    <string name="select_backup_path">請選擇備份路徑</string>
     <string name="menu_import_old_version">匯入舊版資料</string>
     <string name="menu_import_github">匯入Github資料</string>
     <string name="menu_replace_rule">淨化取代</string>
@@ -29,6 +30,7 @@
     <string name="draw">提醒</string>
     <string name="edit">編輯</string>
     <string name="delete">刪除</string>
+    <string name="delete_all">刪除所有</string>
     <string name="replace">取代</string>
     <string name="replace_purify">取代淨化</string>
     <string name="replace_purify_desc">配置取代淨化規則</string>
@@ -388,11 +390,14 @@
     <string name="source_name">源名稱(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分組(sourceGroup)</string>
+    <string name="diy_source_group">自訂源分組</string>
+    <string name="diy_edit_source_group">輸入自訂源分組名稱</string>
+    <string name="diy_edit_source_group_title">【%s】</string>
     <string name="sort_url">分類Url</string>
     <string name="login_url">登入URL(loginUrl)</string>
+    <string name="comment">源注釋(sourceComment)</string>
     <string name="r_search_url">搜尋地址(url)</string>
     <string name="r_find_url">發現地址規則(url)</string>
-    <string name="comment">源注釋(sourceComment)</string>
     <string name="r_book_list">書籍列表規則(bookList)</string>
     <string name="r_book_name">書名規則(name)</string>
     <string name="r_book_url">詳情頁url規則(bookUrl)</string>
@@ -415,6 +420,8 @@
     <string name="rule_book_content">正文規則(content)</string>
     <string name="rule_next_content">正文下一頁URL規則(nextContentUrl)</string>
     <string name="rule_web_js">WebViewJs(webJs)</string>
+    <string name="rule_image_style">圖片樣式(imageStyle)</string>
+    <string name="rule_replace_regex">取代規則(replaceRegex)</string>
     <string name="rule_source_regex">資源正則(sourceRegex)</string>
 
     <string name="source_icon">圖示(sourceIcon)</string>
@@ -449,6 +456,7 @@
     <string name="source_http_header">請求頭(header)</string>
     <string name="debug_source">除錯源</string>
     <string name="import_by_qr_code">二維碼匯入</string>
+    <string name="share_selected_source">分享選取源</string>
     <string name="scan_qr_code">掃描二維碼</string>
     <string name="click_on_selected_show_menu">選中時點擊可彈出選單</string>
     <string name="theme">主題</string>
@@ -684,6 +692,7 @@
     <string name="middle">中</string>
     <string name="information">訊息</string>
     <string name="switchLayout">切換布局</string>
+    <string name="text_font_weight_converter">文章字重轉換</string>
   
     <!--color-->
     <string name="primary">主色調</string>
@@ -702,16 +711,14 @@
     <string name="night_navbar_color">夜間，底欄色</string>
     <string name="auto_change_source">自動換源</string>
     <string name="text_full_justify">文字兩端對齊</string>
+    <string name="text_bottom_justify">文字底部對齊</string>
     <string name="auto_page_speed">自動翻頁速度</string>
     <string name="sort_by_url">地址排序</string>
-    <string name="text_font_weight_converter">文章字體轉換</string>
-    <string name="select_backup_path">請選擇備份路徑</string>
     <string name="backup_summary">本機和 WebDav 一起備份</string>
     <string name="restore_summary">優先從 WebDav 復原,長按從本機復原</string>
     <string name="import_old_summary">選擇舊版備份資料夾</string>
     <string name="enabled">已啟用</string>
     <string name="disabled">已禁用</string>
-    <string name="text_bottom_justify">文字底部對齊</string>
     <string name="starting_download">正在啟動下載</string>
     <string name="already_in_download">該書已在下載列表</string>
     <string name="click_to_open">點擊打開</string>
@@ -729,8 +736,6 @@
     <string name="restore_ignore">復原忽略列表</string>
     <string name="restore_ignore_summary">復原時忽略一些內容不復原,方便不同手機配置不同</string>
     <string name="read_config">閱讀介面設定</string>
-    <string name="rule_image_style">圖片樣式(imageStyle)</string>
-    <string name="rule_replace_regex">取代規則(replaceRegex)</string>
     <string name="group_name">分組名稱</string>
     <string name="note_content">備註內容</string>
     <string name="replace_enable_default_t">預設啟用取代淨化</string>
@@ -755,7 +760,6 @@
     <string name="thread_count">執行緒數</string>
     <string name="all_read_time">總閱讀時間</string>
     <string name="un_select_all">全不選</string>
-    <string name="delete_all">刪除所有</string>
     <string name="import_str">匯入</string>
     <string name="export_str">匯出</string>
     <string name="save_theme_config">儲存主題配置</string>
@@ -764,7 +768,6 @@
     <string name="theme_list">主題列表</string>
     <string name="theme_list_summary">使用儲存主題,匯入,分享主題</string>
     <string name="select_theme">切換預設主題</string>
-    <string name="share_selected_source">分享選中源</string>
     <string name="sort_by_lastUpdateTime">時間排序</string>
     <string name="search_content">全文搜尋</string>
     <string name="rss_source_empty">關注公眾號[开源阅读]獲取訂閱源!</string>
