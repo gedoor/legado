@@ -117,6 +117,7 @@ class CheckSourceService : BaseService() {
         }.timeout(60000L)
             .onError {
                 source.addGroup("失效")
+                source.bookSourceComment = "${source.bookSourceComment}\n${it.localizedMessage}"
                 App.db.bookSourceDao.update(source)
             }.onSuccess {
                 source.removeGroup("失效")
