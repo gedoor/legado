@@ -88,13 +88,13 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 }
             PreferKey.cleanCache -> clearCache()
             PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
-                selectDefaultCover()
+                selectImage(requestCodeCover)
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.defaultCover)
                     } else {
-                        selectDefaultCover()
+                        selectImage(requestCodeCover)
                     }
                 }
             }
@@ -183,11 +183,12 @@ class OtherConfigFragment : BasePreferenceFragment(),
         }.show()
     }
 
-    private fun selectDefaultCover() {
+    @Suppress("SameParameterValue")
+    private fun selectImage(requestCode: Int) {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "image/*"
-        startActivityForResult(intent, requestCodeCover)
+        startActivityForResult(intent, requestCode)
     }
 
     private fun isProcessTextEnabled(): Boolean {
