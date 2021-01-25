@@ -12,10 +12,10 @@ interface BookSourceDao {
     fun liveDataAll(): LiveData<List<BookSource>>
 
     @Query("select * from book_sources where bookSourceName like :searchKey or bookSourceGroup like :searchKey or bookSourceUrl like :searchKey  or bookSourceComment like :searchKey order by customOrder asc")
-    fun liveDataSearch(searchKey: String = ""): LiveData<List<BookSource>>
+    fun liveDataSearch(searchKey: String): LiveData<List<BookSource>>
 
     @Query("select * from book_sources where bookSourceGroup like :searchKey order by customOrder asc")
-    fun liveDataGroupSearch(searchKey: String = ""): LiveData<List<BookSource>>
+    fun liveDataGroupSearch(searchKey: String): LiveData<List<BookSource>>
 
     @Query("select * from book_sources where enabled = 1 order by customOrder asc")
     fun liveDataEnabled(): LiveData<List<BookSource>>
@@ -32,17 +32,14 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' and (bookSourceGroup like :key) order by customOrder asc")
     fun liveGroupExplore(key: String): LiveData<List<BookSource>>
 
-    @Query("select bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
+    @Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
     fun liveGroup(): LiveData<List<String>>
 
-    @Query("select bookSourceGroup from book_sources where enabled = 1 and trim(bookSourceGroup) <> ''")
+    @Query("select distinct bookSourceGroup from book_sources where enabled = 1 and trim(bookSourceGroup) <> ''")
     fun liveGroupEnabled(): LiveData<List<String>>
 
-    @Query("select bookSourceGroup from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' and trim(bookSourceGroup) <> ''")
+    @Query("select distinct bookSourceGroup from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' and trim(bookSourceGroup) <> ''")
     fun liveExploreGroup(): LiveData<List<String>>
-
-    @Query("select distinct  enabled from book_sources where bookSourceName like :searchKey or bookSourceGroup like :searchKey or bookSourceUrl like :searchKey")
-    fun searchIsEnable(searchKey: String = ""): List<Boolean>
 
     @Query("select * from book_sources where enabledExplore = 1 order by customOrder asc")
     fun observeFind(): DataSource.Factory<Int, BookSource>
@@ -67,6 +64,9 @@ interface BookSourceDao {
 
     @get:Query("select * from book_sources where enabled = 1 and bookSourceType = 0 order by customOrder")
     val allTextEnabled: List<BookSource>
+
+    @get:Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
+    val allGroup: List<String>
 
     @Query("select * from book_sources where bookSourceUrl = :key")
     fun getBookSource(key: String): BookSource?

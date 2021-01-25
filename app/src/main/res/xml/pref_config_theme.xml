@@ -42,6 +42,7 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:key="dayThemeCategory"
         android:title="@string/day"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
@@ -72,6 +73,10 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="backgroundImage"
+            android:title="@string/background_image" />
+
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_200"
             android:key="colorBottomBackground"
@@ -93,6 +98,7 @@
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:key="nightThemeCategory"
         android:title="@string/night"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
@@ -122,6 +128,10 @@
             android:title="@string/background_color"
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="backgroundImageNight"
+            android:title="@string/background_image" />
 
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_800"

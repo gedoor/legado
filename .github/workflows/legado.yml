@@ -39,11 +39,6 @@ jobs:
         run: |
           echo "清空18PlusList.txt"
           echo "">$GITHUB_WORKSPACE/app/src/main/assets/18PlusList.txt
-      - name: App Minify
-        if: ${{ github.event_name == 'release'}}
-        run: |
-          sed '/minifyEnabled/i\            shrinkResources true' $GITHUB_WORKSPACE/app/build.gradle -i
-          sed 's/minifyEnabled false/minifyEnabled true/'         $GITHUB_WORKSPACE/app/build.gradle -i
       - name: Release Apk Sign
         run: |
           echo "给apk增加签名"

@@ -157,6 +157,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             if (LocalConfig.hasUpTxtTocRule) {
                 DefaultData.importDefaultTocRules()
             }
+            if (LocalConfig.hasUpRssSources) {
+                DefaultData.importDefaultRssSources()
+            }
         }
     }
 }

@@ -154,14 +154,15 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             else -> {
                 App.db.replaceRuleDao.liveDataSearch("%$searchKey%")
             }
+        }.apply {
+            observe(this@ReplaceRuleActivity, {
+                if (dataInit) {
+                    setResult(Activity.RESULT_OK)
+                }
+                adapter.setItems(it, adapter.diffItemCallBack)
+                dataInit = true
+            })
         }
-        replaceRuleLiveData?.observe(this, {
-            if (dataInit) {
-                setResult(Activity.RESULT_OK)
-            }
-            adapter.setItems(it, adapter.diffItemCallBack)
-            dataInit = true
-        })
     }
 
     private fun observeGroupData() {
@@ -239,7 +240,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        observeReplaceRuleData("%$newText%")
+        observeReplaceRuleData(newText)
         return false
     }
 

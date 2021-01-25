@@ -142,10 +142,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //room
-    def room_version = '2.2.5'
+    def room_version = '2.2.6'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
-    testImplementation "androidx.room:room-testing:2.2.5"
+    testImplementation "androidx.room:room-testing:$room_version"
 
     //paging
     implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
@@ -174,8 +174,8 @@ dependencies {
 
     //网络
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.ljx.rxhttp:rxhttp:2.5.1'
-    kapt 'com.ljx.rxhttp:rxhttp-compiler:2.5.1'
+    implementation 'com.ljx.rxhttp:rxhttp:2.5.3'
+    kapt 'com.ljx.rxhttp:rxhttp-compiler:2.5.3'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'

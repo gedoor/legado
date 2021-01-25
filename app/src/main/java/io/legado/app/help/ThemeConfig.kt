@@ -204,6 +204,7 @@ object ThemeConfig {
         var primaryColor: String,
         var accentColor: String,
         var backgroundColor: String,
+        var backgroundImage: String? = null,
         var bottomBackground: String
     )
 

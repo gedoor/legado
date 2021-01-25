@@ -10,10 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.DialogEditTextBinding
@@ -21,10 +23,8 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.utils.getViewModelOfActivity
-import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 
 /**
@@ -85,7 +85,14 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
         when (item.itemId) {
             R.id.menu_new_group -> {
                 alert(R.string.diy_edit_source_group) {
-                    val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+                    val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                        val groups = linkedSetOf<String>()
+                        App.db.rssSourceDao.allGroup.forEach { group ->
+                            groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                        }
+                        editView.setFilterValues(groups.toList())
+                        editView.dropDownHeight = 180.dp
+                    }
                     customView = alertBinding.root
                     okButton {
                         alertBinding.editView.text?.toString()?.let { group ->

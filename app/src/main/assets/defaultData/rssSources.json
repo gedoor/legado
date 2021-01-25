@@ -1,0 +1,21 @@
+[
+  {
+    "articleStyle": 0,
+    "customOrder": 1,
+    "enableJs": true,
+    "enabled": true,
+    "loadWithBaseUrl": false,
+    "ruleArticles": "class.release-main-section||tbody@tr",
+    "ruleContent": "@js:\nif(baseUrl.match(\/90pan\/)){\nresult=result.replace(\/true\\||<a href=\"([^\"]+)\".*?><.*?>([^<]+)<\\\/span><\\\/a>\/g,'<h4><a href=\"$1\" style=\"color:#000\">$2<\/a><\/h4><p style=\"font-size:10px\">$1<\/p>\\n\\n')}\nelse{\nhtml=String(java.getString(\"@@class.markdown-body@html\",false)+java.getString(\"@@class.flex-justify-between.-1@html\",false));\nhref='https:\/\/github.com'+String(java.getString(\"@@class.flex-justify-between.-1@class.Box-body.0@a@href\",false))\nhtml+'<br><p>下载地址：<\/p><a style=\"font-size:13px\">'+href+'<\/a>'\n}",
+    "ruleImage": "@js:if(baseUrl.match(\/legado|704\/g)){\nresult='https:\/\/urlmin.cn\/034'\n}else{result=\"https:\/\/urlmin.cn\/15c\"}",
+    "ruleLink": "tag.a.0@href\n@js:if(baseUrl.match(\/90pan\/)){\nresult='https:\/\/www.90pan.com\/ajax.php,{\"method\": \"POST\",\"body\": \"action=load_down_addr1&file_id='+result.match(\/b(\\d+)\/)[1]+'\"}'}else{\nresult='https:\/\/github.com'+result\n}",
+    "ruleNextPage": "text.Next@href",
+    "rulePubDate": "tag.td!0@text||class.markdown-body@text##\\n##·",
+    "ruleTitle": "tag.a.0@text",
+    "sortUrl": "阅读2.0·GitHub::https:\/\/github.com\/gedoor\/MyBookshelf\/releases\n阅读3.0·GitHub::https:\/\/github.com\/gedoor\/legado\/releases\n阅读2.0·90盘::https:\/\/www.90pan.com\/o138703\n阅读3.0·90盘::https:\/\/www.90pan.com\/o138704",
+    "sourceIcon": "http:\/\/ku.mumuceo.com\/static\/images\/applogo\/yuedu.png",
+    "sourceName": "阅读下载",
+    "sourceUrl": "https:\/\/github.com\/gedoor\/legado\/releases",
+    "style": ""
+  }
+]

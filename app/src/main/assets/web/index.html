@@ -228,29 +228,30 @@
                 <div>
                     <div>章节信息:</div>
                     <textarea rows="1" id="ruleToc_updateTime" class="ruleToc" title="updateTime"
-                        placeholder="选择章节信息 (规则结果为String)"></textarea>
+                              placeholder="选择章节信息 (规则结果为String)"></textarea>
                 </div>
                 <div>
                     <div>翻页规则:</div>
                     <textarea rows="1" id="ruleToc_nextTocUrl" class="ruleToc" title="nextTocUrl"
-                        placeholder="选择目录下一页链接 (规则结果为List&lt;String&gt;或String)"></textarea>
+                              placeholder="选择目录下一页链接 (规则结果为List&lt;String&gt;或String)"></textarea>
                 </div>
                 <p></p>
                 <div><b>正文</b></div>
                 <div>
+                    <div>脚本注入:</div>
+                    <textarea rows="3" id="ruleContent_webJs" class="ruleContent" title="webJs"
+                              placeholder="注入javascript，用于模拟鼠标点击等，必须有返回值，一般为String类型"></textarea>
+                </div>
+                <div>
                     <div>正文规则:</div>
                     <textarea rows="1" id="ruleContent_content" class="ruleContent" title="content"
-                        placeholder="选择正文内容 (规则结果为String)"></textarea>
+                              placeholder="选择正文内容 (规则结果为String)"></textarea>
                 </div>
                 <div>
                     <div>翻页规则:</div>
-                    <textarea rows="1" id="ruleContent_nextContentUrl" class="ruleContent" title="nextContentUrl"
-                        placeholder="选择下一分页(不是下一章)链接 (规则结果为String类型的Url)"></textarea>
-                </div>
-                <div>
-                    <div>脚本注入:</div>
-                    <textarea rows="3" id="ruleContent_webJs" class="ruleContent" title="webJs"
-                        placeholder="注入javascript，用于模拟鼠标点击等，必须有返回值，一般为String类型"></textarea>
+                    <textarea rows="1" id="ruleContent_nextContentUrl" class="ruleContent"
+                              title="nextContentUrl"
+                              placeholder="选择下一分页(不是下一章)链接 (规则结果为String类型的Url)"></textarea>
                 </div>
                 <div>
                     <div>资源正则:</div>

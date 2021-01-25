@@ -646,7 +646,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         bindings["chapter"] = chapter
         bindings["title"] = chapter?.title
         bindings["src"] = content
-        return SCRIPT_ENGINE.eval(jsStr, bindings)
+        return runBlocking {
+            SCRIPT_ENGINE.eval(jsStr, bindings)
+        }
     }
 
     /**

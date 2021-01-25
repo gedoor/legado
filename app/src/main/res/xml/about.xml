@@ -9,13 +9,15 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
-        android:key="check_update"
-        android:title="@string/check_update"
+        android:key="update_log"
+        android:title="@string/update_log"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
-        android:key="update_log"
-        android:title="@string/update_log"
+        android:key="check_update"
+        android:title="@string/check_update"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
@@ -49,6 +51,12 @@
             android:key="git"
             android:title="@string/git_hub"
             android:summary="@string/this_github_url"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="discord"
+            android:title="Discord"
+            android:summary="@string/tg_url"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference

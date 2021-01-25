@@ -10,7 +10,7 @@ import java.util.*
 
 val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
 val imgRegex = "<img[^>]*>".toRegex()
-val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
+val notImgHtmlRegex = "</?(?!img)[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 

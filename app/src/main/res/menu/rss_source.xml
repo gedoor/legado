@@ -49,6 +49,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_import_default"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_default_rule"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_share_source"
         android:icon="@drawable/ic_share"
         android:title="@string/share_selected_source"

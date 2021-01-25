@@ -92,7 +92,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                initData(newText ?: "")
+                initData(newText)
                 return false
             }
         })
@@ -105,7 +105,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         adapter.addHeaderView {
             ItemRssBinding.inflate(layoutInflater, it, false).apply {
                 tvName.setText(R.string.rule_subscription)
-                ivIcon.setImageResource(R.mipmap.ic_launcher)
+                ivIcon.setImageResource(R.drawable.image_legado)
                 root.onClick {
                     startActivity<RuleSubActivity>()
                 }
@@ -113,9 +113,16 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         }
     }
 
-    private fun initData(searchKey: String = "") {
+    private fun initData(searchKey: String? = null) {
         liveRssData?.removeObservers(this)
-        liveRssData = App.db.rssSourceDao.liveEnabled(searchKey).apply {
+        liveRssData = when {
+            searchKey.isNullOrEmpty() -> App.db.rssSourceDao.liveEnabled()
+            searchKey.startsWith("group:") -> {
+                val key = searchKey.substringAfter("group:")
+                App.db.rssSourceDao.liveEnabledByGroup("%$key%")
+            }
+            else -> App.db.rssSourceDao.liveEnabled("%$searchKey%")
+        }.apply {
             observe(viewLifecycleOwner, {
                 adapter.setItems(it)
             })

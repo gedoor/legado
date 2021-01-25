@@ -14,11 +14,11 @@ import kotlin.coroutines.CoroutineContext
 object Rss {
 
     fun getArticles(
+        scope: CoroutineScope,
         sortName: String,
         sortUrl: String,
         rssSource: RssSource,
         page: Int,
-        scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<RssResult> {
         return Coroutine.async(scope, context) {
@@ -35,10 +35,10 @@ object Rss {
     }
 
     fun getContent(
+        scope: CoroutineScope,
         rssArticle: RssArticle,
         ruleContent: String,
         rssSource: RssSource?,
-        scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {

@@ -309,7 +309,7 @@ class AnalyzeUrl(
         }
         return when (method) {
             RequestMethod.POST -> {
-                if (fieldMap.isNotEmpty()) {
+                if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                     RxHttp.postForm(url)
                         .setAssemblyEnabled(false)
                         .setOkClient(HttpHelper.getProxyClient(proxy))
@@ -338,7 +338,7 @@ class AnalyzeUrl(
         setCookie(tag)
         return when (method) {
             RequestMethod.POST -> {
-                if (fieldMap.isNotEmpty()) {
+                if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                     RxHttp.postForm(url)
                         .setAssemblyEnabled(false)
                         .setOkClient(HttpHelper.getProxyClient(proxy))

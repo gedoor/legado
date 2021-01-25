@@ -88,6 +88,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun searchFinish(searchBook: SearchBook) {
+        if (searchBooks.contains(searchBook)) return
         App.db.searchBookDao.insert(searchBook)
         if (screenKey.isEmpty()) {
             searchBooks.add(searchBook)
@@ -99,6 +100,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     private fun startSearch() {
         execute {
+            App.db.searchBookDao.clear(name, author)
+            searchBooks.clear()
+            upAdapter()
             bookSourceList.clear()
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(App.db.bookSourceDao.allEnabled)
@@ -137,7 +141,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         } else {
                             searchFinish(searchBook)
                         }
-                        return@onSuccess
                     }
                 }
             }

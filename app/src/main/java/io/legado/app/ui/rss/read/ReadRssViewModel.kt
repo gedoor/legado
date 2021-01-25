@@ -94,7 +94,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     }
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
-        Rss.getContent(rssArticle, ruleContent, rssSource, this)
+        Rss.getContent(this, rssArticle, ruleContent, rssSource)
             .onSuccess(IO) { body ->
                 rssArticle.description = body
                 App.db.rssArticleDao.insert(rssArticle)
