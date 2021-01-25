@@ -42,6 +42,7 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:key="dayThemeCategory"
         android:title="@string/day"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
@@ -97,6 +98,7 @@
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:key="nightThemeCategory"
         android:title="@string/night"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"

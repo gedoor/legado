@@ -30,7 +30,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
-import io.legado.app.ui.widget.prefs.IconListPreference
+import io.legado.app.ui.widget.prefs.PreferenceCategory
 import io.legado.app.utils.*
 import java.io.File
 
@@ -45,13 +45,18 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
         if (Build.VERSION.SDK_INT < 26) {
-            findPreference<IconListPreference>(PreferKey.launcherIcon)?.let {
-                preferenceScreen.removePreference(it)
-            }
+            preferenceScreen.removePreferenceRecursively(PreferKey.launcherIcon)
+        }
+        if (AppConfig.isGooglePlay) {
+            upPreferenceSummary(PreferKey.bgImage, getPrefString(PreferKey.bgImage))
+            upPreferenceSummary(PreferKey.bgImageN, getPrefString(PreferKey.bgImageN))
+        } else {
+            findPreference<PreferenceCategory>("dayThemeCategory")
+                ?.removePreferenceRecursively(PreferKey.bgImage)
+            findPreference<PreferenceCategory>("nightThemeCategory")
+                ?.removePreferenceRecursively(PreferKey.bgImageN)
         }
         upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
-        upPreferenceSummary(PreferKey.bgImage, getPrefString(PreferKey.bgImage))
-        upPreferenceSummary(PreferKey.bgImageN, getPrefString(PreferKey.bgImageN))
         findPreference<ColorPreference>(PreferKey.cBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
