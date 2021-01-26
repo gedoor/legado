@@ -18,7 +18,7 @@ import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toByteArray
 import java.io.File
 import java.net.URLEncoder
-import java.nio.charset.Charset
+import java.text.DateFormat
 import java.util.*
 
 @Keep
@@ -63,8 +63,8 @@ interface JsExtensions {
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url).type ?: return ""
         val zipPath = FileUtils.getPath(
-            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-            "${MD5Utils.md5Encode16(url)}.${type}"
+                FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+                "${MD5Utils.md5Encode16(url)}.${type}"
         )
         FileUtils.deleteFile(zipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
@@ -82,8 +82,8 @@ interface JsExtensions {
     fun unzipFile(zipPath: String): String {
         if (zipPath.isEmpty()) return ""
         val unzipPath = FileUtils.getPath(
-            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-            FileUtils.getNameExcludeExtension(zipPath)
+                FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+                FileUtils.getNameExcludeExtension(zipPath)
         )
         FileUtils.deleteFile(unzipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
@@ -104,8 +104,8 @@ interface JsExtensions {
             if (it != null) {
                 for (f in it) {
                     val charsetName = EncodingDetect.getEncode(f)
-                    contents.append(String(f.readBytes(), Charset.forName(charsetName)))
-                        .append("\n")
+                    contents.append(String(f.readBytes(), charset(charsetName)))
+                            .append("\n")
                 }
                 contents.deleteCharAt(contents.length - 1)
             }
@@ -115,16 +115,23 @@ interface JsExtensions {
     }
 
     /**
+     * js实现文件夹/文件的删除
+     */
+    fun deleteFolder(path: String) {
+        FileUtils.deleteFile(path)
+    }
+
+    /**
      * js实现重定向拦截,网络访问get
      */
     fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
         return Jsoup.connect(urlStr)
-            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
-            .ignoreContentType(true)
-            .followRedirects(false)
-            .headers(headers)
-            .method(Connection.Method.GET)
-            .execute()
+                .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+                .ignoreContentType(true)
+                .followRedirects(false)
+                .headers(headers)
+                .method(Connection.Method.GET)
+                .execute()
     }
 
     /**
@@ -132,13 +139,13 @@ interface JsExtensions {
      */
     fun post(urlStr: String, body: String, headers: Map<String, String>): Connection.Response {
         return Jsoup.connect(urlStr)
-            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
-            .ignoreContentType(true)
-            .followRedirects(false)
-            .requestBody(body)
-            .headers(headers)
-            .method(Connection.Method.POST)
-            .execute()
+                .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+                .ignoreContentType(true)
+                .followRedirects(false)
+                .requestBody(body)
+                .headers(headers)
+                .method(Connection.Method.POST)
+                .execute()
     }
 
     /**
@@ -202,6 +209,15 @@ interface JsExtensions {
         return dateFormat.format(Date(time))
     }
 
+    fun timeFormat(time: String): String {
+        val date = DateFormat.getDateTimeInstance().parse(time)
+        return if (date == null) {
+            ""
+        } else {
+            dateFormat.format(date)
+        }
+    }
+
     /**
      * utf8编码转gbk编码
      */
@@ -234,8 +250,18 @@ interface JsExtensions {
     /**
      * 读取本地文件
      */
-    fun readFile(path: String): ByteArray? {
+    fun readFile(path: String): ByteArray {
         return File(path).readBytes()
+    }
+
+    fun readTxtFile(path: String): String {
+        val f = File(path)
+        val charsetName = EncodingDetect.getEncode(f)
+        return String(f.readBytes(), charset(charsetName))
+    }
+
+    fun readTxtFile(path: String, charsetName: String): String {
+        return String(File(path).readBytes(), charset(charsetName))
     }
 
     /**
@@ -275,9 +301,9 @@ interface JsExtensions {
     }
 
     fun replaceFont(
-        text: String,
-        font1: QueryTTF?,
-        font2: QueryTTF?
+            text: String,
+            font1: QueryTTF?,
+            font2: QueryTTF?
     ): String {
         if (font1 == null || font2 == null) return text
         val contentArray = text.toCharArray()
