@@ -2,11 +2,14 @@ package io.legado.app.help
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.*
 import java.io.File
@@ -18,6 +21,16 @@ object ThemeConfig {
     val configList: ArrayList<Config> by lazy {
         val cList = getConfigs() ?: DefaultData.themeConfigs
         ArrayList(cList)
+    }
+
+    fun getBgImage(context: Context): Drawable? {
+        val bgPath = when (Theme.getTheme()) {
+            Theme.Light -> context.getPrefString(PreferKey.bgImage)
+            Theme.Dark -> context.getPrefString(PreferKey.bgImageN)
+            else -> null
+        }
+        if (bgPath.isNullOrBlank()) return null
+        return BitmapDrawable.createFromPath(bgPath)
     }
 
     fun upConfig() {
@@ -204,7 +217,6 @@ object ThemeConfig {
         var primaryColor: String,
         var accentColor: String,
         var backgroundColor: String,
-        var backgroundImage: String? = null,
         var bottomBackground: String
     )
 

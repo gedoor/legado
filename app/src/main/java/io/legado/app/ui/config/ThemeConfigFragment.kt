@@ -192,6 +192,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImage)
+                        upTheme(false)
                     } else {
                         selectImage(requestCodeBgImage)
                     }
@@ -203,6 +204,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImageN)
+                        upTheme(true)
                     } else {
                         selectImage(requestCodeBgImageN)
                     }
@@ -262,7 +264,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         }
     }
 
-    private fun setBgFromUri(uri: Uri, preferenceKey: String) {
+    private fun setBgFromUri(uri: Uri, preferenceKey: String, success: () -> Unit) {
         if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
             doc?.name?.let {
@@ -273,7 +275,8 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }.getOrNull()?.let { byteArray ->
                     file.writeBytes(byteArray)
                     putPrefString(preferenceKey, file.absolutePath)
-
+                    upPreferenceSummary(preferenceKey, file.absolutePath)
+                    success()
                 } ?: toast("获取文件出错")
             }
         } else {
@@ -291,7 +294,8 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                             file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
                             file.writeBytes(imgFile.readBytes())
                             putPrefString(preferenceKey, file.absolutePath)
-
+                            upPreferenceSummary(preferenceKey, file.absolutePath)
+                            success()
                         }
                     }
                 }
@@ -304,12 +308,16 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         when (requestCode) {
             requestCodeBgImage -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    setBgFromUri(uri, PreferKey.bgImage)
+                    setBgFromUri(uri, PreferKey.bgImage) {
+                        upTheme(false)
+                    }
                 }
             }
             requestCodeBgImageN -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    setBgFromUri(uri, PreferKey.bgImageN)
+                    setBgFromUri(uri, PreferKey.bgImageN) {
+                        upTheme(true)
+                    }
                 }
             }
         }

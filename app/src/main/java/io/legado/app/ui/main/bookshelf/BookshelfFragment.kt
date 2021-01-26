@@ -86,12 +86,12 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
             R.id.menu_add_url -> addBookByUrl()
             R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity>(
-                Pair("groupId", selectedGroup.groupId ?: 0),
-                Pair("groupName", selectedGroup.groupName ?: 0)
+                Pair("groupId", selectedGroup.groupId),
+                Pair("groupName", selectedGroup.groupName)
             )
             R.id.menu_download -> startActivity<CacheActivity>(
-                Pair("groupId", selectedGroup.groupId ?: 0),
-                Pair("groupName", selectedGroup.groupName ?: 0)
+                Pair("groupId", selectedGroup.groupId),
+                Pair("groupName", selectedGroup.groupName)
             )
             R.id.menu_export_bookshelf -> {
                 val fragment = fragmentMap[selectedGroup.groupId]

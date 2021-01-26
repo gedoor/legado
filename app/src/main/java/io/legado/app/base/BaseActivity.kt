@@ -16,6 +16,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
@@ -149,6 +150,11 @@ abstract class BaseActivity<VB : ViewBinding>(
                     setTheme(R.style.AppTheme_Dark)
                 }
                 ATH.applyBackgroundTint(window.decorView)
+            }
+        }
+        if (AppConfig.isGooglePlay) {
+            ThemeConfig.getBgImage(this)?.let {
+                window.decorView.background = it
             }
         }
     }
