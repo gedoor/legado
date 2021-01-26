@@ -107,7 +107,21 @@ class CheckSourceService : BaseService() {
     fun check(source: BookSource) {
         execute(context = searchCoroutine) {
             val webBook = WebBook(source)
-            val books = webBook.searchBookAwait(this, CheckSource.keyword)
+            var books = webBook.searchBookAwait(this, CheckSource.keyword)
+            if (books.isEmpty()) {
+                val exs = source.getExploreKinds()
+                if (exs.isEmpty()) {
+                    throw Exception("搜索内容为空并且没有发现")
+                }
+                var url: String? = null
+                for (ex in exs) {
+                    url = ex.url
+                    if (!url.isNullOrBlank()) {
+                        break
+                    }
+                }
+                books = webBook.exploreBookAwait(this, url!!)
+            }
             val book = webBook.getBookInfoAwait(this, books.first().toBook())
             val toc = webBook.getChapterListAwait(this, book)
             val content = webBook.getContentAwait(this, book, toc.first())
