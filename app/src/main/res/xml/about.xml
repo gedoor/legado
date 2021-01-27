@@ -56,7 +56,7 @@
         <io.legado.app.ui.widget.prefs.Preference
             android:key="discord"
             android:title="Discord"
-            android:summary="@string/tg_url"
+            android:summary="@string/discord_url"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
