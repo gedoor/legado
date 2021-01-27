@@ -17,17 +17,20 @@ import io.legado.app.utils.postEvent
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import org.jetbrains.anko.collections.forEachWithIndex
+import org.jetbrains.anko.runOnUiThread
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
+import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.*
 
 class HttpReadAloudService : BaseReadAloudService(),
-    MediaPlayer.OnPreparedListener,
-    MediaPlayer.OnErrorListener,
-    MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnErrorListener,
+        MediaPlayer.OnCompletionListener {
 
     private val mediaPlayer = MediaPlayer()
     private lateinit var ttsFolder: String
@@ -84,7 +87,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 contentList.forEachWithIndex { index, item ->
                     if (isActive) {
                         val fileName =
-                            md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), item)
+                                md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), item)
 
                         if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
                             if (index == nowSpeak) {
@@ -100,27 +103,43 @@ class HttpReadAloudService : BaseReadAloudService(),
                             try {
                                 createSpeakCacheFile(fileName)
                                 AnalyzeUrl(
-                                    it.url,
-                                    speakText = item,
-                                    speakSpeed = AppConfig.ttsSpeechRate
+                                        it.url,
+                                        speakText = item,
+                                        speakSpeed = AppConfig.ttsSpeechRate
                                 ).getByteArray().let { bytes ->
                                     ensureActive()
-                                    val file = getSpeakFileAsMd5(fileName)
+
+                                    val file = getSpeakFileAsMd5IfNotExist(fileName)
                                     //val file = getSpeakFile(index)
                                     file.writeBytes(bytes)
                                     removeSpeakCacheFile(fileName)
+
+                                    val fis = FileInputStream(file)
+
+                                    // 用来检测下载的文件是否为可正常播放的音频 （如果不是的话抛出异常，没找到更秒的办法，先这么着吧）
+                                    MediaPlayer().apply {
+                                        setDataSource(fis.fd)
+                                        prepare()
+                                        release()
+                                    }
                                     if (index == nowSpeak) {
                                         @Suppress("BlockingMethodInNonBlockingContext")
-                                        val fis = FileInputStream(file)
                                         playAudio(fis.fd)
                                     }
                                 }
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
-                                // delay(2000)
-                                // downloadAudio()
+                                runOnUiThread { toast("tts接口超时，尝试重新获取") }
+                                downloadAudio()
                             } catch (e: ConnectException) {
                                 removeSpeakCacheFile(fileName)
+                                runOnUiThread { toast("网络错误") }
+                            } catch (e: IOException) {
+                                val file = getSpeakFileAsMd5(fileName)
+                                if (file.exists()) {
+                                    FileUtils.deleteFile(file.absolutePath)
+                                }
+                                runOnUiThread { toast("tts文件解析错误") }
                             } catch (e: Exception) {
                                 removeSpeakCacheFile(fileName)
                             }
@@ -152,20 +171,23 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun hasSpeakFile(name: String) =
-        FileUtils.exist("${speakFilePath()}$name.mp3")
+            FileUtils.exist("${speakFilePath()}$name.mp3")
 
     private fun hasSpeakCacheFile(name: String) =
-        FileUtils.exist("${speakFilePath()}$name.mp3.cache")
+            FileUtils.exist("${speakFilePath()}$name.mp3.cache")
 
     private fun createSpeakCacheFile(name: String): File =
-        FileUtils.createFileWithReplace("${speakFilePath()}$name.mp3.cache")
+            FileUtils.createFileWithReplace("${speakFilePath()}$name.mp3.cache")
 
     private fun removeSpeakCacheFile(name: String) {
         FileUtils.delete("${speakFilePath()}$name.mp3.cache")
     }
 
     private fun getSpeakFileAsMd5(name: String): File =
-        FileUtils.createFileIfNotExist("${speakFilePath()}$name.mp3")
+            FileUtils.getFile(File(speakFilePath()), "$name.mp3")
+
+    private fun getSpeakFileAsMd5IfNotExist(name: String): File =
+            FileUtils.createFileIfNotExist("${speakFilePath()}$name.mp3")
 
     private fun removeCacheFile() {
         FileUtils.listDirsAndFiles(speakFilePath())?.forEach {
@@ -174,7 +196,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             }
             if (Regex(""".+\.mp3$""").matches(it.name)) { //mp3缓存文件
                 val reg =
-                    """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
+                        """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
                 if (!reg.matches(it.name)) {
                     FileUtils.deleteFile(it.absolutePath)
                 }
