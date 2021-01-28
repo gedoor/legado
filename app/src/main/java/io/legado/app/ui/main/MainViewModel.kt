@@ -76,7 +76,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 App.db.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
                     val webBook = WebBook(bookSource)
                     webBook.getChapterList(this, book, context = upTocPool)
-                        .timeout(300000)
+                        .timeout(60000)
                         .onSuccess(IO) {
                             App.db.bookDao.update(book)
                             App.db.bookChapterDao.delByBook(book.bookUrl)
