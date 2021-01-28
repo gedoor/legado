@@ -42,9 +42,13 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     }
 
     override fun onMessage(message: NanoWSD.WebSocketFrame) {
-        if (!message.textPayload.isJson()) return
         launch(IO) {
             kotlin.runCatching {
+                if (!message.textPayload.isJson()) {
+                    send("数据必须为Json格式")
+                    close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
+                    return@launch
+                }
                 val debugBean = GSON.fromJsonObject<Map<String, String>>(message.textPayload)
                 if (debugBean != null) {
                     val tag = debugBean["tag"]
