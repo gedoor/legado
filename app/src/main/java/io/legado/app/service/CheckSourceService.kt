@@ -128,7 +128,7 @@ class CheckSourceService : BaseService() {
             if (content.isBlank()) {
                 throw Exception("正文内容为空")
             }
-        }.timeout(60000L)
+        }.timeout(180000L)
             .onError {
                 source.addGroup("失效")
                 source.bookSourceComment =
