@@ -114,13 +114,6 @@ interface JsExtensions {
     }
 
     /**
-     * js实现文件夹/文件的删除
-     */
-    fun deleteFolder(path: String) {
-        FileUtils.deleteFile(path)
-    }
-
-    /**
      * js实现重定向拦截,网络访问get
      */
     fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
