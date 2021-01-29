@@ -32,6 +32,7 @@ import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -190,6 +191,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_import_source_local -> FilePicker
                 .selectFile(this, importRequestCode, allowExtensions = arrayOf("txt", "json"))
             R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(importRequestCodeQr)
+            R.id.menu_help -> showHelp()
             else -> if (item.groupId == R.id.replace_group) {
                 searchView.setQuery("group:${item.title}", true)
             }
@@ -241,6 +243,11 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             }
             cancelButton()
         }.show()
+    }
+
+    private fun showHelp() {
+        val text = String(assets.open("help/replaceRuleHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
