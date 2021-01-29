@@ -29,6 +29,7 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
@@ -36,6 +37,7 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -52,7 +54,8 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         get() = getViewModel(ReplaceRuleViewModel::class.java)
     private val importRecordKey = "replaceRuleRecordKey"
     private val importRequestCode = 132
-    private val exportRequestCode = 65
+    private val importRequestCodeQr = 133
+    private val exportRequestCode = 234
     private lateinit var adapter: ReplaceRuleAdapter
     private lateinit var searchView: SearchView
     private var groups = hashSetOf<String>()
@@ -186,6 +189,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_local -> FilePicker
                 .selectFile(this, importRequestCode, allowExtensions = arrayOf("txt", "json"))
+            R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(importRequestCodeQr)
             else -> if (item.groupId == R.id.replace_group) {
                 searchView.setQuery("group:${item.title}", true)
             }
@@ -261,6 +265,11 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                     }.onFailure {
                         toast("readTextError:${it.localizedMessage}")
                     }
+                }
+            }
+            importRequestCodeQr -> if (resultCode == Activity.RESULT_OK) {
+                data?.getStringExtra("result")?.let {
+                    startActivity<ImportReplaceRuleActivity>("source" to it)
                 }
             }
             exportRequestCode -> if (resultCode == RESULT_OK) {
