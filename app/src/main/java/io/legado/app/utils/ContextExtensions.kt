@@ -18,9 +18,6 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder
-import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import org.jetbrains.anko.defaultSharedPreferences
@@ -104,9 +101,7 @@ val Context.navigationBarHeight: Int
 
 @SuppressLint("SetWorldReadable")
 fun Context.shareWithQr(title: String, text: String) {
-    QRCodeEncoder.HINTS[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
-    val bitmap = QRCodeEncoder.syncEncodeQRCode(text, 600)
-    QRCodeEncoder.HINTS[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.H
+    val bitmap = QRCodeUtils.createQRCode(text)
     if (bitmap == null) {
         toast(R.string.text_too_long_qr_error)
     } else {

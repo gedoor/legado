@@ -1,11 +1,8 @@
 package io.legado.app.utils
 
 import android.content.Context
-import android.graphics.Bitmap
+import android.graphics.*
 import android.graphics.Bitmap.Config
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
@@ -219,6 +216,30 @@ object BitmapUtils {
                 upperBound
             }
         }
+    }
+
+    fun changeBitmapSize(bitmap: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+
+        val width = bitmap.width
+        val height = bitmap.height
+
+        //计算压缩的比率
+        var scaleWidth = newWidth.toFloat() / width
+        var scaleHeight = newHeight.toFloat() / height
+
+        if (scaleWidth > scaleHeight) {
+            scaleWidth = scaleHeight
+        } else {
+            scaleHeight = scaleWidth
+        }
+
+        //获取想要缩放的matrix
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+
+        //获取新的bitmap
+        return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
+
     }
 
     /**
