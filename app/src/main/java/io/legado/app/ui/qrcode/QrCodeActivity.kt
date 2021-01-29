@@ -24,8 +24,7 @@ class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), OnScanResul
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val fTag = "qrCodeFragment"
-        var qrCodeFragment = supportFragmentManager.findFragmentByTag(fTag)
-        if (qrCodeFragment == null) qrCodeFragment = QrCodeFragment()
+        val qrCodeFragment = QrCodeFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fl_content, qrCodeFragment, fTag)
             .commit()
