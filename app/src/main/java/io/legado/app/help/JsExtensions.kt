@@ -18,7 +18,6 @@ import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toByteArray
 import java.io.File
 import java.net.URLEncoder
-import java.text.DateFormat
 import java.util.*
 
 @Keep
@@ -115,13 +114,6 @@ interface JsExtensions {
     }
 
     /**
-     * js实现文件夹/文件的删除
-     */
-    fun deleteFolder(path: String) {
-        FileUtils.deleteFile(path)
-    }
-
-    /**
      * js实现重定向拦截,网络访问get
      */
     fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
@@ -207,15 +199,6 @@ interface JsExtensions {
      */
     fun timeFormat(time: Long): String {
         return dateFormat.format(Date(time))
-    }
-
-    fun timeFormat(time: String): String {
-        val date = DateFormat.getDateTimeInstance().parse(time)
-        return if (date == null) {
-            ""
-        } else {
-            dateFormat.format(date)
-        }
     }
 
     /**
