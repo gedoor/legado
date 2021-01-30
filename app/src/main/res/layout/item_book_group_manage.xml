@@ -21,12 +21,9 @@
         android:padding="8dp"
         android:text="@string/edit" />
 
-    <TextView
-        android:id="@+id/tv_del"
+    <io.legado.app.lib.theme.view.ATESwitch
+        android:id="@+id/sw_show"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:padding="8dp"
-        android:text="@string/delete" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
