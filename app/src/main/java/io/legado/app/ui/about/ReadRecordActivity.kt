@@ -59,7 +59,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         readRecord.tvBookName.setText(R.string.all_read_time)
         adapter = RecordAdapter(this@ReadRecordActivity)
         recyclerView.adapter = adapter
-        readRecord.ivRemove.onClick {
+        readRecord.tvRemove.onClick {
             alert(R.string.delete, R.string.sure_del) {
                 okButton {
                     App.db.readRecordDao.clear()
@@ -112,7 +112,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemReadRecordBinding) {
             binding.apply {
-                ivRemove.onClick {
+                tvRemove.onClick {
                     getItem(holder.layoutPosition)?.let { item ->
                         sureDelAlert(item)
                     }
