@@ -142,7 +142,11 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         val h = if (hours > 0) "${hours}小时" else ""
         val m = if (minutes > 0) "${minutes}分钟" else ""
         val s = if (seconds > 0) "${seconds}秒" else ""
-        return "$d$h$m$s"
+        var time = "$d$h$m$s"
+        if (time.isBlank()) {
+            time = "0秒"
+        }
+        return time
     }
 
 }
