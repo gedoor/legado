@@ -14,6 +14,7 @@ import io.legado.app.utils.visible
 import org.jetbrains.anko.sdk27.listeners.onClick
 import org.jetbrains.anko.toast
 import java.io.File
+import java.net.URLDecoder
 
 class FontAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<DocItem, ItemFontBinding>(context) {
@@ -50,7 +51,9 @@ class FontAdapter(context: Context, val callBack: CallBack) :
             }
             tvFont.text = item.name
             root.onClick { callBack.onClick(item) }
-            if (item.name == callBack.curFilePath.substringAfterLast(File.separator)) {
+            if (item.name == URLDecoder.decode(callBack.curFilePath, "utf-8")
+                    .substringAfterLast(File.separator)
+            ) {
                 ivChecked.visible()
             } else {
                 ivChecked.invisible()
