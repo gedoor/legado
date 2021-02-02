@@ -116,12 +116,6 @@ class HttpReadAloudService : BaseReadAloudService(),
 
                                     val fis = FileInputStream(file)
 
-                                    // 用来检测下载的文件是否为可正常播放的音频 （如果不是的话抛出异常，没找到更秒的办法，先这么着吧）
-                                    MediaPlayer().apply {
-                                        setDataSource(fis.fd)
-                                        prepare()
-                                        release()
-                                    }
                                     if (index == nowSpeak) {
                                         @Suppress("BlockingMethodInNonBlockingContext")
                                         playAudio(fis.fd)
