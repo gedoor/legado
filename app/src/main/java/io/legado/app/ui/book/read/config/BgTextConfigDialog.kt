@@ -201,6 +201,11 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun exportConfig(uri: Uri) {
+        val exportFileName = if (ReadBookConfig.config.name.isBlank()) {
+            configFileName
+        } else {
+            ReadBookConfig.config.name
+        }
         execute {
             val exportFiles = arrayListOf<File>()
             val configDirPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig")
@@ -253,18 +258,18 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 if (uri.isContentScheme()) {
                     DocumentFile.fromTreeUri(requireContext(), uri)?.let { treeDoc ->
                         treeDoc.findFile(configFileName)?.delete()
-                        treeDoc.createFile("", configFileName)
+                        treeDoc.createFile("", exportFileName)
                             ?.writeBytes(requireContext(), File(configZipPath).readBytes())
                     }
                 } else {
-                    val exportPath = FileUtils.getPath(File(uri.path!!), configFileName)
+                    val exportPath = FileUtils.getPath(File(uri.path!!), exportFileName)
                     FileUtils.deleteFile(exportPath)
                     FileUtils.createFileIfNotExist(exportPath)
                         .writeBytes(File(configZipPath).readBytes())
                 }
             }
         }.onSuccess {
-            toast("导出成功, 文件名为 $configFileName")
+            toast("导出成功, 文件名为 $exportFileName")
         }.onError {
             it.printStackTrace()
             longToast("导出失败:${it.localizedMessage}")
