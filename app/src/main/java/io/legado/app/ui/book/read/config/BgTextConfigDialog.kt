@@ -204,7 +204,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         val exportFileName = if (ReadBookConfig.config.name.isBlank()) {
             configFileName
         } else {
-            ReadBookConfig.config.name
+            "${ReadBookConfig.config.name}.zip"
         }
         execute {
             val exportFiles = arrayListOf<File>()
@@ -257,7 +257,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
             if (ZipUtils.zipFiles(exportFiles, File(configZipPath))) {
                 if (uri.isContentScheme()) {
                     DocumentFile.fromTreeUri(requireContext(), uri)?.let { treeDoc ->
-                        treeDoc.findFile(configFileName)?.delete()
+                        treeDoc.findFile(exportFileName)?.delete()
                         treeDoc.createFile("", exportFileName)
                             ?.writeBytes(requireContext(), File(configZipPath).readBytes())
                     }
