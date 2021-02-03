@@ -26,8 +26,7 @@ import io.legado.app.utils.observeEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.sdk27.listeners.onClick
-
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class SearchContentActivity :
     VMBaseActivity<ActivitySearchContentBinding, SearchContentViewModel>(),

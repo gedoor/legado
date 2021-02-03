@@ -9,8 +9,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ItemImportBookBinding
 import io.legado.app.utils.*
-import org.jetbrains.anko.sdk27.listeners.onClick
-
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<DocItem, ItemImportBookBinding>(context) {

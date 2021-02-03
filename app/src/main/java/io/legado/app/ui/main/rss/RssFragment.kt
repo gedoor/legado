@@ -28,7 +28,7 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 /**
  * 订阅界面

@@ -21,8 +21,8 @@ import io.legado.app.lib.theme.*
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 /**
  * 阅读界面菜单
@@ -212,9 +212,8 @@ class ReadMenu @JvmOverloads constructor(
                 callBack.onClickReadAloud()
             }
         }
-        llReadAloud.onLongClick {
+        llReadAloud.onLongClick(returnValue = true) {
             runMenuOut { callBack.showReadAloudDialog() }
-            true
         }
         //界面
         llFont.onClick {

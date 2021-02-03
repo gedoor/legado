@@ -27,7 +27,7 @@ import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)

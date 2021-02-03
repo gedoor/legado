@@ -16,7 +16,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class ClickActionConfigDialog : BaseDialogFragment() {
     private val binding by viewBinding(DialogClickActionConfigBinding::bind)

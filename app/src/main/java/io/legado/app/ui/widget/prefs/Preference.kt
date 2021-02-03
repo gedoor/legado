@@ -18,7 +18,7 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.utils.ColorUtils
 import org.jetbrains.anko.layoutInflater
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 import kotlin.math.roundToInt
 
 class Preference(context: Context, attrs: AttributeSet) :
@@ -117,9 +117,8 @@ class Preference(context: Context, attrs: AttributeSet) :
             isBottomBackground = isBottomBackground
         )
         super.onBindViewHolder(holder)
-        holder?.itemView?.onLongClick {
+        holder?.itemView?.onLongClick(returnValue = true) {
             onLongClick?.invoke()
-            true
         }
     }
 

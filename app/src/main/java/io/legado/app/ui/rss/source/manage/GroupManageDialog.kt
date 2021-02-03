@@ -24,7 +24,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: RssSourceViewModel

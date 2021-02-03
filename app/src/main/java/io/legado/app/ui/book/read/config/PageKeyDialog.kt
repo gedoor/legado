@@ -10,8 +10,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.putPrefString
-import org.jetbrains.anko.sdk27.listeners.onClick
-
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDialog) {
 

@@ -21,7 +21,7 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.postEvent
 import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.toast
 import kotlin.math.abs

@@ -11,7 +11,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RuleSub
 import io.legado.app.databinding.ItemRuleSubBinding
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class RuleSubAdapter(context: Context, val callBack: Callback) :
     RecyclerAdapter<RuleSub, ItemRuleSubBinding>(context),

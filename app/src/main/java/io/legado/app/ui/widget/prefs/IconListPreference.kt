@@ -23,7 +23,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.getSize
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 
 class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {

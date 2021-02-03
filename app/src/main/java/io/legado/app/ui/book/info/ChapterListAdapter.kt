@@ -8,7 +8,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.lib.theme.accentColor
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.textColorResource
 
 class ChapterListAdapter(context: Context, var callBack: CallBack) :

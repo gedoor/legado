@@ -13,7 +13,7 @@ import io.legado.app.ui.filepicker.entity.FileItem
 import io.legado.app.ui.filepicker.utils.ConvertUtils
 import io.legado.app.ui.filepicker.utils.FilePickerIcon
 import io.legado.app.utils.FileUtils
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import java.io.File
 import java.util.*
 

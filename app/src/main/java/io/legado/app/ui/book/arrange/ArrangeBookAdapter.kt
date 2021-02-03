@@ -14,7 +14,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import java.util.*
 
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :

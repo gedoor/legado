@@ -32,7 +32,7 @@ import io.legado.app.utils.getSize
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 

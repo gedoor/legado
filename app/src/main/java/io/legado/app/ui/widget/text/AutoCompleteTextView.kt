@@ -15,7 +15,7 @@ import io.legado.app.R
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 @Suppress("unused")
 class AutoCompleteTextView @JvmOverloads constructor(

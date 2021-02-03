@@ -21,7 +21,7 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class ReadAloudDialog : BaseDialogFragment() {
     private var callBack: CallBack? = null

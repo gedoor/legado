@@ -24,9 +24,9 @@ import io.legado.app.utils.dp
 import io.legado.app.utils.getIndexById
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onCheckedChange
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
+import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     private val binding by viewBinding(DialogReadBookStyleBinding::bind)
@@ -240,11 +240,9 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
                         changeBg(holder.layoutPosition)
                     }
                 }
-                ivStyle.onLongClick {
+                ivStyle.onLongClick(returnValue = ivStyle.isInView) {
                     if (ivStyle.isInView) {
                         showBgTextConfig(holder.layoutPosition)
-                    } else {
-                        false
                     }
                 }
             }

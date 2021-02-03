@@ -153,7 +153,7 @@ dependencies {
     //anko
     def anko_version = '0.10.8'
     implementation "org.jetbrains.anko:anko-sdk27:$anko_version"
-    implementation "org.jetbrains.anko:anko-sdk27-listeners:$anko_version"
+    implementation "org.jetbrains.anko:anko-sdk27-coroutines:$anko_version"
 
     //liveEventBus
     implementation 'com.jeremyliao:live-event-bus-x:1.5.7'

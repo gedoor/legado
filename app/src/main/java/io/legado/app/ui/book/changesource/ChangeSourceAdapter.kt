@@ -13,8 +13,8 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 
 class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
@@ -70,9 +70,8 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
                 callBack.changeTo(it)
             }
         }
-        holder.itemView.onLongClick {
+        holder.itemView.onLongClick(returnValue = true) {
             showMenu(holder.itemView, getItem(holder.layoutPosition))
-            true
         }
     }
 

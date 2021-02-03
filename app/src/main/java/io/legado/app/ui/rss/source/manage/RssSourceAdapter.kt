@@ -16,7 +16,7 @@ import io.legado.app.databinding.ItemRssSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<RssSource, ItemRssSourceBinding>(context),

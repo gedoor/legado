@@ -28,8 +28,8 @@ import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 import org.jetbrains.anko.startActivityForResult
 import java.util.*
 
@@ -83,15 +83,14 @@ class AudioPlayActivity :
         binding.fabPlayStop.onClick {
             playButton()
         }
-        binding.fabPlayStop.onLongClick {
-            AudioPlay.stop(this)
-            true
+        binding.fabPlayStop.onLongClick(returnValue = true) {
+            AudioPlay.stop(this@AudioPlayActivity)
         }
         binding.ivSkipNext.onClick {
-            AudioPlay.next(this)
+            AudioPlay.next(this@AudioPlayActivity)
         }
         binding.ivSkipPrevious.onClick {
-            AudioPlay.prev(this)
+            AudioPlay.prev(this@AudioPlayActivity)
         }
         binding.playerProgress.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -120,13 +119,13 @@ class AudioPlayActivity :
             binding.ivFastForward.invisible()
         }
         binding.ivFastForward.onClick {
-            AudioPlay.adjustSpeed(this, 0.1f)
+            AudioPlay.adjustSpeed(this@AudioPlayActivity, 0.1f)
         }
         binding.ivFastRewind.onClick {
-            AudioPlay.adjustSpeed(this, -0.1f)
+            AudioPlay.adjustSpeed(this@AudioPlayActivity, -0.1f)
         }
         binding.ivTimer.onClick {
-            AudioPlay.addTimer(this)
+            AudioPlay.addTimer(this@AudioPlayActivity)
         }
     }
 

@@ -15,7 +15,7 @@ import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.*
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.toast
 import java.io.File
 

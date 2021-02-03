@@ -14,8 +14,8 @@ import io.legado.app.help.ReadTipConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onCheckedChange
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class TipConfigDialog : BaseDialogFragment() {
 

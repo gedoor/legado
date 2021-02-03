@@ -11,7 +11,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
     DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {

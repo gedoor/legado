@@ -11,7 +11,7 @@ import io.legado.app.utils.DocItem
 import io.legado.app.utils.RealPathUtil
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.toast
 import java.io.File
 import java.net.URLDecoder

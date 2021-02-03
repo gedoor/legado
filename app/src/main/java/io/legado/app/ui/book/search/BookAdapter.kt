@@ -6,7 +6,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemFilletTextBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class BookAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<Book, ItemFilletTextBinding>(context) {

@@ -33,9 +33,8 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import java.util.*
-
 
 class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val importTocRuleKey = "tocRuleUrl"

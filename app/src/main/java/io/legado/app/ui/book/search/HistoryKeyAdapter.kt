@@ -10,8 +10,8 @@ import io.legado.app.ui.widget.anima.explosion_field.ExplosionField
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 
 class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
@@ -41,7 +41,7 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
                     callBack.searchHistory(it.word)
                 }
             }
-            onLongClick {
+            onLongClick(returnValue = true) {
                 it?.let {
                     explosionField.explode(it, true)
                 }
@@ -50,7 +50,6 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
                         App.db.searchKeywordDao.delete(it)
                     }
                 }
-                true
             }
         }
     }

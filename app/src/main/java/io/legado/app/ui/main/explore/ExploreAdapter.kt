@@ -19,9 +19,8 @@ import io.legado.app.utils.dp
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
-
+import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 class ExploreAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
     RecyclerAdapter<BookSource, ItemFindBookBinding>(context) {

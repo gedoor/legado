@@ -9,8 +9,8 @@ import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfGridBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.invisible
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
     BaseBooksAdapter<ItemBookshelfGridBinding>(context) {
@@ -61,11 +61,10 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                 }
             }
 
-            onLongClick {
+            onLongClick(returnValue = true) {
                 getItem(holder.layoutPosition)?.let {
                     callBack.openBookInfo(it)
                 }
-                true
             }
         }
     }

@@ -14,7 +14,7 @@ import io.legado.app.databinding.ItemRssArticle1Binding
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.textColorResource
 
 class RssArticlesAdapter1(context: Context, callBack: CallBack) :

@@ -9,7 +9,7 @@ import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.postEvent
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import java.io.File
 
 class BgAdapter(context: Context, val textColor: Int) :

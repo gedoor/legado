@@ -9,7 +9,7 @@ import io.legado.app.databinding.ItemSearchListBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.hexString
-import org.jetbrains.anko.sdk27.listeners.onClick
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class SearchContentAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<SearchResult, ItemSearchListBinding>(context) {
