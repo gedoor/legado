@@ -135,15 +135,15 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FilePickerDialog.C
             when (preference?.key) {
                 "bookSourceManage" -> startActivity<BookSourceActivity>()
                 "replaceManage" -> startActivity<ReplaceRuleActivity>()
-                "setting" -> startActivity<ConfigActivity>(
-                    Pair("configType", ConfigViewModel.TYPE_CONFIG)
-                )
-                "web_dav_setting" -> startActivity<ConfigActivity>(
-                    Pair("configType", ConfigViewModel.TYPE_WEB_DAV_CONFIG)
-                )
-                "theme_setting" -> startActivity<ConfigActivity>(
-                    Pair("configType", ConfigViewModel.TYPE_THEME_CONFIG)
-                )
+                "setting" -> startActivity<ConfigActivity> {
+                    putExtra("configType", ConfigViewModel.TYPE_CONFIG)
+                }
+                "web_dav_setting" -> startActivity<ConfigActivity> {
+                    putExtra("configType", ConfigViewModel.TYPE_WEB_DAV_CONFIG)
+                }
+                "theme_setting" -> startActivity<ConfigActivity> {
+                    putExtra("configType", ConfigViewModel.TYPE_THEME_CONFIG)
+                }
                 "readRecord" -> startActivity<ReadRecordActivity>()
                 "donate" -> startActivity<DonateActivity>()
                 "about" -> startActivity<AboutActivity>()

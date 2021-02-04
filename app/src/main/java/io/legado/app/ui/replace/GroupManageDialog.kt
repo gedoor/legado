@@ -101,11 +101,11 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     @SuppressLint("InflateParams")
     private fun editGroup(group: String) {
         alert(title = getString(R.string.group_edit)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-            customView = alertBinding.apply {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "分组名称"
                 editView.setText(group)
-            }.root
+            }
+            customView { alertBinding.root }
             yesButton {
                 viewModel.upGroup(group, alertBinding.editView.text?.toString())
             }

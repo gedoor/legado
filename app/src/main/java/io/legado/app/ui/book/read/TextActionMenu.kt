@@ -25,7 +25,6 @@ import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.utils.*
-import org.jetbrains.anko.share
 import java.util.*
 
 @SuppressLint("RestrictedApi")

@@ -14,10 +14,10 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.startActivityForResult
 
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.startActivityForResult
 
 class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookSourceDebugModel>() {
 

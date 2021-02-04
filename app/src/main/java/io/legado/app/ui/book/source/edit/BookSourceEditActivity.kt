@@ -21,6 +21,7 @@ import io.legado.app.data.entities.rule.*
 import io.legado.app.databinding.ActivityBookSourceEditBinding
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
@@ -31,7 +32,6 @@ import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
-import org.jetbrains.anko.*
 import kotlin.math.abs
 
 class BookSourceEditActivity :
@@ -90,7 +90,9 @@ class BookSourceEditActivity :
             R.id.menu_debug_source -> getSource().let { source ->
                 if (checkSource(source)) {
                     viewModel.save(source) {
-                        startActivity<BookSourceDebugActivity>(Pair("key", source.bookSourceUrl))
+                        startActivity<BookSourceDebugActivity> {
+                            putExtra("key", source.bookSourceUrl)
+                        }
                     }
                 }
             }
@@ -108,10 +110,10 @@ class BookSourceEditActivity :
                     if (it.loginUrl.isNullOrEmpty()) {
                         toastOnUi(R.string.source_no_login)
                     } else {
-                        startActivity<SourceLogin>(
-                            Pair("sourceUrl", it.bookSourceUrl),
-                            Pair("loginUrl", it.loginUrl)
-                        )
+                        startActivity<SourceLogin> {
+                            putExtra("sourceUrl", it.bookSourceUrl)
+                            putExtra("loginUrl", it.loginUrl)
+                        }
                     }
                 }
             }
@@ -145,7 +147,7 @@ class BookSourceEditActivity :
         val source = getSource()
         if (!source.equal(viewModel.bookSource ?: BookSource())) {
             alert(R.string.exit) {
-                messageResource = R.string.exit_no_save
+                setMessage(R.string.exit_no_save)
                 positiveButton(R.string.yes)
                 negativeButton(R.string.no) {
                     super.finish()
@@ -449,7 +451,7 @@ class BookSourceEditActivity :
             val rect = Rect()
             // 获取当前页面窗口的显示范围
             window.decorView.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = this@BookSourceEditActivity.displayMetrics.heightPixels
+            val screenHeight = this@BookSourceEditActivity.getSize().heightPixels
             val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
             val preShowing = mIsSoftKeyBoardShowing
             if (abs(keyboardHeight) > screenHeight / 5) {

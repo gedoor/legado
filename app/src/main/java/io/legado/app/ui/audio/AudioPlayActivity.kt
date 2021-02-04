@@ -29,7 +29,7 @@ import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
-import org.jetbrains.anko.startActivityForResult
+import splitties.views.onLongClick
 import java.util.*
 
 /**
@@ -82,9 +82,8 @@ class AudioPlayActivity :
         binding.fabPlayStop.setOnClickListener {
             playButton()
         }
-        binding.fabPlayStop.setOnLongClickListener {
+        binding.fabPlayStop.onLongClick {
             AudioPlay.stop(this@AudioPlayActivity)
-            true
         }
         binding.ivSkipNext.setOnClickListener {
             AudioPlay.next(this@AudioPlayActivity)
@@ -108,10 +107,9 @@ class AudioPlayActivity :
         })
         binding.ivChapter.setOnClickListener {
             AudioPlay.book?.let {
-                startActivityForResult<ChapterListActivity>(
-                    requestCodeChapter,
-                    Pair("bookUrl", it.bookUrl)
-                )
+                startActivityForResult<ChapterListActivity>(requestCodeChapter) {
+                    putExtra("bookUrl", it.bookUrl)
+                }
             }
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -165,7 +163,7 @@ class AudioPlayActivity :
         AudioPlay.book?.let {
             if (!AudioPlay.inBookshelf) {
                 alert(title = getString(R.string.add_to_shelf)) {
-                    message = getString(R.string.check_add_bookshelf, it.name)
+                    setMessage(getString(R.string.check_add_bookshelf, it.name))
                     okButton {
                         AudioPlay.inBookshelf = true
                         setResult(Activity.RESULT_OK)

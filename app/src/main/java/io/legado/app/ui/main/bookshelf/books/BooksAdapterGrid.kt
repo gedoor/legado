@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfGridBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.invisible
+import splitties.views.onLongClick
 
 class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
     BaseBooksAdapter<ItemBookshelfGridBinding>(context) {
@@ -59,11 +60,10 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                 }
             }
 
-            setOnLongClickListener {
+            onLongClick {
                 getItem(holder.layoutPosition)?.let {
                     callBack.openBookInfo(it)
                 }
-                true
             }
         }
     }

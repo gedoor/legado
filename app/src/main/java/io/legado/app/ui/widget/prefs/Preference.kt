@@ -17,6 +17,7 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.utils.ColorUtils
+import splitties.views.onLongClick
 import kotlin.math.roundToInt
 
 class Preference(context: Context, attrs: AttributeSet) :
@@ -115,9 +116,8 @@ class Preference(context: Context, attrs: AttributeSet) :
             isBottomBackground = isBottomBackground
         )
         super.onBindViewHolder(holder)
-        holder?.itemView?.setOnLongClickListener {
+        holder?.itemView?.onLongClick {
             onLongClick?.invoke()
-            true
         }
     }
 

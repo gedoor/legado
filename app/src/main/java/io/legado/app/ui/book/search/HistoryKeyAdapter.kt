@@ -10,6 +10,7 @@ import io.legado.app.ui.widget.anima.explosion_field.ExplosionField
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import splitties.views.onLongClick
 
 class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
     RecyclerAdapter<SearchKeyword, ItemFilletTextBinding>(activity) {
@@ -38,16 +39,13 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
                     callBack.searchHistory(it.word)
                 }
             }
-            setOnLongClickListener {
-                it?.let {
-                    explosionField.explode(it, true)
-                }
+            onLongClick {
+                explosionField.explode(this, true)
                 getItem(holder.layoutPosition)?.let {
                     GlobalScope.launch(IO) {
                         App.db.searchKeywordDao.delete(it)
                     }
                 }
-                true
             }
         }
     }

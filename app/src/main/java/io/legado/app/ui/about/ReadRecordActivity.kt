@@ -121,7 +121,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
         private fun sureDelAlert(item: ReadRecordShow) {
             alert(R.string.delete) {
-                message = getString(R.string.sure_del_any, item.bookName)
+                setMessage(getString(R.string.sure_del_any, item.bookName))
                 okButton {
                     App.db.readRecordDao.deleteByName(item.bookName)
                     initData()

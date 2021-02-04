@@ -38,8 +38,6 @@ import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.ChapterListActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 
 
 class BookInfoActivity :
@@ -86,9 +84,10 @@ class BookInfoActivity :
                 if (viewModel.inBookshelf) {
                     viewModel.bookData.value?.let {
                         startActivityForResult<BookInfoEditActivity>(
-                            requestCodeInfoEdit,
-                            Pair("bookUrl", it.bookUrl)
-                        )
+                            requestCodeInfoEdit
+                        ) {
+                            putExtra("bookUrl", it.bookUrl)
+                        }
                     }
                 } else {
                     toastOnUi(R.string.after_add_bookshelf)
@@ -227,7 +226,9 @@ class BookInfoActivity :
         }
         tvOrigin.setOnClickListener {
             viewModel.bookData.value?.let {
-                startActivity<BookSourceEditActivity>(Pair("data", it.origin))
+                startActivity<BookSourceEditActivity> {
+                    putExtra("data", it.origin)
+                }
             }
         }
         tvChangeSource.setOnClickListener {
@@ -252,10 +253,14 @@ class BookInfoActivity :
             }
         }
         tvAuthor.setOnClickListener {
-            startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.author))
+            startActivity<SearchActivity> {
+                putExtra("key", viewModel.bookData.value?.author)
+            }
         }
         tvName.setOnClickListener {
-            startActivity<SearchActivity>(Pair("key", viewModel.bookData.value?.name))
+            startActivity<SearchActivity> {
+                putExtra("key", viewModel.bookData.value?.name)
+            }
         }
     }
 
@@ -274,7 +279,7 @@ class BookInfoActivity :
                         setPadding(16.dp, 0, 16.dp, 0)
                         addView(checkBox)
                     }
-                    customView = view
+                    customView { view }
                     positiveButton(R.string.yes) {
                         viewModel.delBook(checkBox.isChecked) {
                             finish()
@@ -297,9 +302,10 @@ class BookInfoActivity :
         }
         viewModel.bookData.value?.let {
             startActivityForResult<ChapterListActivity>(
-                requestCodeChapterList,
-                Pair("bookUrl", it.bookUrl)
-            )
+                requestCodeChapterList
+            ) {
+                putExtra("bookUrl", it.bookUrl)
+            }
         }
     }
 
@@ -320,16 +326,18 @@ class BookInfoActivity :
     private fun startReadActivity(book: Book) {
         when (book.type) {
             BookType.audio -> startActivityForResult<AudioPlayActivity>(
-                requestCodeRead,
-                Pair("bookUrl", book.bookUrl),
-                Pair("inBookshelf", viewModel.inBookshelf)
-            )
+                requestCodeRead
+            ) {
+                putExtra("bookUrl", book.bookUrl)
+                putExtra("inBookshelf", viewModel.inBookshelf)
+            }
             else -> startActivityForResult<ReadBookActivity>(
-                requestCodeRead,
-                Pair("bookUrl", book.bookUrl),
-                Pair("inBookshelf", viewModel.inBookshelf),
-                Pair("key", IntentDataHelp.putData(book))
-            )
+                requestCodeRead
+            ) {
+                putExtra("bookUrl", book.bookUrl)
+                putExtra("inBookshelf", viewModel.inBookshelf)
+                putExtra("key", IntentDataHelp.putData(book))
+            }
         }
     }
 

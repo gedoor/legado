@@ -144,19 +144,21 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     override fun open(book: Book) {
         when (book.type) {
             BookType.audio ->
-                startActivity<AudioPlayActivity>(Pair("bookUrl", book.bookUrl))
-            else -> startActivity<ReadBookActivity>(
-                Pair("bookUrl", book.bookUrl),
-                Pair("key", IntentDataHelp.putData(book))
-            )
+                startActivity<AudioPlayActivity> {
+                    putExtra("bookUrl", book.bookUrl)
+                }
+            else -> startActivity<ReadBookActivity> {
+                putExtra("bookUrl", book.bookUrl)
+                putExtra("key", IntentDataHelp.putData(book))
+            }
         }
     }
 
     override fun openBookInfo(book: Book) {
-        startActivity<BookInfoActivity>(
-            Pair("name", book.name),
-            Pair("author", book.author)
-        )
+        startActivity<BookInfoActivity> {
+            putExtra("name", book.name)
+            putExtra("author", book.author)
+        }
     }
 
     override fun isUpdate(bookUrl: String): Boolean {

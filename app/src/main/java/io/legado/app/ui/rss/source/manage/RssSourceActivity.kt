@@ -35,8 +35,6 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 import java.io.File
 
 
@@ -245,7 +243,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                     aCache.put(importRecordKey, cacheUrls.joinToString(","))
                 }
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
                 text?.let {
@@ -253,7 +251,9 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    startActivity<ImportRssSourceActivity>("source" to it)
+                    startActivity<ImportRssSourceActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             cancelButton()
@@ -268,7 +268,9 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                     kotlin.runCatching {
                         uri.readText(this)?.let {
                             val dataKey = IntentDataHelp.putData(it)
-                            startActivity<ImportRssSourceActivity>("dataKey" to dataKey)
+                            startActivity<ImportRssSourceActivity> {
+                                putExtra("dataKey", dataKey)
+                            }
                         }
                     }.onFailure {
                         toastOnUi("readTextError:${it.localizedMessage}")
@@ -277,7 +279,9 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             }
             qrRequestCode -> if (resultCode == RESULT_OK) {
                 data?.getStringExtra("result")?.let {
-                    startActivity<ImportRssSourceActivity>("source" to it)
+                    startActivity<ImportRssSourceActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             exportRequestCode -> if (resultCode == RESULT_OK) {
@@ -301,7 +305,9 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     }
 
     override fun edit(source: RssSource) {
-        startActivity<RssSourceEditActivity>(Pair("data", source.sourceUrl))
+        startActivity<RssSourceEditActivity> {
+            putExtra("data", source.sourceUrl)
+        }
     }
 
     override fun update(vararg source: RssSource) {

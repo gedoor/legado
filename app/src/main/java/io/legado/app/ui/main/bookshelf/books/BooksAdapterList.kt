@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfListBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.invisible
+import splitties.views.onLongClick
 
 class BooksAdapterList(context: Context, private val callBack: CallBack) :
     BaseBooksAdapter<ItemBookshelfListBinding>(context) {
@@ -65,11 +66,10 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                 }
             }
 
-            setOnLongClickListener {
+            onLongClick {
                 getItem(holder.layoutPosition)?.let {
                     callBack.openBookInfo(it)
                 }
-                true
             }
         }
     }

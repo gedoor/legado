@@ -19,6 +19,7 @@ import io.legado.app.utils.dp
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
+import splitties.views.onLongClick
 
 class ExploreAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
     RecyclerAdapter<BookSource, ItemFindBookBinding>(context) {
@@ -104,9 +105,8 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     notifyItemChanged(position, false)
                 }
             }
-            llTitle.setOnLongClickListener {
+            llTitle.onLongClick {
                 showMenu(llTitle, holder.layoutPosition)
-                true
             }
         }
     }

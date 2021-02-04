@@ -7,48 +7,45 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import io.legado.app.utils.applyTint
-import org.jetbrains.anko.internals.AnkoInternals
-import org.jetbrains.anko.internals.AnkoInternals.NO_GETTER
-import kotlin.DeprecationLevel.ERROR
 
 internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<AlertDialog> {
     private val builder = AlertDialog.Builder(ctx)
 
-    override var title: CharSequence
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setTitle(value) }
+    override fun setTitle(title: CharSequence) {
+        builder.setTitle(title)
+    }
 
-    override var titleResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setTitle(value) }
+    override fun setTitle(titleResource: Int) {
+        builder.setTitle(titleResource)
+    }
 
-    override var message: CharSequence
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setMessage(value) }
+    override fun setMessage(message: CharSequence) {
+        builder.setMessage(message)
+    }
 
-    override var messageResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setMessage(value) }
+    override fun setMessage(messageResource: Int) {
+        builder.setMessage(messageResource)
+    }
 
-    override var icon: Drawable
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setIcon(value) }
+    override fun setIcon(icon: Drawable) {
+        builder.setIcon(icon)
+    }
 
-    override var iconResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setIcon(value) }
+    override fun setIcon(iconResource: Int) {
+        builder.setIcon(iconResource)
+    }
 
-    override var customTitle: View
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setCustomTitle(value) }
+    override fun setCustomTitle(customTitle: View) {
+        builder.setCustomTitle(customTitle)
+    }
 
-    override var customView: View
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setView(value) }
+    override fun setCustomView(customView: View) {
+        builder.setView(customView)
+    }
 
-    override var isCancelable: Boolean
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setCancelable(value) }
+    override fun setCancelable(isCancelable: Boolean) {
+        builder.setCancelable(isCancelable)
+    }
 
     override fun onCancelled(handler: (DialogInterface) -> Unit) {
         builder.setOnCancelListener(handler)
@@ -58,7 +55,10 @@ internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<Ale
         builder.setOnKeyListener(handler)
     }
 
-    override fun positiveButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun positiveButton(
+        buttonText: String,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setPositiveButton(buttonText) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 

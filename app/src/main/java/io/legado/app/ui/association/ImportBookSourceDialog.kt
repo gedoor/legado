@@ -96,7 +96,9 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                         editView.setFilterValues(groups.toList())
                         editView.dropDownHeight = 180.dp
                     }
-                    customView = alertBinding.root
+                    customView {
+                        alertBinding.root
+                    }
                     okButton {
                         alertBinding.editView.text?.toString()?.let { group ->
                             viewModel.groupName = group

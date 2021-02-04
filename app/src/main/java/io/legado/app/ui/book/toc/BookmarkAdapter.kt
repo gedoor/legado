@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ItemBookmarkBinding
+import splitties.views.onLongClick
 
 class BookmarkAdapter(val callback: Callback) : PagedListAdapter<Bookmark, BookmarkAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
@@ -46,9 +47,8 @@ class BookmarkAdapter(val callback: Callback) : PagedListAdapter<Bookmark, Bookm
             itemView.setOnClickListener {
                 callback?.onClick(bookmark)
             }
-            itemView.setOnLongClickListener {
+            itemView.onLongClick {
                 callback?.onLongClick(bookmark)
-                true
             }
         }
     }

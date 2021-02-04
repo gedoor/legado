@@ -11,7 +11,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.*
-import org.jetbrains.anko.longToast
 import java.io.File
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
@@ -144,9 +143,9 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             FileUtils.createFileIfNotExist(file, "exportBookSource.json")
                 .writeText(json)
         }.onSuccess {
-            context.longToast("成功导出至\n${file.absolutePath}")
+            context.longToastOnUi("成功导出至\n${file.absolutePath}")
         }.onError {
-            context.longToast("导出失败\n${it.localizedMessage}")
+            context.longToastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 
@@ -157,9 +156,9 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
             doc.createFile("", "exportBookSource.json")
                 ?.writeText(context, json)
         }.onSuccess {
-            context.longToast("成功导出至\n${doc.uri.path}")
+            context.longToastOnUi("成功导出至\n${doc.uri.path}")
         }.onError {
-            context.longToast("导出失败\n${it.localizedMessage}")
+            context.longToastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 

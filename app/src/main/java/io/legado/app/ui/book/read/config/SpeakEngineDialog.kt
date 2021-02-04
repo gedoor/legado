@@ -110,7 +110,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             val alertBinding = DialogHttpTtsEditBinding.inflate(layoutInflater)
             alertBinding.tvName.setText(httpTTS.name)
             alertBinding.tvUrl.setText(httpTTS.url)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             cancelButton()
             okButton {
                 alertBinding.apply {

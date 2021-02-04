@@ -14,7 +14,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getPrefBoolean
-import org.jetbrains.anko.startActivity
+import io.legado.app.utils.startActivity
 import java.util.concurrent.TimeUnit
 
 open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {

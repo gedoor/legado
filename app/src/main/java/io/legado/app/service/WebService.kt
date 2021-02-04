@@ -10,13 +10,9 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.IntentHelp
-import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
-import org.jetbrains.anko.startService
 import java.io.IOException
 
 class WebService : BaseService() {

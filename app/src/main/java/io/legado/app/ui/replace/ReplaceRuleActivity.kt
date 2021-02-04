@@ -38,8 +38,6 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 import java.io.File
 
 /**
@@ -229,7 +227,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                     aCache.put(importRecordKey, cacheUrls.joinToString(","))
                 }
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
                 text?.let {
@@ -237,7 +235,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    startActivity<ImportReplaceRuleActivity>("source" to it)
+                    startActivity<ImportReplaceRuleActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             cancelButton()
@@ -266,7 +266,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                     kotlin.runCatching {
                         uri.readText(this)?.let {
                             val dataKey = IntentDataHelp.putData(it)
-                            startActivity<ImportReplaceRuleActivity>("dataKey" to dataKey)
+                            startActivity<ImportReplaceRuleActivity> {
+                                putExtra("dataKey", dataKey)
+                            }
                         }
                     }.onFailure {
                         toastOnUi("readTextError:${it.localizedMessage}")
@@ -275,7 +277,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             }
             importRequestCodeQr -> if (resultCode == Activity.RESULT_OK) {
                 data?.getStringExtra("result")?.let {
-                    startActivity<ImportReplaceRuleActivity>("source" to it)
+                    startActivity<ImportReplaceRuleActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             exportRequestCode -> if (resultCode == RESULT_OK) {

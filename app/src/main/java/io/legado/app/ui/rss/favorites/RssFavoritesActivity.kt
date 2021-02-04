@@ -9,7 +9,7 @@ import io.legado.app.data.entities.RssStar
 import io.legado.app.databinding.ActivityRssFavoritesBinding
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import org.jetbrains.anko.startActivity
+import io.legado.app.utils.startActivity
 
 
 class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
@@ -45,10 +45,10 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
     }
 
     override fun readRss(rssStar: RssStar) {
-        startActivity<ReadRssActivity>(
-            Pair("title", rssStar.title),
-            Pair("origin", rssStar.origin),
-            Pair("link", rssStar.link)
-        )
+        startActivity<ReadRssActivity> {
+            putExtra("title", rssStar.title)
+            putExtra("origin", rssStar.origin)
+            putExtra("link", rssStar.link)
+        }
     }
 }

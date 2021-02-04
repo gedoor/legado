@@ -13,8 +13,6 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
-import org.jetbrains.anko.collections.forEachWithIndex
-import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -80,10 +78,10 @@ class HttpReadAloudService : BaseReadAloudService(),
         task = execute {
             removeCacheFile()
             ReadAloud.httpTTS?.let {
-                contentList.forEachWithIndex { index, item ->
+                contentList.forEachIndexed { index, item ->
                     if (isActive) {
                         val fileName =
-                                md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), item)
+                            md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), item)
 
                         if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
                             if (index == nowSpeak) {
@@ -119,17 +117,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
-                                runOnUiThread { toastOnUi("tts接口超时，尝试重新获取") }
+                                toastOnUi("tts接口超时，尝试重新获取")
                                 downloadAudio()
                             } catch (e: ConnectException) {
                                 removeSpeakCacheFile(fileName)
-                                runOnUiThread { toastOnUi("网络错误") }
+                                toastOnUi("网络错误")
                             } catch (e: IOException) {
                                 val file = getSpeakFileAsMd5(fileName)
                                 if (file.exists()) {
                                     FileUtils.deleteFile(file.absolutePath)
                                 }
-                                runOnUiThread { toastOnUi("tts文件解析错误") }
+                                toastOnUi("tts文件解析错误")
                             } catch (e: Exception) {
                                 removeSpeakCacheFile(fileName)
                             }

@@ -151,15 +151,17 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
-        startActivity<ExploreShowActivity>(
-            Pair("exploreName", title),
-            Pair("sourceUrl", sourceUrl),
-            Pair("exploreUrl", exploreUrl)
-        )
+        startActivity<ExploreShowActivity> {
+            putExtra("exploreName", title)
+            putExtra("sourceUrl", sourceUrl)
+            putExtra("exploreUrl", exploreUrl)
+        }
     }
 
     override fun editSource(sourceUrl: String) {
-        startActivity<BookSourceEditActivity>(Pair("data", sourceUrl))
+        startActivity<BookSourceEditActivity> {
+            putExtra("data", sourceUrl)
+        }
     }
 
     override fun toTop(source: BookSource) {

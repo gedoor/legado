@@ -125,10 +125,10 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
 
     override fun readRss(rssArticle: RssArticle) {
         activityViewModel.read(rssArticle)
-        startActivity<ReadRssActivity>(
-            Pair("title", rssArticle.title),
-            Pair("origin", rssArticle.origin),
-            Pair("link", rssArticle.link)
-        )
+        startActivity<ReadRssActivity> {
+            putExtra("title", rssArticle.title)
+            putExtra("origin", rssArticle.origin)
+            putExtra("link", rssArticle.link)
+        }
     }
 }

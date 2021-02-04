@@ -3,14 +3,14 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
-import android.app.DownloadManager
+import android.app.Activity
+import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.BatteryManager
 import android.provider.Settings
@@ -24,16 +24,16 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.io.FileOutputStream
 
-val Context.downloadManager
-    get() = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+inline fun <reified A : Activity> Context.startActivity(configIntent: Intent.() -> Unit = {}) {
+    startActivity(Intent(this, A::class.java).apply(configIntent))
+}
 
-val Context.connectivityManager
-    get() = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+inline fun <reified T : Service> Context.startService(configIntent: Intent.() -> Unit = {}) {
+    startService(Intent(this, T::class.java).apply(configIntent))
+}
 
 fun Context.toastOnUi(message: Int) {
     runOnUiThread {
@@ -135,6 +135,21 @@ val Context.navigationBarHeight: Int
         return resources.getDimensionPixelSize(resourceId)
     }
 
+fun Context.share(text: String) {
+    share(getString(R.string.share), text)
+}
+
+fun Context.share(title: String, text: String) {
+    kotlin.runCatching {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra(Intent.EXTRA_SUBJECT, title)
+        intent.putExtra(Intent.EXTRA_TEXT, text)
+        intent.type = "text/plain"
+        startActivity(Intent.createChooser(intent, title))
+    }
+}
+
 @SuppressLint("SetWorldReadable")
 fun Context.shareWithQr(title: String, text: String) {
     val bitmap = QRCodeUtils.createQRCode(text)
@@ -170,7 +185,7 @@ fun Context.sendToClip(text: String) {
     val clipData = ClipData.newPlainText(null, text)
     clipboard?.let {
         clipboard.setPrimaryClip(clipData)
-        longToast(R.string.copy_complete)
+        longToastOnUi(R.string.copy_complete)
     }
 }
 

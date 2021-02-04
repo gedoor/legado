@@ -18,13 +18,13 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssSourceEditBinding
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
-import org.jetbrains.anko.*
 import kotlin.math.abs
 
 class RssSourceEditActivity :
@@ -63,7 +63,7 @@ class RssSourceEditActivity :
         val source = getRssSource()
         if (!source.equal(viewModel.rssSource)) {
             alert(R.string.exit) {
-                messageResource = R.string.exit_no_save
+                setMessage(R.string.exit_no_save)
                 positiveButton(R.string.yes)
                 negativeButton(R.string.no) {
                     super.finish()
@@ -100,7 +100,9 @@ class RssSourceEditActivity :
                 val source = getRssSource()
                 if (checkSource(source)) {
                     viewModel.save(source) {
-                        startActivity<RssSourceDebugActivity>(Pair("key", source.sourceUrl))
+                        startActivity<RssSourceDebugActivity> {
+                            putExtra("key", source.sourceUrl)
+                        }
                     }
                 }
             }
@@ -249,7 +251,7 @@ class RssSourceEditActivity :
         val rect = Rect()
         // 获取当前页面窗口的显示范围
         window.decorView.getWindowVisibleDisplayFrame(rect)
-        val screenHeight = this@RssSourceEditActivity.displayMetrics.heightPixels
+        val screenHeight = this@RssSourceEditActivity.getSize().heightPixels
         val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
         val preShowing = mIsSoftKeyBoardShowing
         if (abs(keyboardHeight) > screenHeight / 5) {

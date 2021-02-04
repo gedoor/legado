@@ -13,10 +13,9 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssArtivlesBinding
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
-
 import io.legado.app.utils.gone
+import io.legado.app.utils.startActivityForResult
 import io.legado.app.utils.visible
-import org.jetbrains.anko.startActivityForResult
 
 class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>() {
 
@@ -50,7 +49,9 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
-                startActivityForResult<RssSourceEditActivity>(editSource, Pair("data", it))
+                startActivityForResult<RssSourceEditActivity>(editSource) {
+                    putExtra("data", it)
+                }
             }
             R.id.menu_clear -> {
                 viewModel.url?.let {

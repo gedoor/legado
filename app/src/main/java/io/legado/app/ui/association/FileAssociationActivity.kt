@@ -7,10 +7,9 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.ui.main.MainActivity
+import io.legado.app.utils.startActivity
 
 import io.legado.app.utils.toastOnUi
-import org.jetbrains.anko.startActivity
-
 
 class FileAssociationActivity :
     VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>(

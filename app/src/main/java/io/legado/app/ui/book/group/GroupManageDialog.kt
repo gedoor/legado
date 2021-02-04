@@ -99,7 +99,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setHint(R.string.group_name)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotBlank()) {
@@ -123,7 +123,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                     deleteGroup(bookGroup)
                 }
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 alertBinding.editView.text?.toString()?.let {
                     viewModel.upGroup(bookGroup.copy(groupName = it))

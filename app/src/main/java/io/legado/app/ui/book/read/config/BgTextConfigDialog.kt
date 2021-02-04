@@ -123,7 +123,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                     editView.setText(ReadBookConfig.durConfig.name)
                 }
-                customView = alertBinding.root
+                customView { alertBinding.root }
                 okButton {
                     alertBinding.editView.text?.toString()?.let {
                         binding.tvName.text = it
@@ -278,7 +278,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     private fun importNetConfigAlert() {
         alert("输入地址") {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let { url ->
                     importNetConfig(url)

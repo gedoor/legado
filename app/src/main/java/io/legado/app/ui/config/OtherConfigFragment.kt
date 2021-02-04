@@ -156,7 +156,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
         alert("UserAgent") {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
             alertBinding.editView.setText(AppConfig.userAgent)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 val userAgent = alertBinding.editView.text?.toString()
                 if (userAgent.isNullOrBlank()) {

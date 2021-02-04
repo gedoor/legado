@@ -13,6 +13,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
+import splitties.views.onLongClick
 
 
 class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
@@ -68,9 +69,8 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
                 callBack.changeTo(it)
             }
         }
-        holder.itemView.setOnLongClickListener {
+        holder.itemView.onLongClick {
             showMenu(holder.itemView, getItem(holder.layoutPosition))
-            true
         }
     }
 

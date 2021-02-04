@@ -11,40 +11,28 @@ import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.legado.app.R
-import org.jetbrains.anko.internals.AnkoInternals.NO_GETTER
-import kotlin.DeprecationLevel.ERROR
 
 @SuppressLint("SupportAnnotationUsage")
 interface AlertBuilder<out D : DialogInterface> {
     val ctx: Context
 
-    var title: CharSequence
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setTitle(title: CharSequence)
 
-    var titleResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setTitle(titleResource: Int)
 
-    var message: CharSequence
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setMessage(message: CharSequence)
 
-    var messageResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setMessage(messageResource: Int)
 
-    var icon: Drawable
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setIcon(icon: Drawable)
 
-    @setparam:DrawableRes
-    var iconResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setIcon(@DrawableRes iconResource: Int)
 
-    var customTitle: View
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setCustomTitle(customTitle: View)
 
-    var customView: View
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setCustomView(customView: View)
 
-    var isCancelable: Boolean
-        @Deprecated(NO_GETTER, level = ERROR) get
+    fun setCancelable(isCancelable: Boolean)
 
     fun positiveButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)? = null)
     fun positiveButton(
@@ -97,11 +85,11 @@ interface AlertBuilder<out D : DialogInterface> {
 
 
     fun customTitle(view: () -> View) {
-        customTitle = view()
+        setCustomTitle(view())
     }
 
     fun customView(view: () -> View) {
-        customView = view()
+        setCustomView(view())
     }
 
     fun okButton(handler: ((dialog: DialogInterface) -> Unit)? = null) =

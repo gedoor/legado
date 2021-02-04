@@ -21,6 +21,7 @@ import io.legado.app.lib.theme.*
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
+import splitties.views.onLongClick
 
 /**
  * 阅读界面菜单
@@ -210,9 +211,8 @@ class ReadMenu @JvmOverloads constructor(
                 callBack.onClickReadAloud()
             }
         }
-        llReadAloud.setOnLongClickListener {
+        llReadAloud.onLongClick {
             runMenuOut { callBack.showReadAloudDialog() }
-            true
         }
         //界面
         llFont.setOnClickListener {

@@ -19,9 +19,9 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
 import io.legado.app.help.IntentHelp
 import io.legado.app.utils.RealPathUtil
-import io.legado.app.utils.downloadManager
 import io.legado.app.utils.msg
 import io.legado.app.utils.toastOnUi
+import splitties.systemservices.downloadManager
 import java.io.File
 
 

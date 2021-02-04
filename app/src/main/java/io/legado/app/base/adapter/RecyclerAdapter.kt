@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import splitties.views.onLongClick
 import java.util.*
 
 /**
@@ -351,10 +352,10 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
             }
 
             if (itemLongClickListener != null) {
-                holder.itemView.setOnLongClickListener {
+                holder.itemView.onLongClick {
                     getItem(holder.layoutPosition)?.let {
-                        itemLongClickListener?.invoke(holder, it) ?: true
-                    } ?: true
+                        itemLongClickListener?.invoke(holder, it)
+                    }
                 }
             }
 

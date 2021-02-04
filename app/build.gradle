@@ -130,6 +130,7 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.1.0"
     implementation "androidx.fragment:fragment-ktx:1.2.5"
     implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation "androidx.collection:collection-ktx:1.1.0"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
@@ -138,7 +139,11 @@ dependencies {
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    implementation "org.jetbrains.anko:anko-sdk27:0.10.8"
+    //Splitties
+    def splitties_version = '2.1.1'
+    implementation("com.louiscad.splitties:splitties-appctx:$splitties_version")
+    implementation("com.louiscad.splitties:splitties-systemservices:$splitties_version")
+    implementation("com.louiscad.splitties:splitties-views:$splitties_version")
 
     //lifecycle
     def lifecycle_version = '2.2.0'

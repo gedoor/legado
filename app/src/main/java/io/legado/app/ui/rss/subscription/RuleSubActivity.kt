@@ -17,9 +17,9 @@ import io.legado.app.ui.association.ImportBookSourceActivity
 import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.association.ImportRssSourceActivity
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.utils.startActivity
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.startActivity
 
 /**
  * 规则订阅界面
@@ -74,13 +74,19 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     override fun openSubscription(ruleSub: RuleSub) {
         when (ruleSub.type) {
             0 -> {
-                startActivity<ImportBookSourceActivity>("source" to ruleSub.url)
+                startActivity<ImportBookSourceActivity> {
+                    putExtra("source", ruleSub.url)
+                }
             }
             1 -> {
-                startActivity<ImportRssSourceActivity>("source" to ruleSub.url)
+                startActivity<ImportRssSourceActivity> {
+                    putExtra("source", ruleSub.url)
+                }
             }
             2 -> {
-                startActivity<ImportReplaceRuleActivity>("source" to ruleSub.url)
+                startActivity<ImportReplaceRuleActivity> {
+                    putExtra("source", ruleSub.url)
+                }
             }
         }
     }
@@ -92,7 +98,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                 etName.setText(ruleSub.name)
                 etUrl.setText(ruleSub.url)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 ruleSub.type = alertBinding.spType.selectedItemPosition
                 ruleSub.name = alertBinding.etName.text?.toString() ?: ""

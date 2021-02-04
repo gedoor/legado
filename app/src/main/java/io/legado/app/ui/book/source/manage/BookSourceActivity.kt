@@ -39,8 +39,6 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 import java.io.File
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
@@ -304,7 +302,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setText(CheckSource.keyword)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
@@ -325,7 +323,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 editView.setFilterValues(groups.toList())
                 editView.dropDownHeight = 180.dp
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
@@ -345,7 +343,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 editView.setFilterValues(groups.toList())
                 editView.dropDownHeight = 180.dp
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
@@ -381,7 +379,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     aCache.put(importRecordKey, cacheUrls.joinToString(","))
                 }
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
                 text?.let {
@@ -389,7 +387,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    startActivity<ImportBookSourceActivity>(Pair("source", it))
+                    startActivity<ImportBookSourceActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             cancelButton()
@@ -443,7 +443,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun edit(bookSource: BookSource) {
-        startActivity<BookSourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
+        startActivity<BookSourceEditActivity> {
+            putExtra("data", bookSource.bookSourceUrl)
+        }
     }
 
     override fun upOrder() {
@@ -463,7 +465,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         when (requestCode) {
             qrRequestCode -> if (resultCode == RESULT_OK) {
                 data?.getStringExtra("result")?.let {
-                    startActivity<ImportBookSourceActivity>("source" to it)
+                    startActivity<ImportBookSourceActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             importRequestCode -> if (resultCode == Activity.RESULT_OK) {
@@ -471,7 +475,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     try {
                         uri.readText(this)?.let {
                             val dataKey = IntentDataHelp.putData(it)
-                            startActivity<ImportBookSourceActivity>("dataKey" to dataKey)
+                            startActivity<ImportBookSourceActivity> {
+                                putExtra("dataKey", dataKey)
+                            }
                         }
                     } catch (e: Exception) {
                         toastOnUi("readTextError:${e.localizedMessage}")

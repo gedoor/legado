@@ -17,13 +17,13 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceEditBinding
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.getSize
 
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
-import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.selector
 import kotlin.math.abs
 
 /**
@@ -171,7 +171,7 @@ class ReplaceEditActivity :
         val rect = Rect()
         // 获取当前页面窗口的显示范围
         window.decorView.getWindowVisibleDisplayFrame(rect)
-        val screenHeight = this.displayMetrics.heightPixels
+        val screenHeight = this.getSize().heightPixels
         val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
         val preShowing = mIsSoftKeyBoardShowing
         if (abs(keyboardHeight) > screenHeight / 5) {

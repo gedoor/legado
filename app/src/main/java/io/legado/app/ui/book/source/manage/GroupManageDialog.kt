@@ -86,7 +86,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         alert(title = getString(R.string.add_group)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
             alertBinding.editView.setHint(R.string.group_name)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotBlank()) {
@@ -103,7 +103,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         alert(title = getString(R.string.group_edit)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
             alertBinding.editView.setHint(R.string.group_name)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 viewModel.upGroup(group, alertBinding.editView.text?.toString())
             }

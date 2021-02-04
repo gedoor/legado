@@ -24,6 +24,7 @@ import io.legado.app.utils.dp
 import io.legado.app.utils.getIndexById
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.views.onLongClick
 
 class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     private val binding by viewBinding(DialogReadBookStyleBinding::bind)
@@ -237,11 +238,9 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
                         changeBg(holder.layoutPosition)
                     }
                 }
-                ivStyle.setOnLongClickListener {
+                ivStyle.onLongClick(ivStyle.isInView) {
                     if (ivStyle.isInView) {
                         showBgTextConfig(holder.layoutPosition)
-                    } else {
-                        false
                     }
                 }
             }

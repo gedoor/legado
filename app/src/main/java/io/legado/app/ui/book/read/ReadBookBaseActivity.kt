@@ -187,7 +187,7 @@ abstract class ReadBookBaseActivity :
                     editStart.setText((book.durChapterIndex + 1).toString())
                     editEnd.setText(book.totalChapterNum.toString())
                 }
-                customView = alertBinding.root
+                customView { alertBinding.root }
                 yesButton {
                     alertBinding.run {
                         val start = editStart.text?.toString()?.toInt() ?: 0
@@ -203,12 +203,12 @@ abstract class ReadBookBaseActivity :
     @SuppressLint("InflateParams")
     fun showBookMark(bookmark: Bookmark) {
         alert(title = getString(R.string.bookmark_add)) {
-            message = bookmark.chapterName
+            setMessage(bookmark.chapterName)
             val alertBinding = DialogBookmarkBinding.inflate(layoutInflater).apply {
                 editBookText.setText(bookmark.bookText)
                 editView.setText(bookmark.content)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 alertBinding.apply {
                     Coroutine.async {
@@ -231,7 +231,7 @@ abstract class ReadBookBaseActivity :
                 editView.setFilterValues(charsets)
                 editView.setText(ReadBook.book?.charset)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     ReadBook.setCharset(it)

@@ -85,12 +85,12 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     @SuppressLint("InflateParams")
     override fun onLongClick(bookmark: Bookmark) {
         requireContext().alert(R.string.bookmark) {
-            message = bookmark.chapterName
+            setMessage(bookmark.chapterName)
             val alertBinding = DialogBookmarkBinding.inflate(layoutInflater).apply {
                 editBookText.setText(bookmark.bookText)
                 editView.setText(bookmark.content)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 alertBinding.apply {
                     Coroutine.async {

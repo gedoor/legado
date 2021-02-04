@@ -144,12 +144,14 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     override fun openRss(rssSource: RssSource) {
         if (rssSource.singleUrl) {
-            startActivity<ReadRssActivity>(
-                Pair("title", rssSource.sourceName),
-                Pair("origin", rssSource.sourceUrl)
-            )
+            startActivity<ReadRssActivity> {
+                putExtra("title", rssSource.sourceName)
+                putExtra("origin", rssSource.sourceUrl)
+            }
         } else {
-            startActivity<RssSortActivity>(Pair("url", rssSource.sourceUrl))
+            startActivity<RssSortActivity> {
+                putExtra("url", rssSource.sourceUrl)
+            }
         }
     }
 
@@ -158,7 +160,9 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     }
 
     override fun edit(rssSource: RssSource) {
-        startActivity<RssSourceEditActivity>(Pair("data", rssSource.sourceUrl))
+        startActivity<RssSourceEditActivity> {
+            putExtra("data", rssSource.sourceUrl)
+        }
     }
 
     override fun del(rssSource: RssSource) {

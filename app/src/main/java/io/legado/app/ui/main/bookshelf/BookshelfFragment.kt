@@ -35,7 +35,6 @@ import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.main.bookshelf.books.BooksFragment
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.share
 
 /**
  * 书架界面
@@ -81,14 +80,14 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                 .show(childFragmentManager, "groupManageDialog")
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
             R.id.menu_add_url -> addBookByUrl()
-            R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity>(
-                Pair("groupId", selectedGroup.groupId),
-                Pair("groupName", selectedGroup.groupName)
-            )
-            R.id.menu_download -> startActivity<CacheActivity>(
-                Pair("groupId", selectedGroup.groupId),
-                Pair("groupName", selectedGroup.groupName)
-            )
+            R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity> {
+                putExtra("groupId", selectedGroup.groupId)
+                putExtra("groupName", selectedGroup.groupName)
+            }
+            R.id.menu_download -> startActivity<CacheActivity> {
+                putExtra("groupId", selectedGroup.groupId)
+                putExtra("groupName", selectedGroup.groupName)
+            }
             R.id.menu_export_bookshelf -> {
                 val fragment = fragmentMap[selectedGroup.groupId]
                 viewModel.exportBookshelf(fragment?.getBooks()) {
@@ -124,7 +123,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        startActivity<SearchActivity>(Pair("key", query))
+        startActivity<SearchActivity> {
+            putExtra("key", query)
+        }
         return false
     }
 
@@ -164,7 +165,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                         rgLayout.checkByIndex(bookshelfLayout)
                         rgSort.checkByIndex(bookshelfSort)
                     }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.apply {
                     var changed = false
@@ -189,7 +190,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private fun addBookByUrl() {
         alert(titleResource = R.string.add_book_url) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     viewModel.addBookByUrl(it)
@@ -220,7 +221,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "url/json"
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     viewModel.importBookshelf(it, selectedGroup.groupId)
