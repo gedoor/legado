@@ -36,25 +36,25 @@ inline fun <reified T : Service> Context.startService(configIntent: Intent.() ->
 }
 
 fun Context.toastOnUi(message: Int) {
-    runOnUiThread {
+    runOnUI {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
 
 fun Context.toastOnUi(message: CharSequence?) {
-    runOnUiThread {
+    runOnUI {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
 
 fun Context.longToastOnUi(message: Int) {
-    runOnUiThread {
+    runOnUI {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }
 
 fun Context.longToastOnUi(message: CharSequence?) {
-    runOnUiThread {
+    runOnUI {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }
