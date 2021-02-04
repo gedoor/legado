@@ -18,6 +18,8 @@ object AppConst {
 
     const val UA_NAME = "User-Agent"
 
+    var navigationBarHeight = 0
+
     val SCRIPT_ENGINE: ScriptEngine by lazy {
         ScriptEngineManager().getEngineByName("rhino")
     }

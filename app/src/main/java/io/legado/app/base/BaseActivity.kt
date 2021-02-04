@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
@@ -82,7 +81,7 @@ abstract class BaseActivity<VB : ViewBinding>(
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
-            App.navigationBarHeight = navigationBarHeight
+            AppConst.navigationBarHeight = navigationBarHeight
         }
     }
 
