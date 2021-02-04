@@ -12,14 +12,14 @@ import org.jetbrains.anko.longToast
  *
  * @param message the message text resource.
  */
-fun Fragment.toastOnUI(message: Int) = requireActivity().toastOnUI(message)
+fun Fragment.toastOnUi(message: Int) = requireActivity().toastOnUi(message)
 
 /**
  * Display the simple Toast message with the [Toast.LENGTH_SHORT] duration.
  *
  * @param message the message text.
  */
-fun Fragment.toastOnUI(message: CharSequence) = requireActivity().toastOnUI(message)
+fun Fragment.toastOnUi(message: CharSequence) = requireActivity().toastOnUi(message)
 
 /**
  * Display the simple Toast message with the [Toast.LENGTH_LONG] duration.

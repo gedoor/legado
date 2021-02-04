@@ -42,7 +42,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
                 tvFont.typeface = typeface
             }.onFailure {
                 it.printStackTrace()
-                context.toastOnUI("Read ${item.name} Error: ${it.localizedMessage}")
+                context.toastOnUi("Read ${item.name} Error: ${it.localizedMessage}")
             }
             tvFont.text = item.name
             root.setOnClickListener { callBack.onClick(item) }

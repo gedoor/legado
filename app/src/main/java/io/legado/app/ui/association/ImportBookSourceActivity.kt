@@ -8,7 +8,7 @@ import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 
 
 class ImportBookSourceActivity :
@@ -66,7 +66,7 @@ class ImportBookSourceActivity :
                 }
                 else -> {
                     binding.rotateLoading.hide()
-                    toastOnUI(R.string.wrong_format)
+                    toastOnUi(R.string.wrong_format)
                     finish()
                 }
             }

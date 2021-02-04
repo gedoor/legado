@@ -119,17 +119,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
-                                runOnUiThread { toastOnUI("tts接口超时，尝试重新获取") }
+                                runOnUiThread { toastOnUi("tts接口超时，尝试重新获取") }
                                 downloadAudio()
                             } catch (e: ConnectException) {
                                 removeSpeakCacheFile(fileName)
-                                runOnUiThread { toastOnUI("网络错误") }
+                                runOnUiThread { toastOnUi("网络错误") }
                             } catch (e: IOException) {
                                 val file = getSpeakFileAsMd5(fileName)
                                 if (file.exists()) {
                                     FileUtils.deleteFile(file.absolutePath)
                                 }
-                                runOnUiThread { toastOnUI("tts文件解析错误") }
+                                runOnUiThread { toastOnUi("tts文件解析错误") }
                             } catch (e: Exception) {
                                 removeSpeakCacheFile(fileName)
                             }

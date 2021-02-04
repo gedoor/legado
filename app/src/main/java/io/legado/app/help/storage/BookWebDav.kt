@@ -79,7 +79,7 @@ object BookWebDav {
                         Coroutine.async {
                             restoreWebDav(names[index])
                         }.onError {
-                            App.INSTANCE.toastOnUI("WebDavError:${it.localizedMessage}")
+                            App.INSTANCE.toastOnUi("WebDavError:${it.localizedMessage}")
                         }
                     }
                 }
@@ -117,7 +117,7 @@ object BookWebDav {
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
-                App.INSTANCE.toastOnUI("WebDav\n${e.localizedMessage}")
+                App.INSTANCE.toastOnUi("WebDav\n${e.localizedMessage}")
             }
         }
     }
@@ -138,7 +138,7 @@ object BookWebDav {
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
-                App.INSTANCE.toastOnUI("WebDav导出\n${e.localizedMessage}")
+                App.INSTANCE.toastOnUi("WebDav导出\n${e.localizedMessage}")
             }
         }
     }

@@ -65,11 +65,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             }
                             loadChapter(it, changeDruChapterIndex)
                         }.onError {
-                            toastOnUI(R.string.error_get_book_info)
+                            toastOnUi(R.string.error_get_book_info)
                         }
                 } ?: let {
                     chapterListData.postValue(null)
-                    toastOnUI(R.string.error_no_source)
+                    toastOnUi(R.string.error_no_source)
                 }
             }
         }
@@ -101,19 +101,19 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                     changeDruChapterIndex(it)
                                 }
                             } else {
-                                toastOnUI(R.string.chapter_list_empty)
+                                toastOnUi(R.string.chapter_list_empty)
                             }
                         }.onError {
                             chapterListData.postValue(null)
-                            toastOnUI(R.string.error_get_chapter_list)
+                            toastOnUi(R.string.error_get_chapter_list)
                         }
                 } ?: let {
                     chapterListData.postValue(null)
-                    toastOnUI(R.string.error_no_source)
+                    toastOnUi(R.string.error_no_source)
                 }
             }
         }.onError {
-            toastOnUI("LoadTocError:${it.localizedMessage}")
+            toastOnUi("LoadTocError:${it.localizedMessage}")
         }
     }
 
@@ -238,9 +238,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             BookHelp.clearCache(bookData.value!!)
         }.onSuccess {
-            toastOnUI(R.string.clear_cache_success)
+            toastOnUi(R.string.clear_cache_success)
         }.onError {
-            toastOnUI(it.stackTraceToString())
+            toastOnUi(it.stackTraceToString())
         }
     }
 

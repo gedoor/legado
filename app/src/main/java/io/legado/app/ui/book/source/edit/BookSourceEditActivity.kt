@@ -105,7 +105,7 @@ class BookSourceEditActivity :
             R.id.menu_login -> getSource().let {
                 if (checkSource(it)) {
                     if (it.loginUrl.isNullOrEmpty()) {
-                        toastOnUI(R.string.source_no_login)
+                        toastOnUi(R.string.source_no_login)
                     } else {
                         startActivity<SourceLogin>(
                             Pair("sourceUrl", it.bookSourceUrl),
@@ -357,7 +357,7 @@ class BookSourceEditActivity :
 
     private fun checkSource(source: BookSource): Boolean {
         if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
-            toastOnUI(R.string.non_null_name_url)
+            toastOnUi(R.string.non_null_name_url)
             return false
         }
         return true

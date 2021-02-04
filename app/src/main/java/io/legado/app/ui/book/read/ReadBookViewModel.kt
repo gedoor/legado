@@ -226,7 +226,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }.onStart {
             ReadBook.upMsg(context.getString(R.string.source_auto_changing))
         }.onError {
-            toastOnUI(it.msg)
+            toastOnUi(it.msg)
         }.onFinally {
             ReadBook.upMsg(null)
         }

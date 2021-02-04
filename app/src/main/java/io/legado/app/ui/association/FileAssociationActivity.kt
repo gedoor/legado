@@ -7,7 +7,7 @@ import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import org.jetbrains.anko.startActivity
 
 
@@ -27,7 +27,7 @@ class FileAssociationActivity :
         binding.rotateLoading.show()
         viewModel.errorLiveData.observe(this, {
             binding.rotateLoading.hide()
-            toastOnUI(it)
+            toastOnUi(it)
             finish()
         })
         viewModel.successLiveData.observe(this, {

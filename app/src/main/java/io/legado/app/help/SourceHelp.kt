@@ -8,7 +8,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.splitNotBlank
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 
 object SourceHelp {
 
@@ -26,7 +26,7 @@ object SourceHelp {
         rssSources.forEach { rssSource ->
             if (is18Plus(rssSource.sourceUrl)) {
                 handler.post {
-                    App.INSTANCE.toastOnUI("${rssSource.sourceName}是18+网址,禁止导入.")
+                    App.INSTANCE.toastOnUi("${rssSource.sourceName}是18+网址,禁止导入.")
                 }
             } else {
                 App.db.rssSourceDao.insert(rssSource)
@@ -38,7 +38,7 @@ object SourceHelp {
         bookSources.forEach { bookSource ->
             if (is18Plus(bookSource.bookSourceUrl)) {
                 handler.post {
-                    App.INSTANCE.toastOnUI("${bookSource.bookSourceName}是18+网址,禁止导入.")
+                    App.INSTANCE.toastOnUi("${bookSource.bookSourceName}是18+网址,禁止导入.")
                 }
             } else {
                 App.db.bookSourceDao.insert(bookSource)

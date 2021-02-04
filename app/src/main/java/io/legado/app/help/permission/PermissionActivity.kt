@@ -8,7 +8,7 @@ import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import io.legado.app.R
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 
 class PermissionActivity : AppCompatActivity() {
 
@@ -32,7 +32,7 @@ class PermissionActivity : AppCompatActivity() {
                 settingIntent.data = Uri.fromParts("package", packageName, null)
                 startActivityForResult(settingIntent, Request.TYPE_REQUEST_SETTING)
             } catch (e: Exception) {
-                toastOnUI(R.string.tip_cannot_jump_setting_page)
+                toastOnUi(R.string.tip_cannot_jump_setting_page)
                 finish()
             }
 

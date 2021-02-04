@@ -119,7 +119,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             R.id.menu_share_str -> context.share(callBack.selectedText)
             R.id.menu_aloud -> {
                 if (BaseReadAloudService.isRun) {
-                    context.toastOnUI(R.string.alouding_disable)
+                    context.toastOnUi(R.string.alouding_disable)
                     return
                 }
                 readAloud(callBack.selectedText)
@@ -138,7 +138,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                     context.startActivity(intent)
                 }.onFailure {
                     it.printStackTrace()
-                    context.toastOnUI(it.localizedMessage ?: "ERROR")
+                    context.toastOnUi(it.localizedMessage ?: "ERROR")
                 }
             }
             else -> item.intent?.let {
@@ -214,7 +214,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                 ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
             }
         }.onFailure {
-            context.toastOnUI("获取文字操作菜单出错:${it.localizedMessage}")
+            context.toastOnUi("获取文字操作菜单出错:${it.localizedMessage}")
         }
     }
 

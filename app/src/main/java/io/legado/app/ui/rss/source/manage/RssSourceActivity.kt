@@ -270,7 +270,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                             startActivity<ImportRssSourceActivity>("dataKey" to dataKey)
                         }
                     }.onFailure {
-                        toastOnUI("readTextError:${it.localizedMessage}")
+                        toastOnUi("readTextError:${it.localizedMessage}")
                     }
                 }
             }

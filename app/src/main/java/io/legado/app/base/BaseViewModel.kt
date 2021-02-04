@@ -6,7 +6,7 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -38,12 +38,12 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         cancel()
     }
 
-    open fun toastOnUI(message: Int) {
-        context.toastOnUI(message)
+    open fun toastOnUi(message: Int) {
+        context.toastOnUi(message)
     }
 
-    open fun toastOnUI(message: CharSequence?) {
-        context.toastOnUI(message ?: toString())
+    open fun toastOnUi(message: CharSequence?) {
+        context.toastOnUi(message ?: toString())
     }
 
 }

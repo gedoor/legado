@@ -177,7 +177,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
             okButton {
                 BookHelp.clearCache()
                 FileUtils.deleteFile(requireActivity().cacheDir.absolutePath)
-                toastOnUI(R.string.clear_cache_success)
+                toastOnUi(R.string.clear_cache_success)
             }
             noButton()
         }.show()
@@ -221,7 +221,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
                     file.writeBytes(byteArray)
                     putPrefString(PreferKey.defaultCover, file.absolutePath)
                     CoverImageView.upDefaultCover()
-                } ?: toastOnUI("获取文件出错")
+                } ?: toastOnUi("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)

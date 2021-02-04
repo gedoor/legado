@@ -20,7 +20,7 @@ import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.longToast
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.Main
 
 object BackupRestoreUi {
@@ -41,7 +41,7 @@ object BackupRestoreUi {
                     Coroutine.async {
                         Backup.backup(fragment.requireContext(), backupPath)
                     }.onSuccess {
-                        fragment.toastOnUI(R.string.backup_success)
+                        fragment.toastOnUi(R.string.backup_success)
                     }
                 } else {
                     selectBackupFolder(fragment, backupSelectRequestCode)
@@ -64,7 +64,7 @@ object BackupRestoreUi {
                     AppConfig.backupPath = path
                     Backup.backup(fragment.requireContext(), path)
                 }.onSuccess {
-                    fragment.toastOnUI(R.string.backup_success)
+                    fragment.toastOnUi(R.string.backup_success)
                 }
             }
             .request()
@@ -134,7 +134,7 @@ object BackupRestoreUi {
                         Coroutine.async {
                             Backup.backup(App.INSTANCE, uri.toString())
                         }.onSuccess {
-                            App.INSTANCE.toastOnUI(R.string.backup_success)
+                            App.INSTANCE.toastOnUi(R.string.backup_success)
                         }
                     } else {
                         uri.path?.let { path ->
@@ -142,7 +142,7 @@ object BackupRestoreUi {
                             Coroutine.async {
                                 Backup.backup(App.INSTANCE, path)
                             }.onSuccess {
-                                App.INSTANCE.toastOnUI(R.string.backup_success)
+                                App.INSTANCE.toastOnUi(R.string.backup_success)
                             }
                         }
                     }

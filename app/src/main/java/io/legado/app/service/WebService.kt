@@ -13,7 +13,7 @@ import io.legado.app.help.IntentHelp
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
 import org.jetbrains.anko.startService
@@ -91,7 +91,7 @@ class WebService : BaseService() {
                 notificationContent = hostAddress
                 upNotification()
             } catch (e: IOException) {
-                toastOnUI(e.localizedMessage ?: "")
+                toastOnUi(e.localizedMessage ?: "")
                 stopSelf()
             }
         } else {

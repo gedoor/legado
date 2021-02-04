@@ -251,7 +251,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         } ?: let {
             val lastPath = AppConfig.importBookPath
             if (lastPath.isNullOrEmpty()) {
-                toastOnUI(R.string.empty_msg_import_book)
+                toastOnUi(R.string.empty_msg_import_book)
             } else {
                 adapter.clearItems()
                 val file = File(path)

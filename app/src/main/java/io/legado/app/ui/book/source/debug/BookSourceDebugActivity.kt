@@ -14,7 +14,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivityForResult
 
@@ -83,7 +83,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
         viewModel.startDebug(key, {
             binding.rotateLoading.show()
         }, {
-            toastOnUI("未获取到书源")
+            toastOnUi("未获取到书源")
         })
     }
 

@@ -119,7 +119,7 @@ class BookInfoEditActivity :
                 }.getOrNull()?.let { byteArray ->
                     file.writeBytes(byteArray)
                     coverChangeTo(file.absolutePath)
-                } ?: toastOnUI("获取文件出错")
+                } ?: toastOnUi("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)

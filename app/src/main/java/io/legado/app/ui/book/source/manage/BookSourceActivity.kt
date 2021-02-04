@@ -411,7 +411,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             groups.map { group ->
                 if (group.contains("失效")) {
                     searchView.setQuery("失效", true)
-                    toastOnUI("发现有失效书源，已为您自动筛选！")
+                    toastOnUi("发现有失效书源，已为您自动筛选！")
                 }
             }
         }
@@ -473,7 +473,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                             startActivity<ImportBookSourceActivity>("dataKey" to dataKey)
                         }
                     } catch (e: Exception) {
-                        toastOnUI("readTextError:${e.localizedMessage}")
+                        toastOnUi("readTextError:${e.localizedMessage}")
                     }
                 }
             }

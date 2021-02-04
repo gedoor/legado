@@ -6,7 +6,7 @@ import android.os.Build
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.ui.welcome.*
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 
 /**
  * Created by GKF on 2018/2/27.
@@ -26,7 +26,7 @@ object LauncherIconHelp {
     fun changeIcon(icon: String?) {
         if (icon.isNullOrEmpty()) return
         if (Build.VERSION.SDK_INT < 26) {
-            App.INSTANCE.toastOnUI(R.string.change_icon_error)
+            App.INSTANCE.toastOnUi(R.string.change_icon_error)
             return
         }
         var hasEnabled = false

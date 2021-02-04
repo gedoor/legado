@@ -185,7 +185,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 postEvent(EventBus.UP_CONFIG, true)
                 dismiss()
             } else {
-                toastOnUI("数量已是最少,不能删除.")
+                toastOnUi("数量已是最少,不能删除.")
             }
         }
     }
@@ -267,7 +267,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 }
             }
         }.onSuccess {
-            toastOnUI("导出成功, 文件名为 $exportFileName")
+            toastOnUi("导出成功, 文件名为 $exportFileName")
         }.onError {
             it.printStackTrace()
             longToast("导出失败:${it.localizedMessage}")
@@ -363,7 +363,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
             ReadBookConfig.durConfig = config
             postEvent(EventBus.UP_CONFIG, true)
         }.onSuccess {
-            toastOnUI("导入成功")
+            toastOnUi("导入成功")
         }.onError {
             it.printStackTrace()
             longToast("导入失败:${it.localizedMessage}")
@@ -404,7 +404,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                     ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
                     ReadBookConfig.upBg()
                     postEvent(EventBus.UP_CONFIG, false)
-                } ?: toastOnUI("获取文件出错")
+                } ?: toastOnUi("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)

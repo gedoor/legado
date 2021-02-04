@@ -269,7 +269,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                             startActivity<ImportReplaceRuleActivity>("dataKey" to dataKey)
                         }
                     }.onFailure {
-                        toastOnUI("readTextError:${it.localizedMessage}")
+                        toastOnUi("readTextError:${it.localizedMessage}")
                     }
                 }
             }

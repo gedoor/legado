@@ -90,7 +90,7 @@ class BookInfoActivity :
                         )
                     }
                 } else {
-                    toastOnUI(R.string.after_add_bookshelf)
+                    toastOnUi(R.string.after_add_bookshelf)
                 }
             }
             R.id.menu_share_it -> {
@@ -111,7 +111,7 @@ class BookInfoActivity :
             }
             R.id.menu_copy_url -> viewModel.bookData.value?.bookUrl?.let {
                 sendToClip(it)
-            } ?: toastOnUI(R.string.no_book)
+            } ?: toastOnUi(R.string.no_book)
             R.id.menu_can_update -> {
                 if (viewModel.inBookshelf) {
                     viewModel.bookData.value?.let {
@@ -119,7 +119,7 @@ class BookInfoActivity :
                         viewModel.saveBook()
                     }
                 } else {
-                    toastOnUI(R.string.after_add_bookshelf)
+                    toastOnUi(R.string.after_add_bookshelf)
                 }
             }
             R.id.menu_clear_cache -> viewModel.clearCache()
@@ -291,7 +291,7 @@ class BookInfoActivity :
 
     private fun openChapterList() {
         if (viewModel.chapterListData.value.isNullOrEmpty()) {
-            toastOnUI(R.string.chapter_list_empty)
+            toastOnUi(R.string.chapter_list_empty)
             return
         }
         viewModel.bookData.value?.let {

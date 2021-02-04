@@ -9,7 +9,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.launch
 
 
@@ -56,7 +56,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
         viewModel.startDebug({
             binding.rotateLoading.show()
         }, {
-            toastOnUI("未获取到源")
+            toastOnUi("未获取到源")
         })
     }
 }

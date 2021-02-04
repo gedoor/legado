@@ -223,7 +223,7 @@ object Restore {
             ReadBook.loadContent(resetPageOffset = false)
         }
         withContext(Main) {
-            App.INSTANCE.toastOnUI(R.string.restore_success)
+            App.INSTANCE.toastOnUi(R.string.restore_success)
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
             }

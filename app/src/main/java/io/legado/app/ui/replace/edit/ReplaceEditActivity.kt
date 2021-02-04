@@ -20,7 +20,7 @@ import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.selector
 import kotlin.math.abs
@@ -82,7 +82,7 @@ class ReplaceEditActivity :
             R.id.menu_save -> {
                 val rule = getReplaceRule()
                 if (!rule.isValid()) {
-                    toastOnUI(R.string.replace_rule_invalid)
+                    toastOnUi(R.string.replace_rule_invalid)
                 } else {
                     viewModel.save(rule) {
                         postEvent(EventBus.REPLACE_RULE_SAVE, "")

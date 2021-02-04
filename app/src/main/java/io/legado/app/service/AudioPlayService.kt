@@ -31,7 +31,7 @@ import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -133,7 +133,7 @@ class AudioPlayService : BaseService(),
             }.onFailure {
                 it.printStackTrace()
                 launch {
-                    toastOnUI("$url ${it.localizedMessage}")
+                    toastOnUi("$url ${it.localizedMessage}")
                     stopSelf()
                 }
             }
@@ -219,7 +219,7 @@ class AudioPlayService : BaseService(),
         if (!mediaPlayer.isPlaying) {
             AudioPlay.status = Status.STOP
             postEvent(EventBus.AUDIO_STATE, Status.STOP)
-            launch { toastOnUI("error: $what $extra $url") }
+            launch { toastOnUi("error: $what $extra $url") }
         }
         return true
     }
@@ -274,7 +274,7 @@ class AudioPlayService : BaseService(),
                         .onSuccess { content ->
                             if (content.isEmpty()) {
                                 withContext(Main) {
-                                    toastOnUI("未获取到资源链接")
+                                    toastOnUi("未获取到资源链接")
                                 }
                             } else {
                                 contentLoadFinish(chapter, content)
@@ -286,7 +286,7 @@ class AudioPlayService : BaseService(),
                         }
                 } else {
                     removeLoading(chapter.index)
-                    toastOnUI("book or source is null")
+                    toastOnUi("book or source is null")
                 }
             }
         }

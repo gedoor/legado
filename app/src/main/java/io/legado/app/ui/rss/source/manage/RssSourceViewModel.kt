@@ -85,9 +85,9 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             FileUtils.createFileIfNotExist(file, "exportRssSource.json")
                 .writeText(json)
         }.onSuccess {
-            context.toastOnUI("成功导出至\n${file.absolutePath}")
+            context.toastOnUi("成功导出至\n${file.absolutePath}")
         }.onError {
-            context.toastOnUI("导出失败\n${it.localizedMessage}")
+            context.toastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 
@@ -98,9 +98,9 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             doc.createFile("", "exportRssSource.json")
                 ?.writeText(context, json)
         }.onSuccess {
-            context.toastOnUI("成功导出至\n${doc.uri.path}")
+            context.toastOnUi("成功导出至\n${doc.uri.path}")
         }.onError {
-            context.toastOnUI("导出失败\n${it.localizedMessage}")
+            context.toastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 
@@ -122,7 +122,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }.onSuccess {
             success.invoke(it)
         }.onError {
-            toastOnUI(it.msg)
+            toastOnUi(it.msg)
         }
     }
 

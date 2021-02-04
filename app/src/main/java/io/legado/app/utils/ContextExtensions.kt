@@ -35,25 +35,25 @@ val Context.downloadManager
 val Context.connectivityManager
     get() = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-fun Context.toastOnUI(message: Int) {
+fun Context.toastOnUi(message: Int) {
     runOnUiThread {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
 
-fun Context.toastOnUI(message: CharSequence?) {
+fun Context.toastOnUi(message: CharSequence?) {
     runOnUiThread {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
 
-fun Context.longToastOnUI(message: Int) {
+fun Context.longToastOnUi(message: Int) {
     runOnUiThread {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }
 
-fun Context.longToastOnUI(message: CharSequence?) {
+fun Context.longToastOnUi(message: CharSequence?) {
     runOnUiThread {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
@@ -139,7 +139,7 @@ val Context.navigationBarHeight: Int
 fun Context.shareWithQr(title: String, text: String) {
     val bitmap = QRCodeUtils.createQRCode(text)
     if (bitmap == null) {
-        toastOnUI(R.string.text_too_long_qr_error)
+        toastOnUi(R.string.text_too_long_qr_error)
     } else {
         try {
             val file = File(externalCacheDir, "qr.png")
@@ -159,7 +159,7 @@ fun Context.shareWithQr(title: String, text: String) {
             intent.type = "image/png"
             startActivity(Intent.createChooser(intent, title))
         } catch (e: Exception) {
-            toastOnUI(e.localizedMessage ?: "ERROR")
+            toastOnUi(e.localizedMessage ?: "ERROR")
         }
     }
 }
@@ -191,7 +191,7 @@ fun Context.sendMail(mail: String) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     } catch (e: Exception) {
-        toastOnUI(e.localizedMessage ?: "Error")
+        toastOnUi(e.localizedMessage ?: "Error")
     }
 }
 
@@ -231,13 +231,13 @@ fun Context.openUrl(uri: Uri) {
         try {
             startActivity(intent)
         } catch (e: Exception) {
-            toastOnUI(e.localizedMessage ?: "open url error")
+            toastOnUi(e.localizedMessage ?: "open url error")
         }
     } else {
         try {
             startActivity(Intent.createChooser(intent, "请选择浏览器"))
         } catch (e: Exception) {
-            toastOnUI(e.localizedMessage ?: "open url error")
+            toastOnUi(e.localizedMessage ?: "open url error")
         }
     }
 }

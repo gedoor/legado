@@ -346,7 +346,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     ) {
                         if (BaseReadAloudService.isPlay()) {
                             ReadAloud.pause(this)
-                            toastOnUI(R.string.read_aloud_pause)
+                            toastOnUi(R.string.read_aloud_pause)
                             return true
                         }
                         if (isAutoPage) {
@@ -452,7 +452,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             R.id.menu_bookmark -> binding.readView.curPage.let {
                 val bookmark = it.createBookmark()
                 if (bookmark == null) {
-                    toastOnUI(R.string.create_bookmark_error)
+                    toastOnUi(R.string.create_bookmark_error)
                 } else {
                     showBookMark(bookmark)
                 }

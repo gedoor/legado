@@ -181,7 +181,7 @@ class RssSourceEditActivity :
 
     private fun checkSource(source: RssSource): Boolean {
         if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
-            toastOnUI("名称或url不能为空")
+            toastOnUi("名称或url不能为空")
             return false
         }
         return true

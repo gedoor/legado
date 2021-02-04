@@ -16,7 +16,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.toastOnUI
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -70,7 +70,7 @@ class CheckSourceService : BaseService() {
 
     private fun check(ids: List<String>) {
         if (allIds.isNotEmpty()) {
-            toastOnUI("已有书源在校验,等完成后再试")
+            toastOnUi("已有书源在校验,等完成后再试")
             return
         }
         tasks.clear()

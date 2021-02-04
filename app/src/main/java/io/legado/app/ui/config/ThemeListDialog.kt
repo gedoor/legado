@@ -72,7 +72,7 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                     if (ThemeConfig.addConfig(it)) {
                         initData()
                     } else {
-                        toastOnUI("格式不对,添加失败")
+                        toastOnUi("格式不对,添加失败")
                     }
                 }
             }
