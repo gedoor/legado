@@ -7,7 +7,7 @@ import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemCoverBinding
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class CoverAdapter(context: Context, val callBack: CallBack) :
     DiffRecyclerAdapter<SearchBook, ItemCoverBinding>(context) {
@@ -41,7 +41,7 @@ class CoverAdapter(context: Context, val callBack: CallBack) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemCoverBinding) {
         holder.itemView.apply {
-            onClick {
+            setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.changeTo(it.coverUrl ?: "")
                 }

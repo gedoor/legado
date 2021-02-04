@@ -7,12 +7,7 @@ import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemFontBinding
-import io.legado.app.utils.DocItem
-import io.legado.app.utils.RealPathUtil
-import io.legado.app.utils.invisible
-import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.jetbrains.anko.toast
+import io.legado.app.utils.*
 import java.io.File
 import java.net.URLDecoder
 
@@ -47,10 +42,10 @@ class FontAdapter(context: Context, val callBack: CallBack) :
                 tvFont.typeface = typeface
             }.onFailure {
                 it.printStackTrace()
-                context.toast("Read ${item.name} Error: ${it.localizedMessage}")
+                context.toastOnUI("Read ${item.name} Error: ${it.localizedMessage}")
             }
             tvFont.text = item.name
-            root.onClick { callBack.onClick(item) }
+            root.setOnClickListener { callBack.onClick(item) }
             if (item.name == URLDecoder.decode(callBack.curFilePath, "utf-8")
                     .substringAfterLast(File.separator)
             ) {
@@ -62,7 +57,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemFontBinding) {
-        holder.itemView.onClick {
+        holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 callBack.onClick(it)
             }

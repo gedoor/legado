@@ -28,7 +28,7 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: GroupViewModel
@@ -68,7 +68,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
         binding.tvOk.setTextColor(requireContext().accentColor)
         binding.tvOk.visible()
-        binding.tvOk.onClick { dismiss() }
+        binding.tvOk.setOnClickListener { dismiss() }
     }
 
     private fun initData() {
@@ -164,7 +164,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemBookGroupManageBinding) {
             with(binding) {
-                tvEdit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
+                tvEdit.setOnClickListener { getItem(holder.layoutPosition)?.let { editGroup(it) } }
                 swShow.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         getItem(holder.layoutPosition)?.let {

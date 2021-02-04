@@ -14,12 +14,12 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
+import io.legado.app.utils.toastOnUI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.getStackTraceString
-import org.jetbrains.anko.toast
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -437,7 +437,7 @@ object ReadBook {
             }
         }.onError {
             it.printStackTrace()
-            App.INSTANCE.toast("ChapterProvider ERROR:\n${it.getStackTraceString()}")
+            App.INSTANCE.toastOnUI("ChapterProvider ERROR:\n${it.getStackTraceString()}")
         }.onSuccess {
             success?.invoke()
         }

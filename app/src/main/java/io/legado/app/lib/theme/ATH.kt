@@ -24,8 +24,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
-import org.jetbrains.anko.backgroundColor
-
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -272,7 +270,7 @@ object ATH {
     fun applyBackgroundTint(view: View?) {
         view?.apply {
             if (background == null) {
-                backgroundColor = context.backgroundColor
+                setBackgroundColor(context.backgroundColor)
             } else {
                 setBackgroundTint(this, context.backgroundColor)
             }

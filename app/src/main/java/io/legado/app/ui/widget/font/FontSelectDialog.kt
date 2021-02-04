@@ -157,7 +157,7 @@ class FontSelectDialog : BaseDialogFragment(),
         }.onSuccess {
             adapter?.setItems(it)
         }.onError {
-            toast("getFontFiles:${it.localizedMessage}")
+            toastOnUI("getFontFiles:${it.localizedMessage}")
         }
     }
 
@@ -192,7 +192,7 @@ class FontSelectDialog : BaseDialogFragment(),
         }.onSuccess {
             adapter?.setItems(it)
         }.onError {
-            toast("getFontFiles:${it.localizedMessage}")
+            toastOnUI("getFontFiles:${it.localizedMessage}")
         }
     }
 

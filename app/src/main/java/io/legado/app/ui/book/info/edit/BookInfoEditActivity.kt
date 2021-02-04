@@ -15,8 +15,6 @@ import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.*
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.jetbrains.anko.toast
 import java.io.File
 
 class BookInfoEditActivity :
@@ -55,15 +53,15 @@ class BookInfoEditActivity :
     }
 
     private fun initEvent() = with(binding) {
-        tvChangeCover.onClick {
+        tvChangeCover.setOnClickListener {
             viewModel.bookData.value?.let {
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        tvSelectCover.onClick {
+        tvSelectCover.setOnClickListener {
             selectImage()
         }
-        tvRefreshCover.onClick {
+        tvRefreshCover.setOnClickListener {
             viewModel.book?.customCoverUrl = tieCoverUrl.text?.toString()
             upCover()
         }
@@ -121,7 +119,7 @@ class BookInfoEditActivity :
                 }.getOrNull()?.let { byteArray ->
                     file.writeBytes(byteArray)
                     coverChangeTo(file.absolutePath)
-                } ?: toast("获取文件出错")
+                } ?: toastOnUI("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)

@@ -14,7 +14,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 @Suppress("unused")
 class SelectActionBar @JvmOverloads constructor(
@@ -41,9 +41,9 @@ class SelectActionBar @JvmOverloads constructor(
                 callBack?.selectAll(isChecked)
             }
         }
-        binding.btnRevertSelection.onClick { callBack?.revertSelection() }
-        binding.btnSelectActionMain.onClick { callBack?.onClickMainAction() }
-        binding.ivMenuMore.onClick { selMenu?.show() }
+        binding.btnRevertSelection.setOnClickListener { callBack?.revertSelection() }
+        binding.btnSelectActionMain.setOnClickListener { callBack?.onClickMainAction() }
+        binding.ivMenuMore.setOnClickListener { selMenu?.show() }
     }
 
     fun setMainActionText(text: String) = with(binding) {

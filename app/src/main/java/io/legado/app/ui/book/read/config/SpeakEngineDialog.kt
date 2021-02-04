@@ -27,7 +27,7 @@ import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
@@ -66,17 +66,17 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         recyclerView.adapter = adapter
         tvFooterLeft.setText(R.string.local_tts)
         tvFooterLeft.visible()
-        tvFooterLeft.onClick {
+        tvFooterLeft.setOnClickListener {
             removePref(PreferKey.speakEngine)
             dismiss()
         }
         tvOk.visible()
-        tvOk.onClick {
+        tvOk.setOnClickListener {
             putPrefLong(PreferKey.speakEngine, engineId)
             dismiss()
         }
         tvCancel.visible()
-        tvCancel.onClick {
+        tvCancel.setOnClickListener {
             dismiss()
         }
     }
@@ -150,16 +150,16 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemHttpTtsBinding) {
             binding.apply {
-                cbName.onClick {
+                cbName.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
                         engineId = httpTTS.id
                         notifyItemRangeChanged(0, itemCount)
                     }
                 }
-                ivEdit.onClick {
+                ivEdit.setOnClickListener {
                     editHttpTTS(getItem(holder.layoutPosition))
                 }
-                ivMenuDelete.onClick {
+                ivMenuDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
                         App.db.httpTTSDao.delete(httpTTS)
                     }

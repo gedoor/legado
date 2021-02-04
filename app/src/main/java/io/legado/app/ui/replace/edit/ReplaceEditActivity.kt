@@ -20,10 +20,9 @@ import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUI
 import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.selector
-import org.jetbrains.anko.toast
 import kotlin.math.abs
 
 /**
@@ -68,7 +67,7 @@ class ReplaceEditActivity :
         viewModel.initData(intent) {
             upReplaceView(it)
         }
-        binding.ivHelp.onClick {
+        binding.ivHelp.setOnClickListener {
             showRegexHelp()
         }
     }
@@ -83,7 +82,7 @@ class ReplaceEditActivity :
             R.id.menu_save -> {
                 val rule = getReplaceRule()
                 if (!rule.isValid()) {
-                    toast(R.string.replace_rule_invalid)
+                    toastOnUI(R.string.replace_rule_invalid)
                 } else {
                     viewModel.save(rule) {
                         postEvent(EventBus.REPLACE_RULE_SAVE, "")

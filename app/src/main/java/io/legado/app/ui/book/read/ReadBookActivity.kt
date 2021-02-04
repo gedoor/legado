@@ -55,7 +55,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.toast
 
 class ReadBookActivity : ReadBookBaseActivity(),
     View.OnTouchListener,
@@ -347,7 +346,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     ) {
                         if (BaseReadAloudService.isPlay()) {
                             ReadAloud.pause(this)
-                            toast(R.string.read_aloud_pause)
+                            toastOnUI(R.string.read_aloud_pause)
                             return true
                         }
                         if (isAutoPage) {
@@ -453,7 +452,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             R.id.menu_bookmark -> binding.readView.curPage.let {
                 val bookmark = it.createBookmark()
                 if (bookmark == null) {
-                    toast(R.string.create_bookmark_error)
+                    toastOnUI(R.string.create_bookmark_error)
                 } else {
                     showBookMark(bookmark)
                 }

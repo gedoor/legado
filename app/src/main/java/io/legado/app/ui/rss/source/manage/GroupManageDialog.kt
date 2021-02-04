@@ -24,7 +24,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: RssSourceViewModel
@@ -58,7 +58,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         recyclerView.adapter = adapter
         tvOk.setTextColor(requireContext().accentColor)
         tvOk.visible()
-        tvOk.onClick { dismiss() }
+        tvOk.setOnClickListener { dismiss() }
         App.db.rssSourceDao.liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
@@ -132,13 +132,13 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemGroupManageBinding) {
             binding.apply {
-                tvEdit.onClick {
+                tvEdit.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         editGroup(it)
                     }
                 }
 
-                tvDel.onClick {
+                tvDel.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         viewModel.delGroup(it)
                     }

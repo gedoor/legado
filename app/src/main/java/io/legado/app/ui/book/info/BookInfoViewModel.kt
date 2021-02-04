@@ -65,11 +65,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             }
                             loadChapter(it, changeDruChapterIndex)
                         }.onError {
-                            toast(R.string.error_get_book_info)
+                            toastOnUI(R.string.error_get_book_info)
                         }
                 } ?: let {
                     chapterListData.postValue(null)
-                    toast(R.string.error_no_source)
+                    toastOnUI(R.string.error_no_source)
                 }
             }
         }
@@ -101,19 +101,19 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                     changeDruChapterIndex(it)
                                 }
                             } else {
-                                toast(R.string.chapter_list_empty)
+                                toastOnUI(R.string.chapter_list_empty)
                             }
                         }.onError {
                             chapterListData.postValue(null)
-                            toast(R.string.error_get_chapter_list)
+                            toastOnUI(R.string.error_get_chapter_list)
                         }
                 } ?: let {
                     chapterListData.postValue(null)
-                    toast(R.string.error_no_source)
+                    toastOnUI(R.string.error_no_source)
                 }
             }
         }.onError {
-            toast("LoadTocError:${it.localizedMessage}")
+            toastOnUI("LoadTocError:${it.localizedMessage}")
         }
     }
 
@@ -238,9 +238,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             BookHelp.clearCache(bookData.value!!)
         }.onSuccess {
-            toast(R.string.clear_cache_success)
+            toastOnUI(R.string.clear_cache_success)
         }.onError {
-            toast(it.stackTraceToString())
+            toastOnUI(it.stackTraceToString())
         }
     }
 

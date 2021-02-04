@@ -28,7 +28,7 @@ import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 /**
  * 订阅界面
@@ -106,7 +106,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
             ItemRssBinding.inflate(layoutInflater, it, false).apply {
                 tvName.setText(R.string.rule_subscription)
                 ivIcon.setImageResource(R.drawable.image_legado)
-                root.onClick {
+                root.setOnClickListener {
                     startActivity<RuleSubActivity>()
                 }
             }

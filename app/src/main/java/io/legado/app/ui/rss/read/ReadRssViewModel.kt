@@ -137,9 +137,9 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                 }
             } ?: throw Throwable("NULL")
         }.onError {
-            toast("保存图片失败:${it.localizedMessage}")
+            toastOnUI("保存图片失败:${it.localizedMessage}")
         }.onSuccess {
-            toast("保存成功")
+            toastOnUI("保存成功")
         }
     }
 
@@ -186,7 +186,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             play()
         } else {
             launch {
-                toast(R.string.tts_init_failed)
+                toastOnUI(R.string.tts_init_failed)
             }
         }
     }

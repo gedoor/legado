@@ -51,7 +51,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             }.onError {
                 loadFinally.postValue(false)
                 it.printStackTrace()
-                toast(it.localizedMessage)
+                toastOnUI(it.localizedMessage)
             }
     }
 

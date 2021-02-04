@@ -40,7 +40,6 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.toast
 import java.io.File
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
@@ -412,7 +411,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             groups.map { group ->
                 if (group.contains("失效")) {
                     searchView.setQuery("失效", true)
-                    toast("发现有失效书源，已为您自动筛选！")
+                    toastOnUI("发现有失效书源，已为您自动筛选！")
                 }
             }
         }
@@ -474,7 +473,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                             startActivity<ImportBookSourceActivity>("dataKey" to dataKey)
                         }
                     } catch (e: Exception) {
-                        toast("readTextError:${e.localizedMessage}")
+                        toastOnUI("readTextError:${e.localizedMessage}")
                     }
                 }
             }

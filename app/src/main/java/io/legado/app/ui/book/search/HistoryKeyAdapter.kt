@@ -10,9 +10,6 @@ import io.legado.app.ui.widget.anima.explosion_field.ExplosionField
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.jetbrains.anko.sdk27.coroutines.onLongClick
-
 
 class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
     RecyclerAdapter<SearchKeyword, ItemFilletTextBinding>(activity) {
@@ -36,12 +33,12 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
         holder.itemView.apply {
-            onClick {
+            setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.searchHistory(it.word)
                 }
             }
-            onLongClick(returnValue = true) {
+            setOnLongClickListener {
                 it?.let {
                     explosionField.explode(it, true)
                 }
@@ -50,6 +47,7 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
                         App.db.searchKeywordDao.delete(it)
                     }
                 }
+                true
             }
         }
     }

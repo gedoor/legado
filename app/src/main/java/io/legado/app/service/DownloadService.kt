@@ -19,9 +19,9 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
 import io.legado.app.help.IntentHelp
 import io.legado.app.utils.RealPathUtil
+import io.legado.app.utils.downloadManager
 import io.legado.app.utils.msg
-import org.jetbrains.anko.downloadManager
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUI
 import java.io.File
 
 
@@ -149,7 +149,7 @@ class DownloadService : BaseService() {
             try {
                 startActivity(intent)
             } catch (e: Exception) {
-                toast(e.msg)
+                toastOnUI(e.msg)
             }
         }
     }

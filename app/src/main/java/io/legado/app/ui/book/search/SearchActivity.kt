@@ -28,7 +28,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 import org.jetbrains.anko.startActivity
 
 class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
@@ -184,11 +184,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 .setDefaultColor(accentColor)
                 .setPressedColor(ColorUtils.darkenColor(accentColor))
                 .create()
-        binding.fbStop.onClick {
+        binding.fbStop.setOnClickListener {
             viewModel.stop()
             binding.refreshProgressBar.isAutoLoading = false
         }
-        binding.tvClearHistory.onClick { viewModel.clearHistory() }
+        binding.tvClearHistory.setOnClickListener { viewModel.clearHistory() }
     }
 
     private fun initLiveData() {

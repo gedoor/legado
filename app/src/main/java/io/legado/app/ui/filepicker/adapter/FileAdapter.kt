@@ -13,7 +13,7 @@ import io.legado.app.ui.filepicker.entity.FileItem
 import io.legado.app.ui.filepicker.utils.ConvertUtils
 import io.legado.app.ui.filepicker.utils.FilePickerIcon
 import io.legado.app.utils.FileUtils
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 import java.io.File
 import java.util.*
 
@@ -118,7 +118,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemFileFilepickerBinding) {
-        holder.itemView.onClick {
+        holder.itemView.setOnClickListener {
             callBack.onFileClick(holder.layoutPosition)
         }
     }

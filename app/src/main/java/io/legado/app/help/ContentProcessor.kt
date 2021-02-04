@@ -4,9 +4,9 @@ import com.hankcs.hanlp.HanLP
 import io.legado.app.App
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.utils.toastOnUI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.toast
 
 class ContentProcessor(private val bookName: String, private val bookOrigin: String) {
 
@@ -40,7 +40,7 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
                         }
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
-                            App.INSTANCE.toast("${item.name}替换出错")
+                            App.INSTANCE.toastOnUI("${item.name}替换出错")
                         }
                     }
                 }
@@ -57,7 +57,7 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    App.INSTANCE.toast("简繁转换出错")
+                    App.INSTANCE.toastOnUI("简繁转换出错")
                 }
             }
         }

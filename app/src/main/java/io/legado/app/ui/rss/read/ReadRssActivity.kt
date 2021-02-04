@@ -25,7 +25,6 @@ import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
-import org.jetbrains.anko.downloadManager
 import org.jetbrains.anko.share
 import org.jsoup.Jsoup
 

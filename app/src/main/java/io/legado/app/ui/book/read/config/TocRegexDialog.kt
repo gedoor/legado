@@ -33,7 +33,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 import java.util.*
 
 class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
@@ -79,16 +79,16 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recyclerView)
-        tvCancel.onClick {
+        tvCancel.setOnClickListener {
             dismiss()
         }
-        tvOk.onClick {
+        tvOk.setOnClickListener {
             adapter.getItems().forEach { tocRule ->
                 if (selectedName == tocRule.name) {
                     val callBack = activity as? CallBack
                     callBack?.onTocRegexDialogResult(tocRule.rule)
                     dismiss()
-                    return@onClick
+                    return@setOnClickListener
                 }
             }
         }
@@ -231,10 +231,10 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                         }
                     }
                 }
-                ivEdit.onClick {
+                ivEdit.setOnClickListener {
                     editRule(getItem(holder.layoutPosition))
                 }
-                ivDelete.onClick {
+                ivDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { item ->
                         launch(IO) {
                             App.db.txtTocRule.delete(item)

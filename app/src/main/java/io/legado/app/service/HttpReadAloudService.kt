@@ -10,15 +10,11 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.LogUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.postEvent
+import io.legado.app.utils.*
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import org.jetbrains.anko.collections.forEachWithIndex
 import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -123,17 +119,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
-                                runOnUiThread { toast("tts接口超时，尝试重新获取") }
+                                runOnUiThread { toastOnUI("tts接口超时，尝试重新获取") }
                                 downloadAudio()
                             } catch (e: ConnectException) {
                                 removeSpeakCacheFile(fileName)
-                                runOnUiThread { toast("网络错误") }
+                                runOnUiThread { toastOnUI("网络错误") }
                             } catch (e: IOException) {
                                 val file = getSpeakFileAsMd5(fileName)
                                 if (file.exists()) {
                                     FileUtils.deleteFile(file.absolutePath)
                                 }
-                                runOnUiThread { toast("tts文件解析错误") }
+                                runOnUiThread { toastOnUI("tts文件解析错误") }
                             } catch (e: Exception) {
                                 removeSpeakCacheFile(fileName)
                             }

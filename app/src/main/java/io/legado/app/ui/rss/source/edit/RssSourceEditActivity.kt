@@ -22,10 +22,7 @@ import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.GSON
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.sendToClip
-import io.legado.app.utils.shareWithQr
+import io.legado.app.utils.*
 import org.jetbrains.anko.*
 import kotlin.math.abs
 
@@ -184,7 +181,7 @@ class RssSourceEditActivity :
 
     private fun checkSource(source: RssSource): Boolean {
         if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
-            toast("名称或url不能为空")
+            toastOnUI("名称或url不能为空")
             return false
         }
         return true

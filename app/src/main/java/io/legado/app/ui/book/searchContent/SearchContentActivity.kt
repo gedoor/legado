@@ -26,7 +26,7 @@ import io.legado.app.utils.observeEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class SearchContentActivity :
     VMBaseActivity<ActivitySearchContentBinding, SearchContentViewModel>(),
@@ -92,8 +92,13 @@ class SearchContentActivity :
     }
 
     private fun initView() {
-        binding.ivSearchContentTop.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
-        binding.ivSearchContentBottom.onClick {
+        binding.ivSearchContentTop.setOnClickListener {
+            mLayoutManager.scrollToPositionWithOffset(
+                0,
+                0
+            )
+        }
+        binding.ivSearchContentBottom.setOnClickListener {
             if (adapter.itemCount > 0) {
                 mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
             }

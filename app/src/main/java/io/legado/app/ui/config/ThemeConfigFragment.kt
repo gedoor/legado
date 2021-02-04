@@ -60,7 +60,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         findPreference<ColorPreference>(PreferKey.cBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
-                    toast(R.string.day_background_too_dark)
+                    toastOnUI(R.string.day_background_too_dark)
                     true
                 } else {
                     false
@@ -70,7 +70,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         findPreference<ColorPreference>(PreferKey.cNBackground)?.let {
             it.onSaveColor = { color ->
                 if (ColorUtils.isColorLight(color)) {
-                    toast(R.string.night_background_too_light)
+                    toastOnUI(R.string.night_background_too_light)
                     true
                 } else {
                     false
@@ -84,11 +84,11 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 val textColor = getCompatColor(R.color.primaryText)
                 when {
                     ColorUtils.getColorDifference(color, background) <= 60 -> {
-                        toast(R.string.accent_background_diff)
+                        toastOnUI(R.string.accent_background_diff)
                         true
                     }
                     ColorUtils.getColorDifference(color, textColor) <= 60 -> {
-                        toast(R.string.accent_text_diff)
+                        toastOnUI(R.string.accent_text_diff)
                         true
                     }
                     else -> false
@@ -102,11 +102,11 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 val textColor = getCompatColor(R.color.primaryText)
                 when {
                     ColorUtils.getColorDifference(color, background) <= 60 -> {
-                        toast(R.string.accent_background_diff)
+                        toastOnUI(R.string.accent_background_diff)
                         true
                     }
                     ColorUtils.getColorDifference(color, textColor) <= 60 -> {
-                        toast(R.string.accent_text_diff)
+                        toastOnUI(R.string.accent_text_diff)
                         true
                     }
                     else -> false
@@ -277,7 +277,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     putPrefString(preferenceKey, file.absolutePath)
                     upPreferenceSummary(preferenceKey, file.absolutePath)
                     success()
-                } ?: toast("获取文件出错")
+                } ?: toastOnUI("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)

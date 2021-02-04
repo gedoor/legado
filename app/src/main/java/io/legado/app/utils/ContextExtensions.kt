@@ -3,28 +3,64 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.BatteryManager
 import android.provider.Settings
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.io.FileOutputStream
+
+val Context.downloadManager
+    get() = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+val Context.connectivityManager
+    get() = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+fun Context.toastOnUI(message: Int) {
+    runOnUiThread {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun Context.toastOnUI(message: CharSequence?) {
+    runOnUiThread {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun Context.longToastOnUI(message: Int) {
+    runOnUiThread {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+}
+
+fun Context.longToastOnUI(message: CharSequence?) {
+    runOnUiThread {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+}
+
+val Context.defaultSharedPreferences: SharedPreferences
+    get() = PreferenceManager.getDefaultSharedPreferences(this)
 
 fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
     defaultSharedPreferences.getBoolean(key, defValue)
@@ -103,7 +139,7 @@ val Context.navigationBarHeight: Int
 fun Context.shareWithQr(title: String, text: String) {
     val bitmap = QRCodeUtils.createQRCode(text)
     if (bitmap == null) {
-        toast(R.string.text_too_long_qr_error)
+        toastOnUI(R.string.text_too_long_qr_error)
     } else {
         try {
             val file = File(externalCacheDir, "qr.png")
@@ -123,7 +159,7 @@ fun Context.shareWithQr(title: String, text: String) {
             intent.type = "image/png"
             startActivity(Intent.createChooser(intent, title))
         } catch (e: Exception) {
-            toast(e.localizedMessage ?: "ERROR")
+            toastOnUI(e.localizedMessage ?: "ERROR")
         }
     }
 }
@@ -155,7 +191,7 @@ fun Context.sendMail(mail: String) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     } catch (e: Exception) {
-        toast(e.localizedMessage ?: "Error")
+        toastOnUI(e.localizedMessage ?: "Error")
     }
 }
 
@@ -195,13 +231,13 @@ fun Context.openUrl(uri: Uri) {
         try {
             startActivity(intent)
         } catch (e: Exception) {
-            toast(e.localizedMessage ?: "open url error")
+            toastOnUI(e.localizedMessage ?: "open url error")
         }
     } else {
         try {
             startActivity(Intent.createChooser(intent, "请选择浏览器"))
         } catch (e: Exception) {
-            toast(e.localizedMessage ?: "open url error")
+            toastOnUI(e.localizedMessage ?: "open url error")
         }
     }
 }

@@ -12,10 +12,10 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.databinding.ItemRssArticle2Binding
 import io.legado.app.help.ImageLoader
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.jetbrains.anko.textColorResource
+
 
 class RssArticlesAdapter2(context: Context, callBack: CallBack) :
     BaseRssArticlesAdapter<ItemRssArticle2Binding>(context, callBack) {
@@ -67,15 +67,15 @@ class RssArticlesAdapter2(context: Context, callBack: CallBack) :
                 }.into(imageView)
             }
             if (item.read) {
-                tvTitle.textColorResource = R.color.tv_text_summary
+                tvTitle.setTextColor(context.getCompatColor(R.color.tv_text_summary))
             } else {
-                tvTitle.textColorResource = R.color.primaryText
+                tvTitle.setTextColor(context.getCompatColor(R.color.primaryText))
             }
         }
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemRssArticle2Binding) {
-        holder.itemView.onClick {
+        holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 callBack.readRss(it)
             }

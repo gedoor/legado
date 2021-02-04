@@ -36,7 +36,6 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.toast
 import java.io.File
 
 
@@ -271,7 +270,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                             startActivity<ImportRssSourceActivity>("dataKey" to dataKey)
                         }
                     }.onFailure {
-                        toast("readTextError:${it.localizedMessage}")
+                        toastOnUI("readTextError:${it.localizedMessage}")
                     }
                 }
             }

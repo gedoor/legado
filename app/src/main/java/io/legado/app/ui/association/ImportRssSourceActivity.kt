@@ -8,7 +8,7 @@ import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.getViewModel
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUI
 
 class ImportRssSourceActivity :
     VMBaseActivity<ActivityTranslucenceBinding, ImportRssSourceViewModel>(
@@ -65,7 +65,7 @@ class ImportRssSourceActivity :
                 }
                 else -> {
                     binding.rotateLoading.hide()
-                    toast(R.string.wrong_format)
+                    toastOnUI(R.string.wrong_format)
                     finish()
                 }
             }

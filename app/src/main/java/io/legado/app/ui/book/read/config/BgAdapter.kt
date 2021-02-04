@@ -9,7 +9,7 @@ import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.ImageLoader
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.utils.postEvent
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 import java.io.File
 
 class BgAdapter(context: Context, val textColor: Int) :
@@ -39,7 +39,7 @@ class BgAdapter(context: Context, val textColor: Int) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemBgImageBinding) {
         holder.itemView.apply {
-            this.onClick {
+            this.setOnClickListener {
                 getItemByLayoutPosition(holder.layoutPosition)?.let {
                     ReadBookConfig.durConfig.setCurBg(1, it)
                     ReadBookConfig.upBg()

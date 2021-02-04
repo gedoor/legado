@@ -18,8 +18,8 @@ import io.legado.app.data.AppDatabase
 import io.legado.app.help.*
 import io.legado.app.help.http.HttpHelper
 import io.legado.app.utils.LanguageUtils
+import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.postEvent
-import org.jetbrains.anko.defaultSharedPreferences
 import rxhttp.wrapper.param.RxHttp
 
 @Suppress("DEPRECATION")

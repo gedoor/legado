@@ -32,7 +32,7 @@ import io.legado.app.utils.getSize
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
@@ -95,9 +95,9 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
-        binding.tvCancel.onClick { dismiss() }
+        binding.tvCancel.setOnClickListener { dismiss() }
         binding.tvOk.setTextColor(requireContext().accentColor)
-        binding.tvOk.onClick {
+        binding.tvOk.setOnClickListener {
             callBack?.upGroup(requestCode, groupId)
             dismiss()
         }
@@ -187,7 +187,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                         }
                     }
                 }
-                tvEdit.onClick { getItem(holder.layoutPosition)?.let { editGroup(it) } }
+                tvEdit.setOnClickListener { getItem(holder.layoutPosition)?.let { editGroup(it) } }
             }
         }
 

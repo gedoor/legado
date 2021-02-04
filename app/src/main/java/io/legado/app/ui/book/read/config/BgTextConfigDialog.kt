@@ -28,8 +28,6 @@ import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
-import org.jetbrains.anko.sdk27.coroutines.onClick
 import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toByteArray
 import java.io.File
@@ -110,7 +108,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 tvName.text = getString(R.string.select_image)
                 ivBg.setImageResource(R.drawable.ic_image)
                 ivBg.setColorFilter(primaryTextColor)
-                root.onClick { selectImage() }
+                root.setOnClickListener { selectImage() }
             }
         }
         requireContext().assets.list("bg")?.let {
@@ -120,7 +118,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
 
     @SuppressLint("InflateParams")
     private fun initEvent() = with(ReadBookConfig.durConfig) {
-        binding.ivEdit.onClick {
+        binding.ivEdit.setOnClickListener {
             alert(R.string.style_name) {
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                     editView.setText(ReadBookConfig.durConfig.name)
@@ -135,13 +133,13 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 cancelButton()
             }.show()
         }
-        binding.swDarkStatusIcon.onCheckedChange { buttonView, isChecked ->
+        binding.swDarkStatusIcon.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView?.isPressed == true) {
                 setCurStatusIconDark(isChecked)
                 (activity as? ReadBookActivity)?.upSystemUiVisibility()
             }
         }
-        binding.tvTextColor.onClick {
+        binding.tvTextColor.setOnClickListener {
             ColorPickerDialog.newBuilder()
                 .setColor(curTextColor())
                 .setShowAlphaSlider(false)
@@ -149,7 +147,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 .setDialogId(TEXT_COLOR)
                 .show(requireActivity())
         }
-        binding.tvBgColor.onClick {
+        binding.tvBgColor.setOnClickListener {
             val bgColor =
                 if (curBgType() == 0) Color.parseColor(curBgStr())
                 else Color.parseColor("#015A86")
@@ -160,7 +158,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 .setDialogId(BG_COLOR)
                 .show(requireActivity())
         }
-        binding.ivImport.onClick {
+        binding.ivImport.setOnClickListener {
             val importFormNet = "网络导入"
             val otherActions = arrayListOf(importFormNet)
             FilePicker.selectFile(
@@ -175,19 +173,19 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 }
             }
         }
-        binding.ivExport.onClick {
+        binding.ivExport.setOnClickListener {
             FilePicker.selectFolder(
                 this@BgTextConfigDialog,
                 requestCodeExport,
                 title = getString(R.string.export_str)
             )
         }
-        binding.ivDelete.onClick {
+        binding.ivDelete.setOnClickListener {
             if (ReadBookConfig.deleteDur()) {
                 postEvent(EventBus.UP_CONFIG, true)
                 dismiss()
             } else {
-                toast("数量已是最少,不能删除.")
+                toastOnUI("数量已是最少,不能删除.")
             }
         }
     }
@@ -269,7 +267,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 }
             }
         }.onSuccess {
-            toast("导出成功, 文件名为 $exportFileName")
+            toastOnUI("导出成功, 文件名为 $exportFileName")
         }.onError {
             it.printStackTrace()
             longToast("导出失败:${it.localizedMessage}")
@@ -365,7 +363,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
             ReadBookConfig.durConfig = config
             postEvent(EventBus.UP_CONFIG, true)
         }.onSuccess {
-            toast("导入成功")
+            toastOnUI("导入成功")
         }.onError {
             it.printStackTrace()
             longToast("导入失败:${it.localizedMessage}")
@@ -406,7 +404,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                     ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
                     ReadBookConfig.upBg()
                     postEvent(EventBus.UP_CONFIG, false)
-                } ?: toast("获取文件出错")
+                } ?: toastOnUI("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)

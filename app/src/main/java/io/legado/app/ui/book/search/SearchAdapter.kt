@@ -11,7 +11,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
     DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
@@ -66,7 +66,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
-        binding.root.onClick {
+        binding.root.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 callBack.showBookInfo(it.name, it.author)
             }

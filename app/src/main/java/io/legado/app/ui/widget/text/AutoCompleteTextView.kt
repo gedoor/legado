@@ -15,7 +15,7 @@ import io.legado.app.R
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 @Suppress("unused")
 class AutoCompleteTextView @JvmOverloads constructor(
@@ -61,7 +61,7 @@ class AutoCompleteTextView @JvmOverloads constructor(
             textView.text = getItem(position)
             val ivDelete = view.findViewById<ImageView>(R.id.iv_delete)
             if (delCallBack != null) ivDelete.visible() else ivDelete.gone()
-            ivDelete.onClick {
+            ivDelete.setOnClickListener {
                 getItem(position)?.let {
                     remove(it)
                     delCallBack?.invoke(it)

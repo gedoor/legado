@@ -6,11 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.splitNotBlank
-import io.legado.app.utils.writeText
-import org.jetbrains.anko.toast
+import io.legado.app.utils.*
 import java.io.File
 
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
@@ -83,9 +79,9 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             FileUtils.createFileIfNotExist(file, "exportReplaceRule.json")
                 .writeText(json)
         }.onSuccess {
-            context.toast("成功导出至\n${file.absolutePath}")
+            context.toastOnUI("成功导出至\n${file.absolutePath}")
         }.onError {
-            context.toast("导出失败\n${it.localizedMessage}")
+            context.toastOnUI("导出失败\n${it.localizedMessage}")
         }
     }
 
@@ -96,9 +92,9 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             doc.createFile("", "exportReplaceRule.json")
                 ?.writeText(context, json)
         }.onSuccess {
-            context.toast("成功导出至\n${doc.uri.path}")
+            context.toastOnUI("成功导出至\n${doc.uri.path}")
         }.onError {
-            context.toast("导出失败\n${it.localizedMessage}")
+            context.toastOnUI("导出失败\n${it.localizedMessage}")
         }
     }
 

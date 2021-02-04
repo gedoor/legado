@@ -181,7 +181,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }.onSuccess {
             success.invoke(it)
         }.onError {
-            toast(it.msg)
+            toastOnUI(it.msg)
         }
     }
 

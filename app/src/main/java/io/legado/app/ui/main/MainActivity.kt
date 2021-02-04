@@ -32,7 +32,7 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getViewModel
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.observeEvent
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUI
 
 
 class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
@@ -144,7 +144,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                         return true
                     }
                     if (System.currentTimeMillis() - exitTime > 2000) {
-                        toast(R.string.double_click_exit)
+                        toastOnUI(R.string.double_click_exit)
                         exitTime = System.currentTimeMillis()
                     } else {
                         if (BaseReadAloudService.pause) {

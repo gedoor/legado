@@ -40,7 +40,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }.onSuccess {
             success()
         }.onError {
-            toast(it.localizedMessage)
+            toastOnUI(it.localizedMessage)
             it.printStackTrace()
         }
     }
@@ -53,12 +53,12 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             }
             source
         }.onError {
-            toast(it.localizedMessage)
+            toastOnUI(it.localizedMessage)
         }.onSuccess {
             if (it != null) {
                 onSuccess(it)
             } else {
-                toast("格式不对")
+                toastOnUI("格式不对")
             }
         }
     }
@@ -70,7 +70,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
                 finally.invoke(it)
             }
         }.onError {
-            toast(it.msg)
+            toastOnUI(it.msg)
         }
     }
 

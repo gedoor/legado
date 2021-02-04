@@ -15,7 +15,7 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendMail
 import io.legado.app.utils.sendToClip
-import io.legado.app.utils.toast
+import io.legado.app.utils.toastOnUI
 
 class AboutFragment : PreferenceFragmentCompat() {
 
@@ -105,7 +105,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             startActivity(intent)
             return true
         }.onFailure {
-            toast("添加失败,请手动添加")
+            toastOnUI("添加失败,请手动添加")
         }
         return false
     }

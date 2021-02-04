@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.App
-import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
@@ -21,7 +20,6 @@ import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
-import org.jetbrains.anko.debug
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 
@@ -173,7 +171,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                     searchFinish(searchBook)
                 }
             }.onError {
-                debug { context.getString(R.string.error_get_book_info) }
+                it.printStackTrace()
             }
     }
 
@@ -186,7 +184,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                     searchFinish(searchBook)
                 }
             }.onError {
-                debug { context.getString(R.string.error_get_chapter_list) }
+                it.printStackTrace()
             }
     }
 

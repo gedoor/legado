@@ -13,8 +13,6 @@ import io.legado.app.databinding.ItemArrangeBookBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.sdk27.coroutines.onClick
 import java.util.*
 
 class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
@@ -40,7 +38,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         binding.apply {
-            root.backgroundColor = context.backgroundColor
+            root.setBackgroundColor(context.backgroundColor)
             tvName.text = item.name
             tvAuthor.text = item.author
             tvAuthor.visibility = if (item.author.isEmpty()) View.GONE else View.VISIBLE
@@ -65,7 +63,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            root.onClick {
+            root.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     checkbox.isChecked = !checkbox.isChecked
                     if (checkbox.isChecked) {
@@ -76,12 +74,12 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
                     callBack.upSelectCount()
                 }
             }
-            tvDelete.onClick {
+            tvDelete.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.deleteBook(it)
                 }
             }
-            tvGroup.onClick {
+            tvGroup.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     actionItem = it
                     callBack.selectGroup(groupRequestCode, it.group)

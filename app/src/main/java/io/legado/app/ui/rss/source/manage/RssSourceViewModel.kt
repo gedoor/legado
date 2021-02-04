@@ -11,7 +11,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.*
-import org.jetbrains.anko.toast
 import java.io.File
 
 class RssSourceViewModel(application: Application) : BaseViewModel(application) {
@@ -86,9 +85,9 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             FileUtils.createFileIfNotExist(file, "exportRssSource.json")
                 .writeText(json)
         }.onSuccess {
-            context.toast("成功导出至\n${file.absolutePath}")
+            context.toastOnUI("成功导出至\n${file.absolutePath}")
         }.onError {
-            context.toast("导出失败\n${it.localizedMessage}")
+            context.toastOnUI("导出失败\n${it.localizedMessage}")
         }
     }
 
@@ -99,9 +98,9 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
             doc.createFile("", "exportRssSource.json")
                 ?.writeText(context, json)
         }.onSuccess {
-            context.toast("成功导出至\n${doc.uri.path}")
+            context.toastOnUI("成功导出至\n${doc.uri.path}")
         }.onError {
-            context.toast("导出失败\n${it.localizedMessage}")
+            context.toastOnUI("导出失败\n${it.localizedMessage}")
         }
     }
 
@@ -123,7 +122,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }.onSuccess {
             success.invoke(it)
         }.onError {
-            toast(it.msg)
+            toastOnUI(it.msg)
         }
     }
 

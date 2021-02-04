@@ -8,8 +8,8 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.lib.theme.accentColor
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.jetbrains.anko.textColorResource
+import io.legado.app.utils.getCompatColor
+
 
 class ChapterListAdapter(context: Context, var callBack: CallBack) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
@@ -29,7 +29,7 @@ class ChapterListAdapter(context: Context, var callBack: CallBack) :
             if (item.index == callBack.durChapterIndex()) {
                 tvChapterName.setTextColor(context.accentColor)
             } else {
-                tvChapterName.textColorResource = R.color.secondaryText
+                tvChapterName.setTextColor(context.getCompatColor(R.color.secondaryText))
             }
 
         }
@@ -37,7 +37,7 @@ class ChapterListAdapter(context: Context, var callBack: CallBack) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemChapterListBinding) {
         holder.itemView.apply {
-            this.onClick {
+            this.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.openChapter(it)
                 }

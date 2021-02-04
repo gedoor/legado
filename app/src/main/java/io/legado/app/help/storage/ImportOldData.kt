@@ -8,7 +8,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isContentScheme
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUI
 import java.io.File
 
 object ImportOldData {
@@ -21,28 +21,28 @@ object ImportOldData {
                         kotlin.runCatching {
                             DocumentUtils.readText(context, doc.uri)?.let { json ->
                                 val importCount = importOldBookshelf(json)
-                                context.toast("成功导入书籍${importCount}")
+                                context.toastOnUI("成功导入书籍${importCount}")
                             }
                         }.onFailure {
-                            context.toast("导入书籍失败\n${it.localizedMessage}")
+                            context.toastOnUI("导入书籍失败\n${it.localizedMessage}")
                         }
                     "myBookSource.json" ->
                         kotlin.runCatching {
                             DocumentUtils.readText(context, doc.uri)?.let { json ->
                                 val importCount = importOldSource(json)
-                                context.toast("成功导入书源${importCount}")
+                                context.toastOnUI("成功导入书源${importCount}")
                             }
                         }.onFailure {
-                            context.toast("导入源失败\n${it.localizedMessage}")
+                            context.toastOnUI("导入源失败\n${it.localizedMessage}")
                         }
                     "myBookReplaceRule.json" ->
                         kotlin.runCatching {
                             DocumentUtils.readText(context, doc.uri)?.let { json ->
                                 val importCount = importOldReplaceRule(json)
-                                context.toast("成功导入替换规则${importCount}")
+                                context.toastOnUI("成功导入替换规则${importCount}")
                             }
                         }.onFailure {
-                            context.toast("导入替换规则失败\n${it.localizedMessage}")
+                            context.toastOnUI("导入替换规则失败\n${it.localizedMessage}")
                         }
                 }
             }
@@ -54,9 +54,9 @@ object ImportOldData {
                         FileUtils.createFileIfNotExist(file, "myBookShelf.json")
                     val json = shelfFile.readText()
                     val importCount = importOldBookshelf(json)
-                    context.toast("成功导入书籍${importCount}")
+                    context.toastOnUI("成功导入书籍${importCount}")
                 }.onFailure {
-                    context.toast("导入书籍失败\n${it.localizedMessage}")
+                    context.toastOnUI("导入书籍失败\n${it.localizedMessage}")
                 }
 
                 kotlin.runCatching {// Book source
@@ -64,9 +64,9 @@ object ImportOldData {
                         FileUtils.getFile(file, "myBookSource.json")
                     val json = sourceFile.readText()
                     val importCount = importOldSource(json)
-                    context.toast("成功导入书源${importCount}")
+                    context.toastOnUI("成功导入书源${importCount}")
                 }.onFailure {
-                    context.toast("导入源失败\n${it.localizedMessage}")
+                    context.toastOnUI("导入源失败\n${it.localizedMessage}")
                 }
 
                 kotlin.runCatching {// Replace rules
@@ -74,12 +74,12 @@ object ImportOldData {
                     if (ruleFile.exists()) {
                         val json = ruleFile.readText()
                         val importCount = importOldReplaceRule(json)
-                        context.toast("成功导入替换规则${importCount}")
+                        context.toastOnUI("成功导入替换规则${importCount}")
                     } else {
-                        context.toast("未找到替换规则")
+                        context.toastOnUI("未找到替换规则")
                     }
                 }.onFailure {
-                    context.toast("导入替换规则失败\n${it.localizedMessage}")
+                    context.toastOnUI("导入替换规则失败\n${it.localizedMessage}")
                 }
             }
         }

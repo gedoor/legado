@@ -24,7 +24,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var viewModel: BookSourceViewModel
@@ -129,12 +129,12 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemGroupManageBinding) {
             binding.apply {
-                tvEdit.onClick {
+                tvEdit.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         editGroup(it)
                     }
                 }
-                tvDel.onClick {
+                tvDel.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { viewModel.delGroup(it) }
                 }
             }

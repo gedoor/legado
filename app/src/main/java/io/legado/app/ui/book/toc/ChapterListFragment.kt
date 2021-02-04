@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 import kotlin.math.min
 
 class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list),
@@ -63,13 +63,13 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
     }
 
     private fun initView() = with(binding) {
-        ivChapterTop.onClick { mLayoutManager.scrollToPositionWithOffset(0, 0) }
-        ivChapterBottom.onClick {
+        ivChapterTop.setOnClickListener { mLayoutManager.scrollToPositionWithOffset(0, 0) }
+        ivChapterBottom.setOnClickListener {
             if (adapter.itemCount > 0) {
                 mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
             }
         }
-        tvCurrentChapterInfo.onClick {
+        tvCurrentChapterInfo.setOnClickListener {
             mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
         }
     }

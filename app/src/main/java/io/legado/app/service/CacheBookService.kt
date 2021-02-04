@@ -20,9 +20,9 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUI
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.isActive
-import org.jetbrains.anko.toast
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
@@ -128,7 +128,7 @@ class CacheBookService : BaseService() {
         if (downloadMap.containsKey(bookUrl)) {
             notificationContent = getString(R.string.already_in_download)
             upNotification()
-            toast(notificationContent)
+            toastOnUI(notificationContent)
             return
         }
         downloadCount[bookUrl] = DownloadCount()

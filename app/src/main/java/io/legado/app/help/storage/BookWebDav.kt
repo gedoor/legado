@@ -16,7 +16,6 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.toast
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -80,7 +79,7 @@ object BookWebDav {
                         Coroutine.async {
                             restoreWebDav(names[index])
                         }.onError {
-                            App.INSTANCE.toast("WebDavError:${it.localizedMessage}")
+                            App.INSTANCE.toastOnUI("WebDavError:${it.localizedMessage}")
                         }
                     }
                 }
@@ -118,7 +117,7 @@ object BookWebDav {
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
-                App.INSTANCE.toast("WebDav\n${e.localizedMessage}")
+                App.INSTANCE.toastOnUI("WebDav\n${e.localizedMessage}")
             }
         }
     }
@@ -139,7 +138,7 @@ object BookWebDav {
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
-                App.INSTANCE.toast("WebDav导出\n${e.localizedMessage}")
+                App.INSTANCE.toastOnUI("WebDav导出\n${e.localizedMessage}")
             }
         }
     }

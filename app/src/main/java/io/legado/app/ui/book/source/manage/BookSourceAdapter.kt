@@ -20,7 +20,7 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
@@ -132,12 +132,12 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            ivEdit.onClick {
+            ivEdit.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
-            ivMenuMore.onClick {
+            ivMenuMore.setOnClickListener {
                 showMenu(ivMenuMore, holder.layoutPosition)
             }
         }

@@ -16,7 +16,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class AutoReadDialog : BaseDialogFragment() {
     var callBack: CallBack? = null
@@ -94,12 +94,12 @@ class AutoReadDialog : BaseDialogFragment() {
     }
 
     private fun initEvent() {
-        binding.llMainMenu.onClick { callBack?.showMenuBar(); dismiss() }
-        binding.llSetting.onClick {
+        binding.llMainMenu.setOnClickListener { callBack?.showMenuBar(); dismiss() }
+        binding.llSetting.setOnClickListener {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
-        binding.llCatalog.onClick { callBack?.openChapterList() }
-        binding.llAutoPageStop.onClick {
+        binding.llCatalog.setOnClickListener { callBack?.openChapterList() }
+        binding.llAutoPageStop.setOnClickListener {
             callBack?.autoPageStop()
             dismiss()
         }

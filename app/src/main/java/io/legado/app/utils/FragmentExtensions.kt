@@ -11,7 +11,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
-import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.internals.AnkoInternals
 

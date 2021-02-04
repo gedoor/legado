@@ -20,9 +20,8 @@ import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.longToast
-import io.legado.app.utils.toast
+import io.legado.app.utils.toastOnUI
 import kotlinx.coroutines.Dispatchers.Main
-import org.jetbrains.anko.toast
 
 object BackupRestoreUi {
     private const val selectFolderRequestCode = 21
@@ -42,7 +41,7 @@ object BackupRestoreUi {
                     Coroutine.async {
                         Backup.backup(fragment.requireContext(), backupPath)
                     }.onSuccess {
-                        fragment.toast(R.string.backup_success)
+                        fragment.toastOnUI(R.string.backup_success)
                     }
                 } else {
                     selectBackupFolder(fragment, backupSelectRequestCode)
@@ -65,7 +64,7 @@ object BackupRestoreUi {
                     AppConfig.backupPath = path
                     Backup.backup(fragment.requireContext(), path)
                 }.onSuccess {
-                    fragment.toast(R.string.backup_success)
+                    fragment.toastOnUI(R.string.backup_success)
                 }
             }
             .request()
@@ -135,7 +134,7 @@ object BackupRestoreUi {
                         Coroutine.async {
                             Backup.backup(App.INSTANCE, uri.toString())
                         }.onSuccess {
-                            App.INSTANCE.toast(R.string.backup_success)
+                            App.INSTANCE.toastOnUI(R.string.backup_success)
                         }
                     } else {
                         uri.path?.let { path ->
@@ -143,7 +142,7 @@ object BackupRestoreUi {
                             Coroutine.async {
                                 Backup.backup(App.INSTANCE, path)
                             }.onSuccess {
-                                App.INSTANCE.toast(R.string.backup_success)
+                                App.INSTANCE.toastOnUI(R.string.backup_success)
                             }
                         }
                     }

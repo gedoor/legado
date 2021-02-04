@@ -10,7 +10,7 @@ import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
@@ -49,7 +49,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemChapterListBinding) {
-        holder.itemView.onClick {
+        holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 callback.openChapter(it)
             }

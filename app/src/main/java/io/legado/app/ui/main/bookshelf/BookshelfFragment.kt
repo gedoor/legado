@@ -205,7 +205,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     override fun onTabReselected(tab: TabLayout.Tab) {
         fragmentMap[selectedGroup.groupId]?.let {
-            toast("${selectedGroup.groupName}(${it.getBooksCount()})")
+            toastOnUI("${selectedGroup.groupName}(${it.getBooksCount()})")
         }
     }
 

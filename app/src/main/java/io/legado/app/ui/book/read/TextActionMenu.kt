@@ -24,13 +24,8 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.utils.gone
-import io.legado.app.utils.isAbsUrl
-import io.legado.app.utils.sendToClip
-import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
+import io.legado.app.utils.*
 import org.jetbrains.anko.share
-import org.jetbrains.anko.toast
 import java.util.*
 
 @SuppressLint("RestrictedApi")
@@ -73,7 +68,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         if (moreMenu.size() > 0) {
             ivMenuMore.visible()
         }
-        ivMenuMore.onClick {
+        ivMenuMore.setOnClickListener {
             if (recyclerView.isVisible) {
                 ivMenuMore.setImageResource(R.drawable.ic_arrow_back)
                 adapter.setItems(moreMenu.visibleItems)
@@ -107,7 +102,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemTextBinding) {
-            holder.itemView.onClick {
+            holder.itemView.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     if (!callBack.onMenuItemSelected(it.itemId)) {
                         onMenuItemSelected(it)
@@ -124,7 +119,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             R.id.menu_share_str -> context.share(callBack.selectedText)
             R.id.menu_aloud -> {
                 if (BaseReadAloudService.isRun) {
-                    context.toast(R.string.alouding_disable)
+                    context.toastOnUI(R.string.alouding_disable)
                     return
                 }
                 readAloud(callBack.selectedText)
@@ -143,7 +138,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                     context.startActivity(intent)
                 }.onFailure {
                     it.printStackTrace()
-                    context.toast(it.localizedMessage ?: "ERROR")
+                    context.toastOnUI(it.localizedMessage ?: "ERROR")
                 }
             }
             else -> item.intent?.let {
@@ -219,7 +214,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                 ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
             }
         }.onFailure {
-            context.toast("获取文字操作菜单出错:${it.localizedMessage}")
+            context.toastOnUI("获取文字操作菜单出错:${it.localizedMessage}")
         }
     }
 

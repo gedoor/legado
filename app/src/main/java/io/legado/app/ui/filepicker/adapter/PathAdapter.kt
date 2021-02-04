@@ -8,7 +8,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemPathFilepickerBinding
 import io.legado.app.ui.filepicker.utils.ConvertUtils
 import io.legado.app.ui.filepicker.utils.FilePickerIcon
-import org.jetbrains.anko.sdk27.coroutines.onClick
+
 import java.util.*
 
 
@@ -61,7 +61,7 @@ class PathAdapter(context: Context, val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemPathFilepickerBinding) {
-        holder.itemView.onClick {
+        holder.itemView.setOnClickListener {
             callBack.onPathClick(holder.layoutPosition)
         }
     }

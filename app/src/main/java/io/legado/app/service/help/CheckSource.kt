@@ -6,14 +6,14 @@ import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.BookSource
 import io.legado.app.service.CheckSourceService
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUI
 
 object CheckSource {
     var keyword = "我的"
 
     fun start(context: Context, sources: List<BookSource>) {
         if (sources.isEmpty()) {
-            context.toast(R.string.non_select)
+            context.toastOnUI(R.string.non_select)
             return
         }
         val selectedIds: ArrayList<String> = arrayListOf()

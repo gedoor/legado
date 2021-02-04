@@ -9,7 +9,7 @@ import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.getViewModel
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUI
 
 class ImportReplaceRuleActivity :
     VMBaseActivity<ActivityTranslucenceBinding, ImportReplaceRuleViewModel>(
@@ -66,7 +66,7 @@ class ImportReplaceRuleActivity :
                 }
                 else -> {
                     binding.rotateLoading.hide()
-                    toast("格式不对")
+                    toastOnUI("格式不对")
                     finish()
                 }
             }

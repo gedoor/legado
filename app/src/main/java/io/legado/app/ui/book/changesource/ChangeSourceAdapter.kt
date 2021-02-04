@@ -13,8 +13,6 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.jetbrains.anko.sdk27.coroutines.onLongClick
 
 
 class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
@@ -65,13 +63,14 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
-        holder.itemView.onClick {
+        holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 callBack.changeTo(it)
             }
         }
-        holder.itemView.onLongClick(returnValue = true) {
+        holder.itemView.setOnLongClickListener {
             showMenu(holder.itemView, getItem(holder.layoutPosition))
+            true
         }
     }
 
