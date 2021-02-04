@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ViewBookPageBinding
@@ -85,7 +85,7 @@ class PageView(context: Context) : FrameLayout(context) {
             vwTopDivider.visible(it.showHeaderLine)
             vwBottomDivider.visible(it.showFooterLine)
             pageNvBar.layoutParams = pageNvBar.layoutParams.apply {
-                height = if (it.hideNavigationBar) 0 else AppConst.navigationBarHeight
+                height = if (it.hideNavigationBar) 0 else App.navigationBarHeight
             }
         }
         contentTextView.upVisibleRect()

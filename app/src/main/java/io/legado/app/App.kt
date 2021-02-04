@@ -89,4 +89,8 @@ class App : MultiDexApplication() {
         }
     }
 
+    companion object {
+        var navigationBarHeight = 0
+    }
+
 }
