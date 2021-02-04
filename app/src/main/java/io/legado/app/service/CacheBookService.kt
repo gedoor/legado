@@ -23,6 +23,7 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.isActive
+import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
@@ -43,7 +44,7 @@ class CacheBookService : BaseService() {
 
     @Volatile
     private var downloadingCount = 0
-    private var notificationContent = App.INSTANCE.getString(R.string.starting_download)
+    private var notificationContent = appCtx.getString(R.string.starting_download)
 
     private val notificationBuilder by lazy {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)

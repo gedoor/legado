@@ -7,6 +7,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.charset.Charset
@@ -266,7 +267,7 @@ class AnalyzeTxtFile {
                 val bookFile = FileUtils.getFile(LocalBook.cacheFolder, book.originName)
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
-                    DocumentUtils.readBytes(App.INSTANCE, uri)?.let {
+                    DocumentUtils.readBytes(appCtx, uri)?.let {
                         bookFile.writeBytes(it)
                     }
                 }

@@ -23,10 +23,11 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 import java.io.File
 
 object Restore {
-    private val ignoreConfigPath = FileUtils.getPath(App.INSTANCE.filesDir, "restoreIgnore.json")
+    private val ignoreConfigPath = FileUtils.getPath(appCtx.filesDir, "restoreIgnore.json")
     val ignoreConfig: HashMap<String, Boolean> by lazy {
         val file = FileUtils.createFileIfNotExist(ignoreConfigPath)
         val json = file.readText()
@@ -44,11 +45,11 @@ object Restore {
 
     //忽略标题
     val ignoreTitle = arrayOf(
-        App.INSTANCE.getString(R.string.read_config),
-        App.INSTANCE.getString(R.string.theme_mode),
-        App.INSTANCE.getString(R.string.bookshelf_layout),
-        App.INSTANCE.getString(R.string.show_rss),
-        App.INSTANCE.getString(R.string.thread_count)
+        appCtx.getString(R.string.read_config),
+        appCtx.getString(R.string.theme_mode),
+        appCtx.getString(R.string.bookshelf_layout),
+        appCtx.getString(R.string.show_rss),
+        appCtx.getString(R.string.thread_count)
     )
 
     //默认忽略keys
@@ -195,8 +196,8 @@ object Restore {
                     e.printStackTrace()
                 }
             }
-            Preferences.getSharedPreferences(App.INSTANCE, path, "config")?.all?.let { map ->
-                val edit = App.INSTANCE.defaultSharedPreferences.edit()
+            Preferences.getSharedPreferences(appCtx, path, "config")?.all?.let { map ->
+                val edit = appCtx.defaultSharedPreferences.edit()
                 map.forEach {
                     if (keyIsNotIgnore(it.key)) {
                         when (val value = it.value) {
@@ -212,22 +213,22 @@ object Restore {
                 edit.apply()
             }
             ReadBookConfig.apply {
-                styleSelect = App.INSTANCE.getPrefInt(PreferKey.readStyleSelect)
-                shareLayout = App.INSTANCE.getPrefBoolean(PreferKey.shareLayout)
-                hideStatusBar = App.INSTANCE.getPrefBoolean(PreferKey.hideStatusBar)
-                hideNavigationBar = App.INSTANCE.getPrefBoolean(PreferKey.hideNavigationBar)
-                autoReadSpeed = App.INSTANCE.getPrefInt(PreferKey.autoReadSpeed, 46)
+                styleSelect = appCtx.getPrefInt(PreferKey.readStyleSelect)
+                shareLayout = appCtx.getPrefBoolean(PreferKey.shareLayout)
+                hideStatusBar = appCtx.getPrefBoolean(PreferKey.hideStatusBar)
+                hideNavigationBar = appCtx.getPrefBoolean(PreferKey.hideNavigationBar)
+                autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
             }
             ChapterProvider.upStyle()
             ReadBook.loadContent(resetPageOffset = false)
         }
         withContext(Main) {
-            App.INSTANCE.toastOnUi(R.string.restore_success)
+            appCtx.toastOnUi(R.string.restore_success)
             if (!BuildConfig.DEBUG) {
-                LauncherIconHelp.changeIcon(App.INSTANCE.getPrefString(PreferKey.launcherIcon))
+                LauncherIconHelp.changeIcon(appCtx.getPrefString(PreferKey.launcherIcon))
             }
-            LanguageUtils.setConfiguration(App.INSTANCE)
-            App.INSTANCE.applyDayNight()
+            LanguageUtils.setConfiguration(appCtx)
+            ThemeConfig.applyDayNight(appCtx)
             postEvent(EventBus.SHOW_RSS, "")
         }
     }

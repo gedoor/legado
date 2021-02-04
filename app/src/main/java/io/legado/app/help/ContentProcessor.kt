@@ -7,6 +7,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 
 class ContentProcessor(private val bookName: String, private val bookOrigin: String) {
 
@@ -40,7 +41,7 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
                         }
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
-                            App.INSTANCE.toastOnUi("${item.name}替换出错")
+                            appCtx.toastOnUi("${item.name}替换出错")
                         }
                     }
                 }
@@ -57,7 +58,7 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    App.INSTANCE.toastOnUi("简繁转换出错")
+                    appCtx.toastOnUi("简繁转换出错")
                 }
             }
         }

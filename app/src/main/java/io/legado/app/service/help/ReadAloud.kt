@@ -10,13 +10,14 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
 import io.legado.app.utils.getPrefLong
+import splitties.init.appCtx
 
 object ReadAloud {
     private var aloudClass: Class<*> = getReadAloudClass()
     var httpTTS: HttpTTS? = null
 
     private fun getReadAloudClass(): Class<*> {
-        val spId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
+        val spId = appCtx.getPrefLong(PreferKey.speakEngine)
         httpTTS = App.db.httpTTSDao.get(spId)
         return if (httpTTS != null) {
             HttpReadAloudService::class.java
@@ -26,7 +27,7 @@ object ReadAloud {
     }
 
     fun upReadAloudClass() {
-        stop(App.INSTANCE)
+        stop(appCtx)
         aloudClass = getReadAloudClass()
     }
 

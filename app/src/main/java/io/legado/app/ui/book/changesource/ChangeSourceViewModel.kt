@@ -20,6 +20,7 @@ import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
+import splitties.init.appCtx
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 
@@ -37,7 +38,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private val searchBooks = CopyOnWriteArraySet<SearchBook>()
     private var postTime = 0L
     private val sendRunnable = Runnable { upAdapter() }
-    private val searchGroup get() = App.INSTANCE.getPrefString("searchGroup") ?: ""
+    private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
 
     @Volatile
     private var searchIndex = -1

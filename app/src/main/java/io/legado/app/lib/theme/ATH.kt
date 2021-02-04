@@ -18,12 +18,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
+import splitties.init.appCtx
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -288,7 +288,7 @@ object ATH {
     fun getDialogBackground(): GradientDrawable {
         val background = GradientDrawable()
         background.cornerRadius = 3F.dp
-        background.setColor(App.INSTANCE.backgroundColor)
+        background.setColor(appCtx.backgroundColor)
         return background
     }
 

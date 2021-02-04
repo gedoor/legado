@@ -11,12 +11,12 @@ import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
+import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
@@ -189,7 +189,7 @@ class ReadMenu @JvmOverloads constructor(
         //夜间模式
         fabNightTheme.setOnClickListener {
             AppConfig.isNightTheme = !AppConfig.isNightTheme
-            App.INSTANCE.applyDayNight()
+            ThemeConfig.applyDayNight(context)
         }
 
         //上一章

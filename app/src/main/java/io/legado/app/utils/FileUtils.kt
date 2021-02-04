@@ -3,8 +3,8 @@ package io.legado.app.utils
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
-import io.legado.app.App
 import io.legado.app.ui.filepicker.utils.ConvertUtils
+import splitties.init.appCtx
 import java.io.*
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
@@ -105,8 +105,8 @@ object FileUtils {
     }
 
     fun getCachePath(): String {
-        return App.INSTANCE.externalCacheDir?.absolutePath
-            ?: App.INSTANCE.cacheDir.absolutePath
+        return appCtx.externalCacheDir?.absolutePath
+            ?: appCtx.cacheDir.absolutePath
     }
 
     fun getSdCardPath(): String {

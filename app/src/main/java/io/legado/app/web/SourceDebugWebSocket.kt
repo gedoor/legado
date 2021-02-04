@@ -13,6 +13,7 @@ import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.isJson
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import splitties.init.appCtx
 import java.io.IOException
 
 
@@ -54,7 +55,7 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                     val tag = debugBean["tag"]
                     val key = debugBean["key"]
                     if (tag.isNullOrBlank() || key.isNullOrBlank()) {
-                        send(App.INSTANCE.getString(R.string.cannot_empty))
+                        send(appCtx.getString(R.string.cannot_empty))
                         close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
                         return@launch
                     }

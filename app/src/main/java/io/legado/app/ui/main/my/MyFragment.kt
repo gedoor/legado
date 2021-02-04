@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.base.BasePreferenceFragment
@@ -15,6 +14,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.FragmentMyConfigBinding
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -90,7 +90,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FilePickerDialog.C
             }
             findPreference<NameListPreference>(PreferKey.themeMode)?.let {
                 it.setOnPreferenceChangeListener { _, _ ->
-                    view?.post { App.INSTANCE.applyDayNight() }
+                    view?.post { ThemeConfig.applyDayNight(requireContext()) }
                     true
                 }
             }

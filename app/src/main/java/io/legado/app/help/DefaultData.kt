@@ -6,6 +6,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
+import splitties.init.appCtx
 import java.io.File
 
 object DefaultData {
@@ -16,7 +17,7 @@ object DefaultData {
     val httpTTS by lazy {
         val json =
             String(
-                App.INSTANCE.assets.open("defaultData${File.separator}$httpTtsFileName")
+                appCtx.assets.open("defaultData${File.separator}$httpTtsFileName")
                     .readBytes()
             )
         GSON.fromJsonArray<HttpTTS>(json)!!
@@ -24,7 +25,7 @@ object DefaultData {
 
     val readConfigs by lazy {
         val json = String(
-            App.INSTANCE.assets.open("defaultData${File.separator}${ReadBookConfig.configFileName}")
+            appCtx.assets.open("defaultData${File.separator}${ReadBookConfig.configFileName}")
                 .readBytes()
         )
         GSON.fromJsonArray<ReadBookConfig.Config>(json)!!
@@ -32,7 +33,7 @@ object DefaultData {
 
     val txtTocRules by lazy {
         val json = String(
-            App.INSTANCE.assets.open("defaultData${File.separator}$txtTocRuleFileName")
+            appCtx.assets.open("defaultData${File.separator}$txtTocRuleFileName")
                 .readBytes()
         )
         GSON.fromJsonArray<TxtTocRule>(json)!!
@@ -40,7 +41,7 @@ object DefaultData {
 
     val themeConfigs by lazy {
         val json = String(
-            App.INSTANCE.assets.open("defaultData${File.separator}${ThemeConfig.configFileName}")
+            appCtx.assets.open("defaultData${File.separator}${ThemeConfig.configFileName}")
                 .readBytes()
         )
         GSON.fromJsonArray<ThemeConfig.Config>(json)!!
@@ -48,7 +49,7 @@ object DefaultData {
 
     val rssSources by lazy {
         val json = String(
-            App.INSTANCE.assets.open("defaultData${File.separator}rssSources.json")
+            appCtx.assets.open("defaultData${File.separator}rssSources.json")
                 .readBytes()
         )
         GSON.fromJsonArray<RssSource>(json)!!

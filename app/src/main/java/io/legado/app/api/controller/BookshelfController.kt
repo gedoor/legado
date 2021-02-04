@@ -12,6 +12,7 @@ import io.legado.app.utils.cnCompare
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefInt
 import kotlinx.coroutines.runBlocking
+import splitties.init.appCtx
 
 object BookshelfController {
 
@@ -22,7 +23,7 @@ object BookshelfController {
             return if (books.isEmpty()) {
                 returnData.setErrorMsg("还没有添加小说")
             } else {
-                val data = when (App.INSTANCE.getPrefInt(PreferKey.bookshelfSort)) {
+                val data = when (appCtx.getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> books.sortedByDescending { it.latestChapterTime }
                     2 -> books.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)

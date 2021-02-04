@@ -13,6 +13,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.File
 
 
@@ -41,7 +42,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val content = getAllContents(book)
         DocumentUtils.createFileIfNotExist(doc, filename)
             ?.writeText(context, content)
-        if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
+        if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
             FileUtils.createFileIfNotExist(
                 File(FileUtils.getCachePath()),
                 filename
@@ -67,7 +68,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val filename = "${book.name} by ${book.author}.txt"
         FileUtils.createFileIfNotExist(file, filename)
             .writeText(getAllContents(book))
-        if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
+        if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
             BookWebDav.exportWebDav(file.absolutePath, filename) // 导出到webdav
         }
         getSrcList(book).forEach {

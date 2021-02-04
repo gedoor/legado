@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
+import splitties.init.appCtx
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -44,7 +45,7 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
             initSearchPool()
             mSearchId = searchId
             searchPage = 1
-            val searchGroup = App.INSTANCE.getPrefString("searchGroup") ?: ""
+            val searchGroup = appCtx.getPrefString("searchGroup") ?: ""
             bookSourceList.clear()
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(App.db.bookSourceDao.allEnabled)

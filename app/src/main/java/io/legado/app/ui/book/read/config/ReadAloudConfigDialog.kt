@@ -21,6 +21,7 @@ import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.getSize
 import io.legado.app.utils.postEvent
+import splitties.init.appCtx
 
 class ReadAloudConfigDialog : DialogFragment() {
     private val readAloudPreferTag = "readAloudPreferTag"
@@ -60,7 +61,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         private val speakEngineSummary: String
             get() {
-                val eid = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
+                val eid = appCtx.getPrefLong(PreferKey.speakEngine)
                 val ht = App.db.httpTTSDao.get(eid)
                 return ht?.name ?: getString(R.string.local_tts)
             }

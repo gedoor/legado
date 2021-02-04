@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import splitties.init.appCtx
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -215,7 +216,7 @@ object ReadBook {
         if (book != null && textChapter != null) {
             val key = IntentDataHelp.putData(textChapter)
             ReadAloud.play(
-                App.INSTANCE, book.name, textChapter.title, durPageIndex(), key, play
+                appCtx, book.name, textChapter.title, durPageIndex(), key, play
             )
         }
     }
@@ -437,7 +438,7 @@ object ReadBook {
             }
         }.onError {
             it.printStackTrace()
-            App.INSTANCE.toastOnUi("ChapterProvider ERROR:\n${it.msg}")
+            appCtx.toastOnUi("ChapterProvider ERROR:\n${it.msg}")
         }.onSuccess {
             success?.invoke()
         }

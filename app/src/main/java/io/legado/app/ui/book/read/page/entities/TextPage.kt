@@ -2,18 +2,18 @@ package io.legado.app.ui.book.read.page.entities
 
 import android.text.Layout
 import android.text.StaticLayout
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import splitties.init.appCtx
 import java.text.DecimalFormat
 import kotlin.math.min
 
 @Suppress("unused")
 data class TextPage(
     var index: Int = 0,
-    var text: String = App.INSTANCE.getString(R.string.data_loading),
+    var text: String = appCtx.getString(R.string.data_loading),
     var title: String = "",
     val textLines: ArrayList<TextLine> = arrayListOf(),
     var pageSize: Int = 0,

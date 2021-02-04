@@ -35,6 +35,7 @@ import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 
 
 class AudioPlayService : BaseService(),
@@ -370,7 +371,7 @@ class AudioPlayService : BaseService(),
                 Intent(
                     Intent.ACTION_MEDIA_BUTTON,
                     null,
-                    App.INSTANCE,
+                    appCtx,
                     MediaButtonReceiver::class.java
                 ),
                 PendingIntent.FLAG_CANCEL_CURRENT

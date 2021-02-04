@@ -9,13 +9,14 @@ import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.toastOnUi
+import splitties.init.appCtx
 
 object SourceHelp {
 
     private val handler = Handler(Looper.getMainLooper())
     private val list18Plus by lazy {
         try {
-            return@lazy String(App.INSTANCE.assets.open("18PlusList.txt").readBytes())
+            return@lazy String(appCtx.assets.open("18PlusList.txt").readBytes())
                 .splitNotBlank("\n")
         } catch (e: Exception) {
             return@lazy arrayOf<String>()
@@ -26,7 +27,7 @@ object SourceHelp {
         rssSources.forEach { rssSource ->
             if (is18Plus(rssSource.sourceUrl)) {
                 handler.post {
-                    App.INSTANCE.toastOnUi("${rssSource.sourceName}是18+网址,禁止导入.")
+                    appCtx.toastOnUi("${rssSource.sourceName}是18+网址,禁止导入.")
                 }
             } else {
                 App.db.rssSourceDao.insert(rssSource)
@@ -38,7 +39,7 @@ object SourceHelp {
         bookSources.forEach { bookSource ->
             if (is18Plus(bookSource.bookSourceUrl)) {
                 handler.post {
-                    App.INSTANCE.toastOnUi("${bookSource.bookSourceName}是18+网址,禁止导入.")
+                    appCtx.toastOnUi("${bookSource.bookSourceName}是18+网址,禁止导入.")
                 }
             } else {
                 App.db.bookSourceDao.insert(bookSource)

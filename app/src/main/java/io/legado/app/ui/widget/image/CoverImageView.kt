@@ -10,11 +10,11 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.getPrefString
+import splitties.init.appCtx
 
 /**
  * 封面
@@ -172,11 +172,11 @@ class CoverImageView @JvmOverloads constructor(
 
         @SuppressLint("UseCompatLoadingForDrawables")
         fun upDefaultCover() {
-            val path = App.INSTANCE.getPrefString(PreferKey.defaultCover)
+            val path = appCtx.getPrefString(PreferKey.defaultCover)
             var dw = Drawable.createFromPath(path)
             if (dw == null) {
                 showBookName = true
-                dw = App.INSTANCE.resources.getDrawable(R.drawable.image_cover_default, null)
+                dw = appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
             } else {
                 showBookName = false
             }

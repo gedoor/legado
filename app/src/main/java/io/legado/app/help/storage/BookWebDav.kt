@@ -3,7 +3,6 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
@@ -16,6 +15,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,20 +27,20 @@ object BookWebDav {
 
     private val rootWebDavUrl: String
         get() {
-            var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
+            var url = appCtx.getPrefString(PreferKey.webDavUrl)
             if (url.isNullOrEmpty()) {
                 url = defaultWebDavUrl
             }
             if (!url.endsWith("/")) url = "${url}/"
-            if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCreateDir, true)) {
+            if (appCtx.getPrefBoolean(PreferKey.webDavCreateDir, true)) {
                 url = "${url}legado/"
             }
             return url
         }
 
     suspend fun initWebDav(): Boolean {
-        val account = App.INSTANCE.getPrefString(PreferKey.webDavAccount)
-        val password = App.INSTANCE.getPrefString(PreferKey.webDavPassword)
+        val account = appCtx.getPrefString(PreferKey.webDavAccount)
+        val password = appCtx.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
             HttpAuth.auth = HttpAuth.Auth(account, password)
             WebDav(rootWebDavUrl).makeAsDir()
@@ -79,7 +79,7 @@ object BookWebDav {
                         Coroutine.async {
                             restoreWebDav(names[index])
                         }.onError {
-                            App.INSTANCE.toastOnUi("WebDavError:${it.localizedMessage}")
+                            appCtx.toastOnUi("WebDavError:${it.localizedMessage}")
                         }
                     }
                 }
@@ -117,7 +117,7 @@ object BookWebDav {
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
-                App.INSTANCE.toastOnUi("WebDav\n${e.localizedMessage}")
+                appCtx.toastOnUi("WebDav\n${e.localizedMessage}")
             }
         }
     }
@@ -138,7 +138,7 @@ object BookWebDav {
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
-                App.INSTANCE.toastOnUi("WebDav导出\n${e.localizedMessage}")
+                appCtx.toastOnUi("WebDav导出\n${e.localizedMessage}")
             }
         }
     }

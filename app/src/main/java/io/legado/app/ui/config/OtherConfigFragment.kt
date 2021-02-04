@@ -13,7 +13,6 @@ import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
@@ -32,6 +31,7 @@ import io.legado.app.ui.main.MainActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.File
 
 
@@ -40,9 +40,9 @@ class OtherConfigFragment : BasePreferenceFragment(),
 
     private val requestCodeCover = 231
 
-    private val packageManager = App.INSTANCE.packageManager
+    private val packageManager = appCtx.packageManager
     private val componentName = ComponentName(
-        App.INSTANCE,
+        appCtx,
         SharedReceiverActivity::class.java.name
     )
     private val webPort get() = getPrefInt(PreferKey.webPort, 1122)
@@ -124,10 +124,10 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 key, getPrefString(PreferKey.defaultCover)
             )
             PreferKey.language -> listView.postDelayed({
-                LanguageUtils.setConfiguration(App.INSTANCE)
-                val intent = Intent(App.INSTANCE, MainActivity::class.java)
+                LanguageUtils.setConfiguration(appCtx)
+                val intent = Intent(appCtx, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                App.INSTANCE.startActivity(intent)
+                appCtx.startActivity(intent)
                 Process.killProcess(Process.myPid())
             }, 1000)
             PreferKey.userAgent -> listView.post {

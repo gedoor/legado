@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.AppConst
@@ -140,7 +139,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         when (item.itemId) {
             R.id.menu_theme_mode -> {
                 AppConfig.isNightTheme = !AppConfig.isNightTheme
-                App.INSTANCE.applyDayNight()
+                ThemeConfig.applyDayNight(requireContext())
             }
         }
         return super.onOptionsItemSelected(item)

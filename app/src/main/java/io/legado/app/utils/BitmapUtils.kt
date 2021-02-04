@@ -8,7 +8,7 @@ import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
-import io.legado.app.App
+import splitties.init.appCtx
 import java.io.IOException
 import kotlin.math.*
 
@@ -247,7 +247,7 @@ object BitmapUtils {
      */
     fun stackBlur(srcBitmap: Bitmap?): Bitmap? {
         if (srcBitmap == null) return null
-        val rs = RenderScript.create(App.INSTANCE)
+        val rs = RenderScript.create(appCtx)
         val blurredBitmap = srcBitmap.copy(Config.ARGB_8888, true)
 
         //分配用于渲染脚本的内存

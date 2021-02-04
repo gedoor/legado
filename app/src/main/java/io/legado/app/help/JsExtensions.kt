@@ -3,7 +3,6 @@ package io.legado.app.help
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
-import io.legado.app.App
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.SSLHelper
@@ -16,6 +15,7 @@ import org.jsoup.Connection
 import org.jsoup.Jsoup
 import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toByteArray
+import splitties.init.appCtx
 import java.io.File
 import java.net.URLEncoder
 import java.util.*
@@ -273,7 +273,7 @@ interface JsExtensions {
                 }
                 return@runBlocking x
             }
-            str.isContentScheme() -> Uri.parse(str).readBytes(App.INSTANCE)
+            str.isContentScheme() -> Uri.parse(str).readBytes(appCtx)
             str.startsWith("/storage") -> File(str).readBytes()
             else -> base64DecodeToByteArray(str)
         }

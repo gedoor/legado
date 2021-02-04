@@ -4,6 +4,7 @@ import io.legado.app.App
 import io.legado.app.data.entities.Cache
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.ACache
+import splitties.init.appCtx
 
 @Suppress("unused")
 object CacheManager {
@@ -19,7 +20,7 @@ object CacheManager {
             if (saveTime == 0) 0 else System.currentTimeMillis() + saveTime * 1000
         when (value) {
             is QueryTTF -> queryTTFMap[key] = Pair(deadline, value)
-            is ByteArray -> ACache.get(App.INSTANCE).put(key, value, saveTime)
+            is ByteArray -> ACache.get(appCtx).put(key, value, saveTime)
             else -> {
                 val cache = Cache(key, value.toString(), deadline)
                 App.db.cacheDao.insert(cache)
@@ -48,7 +49,7 @@ object CacheManager {
     }
 
     fun getByteArray(key: String): ByteArray? {
-        return ACache.get(App.INSTANCE).getAsBinary(key)
+        return ACache.get(appCtx).getAsBinary(key)
     }
 
     fun getQueryTTF(key: String): QueryTTF? {

@@ -1,6 +1,5 @@
 package io.legado.app.model.webBook
 
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
@@ -12,6 +11,7 @@ import io.legado.app.utils.StringUtils.wordCountFormat
 import io.legado.app.utils.htmlFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ensureActive
+import splitties.init.appCtx
 
 object BookInfo {
 
@@ -25,7 +25,7 @@ object BookInfo {
         canReName: Boolean,
     ) {
         body ?: throw Exception(
-            App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
+            appCtx.getString(R.string.error_get_web_content, baseUrl)
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         val infoRule = bookSource.getBookInfoRule()

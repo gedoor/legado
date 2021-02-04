@@ -12,6 +12,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit
 object Backup {
 
     val backupPath: String by lazy {
-        FileUtils.getFile(App.INSTANCE.filesDir, "backup").absolutePath
+        FileUtils.getFile(appCtx.filesDir, "backup").absolutePath
     }
 
     val backupFileNames by lazy {
@@ -80,9 +81,9 @@ object Backup {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ThemeConfig.configFileName)
                     .writeText(it)
             }
-            Preferences.getSharedPreferences(App.INSTANCE, backupPath, "config")?.let { sp ->
+            Preferences.getSharedPreferences(appCtx, backupPath, "config")?.let { sp ->
                 val edit = sp.edit()
-                App.INSTANCE.defaultSharedPreferences.all.map {
+                appCtx.defaultSharedPreferences.all.map {
                     when (val value = it.value) {
                         is Int -> edit.putInt(it.key, value)
                         is Boolean -> edit.putBoolean(it.key, value)

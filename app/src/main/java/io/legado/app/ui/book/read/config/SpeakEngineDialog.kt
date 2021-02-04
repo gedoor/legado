@@ -28,6 +28,7 @@ import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.init.appCtx
 
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
@@ -35,7 +36,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     lateinit var adapter: Adapter
     private val viewModel: SpeakEngineViewModel by viewModels()
     private var httpTTSData: LiveData<List<HttpTTS>>? = null
-    var engineId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
+    var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
 
     override fun onStart() {
         super.onStart()
