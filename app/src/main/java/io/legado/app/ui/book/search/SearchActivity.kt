@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,7 +38,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     SearchAdapter.CallBack {
 
     override val viewModel: SearchViewModel
-        get() = getViewModel(SearchViewModel::class.java)
+            by viewModels()
 
     lateinit var adapter: SearchAdapter
     private lateinit var bookAdapter: BookAdapter

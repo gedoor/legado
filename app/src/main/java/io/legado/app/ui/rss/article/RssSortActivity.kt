@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -12,7 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssArtivlesBinding
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
-import io.legado.app.utils.getViewModel
+
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import org.jetbrains.anko.startActivityForResult
@@ -20,7 +21,7 @@ import org.jetbrains.anko.startActivityForResult
 class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>() {
 
     override val viewModel: RssSortViewModel
-        get() = getViewModel(RssSortViewModel::class.java)
+            by viewModels()
     private val editSource = 12319
     private val fragments = linkedMapOf<String, RssArticlesFragment>()
     private lateinit var adapter: TabFragmentPageAdapter

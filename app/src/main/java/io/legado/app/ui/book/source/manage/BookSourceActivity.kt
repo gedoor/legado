@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
@@ -49,7 +50,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     SelectActionBar.CallBack,
     SearchView.OnQueryTextListener {
     override val viewModel: BookSourceViewModel
-        get() = getViewModel(BookSourceViewModel::class.java)
+            by viewModels()
     private val importRecordKey = "bookSourceRecordKey"
     private val qrRequestCode = 101
     private val importRequestCode = 132

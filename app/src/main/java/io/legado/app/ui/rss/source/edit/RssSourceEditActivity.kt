@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
+import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -42,7 +43,7 @@ class RssSourceEditActivity :
     }
 
     override val viewModel: RssSourceEditViewModel
-        get() = getViewModel(RssSourceEditViewModel::class.java)
+            by viewModels()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -13,7 +14,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.getViewModel
+
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivityForResult
@@ -21,7 +22,7 @@ import org.jetbrains.anko.startActivityForResult
 class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookSourceDebugModel>() {
 
     override val viewModel: BookSourceDebugModel
-        get() = getViewModel(BookSourceDebugModel::class.java)
+            by viewModels()
 
     private lateinit var adapter: BookSourceDebugAdapter
     private lateinit var searchView: SearchView

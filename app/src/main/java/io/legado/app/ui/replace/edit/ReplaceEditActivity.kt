@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
+import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -18,7 +19,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceEditBinding
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.getViewModel
+
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import org.jetbrains.anko.displayMetrics
@@ -56,7 +57,7 @@ class ReplaceEditActivity :
     }
 
     override val viewModel: ReplaceEditViewModel
-        get() = getViewModel(ReplaceEditViewModel::class.java)
+            by viewModels()
 
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false

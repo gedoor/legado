@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.explore
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -11,13 +12,13 @@ import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.getViewModel
+
 import org.jetbrains.anko.startActivity
 
 class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreShowViewModel>(),
     ExploreShowAdapter.CallBack {
     override val viewModel: ExploreShowViewModel
-        get() = getViewModel(ExploreShowViewModel::class.java)
+            by viewModels()
 
     private lateinit var adapter: ExploreShowAdapter
     private lateinit var loadMoreView: LoadMoreView

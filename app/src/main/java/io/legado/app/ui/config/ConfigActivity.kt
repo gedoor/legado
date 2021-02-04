@@ -1,16 +1,17 @@
 package io.legado.app.ui.config
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.databinding.ActivityConfigBinding
-import io.legado.app.utils.getViewModel
+
 import io.legado.app.utils.observeEvent
 
 class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() {
     override val viewModel: ConfigViewModel
-        get() = getViewModel(ConfigViewModel::class.java)
+            by viewModels()
 
     override fun getViewBinding(): ActivityConfigBinding {
         return ActivityConfigBinding.inflate(layoutInflater)

@@ -3,6 +3,7 @@ package io.legado.app.ui.book.arrange
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -25,7 +26,7 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.getViewModel
+
 
 
 class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBookViewModel>(),
@@ -34,7 +35,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     ArrangeBookAdapter.CallBack,
     GroupSelectDialog.CallBack {
     override val viewModel: ArrangeBookViewModel
-        get() = getViewModel(ArrangeBookViewModel::class.java)
+            by viewModels()
     override val groupList: ArrayList<BookGroup> = arrayListOf()
     private val groupRequestCode = 22
     private val addToGroupRequestCode = 34

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
@@ -46,7 +47,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     RssSourceAdapter.CallBack {
 
     override val viewModel: RssSourceViewModel
-        get() = getViewModel(RssSourceViewModel::class.java)
+            by viewModels()
     private val importRecordKey = "rssSourceRecordKey"
     private val qrRequestCode = 101
     private val importRequestCode = 124

@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import io.legado.app.App
 import io.legado.app.R
@@ -19,7 +20,7 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.getViewModelOfActivity
+
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -32,8 +33,7 @@ import kotlin.math.min
 class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list),
     ChapterListAdapter.Callback,
     ChapterListViewModel.ChapterListCallBack {
-    override val viewModel: ChapterListViewModel
-        get() = getViewModelOfActivity(ChapterListViewModel::class.java)
+    override val viewModel: ChapterListViewModel by activityViewModels()
     private val binding by viewBinding(FragmentChapterListBinding::bind)
     lateinit var adapter: ChapterListAdapter
     private var durChapterIndex = 0

@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf.books
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +25,10 @@ import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
-import io.legado.app.utils.*
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.math.max
 
@@ -47,7 +51,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
 
     private val binding by viewBinding(FragmentBooksBinding::bind)
     private val activityViewModel: MainViewModel
-        get() = getViewModelOfActivity(MainViewModel::class.java)
+            by activityViewModels()
     private lateinit var booksAdapter: BaseBooksAdapter<*>
     private var bookshelfLiveData: LiveData<List<Book>>? = null
     private var position = 0

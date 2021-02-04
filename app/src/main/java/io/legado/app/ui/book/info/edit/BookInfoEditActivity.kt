@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -24,7 +25,7 @@ class BookInfoEditActivity :
     private val resultSelectCover = 132
 
     override val viewModel: BookInfoEditViewModel
-        get() = getViewModel(BookInfoEditViewModel::class.java)
+            by viewModels()
 
     override fun getViewBinding(): ActivityBookInfoEditBinding {
         return ActivityBookInfoEditBinding.inflate(layoutInflater)

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -46,7 +47,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private var groupId: Long = -1
 
     override val viewModel: CacheViewModel
-        get() = getViewModel(CacheViewModel::class.java)
+            by viewModels()
 
     override fun getViewBinding(): ActivityCacheBookBinding {
         return ActivityCacheBookBinding.inflate(layoutInflater)

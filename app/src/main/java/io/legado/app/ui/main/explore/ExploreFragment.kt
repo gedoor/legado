@@ -7,6 +7,7 @@ import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +24,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.utils.cnCompare
-import io.legado.app.utils.getViewModel
+
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -33,8 +34,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  */
 class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
     ExploreAdapter.CallBack {
-    override val viewModel: ExploreViewModel
-        get() = getViewModel(ExploreViewModel::class.java)
+    override val viewModel: ExploreViewModel by viewModels()
     private val binding by viewBinding(FragmentExploreBinding::bind)
     private lateinit var adapter: ExploreAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager

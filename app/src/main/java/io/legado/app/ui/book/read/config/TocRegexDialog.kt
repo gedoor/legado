@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,7 +43,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private var tocRegexLiveData: LiveData<List<TxtTocRule>>? = null
     var selectedName: String? = null
     private var durRegex: String? = null
-    lateinit var viewModel: TocRegexViewModel
+    private val viewModel: TocRegexViewModel by viewModels()
     private val binding by viewBinding(DialogTocRegexBinding::bind)
 
     override fun onStart() {
@@ -56,7 +57,6 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModel(TocRegexViewModel::class.java)
         return inflater.inflate(R.layout.dialog_toc_regex, container)
     }
 

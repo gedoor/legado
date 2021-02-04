@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
@@ -38,7 +39,7 @@ class BookSourceEditActivity :
     FilePickerDialog.CallBack,
     KeyboardToolPop.CallBack {
     override val viewModel: BookSourceEditViewModel
-        get() = getViewModel(BookSourceEditViewModel::class.java)
+            by viewModels()
 
     private val qrRequestCode = 101
     private val selectPathRequestCode = 102

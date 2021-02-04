@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
+import androidx.activity.viewModels
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
@@ -39,7 +40,7 @@ class AudioPlayActivity :
     ChangeSourceDialog.CallBack {
 
     override val viewModel: AudioPlayViewModel
-        get() = getViewModel(AudioPlayViewModel::class.java)
+            by viewModels()
 
     private var requestCodeChapter = 8461
     private var adjustProgress = false

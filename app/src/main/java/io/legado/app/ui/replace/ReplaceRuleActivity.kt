@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
@@ -50,8 +51,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     FilePickerDialog.CallBack,
     SelectActionBar.CallBack,
     ReplaceRuleAdapter.CallBack {
-    override val viewModel: ReplaceRuleViewModel
-        get() = getViewModel(ReplaceRuleViewModel::class.java)
+    override val viewModel: ReplaceRuleViewModel by viewModels()
     private val importRecordKey = "replaceRuleRecordKey"
     private val importRequestCode = 132
     private val importRequestCodeQr = 133

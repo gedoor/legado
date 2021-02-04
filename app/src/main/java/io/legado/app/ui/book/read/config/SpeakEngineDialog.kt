@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
@@ -32,7 +33,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     lateinit var adapter: Adapter
-    lateinit var viewModel: SpeakEngineViewModel
+    private val viewModel: SpeakEngineViewModel by viewModels()
     private var httpTTSData: LiveData<List<HttpTTS>>? = null
     var engineId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
 
@@ -47,7 +48,6 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModel(SpeakEngineViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 

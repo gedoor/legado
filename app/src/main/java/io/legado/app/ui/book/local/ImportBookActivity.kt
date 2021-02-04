@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.DocumentsContract
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
@@ -48,7 +49,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private var path = sdPath
 
     override val viewModel: ImportBookViewModel
-        get() = getViewModel(ImportBookViewModel::class.java)
+            by viewModels()
 
     override fun getViewBinding(): ActivityImportBookBinding {
         return ActivityImportBookBinding.inflate(layoutInflater)

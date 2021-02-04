@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -23,8 +24,11 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.utils.*
+import io.legado.app.utils.dp
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 /**
  * 导入rss源弹出窗口
@@ -34,7 +38,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
     val viewModel: ImportRssSourceViewModel
-        get() = getViewModelOfActivity(ImportRssSourceViewModel::class.java)
+            by activityViewModels()
     lateinit var adapter: SourcesAdapter
 
     override fun onStart() {

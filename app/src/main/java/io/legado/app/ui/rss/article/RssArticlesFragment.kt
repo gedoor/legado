@@ -2,6 +2,8 @@ package io.legado.app.ui.rss.article
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,8 +18,8 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.getViewModelOfActivity
+
+
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -37,9 +39,9 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
 
     private val binding by viewBinding(FragmentRssArticlesBinding::bind)
     private val activityViewModel: RssSortViewModel
-        get() = getViewModelOfActivity(RssSortViewModel::class.java)
+            by activityViewModels()
     override val viewModel: RssArticlesViewModel
-        get() = getViewModel(RssArticlesViewModel::class.java)
+            by viewModels()
     lateinit var adapter: BaseRssArticlesAdapter<*>
     private lateinit var loadMoreView: LoadMoreView
     private var rssArticlesData: LiveData<List<RssArticle>>? = null

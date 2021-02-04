@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
@@ -53,7 +54,7 @@ class BookInfoActivity :
     private val requestCodeRead = 432
 
     override val viewModel: BookInfoViewModel
-        get() = getViewModel(BookInfoViewModel::class.java)
+            by viewModels()
 
     override fun getViewBinding(): ActivityBookInfoBinding {
         return ActivityBookInfoBinding.inflate(layoutInflater)

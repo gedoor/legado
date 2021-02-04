@@ -3,6 +3,7 @@ package io.legado.app.ui.book.searchContent
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import com.hankcs.hanlp.HanLP
 import io.legado.app.App
@@ -21,7 +22,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.getViewModel
+
 import io.legado.app.utils.observeEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +34,7 @@ class SearchContentActivity :
     SearchContentAdapter.Callback {
 
     override val viewModel: SearchContentViewModel
-        get() = getViewModel(SearchContentViewModel::class.java)
+            by viewModels()
     lateinit var adapter: SearchContentAdapter
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private lateinit var searchView: SearchView

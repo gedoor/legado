@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.App
 import io.legado.app.R
@@ -27,7 +28,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
-    private lateinit var viewModel: ReplaceRuleViewModel
+    private val viewModel: ReplaceRuleViewModel by activityViewModels()
     private lateinit var adapter: GroupAdapter
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
@@ -42,7 +43,6 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModelOfActivity(ReplaceRuleViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 

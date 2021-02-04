@@ -9,9 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.*
 import androidx.lifecycle.LiveData
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.App
@@ -49,10 +47,8 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     private val requestCodeImportBookshelf = 312
     private val binding by viewBinding(FragmentBookshelfBinding::bind)
-    override val viewModel: BookshelfViewModel
-        get() = getViewModel(BookshelfViewModel::class.java)
-    private val activityViewModel: MainViewModel
-        get() = getViewModelOfActivity(MainViewModel::class.java)
+    override val viewModel: BookshelfViewModel by viewModels()
+    private val activityViewModel: MainViewModel by activityViewModels()
     private lateinit var adapter: FragmentStatePagerAdapter
     private lateinit var tabLayout: TabLayout
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null

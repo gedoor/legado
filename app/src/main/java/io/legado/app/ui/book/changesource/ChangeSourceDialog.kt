@@ -5,6 +5,7 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.App
@@ -45,7 +46,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     private val binding by viewBinding(DialogChangeSourceBinding::bind)
     private val groups = linkedSetOf<String>()
     private var callBack: CallBack? = null
-    private lateinit var viewModel: ChangeSourceViewModel
+    private val viewModel: ChangeSourceViewModel by viewModels()
     lateinit var adapter: ChangeSourceAdapter
 
     override fun onStart() {
@@ -60,7 +61,6 @@ class ChangeSourceDialog : BaseDialogFragment(),
         savedInstanceState: Bundle?
     ): View? {
         callBack = activity as? CallBack
-        viewModel = getViewModel(ChangeSourceViewModel::class.java)
         return inflater.inflate(R.layout.dialog_change_source, container)
     }
 
