@@ -2,8 +2,8 @@ package io.legado.app.ui.rss.source.edit
 
 import android.app.Application
 import android.content.Intent
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
@@ -20,7 +20,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         execute {
             val key = intent.getStringExtra("data")
             if (key != null) {
-                App.db.rssSourceDao.getByKey(key)?.let {
+                appDb.rssSourceDao.getByKey(key)?.let {
                     rssSource = it
                 }
             }
@@ -33,10 +33,10 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     fun save(source: RssSource, success: (() -> Unit)) {
         execute {
             if (oldSourceUrl != source.sourceUrl) {
-                App.db.rssSourceDao.delete(oldSourceUrl)
+                appDb.rssSourceDao.delete(oldSourceUrl)
                 oldSourceUrl = source.sourceUrl
             }
-            App.db.rssSourceDao.insert(source)
+            appDb.rssSourceDao.insert(source)
         }.onSuccess {
             success()
         }.onError {

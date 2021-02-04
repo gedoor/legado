@@ -6,10 +6,10 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import com.hankcs.hanlp.HanLP
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ActivitySearchContentBinding
@@ -22,7 +22,6 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
-
 import io.legado.app.utils.observeEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -149,7 +148,7 @@ class SearchContentActivity :
             viewModel.lastQuery = newText
             var searchResults = listOf<SearchResult>()
             launch(Dispatchers.Main) {
-                App.db.bookChapterDao.getChapterList(viewModel.bookUrl).map { chapter ->
+                appDb.bookChapterDao.getChapterList(viewModel.bookUrl).map { chapter ->
                     withContext(Dispatchers.IO) {
                         if (isLocalBook
                             || adapter.cacheFileNames.contains(chapter.getFileName())

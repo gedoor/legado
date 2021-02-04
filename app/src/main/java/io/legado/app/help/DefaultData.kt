@@ -1,6 +1,6 @@
 package io.legado.app.help
 
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.TxtTocRule
@@ -56,16 +56,16 @@ object DefaultData {
     }
 
     fun importDefaultHttpTTS() {
-        App.db.httpTTSDao.deleteDefault()
-        App.db.httpTTSDao.insert(*httpTTS.toTypedArray())
+        appDb.httpTTSDao.deleteDefault()
+        appDb.httpTTSDao.insert(*httpTTS.toTypedArray())
     }
 
     fun importDefaultTocRules() {
-        App.db.txtTocRule.deleteDefault()
-        App.db.txtTocRule.insert(*txtTocRules.toTypedArray())
+        appDb.txtTocRule.deleteDefault()
+        appDb.txtTocRule.insert(*txtTocRules.toTypedArray())
     }
 
     fun importDefaultRssSources() {
-        App.db.rssSourceDao.insert(*rssSources.toTypedArray())
+        appDb.rssSourceDao.insert(*rssSources.toTypedArray())
     }
 }

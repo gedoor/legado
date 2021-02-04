@@ -2,8 +2,8 @@ package io.legado.app.ui.book.source.edit
 
 import android.app.Application
 import android.content.Intent
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.storage.OldRule
 import io.legado.app.utils.GSON
@@ -21,7 +21,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             val key = intent.getStringExtra("data")
             var source: BookSource? = null
             if (key != null) {
-                source = App.db.bookSourceDao.getBookSource(key)
+                source = appDb.bookSourceDao.getBookSource(key)
             }
             source?.let {
                 oldSourceUrl = it.bookSourceUrl
@@ -36,11 +36,11 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         execute {
             oldSourceUrl?.let {
                 if (oldSourceUrl != source.bookSourceUrl) {
-                    App.db.bookSourceDao.delete(it)
+                    appDb.bookSourceDao.delete(it)
                 }
             }
             oldSourceUrl = source.bookSourceUrl
-            App.db.bookSourceDao.insert(source)
+            appDb.bookSourceDao.insert(source)
             bookSource = source
         }.onSuccess {
             success?.invoke()

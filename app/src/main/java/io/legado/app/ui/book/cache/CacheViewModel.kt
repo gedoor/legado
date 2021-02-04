@@ -3,11 +3,11 @@ package io.legado.app.ui.book.cache
 import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
@@ -91,7 +91,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         stringBuilder.append(book.name)
             .append("\n")
             .append(context.getString(R.string.author_show, book.author))
-        App.db.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+        appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 val content1 = contentProcessor
                     .getContent(book, chapter.title, content ?: "null", false)
@@ -105,7 +105,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     private fun getSrcList(book: Book): ArrayList<Triple<String, Int, String>> {
         val srcList = arrayListOf<Triple<String, Int, String>>()
-        App.db.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+        appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter)?.let { content ->
                 content.split("\n").forEachIndexed { index, text ->
                     val matcher = AppPattern.imgPattern.matcher(text)

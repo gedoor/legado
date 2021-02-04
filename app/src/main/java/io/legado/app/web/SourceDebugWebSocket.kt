@@ -3,8 +3,8 @@ package io.legado.app.web
 
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoWSD
-import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.data.appDb
 import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.GSON
@@ -59,7 +59,7 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                         close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
                         return@launch
                     }
-                    App.db.bookSourceDao.getBookSource(tag)?.let {
+                    appDb.bookSourceDao.getBookSource(tag)?.let {
                         Debug.callback = this@SourceDebugWebSocket
                         Debug.startDebug(this, WebBook(it), key)
                     }

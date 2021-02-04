@@ -1,6 +1,6 @@
 package io.legado.app.model.webBook
 
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
@@ -48,9 +48,9 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
             val searchGroup = appCtx.getPrefString("searchGroup") ?: ""
             bookSourceList.clear()
             if (searchGroup.isBlank()) {
-                bookSourceList.addAll(App.db.bookSourceDao.allEnabled)
+                bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             } else {
-                bookSourceList.addAll(App.db.bookSourceDao.getEnabledByGroup(searchGroup))
+                bookSourceList.addAll(appDb.bookSourceDao.getEnabledByGroup(searchGroup))
             }
         } else {
             searchPage++

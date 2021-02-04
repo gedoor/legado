@@ -14,11 +14,11 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
@@ -175,20 +175,20 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         bookSourceLiveDate?.removeObservers(this)
         bookSourceLiveDate = when {
             searchKey.isNullOrEmpty() -> {
-                App.db.bookSourceDao.liveDataAll()
+                appDb.bookSourceDao.liveDataAll()
             }
             searchKey == getString(R.string.enabled) -> {
-                App.db.bookSourceDao.liveDataEnabled()
+                appDb.bookSourceDao.liveDataEnabled()
             }
             searchKey == getString(R.string.disabled) -> {
-                App.db.bookSourceDao.liveDataDisabled()
+                appDb.bookSourceDao.liveDataDisabled()
             }
             searchKey.startsWith("group:") -> {
                 val key = searchKey.substringAfter("group:")
-                App.db.bookSourceDao.liveDataGroupSearch("%$key%")
+                appDb.bookSourceDao.liveDataGroupSearch("%$key%")
             }
             else -> {
-                App.db.bookSourceDao.liveDataSearch("%$searchKey%")
+                appDb.bookSourceDao.liveDataSearch("%$searchKey%")
             }
         }.apply {
             observe(this@BookSourceActivity, { data ->
@@ -245,7 +245,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun initLiveDataGroup() {
-        App.db.bookSourceDao.liveGroup().observe(this, {
+        appDb.bookSourceDao.liveGroup().observe(this, {
             groups.clear()
             it.forEach { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

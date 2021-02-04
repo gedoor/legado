@@ -8,11 +8,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.DialogChangeSourceBinding
@@ -146,7 +146,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
         viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
             adapter.setItems(it)
         })
-        App.db.bookSourceDao.liveGroupEnabled().observe(this, {
+        appDb.bookSourceDao.liveGroupEnabled().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

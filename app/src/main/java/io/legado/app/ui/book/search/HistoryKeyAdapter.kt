@@ -1,9 +1,9 @@
 package io.legado.app.ui.book.search
 
 import android.view.ViewGroup
-import io.legado.app.App
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.ui.widget.anima.explosion_field.ExplosionField
@@ -43,7 +43,7 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
                 explosionField.explode(this, true)
                 getItem(holder.layoutPosition)?.let {
                     GlobalScope.launch(IO) {
-                        App.db.searchKeywordDao.delete(it)
+                        appDb.searchKeywordDao.delete(it)
                     }
                 }
             }

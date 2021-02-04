@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReadRecordShow
 import io.legado.app.databinding.ActivityReadRecordBinding
 import io.legado.app.databinding.ItemReadRecordBinding
@@ -61,7 +61,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         readRecord.tvRemove.setOnClickListener {
             alert(R.string.delete, R.string.sure_del) {
                 okButton {
-                    App.db.readRecordDao.clear()
+                    appDb.readRecordDao.clear()
                     initData()
                 }
                 noButton()
@@ -71,11 +71,11 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     private fun initData() {
         launch(IO) {
-            val allTime = App.db.readRecordDao.allTime
+            val allTime = appDb.readRecordDao.allTime
             withContext(Main) {
                 binding.readRecord.tvReadTime.text = formatDuring(allTime)
             }
-            var readRecords = App.db.readRecordDao.allShow
+            var readRecords = appDb.readRecordDao.allShow
             readRecords = when (sortMode) {
                 1 -> readRecords.sortedBy { it.readTime }
                 else -> {
@@ -123,7 +123,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
             alert(R.string.delete) {
                 setMessage(getString(R.string.sure_del_any, item.bookName))
                 okButton {
-                    App.db.readRecordDao.deleteByName(item.bookName)
+                    appDb.readRecordDao.deleteByName(item.bookName)
                     initData()
                 }
                 noButton()

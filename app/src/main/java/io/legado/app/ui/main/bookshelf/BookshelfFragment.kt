@@ -12,11 +12,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.*
 import androidx.lifecycle.LiveData
 import com.google.android.material.tabs.TabLayout
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.DialogBookshelfConfigBinding
 import io.legado.app.databinding.DialogEditTextBinding
@@ -114,7 +114,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
 
     private fun initBookGroupData() {
         bookGroupLiveData?.removeObservers(viewLifecycleOwner)
-        bookGroupLiveData = App.db.bookGroupDao.liveDataShow().apply {
+        bookGroupLiveData = appDb.bookGroupDao.liveDataShow().apply {
             observe(viewLifecycleOwner) {
                 viewModel.checkGroup(it)
                 upGroup(it)
@@ -136,7 +136,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     @Synchronized
     private fun upGroup(data: List<BookGroup>) {
         if (data.isEmpty()) {
-            App.db.bookGroupDao.enableGroup(AppConst.bookGroupAllId)
+            appDb.bookGroupDao.enableGroup(AppConst.bookGroupAllId)
         } else {
             if (data != bookGroups) {
                 bookGroups.clear()

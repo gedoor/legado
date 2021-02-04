@@ -3,7 +3,7 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
@@ -87,7 +87,7 @@ object ImportOldData {
 
     private fun importOldBookshelf(json: String): Int {
         val books = OldBook.toNewBook(json)
-        App.db.bookDao.insert(*books.toTypedArray())
+        appDb.bookDao.insert(*books.toTypedArray())
         return books.size
     }
 
@@ -100,13 +100,13 @@ object ImportOldData {
                 bookSources.add(it)
             }
         }
-        App.db.bookSourceDao.insert(*bookSources.toTypedArray())
+        appDb.bookSourceDao.insert(*bookSources.toTypedArray())
         return bookSources.size
     }
 
     private fun importOldReplaceRule(json: String): Int {
         val rules = OldReplace.jsonToReplaceRules(json)
-        App.db.replaceRuleDao.insert(*rules.toTypedArray())
+        appDb.replaceRuleDao.insert(*rules.toTypedArray())
         return rules.size
     }
 }

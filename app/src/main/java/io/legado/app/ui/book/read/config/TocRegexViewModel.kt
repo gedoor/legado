@@ -1,8 +1,8 @@
 package io.legado.app.ui.book.read.config
 
 import android.app.Application
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.GSON
@@ -15,9 +15,9 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
     fun saveRule(rule: TxtTocRule) {
         execute {
             if (rule.serialNumber < 0) {
-                rule.serialNumber = App.db.txtTocRule.lastOrderNum + 1
+                rule.serialNumber = appDb.txtTocRule.lastOrderNum + 1
             }
-            App.db.txtTocRule.insert(rule)
+            appDb.txtTocRule.insert(rule)
         }
     }
 
@@ -31,7 +31,7 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
         execute {
             RxHttp.get(url).toText("utf-8").await().let { json ->
                 GSON.fromJsonArray<TxtTocRule>(json)?.let {
-                    App.db.txtTocRule.insert(*it.toTypedArray())
+                    appDb.txtTocRule.insert(*it.toTypedArray())
                 }
             }
         }.onSuccess {

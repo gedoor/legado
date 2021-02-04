@@ -6,9 +6,9 @@ import android.view.MenuItem
 import androidx.core.view.isGone
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RuleSub
 import io.legado.app.databinding.ActivityRuleSubBinding
 import io.legado.app.databinding.DialogRuleSubEditBinding
@@ -47,7 +47,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> {
-                val order = App.db.ruleSubDao.maxOrder + 1
+                val order = appDb.ruleSubDao.maxOrder + 1
                 editSubscription(RuleSub(customOrder = order))
             }
         }
@@ -64,7 +64,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     private fun initData() {
         liveData?.removeObservers(this)
-        liveData = App.db.ruleSubDao.observeAll()
+        liveData = appDb.ruleSubDao.observeAll()
         liveData?.observe(this) {
             binding.tvEmptyMsg.isGone = it.isNotEmpty()
             adapter.setItems(it)
@@ -104,7 +104,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                 ruleSub.name = alertBinding.etName.text?.toString() ?: ""
                 ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
                 launch(IO) {
-                    App.db.ruleSubDao.insert(ruleSub)
+                    appDb.ruleSubDao.insert(ruleSub)
                 }
             }
             cancelButton()
@@ -113,23 +113,23 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     override fun delSubscription(ruleSub: RuleSub) {
         launch(IO) {
-            App.db.ruleSubDao.delete(ruleSub)
+            appDb.ruleSubDao.delete(ruleSub)
         }
     }
 
     override fun updateSourceSub(vararg ruleSub: RuleSub) {
         launch(IO) {
-            App.db.ruleSubDao.update(*ruleSub)
+            appDb.ruleSubDao.update(*ruleSub)
         }
     }
 
     override fun upOrder() {
         launch(IO) {
-            val sourceSubs = App.db.ruleSubDao.all
+            val sourceSubs = appDb.ruleSubDao.all
             for ((index: Int, ruleSub: RuleSub) in sourceSubs.withIndex()) {
                 ruleSub.customOrder = index + 1
             }
-            App.db.ruleSubDao.update(*sourceSubs.toTypedArray())
+            appDb.ruleSubDao.update(*sourceSubs.toTypedArray())
         }
     }
 

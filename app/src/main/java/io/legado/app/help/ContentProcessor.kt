@@ -1,7 +1,7 @@
 package io.legado.app.help
 
 import com.hankcs.hanlp.HanLP
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.toastOnUi
@@ -20,7 +20,7 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
     @Synchronized
     fun upReplaceRules() {
         replaceRules.clear()
-        replaceRules.addAll(App.db.replaceRuleDao.findEnabledByScope(bookName, bookOrigin))
+        replaceRules.addAll(appDb.replaceRuleDao.findEnabledByScope(bookName, bookOrigin))
     }
 
     suspend fun getContent(

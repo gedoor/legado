@@ -7,10 +7,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.FragmentChapterListBinding
@@ -20,14 +20,12 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
-
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 import kotlin.math.min
 
 class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list),
@@ -89,7 +87,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
 
     private fun initDoc() {
         tocLiveData?.removeObservers(this@ChapterListFragment)
-        tocLiveData = App.db.bookChapterDao.observeByBook(viewModel.bookUrl)
+        tocLiveData = appDb.bookChapterDao.observeByBook(viewModel.bookUrl)
         tocLiveData?.observe(viewLifecycleOwner, {
             adapter.setItems(it)
             if (!scrollToDurChapter) {
@@ -124,7 +122,7 @@ class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragme
             initDoc()
         } else {
             tocLiveData?.removeObservers(this)
-            tocLiveData = App.db.bookChapterDao.liveDataSearch(viewModel.bookUrl, newText)
+            tocLiveData = appDb.bookChapterDao.liveDataSearch(viewModel.bookUrl, newText)
             tocLiveData?.observe(viewLifecycleOwner, {
                 adapter.setItems(it)
             })

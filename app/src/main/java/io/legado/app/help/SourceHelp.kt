@@ -2,7 +2,7 @@ package io.legado.app.help
 
 import android.os.Handler
 import android.os.Looper
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.EncoderUtils
@@ -30,7 +30,7 @@ object SourceHelp {
                     appCtx.toastOnUi("${rssSource.sourceName}是18+网址,禁止导入.")
                 }
             } else {
-                App.db.rssSourceDao.insert(rssSource)
+                appDb.rssSourceDao.insert(rssSource)
             }
         }
     }
@@ -42,7 +42,7 @@ object SourceHelp {
                     appCtx.toastOnUi("${bookSource.bookSourceName}是18+网址,禁止导入.")
                 }
             } else {
-                App.db.bookSourceDao.insert(bookSource)
+                appDb.bookSourceDao.insert(bookSource)
             }
         }
     }

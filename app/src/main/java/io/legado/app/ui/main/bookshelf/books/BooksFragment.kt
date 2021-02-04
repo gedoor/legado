@@ -8,13 +8,13 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.FragmentBooksBinding
 import io.legado.app.help.AppConfig
@@ -104,11 +104,11 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private fun upRecyclerData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData = when (groupId) {
-            AppConst.bookGroupAllId -> App.db.bookDao.observeAll()
-            AppConst.bookGroupLocalId -> App.db.bookDao.observeLocal()
-            AppConst.bookGroupAudioId -> App.db.bookDao.observeAudio()
-            AppConst.bookGroupNoneId -> App.db.bookDao.observeNoGroup()
-            else -> App.db.bookDao.observeByGroup(groupId)
+            AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
+            AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
+            AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
+            AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
+            else -> appDb.bookDao.observeByGroup(groupId)
         }.apply {
             observe(viewLifecycleOwner) { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()

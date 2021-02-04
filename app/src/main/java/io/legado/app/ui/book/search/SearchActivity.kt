@@ -12,11 +12,11 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
@@ -191,7 +191,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun initLiveData() {
-        App.db.bookSourceDao.liveGroupEnabled().observe(this, {
+        appDb.bookSourceDao.liveGroupEnabled().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -272,7 +272,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             binding.tvBookShow.gone()
             binding.rvBookshelfSearch.gone()
         } else {
-            bookData = App.db.bookDao.liveDataSearch(key)
+            bookData = appDb.bookDao.liveDataSearch(key)
             bookData?.observe(this, {
                 if (it.isEmpty()) {
                     binding.tvBookShow.gone()
@@ -287,9 +287,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         historyData?.removeObservers(this)
         historyData =
             if (key.isNullOrBlank()) {
-                App.db.searchKeywordDao.liveDataByUsage()
+                appDb.searchKeywordDao.liveDataByUsage()
             } else {
-                App.db.searchKeywordDao.liveDataSearch(key)
+                appDb.searchKeywordDao.liveDataSearch(key)
             }
         historyData?.observe(this, {
             historyKeyAdapter.setItems(it)
@@ -358,7 +358,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 searchView.query.toString() == key -> {
                     searchView.setQuery(key, true)
                 }
-                withContext(IO) { App.db.bookDao.findByName(key).isEmpty() } -> {
+                withContext(IO) { appDb.bookDao.findByName(key).isEmpty() } -> {
                     searchView.setQuery(key, true)
                 }
                 else -> {

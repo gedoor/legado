@@ -11,13 +11,13 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
@@ -90,7 +90,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 alert(R.string.diy_edit_source_group) {
                     val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                         val groups = linkedSetOf<String>()
-                        App.db.bookSourceDao.allGroup.forEach { group ->
+                        appDb.bookSourceDao.allGroup.forEach { group ->
                             groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                         }
                         editView.setFilterValues(groups.toList())

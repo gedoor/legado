@@ -2,9 +2,9 @@ package io.legado.app.ui.book.read
 
 import android.app.Application
 import android.content.Intent
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
@@ -33,10 +33,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             IntentDataHelp.getData<Book>(intent.getStringExtra("key"))?.let {
                 initBook(it)
             } ?: intent.getStringExtra("bookUrl")?.let {
-                App.db.bookDao.getBook(it)?.let { book ->
+                appDb.bookDao.getBook(it)?.let { book ->
                     initBook(book)
                 }
-            } ?: App.db.bookDao.lastReadBook?.let {
+            } ?: appDb.bookDao.lastReadBook?.let {
                 initBook(it)
             }
         }.onFinally {
@@ -54,7 +54,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 autoChangeSource(book.name, book.author)
                 return
             }
-            ReadBook.chapterSize = App.db.bookChapterDao.getChapterCount(book.bookUrl)
+            ReadBook.chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {
                     loadBookInfo(book)
@@ -84,7 +84,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 autoChangeSource(book.name, book.author)
                 return
             }
-            ReadBook.chapterSize = App.db.bookChapterDao.getChapterCount(book.bookUrl)
+            ReadBook.chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {
                     loadBookInfo(book)
@@ -125,9 +125,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (book.isLocalBook()) {
             execute {
                 LocalBook.getChapterList(book).let {
-                    App.db.bookChapterDao.delByBook(book.bookUrl)
-                    App.db.bookChapterDao.insert(*it.toTypedArray())
-                    App.db.bookDao.update(book)
+                    appDb.bookChapterDao.delByBook(book.bookUrl)
+                    appDb.bookChapterDao.insert(*it.toTypedArray())
+                    appDb.bookDao.update(book)
                     ReadBook.chapterSize = it.size
                     if (it.isEmpty()) {
                         ReadBook.upMsg(context.getString(R.string.error_load_toc))
@@ -144,8 +144,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ?.onSuccess(IO) { cList ->
                     if (cList.isNotEmpty()) {
                         if (changeDruChapterIndex == null) {
-                            App.db.bookChapterDao.insert(*cList.toTypedArray())
-                            App.db.bookDao.update(book)
+                            appDb.bookChapterDao.insert(*cList.toTypedArray())
+                            appDb.bookDao.update(book)
                             ReadBook.chapterSize = cList.size
                             ReadBook.upMsg(null)
                             ReadBook.loadContent(resetPageOffset = true)
@@ -191,7 +191,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 it.changeTo(newBook)
             }
             ReadBook.book = newBook
-            App.db.bookSourceDao.getBookSource(newBook.origin)?.let {
+            appDb.bookSourceDao.getBookSource(newBook.origin)?.let {
                 ReadBook.webBook = WebBook(it)
             }
             ReadBook.prevTextChapter = null
@@ -215,7 +215,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun autoChangeSource(name: String, author: String) {
         if (!AppConfig.autoChangeSource) return
         execute {
-            val sources = App.db.bookSourceDao.allTextEnabled
+            val sources = appDb.bookSourceDao.allTextEnabled
             val book = PreciseSearch.searchFirstBook(this, sources, name, author)
             if (book != null) {
                 book.upInfoFromOld(ReadBook.book)
@@ -242,8 +242,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             )
             book.durChapterIndex = ReadBook.durChapterIndex
             book.durChapterTitle = chapters[ReadBook.durChapterIndex].title
-            App.db.bookDao.update(book)
-            App.db.bookChapterDao.insert(*chapters.toTypedArray())
+            appDb.bookDao.update(book)
+            appDb.bookChapterDao.insert(*chapters.toTypedArray())
             ReadBook.chapterSize = chapters.size
             ReadBook.upMsg(null)
             ReadBook.loadContent(resetPageOffset = true)
@@ -276,7 +276,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun upBookSource(success: (() -> Unit)?) {
         execute {
             ReadBook.book?.let { book ->
-                App.db.bookSourceDao.getBookSource(book.origin)?.let {
+                appDb.bookSourceDao.getBookSource(book.origin)?.let {
                     ReadBook.webBook = WebBook(it)
                 }
             }
@@ -287,7 +287,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun refreshContent(book: Book) {
         execute {
-            App.db.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+            appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
                 ?.let { chapter ->
                     BookHelp.delContent(book, chapter)
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)

@@ -1,5 +1,6 @@
 package io.legado.app.ui.rss.article
 
+
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -8,9 +9,9 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.databinding.FragmentRssArticlesBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
@@ -18,8 +19,6 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
-
-
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -95,7 +94,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     private fun initData() {
         activityViewModel.url?.let {
             rssArticlesData?.removeObservers(this)
-            rssArticlesData = App.db.rssArticleDao.liveByOriginSort(it, viewModel.sortName)
+            rssArticlesData = appDb.rssArticleDao.liveByOriginSort(it, viewModel.sortName)
             rssArticlesData?.observe(viewLifecycleOwner, { list ->
                 adapter.setItems(list)
             })

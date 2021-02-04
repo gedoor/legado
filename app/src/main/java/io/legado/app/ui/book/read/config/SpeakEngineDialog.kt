@@ -11,12 +11,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
@@ -90,7 +90,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private fun initData() {
         httpTTSData?.removeObservers(this)
-        httpTTSData = App.db.httpTTSDao.observeAll()
+        httpTTSData = appDb.httpTTSDao.observeAll()
         httpTTSData?.observe(this, {
             adapter.setItems(it)
         })
@@ -117,7 +117,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 alertBinding.apply {
                     httpTTS.name = tvName.text.toString()
                     httpTTS.url = tvUrl.text.toString()
-                    App.db.httpTTSDao.insert(httpTTS)
+                    appDb.httpTTSDao.insert(httpTTS)
                     ReadAloud.upReadAloudClass()
                 }
             }
@@ -162,7 +162,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 }
                 ivMenuDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
-                        App.db.httpTTSDao.delete(httpTTS)
+                        appDb.httpTTSDao.delete(httpTTS)
                     }
                 }
             }

@@ -2,7 +2,7 @@ package io.legado.app.model.localBook
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -83,7 +83,7 @@ object LocalBook {
                 "${MD5Utils.md5Encode16(path)}.jpg"
             )
         )
-        App.db.bookDao.insert(book)
+        appDb.bookDao.insert(book)
         return book
     }
 

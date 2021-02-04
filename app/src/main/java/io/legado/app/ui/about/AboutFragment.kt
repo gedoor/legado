@@ -7,8 +7,8 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.constant.appInfo
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -39,7 +39,7 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.about)
         findPreference<Preference>("update_log")?.summary =
-            "${getString(R.string.version)} ${App.versionName}"
+            "${getString(R.string.version)} ${appInfo.versionName}"
         if (AppConfig.isGooglePlay) {
             preferenceScreen.removePreferenceRecursively("check_update")
         }

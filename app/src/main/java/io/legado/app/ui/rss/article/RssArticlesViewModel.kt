@@ -3,8 +3,8 @@ package io.legado.app.ui.rss.article
 import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.rss.Rss
@@ -37,9 +37,9 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                     list.forEach { rssArticle ->
                         rssArticle.order = order--
                     }
-                    App.db.rssArticleDao.insert(*list.toTypedArray())
+                    appDb.rssArticleDao.insert(*list.toTypedArray())
                     if (!rssSource.ruleNextPage.isNullOrEmpty()) {
-                        App.db.rssArticleDao.clearOld(rssSource.sourceUrl, sortName, order)
+                        appDb.rssArticleDao.clearOld(rssSource.sourceUrl, sortName, order)
                         loadFinally.postValue(true)
                     } else {
                         withContext(Dispatchers.Main) {
@@ -81,7 +81,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 return@let
             }
             val firstArticle = list.first()
-            val dbArticle = App.db.rssArticleDao
+            val dbArticle = appDb.rssArticleDao
                 .get(firstArticle.origin, firstArticle.link)
             if (dbArticle != null) {
                 loadFinally.postValue(false)
@@ -89,7 +89,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 list.forEach { rssArticle ->
                     rssArticle.order = order--
                 }
-                App.db.rssArticleDao.insert(*list.toTypedArray())
+                appDb.rssArticleDao.insert(*list.toTypedArray())
             }
         }
         isLoading = false

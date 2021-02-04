@@ -14,10 +14,10 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
@@ -146,14 +146,14 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         replaceRuleLiveData?.removeObservers(this)
         replaceRuleLiveData = when {
             searchKey.isNullOrEmpty() -> {
-                App.db.replaceRuleDao.liveDataAll()
+                appDb.replaceRuleDao.liveDataAll()
             }
             searchKey.startsWith("group:") -> {
                 val key = searchKey.substringAfter("group:")
-                App.db.replaceRuleDao.liveDataGroupSearch("%$key%")
+                appDb.replaceRuleDao.liveDataGroupSearch("%$key%")
             }
             else -> {
-                App.db.replaceRuleDao.liveDataSearch("%$searchKey%")
+                appDb.replaceRuleDao.liveDataSearch("%$searchKey%")
             }
         }.apply {
             observe(this@ReplaceRuleActivity, {
@@ -167,7 +167,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     private fun observeGroupData() {
-        App.db.replaceRuleDao.liveGroup().observe(this, {
+        appDb.replaceRuleDao.liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

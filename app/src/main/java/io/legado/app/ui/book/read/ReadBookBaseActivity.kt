@@ -8,10 +8,10 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ActivityBookReadBinding
 import io.legado.app.databinding.DialogBookmarkBinding
@@ -32,7 +32,6 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
 import io.legado.app.utils.getPrefString
-
 import io.legado.app.utils.requestInputMethod
 
 /**
@@ -214,7 +213,7 @@ abstract class ReadBookBaseActivity :
                     Coroutine.async {
                         bookmark.bookText = editBookText.text.toString()
                         bookmark.content = editView.text.toString()
-                        App.db.bookmarkDao.insert(bookmark)
+                        appDb.bookmarkDao.insert(bookmark)
                     }
                 }
             }

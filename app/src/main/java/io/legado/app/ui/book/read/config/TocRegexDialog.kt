@@ -15,11 +15,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogTocRegexBinding
@@ -34,7 +34,6 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-
 import java.util.*
 
 class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
@@ -96,7 +95,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private fun initData() {
         tocRegexLiveData?.removeObservers(viewLifecycleOwner)
-        tocRegexLiveData = App.db.txtTocRule.observeAll()
+        tocRegexLiveData = appDb.txtTocRule.observeAll()
         tocRegexLiveData?.observe(viewLifecycleOwner, { tocRules ->
             initSelectedName(tocRules)
             adapter.setItems(tocRules)
@@ -226,7 +225,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                         getItem(holder.layoutPosition)?.let {
                             it.enable = isChecked
                             launch(IO) {
-                                App.db.txtTocRule.update(it)
+                                appDb.txtTocRule.update(it)
                             }
                         }
                     }
@@ -237,7 +236,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 ivDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { item ->
                         launch(IO) {
-                            App.db.txtTocRule.delete(item)
+                            appDb.txtTocRule.delete(item)
                         }
                     }
                 }
@@ -259,7 +258,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                     item.serialNumber = index + 1
                 }
                 launch(IO) {
-                    App.db.txtTocRule.update(*getItems().toTypedArray())
+                    appDb.txtTocRule.update(*getItems().toTypedArray())
                 }
             }
             isMoved = false

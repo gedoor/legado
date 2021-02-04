@@ -1,10 +1,10 @@
 package io.legado.app.ui.main
 
 import android.app.Application
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
@@ -44,7 +44,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upAllBookToc() {
         execute {
-            upToc(App.db.bookDao.hasUpdateBooks)
+            upToc(appDb.bookDao.hasUpdateBooks)
         }
     }
 
@@ -73,14 +73,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     updateList.add(book.bookUrl)
                     postEvent(EventBus.UP_BOOK, book.bookUrl)
                 }
-                App.db.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
+                appDb.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
                     val webBook = WebBook(bookSource)
                     webBook.getChapterList(this, book, context = upTocPool)
                         .timeout(60000)
                         .onSuccess(IO) {
-                            App.db.bookDao.update(book)
-                            App.db.bookChapterDao.delByBook(book.bookUrl)
-                            App.db.bookChapterDao.insert(*it.toTypedArray())
+                            appDb.bookDao.update(book)
+                            appDb.bookChapterDao.delByBook(book.bookUrl)
+                            appDb.bookChapterDao.insert(*it.toTypedArray())
                             if (AppConfig.preDownload) {
                                 cacheBook(webBook, book)
                             }
@@ -112,7 +112,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             if (book.totalChapterNum > book.durChapterIndex) {
                 val downloadToIndex = min(book.totalChapterNum, book.durChapterIndex.plus(10))
                 for (i in book.durChapterIndex until downloadToIndex) {
-                    App.db.bookChapterDao.getChapter(book.bookUrl, i)?.let { chapter ->
+                    appDb.bookChapterDao.getChapter(book.bookUrl, i)?.let { chapter ->
                         if (!BookHelp.hasContent(book, chapter)) {
                             var addToCache = false
                             while (!addToCache) {
@@ -141,9 +141,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun postLoad() {
         execute {
             FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
-            if (App.db.httpTTSDao.count == 0) {
+            if (appDb.httpTTSDao.count == 0) {
                 DefaultData.httpTTS.let {
-                    App.db.httpTTSDao.insert(*it.toTypedArray())
+                    appDb.httpTTSDao.insert(*it.toTypedArray())
                 }
             }
         }

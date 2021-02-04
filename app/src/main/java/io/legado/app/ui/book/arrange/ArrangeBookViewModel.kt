@@ -1,8 +1,8 @@
 package io.legado.app.ui.book.arrange
 
 import android.app.Application
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 
 
@@ -13,19 +13,19 @@ class ArrangeBookViewModel(application: Application) : BaseViewModel(application
             books.forEach {
                 it.canUpdate = canUpdate
             }
-            App.db.bookDao.update(*books)
+            appDb.bookDao.update(*books)
         }
     }
 
     fun updateBook(vararg book: Book) {
         execute {
-            App.db.bookDao.update(*book)
+            appDb.bookDao.update(*book)
         }
     }
 
     fun deleteBook(vararg book: Book) {
         execute {
-            App.db.bookDao.delete(*book)
+            appDb.bookDao.delete(*book)
         }
     }
 

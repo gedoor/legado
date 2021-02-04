@@ -7,11 +7,12 @@ import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
-import io.legado.app.App
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.constant.androidId
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
 import io.legado.app.help.DefaultData
 import io.legado.app.help.LauncherIconHelp
@@ -110,48 +111,48 @@ object Restore {
     suspend fun restoreDatabase(path: String = Backup.backupPath) {
         withContext(IO) {
             fileToListT<Book>(path, "bookshelf.json")?.let {
-                App.db.bookDao.insert(*it.toTypedArray())
+                appDb.bookDao.insert(*it.toTypedArray())
             }
             fileToListT<Bookmark>(path, "bookmark.json")?.let {
-                App.db.bookmarkDao.insert(*it.toTypedArray())
+                appDb.bookmarkDao.insert(*it.toTypedArray())
             }
             fileToListT<BookGroup>(path, "bookGroup.json")?.let {
-                App.db.bookGroupDao.insert(*it.toTypedArray())
+                appDb.bookGroupDao.insert(*it.toTypedArray())
             }
             fileToListT<BookSource>(path, "bookSource.json")?.let {
-                App.db.bookSourceDao.insert(*it.toTypedArray())
+                appDb.bookSourceDao.insert(*it.toTypedArray())
             }
             fileToListT<RssSource>(path, "rssSources.json")?.let {
-                App.db.rssSourceDao.insert(*it.toTypedArray())
+                appDb.rssSourceDao.insert(*it.toTypedArray())
             }
             fileToListT<RssStar>(path, "rssStar.json")?.let {
-                App.db.rssStarDao.insert(*it.toTypedArray())
+                appDb.rssStarDao.insert(*it.toTypedArray())
             }
             fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
-                App.db.replaceRuleDao.insert(*it.toTypedArray())
+                appDb.replaceRuleDao.insert(*it.toTypedArray())
             }
             fileToListT<SearchKeyword>(path, "searchHistory.json")?.let {
-                App.db.searchKeywordDao.insert(*it.toTypedArray())
+                appDb.searchKeywordDao.insert(*it.toTypedArray())
             }
             fileToListT<RuleSub>(path, "sourceSub.json")?.let {
-                App.db.ruleSubDao.insert(*it.toTypedArray())
+                appDb.ruleSubDao.insert(*it.toTypedArray())
             }
             fileToListT<TxtTocRule>(path, DefaultData.txtTocRuleFileName)?.let {
-                App.db.txtTocRule.insert(*it.toTypedArray())
+                appDb.txtTocRule.insert(*it.toTypedArray())
             }
             fileToListT<HttpTTS>(path, DefaultData.httpTtsFileName)?.let {
-                App.db.httpTTSDao.insert(*it.toTypedArray())
+                appDb.httpTTSDao.insert(*it.toTypedArray())
             }
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
                 it.forEach { readRecord ->
                     //判断是不是本机记录
-                    if (readRecord.androidId != App.androidId) {
-                        App.db.readRecordDao.insert(readRecord)
+                    if (readRecord.androidId != androidId) {
+                        appDb.readRecordDao.insert(readRecord)
                     } else {
-                        val time = App.db.readRecordDao
+                        val time = appDb.readRecordDao
                             .getReadTime(readRecord.androidId, readRecord.bookName)
                         if (time == null || time < readRecord.readTime) {
-                            App.db.readRecordDao.insert(readRecord)
+                            appDb.readRecordDao.insert(readRecord)
                         }
                     }
                 }

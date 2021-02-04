@@ -2,12 +2,12 @@ package io.legado.app.service
 
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
@@ -97,7 +97,7 @@ class CheckSourceService : BaseService() {
         execute {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
-                App.db.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
+                appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
                     check(source)
                 } ?: onNext(sourceUrl, "")
             }
@@ -133,10 +133,10 @@ class CheckSourceService : BaseService() {
                 source.addGroup("失效")
                 source.bookSourceComment =
                     "error:${it.localizedMessage}\n${source.bookSourceComment}"
-                App.db.bookSourceDao.update(source)
+                appDb.bookSourceDao.update(source)
             }.onSuccess {
                 source.removeGroup("失效")
-                App.db.bookSourceDao.update(source)
+                appDb.bookSourceDao.update(source)
             }.onFinally {
                 onNext(source.bookSourceUrl, source.bookSourceName)
             }

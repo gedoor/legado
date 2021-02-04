@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemFindBookBinding
@@ -135,7 +135,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     notifyItemChanged(position)
                 }
                 R.id.menu_del -> Coroutine.async(scope) {
-                    App.db.bookSourceDao.delete(source)
+                    appDb.bookSourceDao.delete(source)
                 }
             }
             true

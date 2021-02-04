@@ -1,8 +1,8 @@
 package io.legado.app.help
 
-import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.coroutine.Coroutine
@@ -43,7 +43,7 @@ object BookHelp {
     fun clearRemovedCache() {
         Coroutine.async {
             val bookFolderNames = arrayListOf<String>()
-            App.db.bookDao.all.forEach {
+            appDb.bookDao.all.forEach {
                 bookFolderNames.add(it.getFolderName())
             }
             val file = FileUtils.getFile(downloadDir, cacheFolderName)

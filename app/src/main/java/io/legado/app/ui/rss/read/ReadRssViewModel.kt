@@ -9,10 +9,10 @@ import android.util.Base64
 import android.webkit.URLUtil
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
@@ -47,10 +47,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             val origin = intent.getStringExtra("origin")
             val link = intent.getStringExtra("link")
             origin?.let {
-                rssSource = App.db.rssSourceDao.getByKey(origin)
+                rssSource = appDb.rssSourceDao.getByKey(origin)
                 if (link != null) {
-                    rssStar = App.db.rssStarDao.get(origin, link)
-                    rssArticle = rssStar?.toRssArticle() ?: App.db.rssArticleDao.get(origin, link)
+                    rssStar = appDb.rssStarDao.get(origin, link)
+                    rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
                     rssArticle?.let { rssArticle ->
                         if (!rssArticle.description.isNullOrBlank()) {
                             contentLiveData.postValue(rssArticle.description)
@@ -97,10 +97,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         Rss.getContent(this, rssArticle, ruleContent, rssSource)
             .onSuccess(IO) { body ->
                 rssArticle.description = body
-                App.db.rssArticleDao.insert(rssArticle)
+                appDb.rssArticleDao.insert(rssArticle)
                 rssStar?.let {
                     it.description = body
-                    App.db.rssStarDao.insert(it)
+                    appDb.rssStarDao.insert(it)
                 }
                 contentLiveData.postValue(body)
             }
@@ -109,10 +109,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     fun favorite() {
         execute {
             rssStar?.let {
-                App.db.rssStarDao.delete(it.origin, it.link)
+                appDb.rssStarDao.delete(it.origin, it.link)
                 rssStar = null
             } ?: rssArticle?.toStar()?.let {
-                App.db.rssStarDao.insert(it)
+                appDb.rssStarDao.insert(it)
                 rssStar = it
             }
         }.onSuccess {

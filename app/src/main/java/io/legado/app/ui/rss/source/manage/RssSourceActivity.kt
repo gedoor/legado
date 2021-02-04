@@ -13,10 +13,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
@@ -148,7 +148,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     }
 
     private fun initLiveDataGroup() {
-        App.db.rssSourceDao.liveGroup().observe(this, {
+        appDb.rssSourceDao.liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -200,14 +200,14 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
         sourceLiveData?.removeObservers(this)
         sourceLiveData = when {
             searchKey.isNullOrBlank() -> {
-                App.db.rssSourceDao.liveAll()
+                appDb.rssSourceDao.liveAll()
             }
             searchKey.startsWith("group:") -> {
                 val key = searchKey.substringAfter("group:")
-                App.db.rssSourceDao.liveGroupSearch("%$key%")
+                appDb.rssSourceDao.liveGroupSearch("%$key%")
             }
             else -> {
-                App.db.rssSourceDao.liveSearch("%$searchKey%")
+                appDb.rssSourceDao.liveSearch("%$searchKey%")
             }
         }.apply {
             observe(this@RssSourceActivity, {

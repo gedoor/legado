@@ -8,10 +8,10 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.FragmentRssBinding
 import io.legado.app.databinding.ItemRssBinding
@@ -25,7 +25,6 @@ import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.ui.rss.source.manage.RssSourceViewModel
 import io.legado.app.ui.rss.subscription.RuleSubActivity
 import io.legado.app.utils.cnCompare
-
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -117,12 +116,12 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     private fun initData(searchKey: String? = null) {
         liveRssData?.removeObservers(this)
         liveRssData = when {
-            searchKey.isNullOrEmpty() -> App.db.rssSourceDao.liveEnabled()
+            searchKey.isNullOrEmpty() -> appDb.rssSourceDao.liveEnabled()
             searchKey.startsWith("group:") -> {
                 val key = searchKey.substringAfter("group:")
-                App.db.rssSourceDao.liveEnabledByGroup("%$key%")
+                appDb.rssSourceDao.liveEnabledByGroup("%$key%")
             }
-            else -> App.db.rssSourceDao.liveEnabled("%$searchKey%")
+            else -> appDb.rssSourceDao.liveEnabled("%$searchKey%")
         }.apply {
             observe(viewLifecycleOwner, {
                 adapter.setItems(it)
@@ -132,7 +131,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     private fun initGroupData() {
         liveGroup?.removeObservers(viewLifecycleOwner)
-        liveGroup = App.db.rssSourceDao.liveGroup()
+        liveGroup = appDb.rssSourceDao.liveGroup()
         liveGroup?.observe(viewLifecycleOwner, {
             groups.clear()
             it.map { group ->

@@ -2,9 +2,9 @@ package io.legado.app.service.help
 
 import android.content.Context
 import android.content.Intent
-import io.legado.app.App
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
@@ -18,7 +18,7 @@ object ReadAloud {
 
     private fun getReadAloudClass(): Class<*> {
         val spId = appCtx.getPrefLong(PreferKey.speakEngine)
-        httpTTS = App.db.httpTTSDao.get(spId)
+        httpTTS = appDb.httpTTSDao.get(spId)
         return if (httpTTS != null) {
             HttpReadAloudService::class.java
         } else {

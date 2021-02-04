@@ -1,6 +1,6 @@
 package io.legado.app.help
 
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cache
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.ACache
@@ -23,13 +23,13 @@ object CacheManager {
             is ByteArray -> ACache.get(appCtx).put(key, value, saveTime)
             else -> {
                 val cache = Cache(key, value.toString(), deadline)
-                App.db.cacheDao.insert(cache)
+                appDb.cacheDao.insert(cache)
             }
         }
     }
 
     fun get(key: String): String? {
-        return App.db.cacheDao.get(key, System.currentTimeMillis())
+        return appDb.cacheDao.get(key, System.currentTimeMillis())
     }
 
     fun getInt(key: String): Int? {

@@ -8,11 +8,11 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ActivityArrangeBookBinding
@@ -26,7 +26,6 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getPrefInt
-
 
 
 class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBookViewModel>(),
@@ -103,7 +102,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
 
     private fun initGroupData() {
         groupLiveData?.removeObservers(this)
-        groupLiveData = App.db.bookGroupDao.liveDataAll()
+        groupLiveData = appDb.bookGroupDao.liveDataAll()
         groupLiveData?.observe(this, {
             groupList.clear()
             groupList.addAll(it)
@@ -116,11 +115,11 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         booksLiveData?.removeObservers(this)
         booksLiveData =
             when (groupId) {
-                AppConst.bookGroupAllId -> App.db.bookDao.observeAll()
-                AppConst.bookGroupLocalId -> App.db.bookDao.observeLocal()
-                AppConst.bookGroupAudioId -> App.db.bookDao.observeAudio()
-                AppConst.bookGroupNoneId -> App.db.bookDao.observeNoGroup()
-                else -> App.db.bookDao.observeByGroup(groupId)
+                AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
+                AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
+                AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
+                AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
+                else -> appDb.bookDao.observeByGroup(groupId)
             }
         booksLiveData?.observe(this, { list ->
             val books = when (getPrefInt(PreferKey.bookshelfSort)) {
@@ -141,7 +140,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
                 .show(supportFragmentManager, "groupManage")
             else -> if (item.groupId == R.id.menu_group) {
                 binding.titleBar.subtitle = item.title
-                groupId = App.db.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
+                groupId = appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
                 initBookData()
             }
         }

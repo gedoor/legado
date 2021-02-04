@@ -1,7 +1,7 @@
 package io.legado.app.model.localBook
 
 import android.net.Uri
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.TxtTocRule
@@ -277,10 +277,10 @@ class AnalyzeTxtFile {
         }
 
         private fun getTocRules(): List<TxtTocRule> {
-            var rules = App.db.txtTocRule.enabled
+            var rules = appDb.txtTocRule.enabled
             if (rules.isEmpty()) {
                 rules = DefaultData.txtTocRules.apply {
-                    App.db.txtTocRule.insert(*this.toTypedArray())
+                    appDb.txtTocRule.insert(*this.toTypedArray())
                 }.filter {
                     it.enable
                 }

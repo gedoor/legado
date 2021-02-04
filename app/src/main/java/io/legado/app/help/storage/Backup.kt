@@ -3,8 +3,8 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.App
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.help.DefaultData
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ThemeConfig
@@ -57,18 +57,18 @@ object Backup {
         context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
         withContext(IO) {
             FileUtils.deleteFile(backupPath)
-            writeListToJson(App.db.bookDao.all, "bookshelf.json", backupPath)
-            writeListToJson(App.db.bookmarkDao.all, "bookmark.json", backupPath)
-            writeListToJson(App.db.bookGroupDao.all, "bookGroup.json", backupPath)
-            writeListToJson(App.db.bookSourceDao.all, "bookSource.json", backupPath)
-            writeListToJson(App.db.rssSourceDao.all, "rssSources.json", backupPath)
-            writeListToJson(App.db.rssStarDao.all, "rssStar.json", backupPath)
-            writeListToJson(App.db.replaceRuleDao.all, "replaceRule.json", backupPath)
-            writeListToJson(App.db.readRecordDao.all, "readRecord.json", backupPath)
-            writeListToJson(App.db.searchKeywordDao.all, "searchHistory.json", backupPath)
-            writeListToJson(App.db.ruleSubDao.all, "sourceSub.json", backupPath)
-            writeListToJson(App.db.txtTocRule.all, DefaultData.txtTocRuleFileName, backupPath)
-            writeListToJson(App.db.httpTTSDao.all, DefaultData.httpTtsFileName, backupPath)
+            writeListToJson(appDb.bookDao.all, "bookshelf.json", backupPath)
+            writeListToJson(appDb.bookmarkDao.all, "bookmark.json", backupPath)
+            writeListToJson(appDb.bookGroupDao.all, "bookGroup.json", backupPath)
+            writeListToJson(appDb.bookSourceDao.all, "bookSource.json", backupPath)
+            writeListToJson(appDb.rssSourceDao.all, "rssSources.json", backupPath)
+            writeListToJson(appDb.rssStarDao.all, "rssStar.json", backupPath)
+            writeListToJson(appDb.replaceRuleDao.all, "replaceRule.json", backupPath)
+            writeListToJson(appDb.readRecordDao.all, "readRecord.json", backupPath)
+            writeListToJson(appDb.searchKeywordDao.all, "searchHistory.json", backupPath)
+            writeListToJson(appDb.ruleSubDao.all, "sourceSub.json", backupPath)
+            writeListToJson(appDb.txtTocRule.all, DefaultData.txtTocRuleFileName, backupPath)
+            writeListToJson(appDb.httpTTSDao.all, DefaultData.httpTtsFileName, backupPath)
             GSON.toJson(ReadBookConfig.configList).let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
                     .writeText(it)

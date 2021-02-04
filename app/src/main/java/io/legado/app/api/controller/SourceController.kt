@@ -2,8 +2,8 @@ package io.legado.app.api.controller
 
 
 import android.text.TextUtils
-import io.legado.app.App
 import io.legado.app.api.ReturnData
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
@@ -14,7 +14,7 @@ object SourceController {
 
     val sources: ReturnData
         get() {
-            val bookSources = App.db.bookSourceDao.all
+            val bookSources = appDb.bookSourceDao.all
             val returnData = ReturnData()
             return if (bookSources.isEmpty()) {
                 returnData.setErrorMsg("设备书源列表为空")
@@ -29,7 +29,7 @@ object SourceController {
                 if (TextUtils.isEmpty(bookSource.bookSourceName) || TextUtils.isEmpty(bookSource.bookSourceUrl)) {
                     returnData.setErrorMsg("书源名称和URL不能为空")
                 } else {
-                    App.db.bookSourceDao.insert(bookSource)
+                    appDb.bookSourceDao.insert(bookSource)
                     returnData.setData("")
                 }
             } else {
@@ -50,7 +50,7 @@ object SourceController {
                     if (bookSource.bookSourceName.isBlank() || bookSource.bookSourceUrl.isBlank()) {
                         continue
                     }
-                    App.db.bookSourceDao.insert(bookSource)
+                    appDb.bookSourceDao.insert(bookSource)
                     okSources.add(bookSource)
                 }
             }
@@ -64,7 +64,7 @@ object SourceController {
         if (url.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书源地址")
         }
-        val bookSource = App.db.bookSourceDao.getBookSource(url)
+        val bookSource = appDb.bookSourceDao.getBookSource(url)
             ?: return returnData.setErrorMsg("未找到书源，请检查书源地址")
         return returnData.setData(bookSource)
     }
@@ -73,7 +73,7 @@ object SourceController {
         kotlin.runCatching {
             GSON.fromJsonArray<BookSource>(postData)?.let {
                 it.forEach { source ->
-                    App.db.bookSourceDao.delete(source)
+                    appDb.bookSourceDao.delete(source)
                 }
             }
         }

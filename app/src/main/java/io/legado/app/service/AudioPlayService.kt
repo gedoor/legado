@@ -16,13 +16,13 @@ import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
@@ -322,7 +322,7 @@ class AudioPlayService : BaseService(),
         execute {
             AudioPlay.book?.let {
                 AudioPlay.durChapterPos = mediaPlayer.currentPosition
-                App.db.bookDao.upProgress(it.bookUrl, AudioPlay.durChapterPos)
+                appDb.bookDao.upProgress(it.bookUrl, AudioPlay.durChapterPos)
             }
         }
     }
