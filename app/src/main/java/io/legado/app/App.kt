@@ -22,10 +22,6 @@ import rxhttp.wrapper.param.RxHttp
 
 class App : MultiDexApplication() {
 
-    companion object {
-        var navigationBarHeight = 0
-    }
-
     override fun onCreate() {
         super.onCreate()
         CrashHandler(this)

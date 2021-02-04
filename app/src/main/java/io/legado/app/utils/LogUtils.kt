@@ -32,19 +32,19 @@ object LogUtils {
         val root = appCtx.externalCacheDir ?: return@lazy null
         val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
         val logPath = FileUtils.getPath(root = logFolder, "appLog")
-        FileHandler(logPath, 10240, 10).apply {
-            formatter = object : Formatter() {
-                override fun format(record: LogRecord): String {
-                    // 设置文件输出格式
-                    return (getCurrentDateStr(TIME_PATTERN) + ": " + record.message + "\n")
-                }
-            }
-            level = if (appCtx.getPrefBoolean("recordLog")) {
-                Level.INFO
-            } else {
-                Level.OFF
+        val fileHandler = FileHandler(logPath, 10240, 10)
+        fileHandler.formatter = object : java.util.logging.Formatter() {
+            override fun format(record: LogRecord): String {
+                // 设置文件输出格式
+                return (getCurrentDateStr(TIME_PATTERN) + ": " + record.message + "\n")
             }
         }
+        fileHandler.level = if (appCtx.getPrefBoolean("recordLog")) {
+            Level.INFO
+        } else {
+            Level.OFF
+        }
+        return@lazy fileHandler
     }
 
     fun upLevel() {

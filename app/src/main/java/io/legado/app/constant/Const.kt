@@ -25,3 +25,5 @@ data class AppInfo(
     var versionCode: Long = 0L,
     var versionName: String = ""
 )
+
+var navigationBarHeight = 0
