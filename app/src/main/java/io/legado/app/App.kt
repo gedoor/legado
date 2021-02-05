@@ -57,7 +57,7 @@ class App : MultiDexApplication() {
             val downloadChannel = NotificationChannel(
                 channelIdDownload,
                 getString(R.string.action_download),
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 enableLights(false)
                 enableVibration(false)
@@ -67,7 +67,7 @@ class App : MultiDexApplication() {
             val readAloudChannel = NotificationChannel(
                 channelIdReadAloud,
                 getString(R.string.read_aloud),
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 enableLights(false)
                 enableVibration(false)
@@ -77,7 +77,7 @@ class App : MultiDexApplication() {
             val webChannel = NotificationChannel(
                 channelIdWeb,
                 getString(R.string.web_service),
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 enableLights(false)
                 enableVibration(false)
