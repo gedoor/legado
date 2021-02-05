@@ -17,11 +17,7 @@ import java.lang.ref.WeakReference
 
 class AjaxWebView {
     var callback: Callback? = null
-    private var mHandler: AjaxHandler
-
-    init {
-        mHandler = AjaxHandler(this)
-    }
+    private var mHandler: AjaxHandler = AjaxHandler(this)
 
     class AjaxHandler(private val ajaxWebView: AjaxWebView) : Handler(Looper.getMainLooper()) {
 
