@@ -19,6 +19,7 @@ class SourceLogin : BaseActivity<ActivitySourceLoginBinding>() {
 
     var sourceUrl: String? = null
     var loginUrl: String? = null
+    var userAgent: String? = null
     var checking = false
 
     override fun getViewBinding(): ActivitySourceLoginBinding {
@@ -28,6 +29,7 @@ class SourceLogin : BaseActivity<ActivitySourceLoginBinding>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         sourceUrl = intent.getStringExtra("sourceUrl")
         loginUrl = intent.getStringExtra("loginUrl")
+        userAgent = intent.getStringExtra("userAgent")
         title = getString(R.string.login_source, sourceUrl)
         initWebView()
     }
@@ -38,6 +40,9 @@ class SourceLogin : BaseActivity<ActivitySourceLoginBinding>() {
         settings.setSupportZoom(true)
         settings.builtInZoomControls = true
         settings.javaScriptEnabled = true
+        userAgent?.let {
+            settings.userAgentString = it
+        }
         val cookieManager = CookieManager.getInstance()
         binding.webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {

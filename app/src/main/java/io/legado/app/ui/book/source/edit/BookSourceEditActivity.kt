@@ -113,6 +113,7 @@ class BookSourceEditActivity :
                         startActivity<SourceLogin> {
                             putExtra("sourceUrl", it.bookSourceUrl)
                             putExtra("loginUrl", it.loginUrl)
+                            putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
                         }
                     }
                 }

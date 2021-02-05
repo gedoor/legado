@@ -15,6 +15,7 @@ import androidx.core.view.size
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
@@ -726,6 +727,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             startActivity<SourceLogin> {
                 putExtra("sourceUrl", it.bookSourceUrl)
                 putExtra("loginUrl", it.loginUrl)
+                putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
             }
         }
     }
