@@ -28,7 +28,10 @@ import java.io.File
 import java.io.FileOutputStream
 
 inline fun <reified A : Activity> Context.startActivity(configIntent: Intent.() -> Unit = {}) {
-    startActivity(Intent(this, A::class.java).apply(configIntent))
+    val intent = Intent(this, A::class.java)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.apply(configIntent)
+    startActivity(intent)
 }
 
 inline fun <reified T : Service> Context.startService(configIntent: Intent.() -> Unit = {}) {
