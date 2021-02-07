@@ -125,16 +125,25 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.0'
 
     //androidX
-    implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.media:media:1.2.1'
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation "androidx.activity:activity-ktx:1.1.0"
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
     implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation "androidx.collection:collection-ktx:1.1.0"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation 'androidx.media:media:1.2.1'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    //Splitties
+    def splitties_version = '2.1.1'
+    implementation("com.louiscad.splitties:splitties-appctx:$splitties_version")
+    implementation("com.louiscad.splitties:splitties-systemservices:$splitties_version")
+    implementation("com.louiscad.splitties:splitties-views:$splitties_version")
 
     //lifecycle
     def lifecycle_version = '2.2.0'
@@ -149,11 +158,6 @@ dependencies {
 
     //paging
     implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
-
-    //anko
-    def anko_version = '0.10.8'
-    implementation "org.jetbrains.anko:anko-sdk27:$anko_version"
-    implementation "org.jetbrains.anko:anko-sdk27-listeners:$anko_version"
 
     //liveEventBus
     implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
@@ -185,7 +189,7 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd-websocket:2.3.1'
 
     //二维码
-    implementation 'cn.bingoogolapple:bga-qrcode-zxing:1.3.7'
+    implementation 'com.king.zxing:zxing-lite:2.0.2'
 
     //颜色选择
     implementation 'com.jaredrummler:colorpicker:1.1.0'

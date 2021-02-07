@@ -6,12 +6,16 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.legado.app.App
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.androidId
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
+import splitties.init.appCtx
 import java.util.*
 
+val appDb by lazy {
+    AppDatabase.createDatabase(appCtx)
+}
 
 @Database(
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
@@ -151,7 +155,7 @@ abstract class AppDatabase : RoomDatabase() {
                     """CREATE TABLE IF NOT EXISTS `readRecordNew` (`androidId` TEXT NOT NULL, `bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, 
                     PRIMARY KEY(`androidId`, `bookName`))"""
                 )
-                database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${App.androidId}' as androidId, bookName, readTime from readRecord")
+                database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${androidId}' as androidId, bookName, readTime from readRecord")
                 database.execSQL("DROP TABLE readRecord")
                 database.execSQL("ALTER TABLE readRecordNew RENAME TO readRecord")
             }

@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.legado.app.R
-import org.jetbrains.anko.startActivity
+import io.legado.app.utils.startActivity
 import java.util.*
 
 internal class Request : OnRequestPermissionsResultCallback {
@@ -77,20 +77,26 @@ internal class Request : OnRequestPermissionsResultCallback {
             if (deniedPermissions == null) {
                 onPermissionsGranted(requestCode)
             } else {
-                val rationale = if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
+                val rationale =
+                    if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
                 if (rationale != null) {
-                    showSettingDialog(rationale) { onPermissionsDenied(requestCode, deniedPermissions) }
+                    showSettingDialog(rationale) {
+                        onPermissionsDenied(
+                            requestCode,
+                            deniedPermissions
+                        )
+                    }
                 } else {
                     onPermissionsDenied(requestCode, deniedPermissions)
                 }
             }
         } else {
             if (deniedPermissions != null) {
-                source?.context?.startActivity<PermissionActivity>(
-                    PermissionActivity.KEY_INPUT_REQUEST_TYPE to TYPE_REQUEST_PERMISSION,
-                    PermissionActivity.KEY_INPUT_PERMISSIONS_CODE to requestCode,
-                    PermissionActivity.KEY_INPUT_PERMISSIONS to deniedPermissions
-                )
+                source?.context?.startActivity<PermissionActivity> {
+                    putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)
+                    putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+                    putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                }
             } else {
                 onPermissionsGranted(requestCode)
             }
@@ -132,9 +138,12 @@ internal class Request : OnRequestPermissionsResultCallback {
                     .setTitle(R.string.dialog_title)
                     .setMessage(rationale)
                     .setPositiveButton(R.string.dialog_setting) { _, _ ->
-                        it.startActivity<PermissionActivity>(
-                            PermissionActivity.KEY_INPUT_REQUEST_TYPE to TYPE_REQUEST_SETTING
-                        )
+                        it.startActivity<PermissionActivity> {
+                            putExtra(
+                                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
+                                TYPE_REQUEST_SETTING
+                            )
+                        }
                     }
                     .setNegativeButton(R.string.dialog_cancel) { _, _ -> cancel() }
                     .show()
@@ -160,10 +169,15 @@ internal class Request : OnRequestPermissionsResultCallback {
         RequestPlugins.sResultCallback?.onPermissionsDenied(requestCode, deniedPermissions)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         val deniedPermissions = getDeniedPermissions(permissions)
         if (deniedPermissions != null) {
-            val rationale = if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
+            val rationale =
+                if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
             if (rationale != null) {
                 showSettingDialog(rationale) { onPermissionsDenied(requestCode, deniedPermissions) }
             } else {

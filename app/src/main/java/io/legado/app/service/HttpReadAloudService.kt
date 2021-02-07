@@ -10,15 +10,9 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.LogUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.postEvent
+import io.legado.app.utils.*
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
-import org.jetbrains.anko.collections.forEachWithIndex
-import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -84,10 +78,10 @@ class HttpReadAloudService : BaseReadAloudService(),
         task = execute {
             removeCacheFile()
             ReadAloud.httpTTS?.let {
-                contentList.forEachWithIndex { index, item ->
+                contentList.forEachIndexed { index, item ->
                     if (isActive) {
                         val fileName =
-                                md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), item)
+                            md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), item)
 
                         if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
                             if (index == nowSpeak) {
@@ -116,12 +110,6 @@ class HttpReadAloudService : BaseReadAloudService(),
 
                                     val fis = FileInputStream(file)
 
-                                    // 用来检测下载的文件是否为可正常播放的音频 （如果不是的话抛出异常，没找到更秒的办法，先这么着吧）
-                                    MediaPlayer().apply {
-                                        setDataSource(fis.fd)
-                                        prepare()
-                                        release()
-                                    }
                                     if (index == nowSpeak) {
                                         @Suppress("BlockingMethodInNonBlockingContext")
                                         playAudio(fis.fd)
@@ -129,17 +117,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
-                                runOnUiThread { toast("tts接口超时，尝试重新获取") }
+                                toastOnUi("tts接口超时，尝试重新获取")
                                 downloadAudio()
                             } catch (e: ConnectException) {
                                 removeSpeakCacheFile(fileName)
-                                runOnUiThread { toast("网络错误") }
+                                toastOnUi("网络错误")
                             } catch (e: IOException) {
                                 val file = getSpeakFileAsMd5(fileName)
                                 if (file.exists()) {
                                     FileUtils.deleteFile(file.absolutePath)
                                 }
-                                runOnUiThread { toast("tts文件解析错误") }
+                                toastOnUi("tts文件解析错误")
                             } catch (e: Exception) {
                                 removeSpeakCacheFile(fileName)
                             }

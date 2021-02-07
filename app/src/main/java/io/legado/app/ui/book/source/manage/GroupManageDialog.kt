@@ -9,12 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemGroupManageBinding
@@ -22,12 +23,15 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.*
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getSize
+import io.legado.app.utils.requestInputMethod
+import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
-    private lateinit var viewModel: BookSourceViewModel
+    private val viewModel: BookSourceViewModel by activityViewModels()
     private lateinit var adapter: GroupAdapter
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
@@ -42,7 +46,6 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModelOfActivity(BookSourceViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
@@ -62,7 +65,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private fun initData() {
-        App.db.bookSourceDao.liveGroup().observe(viewLifecycleOwner, {
+        appDb.bookSourceDao.liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -83,7 +86,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         alert(title = getString(R.string.add_group)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
             alertBinding.editView.setHint(R.string.group_name)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotBlank()) {
@@ -100,7 +103,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         alert(title = getString(R.string.group_edit)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
             alertBinding.editView.setHint(R.string.group_name)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 viewModel.upGroup(group, alertBinding.editView.text?.toString())
             }
@@ -129,12 +132,12 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemGroupManageBinding) {
             binding.apply {
-                tvEdit.onClick {
+                tvEdit.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         editGroup(it)
                     }
                 }
-                tvDel.onClick {
+                tvDel.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { viewModel.delGroup(it) }
                 }
             }

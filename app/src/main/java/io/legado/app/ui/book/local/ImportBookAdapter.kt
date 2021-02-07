@@ -9,7 +9,6 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ItemImportBookBinding
 import io.legado.app.utils.*
-import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
@@ -63,7 +62,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemImportBookBinding) {
-        holder.itemView.onClick {
+        holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 if (it.isDir) {
                     callBack.nextDoc(it.uri)

@@ -23,10 +23,10 @@ fun <D : DialogInterface> Context.alert(
 ): AlertBuilder<D> {
     return factory(this).apply {
         if (title != null) {
-            this.title = title
+            this.setTitle(title)
         }
         if (message != null) {
-            this.message = message
+            this.setMessage(message)
         }
         if (init != null) init()
     }
@@ -47,10 +47,10 @@ fun <D : DialogInterface> Context.alert(
 ): AlertBuilder<D> {
     return factory(this).apply {
         if (titleResource != null) {
-            this.titleResource = titleResource
+            this.setTitle(titleResource)
         }
         if (messageResource != null) {
-            this.messageResource = messageResource
+            this.setMessage(messageResource)
         }
         if (init != null) init()
     }

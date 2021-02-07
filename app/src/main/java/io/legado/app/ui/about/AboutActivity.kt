@@ -12,7 +12,7 @@ import io.legado.app.databinding.ActivityAboutBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.openUrl
-import org.jetbrains.anko.share
+import io.legado.app.utils.share
 
 
 class AboutActivity : BaseActivity<ActivityAboutBinding>() {

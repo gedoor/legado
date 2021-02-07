@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -12,15 +13,14 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssArtivlesBinding
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
-import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
+import io.legado.app.utils.startActivityForResult
 import io.legado.app.utils.visible
-import org.jetbrains.anko.startActivityForResult
 
 class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>() {
 
     override val viewModel: RssSortViewModel
-        get() = getViewModel(RssSortViewModel::class.java)
+            by viewModels()
     private val editSource = 12319
     private val fragments = linkedMapOf<String, RssArticlesFragment>()
     private lateinit var adapter: TabFragmentPageAdapter
@@ -49,7 +49,9 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
-                startActivityForResult<RssSourceEditActivity>(editSource, Pair("data", it))
+                startActivityForResult<RssSourceEditActivity>(editSource) {
+                    putExtra("data", it)
+                }
             }
             R.id.menu_clear -> {
                 viewModel.url?.let {

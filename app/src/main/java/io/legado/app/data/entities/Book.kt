@@ -2,9 +2,9 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.*
-import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
+import io.legado.app.data.appDb
 import io.legado.app.help.AppConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
@@ -182,14 +182,14 @@ data class Book(
         newBook.canUpdate = canUpdate
         newBook.readConfig = readConfig
         delete()
-        App.db.bookDao.insert(newBook)
+        appDb.bookDao.insert(newBook)
     }
 
     fun delete() {
         if (ReadBook.book?.bookUrl == bookUrl) {
             ReadBook.book = null
         }
-        App.db.bookDao.delete(this)
+        appDb.bookDao.delete(this)
     }
 
     fun upInfoFromOld(oldBook: Book?) {

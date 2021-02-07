@@ -16,7 +16,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class ClickActionConfigDialog : BaseDialogFragment() {
     private val binding by viewBinding(DialogClickActionConfigBinding::bind)
@@ -68,52 +68,52 @@ class ClickActionConfigDialog : BaseDialogFragment() {
     }
 
     private fun initViewEvent() {
-        binding.ivClose.onClick {
+        binding.ivClose.setOnClickListener {
             dismiss()
         }
-        binding.tvTopLeft.onClick {
+        binding.tvTopLeft.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTL, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        binding.tvTopCenter.onClick {
+        binding.tvTopCenter.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTC, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        binding.tvTopRight.onClick {
+        binding.tvTopRight.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionTR, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        binding.tvMiddleLeft.onClick {
+        binding.tvMiddleLeft.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionML, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        binding.tvMiddleRight.onClick {
+        binding.tvMiddleRight.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionMR, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        binding.tvBottomLeft.onClick {
+        binding.tvBottomLeft.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBL, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        binding.tvBottomCenter.onClick {
+        binding.tvBottomCenter.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBC, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
-        binding.tvBottomRight.onClick {
+        binding.tvBottomRight.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBR, action)
                 (it as? TextView)?.text = actions[action]

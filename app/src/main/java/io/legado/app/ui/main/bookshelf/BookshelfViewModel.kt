@@ -1,9 +1,9 @@
 package io.legado.app.ui.main.bookshelf
 
 import android.app.Application
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
@@ -25,12 +25,12 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             for (url in urls) {
                 val bookUrl = url.trim()
                 if (bookUrl.isEmpty()) continue
-                if (App.db.bookDao.getBook(bookUrl) != null) continue
+                if (appDb.bookDao.getBook(bookUrl) != null) continue
                 val baseUrl = NetworkUtils.getBaseUrl(bookUrl) ?: continue
-                var source = App.db.bookSourceDao.getBookSource(baseUrl)
+                var source = appDb.bookSourceDao.getBookSource(baseUrl)
                 if (source == null) {
                     if (hasBookUrlPattern == null) {
-                        hasBookUrlPattern = App.db.bookSourceDao.hasBookUrlPattern
+                        hasBookUrlPattern = appDb.bookSourceDao.hasBookUrlPattern
                     }
                     hasBookUrlPattern.forEach { bookSource ->
                         if (bookUrl.matches(bookSource.bookUrlPattern!!.toRegex())) {
@@ -47,8 +47,8 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                     )
                     WebBook(bookSource).getBookInfo(this, book)
                         .onSuccess(IO) {
-                            it.order = App.db.bookDao.maxOrder + 1
-                            App.db.bookDao.insert(it)
+                            it.order = appDb.bookDao.maxOrder + 1
+                            appDb.bookDao.insert(it)
                             successCount++
                         }.onError {
                             throw Exception(it.localizedMessage)
@@ -57,12 +57,12 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             }
         }.onSuccess {
             if (successCount > 0) {
-                toast(R.string.success)
+                toastOnUi(R.string.success)
             } else {
-                toast("ERROR")
+                toastOnUi("ERROR")
             }
         }.onError {
-            toast(it.localizedMessage ?: "ERROR")
+            toastOnUi(it.localizedMessage ?: "ERROR")
         }
     }
 
@@ -98,30 +98,30 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 }
             }
         }.onError {
-            toast(it.localizedMessage ?: "ERROR")
+            toastOnUi(it.localizedMessage ?: "ERROR")
         }
     }
 
     private fun importBookshelfByJson(json: String, groupId: Long) {
         execute {
-            val bookSources = App.db.bookSourceDao.allEnabled
+            val bookSources = appDb.bookSourceDao.allEnabled
             GSON.fromJsonArray<Map<String, String?>>(json)?.forEach {
                 if (!isActive) return@execute
                 val name = it["name"] ?: ""
                 val author = it["author"] ?: ""
-                if (name.isNotEmpty() && App.db.bookDao.getBook(name, author) == null) {
+                if (name.isNotEmpty() && appDb.bookDao.getBook(name, author) == null) {
                     val book = PreciseSearch
                         .searchFirstBook(this, bookSources, name, author)
                     book?.let {
                         if (groupId > 0) {
                             book.group = groupId
                         }
-                        App.db.bookDao.insert(book)
+                        appDb.bookDao.insert(book)
                     }
                 }
             }
         }.onFinally {
-            toast(R.string.success)
+            toastOnUi(R.string.success)
         }
     }
 
@@ -129,13 +129,13 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
         groups.forEach { group ->
             if (group.groupId >= 0 && group.groupId and (group.groupId - 1) != 0L) {
                 var id = 1L
-                val idsSum = App.db.bookGroupDao.idsSum
+                val idsSum = appDb.bookGroupDao.idsSum
                 while (id and idsSum != 0L) {
                     id = id.shl(1)
                 }
-                App.db.bookGroupDao.delete(group)
-                App.db.bookGroupDao.insert(group.copy(groupId = id))
-                App.db.bookDao.upGroup(group.groupId, id)
+                appDb.bookGroupDao.delete(group)
+                appDb.bookGroupDao.insert(group.copy(groupId = id))
+                appDb.bookDao.upGroup(group.groupId, id)
             }
         }
     }

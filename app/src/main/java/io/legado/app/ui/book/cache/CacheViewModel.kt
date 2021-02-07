@@ -3,16 +3,17 @@ package io.legado.app.ui.book.cache
 import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.File
 
 
@@ -41,7 +42,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val content = getAllContents(book)
         DocumentUtils.createFileIfNotExist(doc, filename)
             ?.writeText(context, content)
-        if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
+        if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
             FileUtils.createFileIfNotExist(
                 File(FileUtils.getCachePath()),
                 filename
@@ -67,7 +68,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val filename = "${book.name} by ${book.author}.txt"
         FileUtils.createFileIfNotExist(file, filename)
             .writeText(getAllContents(book))
-        if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
+        if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
             BookWebDav.exportWebDav(file.absolutePath, filename) // 导出到webdav
         }
         getSrcList(book).forEach {
@@ -90,7 +91,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         stringBuilder.append(book.name)
             .append("\n")
             .append(context.getString(R.string.author_show, book.author))
-        App.db.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+        appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 val content1 = contentProcessor
                     .getContent(book, chapter.title, content ?: "null", false)
@@ -104,7 +105,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     private fun getSrcList(book: Book): ArrayList<Triple<String, Int, String>> {
         val srcList = arrayListOf<Triple<String, Int, String>>()
-        App.db.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+        appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter)?.let { content ->
                 content.split("\n").forEachIndexed { index, text ->
                     val matcher = AppPattern.imgPattern.matcher(text)

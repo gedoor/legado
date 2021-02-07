@@ -7,17 +7,18 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
@@ -38,9 +39,6 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.toast
 import java.io.File
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
@@ -50,7 +48,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     SelectActionBar.CallBack,
     SearchView.OnQueryTextListener {
     override val viewModel: BookSourceViewModel
-        get() = getViewModel(BookSourceViewModel::class.java)
+            by viewModels()
     private val importRecordKey = "bookSourceRecordKey"
     private val qrRequestCode = 101
     private val importRequestCode = 132
@@ -177,20 +175,20 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         bookSourceLiveDate?.removeObservers(this)
         bookSourceLiveDate = when {
             searchKey.isNullOrEmpty() -> {
-                App.db.bookSourceDao.liveDataAll()
+                appDb.bookSourceDao.liveDataAll()
             }
             searchKey == getString(R.string.enabled) -> {
-                App.db.bookSourceDao.liveDataEnabled()
+                appDb.bookSourceDao.liveDataEnabled()
             }
             searchKey == getString(R.string.disabled) -> {
-                App.db.bookSourceDao.liveDataDisabled()
+                appDb.bookSourceDao.liveDataDisabled()
             }
             searchKey.startsWith("group:") -> {
                 val key = searchKey.substringAfter("group:")
-                App.db.bookSourceDao.liveDataGroupSearch("%$key%")
+                appDb.bookSourceDao.liveDataGroupSearch("%$key%")
             }
             else -> {
-                App.db.bookSourceDao.liveDataSearch("%$searchKey%")
+                appDb.bookSourceDao.liveDataSearch("%$searchKey%")
             }
         }.apply {
             observe(this@BookSourceActivity, { data ->
@@ -247,7 +245,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun initLiveDataGroup() {
-        App.db.bookSourceDao.liveGroup().observe(this, {
+        appDb.bookSourceDao.liveGroup().observe(this, {
             groups.clear()
             it.forEach { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -304,7 +302,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setText(CheckSource.keyword)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
@@ -325,7 +323,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 editView.setFilterValues(groups.toList())
                 editView.dropDownHeight = 180.dp
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
@@ -345,7 +343,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 editView.setFilterValues(groups.toList())
                 editView.dropDownHeight = 180.dp
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
@@ -381,7 +379,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     aCache.put(importRecordKey, cacheUrls.joinToString(","))
                 }
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
                 text?.let {
@@ -389,7 +387,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    startActivity<ImportBookSourceActivity>(Pair("source", it))
+                    startActivity<ImportBookSourceActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             cancelButton()
@@ -412,7 +412,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             groups.map { group ->
                 if (group.contains("失效")) {
                     searchView.setQuery("失效", true)
-                    toast("发现有失效书源，已为您自动筛选！")
+                    toastOnUi("发现有失效书源，已为您自动筛选！")
                 }
             }
         }
@@ -443,7 +443,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun edit(bookSource: BookSource) {
-        startActivity<BookSourceEditActivity>(Pair("data", bookSource.bookSourceUrl))
+        startActivity<BookSourceEditActivity> {
+            putExtra("data", bookSource.bookSourceUrl)
+        }
     }
 
     override fun upOrder() {
@@ -463,7 +465,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         when (requestCode) {
             qrRequestCode -> if (resultCode == RESULT_OK) {
                 data?.getStringExtra("result")?.let {
-                    startActivity<ImportBookSourceActivity>("source" to it)
+                    startActivity<ImportBookSourceActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             importRequestCode -> if (resultCode == Activity.RESULT_OK) {
@@ -471,10 +475,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     try {
                         uri.readText(this)?.let {
                             val dataKey = IntentDataHelp.putData(it)
-                            startActivity<ImportBookSourceActivity>("dataKey" to dataKey)
+                            startActivity<ImportBookSourceActivity> {
+                                putExtra("dataKey", dataKey)
+                            }
                         }
                     } catch (e: Exception) {
-                        toast("readTextError:${e.localizedMessage}")
+                        toastOnUi("readTextError:${e.localizedMessage}")
                     }
                 }
             }

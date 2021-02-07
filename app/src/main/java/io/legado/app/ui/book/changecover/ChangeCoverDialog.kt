@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -14,7 +15,7 @@ import io.legado.app.databinding.DialogChangeCoverBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getSize
-import io.legado.app.utils.getViewModel
+
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
@@ -39,7 +40,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
 
     private val binding by viewBinding(DialogChangeCoverBinding::bind)
     private var callBack: CallBack? = null
-    private lateinit var viewModel: ChangeCoverViewModel
+    private val viewModel: ChangeCoverViewModel by viewModels()
     lateinit var adapter: CoverAdapter
 
     override fun onStart() {
@@ -54,7 +55,6 @@ class ChangeCoverDialog : BaseDialogFragment(),
         savedInstanceState: Bundle?
     ): View? {
         callBack = activity as? CallBack
-        viewModel = getViewModel(ChangeCoverViewModel::class.java)
         return inflater.inflate(R.layout.dialog_change_cover, container)
     }
 

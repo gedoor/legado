@@ -9,23 +9,27 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.utils.*
+import io.legado.app.utils.dp
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import io.legado.app.utils.visible
+
 
 /**
  * 导入书源弹出窗口
@@ -34,8 +38,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
-    val viewModel: ImportBookSourceViewModel
-        get() = getViewModelOfActivity(ImportBookSourceViewModel::class.java)
+    val viewModel: ImportBookSourceViewModel by viewModels()
     lateinit var adapter: SourcesAdapter
 
     override fun onStart() {
@@ -62,11 +65,11 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         binding.recyclerView.adapter = adapter
         adapter.setItems(viewModel.allSources)
         binding.tvCancel.visible()
-        binding.tvCancel.onClick {
+        binding.tvCancel.setOnClickListener {
             dismiss()
         }
         binding.tvOk.visible()
-        binding.tvOk.onClick {
+        binding.tvOk.setOnClickListener {
             viewModel.importSelect {
                 dismiss()
             }
@@ -87,13 +90,15 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 alert(R.string.diy_edit_source_group) {
                     val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                         val groups = linkedSetOf<String>()
-                        App.db.bookSourceDao.allGroup.forEach { group ->
+                        appDb.bookSourceDao.allGroup.forEach { group ->
                             groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                         }
                         editView.setFilterValues(groups.toList())
                         editView.dropDownHeight = 180.dp
                     }
-                    customView = alertBinding.root
+                    customView {
+                        alertBinding.root
+                    }
                     okButton {
                         alertBinding.editView.text?.toString()?.let { group ->
                             viewModel.groupName = group

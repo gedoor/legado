@@ -1,8 +1,8 @@
 package io.legado.app.help
 
-import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.coroutine.Coroutine
@@ -11,6 +11,7 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import org.apache.commons.text.similarity.JaccardSimilarity
+import splitties.init.appCtx
 import java.io.File
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.regex.Matcher
@@ -22,7 +23,7 @@ import kotlin.math.min
 object BookHelp {
     private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
-    private val downloadDir: File = App.INSTANCE.externalFilesDir
+    private val downloadDir: File = appCtx.externalFilesDir
     private val downloadImages = CopyOnWriteArraySet<String>()
 
     fun clearCache() {
@@ -42,7 +43,7 @@ object BookHelp {
     fun clearRemovedCache() {
         Coroutine.async {
             val bookFolderNames = arrayListOf<String>()
-            App.db.bookDao.all.forEach {
+            appDb.bookDao.all.forEach {
                 bookFolderNames.add(it.getFolderName())
             }
             val file = FileUtils.getFile(downloadDir, cacheFolderName)

@@ -2,20 +2,21 @@ package io.legado.app.model.localBook
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.File
 
 
 object LocalBook {
     private const val folderName = "bookTxt"
     val cacheFolder: File by lazy {
-        val rootFile = App.INSTANCE.getExternalFilesDir(null)
-            ?: App.INSTANCE.externalCacheDir
-            ?: App.INSTANCE.cacheDir
+        val rootFile = appCtx.getExternalFilesDir(null)
+            ?: appCtx.externalCacheDir
+            ?: appCtx.cacheDir
         FileUtils.createFolderIfNotExist(rootFile, folderName)
     }
 
@@ -39,12 +40,12 @@ object LocalBook {
         val path: String
         val fileName = if (uri.isContentScheme()) {
             path = uri.toString()
-            val doc = DocumentFile.fromSingleUri(App.INSTANCE, uri)
+            val doc = DocumentFile.fromSingleUri(appCtx, uri)
             doc?.let {
                 val bookFile = FileUtils.getFile(cacheFolder, it.name!!)
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
-                    doc.readBytes(App.INSTANCE)?.let { bytes ->
+                    doc.readBytes(appCtx)?.let { bytes ->
                         bookFile.writeBytes(bytes)
                     }
                 }
@@ -77,12 +78,12 @@ object LocalBook {
             author = author,
             originName = fileName,
             coverUrl = FileUtils.getPath(
-                App.INSTANCE.externalFilesDir,
+                appCtx.externalFilesDir,
                 "covers",
                 "${MD5Utils.md5Encode16(path)}.jpg"
             )
         )
-        App.db.bookDao.insert(book)
+        appDb.bookDao.insert(book)
         return book
     }
 
@@ -96,7 +97,7 @@ object LocalBook {
             if (deleteOriginal) {
                 if (book.bookUrl.isContentScheme()) {
                     val uri = Uri.parse(book.bookUrl)
-                    DocumentFile.fromSingleUri(App.INSTANCE, uri)?.delete()
+                    DocumentFile.fromSingleUri(appCtx, uri)?.delete()
                 } else {
                     FileUtils.deleteFile(book.bookUrl)
                 }

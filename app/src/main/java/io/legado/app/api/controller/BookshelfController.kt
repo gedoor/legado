@@ -1,8 +1,8 @@
 package io.legado.app.api.controller
 
-import io.legado.app.App
 import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.model.webBook.WebBook
@@ -12,17 +12,18 @@ import io.legado.app.utils.cnCompare
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefInt
 import kotlinx.coroutines.runBlocking
+import splitties.init.appCtx
 
 object BookshelfController {
 
     val bookshelf: ReturnData
         get() {
-            val books = App.db.bookDao.all
+            val books = appDb.bookDao.all
             val returnData = ReturnData()
             return if (books.isEmpty()) {
                 returnData.setErrorMsg("还没有添加小说")
             } else {
-                val data = when (App.INSTANCE.getPrefInt(PreferKey.bookshelfSort)) {
+                val data = when (appCtx.getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> books.sortedByDescending { it.latestChapterTime }
                     2 -> books.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
@@ -40,7 +41,7 @@ object BookshelfController {
         if (bookUrl.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
         }
-        val chapterList = App.db.bookChapterDao.getChapterList(bookUrl)
+        val chapterList = appDb.bookChapterDao.getChapterList(bookUrl)
         return returnData.setData(chapterList)
     }
 
@@ -54,8 +55,8 @@ object BookshelfController {
         if (index == null) {
             return returnData.setErrorMsg("参数index不能为空, 请指定目录序号")
         }
-        val book = App.db.bookDao.getBook(bookUrl)
-        val chapter = App.db.bookChapterDao.getChapter(bookUrl, index)
+        val book = appDb.bookDao.getBook(bookUrl)
+        val chapter = appDb.bookChapterDao.getChapter(bookUrl, index)
         if (book == null || chapter == null) {
             returnData.setErrorMsg("未找到")
         } else {
@@ -64,7 +65,7 @@ object BookshelfController {
                 saveBookReadIndex(book, index)
                 returnData.setData(content)
             } else {
-                App.db.bookSourceDao.getBookSource(book.origin)?.let { source ->
+                appDb.bookSourceDao.getBookSource(book.origin)?.let { source ->
                     runBlocking {
                         WebBook(source).getContentAwait(this, book, chapter)
                     }.let {
@@ -81,7 +82,7 @@ object BookshelfController {
         val book = GSON.fromJsonObject<Book>(postData)
         val returnData = ReturnData()
         if (book != null) {
-            App.db.bookDao.insert(book)
+            appDb.bookDao.insert(book)
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book
                 ReadBook.durChapterIndex = book.durChapterIndex
@@ -95,10 +96,10 @@ object BookshelfController {
         if (index > book.durChapterIndex) {
             book.durChapterIndex = index
             book.durChapterTime = System.currentTimeMillis()
-            App.db.bookChapterDao.getChapter(book.bookUrl, index)?.let {
+            appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let {
                 book.durChapterTitle = it.title
             }
-            App.db.bookDao.update(book)
+            appDb.bookDao.update(book)
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book
                 ReadBook.durChapterIndex = index

@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
-import io.legado.app.App
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ActivityHelp
 import io.legado.app.service.AudioPlayService
@@ -76,7 +76,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 else -> if (context.getPrefBoolean("mediaButtonOnExit", true)) {
                     GlobalScope.launch(Main) {
                         val lastBook: Book? = withContext(IO) {
-                            App.db.bookDao.lastReadBook
+                            appDb.bookDao.lastReadBook
                         }
                         lastBook?.let {
                             if (!ActivityHelp.isExist(MainActivity::class.java)) {

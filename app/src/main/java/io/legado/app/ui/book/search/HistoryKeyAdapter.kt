@@ -1,18 +1,16 @@
 package io.legado.app.ui.book.search
 
 import android.view.ViewGroup
-import io.legado.app.App
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.ui.widget.anima.explosion_field.ExplosionField
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
-
+import splitties.views.onLongClick
 
 class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
     RecyclerAdapter<SearchKeyword, ItemFilletTextBinding>(activity) {
@@ -36,21 +34,18 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
         holder.itemView.apply {
-            onClick {
+            setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.searchHistory(it.word)
                 }
             }
             onLongClick {
-                it?.let {
-                    explosionField.explode(it, true)
-                }
+                explosionField.explode(this, true)
                 getItem(holder.layoutPosition)?.let {
                     GlobalScope.launch(IO) {
-                        App.db.searchKeywordDao.delete(it)
+                        appDb.searchKeywordDao.delete(it)
                     }
                 }
-                true
             }
         }
     }

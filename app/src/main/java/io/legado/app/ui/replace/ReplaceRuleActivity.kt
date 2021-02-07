@@ -7,16 +7,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
@@ -29,14 +30,14 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
 import java.io.File
 
 /**
@@ -48,11 +49,11 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     FilePickerDialog.CallBack,
     SelectActionBar.CallBack,
     ReplaceRuleAdapter.CallBack {
-    override val viewModel: ReplaceRuleViewModel
-        get() = getViewModel(ReplaceRuleViewModel::class.java)
+    override val viewModel: ReplaceRuleViewModel by viewModels()
     private val importRecordKey = "replaceRuleRecordKey"
     private val importRequestCode = 132
-    private val exportRequestCode = 65
+    private val importRequestCodeQr = 133
+    private val exportRequestCode = 234
     private lateinit var adapter: ReplaceRuleAdapter
     private lateinit var searchView: SearchView
     private var groups = hashSetOf<String>()
@@ -145,14 +146,14 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         replaceRuleLiveData?.removeObservers(this)
         replaceRuleLiveData = when {
             searchKey.isNullOrEmpty() -> {
-                App.db.replaceRuleDao.liveDataAll()
+                appDb.replaceRuleDao.liveDataAll()
             }
             searchKey.startsWith("group:") -> {
                 val key = searchKey.substringAfter("group:")
-                App.db.replaceRuleDao.liveDataGroupSearch("%$key%")
+                appDb.replaceRuleDao.liveDataGroupSearch("%$key%")
             }
             else -> {
-                App.db.replaceRuleDao.liveDataSearch("%$searchKey%")
+                appDb.replaceRuleDao.liveDataSearch("%$searchKey%")
             }
         }.apply {
             observe(this@ReplaceRuleActivity, {
@@ -166,7 +167,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     private fun observeGroupData() {
-        App.db.replaceRuleDao.liveGroup().observe(this, {
+        appDb.replaceRuleDao.liveGroup().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -186,6 +187,8 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_import_source_onLine -> showImportDialog()
             R.id.menu_import_source_local -> FilePicker
                 .selectFile(this, importRequestCode, allowExtensions = arrayOf("txt", "json"))
+            R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(importRequestCodeQr)
+            R.id.menu_help -> showHelp()
             else -> if (item.groupId == R.id.replace_group) {
                 searchView.setQuery("group:${item.title}", true)
             }
@@ -224,7 +227,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                     aCache.put(importRecordKey, cacheUrls.joinToString(","))
                 }
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
                 text?.let {
@@ -232,11 +235,18 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    startActivity<ImportReplaceRuleActivity>("source" to it)
+                    startActivity<ImportReplaceRuleActivity> {
+                        putExtra("source", it)
+                    }
                 }
             }
             cancelButton()
         }.show()
+    }
+
+    private fun showHelp() {
+        val text = String(assets.open("help/replaceRuleHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
@@ -256,10 +266,19 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                     kotlin.runCatching {
                         uri.readText(this)?.let {
                             val dataKey = IntentDataHelp.putData(it)
-                            startActivity<ImportReplaceRuleActivity>("dataKey" to dataKey)
+                            startActivity<ImportReplaceRuleActivity> {
+                                putExtra("dataKey", dataKey)
+                            }
                         }
                     }.onFailure {
-                        toast("readTextError:${it.localizedMessage}")
+                        toastOnUi("readTextError:${it.localizedMessage}")
+                    }
+                }
+            }
+            importRequestCodeQr -> if (resultCode == Activity.RESULT_OK) {
+                data?.getStringExtra("result")?.let {
+                    startActivity<ImportReplaceRuleActivity> {
+                        putExtra("source", it)
                     }
                 }
             }

@@ -170,14 +170,14 @@ class FilePickerDialog : DialogFragment(),
         } else {
             fileItem?.path?.let { path ->
                 if (mode == DIRECTORY) {
-                    toast("这是文件夹选择,不能选择文件,点击右上角的确定选择文件夹")
+                    toastOnUi("这是文件夹选择,不能选择文件,点击右上角的确定选择文件夹")
                 } else if (allowExtensions.isNullOrEmpty() ||
                     allowExtensions?.contains(FileUtils.getExtension(path)) == true
                 ) {
                     setData(path)
                     dismiss()
                 } else {
-                    toast("不能打开此文件")
+                    toastOnUi("不能打开此文件")
                 }
             }
         }

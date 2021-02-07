@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
@@ -20,6 +21,7 @@ import io.legado.app.data.entities.rule.*
 import io.legado.app.databinding.ActivityBookSourceEditBinding
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
@@ -30,7 +32,6 @@ import io.legado.app.ui.qrcode.QrCodeActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
-import org.jetbrains.anko.*
 import kotlin.math.abs
 
 class BookSourceEditActivity :
@@ -38,7 +39,7 @@ class BookSourceEditActivity :
     FilePickerDialog.CallBack,
     KeyboardToolPop.CallBack {
     override val viewModel: BookSourceEditViewModel
-        get() = getViewModel(BookSourceEditViewModel::class.java)
+            by viewModels()
 
     private val qrRequestCode = 101
     private val selectPathRequestCode = 102
@@ -89,7 +90,9 @@ class BookSourceEditActivity :
             R.id.menu_debug_source -> getSource().let { source ->
                 if (checkSource(source)) {
                     viewModel.save(source) {
-                        startActivity<BookSourceDebugActivity>(Pair("key", source.bookSourceUrl))
+                        startActivity<BookSourceDebugActivity> {
+                            putExtra("key", source.bookSourceUrl)
+                        }
                     }
                 }
             }
@@ -105,12 +108,13 @@ class BookSourceEditActivity :
             R.id.menu_login -> getSource().let {
                 if (checkSource(it)) {
                     if (it.loginUrl.isNullOrEmpty()) {
-                        toast(R.string.source_no_login)
+                        toastOnUi(R.string.source_no_login)
                     } else {
-                        startActivity<SourceLogin>(
-                            Pair("sourceUrl", it.bookSourceUrl),
-                            Pair("loginUrl", it.loginUrl)
-                        )
+                        startActivity<SourceLogin> {
+                            putExtra("sourceUrl", it.bookSourceUrl)
+                            putExtra("loginUrl", it.loginUrl)
+                            putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
+                        }
                     }
                 }
             }
@@ -144,7 +148,7 @@ class BookSourceEditActivity :
         val source = getSource()
         if (!source.equal(viewModel.bookSource ?: BookSource())) {
             alert(R.string.exit) {
-                messageResource = R.string.exit_no_save
+                setMessage(R.string.exit_no_save)
                 positiveButton(R.string.yes)
                 negativeButton(R.string.no) {
                     super.finish()
@@ -357,7 +361,7 @@ class BookSourceEditActivity :
 
     private fun checkSource(source: BookSource): Boolean {
         if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
-            toast(R.string.non_null_name_url)
+            toastOnUi(R.string.non_null_name_url)
             return false
         }
         return true
@@ -448,7 +452,7 @@ class BookSourceEditActivity :
             val rect = Rect()
             // 获取当前页面窗口的显示范围
             window.decorView.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = this@BookSourceEditActivity.displayMetrics.heightPixels
+            val screenHeight = this@BookSourceEditActivity.getSize().heightPixels
             val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
             val preShowing = mIsSoftKeyBoardShowing
             if (abs(keyboardHeight) > screenHeight / 5) {

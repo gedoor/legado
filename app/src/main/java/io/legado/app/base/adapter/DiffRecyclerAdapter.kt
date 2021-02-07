@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import splitties.views.onLongClick
 
 /**
  * Created by Invincible on 2017/12/15.
@@ -130,10 +131,10 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         }
 
         if (itemLongClickListener != null) {
-            holder.itemView.setOnLongClickListener {
+            holder.itemView.onLongClick {
                 getItem(holder.layoutPosition)?.let {
-                    itemLongClickListener?.invoke(holder, it) ?: true
-                } ?: true
+                    itemLongClickListener?.invoke(holder, it)
+                }
             }
         }
 

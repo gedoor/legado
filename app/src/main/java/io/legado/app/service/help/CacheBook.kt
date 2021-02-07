@@ -2,7 +2,6 @@ package io.legado.app.service.help
 
 import android.content.Context
 import android.content.Intent
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.Book
@@ -11,6 +10,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.msg
 import kotlinx.coroutines.CoroutineScope
+import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -81,7 +81,7 @@ object CacheBook {
                     ReadBook.contentLoadFinish(
                         book,
                         chapter,
-                        content.ifBlank { App.INSTANCE.getString(R.string.content_empty) },
+                        content.ifBlank { appCtx.getString(R.string.content_empty) },
                         resetPageOffset = resetPageOffset
                     )
                 }

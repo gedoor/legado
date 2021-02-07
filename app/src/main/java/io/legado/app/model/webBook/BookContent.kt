@@ -1,7 +1,7 @@
 package io.legado.app.model.webBook
 
-import io.legado.app.App
 import io.legado.app.R
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
@@ -14,6 +14,7 @@ import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.htmlFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 
 object BookContent {
 
@@ -28,7 +29,7 @@ object BookContent {
         nextChapterUrlF: String? = null
     ): String {
         body ?: throw Exception(
-            App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
+            appCtx.getString(R.string.error_get_web_content, baseUrl)
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         val content = StringBuilder()
@@ -45,7 +46,7 @@ object BookContent {
             val nextChapterUrl = if (!nextChapterUrlF.isNullOrEmpty())
                 nextChapterUrlF
             else
-                App.db.bookChapterDao.getChapter(book.bookUrl, bookChapter.index + 1)?.url
+                appDb.bookChapterDao.getChapter(book.bookUrl, bookChapter.index + 1)?.url
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 if (!nextChapterUrl.isNullOrEmpty()
                     && NetworkUtils.getAbsoluteURL(baseUrl, nextUrl)

@@ -1,8 +1,8 @@
 package io.legado.app.ui.book.read.config
 
 import android.app.Application
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.GSON
@@ -22,7 +22,7 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
         execute {
             RxHttp.get(url).toText("utf-8").await().let { json ->
                 GSON.fromJsonArray<HttpTTS>(json)?.let {
-                    App.db.httpTTSDao.insert(*it.toTypedArray())
+                    appDb.httpTTSDao.insert(*it.toTypedArray())
                 }
             }
         }.onSuccess {

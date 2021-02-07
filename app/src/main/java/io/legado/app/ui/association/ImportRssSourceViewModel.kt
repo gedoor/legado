@@ -5,9 +5,9 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.SourceHelp
@@ -129,7 +129,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = App.db.rssSourceDao.getByKey(it.sourceUrl)
+                val has = appDb.rssSourceDao.getByKey(it.sourceUrl)
                 checkSources.add(has)
                 selectStatus.add(has == null)
             }

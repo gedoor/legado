@@ -3,7 +3,7 @@
 package io.legado.app.help.http
 
 import android.text.TextUtils
-import io.legado.app.App
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cookie
 import io.legado.app.help.http.api.CookieManager
 import io.legado.app.utils.NetworkUtils
@@ -12,7 +12,7 @@ object CookieStore : CookieManager {
 
     override fun setCookie(url: String, cookie: String?) {
         val cookieBean = Cookie(NetworkUtils.getSubDomain(url), cookie ?: "")
-        App.db.cookieDao.insert(cookieBean)
+        appDb.cookieDao.insert(cookieBean)
     }
 
     override fun replaceCookie(url: String, cookie: String) {
@@ -31,12 +31,12 @@ object CookieStore : CookieManager {
     }
 
     override fun getCookie(url: String): String {
-        val cookieBean = App.db.cookieDao.get(NetworkUtils.getSubDomain(url))
+        val cookieBean = appDb.cookieDao.get(NetworkUtils.getSubDomain(url))
         return cookieBean?.cookie ?: ""
     }
 
     override fun removeCookie(url: String) {
-        App.db.cookieDao.delete(NetworkUtils.getSubDomain(url))
+        appDb.cookieDao.delete(NetworkUtils.getSubDomain(url))
     }
 
     override fun cookieToMap(cookie: String): MutableMap<String, String> {
@@ -77,7 +77,7 @@ object CookieStore : CookieManager {
     }
 
     fun clear() {
-        App.db.cookieDao.deleteOkHttp()
+        appDb.cookieDao.deleteOkHttp()
     }
 
 }

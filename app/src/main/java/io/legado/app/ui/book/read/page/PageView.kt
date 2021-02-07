@@ -20,7 +20,6 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.*
-import org.jetbrains.anko.topPadding
 import java.util.*
 
 /**
@@ -97,9 +96,9 @@ class PageView(context: Context) : FrameLayout(context) {
     /**
      * 显示状态栏时隐藏header
      */
-    fun upStatusBar() {
-        binding.vwStatusBar.topPadding = context.statusBarHeight
-        binding.vwStatusBar.isGone =
+    fun upStatusBar() = with(binding.vwStatusBar) {
+        setPadding(paddingLeft, context.statusBarHeight, paddingRight, paddingBottom)
+        isGone =
             ReadBookConfig.hideStatusBar || (activity as? BaseActivity<*>)?.isInMultiWindow == true
     }
 

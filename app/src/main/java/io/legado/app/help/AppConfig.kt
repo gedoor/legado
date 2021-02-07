@@ -2,15 +2,15 @@ package io.legado.app.help
 
 import android.content.Context
 import android.content.SharedPreferences
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.utils.*
+import splitties.init.appCtx
 
 @Suppress("MemberVisibilityCanBePrivate")
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
-    private val context get() = App.INSTANCE
+    private val context get() = appCtx
     val isGooglePlay = context.channel == "google"
     var userAgent: String = getPrefUserAgent()
     var replaceEnableDefault = context.getPrefBoolean(PreferKey.replaceEnableDefault, true)

@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
-import io.legado.app.App
+import splitties.init.appCtx
 import java.lang.reflect.Field
 
 
@@ -31,7 +31,7 @@ val View.activity: AppCompatActivity?
     get() = getCompatActivity(context)
 
 fun View.hideSoftInput() = run {
-    val imm = App.INSTANCE.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+    val imm = appCtx.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     imm?.let {
         imm.hideSoftInputFromWindow(this.windowToken, 0)
     }

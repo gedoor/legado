@@ -8,9 +8,9 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.utils.ACache
+import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
-import org.jetbrains.anko.longToast
 
 class DonateFragment : PreferenceFragmentCompat() {
 
@@ -42,7 +42,7 @@ class DonateFragment : PreferenceFragmentCompat() {
 
     private fun getZfbHb(context: Context) {
         requireContext().sendToClip("537954522")
-        context.longToast("高级功能已开启\n红包码已复制\n支付宝首页搜索“537954522” 立即领红包")
+        context.longToastOnUi("高级功能已开启\n红包码已复制\n支付宝首页搜索“537954522” 立即领红包")
         try {
             val packageManager = context.applicationContext.packageManager
             val intent = packageManager.getLaunchIntentForPackage("com.eg.android.AlipayGphone")!!

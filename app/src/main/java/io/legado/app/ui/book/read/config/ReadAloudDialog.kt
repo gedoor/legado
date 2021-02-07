@@ -21,7 +21,7 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class ReadAloudDialog : BaseDialogFragment() {
     private var callBack: CallBack? = null
@@ -122,18 +122,18 @@ class ReadAloudDialog : BaseDialogFragment() {
     }
 
     private fun initEvent() = with(binding) {
-        llMainMenu.onClick { callBack?.showMenuBar(); dismiss() }
-        llSetting.onClick {
+        llMainMenu.setOnClickListener { callBack?.showMenuBar(); dismiss() }
+        llSetting.setOnClickListener {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
-        tvPre.onClick { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
-        tvNext.onClick { ReadBook.moveToNextChapter(true) }
-        ivStop.onClick { ReadAloud.stop(requireContext()); dismiss() }
-        ivPlayPause.onClick { callBack?.onClickReadAloud() }
-        ivPlayPrev.onClick { ReadAloud.prevParagraph(requireContext()) }
-        ivPlayNext.onClick { ReadAloud.nextParagraph(requireContext()) }
-        llCatalog.onClick { callBack?.openChapterList() }
-        llToBackstage.onClick { callBack?.finish() }
+        tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
+        tvNext.setOnClickListener { ReadBook.moveToNextChapter(true) }
+        ivStop.setOnClickListener { ReadAloud.stop(requireContext()); dismiss() }
+        ivPlayPause.setOnClickListener { callBack?.onClickReadAloud() }
+        ivPlayPrev.setOnClickListener { ReadAloud.prevParagraph(requireContext()) }
+        ivPlayNext.setOnClickListener { ReadAloud.nextParagraph(requireContext()) }
+        llCatalog.setOnClickListener { callBack?.openChapterList() }
+        llToBackstage.setOnClickListener { callBack?.finish() }
     }
 
     private fun upPlayState() {

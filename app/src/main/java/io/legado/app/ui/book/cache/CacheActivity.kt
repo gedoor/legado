@@ -5,15 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
@@ -46,7 +47,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private var groupId: Long = -1
 
     override val viewModel: CacheViewModel
-        get() = getViewModel(CacheViewModel::class.java)
+            by viewModels()
 
     override fun getViewBinding(): ActivityCacheBookBinding {
         return ActivityCacheBookBinding.inflate(layoutInflater)
@@ -101,7 +102,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
             else -> if (item.groupId == R.id.menu_group) {
                 binding.titleBar.subtitle = item.title
-                groupId = App.db.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
+                groupId = appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
                 initBookData()
             }
         }
@@ -117,11 +118,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun initBookData() {
         booksLiveData?.removeObservers(this)
         booksLiveData = when (groupId) {
-            AppConst.bookGroupAllId -> App.db.bookDao.observeAll()
-            AppConst.bookGroupLocalId -> App.db.bookDao.observeLocal()
-            AppConst.bookGroupAudioId -> App.db.bookDao.observeAudio()
-            AppConst.bookGroupNoneId -> App.db.bookDao.observeNoGroup()
-            else -> App.db.bookDao.observeByGroup(groupId)
+            AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
+            AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
+            AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
+            AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
+            else -> appDb.bookDao.observeByGroup(groupId)
         }
         booksLiveData?.observe(this, { list ->
             val booksDownload = list.filter {
@@ -142,7 +143,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     private fun initGroupData() {
         groupLiveData?.removeObservers(this)
-        groupLiveData = App.db.bookGroupDao.liveDataAll()
+        groupLiveData = appDb.bookGroupDao.liveDataAll()
         groupLiveData?.observe(this, {
             groupList.clear()
             groupList.addAll(it)
@@ -156,7 +157,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             books.forEach { book ->
                 val chapterCaches = hashSetOf<String>()
                 val cacheNames = BookHelp.getChapterFiles(book)
-                App.db.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+                appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
                     if (cacheNames.contains(chapter.getFileName())) {
                         chapterCaches.add(chapter.url)
                     }

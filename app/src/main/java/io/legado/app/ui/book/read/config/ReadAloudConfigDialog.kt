@@ -9,11 +9,11 @@ import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
@@ -21,6 +21,7 @@ import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.getSize
 import io.legado.app.utils.postEvent
+import splitties.init.appCtx
 
 class ReadAloudConfigDialog : DialogFragment() {
     private val readAloudPreferTag = "readAloudPreferTag"
@@ -60,8 +61,8 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         private val speakEngineSummary: String
             get() {
-                val eid = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
-                val ht = App.db.httpTTSDao.get(eid)
+                val eid = appCtx.getPrefLong(PreferKey.speakEngine)
+                val ht = appDb.httpTTSDao.get(eid)
                 return ht?.name ?: getString(R.string.local_tts)
             }
 

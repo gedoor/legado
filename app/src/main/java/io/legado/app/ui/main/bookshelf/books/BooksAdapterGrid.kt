@@ -9,8 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfGridBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.invisible
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import splitties.views.onLongClick
 
 class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
     BaseBooksAdapter<ItemBookshelfGridBinding>(context) {
@@ -55,7 +54,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemBookshelfGridBinding) {
         holder.itemView.apply {
-            onClick {
+            setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.open(it)
                 }
@@ -65,7 +64,6 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                 getItem(holder.layoutPosition)?.let {
                     callBack.openBookInfo(it)
                 }
-                true
             }
         }
     }

@@ -1,7 +1,6 @@
 package io.legado.app.model.webBook
 
 import android.text.TextUtils
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -14,6 +13,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.suspendCancellableCoroutine
+import splitties.init.appCtx
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -29,7 +29,7 @@ object BookChapterList {
         kotlin.runCatching {
             val chapterList = ArrayList<BookChapter>()
             body ?: throw Exception(
-                App.INSTANCE.getString(R.string.error_get_web_content, baseUrl)
+                appCtx.getString(R.string.error_get_web_content, baseUrl)
             )
             Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
 

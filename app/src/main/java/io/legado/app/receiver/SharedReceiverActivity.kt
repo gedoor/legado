@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.MainActivity
-import org.jetbrains.anko.startActivity
+import io.legado.app.utils.startActivity
 
 class SharedReceiverActivity : AppCompatActivity() {
 
@@ -22,7 +22,9 @@ class SharedReceiverActivity : AppCompatActivity() {
         if (Intent.ACTION_SEND == intent.action && intent.type == receivingType) {
             intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
                 if (openUrl(it)) {
-                    startActivity<SearchActivity>(Pair("key", it))
+                    startActivity<SearchActivity> {
+                        putExtra("key", it)
+                    }
                 }
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
@@ -31,7 +33,9 @@ class SharedReceiverActivity : AppCompatActivity() {
         ) {
             intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.let {
                 if (openUrl(it)) {
-                    startActivity<SearchActivity>(Pair("key", it))
+                    startActivity<SearchActivity> {
+                        putExtra("key", it)
+                    }
                 }
             }
         }

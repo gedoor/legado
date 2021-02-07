@@ -16,7 +16,7 @@ import io.legado.app.databinding.ItemReplaceRuleBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 import java.util.*
 
 
@@ -147,12 +147,12 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                     }
                 }
             }
-            ivEdit.onClick {
+            ivEdit.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
-            cbName.onClick {
+            cbName.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     if (cbName.isChecked) {
                         selected.add(it)
@@ -162,7 +162,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                 }
                 callBack.upCountView()
             }
-            ivMenuMore.onClick {
+            ivMenuMore.setOnClickListener {
                 showMenu(ivMenuMore, holder.layoutPosition)
             }
         }

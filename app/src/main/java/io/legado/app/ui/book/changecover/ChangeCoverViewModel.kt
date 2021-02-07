@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
@@ -55,7 +55,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
 
     fun loadDbSearchBook() {
         execute {
-            App.db.searchBookDao.getEnableHasCover(name, author).let {
+            appDb.searchBookDao.getEnableHasCover(name, author).let {
                 searchBooks.addAll(it)
                 searchBooksLiveData.postValue(searchBooks.toList())
                 if (it.size <= 1) {
@@ -81,7 +81,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private fun startSearch() {
         execute {
             bookSourceList.clear()
-            bookSourceList.addAll(App.db.bookSourceDao.allEnabled)
+            bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             searchStateData.postValue(true)
             initSearchPool()
             for (i in 0 until threadCount) {
@@ -106,7 +106,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                         if (searchBook.name == name && searchBook.author == author
                             && !searchBook.coverUrl.isNullOrEmpty()
                         ) {
-                            App.db.searchBookDao.insert(searchBook)
+                            appDb.searchBookDao.insert(searchBook)
                             if (!searchBooks.contains(searchBook)) {
                                 searchBooks.add(searchBook)
                                 upAdapter()

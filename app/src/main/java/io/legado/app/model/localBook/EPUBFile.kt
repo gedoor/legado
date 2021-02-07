@@ -4,13 +4,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.text.TextUtils
-import io.legado.app.App
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.utils.*
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
 import org.jsoup.Jsoup
+import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -59,14 +59,14 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
             val epubReader = EpubReader()
             val inputStream = if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
-                App.INSTANCE.contentResolver.openInputStream(uri)
+                appCtx.contentResolver.openInputStream(uri)
             } else {
                 File(book.bookUrl).inputStream()
             }
             epubBook = epubReader.readEpub(inputStream)
             if (book.coverUrl.isNullOrEmpty()) {
                 book.coverUrl = FileUtils.getPath(
-                    App.INSTANCE.externalFilesDir,
+                    appCtx.externalFilesDir,
                     "covers",
                     "${MD5Utils.md5Encode16(book.bookUrl)}.jpg"
                 )

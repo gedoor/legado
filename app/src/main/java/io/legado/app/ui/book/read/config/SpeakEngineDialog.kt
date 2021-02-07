@@ -8,14 +8,15 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
@@ -27,14 +28,15 @@ import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+import splitties.init.appCtx
+
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     lateinit var adapter: Adapter
-    lateinit var viewModel: SpeakEngineViewModel
+    private val viewModel: SpeakEngineViewModel by viewModels()
     private var httpTTSData: LiveData<List<HttpTTS>>? = null
-    var engineId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
+    var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
 
     override fun onStart() {
         super.onStart()
@@ -47,7 +49,6 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModel(SpeakEngineViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
@@ -66,17 +67,17 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         recyclerView.adapter = adapter
         tvFooterLeft.setText(R.string.local_tts)
         tvFooterLeft.visible()
-        tvFooterLeft.onClick {
+        tvFooterLeft.setOnClickListener {
             removePref(PreferKey.speakEngine)
             dismiss()
         }
         tvOk.visible()
-        tvOk.onClick {
+        tvOk.setOnClickListener {
             putPrefLong(PreferKey.speakEngine, engineId)
             dismiss()
         }
         tvCancel.visible()
-        tvCancel.onClick {
+        tvCancel.setOnClickListener {
             dismiss()
         }
     }
@@ -89,7 +90,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private fun initData() {
         httpTTSData?.removeObservers(this)
-        httpTTSData = App.db.httpTTSDao.observeAll()
+        httpTTSData = appDb.httpTTSDao.observeAll()
         httpTTSData?.observe(this, {
             adapter.setItems(it)
         })
@@ -110,13 +111,13 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             val alertBinding = DialogHttpTtsEditBinding.inflate(layoutInflater)
             alertBinding.tvName.setText(httpTTS.name)
             alertBinding.tvUrl.setText(httpTTS.url)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             cancelButton()
             okButton {
                 alertBinding.apply {
                     httpTTS.name = tvName.text.toString()
                     httpTTS.url = tvUrl.text.toString()
-                    App.db.httpTTSDao.insert(httpTTS)
+                    appDb.httpTTSDao.insert(httpTTS)
                     ReadAloud.upReadAloudClass()
                 }
             }
@@ -150,18 +151,18 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemHttpTtsBinding) {
             binding.apply {
-                cbName.onClick {
+                cbName.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
                         engineId = httpTTS.id
                         notifyItemRangeChanged(0, itemCount)
                     }
                 }
-                ivEdit.onClick {
+                ivEdit.setOnClickListener {
                     editHttpTTS(getItem(holder.layoutPosition))
                 }
-                ivMenuDelete.onClick {
+                ivMenuDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { httpTTS ->
-                        App.db.httpTTSDao.delete(httpTTS)
+                        appDb.httpTTSDao.delete(httpTTS)
                     }
                 }
             }

@@ -6,15 +6,13 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.toast
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("unused")
 open class BaseViewModel(application: Application) : AndroidViewModel(application),
-    CoroutineScope by MainScope(),
-    AnkoLogger {
+    CoroutineScope by MainScope() {
 
     val context: Context by lazy { this.getApplication<App>() }
 
@@ -40,27 +38,12 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         cancel()
     }
 
-    open fun toast(message: Int) {
-        launch {
-            context.toast(message)
-        }
+    open fun toastOnUi(message: Int) {
+        context.toastOnUi(message)
     }
 
-    open fun toast(message: CharSequence?) {
-        launch {
-            context.toast(message ?: toString())
-        }
+    open fun toastOnUi(message: CharSequence?) {
+        context.toastOnUi(message ?: toString())
     }
 
-    open fun longToast(message: Int) {
-        launch {
-            context.toast(message)
-        }
-    }
-
-    open fun longToast(message: CharSequence?) {
-        launch {
-            context.toast(message ?: toString())
-        }
-    }
 }

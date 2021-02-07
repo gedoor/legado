@@ -1,7 +1,6 @@
 package io.legado.app.model.rss
 
 import androidx.annotation.Keep
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
@@ -10,6 +9,7 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
+import splitties.init.appCtx
 import java.util.*
 
 @Keep
@@ -27,7 +27,7 @@ object RssParserByRule {
         var nextUrl: String? = null
         if (body.isNullOrBlank()) {
             throw Exception(
-                App.INSTANCE.getString(R.string.error_get_web_content, rssSource.sourceUrl)
+                appCtx.getString(R.string.error_get_web_content, rssSource.sourceUrl)
             )
         }
         Debug.log(sourceUrl, "≡获取成功:$sourceUrl")
