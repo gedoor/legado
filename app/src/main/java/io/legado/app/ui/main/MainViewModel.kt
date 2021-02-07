@@ -66,8 +66,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     @Synchronized
     private fun updateToc() {
+        var update = false
         bookMap.forEach { bookEntry ->
             if (!updateList.contains(bookEntry.key)) {
+                update = true
                 val book = bookEntry.value
                 synchronized(this) {
                     updateList.add(book.bookUrl)
@@ -104,6 +106,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 }
                 return
             }
+        }
+        if (!update) {
+            usePoolCount--
         }
     }
 
