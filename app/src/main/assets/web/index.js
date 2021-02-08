@@ -164,7 +164,7 @@ function rule2json() {
 	//RuleJSON.ruleContent = JSON.stringify(contentJson);
 	RuleJSON.ruleContent = contentJson;
 
-	RuleJSON.lastUpdateTime = RuleJSON.lastUpdateTime == '' ? 0 : parseInt(RuleJSON.lastUpdateTime);
+	RuleJSON.lastUpdateTime = new Date().getTime();//RuleJSON.lastUpdateTime == '' ? 0 : parseInt(RuleJSON.lastUpdateTime);
 	RuleJSON.customOrder = RuleJSON.customOrder == '' ? 0 : parseInt(RuleJSON.customOrder);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
 	RuleJSON.bookSourceType == RuleJSON.bookSourceType == '' ? 0 : parseInt(RuleJSON.weight);
