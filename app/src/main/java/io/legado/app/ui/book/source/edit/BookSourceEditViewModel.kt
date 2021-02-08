@@ -40,6 +40,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                 }
             }
             oldSourceUrl = source.bookSourceUrl
+            source.lastUpdateTime = System.currentTimeMillis()
             appDb.bookSourceDao.insert(source)
             bookSource = source
         }.onSuccess {
