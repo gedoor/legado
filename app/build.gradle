@@ -134,10 +134,15 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'androidx.media:media:1.2.1'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    //media
+    def media2_version = "1.1.2"
+    implementation "androidx.media2:media2-session:$media2_version"
+    //implementation "androidx.media2:media2-player:$media2_version"
+    //implementation 'com.google.android.exoplayer:exoplayer:2.13.0'
 
     //Splitties
     def splitties_version = '2.1.1'
@@ -202,9 +207,6 @@ dependencies {
     implementation 'io.noties.markwon:image-glide:4.6.0'
     implementation 'io.noties.markwon:ext-tables:4.6.0'
     implementation 'io.noties.markwon:html:4.6.0'
-
-    //ExoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.13.0'
 
     //转换繁体
     implementation 'com.hankcs:hanlp:portable-1.7.8'
