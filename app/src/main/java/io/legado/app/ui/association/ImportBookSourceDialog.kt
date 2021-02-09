@@ -9,7 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -38,7 +38,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
-    val viewModel: ImportBookSourceViewModel by viewModels()
+    val viewModel: ImportBookSourceViewModel by activityViewModels()
     lateinit var adapter: SourcesAdapter
 
     override fun onStart() {

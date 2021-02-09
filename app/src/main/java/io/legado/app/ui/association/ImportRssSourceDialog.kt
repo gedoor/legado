@@ -36,9 +36,7 @@ import io.legado.app.utils.visible
 class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
-
-    val viewModel: ImportRssSourceViewModel
-            by activityViewModels()
+    val viewModel: ImportRssSourceViewModel by activityViewModels()
     lateinit var adapter: SourcesAdapter
 
     override fun onStart() {
