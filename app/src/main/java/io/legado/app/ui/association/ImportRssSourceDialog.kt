@@ -73,6 +73,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
             }
         }
         upSelectText()
+        binding.tvFooterLeft.visible()
         binding.tvFooterLeft.setOnClickListener {
             val selectAll = viewModel.isSelectAll()
             viewModel.selectStatus.forEachIndexed { index, b ->

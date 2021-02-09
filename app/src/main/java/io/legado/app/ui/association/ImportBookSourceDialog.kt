@@ -75,6 +75,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
             }
         }
         upSelectText()
+        binding.tvFooterLeft.visible()
         binding.tvFooterLeft.setOnClickListener {
             val selectAll = viewModel.isSelectAll()
             viewModel.selectStatus.forEachIndexed { index, b ->

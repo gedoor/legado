@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:padding="12dp"
+            android:visibility="gone"
             tools:ignore="RtlHardcoded" />
 
         <Space
