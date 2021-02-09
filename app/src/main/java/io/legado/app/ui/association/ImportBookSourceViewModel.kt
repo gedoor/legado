@@ -36,6 +36,16 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
         return true
     }
 
+    fun selectCount(): Int {
+        var count = 0
+        selectStatus.forEach {
+            if (it) {
+                count++
+            }
+        }
+        return count
+    }
+
     fun importSelect(finally: () -> Unit) {
         execute {
             val keepName = AppConfig.importKeepName

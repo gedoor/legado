@@ -212,7 +212,7 @@
     <string name="select_action">選擇操作</string>
     <string name="select_all">全選</string>
     <string name="select_all_count">全選 (%1$d/%2$d)</string>
-    <string name="select_cancel_count">取消 (%1$d/%2$d)</string>
+    <string name="select_cancel_count">取消全選 (%1$d/%2$d)</string>
     <string name="dark_theme">深色模式</string>
     <string name="welcome">啟動頁</string>
     <string name="download_start">開始下載</string>

@@ -214,7 +214,7 @@
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
     <string name="select_all_count">全选(%1$d/%2$d)</string>
-    <string name="select_cancel_count">取消(%1$d/%2$d)</string>
+    <string name="select_cancel_count">取消全选(%1$d/%2$d)</string>
     <string name="dark_theme">深色模式</string>
     <string name="welcome">启动页</string>
     <string name="download_start">开始下载</string>

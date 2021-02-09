@@ -74,7 +74,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 dismiss()
             }
         }
-        binding.tvFooterLeft.setText(R.string.select_all)
+        upSelectText()
         binding.tvFooterLeft.setOnClickListener {
             val selectAll = viewModel.isSelectAll()
             viewModel.selectStatus.forEachIndexed { index, b ->
@@ -83,6 +83,23 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 }
             }
             adapter.notifyDataSetChanged()
+            upSelectText()
+        }
+    }
+
+    private fun upSelectText() {
+        if (viewModel.isSelectAll()) {
+            binding.tvFooterLeft.text = getString(
+                R.string.select_cancel_count,
+                viewModel.selectCount(),
+                viewModel.allSources.size
+            )
+        } else {
+            binding.tvFooterLeft.text = getString(
+                R.string.select_all_count,
+                viewModel.selectCount(),
+                viewModel.allSources.size
+            )
         }
     }
 
@@ -162,6 +179,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 cbSourceName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         viewModel.selectStatus[holder.layoutPosition] = isChecked
+                        upSelectText()
                     }
                 }
             }

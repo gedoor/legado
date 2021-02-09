@@ -72,7 +72,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
                 dismiss()
             }
         }
-        binding.tvFooterLeft.setText(R.string.select_all)
+        upSelectText()
         binding.tvFooterLeft.setOnClickListener {
             val selectAll = viewModel.isSelectAll()
             viewModel.selectStatus.forEachIndexed { index, b ->
@@ -81,6 +81,23 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
                 }
             }
             adapter.notifyDataSetChanged()
+            upSelectText()
+        }
+    }
+
+    private fun upSelectText() {
+        if (viewModel.isSelectAll()) {
+            binding.tvFooterLeft.text = getString(
+                R.string.select_cancel_count,
+                viewModel.selectCount(),
+                viewModel.allSources.size
+            )
+        } else {
+            binding.tvFooterLeft.text = getString(
+                R.string.select_all_count,
+                viewModel.selectCount(),
+                viewModel.allSources.size
+            )
         }
     }
 
@@ -158,6 +175,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
                 cbSourceName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         viewModel.selectStatus[holder.layoutPosition] = isChecked
+                        upSelectText()
                     }
                 }
             }
