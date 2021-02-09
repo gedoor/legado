@@ -26,6 +26,14 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     val checkSources = arrayListOf<RssSource?>()
     val selectStatus = arrayListOf<Boolean>()
 
+    fun isSelectAll(): Boolean {
+        selectStatus.forEach {
+            if (!it) {
+                return false
+            }
+        }
+        return true
+    }
 
     fun importSelect(finally: () -> Unit) {
         execute {

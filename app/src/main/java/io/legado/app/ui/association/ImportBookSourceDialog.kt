@@ -74,6 +74,16 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 dismiss()
             }
         }
+        binding.tvFooterLeft.setText(R.string.select_all)
+        binding.tvFooterLeft.setOnClickListener {
+            val selectAll = viewModel.isSelectAll()
+            viewModel.selectStatus.forEachIndexed { index, b ->
+                if (b != !selectAll) {
+                    viewModel.selectStatus[index] = !selectAll
+                }
+            }
+            adapter.notifyDataSetChanged()
+        }
     }
 
     private fun initMenu() {
@@ -107,22 +117,6 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                     }
                     noButton()
                 }.show()
-            }
-            R.id.menu_select_all -> {
-                viewModel.selectStatus.forEachIndexed { index, b ->
-                    if (!b) {
-                        viewModel.selectStatus[index] = true
-                    }
-                }
-                adapter.notifyDataSetChanged()
-            }
-            R.id.menu_un_select_all -> {
-                viewModel.selectStatus.forEachIndexed { index, b ->
-                    if (b) {
-                        viewModel.selectStatus[index] = false
-                    }
-                }
-                adapter.notifyDataSetChanged()
             }
             R.id.menu_Keep_original_name -> {
                 item.isChecked = !item.isChecked
