@@ -203,6 +203,9 @@ dependencies {
     implementation 'io.noties.markwon:ext-tables:4.6.0'
     implementation 'io.noties.markwon:html:4.6.0'
 
+    //ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.13.0'
+
     //转换繁体
     implementation 'com.hankcs:hanlp:portable-1.7.8'
 
