@@ -152,9 +152,9 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = appDb.bookSourceDao.getBookSource(it.bookSourceUrl)
-                checkSources.add(has)
-                selectStatus.add(has == null)
+                val source = appDb.bookSourceDao.getBookSource(it.bookSourceUrl)
+                checkSources.add(source)
+                selectStatus.add(source == null || source.lastUpdateTime < it.lastUpdateTime)
             }
             successLiveData.postValue(allSources.size)
         }
