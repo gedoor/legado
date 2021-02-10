@@ -66,6 +66,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         adapter = Adapter(requireContext())
         recyclerView.adapter = adapter
         tvFooterLeft.setText(R.string.local_tts)
+        tvFooterLeft.visible()
         tvFooterLeft.setOnClickListener {
             removePref(PreferKey.speakEngine)
             dismiss()
