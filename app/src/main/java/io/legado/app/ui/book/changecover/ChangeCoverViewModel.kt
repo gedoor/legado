@@ -90,45 +90,53 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    @Synchronized
     private fun search() {
-        synchronized(this) {
-            if (searchIndex >= bookSourceList.lastIndex) {
-                return
+        if (searchIndex >= bookSourceList.lastIndex) {
+            return
+        }
+        searchIndex++
+        val source = bookSourceList[searchIndex]
+        if (source.getSearchRule().coverUrl.isNullOrBlank()) {
+            searchNext()
+            return
+        }
+        val task = WebBook(source)
+            .searchBook(this, name, context = searchPool!!)
+            .timeout(60000L)
+            .onSuccess(Dispatchers.IO) {
+                if (it.isNotEmpty()) {
+                    val searchBook = it[0]
+                    if (searchBook.name == name && searchBook.author == author
+                        && !searchBook.coverUrl.isNullOrEmpty()
+                    ) {
+                        appDb.searchBookDao.insert(searchBook)
+                        if (!searchBooks.contains(searchBook)) {
+                            searchBooks.add(searchBook)
+                            upAdapter()
+                        }
+                    }
+                }
             }
+            .onFinally {
+                searchNext()
+            }
+        tasks.add(task)
+    }
+
+    @Synchronized
+    private fun searchNext() {
+        if (searchIndex < bookSourceList.lastIndex) {
+            search()
+        } else {
             searchIndex++
-            val source = bookSourceList[searchIndex]
-            val task = WebBook(source)
-                .searchBook(this, name, context = searchPool!!)
-                .timeout(60000L)
-                .onSuccess(Dispatchers.IO) {
-                    if (it.isNotEmpty()) {
-                        val searchBook = it[0]
-                        if (searchBook.name == name && searchBook.author == author
-                            && !searchBook.coverUrl.isNullOrEmpty()
-                        ) {
-                            appDb.searchBookDao.insert(searchBook)
-                            if (!searchBooks.contains(searchBook)) {
-                                searchBooks.add(searchBook)
-                                upAdapter()
-                            }
-                        }
-                    }
-                }
-                .onFinally {
-                    synchronized(this) {
-                        if (searchIndex < bookSourceList.lastIndex) {
-                            search()
-                        } else {
-                            searchIndex++
-                        }
-                        if (searchIndex >= bookSourceList.lastIndex + min(bookSourceList.size,
-                                threadCount)
-                        ) {
-                            searchStateData.postValue(false)
-                        }
-                    }
-                }
-            tasks.add(task)
+        }
+        if (searchIndex >= bookSourceList.lastIndex + min(
+                bookSourceList.size,
+                threadCount
+            )
+        ) {
+            searchStateData.postValue(false)
         }
     }
 
