@@ -23,7 +23,7 @@ val appDb by lazy {
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
         RuleSub::class],
-    version = 28,
+    version = 29,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -58,7 +58,7 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_14_15, migration_15_17, migration_17_18, migration_18_19,
                     migration_19_20, migration_20_21, migration_21_22, migration_22_23,
                     migration_23_24, migration_24_25, migration_25_26, migration_26_27,
-                    migration_27_28
+                    migration_27_28, migration_28_29
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -253,6 +253,12 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE rssArticles ADD variable TEXT")
                 database.execSQL("ALTER TABLE rssStars ADD variable TEXT")
+            }
+        }
+
+        private val migration_28_29 = object : Migration(28, 29) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE rssSources ADD sourceComment TEXT")
             }
         }
     }

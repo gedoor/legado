@@ -23,6 +23,7 @@ data class RssSource(
     var sourceName: String = "",
     var sourceIcon: String = "",
     var sourceGroup: String? = null,
+    var sourceComment: String? = null,
     var enabled: Boolean = true,
     var sortUrl: String? = null,
     var singleUrl: Boolean = false,
