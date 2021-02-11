@@ -48,11 +48,10 @@ jobs:
         run: |
           echo "给apk增加签名"
           cp $GITHUB_WORKSPACE/.github/workflows/legado.jks $GITHUB_WORKSPACE/app/legado.jks
-          sed -e '$a\RELEASE_STORE_FILE=./legado.jks' \
-              -e '$a\RELEASE_KEY_ALIAS=legado' \
-              -e '$a\RELEASE_STORE_PASSWORD=gedoor_legado' \
-              -e '$a\RELEASE_KEY_PASSWORD=gedoor_legado' \       
-              $GITHUB_WORKSPACE/gradle.properties -i
+          sed '$a\RELEASE_STORE_FILE=./legado.jks'          $GITHUB_WORKSPACE/gradle.properties -i
+          sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
+          sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
+          sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
       - name: Apk Live Together
         run: |
           echo "设置apk共存"
