@@ -4,12 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.msg
+import io.legado.app.utils.share
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
@@ -64,17 +63,11 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         //添加自定义信息
         addCustomInfo()
         kotlin.runCatching {
-            //使用Toast来显示异常信息
-            Handler(Looper.getMainLooper()).post {
-                Toast.makeText(
-                    context,
-                    ex.message,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+            //分享崩溃日志
+            context.share(ex.msg, "崩溃日志")
+            //保存日志文件
+            saveCrashInfo2File(ex)
         }
-        //保存日志文件
-        saveCrashInfo2File(ex)
     }
 
     /**
@@ -116,35 +109,33 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
      * 保存错误信息到文件中
      */
     private fun saveCrashInfo2File(ex: Throwable) {
-        kotlin.runCatching {
-            val sb = StringBuilder()
-            for ((key, value) in paramsMap) {
-                sb.append(key).append("=").append(value).append("\n")
-            }
+        val sb = StringBuilder()
+        for ((key, value) in paramsMap) {
+            sb.append(key).append("=").append(value).append("\n")
+        }
 
-            val writer = StringWriter()
-            val printWriter = PrintWriter(writer)
-            ex.printStackTrace(printWriter)
-            var cause: Throwable? = ex.cause
-            while (cause != null) {
-                cause.printStackTrace(printWriter)
-                cause = cause.cause
-            }
-            printWriter.close()
-            val result = writer.toString()
-            sb.append(result)
-            val timestamp = System.currentTimeMillis()
-            val time = format.format(Date())
-            val fileName = "crash-$time-$timestamp.log"
-            context.externalCacheDir?.let { rootFile ->
-                FileUtils.getFile(rootFile, "crash").listFiles()?.forEach {
-                    if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)) {
-                        it.delete()
-                    }
+        val writer = StringWriter()
+        val printWriter = PrintWriter(writer)
+        ex.printStackTrace(printWriter)
+        var cause: Throwable? = ex.cause
+        while (cause != null) {
+            cause.printStackTrace(printWriter)
+            cause = cause.cause
+        }
+        printWriter.close()
+        val result = writer.toString()
+        sb.append(result)
+        val timestamp = System.currentTimeMillis()
+        val time = format.format(Date())
+        val fileName = "crash-$time-$timestamp.log"
+        context.externalCacheDir?.let { rootFile ->
+            FileUtils.getFile(rootFile, "crash").listFiles()?.forEach {
+                if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)) {
+                    it.delete()
                 }
-                FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
-                    .writeText(sb.toString())
             }
+            FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
+                .writeText(sb.toString())
         }
     }
 
