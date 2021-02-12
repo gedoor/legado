@@ -138,11 +138,7 @@ val Context.navigationBarHeight: Int
         return resources.getDimensionPixelSize(resourceId)
     }
 
-fun Context.share(text: String) {
-    share(getString(R.string.share), text)
-}
-
-fun Context.share(title: String, text: String) {
+fun Context.share(text: String, title: String = getString(R.string.share)) {
     kotlin.runCatching {
         val intent = Intent(Intent.ACTION_SEND)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -154,7 +150,7 @@ fun Context.share(title: String, text: String) {
 }
 
 @SuppressLint("SetWorldReadable")
-fun Context.shareWithQr(title: String, text: String) {
+fun Context.shareWithQr(text: String, title: String = getString(R.string.share)) {
     val bitmap = QRCodeUtils.createQRCode(text)
     if (bitmap == null) {
         toastOnUi(R.string.text_too_long_qr_error)

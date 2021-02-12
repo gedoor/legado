@@ -97,7 +97,7 @@ class BookInfoActivity :
                 viewModel.bookData.value?.let {
                     val bookJson = GSON.toJson(it)
                     val shareStr = "${it.bookUrl}#$bookJson"
-                    shareWithQr(it.name, shareStr)
+                    shareWithQr(shareStr, it.name)
                 }
             }
             R.id.menu_refresh -> {

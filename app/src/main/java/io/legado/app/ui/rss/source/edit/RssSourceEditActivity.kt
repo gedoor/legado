@@ -111,8 +111,8 @@ class RssSourceEditActivity :
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_share_str -> share(GSON.toJson(getRssSource()))
             R.id.menu_share_qr -> shareWithQr(
-                getString(R.string.share_rss_source),
-                GSON.toJson(getRssSource())
+                GSON.toJson(getRssSource()),
+                getString(R.string.share_rss_source)
             )
             R.id.menu_help -> showRuleHelp()
         }

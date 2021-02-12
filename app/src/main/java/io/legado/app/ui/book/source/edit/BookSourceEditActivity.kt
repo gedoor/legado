@@ -101,8 +101,8 @@ class BookSourceEditActivity :
             R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
             R.id.menu_share_str -> share(GSON.toJson(getSource()))
             R.id.menu_share_qr -> shareWithQr(
-                getString(R.string.share_book_source),
-                GSON.toJson(getSource())
+                GSON.toJson(getSource()),
+                getString(R.string.share_book_source)
             )
             R.id.menu_help -> showRuleHelp()
             R.id.menu_login -> getSource().let {
