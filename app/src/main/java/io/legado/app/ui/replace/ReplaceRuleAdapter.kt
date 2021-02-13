@@ -16,6 +16,7 @@ import io.legado.app.databinding.ItemReplaceRuleBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.utils.ColorUtils
 
 import java.util.*
 
@@ -110,7 +111,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         with(binding) {
             val bundle = payloads.getOrNull(0) as? Bundle
             if (bundle == null) {
-                root.setBackgroundColor(context.backgroundColor)
+                root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 if (item.group.isNullOrEmpty()) {
                     cbName.text = item.name
                 } else {

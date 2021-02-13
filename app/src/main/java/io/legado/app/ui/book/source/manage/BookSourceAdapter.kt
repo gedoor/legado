@@ -18,6 +18,7 @@ import io.legado.app.databinding.ItemBookSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 
@@ -86,7 +87,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         with(binding) {
             val payload = payloads.getOrNull(0) as? Bundle
             if (payload == null) {
-                root.setBackgroundColor(context.backgroundColor)
+                root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 if (item.bookSourceGroup.isNullOrEmpty()) {
                     cbBookSource.text = item.bookSourceName
                 } else {
