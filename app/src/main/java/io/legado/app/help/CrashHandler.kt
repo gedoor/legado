@@ -7,8 +7,8 @@ import android.os.Build
 import android.util.Log
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.msg
-import io.legado.app.utils.share
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
@@ -25,7 +25,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
     /**
      * 系统默认UncaughtExceptionHandler
      */
-    private var mDefaultHandler: Thread.UncaughtExceptionHandler? = null
+    private var mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
 
     /**
      * 存储异常和参数信息
@@ -39,7 +39,6 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
     private val format = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
 
     init {
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         //设置该CrashHandler为系统默认的
         Thread.setDefaultUncaughtExceptionHandler(this)
     }
@@ -62,12 +61,9 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         collectDeviceInfo(context)
         //添加自定义信息
         addCustomInfo()
-        kotlin.runCatching {
-            //分享崩溃日志
-            context.share(ex.msg, "崩溃日志")
-            //保存日志文件
-            saveCrashInfo2File(ex)
-        }
+        //保存日志文件
+        saveCrashInfo2File(ex)
+        context.longToastOnUi(ex.msg)
     }
 
     /**
