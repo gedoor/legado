@@ -28,7 +28,6 @@ class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCate
             if (view is TextView) {  //  && !view.isInEditMode
                 view.text = title
                 if (view.isInEditMode) return
-                view.setBackgroundColor(context.backgroundColor)
                 view.setTextColor(context.accentColor)
                 view.isVisible = title != null && title.isNotEmpty()
 
