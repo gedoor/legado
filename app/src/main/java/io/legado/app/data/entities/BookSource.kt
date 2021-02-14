@@ -105,7 +105,9 @@ data class BookSource(
             var a = urlRule
             if (a.isNotBlank()) {
                 kotlin.runCatching {
-                    if (urlRule.startsWith("<js>", false)) {
+                    if (urlRule.startsWith("<js>", false)
+                        || urlRule.startsWith("@js", false)
+                    ) {
                         val aCache = ACache.get(appCtx, "explore")
                         a = aCache.getAsString(bookSourceUrl) ?: ""
                         if (a.isBlank()) {
@@ -114,10 +116,12 @@ data class BookSource(
                             bindings["java"] = this
                             bindings["cookie"] = CookieStore
                             bindings["cache"] = CacheManager
-                            a = AppConst.SCRIPT_ENGINE.eval(
-                                urlRule.substring(4, urlRule.lastIndexOf("<")),
-                                bindings
-                            ).toString()
+                            val jsStr = if (urlRule.startsWith("@")) {
+                                urlRule.substring(3)
+                            } else {
+                                urlRule.substring(4, urlRule.lastIndexOf("<"))
+                            }
+                            a = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
                             aCache.put(bookSourceUrl, a)
                         }
                     }

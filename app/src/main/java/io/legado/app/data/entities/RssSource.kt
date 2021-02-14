@@ -9,9 +9,11 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
+import io.legado.app.utils.ACache
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.Parcelize
+import splitties.init.appCtx
 import java.util.*
 import javax.script.SimpleBindings
 
@@ -105,9 +107,30 @@ data class RssSource(
         return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
     }
 
-    fun sortUrls(): LinkedHashMap<String, String> =
-        linkedMapOf<String, String>().apply {
-            sortUrl?.split("(&&|\n)+".toRegex())?.forEach { c ->
+    fun sortUrls(): LinkedHashMap<String, String> = linkedMapOf<String, String>().apply {
+        kotlin.runCatching {
+            var a = sortUrl
+            if (sortUrl?.startsWith("<js>", false) == true
+                || sortUrl?.startsWith("@js", false) == true
+            ) {
+                val aCache = ACache.get(appCtx, "rssSortUrl")
+                a = aCache.getAsString(sourceUrl) ?: ""
+                if (a.isBlank()) {
+                    val bindings = SimpleBindings()
+                    bindings["baseUrl"] = sourceUrl
+                    bindings["java"] = this
+                    bindings["cookie"] = CookieStore
+                    bindings["cache"] = CacheManager
+                    val jsStr = if (sortUrl!!.startsWith("@")) {
+                        sortUrl!!.substring(3)
+                    } else {
+                        sortUrl!!.substring(4, sortUrl!!.lastIndexOf("<"))
+                    }
+                    a = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
+                    aCache.put(sourceUrl, a)
+                }
+            }
+            a?.split("(&&|\n)+".toRegex())?.forEach { c ->
                 val d = c.split("::")
                 if (d.size > 1)
                     this[d[0]] = d[1]
@@ -116,4 +139,5 @@ data class RssSource(
                 this[""] = sourceUrl
             }
         }
+    }
 }
