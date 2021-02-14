@@ -3,7 +3,6 @@ package io.legado.app.ui.welcome
 import android.content.Intent
 import android.os.Bundle
 import com.hankcs.hanlp.HanLP
-import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -54,7 +53,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
     private fun startMainActivity() {
         startActivity<MainActivity>()
-        if (getPrefBoolean(R.string.pk_default_read)) {
+        if (getPrefBoolean(PreferKey.defaultToRead)) {
             startActivity<ReadBookActivity>()
         }
         finish()

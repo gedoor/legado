@@ -2,7 +2,6 @@ package io.legado.app.help
 
 import android.content.Context
 import android.content.SharedPreferences
-import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.utils.*
@@ -96,7 +95,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         get() = context.getPrefBoolean(PreferKey.showRss, true)
 
     val autoRefreshBook: Boolean
-        get() = context.getPrefBoolean(R.string.pk_auto_refresh)
+        get() = context.getPrefBoolean(PreferKey.autoRefresh)
 
     var threadCount: Int
         get() = context.getPrefInt(PreferKey.threadCount, 16)

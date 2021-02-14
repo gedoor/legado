@@ -17,7 +17,6 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
@@ -67,9 +66,6 @@ val Context.defaultSharedPreferences: SharedPreferences
 
 fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
     defaultSharedPreferences.getBoolean(key, defValue)
-
-fun Context.getPrefBoolean(@StringRes keyId: Int, defValue: Boolean = false) =
-    defaultSharedPreferences.getBoolean(getString(keyId), defValue)
 
 fun Context.putPrefBoolean(key: String, value: Boolean = false) =
     defaultSharedPreferences.edit { putBoolean(key, value) }
