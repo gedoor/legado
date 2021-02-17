@@ -94,11 +94,13 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
-        binding.tvCancel.setOnClickListener { dismiss() }
+        binding.tvCancel.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
         binding.tvOk.setTextColor(requireContext().accentColor)
         binding.tvOk.setOnClickListener {
             callBack?.upGroup(requestCode, groupId)
-            dismiss()
+            dismissAllowingStateLoss()
         }
     }
 

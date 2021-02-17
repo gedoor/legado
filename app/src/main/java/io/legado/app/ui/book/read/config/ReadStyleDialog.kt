@@ -125,7 +125,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             }
         }
         tvPadding.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
             callBack?.showPaddingConfig()
         }
         tvTip.setOnClickListener {
@@ -174,7 +174,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun showBgTextConfig(index: Int): Boolean {
-        dismiss()
+        dismissAllowingStateLoss()
         changeBg(index)
         callBack?.showBgTextConfig()
         return true

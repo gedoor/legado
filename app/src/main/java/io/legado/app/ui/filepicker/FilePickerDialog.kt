@@ -152,12 +152,12 @@ class FilePickerDialog : DialogFragment(),
         when (item?.itemId) {
             R.id.menu_ok -> fileAdapter.currentPath?.let {
                 setData(it)
-                dismiss()
+                dismissAllowingStateLoss()
             }
             else -> item?.title?.let {
                 (parentFragment as? CallBack)?.onMenuClick(it.toString())
                 (activity as? CallBack)?.onMenuClick(it.toString())
-                dismiss()
+                dismissAllowingStateLoss()
             }
         }
         return true
@@ -175,7 +175,7 @@ class FilePickerDialog : DialogFragment(),
                     allowExtensions?.contains(FileUtils.getExtension(path)) == true
                 ) {
                     setData(path)
-                    dismiss()
+                    dismissAllowingStateLoss()
                 } else {
                     toastOnUi("不能打开此文件")
                 }

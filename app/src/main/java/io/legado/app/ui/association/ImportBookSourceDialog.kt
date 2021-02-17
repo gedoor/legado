@@ -66,12 +66,12 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         adapter.setItems(viewModel.allSources)
         binding.tvCancel.visible()
         binding.tvCancel.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
         binding.tvOk.visible()
         binding.tvOk.setOnClickListener {
             viewModel.importSelect {
-                dismiss()
+                dismissAllowingStateLoss()
             }
         }
         upSelectText()

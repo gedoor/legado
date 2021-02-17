@@ -94,14 +94,17 @@ class AutoReadDialog : BaseDialogFragment() {
     }
 
     private fun initEvent() {
-        binding.llMainMenu.setOnClickListener { callBack?.showMenuBar(); dismiss() }
+        binding.llMainMenu.setOnClickListener {
+            callBack?.showMenuBar()
+            dismissAllowingStateLoss()
+        }
         binding.llSetting.setOnClickListener {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
         binding.llCatalog.setOnClickListener { callBack?.openChapterList() }
         binding.llAutoPageStop.setOnClickListener {
             callBack?.autoPageStop()
-            dismiss()
+            dismissAllowingStateLoss()
         }
     }
 

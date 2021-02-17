@@ -58,7 +58,9 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         recyclerView.adapter = adapter
         tvOk.setTextColor(requireContext().accentColor)
         tvOk.visible()
-        tvOk.setOnClickListener { dismiss() }
+        tvOk.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
         appDb.rssSourceDao.liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->

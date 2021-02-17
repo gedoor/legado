@@ -107,7 +107,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
 
     override fun changeTo(coverUrl: String) {
         callBack?.coverChangeTo(coverUrl)
-        dismiss()
+        dismissAllowingStateLoss()
     }
 
     interface CallBack {

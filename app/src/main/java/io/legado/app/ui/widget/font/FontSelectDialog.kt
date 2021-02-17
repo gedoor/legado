@@ -94,7 +94,7 @@ class FontSelectDialog : BaseDialogFragment(),
                     ) { _, i ->
                         AppConfig.systemTypefaces = i
                         onDefaultFontChange()
-                        dismiss()
+                        dismissAllowingStateLoss()
                     }
                 }.show()
             }
@@ -223,7 +223,7 @@ class FontSelectDialog : BaseDialogFragment(),
             FileUtils.deleteFile(fontFolder.absolutePath)
             callBack?.selectFont(docItem.uri.toString())
         }.onSuccess {
-            dialog?.dismiss()
+            dismissAllowingStateLoss()
         }
     }
 

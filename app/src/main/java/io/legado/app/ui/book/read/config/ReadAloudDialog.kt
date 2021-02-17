@@ -122,13 +122,19 @@ class ReadAloudDialog : BaseDialogFragment() {
     }
 
     private fun initEvent() = with(binding) {
-        llMainMenu.setOnClickListener { callBack?.showMenuBar(); dismiss() }
+        llMainMenu.setOnClickListener {
+            callBack?.showMenuBar()
+            dismissAllowingStateLoss()
+        }
         llSetting.setOnClickListener {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
         tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
         tvNext.setOnClickListener { ReadBook.moveToNextChapter(true) }
-        ivStop.setOnClickListener { ReadAloud.stop(requireContext()); dismiss() }
+        ivStop.setOnClickListener {
+            ReadAloud.stop(requireContext())
+            dismissAllowingStateLoss()
+        }
         ivPlayPause.setOnClickListener { callBack?.onClickReadAloud() }
         ivPlayPrev.setOnClickListener { ReadAloud.prevParagraph(requireContext()) }
         ivPlayNext.setOnClickListener { ReadAloud.nextParagraph(requireContext()) }

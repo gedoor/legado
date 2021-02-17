@@ -190,7 +190,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
         val book = searchBook.toBook()
         book.upInfoFromOld(callBack?.oldBook)
         callBack?.changeTo(book)
-        dismiss()
+        dismissAllowingStateLoss()
     }
 
     override val bookUrl: String?

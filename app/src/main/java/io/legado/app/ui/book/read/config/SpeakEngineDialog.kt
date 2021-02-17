@@ -69,16 +69,16 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tvFooterLeft.visible()
         tvFooterLeft.setOnClickListener {
             removePref(PreferKey.speakEngine)
-            dismiss()
+            dismissAllowingStateLoss()
         }
         tvOk.visible()
         tvOk.setOnClickListener {
             putPrefLong(PreferKey.speakEngine, engineId)
-            dismiss()
+            dismissAllowingStateLoss()
         }
         tvCancel.visible()
         tvCancel.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
     }
 

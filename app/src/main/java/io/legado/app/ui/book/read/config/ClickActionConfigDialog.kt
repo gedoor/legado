@@ -69,7 +69,7 @@ class ClickActionConfigDialog : BaseDialogFragment() {
 
     private fun initViewEvent() {
         binding.ivClose.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
         binding.tvTopLeft.setOnClickListener {
             selectAction { action ->

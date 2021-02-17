@@ -79,14 +79,14 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recyclerView)
         tvCancel.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
         tvOk.setOnClickListener {
             adapter.getItems().forEach { tocRule ->
                 if (selectedName == tocRule.name) {
                     val callBack = activity as? CallBack
                     callBack?.onTocRegexDialogResult(tocRule.rule)
-                    dismiss()
+                    dismissAllowingStateLoss()
                     return@setOnClickListener
                 }
             }

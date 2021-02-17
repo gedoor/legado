@@ -183,7 +183,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         binding.ivDelete.setOnClickListener {
             if (ReadBookConfig.deleteDur()) {
                 postEvent(EventBus.UP_CONFIG, true)
-                dismiss()
+                dismissAllowingStateLoss()
             } else {
                 toastOnUi("数量已是最少,不能删除.")
             }
