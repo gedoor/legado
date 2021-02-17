@@ -36,6 +36,23 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
     private fun init() {
         Coroutine.async {
+            val books = appDb.bookDao.all
+            books.forEach { book ->
+                BookWebDav.getBookProgress(book)?.let { bookProgress ->
+                    if (bookProgress.durChapterIndex > book.durChapterIndex ||
+                        (bookProgress.durChapterIndex == book.durChapterIndex &&
+                                bookProgress.durChapterPos > book.durChapterPos)
+                    ) {
+                        book.durChapterIndex = bookProgress.durChapterIndex
+                        book.durChapterPos = bookProgress.durChapterPos
+                        book.durChapterTitle = bookProgress.durChapterTitle
+                        book.durChapterTime = bookProgress.durChapterTime
+                        appDb.bookDao.update(book)
+                    }
+                }
+            }
+        }
+        Coroutine.async {
             appDb.cacheDao.clearDeadline(System.currentTimeMillis())
             //清除过期数据
             if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
@@ -49,25 +66,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
                 else -> null
             }
         }
-        Coroutine.async(this) {
-            val books = appDb.bookDao.all
-            books.forEach { book ->
-                BookWebDav.getBookProgress(book)?.let { bookProgress ->
-                    if (bookProgress.durChapterIndex > book.durChapterIndex ||
-                        (bookProgress.durChapterIndex == book.durChapterIndex &&
-                                bookProgress.durChapterPos > book.durChapterPos)
-                    ) {
-                        book.durChapterIndex = bookProgress.durChapterIndex
-                        book.durChapterPos = bookProgress.durChapterPos
-                        book.durChapterTitle = bookProgress.durChapterTitle
-                        book.durChapterTime = bookProgress.durChapterTime
-                    }
-                }
-            }
-            appDb.bookDao.update(*books.toTypedArray())
-        }.onFinally {
-            binding.root.postDelayed({ startMainActivity() }, 300)
-        }
+        binding.root.postDelayed({ startMainActivity() }, 500)
     }
 
     private fun startMainActivity() {
