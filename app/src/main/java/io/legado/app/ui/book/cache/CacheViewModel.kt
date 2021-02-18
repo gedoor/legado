@@ -15,6 +15,7 @@ import io.legado.app.help.storage.BookWebDav
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
+import java.nio.charset.Charset
 
 
 class CacheViewModel(application: Application) : BaseViewModel(application) {
@@ -67,7 +68,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     private suspend fun export(file: File, book: Book) {
         val filename = "${book.name} by ${book.author}.txt"
         FileUtils.createFileIfNotExist(file, filename)
-            .writeText(getAllContents(book))
+            .writeText(getAllContents(book), Charset.forName("GB18030"))
         if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
             BookWebDav.exportWebDav(file.absolutePath, filename) // 导出到webdav
         }
