@@ -221,7 +221,6 @@ abstract class ReadBookBaseActivity :
         }.show().requestInputMethod()
     }
 
-    @SuppressLint("InflateParams")
     fun showCharsetConfig() {
         val charsets =
             arrayListOf("UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "UTF-16LE", "ASCII")

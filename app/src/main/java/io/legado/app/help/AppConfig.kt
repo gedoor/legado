@@ -137,6 +137,18 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             context.putPrefInt(PreferKey.barElevation, value)
         }
 
+    var exportCharset: String
+        get() {
+            val c = context.getPrefString(PreferKey.exportCharset)
+            if (c.isNullOrBlank()) {
+                return "UTF-8"
+            }
+            return c
+        }
+        set(value) {
+            context.putPrefString(PreferKey.exportCharset, value)
+        }
+
     val autoChangeSource: Boolean
         get() = context.getPrefBoolean(PreferKey.autoChangeSource, true)
 

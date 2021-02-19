@@ -67,6 +67,7 @@ object PreferKey {
     const val preDownload = "preDownload"
     const val autoRefresh = "auto_refresh"
     const val defaultToRead = "defaultToRead"
+    const val exportCharset = "exportCharset"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
