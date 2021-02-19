@@ -193,6 +193,15 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun export(position: Int) {
         exportPosition = position
+        val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
+        if (path.isNullOrEmpty()) {
+            selectExportFolder()
+        } else {
+            startExport(path)
+        }
+    }
+
+    private fun selectExportFolder() {
         val default = arrayListOf<String>()
         val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
         if (!path.isNullOrEmpty()) {
