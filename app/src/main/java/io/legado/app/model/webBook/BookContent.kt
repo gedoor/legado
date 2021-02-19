@@ -121,6 +121,9 @@ object BookContent {
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         val nextUrlList = arrayListOf<String>()
         analyzeRule.chapter = chapter
+        //获取正文
+        val content = analyzeRule.getString(contentRule.content)
+        //获取下一页链接
         val nextUrlRule = contentRule.nextContentUrl
         if (!nextUrlRule.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "┌获取正文下一页链接", printLog)
@@ -129,7 +132,6 @@ object BookContent {
             }
             Debug.log(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString("，"), printLog)
         }
-        val content = analyzeRule.getString(contentRule.content)
         return ContentData(content, nextUrlList)
     }
 }

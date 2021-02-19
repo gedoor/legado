@@ -204,24 +204,8 @@ object BookChapterList {
     ): ChapterData<List<String>> {
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
+        //获取目录列表
         val chapterList = arrayListOf<BookChapter>()
-        val nextUrlList = arrayListOf<String>()
-        val nextTocRule = tocRule.nextTocUrl
-        if (getNextUrl && !nextTocRule.isNullOrEmpty()) {
-            Debug.log(bookSource.bookSourceUrl, "┌获取目录下一页列表", log)
-            analyzeRule.getStringList(nextTocRule, true)?.let {
-                for (item in it) {
-                    if (item != baseUrl) {
-                        nextUrlList.add(item)
-                    }
-                }
-            }
-            Debug.log(
-                bookSource.bookSourceUrl,
-                "└" + TextUtils.join("，\n", nextUrlList),
-                log
-            )
-        }
         Debug.log(bookSource.bookSourceUrl, "┌获取目录列表", log)
         val elements = analyzeRule.getElements(listRule)
         Debug.log(bookSource.bookSourceUrl, "└列表大小:${elements.size}", log)
@@ -257,6 +241,24 @@ object BookChapterList {
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].url}", log)
             Debug.log(bookSource.bookSourceUrl, "┌获取首章信息", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].tag}", log)
+        }
+        //获取下一页链接
+        val nextUrlList = arrayListOf<String>()
+        val nextTocRule = tocRule.nextTocUrl
+        if (getNextUrl && !nextTocRule.isNullOrEmpty()) {
+            Debug.log(bookSource.bookSourceUrl, "┌获取目录下一页列表", log)
+            analyzeRule.getStringList(nextTocRule, true)?.let {
+                for (item in it) {
+                    if (item != baseUrl) {
+                        nextUrlList.add(item)
+                    }
+                }
+            }
+            Debug.log(
+                bookSource.bookSourceUrl,
+                "└" + TextUtils.join("，\n", nextUrlList),
+                log
+            )
         }
         return ChapterData(chapterList, nextUrlList)
     }
