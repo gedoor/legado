@@ -100,15 +100,10 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                     CacheBook.stop(this@CacheActivity)
                 }
             }
-            R.id.menu_export_folder -> {
-
-            }
-            R.id.menu_export_charset -> {
-
-            }
-            R.id.menu_log -> {
+            R.id.menu_export_folder -> export(-1)
+            R.id.menu_export_charset -> showCharsetConfig()
+            R.id.menu_log ->
                 TextListDialog.show(supportFragmentManager, getString(R.string.log), CacheBook.logs)
-            }
             else -> if (item.groupId == R.id.menu_group) {
                 binding.titleBar.subtitle = item.title
                 groupId = appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
