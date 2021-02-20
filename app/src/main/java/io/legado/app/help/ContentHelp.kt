@@ -17,22 +17,8 @@ object ContentHelp {
      */
     fun reSegment(content: String, chapterName: String): String {
         var content1 = content
-        val content2: String
-        val chapterNameLength = chapterName.trim { it <= ' ' }.length
-        content2 = if (chapterNameLength > 1) {
-            val regexp =
-                chapterName.trim { it <= ' ' }.replace("\\s+".toRegex(), "(\\\\s*)")
-            //            质量较低的页面，章节内可能重复出现章节标题
-            if (chapterNameLength > 5) content1.replace(regexp.toRegex(), "")
-                .trim { it <= ' ' } else content1.replaceFirst(
-                "^\\s*" + regexp.toRegex(),
-                ""
-            ).trim { it <= ' ' }
-        } else {
-            content1
-        }
-        val dict = makeDict(content2)
-        var p = content2
+        val dict = makeDict(content1)
+        var p = content1
             .replace("&quot;".toRegex(), "“")
             .replace("[:：]['\"‘”“]+".toRegex(), "：“")
             .replace("[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
