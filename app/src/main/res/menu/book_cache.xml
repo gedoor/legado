@@ -21,6 +21,12 @@
     </item>
 
     <item
+        android:id="@+id/menu_enable_replace"
+        android:title="@string/replace_purify"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_export_folder"
         android:title="@string/export_folder"
         app:showAsAction="never" />

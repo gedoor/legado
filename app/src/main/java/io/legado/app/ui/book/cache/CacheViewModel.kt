@@ -9,6 +9,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.BookWebDav
@@ -86,6 +87,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private suspend fun getAllContents(book: Book): String {
+        val useReplace = AppConfig.exportUseReplace
         val contentProcessor = ContentProcessor(book.name, book.origin)
         val stringBuilder = StringBuilder()
         stringBuilder.append(book.name)
@@ -94,7 +96,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 val content1 = contentProcessor
-                    .getContent(book, chapter.title, content ?: "null", false)
+                    .getContent(book, chapter.title, content ?: "null", false, useReplace)
                     .joinToString("\n")
                 stringBuilder.append("\n\n")
                     .append(content1)

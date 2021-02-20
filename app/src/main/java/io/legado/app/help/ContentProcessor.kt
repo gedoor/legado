@@ -27,10 +27,11 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
         book: Book,
         title: String, //已经经过简繁转换
         content: String,
-        isRead: Boolean = true
+        isRead: Boolean = true,
+        useReplace: Boolean = book.getUseReplaceRule()
     ): List<String> {
         var content1 = content
-        if (book.getUseReplaceRule()) {
+        if (useReplace) {
             replaceRules.forEach { item ->
                 if (item.pattern.isNotEmpty()) {
                     try {

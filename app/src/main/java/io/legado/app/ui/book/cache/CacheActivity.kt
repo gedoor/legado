@@ -75,6 +75,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         return super.onPrepareOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_enable_replace).isChecked = AppConfig.exportUseReplace
+        return super.onMenuOpened(featureId, menu)
+    }
+
     private fun upMenu() {
         menu?.findItem(R.id.menu_book_group)?.subMenu?.let { subMenu ->
             subMenu.removeGroup(R.id.menu_group)
@@ -100,6 +105,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                     CacheBook.stop(this@CacheActivity)
                 }
             }
+            R.id.menu_enable_replace -> AppConfig.exportUseReplace = !item.isChecked
             R.id.menu_export_folder -> export(-1)
             R.id.menu_export_charset -> showCharsetConfig()
             R.id.menu_log ->
