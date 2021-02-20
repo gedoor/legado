@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
+import java.nio.charset.Charset
 import java.util.*
 
 
@@ -14,6 +15,11 @@ object DocumentUtils {
     fun exists(root: DocumentFile, fileName: String, vararg subDirs: String): Boolean {
         val parent = getDirDocument(root, *subDirs) ?: return false
         return parent.findFile(fileName)?.exists() ?: false
+    }
+
+    fun delete(root: DocumentFile, fileName: String, vararg subDirs: String) {
+        val parent: DocumentFile? = createFolderIfNotExist(root, *subDirs)
+        parent?.findFile(fileName)?.delete()
     }
 
     fun createFileIfNotExist(
@@ -47,8 +53,13 @@ object DocumentUtils {
 
     @JvmStatic
     @Throws(Exception::class)
-    fun writeText(context: Context, data: String, fileUri: Uri): Boolean {
-        return writeBytes(context, data.toByteArray(), fileUri)
+    fun writeText(
+        context: Context,
+        data: String,
+        fileUri: Uri,
+        charset: Charset = Charsets.UTF_8
+    ): Boolean {
+        return writeBytes(context, data.toByteArray(charset), fileUri)
     }
 
     @JvmStatic
@@ -143,8 +154,8 @@ data class DocItem(
 }
 
 @Throws(Exception::class)
-fun DocumentFile.writeText(context: Context, data: String) {
-    DocumentUtils.writeText(context, data, this.uri)
+fun DocumentFile.writeText(context: Context, data: String, charset: Charset = Charsets.UTF_8) {
+    DocumentUtils.writeText(context, data, this.uri, charset)
 }
 
 @Throws(Exception::class)

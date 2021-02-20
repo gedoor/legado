@@ -16,6 +16,7 @@ import io.legado.app.help.storage.BookWebDav
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
+import java.nio.charset.Charset
 
 
 class CacheViewModel(application: Application) : BaseViewModel(application) {
@@ -38,20 +39,24 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun export(doc: DocumentFile, book: Book) {
         val filename = "${book.name} by ${book.author}.txt"
-        val content = getAllContents(book)
-        DocumentUtils.createFileIfNotExist(doc, filename)
-            ?.writeText(context, content)
-        if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
-            FileUtils.createFileIfNotExist(
-                File(FileUtils.getCachePath()),
-                filename
-            ).writeText(content) // 写出文件到cache目录
-            // 导出到webdav
-            BookWebDav.exportWebDav(FileUtils.getCachePath(), filename)
-            // 上传完删除cache文件
-            FileUtils.deleteFile("${FileUtils.getCachePath()}${File.separator}${filename}")
+        DocumentUtils.delete(doc, filename)
+        DocumentUtils.createFileIfNotExist(doc, filename)?.let { bookDoc ->
+            val stringBuilder = StringBuilder()
+            context.contentResolver.openOutputStream(bookDoc.uri, "wa")?.use { bookOs ->
+                getAllContents(book) {
+                    bookOs.write(it.toByteArray(Charset.forName(AppConfig.exportCharset)))
+                    stringBuilder.append(it)
+                }
+            }
+            if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
+                // 导出到webdav
+                val byteArray =
+                    stringBuilder.toString().toByteArray(Charset.forName(AppConfig.exportCharset))
+                BookWebDav.exportWebDav(byteArray, filename)
+            }
         }
         getSrcList(book).forEach {
             val vFile = BookHelp.getImage(book, it.third)
@@ -67,10 +72,17 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     private suspend fun export(file: File, book: Book) {
         val filename = "${book.name} by ${book.author}.txt"
-        FileUtils.createFileIfNotExist(file, filename)
-            .writeText(getAllContents(book))
+        val bookPath = FileUtils.getPath(file, filename)
+        val bookFile = FileUtils.createFileWithReplace(bookPath)
+        val stringBuilder = StringBuilder()
+        getAllContents(book) {
+            bookFile.appendText(it, Charset.forName(AppConfig.exportCharset))
+            stringBuilder.append(it)
+        }
         if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
-            BookWebDav.exportWebDav(file.absolutePath, filename) // 导出到webdav
+            val byteArray =
+                stringBuilder.toString().toByteArray(Charset.forName(AppConfig.exportCharset))
+            BookWebDav.exportWebDav(byteArray, filename) // 导出到webdav
         }
         getSrcList(book).forEach {
             val vFile = BookHelp.getImage(book, it.third)
@@ -86,23 +98,18 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun getAllContents(book: Book): String {
+    private suspend fun getAllContents(book: Book, append: (text: String) -> Unit) {
         val useReplace = AppConfig.exportUseReplace
         val contentProcessor = ContentProcessor(book.name, book.origin)
-        val stringBuilder = StringBuilder()
-        stringBuilder.append(book.name)
-            .append("\n")
-            .append(context.getString(R.string.author_show, book.author))
+        append("${book.name}\n${context.getString(R.string.author_show, book.author)}")
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 val content1 = contentProcessor
                     .getContent(book, chapter.title, content ?: "null", false, useReplace)
                     .joinToString("\n")
-                stringBuilder.append("\n\n")
-                    .append(content1)
+                append.invoke("\n\n$content1")
             }
         }
-        return stringBuilder.toString()
     }
 
     private fun getSrcList(book: Book): ArrayList<Triple<String, Int, String>> {
