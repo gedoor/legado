@@ -61,7 +61,7 @@ object ChapterProvider {
     private var titleBottomSpacing = 0
 
     @JvmStatic
-    var typeface: Typeface = Typeface.SANS_SERIF
+    var typeface: Typeface = Typeface.DEFAULT
 
     @JvmStatic
     lateinit var titlePaint: TextPaint
