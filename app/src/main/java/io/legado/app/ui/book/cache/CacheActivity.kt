@@ -77,6 +77,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.findItem(R.id.menu_enable_replace).isChecked = AppConfig.exportUseReplace
+        menu.findItem(R.id.menu_export_web_dav).isChecked = AppConfig.exportToWebDav
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -106,6 +107,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
             }
             R.id.menu_enable_replace -> AppConfig.exportUseReplace = !item.isChecked
+            R.id.menu_export_web_dav -> AppConfig.exportToWebDav = !item.isChecked
             R.id.menu_export_folder -> export(-1)
             R.id.menu_export_charset -> showCharsetConfig()
             R.id.menu_log ->
@@ -200,7 +202,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     override fun export(position: Int) {
         exportPosition = position
         val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
-        if (path.isNullOrEmpty()) {
+        if (path.isNullOrEmpty() || position < 0) {
             selectExportFolder()
         } else {
             startExport(path)

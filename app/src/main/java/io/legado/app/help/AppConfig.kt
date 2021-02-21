@@ -154,6 +154,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.exportUseReplace, value)
         }
 
+    var exportToWebDav: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.exportToWebDav)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.exportToWebDav, value)
+        }
+
     val autoChangeSource: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.autoChangeSource, true)
 

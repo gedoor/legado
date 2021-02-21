@@ -27,6 +27,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_export_web_dav"
+        android:title="@string/export_to_web_dav"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_export_folder"
         android:title="@string/export_folder"
         app:showAsAction="never" />

@@ -6,7 +6,6 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.AppConfig
@@ -14,7 +13,6 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.utils.*
-import splitties.init.appCtx
 import java.io.File
 import java.nio.charset.Charset
 
@@ -51,7 +49,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     stringBuilder.append(it)
                 }
             }
-            if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
+            if (AppConfig.exportToWebDav) {
                 // 导出到webdav
                 val byteArray =
                     stringBuilder.toString().toByteArray(Charset.forName(AppConfig.exportCharset))
@@ -79,7 +77,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             bookFile.appendText(it, Charset.forName(AppConfig.exportCharset))
             stringBuilder.append(it)
         }
-        if (appCtx.getPrefBoolean(PreferKey.webDavCacheBackup, false)) {
+        if (AppConfig.exportToWebDav) {
             val byteArray =
                 stringBuilder.toString().toByteArray(Charset.forName(AppConfig.exportCharset))
             BookWebDav.exportWebDav(byteArray, filename) // 导出到webdav
