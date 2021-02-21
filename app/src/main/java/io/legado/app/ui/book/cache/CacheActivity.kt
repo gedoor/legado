@@ -76,8 +76,8 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
-        menu.findItem(R.id.menu_enable_replace).isChecked = AppConfig.exportUseReplace
-        menu.findItem(R.id.menu_export_web_dav).isChecked = AppConfig.exportToWebDav
+        menu.findItem(R.id.menu_enable_replace)?.isChecked = AppConfig.exportUseReplace
+        menu.findItem(R.id.menu_export_web_dav)?.isChecked = AppConfig.exportToWebDav
         return super.onMenuOpened(featureId, menu)
     }
 
