@@ -49,8 +49,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private val groupList: ArrayList<BookGroup> = arrayListOf()
     private var groupId: Long = -1
 
-    override val viewModel: CacheViewModel
-            by viewModels()
+    override val viewModel: CacheViewModel by viewModels()
 
     override fun getViewBinding(): ActivityCacheBookBinding {
         return ActivityCacheBookBinding.inflate(layoutInflater)
