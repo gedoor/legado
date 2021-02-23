@@ -14,7 +14,6 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import java.util.concurrent.ConcurrentHashMap
@@ -76,28 +75,28 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     postEvent(EventBus.UP_BOOK, book.bookUrl)
                 }
                 appDb.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
-                    val webBook = WebBook(bookSource)
-                    webBook.getChapterList(this, book, context = upTocPool)
-                        .timeout(60000)
-                        .onSuccess(IO) {
-                            appDb.bookDao.update(book)
-                            appDb.bookChapterDao.delByBook(book.bookUrl)
-                            appDb.bookChapterDao.insert(*it.toTypedArray())
-                            if (AppConfig.preDownload) {
-                                cacheBook(webBook, book)
-                            }
+                    execute(context = upTocPool) {
+                        val webBook = WebBook(bookSource)
+                        if (book.tocUrl.isBlank()) {
+                            webBook.getBookInfoAwait(this, book)
                         }
-                        .onError {
-                            it.printStackTrace()
+                        val toc = webBook.getChapterListAwait(this, book)
+                        appDb.bookDao.update(book)
+                        appDb.bookChapterDao.delByBook(book.bookUrl)
+                        appDb.bookChapterDao.insert(*toc.toTypedArray())
+                        if (AppConfig.preDownload) {
+                            cacheBook(webBook, book)
                         }
-                        .onFinally {
-                            synchronized(this) {
-                                bookMap.remove(bookEntry.key)
-                                updateList.remove(book.bookUrl)
-                                postEvent(EventBus.UP_BOOK, book.bookUrl)
-                                upNext()
-                            }
+                    }.onError {
+                        it.printStackTrace()
+                    }.onFinally {
+                        synchronized(this) {
+                            bookMap.remove(bookEntry.key)
+                            updateList.remove(book.bookUrl)
+                            postEvent(EventBus.UP_BOOK, book.bookUrl)
+                            upNext()
                         }
+                    }
                 } ?: synchronized(this) {
                     bookMap.remove(bookEntry.key)
                     updateList.remove(book.bookUrl)
