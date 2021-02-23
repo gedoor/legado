@@ -206,7 +206,7 @@ object Debug {
                 if (it.isNotEmpty()) {
                     log(debugSource, "︽目录页解析完成")
                     log(debugSource, showTime = false)
-                    val nextChapterUrl = if (it.size > 1) it[1].url else null
+                    val nextChapterUrl = it.getOrNull(1)?.url
                     contentDebug(scope, webBook, book, it[0], nextChapterUrl)
                 } else {
                     log(debugSource, "︽目录列表为空", state = -1)

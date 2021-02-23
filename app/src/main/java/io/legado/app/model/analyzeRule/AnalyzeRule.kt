@@ -27,6 +27,7 @@ import kotlin.collections.HashMap
 class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     var book: BaseBook? = null
     var chapter: BookChapter? = null
+    var nextChapterUrl: String? = null
     private var content: Any? = null
     private var baseUrl: String? = null
     private var baseURL: URL? = null
@@ -646,6 +647,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         bindings["chapter"] = chapter
         bindings["title"] = chapter?.title
         bindings["src"] = content
+        bindings["nextChapterUrl"] = nextChapterUrl
         return runBlocking {
             SCRIPT_ENGINE.eval(jsStr, bindings)
         }
