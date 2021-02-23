@@ -21,6 +21,9 @@ val appInfo: AppInfo by lazy {
     appInfo
 }
 
+val charsets =
+    arrayListOf("UTF-8", "GB2312", "GB18030", "GBK", "Unicode", "UTF-16", "UTF-16LE", "ASCII")
+
 data class AppInfo(
     var versionCode: Long = 0L,
     var versionName: String = ""
