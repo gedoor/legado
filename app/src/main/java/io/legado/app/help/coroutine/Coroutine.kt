@@ -197,7 +197,9 @@ class Coroutine<T>(
         return withContext(scope.coroutineContext.plus(context)) {
             if (timeMillis > 0L) withTimeout(timeMillis) {
                 block()
-            } else block()
+            } else {
+                block()
+            }
         }
     }
 
