@@ -305,49 +305,15 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             request: WebResourceRequest?
         ): Boolean {
             request?.let {
-                if (it.url.scheme == "http" || it.url.scheme == "https") {
-                    return false
-                } else if (it.url.scheme == "yuedu") {
-                    when (it.url.host) {
-                        "booksource" -> {
-                            val intent = Intent(
-                                this@ReadRssActivity,
-                                ImportBookSourceActivity::class.java
-                            )
-                            intent.data = it.url
-                            startActivity(intent)
-                        }
-                        "rsssource" -> {
-                            val intent = Intent(
-                                this@ReadRssActivity,
-                                ImportRssSourceActivity::class.java
-                            )
-                            intent.data = it.url
-                            startActivity(intent)
-                        }
-                        "replace" -> {
-                            val intent = Intent(
-                                this@ReadRssActivity,
-                                ImportReplaceRuleActivity::class.java
-                            )
-                            intent.data = it.url
-                            startActivity(intent)
-                        }
-                    }
-                    return true
-                }
-                openUrl(it.url)
+                return shouldOverrideUrlLoading(it.url)
             }
             return true
         }
 
         @Suppress("DEPRECATION")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            if (url?.startsWith("http", true) == true) {
-                return false
-            }
             url?.let {
-                openUrl(it)
+                return shouldOverrideUrlLoading(Uri.parse(it))
             }
             return true
         }
@@ -356,6 +322,45 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             super.onPageFinished(view, url)
             upWebViewTheme()
         }
+
+        private fun shouldOverrideUrlLoading(url: Uri): Boolean {
+            if (url.scheme == "http" || url.scheme == "https") {
+                return false
+            } else if (url.scheme == "yuedu") {
+                when (url.host) {
+                    "booksource" -> {
+                        val intent = Intent(
+                            this@ReadRssActivity,
+                            ImportBookSourceActivity::class.java
+                        )
+                        intent.data = url
+                        startActivity(intent)
+                    }
+                    "rsssource" -> {
+                        val intent = Intent(
+                            this@ReadRssActivity,
+                            ImportRssSourceActivity::class.java
+                        )
+                        intent.data = url
+                        startActivity(intent)
+                    }
+                    "replace" -> {
+                        val intent = Intent(
+                            this@ReadRssActivity,
+                            ImportReplaceRuleActivity::class.java
+                        )
+                        intent.data = url
+                        startActivity(intent)
+                    }
+                }
+                return true
+            }
+            binding.root.longSnackbar("跳转其它应用", "确认") {
+                openUrl(url)
+            }
+            return true
+        }
+
     }
 
 }
