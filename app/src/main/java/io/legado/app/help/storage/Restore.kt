@@ -1,5 +1,7 @@
 package io.legado.app.help.storage
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
@@ -9,7 +11,6 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.androidId
 import io.legado.app.data.appDb
@@ -18,14 +19,16 @@ import io.legado.app.help.DefaultData
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ThemeConfig
-import io.legado.app.service.help.ReadBook
-import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import splitties.systemservices.alarmManager
 import java.io.File
+import kotlin.system.exitProcess
+
 
 object Restore {
     private val ignoreConfigPath = FileUtils.getPath(appCtx.filesDir, "restoreIgnore.json")
@@ -220,17 +223,19 @@ object Restore {
                 hideNavigationBar = appCtx.getPrefBoolean(PreferKey.hideNavigationBar)
                 autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
             }
-            ChapterProvider.upStyle()
-            ReadBook.loadContent(resetPageOffset = false)
         }
         withContext(Main) {
             appCtx.toastOnUi(R.string.restore_success)
+            delay(100)
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(appCtx.getPrefString(PreferKey.launcherIcon))
             }
-            LanguageUtils.setConfiguration(appCtx)
-            ThemeConfig.applyDayNight(appCtx)
-            postEvent(EventBus.SHOW_RSS, "")
+            appCtx.packageManager.getLaunchIntentForPackage(appCtx.packageName)?.let { intent ->
+                val restartIntent =
+                    PendingIntent.getActivity(appCtx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+                alarmManager[AlarmManager.RTC, System.currentTimeMillis() + 300] = restartIntent
+                exitProcess(0)
+            }
         }
     }
 

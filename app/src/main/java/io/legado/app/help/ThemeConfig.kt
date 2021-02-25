@@ -52,10 +52,8 @@ object ThemeConfig {
     }
 
     fun upConfig() {
-        getConfigs()?.let {
-            it.forEach { config ->
-                addConfig(config)
-            }
+        getConfigs()?.forEach { config ->
+            addConfig(config)
         }
     }
 
