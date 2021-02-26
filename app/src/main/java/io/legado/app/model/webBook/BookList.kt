@@ -37,6 +37,7 @@ object BookList {
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${analyzeUrl.ruleUrl}")
         val analyzeRule = AnalyzeRule(variableBook)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
+        analyzeRule.setRedirectUrl(baseUrl)
         bookSource.bookUrlPattern?.let {
             scope.ensureActive()
             if (baseUrl.matches(it.toRegex())) {

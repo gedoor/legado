@@ -127,6 +127,7 @@ class WebBook(val bookSource: BookSource) {
                 book.infoHtml,
                 bookSource,
                 book.bookUrl,
+                book.bookUrl,
                 canReName
             )
         } else {
@@ -136,7 +137,15 @@ class WebBook(val bookSource: BookSource) {
                 headerMapF = bookSource.getHeaderMap(),
                 book = book
             ).getStrResponse(bookSource.bookSourceUrl)
-            BookInfo.analyzeBookInfo(scope, book, res.body, bookSource, book.bookUrl, canReName)
+            BookInfo.analyzeBookInfo(
+                scope,
+                book,
+                res.body,
+                bookSource,
+                book.bookUrl,
+                res.url,
+                canReName
+            )
         }
         return book
     }
@@ -160,7 +169,14 @@ class WebBook(val bookSource: BookSource) {
     ): List<BookChapter> {
         book.type = bookSource.bookSourceType
         return if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
-            BookChapterList.analyzeChapterList(scope, book, book.tocHtml, bookSource, book.tocUrl)
+            BookChapterList.analyzeChapterList(
+                scope,
+                book,
+                book.tocHtml,
+                bookSource,
+                book.tocUrl,
+                book.tocUrl
+            )
         } else {
             val res = AnalyzeUrl(
                 book = book,
@@ -168,7 +184,14 @@ class WebBook(val bookSource: BookSource) {
                 baseUrl = book.bookUrl,
                 headerMapF = bookSource.getHeaderMap()
             ).getStrResponse(bookSource.bookSourceUrl)
-            BookChapterList.analyzeChapterList(scope, book, res.body, bookSource, book.tocUrl)
+            BookChapterList.analyzeChapterList(
+                scope,
+                book,
+                res.body,
+                bookSource,
+                book.tocUrl,
+                res.url
+            )
         }
     }
 

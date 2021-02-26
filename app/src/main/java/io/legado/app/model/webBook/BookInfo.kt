@@ -22,6 +22,7 @@ object BookInfo {
         body: String?,
         bookSource: BookSource,
         baseUrl: String,
+        redirectUrl: String,
         canReName: Boolean,
     ) {
         body ?: throw Exception(
@@ -31,6 +32,7 @@ object BookInfo {
         val infoRule = bookSource.getBookInfoRule()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
+        analyzeRule.setRedirectUrl(redirectUrl)
         infoRule.init?.let {
             if (it.isNotBlank()) {
                 scope.ensureActive()
@@ -84,7 +86,7 @@ object BookInfo {
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
         analyzeRule.getString(infoRule.coverUrl).let {
-            if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
+            if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(redirectUrl, it)
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.coverUrl}")
         scope.ensureActive()
