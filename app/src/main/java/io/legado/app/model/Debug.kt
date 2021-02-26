@@ -186,6 +186,12 @@ object Debug {
     }
 
     private fun infoDebug(scope: CoroutineScope, webBook: WebBook, book: Book) {
+        if (book.tocUrl.isNotBlank()) {
+            log(debugSource, "目录url不为空,详情页已解析")
+            log(debugSource, showTime = false)
+            tocDebug(scope, webBook, book)
+            return
+        }
         log(debugSource, "︾开始解析详情页")
         val info = webBook.getBookInfo(scope, book)
             .onSuccess {
