@@ -191,6 +191,25 @@ object BookHelp {
         return null
     }
 
+    fun reverseContent(book: Book, bookChapter: BookChapter) {
+        if (!book.isLocalBook()) {
+            val file = FileUtils.getFile(
+                downloadDir,
+                cacheFolderName,
+                book.getFolderName(),
+                bookChapter.getFileName()
+            )
+            if (file.exists()) {
+                val text = file.readText()
+                val stringBuilder = StringBuilder()
+                text.toStringArray().forEach {
+                    stringBuilder.insert(0, it)
+                }
+                file.writeText(stringBuilder.toString())
+            }
+        }
+    }
+
     fun delContent(book: Book, bookChapter: BookChapter) {
         if (book.isLocalBook()) {
             return

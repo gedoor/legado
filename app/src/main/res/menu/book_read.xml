@@ -74,6 +74,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_reverse_content"
+        android:title="@string/reverse_content"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_enable_replace"
         android:title="@string/replace_rule_title"
         android:checkable="true"

@@ -242,6 +242,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 supportFragmentManager,
                 ReadBook.book?.tocUrl
             )
+            R.id.menu_reverse_content -> ReadBook.book?.let {
+                viewModel.reverseContent(it)
+            }
             R.id.menu_set_charset -> showCharsetConfig()
             R.id.menu_get_progress -> ReadBook.book?.let {
                 viewModel.syncBookProgress(it) { progress ->
