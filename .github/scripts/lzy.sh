@@ -42,7 +42,7 @@ _UPLOAD() {
 	[[ $(du "${NAME_FILE}"|awk '{print $1}') -gt 100000000 ]] && _NOTICE "ERROR" "${NAME}文件大于 100MB！"
 	HTML_UPLOAD=$(curl --connect-timeout 120 -m 5000 --retry 2 -s -b "ylogin=${COOKIE_YLOGIN};phpdisk_info=${COOKIE_PHPDISK_INFO}" -H "${URL_UPLOAD}" -F "task=1" -F "id=WU_FILE_0" -F "folder_id=${FOLDER_ID}" -F "name=${NAME}" -F "upload_file=@${NAME_FILE}" "${URL_UPLOAD}"|grep '\\u4e0a\\u4f20\\u6210\\u529f')
 	[[ -z "${HTML_UPLOAD}" ]] && _NOTICE "ERROR" "${NAME}文件上传失败！"
-	echo -e "${INFO} 文件上传成功！[$(date '+%Y/%m/%d %H:%M')]"
+	echo -e "${INFO} 文件上传成功！[$(date -u -d '+8 hour' '+%Y-%m-%d %H:%M:%S')]"
 }
 
 
