@@ -811,5 +811,6 @@
     <string name="export_folder">导出文件夹</string>
     <string name="export_charset">导出编码</string>
     <string name="export_to_web_dav">导出到WebDav</string>
+    <string name="reverse_content">反转内容</string>
 
 </resources>

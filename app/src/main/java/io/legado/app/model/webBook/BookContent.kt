@@ -41,6 +41,7 @@ object BookContent {
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
         val analyzeRule = AnalyzeRule(book).setContent(body, baseUrl)
+        analyzeRule.setRedirectUrl(baseUrl)
         analyzeRule.nextChapterUrl = mNextChapterUrl
         var contentData = analyzeContent(
             book, baseUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl

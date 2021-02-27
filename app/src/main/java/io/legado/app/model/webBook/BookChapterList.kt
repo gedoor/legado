@@ -24,7 +24,8 @@ object BookChapterList {
         book: Book,
         body: String?,
         bookSource: BookSource,
-        baseUrl: String
+        baseUrl: String,
+        redirectUrl: String
     ): List<BookChapter> = suspendCancellableCoroutine { block ->
         kotlin.runCatching {
             val chapterList = ArrayList<BookChapter>()
@@ -46,7 +47,15 @@ object BookChapterList {
             }
             var chapterData =
                 analyzeChapterList(
-                    scope, book, baseUrl, body, tocRule, listRule, bookSource, log = true
+                    scope,
+                    book,
+                    baseUrl,
+                    redirectUrl,
+                    body,
+                    tocRule,
+                    listRule,
+                    bookSource,
+                    log = true
                 )
             chapterData.chapterList?.let {
                 chapterList.addAll(it)
@@ -66,7 +75,14 @@ object BookChapterList {
                                 headerMapF = bookSource.getHeaderMap()
                             ).getStrResponse(bookSource.bookSourceUrl).body?.let { nextBody ->
                                 chapterData = analyzeChapterList(
-                                    this, book, nextUrl, nextBody, tocRule, listRule, bookSource
+                                    this,
+                                    book,
+                                    nextUrl,
+                                    nextUrl,
+                                    nextBody,
+                                    tocRule,
+                                    listRule,
+                                    bookSource
                                 )
                                 nextUrl = chapterData.nextUrl.firstOrNull() ?: ""
                                 chapterData.chapterList?.let {
@@ -128,7 +144,15 @@ object BookChapterList {
             ).getStrResponse(bookSource.bookSourceUrl).body
                 ?: throw Exception("${chapterData.nextUrl}, 下载失败")
             val nextChapterData = analyzeChapterList(
-                this, book, chapterData.nextUrl, nextBody, tocRule, listRule, bookSource, false
+                this,
+                book,
+                chapterData.nextUrl,
+                chapterData.nextUrl,
+                nextBody,
+                tocRule,
+                listRule,
+                bookSource,
+                false
             )
             synchronized(chapterDataList) {
                 val isFinished = addChapterListIsFinish(
@@ -195,6 +219,7 @@ object BookChapterList {
         scope: CoroutineScope,
         book: Book,
         baseUrl: String,
+        redirectUrl: String,
         body: String,
         tocRule: TocRule,
         listRule: String,
@@ -204,6 +229,7 @@ object BookChapterList {
     ): ChapterData<List<String>> {
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
+        analyzeRule.setRedirectUrl(redirectUrl)
         //获取目录列表
         val chapterList = arrayListOf<BookChapter>()
         Debug.log(bookSource.bookSourceUrl, "┌获取目录列表", log)

@@ -30,7 +30,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     var nextChapterUrl: String? = null
     private var content: Any? = null
     private var baseUrl: String? = null
-    private var baseURL: URL? = null
+    private var redirectUrl: URL? = null
     private var isJSON: Boolean = false
     private var isRegex: Boolean = false
 
@@ -63,11 +63,13 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     fun setBaseUrl(baseUrl: String?): AnalyzeRule {
         baseUrl?.let {
             this.baseUrl = baseUrl
-            kotlin.runCatching {
-                baseURL = URL(baseUrl.substringBefore(","))
-            }.onFailure {
-                it.printStackTrace()
-            }
+        }
+        return this
+    }
+
+    fun setRedirectUrl(url: String): AnalyzeRule {
+        kotlin.runCatching {
+            redirectUrl = URL(url.split(AnalyzeUrl.splitUrlRegex, 1)[0])
         }
         return this
     }
@@ -170,7 +172,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             val urlList = ArrayList<String>()
             if (result is List<*>) {
                 for (url in result as List<*>) {
-                    val absoluteURL = NetworkUtils.getAbsoluteURL(baseURL, url.toString())
+                    val absoluteURL = NetworkUtils.getAbsoluteURL(redirectUrl, url.toString())
                     if (absoluteURL.isNotEmpty() && !urlList.contains(absoluteURL)) {
                         urlList.add(absoluteURL)
                     }
@@ -239,7 +241,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             return if (str.isBlank()) {
                 baseUrl ?: ""
             } else {
-                NetworkUtils.getAbsoluteURL(baseURL, str)
+                NetworkUtils.getAbsoluteURL(redirectUrl, str)
             }
         }
         return str
