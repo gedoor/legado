@@ -137,6 +137,7 @@ object BookContent {
     ): ContentData<List<String>> {
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
+        analyzeRule.setRedirectUrl(baseUrl)
         analyzeRule.nextChapterUrl = nextChapterUrl
         val nextUrlList = arrayListOf<String>()
         analyzeRule.chapter = chapter
