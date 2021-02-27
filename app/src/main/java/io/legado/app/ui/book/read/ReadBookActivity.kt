@@ -170,6 +170,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     else -> when (item.itemId) {
                         R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
                         R.id.menu_re_segment -> item.isChecked = book.getReSegment()
+                        R.id.menu_reverse_content -> item.isVisible = onLine
                     }
                 }
             }
