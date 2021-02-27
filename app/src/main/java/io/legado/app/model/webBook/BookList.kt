@@ -43,7 +43,7 @@ object BookList {
             scope.ensureActive()
             if (baseUrl.matches(it.toRegex())) {
                 Debug.log(bookSource.bookSourceUrl, "≡链接为详情页")
-                getInfoItem(scope, analyzeRule, bookSource, baseUrl, variableBook.variable)
+                getInfoItem(scope, body, analyzeRule, bookSource, baseUrl, variableBook.variable)
                     ?.let { searchBook ->
                         searchBook.infoHtml = body
                         bookList.add(searchBook)
@@ -71,7 +71,7 @@ object BookList {
         scope.ensureActive()
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
-            getInfoItem(scope, analyzeRule, bookSource, baseUrl, variableBook.variable)
+            getInfoItem(scope, body, analyzeRule, bookSource, baseUrl, variableBook.variable)
                 ?.let { searchBook ->
                     searchBook.infoHtml = body
                     bookList.add(searchBook)
@@ -120,6 +120,7 @@ object BookList {
     @Throws(Exception::class)
     private fun getInfoItem(
         scope: CoroutineScope,
+        body: String,
         analyzeRule: AnalyzeRule,
         bookSource: BookSource,
         baseUrl: String,
@@ -132,7 +133,16 @@ object BookList {
         book.originOrder = bookSource.customOrder
         book.type = bookSource.bookSourceType
         analyzeRule.book = book
-        BookInfo.analyzeBookInfo(scope, book, analyzeRule, bookSource, baseUrl, baseUrl, false)
+        BookInfo.analyzeBookInfo(
+            scope,
+            book,
+            body,
+            analyzeRule,
+            bookSource,
+            baseUrl,
+            baseUrl,
+            false
+        )
         if (book.name.isNotBlank()) {
             return book.toSearchBook()
         }

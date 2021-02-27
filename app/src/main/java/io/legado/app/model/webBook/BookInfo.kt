@@ -32,12 +32,13 @@ object BookInfo {
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
-        analyzeBookInfo(scope, book, analyzeRule, bookSource, baseUrl, redirectUrl, canReName)
+        analyzeBookInfo(scope, book, body, analyzeRule, bookSource, baseUrl, redirectUrl, canReName)
     }
 
     fun analyzeBookInfo(
         scope: CoroutineScope,
         book: Book,
+        body: String,
         analyzeRule: AnalyzeRule,
         bookSource: BookSource,
         baseUrl: String,
@@ -106,7 +107,7 @@ object BookInfo {
         book.tocUrl = analyzeRule.getString(infoRule.tocUrl, true)
         if (book.tocUrl.isEmpty()) book.tocUrl = baseUrl
         if (book.tocUrl == baseUrl) {
-            book.tocHtml = analyzeRule.content.toString()
+            book.tocHtml = body
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.tocUrl}")
     }
