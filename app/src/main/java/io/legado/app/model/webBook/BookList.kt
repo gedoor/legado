@@ -168,6 +168,13 @@ object BookList {
                 Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
                 searchBook.coverUrl = analyzeRule.getString(coverUrl, true)
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}")
+                Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
+                searchBook.tocUrl = analyzeRule.getString(tocUrl, true)
+                if (searchBook.tocUrl.isEmpty()) searchBook.tocUrl = baseUrl
+                if (searchBook.tocUrl == baseUrl) {
+                    searchBook.tocHtml = analyzeRule.content.toString()
+                }
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.tocUrl}")
                 return searchBook
             }
         }
