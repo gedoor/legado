@@ -6,11 +6,6 @@ on:
   push:
     branches:
       - master
-#    tags:
-#      - '3.*'
-#  pull_request:
-#    branches:
-#      - master
 #  watch:
 #    types: [started]
 #  schedule:
@@ -25,8 +20,8 @@ jobs:
       # LANZOU_PSD ： pc.woozooo.com -> Cookie -> phpdisk_info
       LANZOU_ID: ${{ secrets.LANZOU_ID }}
       LANZOU_PSD: ${{ secrets.LANZOU_PSD }}
-      # 蓝奏云里的文件夹名（需手动在蓝奏云创建）
-      LANZOU_FOLDER: '阅读3测试版'
+      # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
+      LANZOU_FOLDER_ID: '2670621'
       # 是否上传到artifact
       UPLOAD_ARTIFACT: 'true'
     steps:
@@ -68,28 +63,23 @@ jobs:
         with:
           name: legado apk
           path: ${{ github.workspace }}/app/build/outputs/apk/app/release/*.apk
-      - name: Set Up Python 3
-        if: ${{ env.LANZOU_PSD }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Dependence Install
-        if: ${{ env.LANZOU_PSD }}
-        run: |
-          pip install requests
-          pip install lanzou-api
-      - name: Download Script
-        if: ${{ env.LANZOU_PSD }}
-        shell: python
-        run: |
-          import requests,os
-          res = requests.get('https://raw.githubusercontent.com/Celeter/build/master/.github/scripts/API_lanzou.py')
-          with open(os.environ["FILE_PATH"], 'wb') as f:
-            f.write(res.content)
-        env:
-          FILE_PATH: ${{ github.workspace }}/.github/lzy.py
       - name: Upload App To Lanzou
         if: ${{ env.LANZOU_PSD }}
-        run: python $GITHUB_WORKSPACE/.github/lzy.py
+        run: |
+          path="$GITHUB_WORKSPACE/app/build/outputs/apk/app/release/"
+          files=$(ls $path)
+          for f in $files
+          do
+           if [[ $f == *"apk" ]]; then
+            file=$f
+           fi
+          done
+          version=${file:0-15:11}
+          echo $version
+        
+          bash $GITHUB_WORKSPACE/.github/scripts/lzy.sh "legado_app_$version.apk" "$GITHUB_WORKSPACE/app/build/outputs/apk/app/release/legado_app_$version.apk" "${{ env.LANZOU_FOLDER_ID }}"
+          echo "分享链接: https://kunfei.lanzous.com/b0f810h4b"
         env:
-          UPLOAD_FOLDER: ${{ github.workspace }}/app/build/outputs/apk/app/release/
+          LANZOU_ID: ${{ env.LANZOU_ID }}
+          LANZOU_PSD: ${{ env.LANZOU_PSD }}
+ 
