@@ -77,10 +77,10 @@ jobs:
            fi
           done
         
-          bash $GITHUB_WORKSPACE/.github/scripts/lzy.sh "$file" "$GITHUB_WORKSPACE/app/build/outputs/apk/app/release/$file" "${{ env.LANZOU_FOLDER_ID }}"
+          bash $GITHUB_WORKSPACE/.github/scripts/lzy.sh "$file" \
+          "$GITHUB_WORKSPACE/app/build/outputs/apk/app/release/$file" "${{ env.LANZOU_FOLDER_ID }}"
           echo "分享链接: https://kunfei.lanzous.com/b0f810h4b"
         env:
           LANZOU_ID: ${{ env.LANZOU_ID }}
           LANZOU_PSD: ${{ env.LANZOU_PSD }}
- 
  
