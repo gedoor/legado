@@ -29,6 +29,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.association.ImportBookSourceActivity
+import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
@@ -458,6 +459,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun toBottom(bookSource: BookSource) {
         viewModel.bottomSource(bookSource)
+    }
+
+    override fun debug(bookSource: BookSource) {
+        startActivity<BookSourceDebugActivity> {
+            putExtra("key", bookSource.bookSourceUrl)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
