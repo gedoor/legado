@@ -1,6 +1,7 @@
 package io.legado.app.model.webBook
 
 import io.legado.app.R
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.rule.BookListRule
@@ -124,59 +125,16 @@ object BookList {
         baseUrl: String,
         variable: String?
     ): SearchBook? {
-        val searchBook = SearchBook(variable = variable)
-        searchBook.bookUrl = baseUrl
-        searchBook.origin = bookSource.bookSourceUrl
-        searchBook.originName = bookSource.bookSourceName
-        searchBook.originOrder = bookSource.customOrder
-        searchBook.type = bookSource.bookSourceType
-        analyzeRule.book = searchBook
-        with(bookSource.getBookInfoRule()) {
-            init?.let {
-                if (it.isNotEmpty()) {
-                    scope.ensureActive()
-                    Debug.log(bookSource.bookSourceUrl, "≡执行详情页初始化规则")
-                    analyzeRule.setContent(analyzeRule.getElement(it))
-                }
-            }
-            scope.ensureActive()
-            Debug.log(bookSource.bookSourceUrl, "┌获取书名")
-            searchBook.name = BookHelp.formatBookName(analyzeRule.getString(name))
-            Debug.log(bookSource.bookSourceUrl, "└${searchBook.name}")
-            if (searchBook.name.isNotEmpty()) {
-                scope.ensureActive()
-                Debug.log(bookSource.bookSourceUrl, "┌获取作者")
-                searchBook.author = BookHelp.formatBookAuthor(analyzeRule.getString(author))
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.author}")
-                scope.ensureActive()
-                Debug.log(bookSource.bookSourceUrl, "┌获取分类")
-                searchBook.kind = analyzeRule.getStringList(kind)?.joinToString(",")
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}")
-                scope.ensureActive()
-                Debug.log(bookSource.bookSourceUrl, "┌获取字数")
-                searchBook.wordCount = wordCountFormat(analyzeRule.getString(wordCount))
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.wordCount}")
-                scope.ensureActive()
-                Debug.log(bookSource.bookSourceUrl, "┌获取最新章节")
-                searchBook.latestChapterTitle = analyzeRule.getString(lastChapter)
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}")
-                scope.ensureActive()
-                Debug.log(bookSource.bookSourceUrl, "┌获取简介")
-                searchBook.intro = analyzeRule.getString(intro).htmlFormat()
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}")
-                scope.ensureActive()
-                Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
-                searchBook.coverUrl = analyzeRule.getString(coverUrl, true)
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}")
-                Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
-                searchBook.tocUrl = analyzeRule.getString(tocUrl, true)
-                if (searchBook.tocUrl.isEmpty()) searchBook.tocUrl = baseUrl
-                if (searchBook.tocUrl == baseUrl) {
-                    searchBook.tocHtml = analyzeRule.content.toString()
-                }
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.tocUrl}")
-                return searchBook
-            }
+        val book = Book(variable = variable)
+        book.bookUrl = baseUrl
+        book.origin = bookSource.bookSourceUrl
+        book.originName = bookSource.bookSourceName
+        book.originOrder = bookSource.customOrder
+        book.type = bookSource.bookSourceType
+        analyzeRule.book = book
+        BookInfo.analyzeBookInfo(scope, book, analyzeRule, bookSource, baseUrl, baseUrl, false)
+        if (book.name.isNotBlank()) {
+            return book.toSearchBook()
         }
         return null
     }

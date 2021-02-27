@@ -29,10 +29,22 @@ object BookInfo {
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
-        val infoRule = bookSource.getBookInfoRule()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
+        analyzeBookInfo(scope, book, analyzeRule, bookSource, baseUrl, redirectUrl, canReName)
+    }
+
+    fun analyzeBookInfo(
+        scope: CoroutineScope,
+        book: Book,
+        analyzeRule: AnalyzeRule,
+        bookSource: BookSource,
+        baseUrl: String,
+        redirectUrl: String,
+        canReName: Boolean,
+    ) {
+        val infoRule = bookSource.getBookInfoRule()
         infoRule.init?.let {
             if (it.isNotBlank()) {
                 scope.ensureActive()
@@ -94,7 +106,7 @@ object BookInfo {
         book.tocUrl = analyzeRule.getString(infoRule.tocUrl, true)
         if (book.tocUrl.isEmpty()) book.tocUrl = baseUrl
         if (book.tocUrl == baseUrl) {
-            book.tocHtml = body
+            book.tocHtml = analyzeRule.content.toString()
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.tocUrl}")
     }
