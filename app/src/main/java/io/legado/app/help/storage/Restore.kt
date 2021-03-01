@@ -210,7 +210,6 @@ object Restore {
                             is Long -> edit.putLong(it.key, value)
                             is Float -> edit.putFloat(it.key, value)
                             is String -> edit.putString(it.key, value)
-                            else -> Unit
                         }
                     }
                 }
@@ -224,8 +223,8 @@ object Restore {
                 autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
             }
         }
+        appCtx.toastOnUi(R.string.restore_success)
         withContext(Main) {
-            appCtx.toastOnUi(R.string.restore_success)
             delay(100)
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(appCtx.getPrefString(PreferKey.launcherIcon))
