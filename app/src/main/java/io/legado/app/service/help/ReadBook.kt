@@ -186,7 +186,7 @@ object ReadBook {
 
     fun skipToPage(index: Int, success: (() -> Unit)? = null) {
         durChapterPos = curTextChapter?.getReadLength(index) ?: index
-        callBack?.upContent() {
+        callBack?.upContent {
             success?.invoke()
         }
         curPageChanged()

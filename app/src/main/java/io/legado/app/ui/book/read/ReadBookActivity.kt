@@ -81,9 +81,14 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = binding.readView.isScroll
     private val mHandler = Handler(Looper.getMainLooper())
-    private val keepScreenRunnable: Runnable =
-        Runnable { keepScreenOn(window, false) }
-    private val autoPageRunnable: Runnable = Runnable { autoPagePlus() }
+    private val keepScreenRunnable = Runnable { keepScreenOn(window, false) }
+    private val autoPageRunnable = Runnable { autoPagePlus() }
+    private val backupRunnable = Runnable {
+        if (!BuildConfig.DEBUG) {
+            ReadBook.uploadProgress()
+            Backup.autoBack(this)
+        }
+    }
     override var autoPageProgress = 0
     override var isAutoPage = false
     private var screenTimeOut: Long = 0
@@ -129,6 +134,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun onPause() {
         super.onPause()
+        mHandler.removeCallbacks(backupRunnable)
         ReadBook.saveRead()
         timeBatteryReceiver?.let {
             unregisterReceiver(it)
@@ -571,6 +577,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         launch {
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
         }
+        mHandler.postDelayed(backupRunnable, 600000)
     }
 
     /**
