@@ -2,7 +2,7 @@
     <!--App-->
     <string name="app_name">閱讀</string>
     <string name="receiving_shared_label">閱讀·搜尋</string>
-    <string name="tip_perm_request_storage">閱讀需要存取記憶卡權限，請前往“設定”—“應用程式權限”—打開所需權限</string>
+    <string name="tip_perm_request_storage">閱讀需要存取記憶卡權限，請前往「設定」—「應用程式權限」—打開所需權限</string>
 
     <!--Other-->
     <string name="menu_backup">Home</string>
@@ -810,7 +810,5 @@
     <string name="export_to_web_dav">匯出到WebDav</string>
     <string name="reverse_content">反转内容</string>
     <string name="debug">调试</string>
-    <string name="crash_log">崩溃日志</string>
-    <string name="use_zh_layout">使用自定义中文分行</string>
 
 </resources>
