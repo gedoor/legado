@@ -46,6 +46,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
                 appCtx.getPrefInt(PreferKey.clickActionBR, 2)
             PreferKey.readBodyToLh -> ReadBookConfig.readBodyToLh =
                 appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
+            PreferKey.useZhLayout -> ReadBookConfig.useZhLayout =
+                appCtx.getPrefBoolean(PreferKey.useZhLayout)
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
         }
     }

@@ -42,6 +42,13 @@
         app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:title="@string/use_zh_layout"
+        android:key="useZhLayout"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
         android:title="@string/text_full_justify"
         android:key="textFullJustify"

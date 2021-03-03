@@ -69,6 +69,7 @@ object PreferKey {
     const val defaultToRead = "defaultToRead"
     const val exportCharset = "exportCharset"
     const val exportUseReplace = "exportUseReplace"
+    const val useZhLayout = "useZhLayout"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

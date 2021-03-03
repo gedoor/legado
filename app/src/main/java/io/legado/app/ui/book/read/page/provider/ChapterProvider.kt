@@ -200,7 +200,9 @@ object ChapterProvider {
         textPaint: TextPaint
     ): Float {
         var durY = if (isTitle) y + titleTopSpacing else y
-        val layout = StaticLayout(
+        val layout = if (ReadBookConfig.useZhLayout) {
+            ZhLayout(text, textPaint, visibleWidth)
+        } else StaticLayout(
             text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         for (lineIndex in 0 until layout.lineCount) {
