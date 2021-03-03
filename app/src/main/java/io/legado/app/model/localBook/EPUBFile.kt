@@ -6,9 +6,14 @@ import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.utils.*
+import net.sf.jazzlib.ZipEntry
+import net.sf.jazzlib.ZipInputStream
 import nl.siegmann.epublib.domain.Book
+import nl.siegmann.epublib.domain.Resources
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
+import nl.siegmann.epublib.service.MediatypeService
+import nl.siegmann.epublib.util.ResourceUtil
 import org.jsoup.Jsoup
 import splitties.init.appCtx
 import java.io.File
@@ -56,33 +61,65 @@ class EPUBFile(val book: io.legado.app.data.entities.Book) {
 
     init {
         try {
-            val epubReader = EpubReader()
             val inputStream = if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
                 appCtx.contentResolver.openInputStream(uri)
             } else {
                 File(book.bookUrl).inputStream()
             }
-            epubBook = epubReader.readEpub(inputStream)
-            if (book.coverUrl.isNullOrEmpty()) {
-                book.coverUrl = FileUtils.getPath(
-                    appCtx.externalFilesDir,
-                    "covers",
-                    "${MD5Utils.md5Encode16(book.bookUrl)}.jpg"
-                )
-            }
-            if (!File(book.coverUrl!!).exists()) {
-                epubBook!!.coverImage?.inputStream?.use {
-                    val cover = BitmapFactory.decodeStream(it)
-                    val out = FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
-                    cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
-                    out.flush()
-                    out.close()
+            epubBook = readEpub(inputStream)
+            if (epubBook != null) {
+                if (book.coverUrl.isNullOrEmpty()) {
+                    book.coverUrl = FileUtils.getPath(
+                        appCtx.externalFilesDir,
+                        "covers",
+                        "${MD5Utils.md5Encode16(book.bookUrl)}.jpg"
+                    )
+                }
+                if (!File(book.coverUrl!!).exists()) {
+                    epubBook!!.coverImage?.inputStream?.use {
+                        val cover = BitmapFactory.decodeStream(it)
+                        val out = FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
+                        cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                        out.flush()
+                        out.close()
+                    }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
+    private fun readEpub(input: InputStream?): Book? {
+        if (input == null) return null
+        try {
+            val inZip = ZipInputStream(input)
+            var zipEntry: ZipEntry?
+            val resources = Resources()
+            do {
+                zipEntry = inZip.nextEntry
+                if ((zipEntry == null) || zipEntry.isDirectory || zipEntry == ZipEntry("<error>")) continue
+                val resource = ResourceUtil.createResource(zipEntry, inZip)
+                if (resource.mediaType == MediatypeService.XHTML) {
+                    resource.inputEncoding = "UTF-8";
+                }
+                if (zipEntry.name.endsWith("opf")) {
+                    /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
+                    val newS = String(resource.data).replace(
+                        "\\smlns=\"http://www.idpf.org/2007/opf\"".toRegex(),
+                        " xmlns=\"http://www.idpf.org/2007/opf\""
+                    )
+                    resource.data = newS.toByteArray()
+                }
+                resources.add(resource)
+            } while (zipEntry != null)
+            if (resources.size() > 0) return EpubReader().readEpub(resources)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     private fun getContent(chapter: BookChapter): String? {
