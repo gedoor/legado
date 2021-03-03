@@ -153,6 +153,7 @@ class ZhLayout(
                 if (!breakLine) {
                     offset = 0f
                     lineEnd[line] = index + 1
+                    lineStart[line + 1] = lineEnd[line]
                     lineWidth[line] = lineW - offset
                     lineW = offset
                     line++
@@ -160,6 +161,7 @@ class ZhLayout(
                 /*写满断行、段落末尾、且需要下移字符，这种特殊情况下要额外多一行*/
                 else if (breakCharCnt > 0) {
                     lineEnd[line] = lineStart[line] + breakCharCnt
+                    lineStart[line + 1] = lineEnd[line]
                     lineWidth[line] = lineW
                     line++
                 }
@@ -225,7 +227,9 @@ class ZhLayout(
         return 0
     }
 
-    override fun getLineStart(line: Int): Int = lineStart[line]
+    override fun getLineStart(line: Int): Int {
+        return lineStart[line]
+    }
 
     override fun getParagraphDirection(line: Int): Int {
         return 0
