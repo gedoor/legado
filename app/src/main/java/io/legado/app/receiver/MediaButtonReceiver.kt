@@ -31,6 +31,12 @@ import kotlinx.coroutines.withContext
 
 class MediaButtonReceiver : BroadcastReceiver() {
 
+    override fun onReceive(context: Context, intent: Intent) {
+        if (handleIntent(context, intent) && isOrderedBroadcast) {
+            abortBroadcast()
+        }
+    }
+
     companion object {
 
         fun handleIntent(context: Context, intent: Intent): Boolean {
@@ -55,7 +61,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
             return true
         }
 
-        private fun readAloud(context: Context) {
+        fun readAloud(context: Context) {
             when {
                 BaseReadAloudService.isRun -> if (BaseReadAloudService.isPlay()) {
                     ReadAloud.pause(context)
@@ -94,12 +100,6 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     }
                 }
             }
-        }
-    }
-
-    override fun onReceive(context: Context, intent: Intent) {
-        if (handleIntent(context, intent) && isOrderedBroadcast) {
-            abortBroadcast()
         }
     }
 
