@@ -297,7 +297,8 @@
         <!-- 文字处理 -->
         <activity
             android:name=".receiver.SharedReceiverActivity"
-            android:label="@string/receiving_shared_label">
+            android:label="@string/receiving_shared_label"
+            android:theme="@style/AppTheme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
