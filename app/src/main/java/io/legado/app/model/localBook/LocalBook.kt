@@ -83,6 +83,7 @@ object LocalBook {
                 "${MD5Utils.md5Encode16(path)}.jpg"
             )
         )
+        if (book.isEpub()) EPUBFile.upBookInfo(book)
         appDb.bookDao.insert(book)
         return book
     }
