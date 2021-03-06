@@ -164,7 +164,7 @@ object ChapterProvider {
                     }
                 }
             }
-            val textLine = TextLine(isImage = true)
+            val textLine = TextLine()
             textLine.lineTop = durY
             durY += height
             textLine.lineBottom = durY
