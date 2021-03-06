@@ -15,9 +15,9 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
     fun saveRule(rule: TxtTocRule) {
         execute {
             if (rule.serialNumber < 0) {
-                rule.serialNumber = appDb.txtTocRule.lastOrderNum + 1
+                rule.serialNumber = appDb.txtTocRuleDao.lastOrderNum + 1
             }
-            appDb.txtTocRule.insert(rule)
+            appDb.txtTocRuleDao.insert(rule)
         }
     }
 
@@ -31,7 +31,7 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
         execute {
             RxHttp.get(url).toText("utf-8").await().let { json ->
                 GSON.fromJsonArray<TxtTocRule>(json)?.let {
-                    appDb.txtTocRule.insert(*it.toTypedArray())
+                    appDb.txtTocRuleDao.insert(*it.toTypedArray())
                 }
             }
         }.onSuccess {

@@ -141,7 +141,7 @@ object Restore {
                 appDb.ruleSubDao.insert(*it.toTypedArray())
             }
             fileToListT<TxtTocRule>(path, DefaultData.txtTocRuleFileName)?.let {
-                appDb.txtTocRule.insert(*it.toTypedArray())
+                appDb.txtTocRuleDao.insert(*it.toTypedArray())
             }
             fileToListT<HttpTTS>(path, DefaultData.httpTtsFileName)?.let {
                 appDb.httpTTSDao.insert(*it.toTypedArray())

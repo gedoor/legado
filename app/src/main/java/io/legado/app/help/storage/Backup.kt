@@ -67,7 +67,7 @@ object Backup {
             writeListToJson(appDb.readRecordDao.all, "readRecord.json", backupPath)
             writeListToJson(appDb.searchKeywordDao.all, "searchHistory.json", backupPath)
             writeListToJson(appDb.ruleSubDao.all, "sourceSub.json", backupPath)
-            writeListToJson(appDb.txtTocRule.all, DefaultData.txtTocRuleFileName, backupPath)
+            writeListToJson(appDb.txtTocRuleDao.all, DefaultData.txtTocRuleFileName, backupPath)
             writeListToJson(appDb.httpTTSDao.all, DefaultData.httpTtsFileName, backupPath)
             GSON.toJson(ReadBookConfig.configList).let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)

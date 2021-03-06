@@ -95,7 +95,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private fun initData() {
         tocRegexLiveData?.removeObservers(viewLifecycleOwner)
-        tocRegexLiveData = appDb.txtTocRule.observeAll()
+        tocRegexLiveData = appDb.txtTocRuleDao.observeAll()
         tocRegexLiveData?.observe(viewLifecycleOwner, { tocRules ->
             initSelectedName(tocRules)
             adapter.setItems(tocRules)
@@ -225,7 +225,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                         getItem(holder.layoutPosition)?.let {
                             it.enable = isChecked
                             launch(IO) {
-                                appDb.txtTocRule.update(it)
+                                appDb.txtTocRuleDao.update(it)
                             }
                         }
                     }
@@ -236,7 +236,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 ivDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { item ->
                         launch(IO) {
-                            appDb.txtTocRule.delete(item)
+                            appDb.txtTocRuleDao.delete(item)
                         }
                     }
                 }
@@ -258,7 +258,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                     item.serialNumber = index + 1
                 }
                 launch(IO) {
-                    appDb.txtTocRule.update(*getItems().toTypedArray())
+                    appDb.txtTocRuleDao.update(*getItems().toTypedArray())
                 }
             }
             isMoved = false

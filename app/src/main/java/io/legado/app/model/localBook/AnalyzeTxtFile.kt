@@ -277,10 +277,10 @@ class AnalyzeTxtFile {
         }
 
         private fun getTocRules(): List<TxtTocRule> {
-            var rules = appDb.txtTocRule.enabled
+            var rules = appDb.txtTocRuleDao.enabled
             if (rules.isEmpty()) {
                 rules = DefaultData.txtTocRules.apply {
-                    appDb.txtTocRule.insert(*this.toTypedArray())
+                    appDb.txtTocRuleDao.insert(*this.toTypedArray())
                 }.filter {
                     it.enable
                 }

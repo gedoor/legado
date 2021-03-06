@@ -61,8 +61,8 @@ object DefaultData {
     }
 
     fun importDefaultTocRules() {
-        appDb.txtTocRule.deleteDefault()
-        appDb.txtTocRule.insert(*txtTocRules.toTypedArray())
+        appDb.txtTocRuleDao.deleteDefault()
+        appDb.txtTocRuleDao.insert(*txtTocRules.toTypedArray())
     }
 
     fun importDefaultRssSources() {

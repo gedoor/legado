@@ -37,6 +37,8 @@ data class BookChapter(
     var tag: String? = null,            //
     var start: Long? = null,            // 章节起始位置
     var end: Long? = null,              // 章节终止位置
+    var startFragmentId: String? = null,  //EPUB书籍当前章节的fragmentId
+    var endFragmentId: String? = null,    //EPUB书籍下一章节的fragmentId
     var variable: String? = null        //变量
 ) : Parcelable {
 
