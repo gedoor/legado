@@ -81,7 +81,6 @@ object ChapterProvider {
         bookChapter: BookChapter,
         contents: List<String>,
         chapterSize: Int,
-        imageStyle: String?,
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val stringBuilder = StringBuilder()
@@ -94,7 +93,7 @@ object ChapterProvider {
                     if (!book.isEpub()) {
                         val src = NetworkUtils.getAbsoluteURL(bookChapter.url, it)
                         durY = setTypeImage(
-                            book, bookChapter, src, durY, textPages, imageStyle
+                            book, bookChapter, src, durY, textPages, book.getImageStyle()
                         )
                     }
                 }
@@ -142,9 +141,12 @@ object ChapterProvider {
             var height = it.height
             var width = it.width
             when (imageStyle?.toUpperCase(Locale.ROOT)) {
-                "FULL" -> {
+                Book.imgStyleFull -> {
                     width = visibleWidth
                     height = it.height * visibleWidth / it.width
+                }
+                Book.imgStyleText -> {
+
                 }
                 else -> {
                     if (it.width > visibleWidth) {

@@ -146,6 +146,14 @@ data class Book(
         config().pageAnim = pageAnim
     }
 
+    fun getImageStyle(): String? {
+        return config().imageStyle
+    }
+
+    fun setImageStyle(imageStyle: String?) {
+        config().imageStyle = imageStyle
+    }
+
     fun getDelParagraph(): Int {
         return config().delParagraph
     }
@@ -228,15 +236,19 @@ data class Book(
         const val hTag = 2L
         const val rubyTag = 4L
         const val imgTag = 8L
+        const val imgStyleDefault = "DEFAULT"
+        const val imgStyleFull = "FULL"
+        const val imgStyleText = "TEXT"
     }
 
     @Parcelize
     data class ReadConfig(
         var pageAnim: Int = -1,
         var reSegment: Boolean = false,
-        var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,         // 正文使用净化替换规则
+        var imageStyle: String? = null,
+        var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,// 正文使用净化替换规则
         var delParagraph: Int = 0,//去除段首
-        var delTag: Long = 0L//去除标签
+        var delTag: Long = 0L,//去除标签
     ) : Parcelable
 
     class Converters {

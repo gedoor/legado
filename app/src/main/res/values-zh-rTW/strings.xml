@@ -810,5 +810,6 @@
     <string name="export_to_web_dav">匯出到WebDav</string>
     <string name="reverse_content">反转内容</string>
     <string name="debug">调试</string>
+    <string name="image_style">图片样式</string>
 
 </resources>
