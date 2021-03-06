@@ -88,6 +88,10 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
             val alertBinding = DialogBookmarkBinding.inflate(layoutInflater).apply {
                 editBookText.setText(bookmark.bookText)
                 editView.setText(bookmark.content)
+                editBookText.textSize = 15f
+                editView.textSize = 15f
+                editBookText.maxLines= 6
+                editView.maxLines= 6
             }
             customView { alertBinding.root }
             yesButton {

@@ -148,7 +148,7 @@ object BookHelp {
 
     fun getChapterFiles(book: Book): List<String> {
         val fileNameList = arrayListOf<String>()
-        if (book.isLocalBook()) {
+        if (book.isLocalTxt()) {
             return fileNameList
         }
         FileUtils.createFolderIfNotExist(
@@ -162,7 +162,7 @@ object BookHelp {
 
     // 检测该章节是否下载
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-        return if (book.isLocalBook()) {
+        return if (book.isLocalTxt()) {
             true
         } else {
             FileUtils.exists(
@@ -175,8 +175,19 @@ object BookHelp {
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-        if (book.isLocalBook()) {
+        if (book.isLocalTxt()) {
             return LocalBook.getContext(book, bookChapter)
+        } else if (book.isEpub() && !hasContent(book, bookChapter)) {
+            val string = LocalBook.getContext(book, bookChapter)
+            string?.let {
+                FileUtils.createFileIfNotExist(
+                    downloadDir,
+                    cacheFolderName,
+                    book.getFolderName(),
+                    bookChapter.getFileName(),
+                ).writeText(it)
+            }
+            return string
         } else {
             val file = FileUtils.getFile(
                 downloadDir,
@@ -211,7 +222,7 @@ object BookHelp {
     }
 
     fun delContent(book: Book, bookChapter: BookChapter) {
-        if (book.isLocalBook()) {
+        if (book.isLocalTxt()) {
             return
         } else {
             FileUtils.createFileIfNotExist(
