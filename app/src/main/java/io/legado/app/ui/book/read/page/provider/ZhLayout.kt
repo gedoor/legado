@@ -167,9 +167,6 @@ class ZhLayout(
                 }
             }
             cwPre = cw
-            if (line >= 999) {
-                return@forEachIndexed
-            }
         }
 
         lineCount = line
