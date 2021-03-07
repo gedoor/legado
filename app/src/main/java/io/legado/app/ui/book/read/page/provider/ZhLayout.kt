@@ -18,10 +18,10 @@ class ZhLayout(
     textPaint: TextPaint,
     width: Int
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
-    var lineStart = IntArray(1000)
-    var lineEnd = IntArray(1000)
-    var lineWidth = FloatArray(1000)
-    var lineCompressMod = IntArray(1000)
+    var lineStart = arrayListOf<Int>()
+    var lineEnd = arrayListOf<Int>()
+    var lineWidth = arrayListOf<Float>()
+    var lineCompressMod = arrayListOf<Int>()
     private var lineCount = 0
     private val curPaint = textPaint
     private val cnCharWitch = getDesiredWidth("我", textPaint)
