@@ -12,7 +12,8 @@ data class TextLine(
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,
     val isTitle: Boolean = false,
-    var isReadAloud: Boolean = false
+    var isReadAloud: Boolean = false,
+    var isImage: Boolean = false
 ) {
 
     val charSize: Int get() = textChars.size
