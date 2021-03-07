@@ -12,7 +12,7 @@ interface EpubChapterDao {
     fun getCnt(bookUrl: String): Int
 
     @Query("select * from epubChapters Where bookUrl = :bookUrl and parentHref = :parentHref ")
-    fun get(bookUrl: String, parentHref: String): List<EpubChapter>?
+    fun get(bookUrl: String, parentHref: String): List<EpubChapter>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg chapter: EpubChapter)
