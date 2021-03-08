@@ -7,11 +7,10 @@ import android.text.TextPaint
 import io.legado.app.utils.toStringArray
 import kotlin.math.max
 
-/*
-* 针对中文的断行排版处理-by hoodie13
-* 因为StaticLayout对标点处理不符合国人习惯，继承Layout
-* 接口封的不抽象，数组用的也琐碎，因目前语法不熟悉，后面完善。
-* */
+/**
+ * 针对中文的断行排版处理-by hoodie13
+ * 因为StaticLayout对标点处理不符合国人习惯，继承Layout
+ * */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ZhLayout(
     text: String,
@@ -145,8 +144,7 @@ class ZhLayout(
             if (breakLine) {
                 lineWidth[line] = lineW - offset
                 lineW = offset
-                line++
-                addLineArray(line)
+                addLineArray(++line)
             }
             /*已到最后一个字符*/
             if ((words.lastIndex) == index) {
@@ -155,15 +153,13 @@ class ZhLayout(
                     lineStart[line + 1] = index + 1
                     lineWidth[line] = lineW - offset
                     lineW = offset
-                    line++
-                    addLineArray(line)
+                    addLineArray(++line)
                 }
                 /*写满断行、段落末尾、且需要下移字符，这种特殊情况下要额外多一行*/
                 else if (breakCharCnt > 0) {
                     lineStart[line + 1] = lineStart[line] + breakCharCnt
                     lineWidth[line] = lineW
-                    line++
-                    addLineArray(line)
+                    addLineArray(++line)
                 }
             }
             cwPre = cw
