@@ -18,10 +18,9 @@ class ZhLayout(
     textPaint: TextPaint,
     width: Int
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
-    var lineStart = arrayListOf<Int>()
-    var lineEnd = arrayListOf<Int>()
-    var lineWidth = arrayListOf<Float>()
-    var lineCompressMod = arrayListOf<Int>()
+    var lineStart = IntArray(100)
+    var lineWidth = FloatArray(100)
+    var lineCompressMod = IntArray(100)
     private var lineCount = 0
     private val curPaint = textPaint
     private val cnCharWitch = getDesiredWidth("我", textPaint)
@@ -103,37 +102,37 @@ class ZhLayout(
                 when (breakMod) {
                     BreakMod.NORMAL -> {//模式0 正常断行
                         offset = cw
-                        lineEnd[line] = index
+                        lineStart[line + 1] = index
                         lineCompressMod[line] = 0
                         breakCharCnt = 1
                     }
                     BreakMod.BREAK_ONE_CHAR -> {//模式1 当前行下移一个字
                         offset = cw + cwPre
-                        lineEnd[line] = index - 1
+                        lineStart[line + 1] = index - 1
                         lineCompressMod[line] = 0
                         breakCharCnt = 2
                     }
                     BreakMod.BREAK_MORE_CHAR -> {//模式2 当前行下移多个字
                         offset = cw + cwPre
-                        lineEnd[line] = index - breakIndex
+                        lineStart[line + 1] = index - breakIndex
                         lineCompressMod[line] = 0
                         breakCharCnt = breakIndex + 1
                     }
                     BreakMod.CPS_1 -> {//模式3 两个后置标点压缩
                         offset = 0f
-                        lineEnd[line] = index + 1
+                        lineStart[line + 1] = index + 1
                         lineCompressMod[line] = 1
                         breakCharCnt = 0
                     }
                     BreakMod.CPS_2 -> { //模式4 前置标点压缩+前置标点压缩+字
                         offset = 0f
-                        lineEnd[line] = index + 1
+                        lineStart[line + 1] = index + 1
                         lineCompressMod[line] = 2
                         breakCharCnt = 0
                     }
                     BreakMod.CPS_3 -> {//模式5 前置标点压缩+字+后置标点压缩
                         offset = 0f
-                        lineEnd[line] = index + 1
+                        lineStart[line + 1] = index + 1
                         lineCompressMod[line] = 3
                         breakCharCnt = 0
                     }
@@ -144,26 +143,26 @@ class ZhLayout(
             /*当前行写满情况下的断行*/
             if (breakLine) {
                 lineWidth[line] = lineW - offset
-                lineStart[line + 1] = lineEnd[line]
                 lineW = offset
                 line++
+                addLineArray(line)
             }
             /*已到最后一个字符*/
             if ((words.lastIndex) == index) {
                 if (!breakLine) {
                     offset = 0f
-                    lineEnd[line] = index + 1
-                    lineStart[line + 1] = lineEnd[line]
+                    lineStart[line + 1] = index + 1
                     lineWidth[line] = lineW - offset
                     lineW = offset
                     line++
+                    addLineArray(line)
                 }
                 /*写满断行、段落末尾、且需要下移字符，这种特殊情况下要额外多一行*/
                 else if (breakCharCnt > 0) {
-                    lineEnd[line] = lineStart[line] + breakCharCnt
-                    lineStart[line + 1] = lineEnd[line]
+                    lineStart[line + 1] = lineStart[line] + breakCharCnt
                     lineWidth[line] = lineW
                     line++
+                    addLineArray(line)
                 }
             }
             cwPre = cw
@@ -171,6 +170,14 @@ class ZhLayout(
 
         lineCount = line
 
+    }
+
+    private fun addLineArray(line: Int) {
+        if (lineStart.size <= line) {
+            lineStart = lineStart.copyOf(line + 100)
+            lineWidth = lineWidth.copyOf(line + 100)
+            lineCompressMod = lineCompressMod.copyOf(line + 100)
+        }
     }
 
     private fun isPostPanc(string: String): Boolean {
