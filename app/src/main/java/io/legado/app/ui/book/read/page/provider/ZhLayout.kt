@@ -20,7 +20,6 @@ class ZhLayout(
     private val defaultCapacity = 10
     var lineStart = IntArray(defaultCapacity)
     var lineWidth = FloatArray(defaultCapacity)
-    var lineCompressMod = IntArray(defaultCapacity)
     private var lineCount = 0
     private val curPaint = textPaint
     private val cnCharWitch = getDesiredWidth("我", textPaint)
@@ -103,37 +102,31 @@ class ZhLayout(
                     BreakMod.NORMAL -> {//模式0 正常断行
                         offset = cw
                         lineStart[line + 1] = index
-                        lineCompressMod[line] = 0
                         breakCharCnt = 1
                     }
                     BreakMod.BREAK_ONE_CHAR -> {//模式1 当前行下移一个字
                         offset = cw + cwPre
                         lineStart[line + 1] = index - 1
-                        lineCompressMod[line] = 0
                         breakCharCnt = 2
                     }
                     BreakMod.BREAK_MORE_CHAR -> {//模式2 当前行下移多个字
                         offset = cw + cwPre
                         lineStart[line + 1] = index - breakIndex
-                        lineCompressMod[line] = 0
                         breakCharCnt = breakIndex + 1
                     }
                     BreakMod.CPS_1 -> {//模式3 两个后置标点压缩
                         offset = 0f
                         lineStart[line + 1] = index + 1
-                        lineCompressMod[line] = 1
                         breakCharCnt = 0
                     }
                     BreakMod.CPS_2 -> { //模式4 前置标点压缩+前置标点压缩+字
                         offset = 0f
                         lineStart[line + 1] = index + 1
-                        lineCompressMod[line] = 2
                         breakCharCnt = 0
                     }
                     BreakMod.CPS_3 -> {//模式5 前置标点压缩+字+后置标点压缩
                         offset = 0f
                         lineStart[line + 1] = index + 1
-                        lineCompressMod[line] = 3
                         breakCharCnt = 0
                     }
                 }
@@ -173,7 +166,6 @@ class ZhLayout(
         if (lineStart.size <= line + 1) {
             lineStart = lineStart.copyOf(line + defaultCapacity)
             lineWidth = lineWidth.copyOf(line + defaultCapacity)
-            lineCompressMod = lineCompressMod.copyOf(line + defaultCapacity)
         }
     }
 
@@ -252,7 +244,9 @@ class ZhLayout(
         return 0
     }
 
-    override fun getLineWidth(line: Int): Float = lineWidth[line]
+    override fun getLineWidth(line: Int): Float {
+        return lineWidth[line]
+    }
 
     override fun getEllipsisStart(line: Int): Int {
         return 0
@@ -260,103 +254,6 @@ class ZhLayout(
 
     override fun getEllipsisCount(line: Int): Int {
         return 0
-    }
-
-    fun getDefaultWidth(): Float = cnCharWitch
-
-    /*
-    * @fun：获取当前行的平均间隔：用于两端对齐，获取左对齐时的右边间隔：用于间隔过大时不再两端对齐
-    * @in：行，当前字符串，最大显示宽度
-    * @out：单个字符的平均间隔，左对齐的最大间隔
-    */
-    fun getInterval(line: Int, words: Array<String>, visibleWidth: Int): Interval {
-        val interval = Interval()
-        val total: Float
-        val d: Float
-        val lastIndex = words.lastIndex
-        val desiredWidth = getLineWidth(line)
-        if (lineCompressMod[line] > 0) {
-            val gapCount: Int = lastIndex - 1
-            val lastWordsWith = getDesiredWidth(words[lastIndex], curPaint)
-            total = visibleWidth - desiredWidth + lastWordsWith
-            d = total / gapCount
-        } else {
-            val gapCount: Int = lastIndex
-            total = visibleWidth - desiredWidth
-            d = total / gapCount
-        }
-        interval.total = total
-        interval.single = d
-        return interval
-    }
-
-    /*
-    * @fun：获取当前行不同字符的位置
-    * @in：行，当前字符对于最后一个字符的偏移值，字符，间隔，定位参数
-    * @out：定位参数
-    */
-    fun getLocate(line: Int, idx: Int, string: String, interval: Float, locate: Locate) {
-        val cw = getDesiredWidth(string, curPaint)
-        when (lineCompressMod[line]) {
-            1 -> {
-                when (idx) {
-                    1 -> {
-                        val offset = getPostPancOffset(string)
-                        locate.start -= offset
-                        locate.end = locate.start + cw / 2 + offset
-                    }
-                    0 -> {
-                        locate.start -= getPostPancOffset(string)
-                        locate.end = locate.start + cw
-                    }
-                    else -> {
-                        locate.end = locate.start + cw + interval
-                    }
-                }
-            }
-            2 -> {
-                when (idx) {
-                    2 -> {
-                        val offset = getPostPancOffset(string)
-                        locate.start -= offset
-                        locate.end = locate.start + cw / 2 + offset
-                    }
-                    1 -> {
-                        val offset = getPostPancOffset(string)
-                        locate.start -= offset
-                        locate.end = locate.start + cw / 2 + offset
-                    }
-                    0 -> {
-                        locate.end = locate.start + cw
-                    }
-                    else -> {
-                        locate.end = locate.start + cw + interval
-                    }
-                }
-            }
-            3 -> {
-                when (idx) {
-                    2 -> {
-                        val offset = getPrePancOffset(string)
-                        locate.start -= offset
-                        locate.end = locate.start + cw / 2 + offset
-                    }
-                    1 -> {
-                        locate.end = locate.start + cw + interval
-                    }
-                    0 -> {
-                        locate.start -= getPostPancOffset(string)
-                        locate.end = locate.start + cw
-                    }
-                    else -> {
-                        locate.end = locate.start + cw + interval
-                    }
-                }
-            }
-            else -> {
-                locate.end = if (idx != 0) (locate.start + cw + interval) else (locate.start + cw)
-            }
-        }
     }
 
 }
