@@ -18,9 +18,10 @@ class ZhLayout(
     textPaint: TextPaint,
     width: Int
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
-    var lineStart = IntArray(100)
-    var lineWidth = FloatArray(100)
-    var lineCompressMod = IntArray(100)
+    private val defaultCapacity = 10
+    var lineStart = IntArray(defaultCapacity)
+    var lineWidth = FloatArray(defaultCapacity)
+    var lineCompressMod = IntArray(defaultCapacity)
     private var lineCount = 0
     private val curPaint = textPaint
     private val cnCharWitch = getDesiredWidth("我", textPaint)
@@ -173,10 +174,10 @@ class ZhLayout(
     }
 
     private fun addLineArray(line: Int) {
-        if (lineStart.size <= line) {
-            lineStart = lineStart.copyOf(line + 100)
-            lineWidth = lineWidth.copyOf(line + 100)
-            lineCompressMod = lineCompressMod.copyOf(line + 100)
+        if (lineStart.size <= line + 1) {
+            lineStart = lineStart.copyOf(line + defaultCapacity)
+            lineWidth = lineWidth.copyOf(line + defaultCapacity)
+            lineCompressMod = lineCompressMod.copyOf(line + defaultCapacity)
         }
     }
 
