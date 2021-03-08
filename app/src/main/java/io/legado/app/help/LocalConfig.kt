@@ -71,5 +71,5 @@ object LocalConfig {
         get() = !isLastVersion(1, "txtTocRuleVersion")
 
     val hasUpRssSources: Boolean
-        get() = !isLastVersion(1, "rssSourceVersion")
+        get() = !isLastVersion(2, "rssSourceVersion")
 }
