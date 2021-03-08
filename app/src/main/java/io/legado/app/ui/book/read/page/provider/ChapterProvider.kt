@@ -95,8 +95,9 @@ object ChapterProvider {
                 val sb = StringBuffer()
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
-                    matcher.group(1)?.let {
-                        srcList.add(it)
+                    matcher.group(1)?.let { src ->
+                        srcList.add(src)
+                        ImageProvider.getImage(book, bookChapter.index, src)
                         matcher.appendReplacement(sb, srcReplaceChar)
                     }
                 }
@@ -106,13 +107,8 @@ object ChapterProvider {
                 val textPaint = if (isTitle) titlePaint else contentPaint
                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                     durY = setTypeText(
-                        text,
-                        durY,
-                        textPages,
-                        stringBuilder,
-                        isTitle,
-                        textPaint,
-                        srcList
+                        text, durY, textPages, stringBuilder,
+                        isTitle, textPaint, srcList
                     )
                 }
             } else if (book.getImageStyle() != Book.imgStyleText) {
@@ -332,13 +328,20 @@ object ChapterProvider {
         bodyIndent.toStringArray().forEach {
             val x1 = x + icw
             if (srcList != null && it == srcReplaceChar) {
-                textLine.addTextChar(
-                    srcList.removeFirst(),
-                    start = paddingLeft + x,
-                    end = paddingLeft + x1
+                textLine.textChars.add(
+                    TextChar(
+                        srcList.removeFirst(),
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1,
+                        isImage = true
+                    )
                 )
             } else {
-                textLine.addTextChar(it, start = paddingLeft + x, end = paddingLeft + x1)
+                textLine.textChars.add(
+                    TextChar(
+                        it, start = paddingLeft + x, end = paddingLeft + x1
+                    )
+                )
             }
             x = x1
         }
@@ -368,13 +371,20 @@ object ChapterProvider {
             val cw = StaticLayout.getDesiredWidth(s, textPaint)
             val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
             if (srcList != null && s == srcReplaceChar) {
-                textLine.addTextChar(
-                    srcList.removeFirst(),
-                    start = paddingLeft + x,
-                    end = paddingLeft + x1
+                textLine.textChars.add(
+                    TextChar(
+                        srcList.removeFirst(),
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1,
+                        isImage = true
+                    )
                 )
             } else {
-                textLine.addTextChar(charData = s, start = paddingLeft + x, end = paddingLeft + x1)
+                textLine.textChars.add(
+                    TextChar(
+                        s, start = paddingLeft + x, end = paddingLeft + x1
+                    )
+                )
             }
             x = x1
         }
@@ -396,13 +406,20 @@ object ChapterProvider {
             val cw = StaticLayout.getDesiredWidth(it, textPaint)
             val x1 = x + cw
             if (srcList != null && it == srcReplaceChar) {
-                textLine.addTextChar(
-                    srcList.removeFirst(),
-                    start = paddingLeft + x,
-                    end = paddingLeft + x1
+                textLine.textChars.add(
+                    TextChar(
+                        srcList.removeFirst(),
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1,
+                        isImage = true
+                    )
                 )
             } else {
-                textLine.addTextChar(charData = it, start = paddingLeft + x, end = paddingLeft + x1)
+                textLine.textChars.add(
+                    TextChar(
+                        it, start = paddingLeft + x, end = paddingLeft + x1
+                    )
+                )
             }
             x = x1
         }

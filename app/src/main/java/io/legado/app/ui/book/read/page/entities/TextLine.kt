@@ -24,10 +24,6 @@ data class TextLine(
         lineBase = lineBottom - textPaint.fontMetrics.descent
     }
 
-    fun addTextChar(charData: String, start: Float, end: Float) {
-        textChars.add(TextChar(charData, start = start, end = end))
-    }
-
     fun getTextChar(index: Int): TextChar {
         return textChars.getOrElse(index) {
             textChars.last()
