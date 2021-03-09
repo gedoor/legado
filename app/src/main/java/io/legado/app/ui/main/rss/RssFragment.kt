@@ -25,6 +25,7 @@ import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.ui.rss.source.manage.RssSourceViewModel
 import io.legado.app.ui.rss.subscription.RuleSubActivity
 import io.legado.app.utils.cnCompare
+import io.legado.app.utils.openUrl
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -143,9 +144,13 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     override fun openRss(rssSource: RssSource) {
         if (rssSource.singleUrl) {
-            startActivity<ReadRssActivity> {
-                putExtra("title", rssSource.sourceName)
-                putExtra("origin", rssSource.sourceUrl)
+            if (rssSource.sourceUrl.startsWith("http", true)) {
+                startActivity<ReadRssActivity> {
+                    putExtra("title", rssSource.sourceName)
+                    putExtra("origin", rssSource.sourceUrl)
+                }
+            } else {
+                context?.openUrl(rssSource.sourceUrl)
             }
         } else {
             startActivity<RssSortActivity> {

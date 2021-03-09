@@ -27,6 +27,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
@@ -253,6 +254,16 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 viewModel.reverseContent(it)
             }
             R.id.menu_set_charset -> showCharsetConfig()
+            R.id.menu_image_style -> {
+                val imgStyles =
+                    arrayListOf(Book.imgStyleDefault, Book.imgStyleFull, Book.imgStyleText)
+                selector(
+                    R.string.image_style,
+                    imgStyles
+                ) { _, index ->
+                    ReadBook.book?.setImageStyle(imgStyles[index])
+                }
+            }
             R.id.menu_get_progress -> ReadBook.book?.let {
                 viewModel.syncBookProgress(it) { progress ->
                     sureSyncProgress(progress)

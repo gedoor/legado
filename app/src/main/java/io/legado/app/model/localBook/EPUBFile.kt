@@ -133,7 +133,7 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
         /*获取当前章节文本*/
         var string = getChildChapter(chapter, chapter.url)
         val childContends = appDb.epubChapterDao.get(book.bookUrl, chapter.url)
-        childContends?.forEach {
+        childContends.forEach {
             string += "\n" + getChildChapter(chapter, it.href)
         }
         return string

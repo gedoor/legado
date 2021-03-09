@@ -17,5 +17,14 @@
     "sourceName": "阅读下载",
     "sourceUrl": "https:\/\/github.com\/gedoor\/legado\/releases",
     "style": ""
+  },
+  {
+    "customOrder": 1,
+    "enableJs": true,
+    "enabled": true,
+    "singleUrl": true,
+    "sourceIcon": "http:\/\/mmbiz.qpic.cn\/mmbiz_png\/hpfMV8hEuL2eS6vnCxvTzoOiaCAibV6exBzJWq9xMic9xDg3YXAick87tsfafic0icRwkQ5ibV0bJ84JtSuxhPuEDVquA\/0?wx_fmt=png",
+    "sourceName": "小说拾遗",
+    "sourceUrl": "snssdk1128:\/\/user\/profile\/562564899806367"
   }
 ]
