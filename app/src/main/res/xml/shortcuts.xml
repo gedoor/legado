@@ -36,7 +36,7 @@
             android:targetClass="io.legado.app.receiver.SharedReceiverActivity">
             <extra
                 android:name="action"
-                android:value="mediaButton" />
+                android:value="readAloud" />
         </intent>
         <categories android:name="android.shortcut.conversation" />
     </shortcut>

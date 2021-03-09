@@ -175,6 +175,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val preDownload get() = appCtx.getPrefBoolean(PreferKey.preDownload, true)
 
+    val mediaButtonOnExit get() = appCtx.getPrefBoolean("mediaButtonOnExit", true)
+
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {
