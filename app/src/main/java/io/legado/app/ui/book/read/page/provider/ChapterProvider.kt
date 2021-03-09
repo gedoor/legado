@@ -95,7 +95,8 @@ object ChapterProvider {
                 val sb = StringBuffer()
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
-                    matcher.group(1)?.let { src ->
+                    matcher.group(1)?.let { it ->
+                        val src = NetworkUtils.getAbsoluteURL(bookChapter.url, it)
                         srcList.add(src)
                         ImageProvider.getImage(book, bookChapter.index, src)
                         matcher.appendReplacement(sb, srcReplaceChar)
@@ -117,16 +118,12 @@ object ChapterProvider {
                         if (text.isNotBlank()) {
                             val matcher = AppPattern.imgPattern.matcher(text)
                             if (matcher.find()) {
-                                matcher.group(1)?.let { mt ->
+                                matcher.group(1)?.let { it ->
                                     if (!book.isEpub()) {
-                                        val src = NetworkUtils.getAbsoluteURL(bookChapter.url, mt)
+                                        val src = NetworkUtils.getAbsoluteURL(bookChapter.url, it)
                                         durY = setTypeImage(
-                                            book,
-                                            bookChapter,
-                                            src,
-                                            durY,
-                                            textPages,
-                                            book.getImageStyle()
+                                            book, bookChapter, src,
+                                            durY, textPages, book.getImageStyle()
                                         )
                                     }
                                 }
@@ -135,12 +132,8 @@ object ChapterProvider {
                                 val textPaint = if (isTitle) titlePaint else contentPaint
                                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                                     durY = setTypeText(
-                                        text,
-                                        durY,
-                                        textPages,
-                                        stringBuilder,
-                                        isTitle,
-                                        textPaint
+                                        text, durY, textPages,
+                                        stringBuilder, isTitle, textPaint
                                     )
                                 }
                             }
