@@ -6,20 +6,24 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.legado.app.App
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.androidId
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
+import splitties.init.appCtx
 import java.util.*
 
+val appDb by lazy {
+    AppDatabase.createDatabase(appCtx)
+}
 
 @Database(
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
-        RuleSub::class],
-    version = 28,
+        RuleSub::class, EpubChapter::class],
+    version = 30,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -36,11 +40,12 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val rssArticleDao: RssArticleDao
     abstract val rssStarDao: RssStarDao
     abstract val cookieDao: CookieDao
-    abstract val txtTocRule: TxtTocRuleDao
+    abstract val txtTocRuleDao: TxtTocRuleDao
     abstract val readRecordDao: ReadRecordDao
     abstract val httpTTSDao: HttpTTSDao
     abstract val cacheDao: CacheDao
     abstract val ruleSubDao: RuleSubDao
+    abstract val epubChapterDao: EpubChapterDao
 
     companion object {
 
@@ -54,7 +59,7 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_14_15, migration_15_17, migration_17_18, migration_18_19,
                     migration_19_20, migration_20_21, migration_21_22, migration_22_23,
                     migration_23_24, migration_24_25, migration_25_26, migration_26_27,
-                    migration_27_28
+                    migration_27_28, migration_28_29, migration_29_30
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -151,7 +156,7 @@ abstract class AppDatabase : RoomDatabase() {
                     """CREATE TABLE IF NOT EXISTS `readRecordNew` (`androidId` TEXT NOT NULL, `bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, 
                     PRIMARY KEY(`androidId`, `bookName`))"""
                 )
-                database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${App.androidId}' as androidId, bookName, readTime from readRecord")
+                database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${androidId}' as androidId, bookName, readTime from readRecord")
                 database.execSQL("DROP TABLE readRecord")
                 database.execSQL("ALTER TABLE readRecordNew RENAME TO readRecord")
             }
@@ -249,6 +254,28 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE rssArticles ADD variable TEXT")
                 database.execSQL("ALTER TABLE rssStars ADD variable TEXT")
+            }
+        }
+
+        private val migration_28_29 = object : Migration(28, 29) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE rssSources ADD sourceComment TEXT")
+            }
+        }
+
+        private val migration_29_30 = object : Migration(29, 30) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE chapters ADD `startFragmentId` TEXT")
+                database.execSQL("ALTER TABLE chapters ADD `endFragmentId` TEXT")
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `epubChapters` 
+                    (`bookUrl` TEXT NOT NULL, `href` TEXT NOT NULL, `parentHref` TEXT, 
+                    PRIMARY KEY(`bookUrl`, `href`), FOREIGN KEY(`bookUrl`) REFERENCES `books`(`bookUrl`) ON UPDATE NO ACTION ON DELETE CASCADE )
+                """
+                )
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_epubChapters_bookUrl` ON `epubChapters` (`bookUrl`)")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_epubChapters_bookUrl_href` ON `epubChapters` (`bookUrl`, `href`)")
             }
         }
     }

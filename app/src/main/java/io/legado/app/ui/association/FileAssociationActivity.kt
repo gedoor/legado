@@ -2,14 +2,14 @@ package io.legado.app.ui.association
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.ui.main.MainActivity
-import io.legado.app.utils.getViewModel
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import io.legado.app.utils.startActivity
 
+import io.legado.app.utils.toastOnUi
 
 class FileAssociationActivity :
     VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>(
@@ -20,14 +20,13 @@ class FileAssociationActivity :
         return ActivityTranslucenceBinding.inflate(layoutInflater)
     }
 
-    override val viewModel: FileAssociationViewModel
-        get() = getViewModel(FileAssociationViewModel::class.java)
+    override val viewModel: FileAssociationViewModel by viewModels()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()
         viewModel.errorLiveData.observe(this, {
             binding.rotateLoading.hide()
-            toast(it)
+            toastOnUi(it)
             finish()
         })
         viewModel.successLiveData.observe(this, {

@@ -6,16 +6,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
@@ -28,9 +29,6 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.startActivity
-
 
 class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
     BookAdapter.CallBack,
@@ -38,7 +36,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     SearchAdapter.CallBack {
 
     override val viewModel: SearchViewModel
-        get() = getViewModel(SearchViewModel::class.java)
+            by viewModels()
 
     lateinit var adapter: SearchAdapter
     private lateinit var bookAdapter: BookAdapter
@@ -185,15 +183,15 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 .setDefaultColor(accentColor)
                 .setPressedColor(ColorUtils.darkenColor(accentColor))
                 .create()
-        binding.fbStop.onClick {
+        binding.fbStop.setOnClickListener {
             viewModel.stop()
             binding.refreshProgressBar.isAutoLoading = false
         }
-        binding.tvClearHistory.onClick { viewModel.clearHistory() }
+        binding.tvClearHistory.setOnClickListener { viewModel.clearHistory() }
     }
 
     private fun initLiveData() {
-        App.db.bookSourceDao.liveGroupEnabled().observe(this, {
+        appDb.bookSourceDao.liveGroupEnabled().observe(this, {
             groups.clear()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -274,7 +272,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             binding.tvBookShow.gone()
             binding.rvBookshelfSearch.gone()
         } else {
-            bookData = App.db.bookDao.liveDataSearch(key)
+            bookData = appDb.bookDao.liveDataSearch(key)
             bookData?.observe(this, {
                 if (it.isEmpty()) {
                     binding.tvBookShow.gone()
@@ -289,9 +287,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         historyData?.removeObservers(this)
         historyData =
             if (key.isNullOrBlank()) {
-                App.db.searchKeywordDao.liveDataByUsage()
+                appDb.searchKeywordDao.liveDataByUsage()
             } else {
-                App.db.searchKeywordDao.liveDataSearch(key)
+                appDb.searchKeywordDao.liveDataSearch(key)
             }
         historyData?.observe(this, {
             historyKeyAdapter.setItems(it)
@@ -333,10 +331,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override fun showBookInfo(name: String, author: String) {
         viewModel.getSearchBook(name, author) { searchBook ->
             searchBook?.let {
-                startActivity<BookInfoActivity>(
-                    Pair("name", it.name),
-                    Pair("author", it.author)
-                )
+                startActivity<BookInfoActivity> {
+                    putExtra("name", it.name)
+                    putExtra("author", it.author)
+                }
             }
         }
     }
@@ -345,10 +343,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 显示书籍详情
      */
     override fun showBookInfo(book: Book) {
-        startActivity<BookInfoActivity>(
-            Pair("name", book.name),
-            Pair("author", book.author)
-        )
+        startActivity<BookInfoActivity> {
+            putExtra("name", book.name)
+            putExtra("author", book.author)
+        }
     }
 
     /**
@@ -360,7 +358,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 searchView.query.toString() == key -> {
                     searchView.setQuery(key, true)
                 }
-                withContext(IO) { App.db.bookDao.findByName(key).isEmpty() } -> {
+                withContext(IO) { appDb.bookDao.findByName(key).isEmpty() } -> {
                     searchView.setQuery(key, true)
                 }
                 else -> {

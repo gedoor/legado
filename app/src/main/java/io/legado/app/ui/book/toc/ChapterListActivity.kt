@@ -2,6 +2,7 @@ package io.legado.app.ui.book.toc
 
 import android.os.Bundle
 import android.view.Menu
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -14,14 +15,14 @@ import io.legado.app.databinding.ActivityChapterListBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.utils.getViewModel
+
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
 
 class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterListViewModel>() {
     override val viewModel: ChapterListViewModel
-        get() = getViewModel(ChapterListViewModel::class.java)
+            by viewModels()
 
     private lateinit var tabLayout: TabLayout
     private var searchView: SearchView? = null

@@ -4,9 +4,9 @@ import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.model.webBook.SearchBookModel
@@ -63,7 +63,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
 
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
         val precision = context.getPrefBoolean(PreferKey.precisionSearch)
-        App.db.searchBookDao.insert(*searchBooks.toTypedArray())
+        appDb.searchBookDao.insert(*searchBooks.toTypedArray())
         mergeItems(this, searchBooks, precision)
     }
 
@@ -146,7 +146,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun getSearchBook(name: String, author: String, success: ((searchBook: SearchBook?) -> Unit)?) {
         execute {
-            val searchBook = App.db.searchBookDao.getFirstByNameAuthor(name, author)
+            val searchBook = appDb.searchBookDao.getFirstByNameAuthor(name, author)
             success?.invoke(searchBook)
         }
     }
@@ -156,10 +156,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun saveSearchKey(key: String) {
         execute {
-            App.db.searchKeywordDao.get(key)?.let {
+            appDb.searchKeywordDao.get(key)?.let {
                 it.usage = it.usage + 1
-                App.db.searchKeywordDao.update(it)
-            } ?: App.db.searchKeywordDao.insert(SearchKeyword(key, 1))
+                appDb.searchKeywordDao.update(it)
+            } ?: appDb.searchKeywordDao.insert(SearchKeyword(key, 1))
         }
     }
 
@@ -168,7 +168,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun clearHistory() {
         execute {
-            App.db.searchKeywordDao.deleteAll()
+            appDb.searchKeywordDao.deleteAll()
         }
     }
 

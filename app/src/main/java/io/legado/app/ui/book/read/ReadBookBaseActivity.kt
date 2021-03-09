@@ -6,11 +6,13 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
+import io.legado.app.constant.charsets
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ActivityBookReadBinding
 import io.legado.app.databinding.DialogBookmarkBinding
@@ -31,7 +33,6 @@ import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
 import io.legado.app.utils.getPrefString
-import io.legado.app.utils.getViewModel
 import io.legado.app.utils.requestInputMethod
 
 /**
@@ -41,7 +42,7 @@ abstract class ReadBookBaseActivity :
     VMBaseActivity<ActivityBookReadBinding, ReadBookViewModel>() {
 
     override val viewModel: ReadBookViewModel
-        get() = getViewModel(ReadBookViewModel::class.java)
+            by viewModels()
     var bottomDialog = 0
 
     override fun getViewBinding(): ActivityBookReadBinding {
@@ -186,7 +187,7 @@ abstract class ReadBookBaseActivity :
                     editStart.setText((book.durChapterIndex + 1).toString())
                     editEnd.setText(book.totalChapterNum.toString())
                 }
-                customView = alertBinding.root
+                customView { alertBinding.root }
                 yesButton {
                     alertBinding.run {
                         val start = editStart.text?.toString()?.toInt() ?: 0
@@ -202,18 +203,18 @@ abstract class ReadBookBaseActivity :
     @SuppressLint("InflateParams")
     fun showBookMark(bookmark: Bookmark) {
         alert(title = getString(R.string.bookmark_add)) {
-            message = bookmark.chapterName
+            setMessage(bookmark.chapterName)
             val alertBinding = DialogBookmarkBinding.inflate(layoutInflater).apply {
                 editBookText.setText(bookmark.bookText)
                 editView.setText(bookmark.content)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             yesButton {
                 alertBinding.apply {
                     Coroutine.async {
                         bookmark.bookText = editBookText.text.toString()
                         bookmark.content = editView.text.toString()
-                        App.db.bookmarkDao.insert(bookmark)
+                        appDb.bookmarkDao.insert(bookmark)
                     }
                 }
             }
@@ -221,16 +222,13 @@ abstract class ReadBookBaseActivity :
         }.show().requestInputMethod()
     }
 
-    @SuppressLint("InflateParams")
     fun showCharsetConfig() {
-        val charsets =
-            arrayListOf("UTF-8", "GB2312", "GBK", "Unicode", "UTF-16", "UTF-16LE", "ASCII")
         alert(R.string.set_charset) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setFilterValues(charsets)
                 editView.setText(ReadBook.book?.charset)
             }
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     ReadBook.setCharset(it)

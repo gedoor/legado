@@ -10,7 +10,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemDownloadBinding
 import io.legado.app.service.help.CacheBook
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -54,7 +54,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemDownloadBinding) {
         with(binding) {
-            ivDownload.onClick {
+            ivDownload.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     if (downloadMap?.containsKey(it.bookUrl) == true) {
                         CacheBook.remove(context, it.bookUrl)
@@ -63,7 +63,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                     }
                 }
             }
-            tvExport.onClick {
+            tvExport.setOnClickListener {
                 callBack.export(holder.layoutPosition)
             }
         }

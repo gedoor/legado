@@ -2,7 +2,7 @@
     <!--App-->
     <string name="app_name">閱讀</string>
     <string name="receiving_shared_label">閱讀·搜尋</string>
-    <string name="tip_perm_request_storage">閱讀需要存取記憶卡權限，請前往“設定”—“應用程式權限”—打開所需權限</string>
+    <string name="tip_perm_request_storage">閱讀需要存取記憶卡權限，請前往「設定」—「應用程式權限」—打開所需權限</string>
 
     <!--Other-->
     <string name="menu_backup">Home</string>
@@ -214,7 +214,7 @@
     <string name="select_action">選擇操作</string>
     <string name="select_all">全選</string>
     <string name="select_all_count">全選(%1$d/%2$d)</string>
-    <string name="select_cancel_count">取消(%1$d/%2$d)</string>
+    <string name="select_cancel_count">取消全選(%1$d/%2$d)</string>
     <string name="dark_theme">深色模式</string>
     <string name="welcome">啟動頁</string>
     <string name="download_start">開始下載</string>
@@ -797,13 +797,19 @@
     <string name="current_progress_exceeds_cloud">目前進度超過雲端進度,是否同步?</string>
     <string name="sync_book_progress_t">同步閱讀進度</string>
     <string name="sync_book_progress_s">進入退出閱讀介面時同步閱讀進度</string>
-    <string name="create_bookmark_error">创建书签失败</string>
-    <string name="single_url">单URL</string>
-    <string name="export_bookshelf">导出书单</string>
-    <string name="import_bookshelf">导入书单</string>
-    <string name="pre_download">预下载</string>
-    <string name="pre_download_s">预先下载10章正文</string>
-    <string name="sort_enable">启用排序</string>
-    <string name="background_image">背景图片</string>
+    <string name="create_bookmark_error">建立書籤失敗</string>
+    <string name="single_url">單URL</string>
+    <string name="export_bookshelf">匯出書單</string>
+    <string name="import_bookshelf">匯入書單</string>
+    <string name="pre_download">預下載</string>
+    <string name="pre_download_s">預先下載10章正文</string>
+    <string name="sort_enable">啟用排序</string>
+    <string name="background_image">背景圖片</string>
+    <string name="export_folder">匯出資料夾</string>
+    <string name="export_charset">匯出編碼</string>
+    <string name="export_to_web_dav">匯出到WebDav</string>
+    <string name="reverse_content">反转内容</string>
+    <string name="debug">调试</string>
+    <string name="image_style">图片样式</string>
 
 </resources>

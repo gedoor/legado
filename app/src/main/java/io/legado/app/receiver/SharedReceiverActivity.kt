@@ -6,7 +6,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.MainActivity
-import org.jetbrains.anko.startActivity
+import io.legado.app.utils.startActivity
+import splitties.init.appCtx
 
 class SharedReceiverActivity : AppCompatActivity() {
 
@@ -19,20 +20,29 @@ class SharedReceiverActivity : AppCompatActivity() {
     }
 
     private fun initIntent() {
-        if (Intent.ACTION_SEND == intent.action && intent.type == receivingType) {
-            intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-                if (openUrl(it)) {
-                    startActivity<SearchActivity>(Pair("key", it))
+        when {
+            Intent.ACTION_SEND == intent.action && intent.type == receivingType -> {
+                intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                    if (openUrl(it)) {
+                        startActivity<SearchActivity> {
+                            putExtra("key", it)
+                        }
+                    }
                 }
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-            && Intent.ACTION_PROCESS_TEXT == intent.action
-            && intent.type == receivingType
-        ) {
-            intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.let {
-                if (openUrl(it)) {
-                    startActivity<SearchActivity>(Pair("key", it))
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && Intent.ACTION_PROCESS_TEXT == intent.action
+                    && intent.type == receivingType -> {
+                intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.let {
+                    if (openUrl(it)) {
+                        startActivity<SearchActivity> {
+                            putExtra("key", it)
+                        }
+                    }
                 }
+            }
+            intent.getStringExtra("action") == "readAloud" -> {
+                MediaButtonReceiver.readAloud(appCtx, false)
             }
         }
     }

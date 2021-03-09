@@ -8,13 +8,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemGroupManageBinding
@@ -24,10 +25,10 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
-    private lateinit var viewModel: RssSourceViewModel
+    private val viewModel: RssSourceViewModel by activityViewModels()
     private lateinit var adapter: GroupAdapter
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
@@ -42,7 +43,6 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = getViewModelOfActivity(RssSourceViewModel::class.java)
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
@@ -58,8 +58,10 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         recyclerView.adapter = adapter
         tvOk.setTextColor(requireContext().accentColor)
         tvOk.visible()
-        tvOk.onClick { dismiss() }
-        App.db.rssSourceDao.liveGroup().observe(viewLifecycleOwner, {
+        tvOk.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
+        appDb.rssSourceDao.liveGroup().observe(viewLifecycleOwner, {
             val groups = linkedSetOf<String>()
             it.map { group ->
                 groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -132,13 +134,13 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemGroupManageBinding) {
             binding.apply {
-                tvEdit.onClick {
+                tvEdit.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         editGroup(it)
                     }
                 }
 
-                tvDel.onClick {
+                tvDel.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         viewModel.delGroup(it)
                     }

@@ -17,22 +17,8 @@ object ContentHelp {
      */
     fun reSegment(content: String, chapterName: String): String {
         var content1 = content
-        val content2: String
-        val chapterNameLength = chapterName.trim { it <= ' ' }.length
-        content2 = if (chapterNameLength > 1) {
-            val regexp =
-                chapterName.trim { it <= ' ' }.replace("\\s+".toRegex(), "(\\\\s*)")
-            //            质量较低的页面，章节内可能重复出现章节标题
-            if (chapterNameLength > 5) content1.replace(regexp.toRegex(), "")
-                .trim { it <= ' ' } else content1.replaceFirst(
-                "^\\s*" + regexp.toRegex(),
-                ""
-            ).trim { it <= ' ' }
-        } else {
-            content1
-        }
-        val dict = makeDict(content2)
-        var p = content2
+        val dict = makeDict(content1)
+        var p = content1
             .replace("&quot;".toRegex(), "“")
             .replace("[:：]['\"‘”“]+".toRegex(), "：“")
             .replace("[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
@@ -315,14 +301,6 @@ object ContentHelp {
                 if (loop2Mod1 < 0 && loop2Mod2 > 0) {
                     if (match(MARK_SENTENCES_END, string[j])) insN.add(j)
                 }
-                /*
-                else if (mod[i - 1] > 0 && mod[i] < 0) {
-                    if (j > 0) {
-                        if (match(MARK_SENTENCES_END, string.charAt(j)))
-                            ins_n.add(j);
-                    }
-                }
-                */
                 loop2Mod1 = loop2Mod2
                 i++
             }
@@ -440,28 +418,6 @@ object ContentHelp {
         }
         insN = ArrayList(HashSet(insN))
         insN.sort()
-
-//        输出log进行检验
-/*
-        System.out.println("quote[i]:position/mod\t" + string);
-        for (int i = 0; i < array_quote.size(); i++) {
-            System.out.print(" [" + i + "]" + array_quote.get(i) + "/" + mod[i]);
-        }
-        System.out.print("\n");
-
-        System.out.print("ins_q:");
-        for (int i = 0; i < ins_quote.length; i++) {
-            System.out.print(" " + ins_quote[i]);
-        }
-        System.out.print("\n");
-
-        System.out.print("ins_n:");
-
-        for (int i : ins_n) {
-            System.out.print(" " + i);
-        }
-        System.out.print("\n");
-*/
 
 //     完成字符串拼接（从string复制、插入引号和换行
 //     ins_quote 在引号前插入一个引号。   ins_quote[i]!=0,则array_quote.get(i)的引号前需要前插入'”'
@@ -624,37 +580,6 @@ object ContentHelp {
             i++
         }
         return -1
-    }
-
-    /**
-     * 计算字符串与字典的距离。
-     *
-     * @param str     数据字符串
-     * @param form    从第几个字符开始匹配
-     * @param to      匹配到第几个字符串结束
-     * @param inOrder 是否从前向后匹配。
-     * @param words   可变长参数构成的字典。每个字符串代表一个字符
-     * @return 匹配结果。注意这个距离是使用第一个字符进行计算的
-     */
-    private fun seekWordsIndex(
-        str: String,
-        form: Int,
-        to: Int,
-        inOrder: Boolean,
-        vararg words: String
-    ): Int {
-        if (words.isEmpty()) return -2
-        val i = seekIndex(str, words[0], form, to, inOrder)
-        if (i < 0) return i
-        for (j in 1 until words.size) {
-            val k = seekIndex(str, words[j], form, to, inOrder)
-            if (inOrder) {
-                if (i + j != k) return -3
-            } else {
-                if (i - j != k) return -3
-            }
-        }
-        return i
     }
 
     /* 搜寻引号并进行分段。处理了一、二、五三类常见情况

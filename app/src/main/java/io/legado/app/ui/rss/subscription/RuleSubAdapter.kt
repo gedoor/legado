@@ -11,7 +11,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RuleSub
 import io.legado.app.databinding.ItemRuleSubBinding
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class RuleSubAdapter(context: Context, val callBack: Callback) :
     RecyclerAdapter<RuleSub, ItemRuleSubBinding>(context),
@@ -31,13 +31,13 @@ class RuleSubAdapter(context: Context, val callBack: Callback) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemRuleSubBinding) {
-        binding.root.onClick {
+        binding.root.setOnClickListener {
             callBack.openSubscription(getItem(holder.layoutPosition)!!)
         }
-        binding.ivEdit.onClick {
+        binding.ivEdit.setOnClickListener {
             callBack.editSubscription(getItem(holder.layoutPosition)!!)
         }
-        binding.ivMenuMore.onClick {
+        binding.ivMenuMore.setOnClickListener {
             showMenu(binding.ivMenuMore, holder.layoutPosition)
         }
     }

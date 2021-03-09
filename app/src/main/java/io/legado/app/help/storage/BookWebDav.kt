@@ -3,7 +3,6 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
@@ -16,7 +15,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.toast
+import splitties.init.appCtx
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,20 +27,20 @@ object BookWebDav {
 
     private val rootWebDavUrl: String
         get() {
-            var url = App.INSTANCE.getPrefString(PreferKey.webDavUrl)
+            var url = appCtx.getPrefString(PreferKey.webDavUrl)
             if (url.isNullOrEmpty()) {
                 url = defaultWebDavUrl
             }
             if (!url.endsWith("/")) url = "${url}/"
-            if (App.INSTANCE.getPrefBoolean(PreferKey.webDavCreateDir, true)) {
+            if (appCtx.getPrefBoolean(PreferKey.webDavCreateDir, true)) {
                 url = "${url}legado/"
             }
             return url
         }
 
-    suspend fun initWebDav(): Boolean {
-        val account = App.INSTANCE.getPrefString(PreferKey.webDavAccount)
-        val password = App.INSTANCE.getPrefString(PreferKey.webDavPassword)
+    private suspend fun initWebDav(): Boolean {
+        val account = appCtx.getPrefString(PreferKey.webDavAccount)
+        val password = appCtx.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
             HttpAuth.auth = HttpAuth.Auth(account, password)
             WebDav(rootWebDavUrl).makeAsDir()
@@ -80,7 +79,7 @@ object BookWebDav {
                         Coroutine.async {
                             restoreWebDav(names[index])
                         }.onError {
-                            App.INSTANCE.toast("WebDavError:${it.localizedMessage}")
+                            appCtx.toastOnUi("WebDavError:${it.localizedMessage}")
                         }
                     }
                 }
@@ -118,28 +117,25 @@ object BookWebDav {
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
-                App.INSTANCE.toast("WebDav\n${e.localizedMessage}")
+                appCtx.toastOnUi("WebDav\n${e.localizedMessage}")
             }
         }
     }
 
-    suspend fun exportWebDav(path: String, fileName: String) {
+    suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         try {
             if (initWebDav()) {
                 // 默认导出到legado文件夹下exports目录
                 val exportsWebDavUrl = rootWebDavUrl + EncoderUtils.escape("exports") + "/"
                 // 在legado文件夹创建exports目录,如果不存在的话
                 WebDav(exportsWebDavUrl).makeAsDir()
-                val file = File("${path}${File.separator}${fileName}")
                 // 如果导出的本地文件存在,开始上传
-                if (file.exists()) {
-                    val putUrl = exportsWebDavUrl + fileName
-                    WebDav(putUrl).upload("${path}${File.separator}${fileName}")
-                }
+                val putUrl = exportsWebDavUrl + fileName
+                WebDav(putUrl).upload(byteArray)
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
-                App.INSTANCE.toast("WebDav导出\n${e.localizedMessage}")
+                appCtx.toastOnUi("WebDav导出\n${e.localizedMessage}")
             }
         }
     }

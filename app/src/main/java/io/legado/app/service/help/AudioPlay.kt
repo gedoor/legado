@@ -3,10 +3,10 @@ package io.legado.app.service.help
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.coroutine.Coroutine
@@ -44,7 +44,7 @@ object AudioPlay {
     }
 
     fun upDurChapter(book: Book) {
-        durChapter = App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
+        durChapter = appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
         postEvent(EventBus.AUDIO_SUB_TITLE, durChapter?.title ?: "")
         postEvent(EventBus.AUDIO_SIZE, durChapter?.end?.toInt() ?: 0)
         postEvent(EventBus.AUDIO_PROGRESS, durChapterPos)
@@ -153,10 +153,10 @@ object AudioPlay {
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durChapterPos
-                App.db.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
+                appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }
-                App.db.bookDao.update(book)
+                appDb.bookDao.update(book)
             }
         }
     }
@@ -165,7 +165,7 @@ object AudioPlay {
         Coroutine.async {
             durChapter?.let {
                 it.end = audioSize
-                App.db.bookChapterDao.insert(it)
+                appDb.bookChapterDao.insert(it)
             }
         }
     }

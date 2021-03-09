@@ -56,7 +56,7 @@
         <io.legado.app.ui.widget.prefs.Preference
             android:key="discord"
             android:title="Discord"
-            android:summary="@string/tg_url"
+            android:summary="@string/discord_url"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
@@ -87,6 +87,11 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false"
         app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="crashLog"
+            android:title="@string/crash_log"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="license"

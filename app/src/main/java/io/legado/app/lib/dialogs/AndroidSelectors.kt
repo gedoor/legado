@@ -35,7 +35,7 @@ fun Context.selector(
 ) {
     with(AndroidAlertBuilder(this)) {
         if (title != null) {
-            this.title = title
+            this.setTitle(title)
         }
         items(items, onClick)
         show()
@@ -49,7 +49,7 @@ fun Context.selector(
 ) {
     with(AndroidAlertBuilder(this)) {
         if (titleSource != null) {
-            this.title = getString(titleSource)
+            this.setTitle(titleSource)
         }
         items(items, onClick)
         show()

@@ -61,6 +61,7 @@ object ImageProvider {
         }
     }
 
+    @Synchronized
     fun clearAllCache() {
         cache.forEach { indexCache ->
             indexCache.value.forEach {
@@ -70,6 +71,7 @@ object ImageProvider {
         cache.clear()
     }
 
+    @Synchronized
     fun clearOut(chapterIndex: Int) {
         cache.forEach { indexCache ->
             if (indexCache.key !in chapterIndex - 1..chapterIndex + 1) {

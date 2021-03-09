@@ -9,19 +9,15 @@ import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import io.legado.app.App
 import io.legado.app.constant.AppConst
 import org.apache.commons.text.StringEscapeUtils
+import splitties.init.appCtx
 import java.lang.ref.WeakReference
 
 
 class AjaxWebView {
     var callback: Callback? = null
-    private var mHandler: AjaxHandler
-
-    init {
-        mHandler = AjaxHandler(this)
-    }
+    private var mHandler: AjaxHandler = AjaxHandler(this)
 
     class AjaxHandler(private val ajaxWebView: AjaxWebView) : Handler(Looper.getMainLooper()) {
 
@@ -51,7 +47,7 @@ class AjaxWebView {
 
         @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
         fun createAjaxWebView(params: AjaxParams, handler: Handler): WebView {
-            val webView = WebView(App.INSTANCE)
+            val webView = WebView(appCtx)
             val settings = webView.settings
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true

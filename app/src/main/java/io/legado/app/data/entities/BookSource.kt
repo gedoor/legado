@@ -3,7 +3,6 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.*
-import io.legado.app.App
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
@@ -16,6 +15,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.splitNotBlank
 import kotlinx.parcelize.Parcelize
+import splitties.init.appCtx
 import javax.script.SimpleBindings
 
 @Parcelize
@@ -105,8 +105,10 @@ data class BookSource(
             var a = urlRule
             if (a.isNotBlank()) {
                 kotlin.runCatching {
-                    if (urlRule.startsWith("<js>", false)) {
-                        val aCache = ACache.get(App.INSTANCE, "explore")
+                    if (urlRule.startsWith("<js>", false)
+                        || urlRule.startsWith("@js", false)
+                    ) {
+                        val aCache = ACache.get(appCtx, "explore")
                         a = aCache.getAsString(bookSourceUrl) ?: ""
                         if (a.isBlank()) {
                             val bindings = SimpleBindings()
@@ -114,10 +116,12 @@ data class BookSource(
                             bindings["java"] = this
                             bindings["cookie"] = CookieStore
                             bindings["cache"] = CacheManager
-                            a = AppConst.SCRIPT_ENGINE.eval(
-                                urlRule.substring(4, urlRule.lastIndexOf("<")),
-                                bindings
-                            ).toString()
+                            val jsStr = if (urlRule.startsWith("@")) {
+                                urlRule.substring(3)
+                            } else {
+                                urlRule.substring(4, urlRule.lastIndexOf("<"))
+                            }
+                            a = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
                             aCache.put(bookSourceUrl, a)
                         }
                     }

@@ -24,9 +24,7 @@ import io.legado.app.utils.dp
 import io.legado.app.utils.getIndexById
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onCheckedChange
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import splitties.views.onLongClick
 
 class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     private val binding by viewBinding(DialogReadBookStyleBinding::bind)
@@ -93,7 +91,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
                 ivStyle.setColorFilter(textColor)
                 ivStyle.borderColor = textColor
                 ivStyle.setImageResource(R.drawable.ic_add)
-                root.onClick {
+                root.setOnClickListener {
                     ReadBookConfig.configList.add(ReadBookConfig.Config())
                     showBgTextConfig(ReadBookConfig.configList.lastIndex)
                 }
@@ -114,10 +112,10 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         textFontWeightConverter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
-        tvTextFont.onClick {
+        tvTextFont.setOnClickListener {
             FontSelectDialog().show(childFragmentManager, "fontSelectDialog")
         }
-        tvTextIndent.onClick {
+        tvTextIndent.setOnClickListener {
             selector(
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
@@ -126,14 +124,14 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        tvPadding.onClick {
-            dismiss()
+        tvPadding.setOnClickListener {
+            dismissAllowingStateLoss()
             callBack?.showPaddingConfig()
         }
-        tvTip.onClick {
+        tvTip.setOnClickListener {
             TipConfigDialog().show(childFragmentManager, "tipConfigDialog")
         }
-        rgPageAnim.onCheckedChange { _, checkedId ->
+        rgPageAnim.setOnCheckedChangeListener { _, checkedId ->
             ReadBook.book?.setPageAnim(-1)
             ReadBookConfig.pageAnim = binding.rgPageAnim.getIndexById(checkedId)
             callBack?.upPageAnim()
@@ -176,7 +174,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun showBgTextConfig(index: Int): Boolean {
-        dismiss()
+        dismissAllowingStateLoss()
         changeBg(index)
         callBack?.showBgTextConfig()
         return true
@@ -235,16 +233,14 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemReadStyleBinding) {
             binding.apply {
-                ivStyle.onClick {
+                ivStyle.setOnClickListener {
                     if (ivStyle.isInView) {
                         changeBg(holder.layoutPosition)
                     }
                 }
-                ivStyle.onLongClick {
+                ivStyle.onLongClick(ivStyle.isInView) {
                     if (ivStyle.isInView) {
                         showBgTextConfig(holder.layoutPosition)
-                    } else {
-                        false
                     }
                 }
             }

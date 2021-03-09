@@ -17,9 +17,6 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.activity
 import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.statusBarHeight
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.bottomPadding
-import org.jetbrains.anko.topPadding
 
 @Suppress("unused")
 class TitleBar @JvmOverloads constructor(
@@ -144,14 +141,14 @@ class TitleBar @JvmOverloads constructor(
 
         if (!isInEditMode) {
             if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
-                topPadding = context.statusBarHeight
+                setPadding(paddingLeft, context.statusBarHeight, paddingRight, paddingBottom)
             }
 
             if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
-                bottomPadding = context.navigationBarHeight
+                setPadding(paddingLeft, paddingTop, paddingRight, context.navigationBarHeight)
             }
 
-            backgroundColor = context.primaryColor
+            setBackgroundColor(context.primaryColor)
 
             stateListAnimator = null
             elevation = if (AppConfig.elevation < 0) {
@@ -198,11 +195,12 @@ class TitleBar @JvmOverloads constructor(
 
     fun transparent() {
         elevation = 0f
-        backgroundColor = Color.TRANSPARENT
+        setBackgroundColor(Color.TRANSPARENT)
     }
 
     fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, fullScreen: Boolean) {
-        topPadding = if (!isInMultiWindowMode && fullScreen) context.statusBarHeight else 0
+        val topPadding = if (!isInMultiWindowMode && fullScreen) context.statusBarHeight else 0
+        setPadding(paddingLeft, topPadding, paddingRight, paddingBottom)
     }
 
     private fun attachToActivity() {

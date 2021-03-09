@@ -4,12 +4,12 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import androidx.core.app.NotificationCompat
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
@@ -20,9 +20,10 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.isActive
-import org.jetbrains.anko.toast
+import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
@@ -43,7 +44,7 @@ class CacheBookService : BaseService() {
 
     @Volatile
     private var downloadingCount = 0
-    private var notificationContent = App.INSTANCE.getString(R.string.starting_download)
+    private var notificationContent = appCtx.getString(R.string.starting_download)
 
     private val notificationBuilder by lazy {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
@@ -95,7 +96,7 @@ class CacheBookService : BaseService() {
             synchronized(this) {
                 book = bookMap[bookUrl]
                 if (book == null) {
-                    book = App.db.bookDao.getBook(bookUrl)
+                    book = appDb.bookDao.getBook(bookUrl)
                     if (book == null) {
                         removeDownload(bookUrl)
                     }
@@ -111,7 +112,7 @@ class CacheBookService : BaseService() {
             synchronized(this) {
                 webBook = webBookMap[origin]
                 if (webBook == null) {
-                    App.db.bookSourceDao.getBookSource(origin)?.let {
+                    appDb.bookSourceDao.getBookSource(origin)?.let {
                         webBook = WebBook(it)
                     }
                     if (webBook == null) {
@@ -128,12 +129,12 @@ class CacheBookService : BaseService() {
         if (downloadMap.containsKey(bookUrl)) {
             notificationContent = getString(R.string.already_in_download)
             upNotification()
-            toast(notificationContent)
+            toastOnUi(notificationContent)
             return
         }
         downloadCount[bookUrl] = DownloadCount()
         execute {
-            App.db.bookChapterDao.getChapterList(bookUrl, start, end).let {
+            appDb.bookChapterDao.getChapterList(bookUrl, start, end).let {
                 if (it.isNotEmpty()) {
                     val chapters = CopyOnWriteArraySet<BookChapter>()
                     chapters.addAll(it)

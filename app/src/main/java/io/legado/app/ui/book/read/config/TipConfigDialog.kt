@@ -14,8 +14,7 @@ import io.legado.app.help.ReadTipConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onCheckedChange
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class TipConfigDialog : BaseDialogFragment() {
 
@@ -76,7 +75,7 @@ class TipConfigDialog : BaseDialogFragment() {
     }
 
     private fun initEvent() = with(binding) {
-        rgTitleMode.onCheckedChange { _, checkedId ->
+        rgTitleMode.setOnCheckedChangeListener { _, checkedId ->
             ReadBookConfig.titleMode = rgTitleMode.getIndexById(checkedId)
             postEvent(EventBus.UP_CONFIG, true)
         }
@@ -92,21 +91,21 @@ class TipConfigDialog : BaseDialogFragment() {
             ReadBookConfig.titleBottomSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        llHeaderShow.onClick {
+        llHeaderShow.setOnClickListener {
             selector(items = ReadTipConfig.headerModes.values.toList()) { _, i ->
                 ReadTipConfig.headerMode = ReadTipConfig.headerModes.keys.toList()[i]
                 tvHeaderShow.text = ReadTipConfig.headerModes[ReadTipConfig.headerMode]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        llFooterShow.onClick {
+        llFooterShow.setOnClickListener {
             selector(items = ReadTipConfig.footerModes.values.toList()) { _, i ->
                 ReadTipConfig.footerMode = ReadTipConfig.footerModes.keys.toList()[i]
                 tvFooterShow.text = ReadTipConfig.footerModes[ReadTipConfig.footerMode]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        llHeaderLeft.onClick {
+        llHeaderLeft.setOnClickListener {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderLeft = i
@@ -114,7 +113,7 @@ class TipConfigDialog : BaseDialogFragment() {
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        llHeaderMiddle.onClick {
+        llHeaderMiddle.setOnClickListener {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderMiddle = i
@@ -122,7 +121,7 @@ class TipConfigDialog : BaseDialogFragment() {
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        llHeaderRight.onClick {
+        llHeaderRight.setOnClickListener {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderRight = i
@@ -130,7 +129,7 @@ class TipConfigDialog : BaseDialogFragment() {
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        llFooterLeft.onClick {
+        llFooterLeft.setOnClickListener {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterLeft = i
@@ -138,7 +137,7 @@ class TipConfigDialog : BaseDialogFragment() {
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        llFooterMiddle.onClick {
+        llFooterMiddle.setOnClickListener {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterMiddle = i
@@ -146,7 +145,7 @@ class TipConfigDialog : BaseDialogFragment() {
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        llFooterRight.onClick {
+        llFooterRight.setOnClickListener {
             selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterRight = i
@@ -154,7 +153,7 @@ class TipConfigDialog : BaseDialogFragment() {
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        llTipColor.onClick {
+        llTipColor.setOnClickListener {
             selector(items = arrayListOf("跟随正文", "自定义")) { _, i ->
                 when (i) {
                     0 -> {

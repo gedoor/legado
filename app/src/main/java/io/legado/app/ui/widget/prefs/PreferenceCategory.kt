@@ -28,15 +28,20 @@ class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCate
             if (view is TextView) {  //  && !view.isInEditMode
                 view.text = title
                 if (view.isInEditMode) return
-                view.setBackgroundColor(context.backgroundColor)
                 view.setTextColor(context.accentColor)
                 view.isVisible = title != null && title.isNotEmpty()
 
                 val da = it.findViewById(R.id.preference_divider_above)
                 val dividerColor = if (AppConfig.isNightTheme) {
-                    ColorUtils.shiftColor(context.backgroundColor, 1.05f)
+                    ColorUtils.withAlpha(
+                        ColorUtils.shiftColor(context.backgroundColor, 1.05f),
+                        0.5f
+                    )
                 } else {
-                    ColorUtils.shiftColor(context.backgroundColor, 0.95f)
+                    ColorUtils.withAlpha(
+                        ColorUtils.shiftColor(context.backgroundColor, 0.95f),
+                        0.5f
+                    )
                 }
                 if (da is View) {
                     da.setBackgroundColor(dividerColor)

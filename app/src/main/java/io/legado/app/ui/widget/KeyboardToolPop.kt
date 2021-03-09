@@ -10,7 +10,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.PopupKeyboardToolBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 
 class KeyboardToolPop(
@@ -59,7 +59,7 @@ class KeyboardToolPop(
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
             holder.itemView.apply {
-                onClick {
+                setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         callBack?.sendText(it)
                     }

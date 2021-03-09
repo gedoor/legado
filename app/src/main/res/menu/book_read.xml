@@ -74,6 +74,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_reverse_content"
+        android:title="@string/reverse_content"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_enable_replace"
         android:title="@string/replace_rule_title"
         android:checkable="true"
@@ -85,6 +90,11 @@
         android:title="@string/re_segment"
         android:checkable="true"
         android:checked="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_image_style"
+        android:title="@string/image_style"
         app:showAsAction="never" />
 
     <item

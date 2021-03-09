@@ -19,7 +19,6 @@ object LanguageUtils {
             val resources: Resources = context.resources
             val metrics = resources.displayMetrics
             val configuration: Configuration = resources.configuration
-            //Log.d("h11128", "set language to ${context.getPrefString(PreferKey.language)}")
             val targetLocale = getSetLocale(context)
             configuration.setLocale(targetLocale)
             configuration.setLocales(LocaleList(targetLocale))

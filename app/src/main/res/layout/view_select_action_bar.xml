@@ -27,7 +27,7 @@
         android:layout_margin="5dp"
         android:padding="5dp"
         android:gravity="center"
-        android:minWidth="80dp"
+        android:minWidth="72dp"
         android:text="@string/revert_selection" />
 
     <io.legado.app.ui.widget.text.AccentStrokeTextView
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:padding="5dp"
-        android:minWidth="80dp"
+        android:minWidth="72dp"
         android:gravity="center"
         android:visibility="gone"
         android:text="@string/app_name" />

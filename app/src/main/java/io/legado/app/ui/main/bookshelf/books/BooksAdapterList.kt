@@ -7,10 +7,10 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfListBinding
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import splitties.views.onLongClick
 
 class BooksAdapterList(context: Context, private val callBack: CallBack) :
     BaseBooksAdapter<ItemBookshelfListBinding>(context) {
@@ -24,24 +24,24 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
         binding: ItemBookshelfListBinding,
         item: Book,
         payloads: MutableList<Any>
-    ) {
+    ) = with(binding) {
         val bundle = payloads.getOrNull(0) as? Bundle
         if (bundle == null) {
-            ATH.applyBackgroundTint(binding.root)
-            binding.tvName.text = item.name
-            binding.tvAuthor.text = item.author
-            binding.tvRead.text = item.durChapterTitle
-            binding.tvLast.text = item.latestChapterTitle
-            binding.ivCover.load(item.getDisplayCover(), item.name, item.author)
+            root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
+            tvName.text = item.name
+            tvAuthor.text = item.author
+            tvRead.text = item.durChapterTitle
+            tvLast.text = item.latestChapterTitle
+            ivCover.load(item.getDisplayCover(), item.name, item.author)
             upRefresh(binding, item)
         } else {
-            binding.tvRead.text = item.durChapterTitle
-            binding.tvLast.text = item.latestChapterTitle
+            tvRead.text = item.durChapterTitle
+            tvLast.text = item.latestChapterTitle
             bundle.keySet().forEach {
                 when (it) {
-                    "name" -> binding.tvName.text = item.name
-                    "author" -> binding.tvAuthor.text = item.author
-                    "cover" -> binding.ivCover.load(item.getDisplayCover(), item.name, item.author)
+                    "name" -> tvName.text = item.name
+                    "author" -> tvAuthor.text = item.author
+                    "cover" -> ivCover.load(item.getDisplayCover(), item.name, item.author)
                     "refresh" -> upRefresh(binding, item)
                 }
             }
@@ -61,7 +61,7 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemBookshelfListBinding) {
         holder.itemView.apply {
-            onClick {
+            setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.open(it)
                 }
@@ -71,7 +71,6 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                 getItem(holder.layoutPosition)?.let {
                     callBack.openBookInfo(it)
                 }
-                true
             }
         }
     }

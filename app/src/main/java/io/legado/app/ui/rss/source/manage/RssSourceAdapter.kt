@@ -16,7 +16,8 @@ import io.legado.app.databinding.ItemRssSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
-import org.jetbrains.anko.sdk27.listeners.onClick
+import io.legado.app.utils.ColorUtils
+
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<RssSource, ItemRssSourceBinding>(context),
@@ -68,7 +69,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         with(binding) {
             val bundle = payloads.getOrNull(0) as? Bundle
             if (bundle == null) {
-                root.setBackgroundColor(context.backgroundColor)
+                root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 if (item.sourceGroup.isNullOrEmpty()) {
                     cbSource.text = item.sourceName
                 } else {
@@ -113,12 +114,12 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            ivEdit.onClick {
+            ivEdit.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
-            ivMenuMore.onClick {
+            ivMenuMore.setOnClickListener {
                 showMenu(ivMenuMore, holder.layoutPosition)
             }
         }

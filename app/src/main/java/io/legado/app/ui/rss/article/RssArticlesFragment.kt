@@ -1,14 +1,17 @@
 package io.legado.app.ui.rss.article
 
+
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.databinding.FragmentRssArticlesBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
@@ -16,8 +19,6 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.getViewModel
-import io.legado.app.utils.getViewModelOfActivity
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -37,9 +38,9 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
 
     private val binding by viewBinding(FragmentRssArticlesBinding::bind)
     private val activityViewModel: RssSortViewModel
-        get() = getViewModelOfActivity(RssSortViewModel::class.java)
+            by activityViewModels()
     override val viewModel: RssArticlesViewModel
-        get() = getViewModel(RssArticlesViewModel::class.java)
+            by viewModels()
     lateinit var adapter: BaseRssArticlesAdapter<*>
     private lateinit var loadMoreView: LoadMoreView
     private var rssArticlesData: LiveData<List<RssArticle>>? = null
@@ -93,7 +94,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     private fun initData() {
         activityViewModel.url?.let {
             rssArticlesData?.removeObservers(this)
-            rssArticlesData = App.db.rssArticleDao.liveByOriginSort(it, viewModel.sortName)
+            rssArticlesData = appDb.rssArticleDao.liveByOriginSort(it, viewModel.sortName)
             rssArticlesData?.observe(viewLifecycleOwner, { list ->
                 adapter.setItems(list)
             })
@@ -123,10 +124,10 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
 
     override fun readRss(rssArticle: RssArticle) {
         activityViewModel.read(rssArticle)
-        startActivity<ReadRssActivity>(
-            Pair("title", rssArticle.title),
-            Pair("origin", rssArticle.origin),
-            Pair("link", rssArticle.link)
-        )
+        startActivity<ReadRssActivity> {
+            putExtra("title", rssArticle.title)
+            putExtra("origin", rssArticle.origin)
+            putExtra("link", rssArticle.link)
+        }
     }
 }

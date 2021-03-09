@@ -3,7 +3,6 @@ package io.legado.app.utils
 import com.google.gson.*
 import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
-import org.jetbrains.anko.attempt
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.math.ceil
@@ -24,17 +23,15 @@ val GSON: Gson by lazy {
 inline fun <reified T> genericType(): Type = object : TypeToken<T>() {}.type
 
 inline fun <reified T> Gson.fromJsonObject(json: String?): T? {//可转成任意类型
-    return attempt {
-        val result: T? = fromJson(json, genericType<T>())
-        result
-    }.value
+    return kotlin.runCatching {
+        fromJson(json, genericType<T>()) as? T
+    }.getOrNull()
 }
 
 inline fun <reified T> Gson.fromJsonArray(json: String?): List<T>? {
-    return attempt {
-        val result: List<T>? = fromJson(json, ParameterizedTypeImpl(T::class.java))
-        result
-    }.value
+    return kotlin.runCatching {
+        fromJson(json, ParameterizedTypeImpl(T::class.java)) as? List<T>
+    }.getOrNull()
 }
 
 class ParameterizedTypeImpl(private val clazz: Class<*>) : ParameterizedType {

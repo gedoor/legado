@@ -3,51 +3,47 @@ package io.legado.app.ui.replace
 import android.app.Application
 import android.text.TextUtils
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.splitNotBlank
-import io.legado.app.utils.writeText
-import org.jetbrains.anko.toast
+import io.legado.app.utils.*
 import java.io.File
 
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
 
     fun update(vararg rule: ReplaceRule) {
         execute {
-            App.db.replaceRuleDao.update(*rule)
+            appDb.replaceRuleDao.update(*rule)
         }
     }
 
     fun delete(rule: ReplaceRule) {
         execute {
-            App.db.replaceRuleDao.delete(rule)
+            appDb.replaceRuleDao.delete(rule)
         }
     }
 
     fun toTop(rule: ReplaceRule) {
         execute {
-            rule.order = App.db.replaceRuleDao.minOrder - 1
-            App.db.replaceRuleDao.update(rule)
+            rule.order = appDb.replaceRuleDao.minOrder - 1
+            appDb.replaceRuleDao.update(rule)
         }
     }
 
     fun toBottom(rule: ReplaceRule) {
         execute {
-            rule.order = App.db.replaceRuleDao.maxOrder + 1
-            App.db.replaceRuleDao.update(rule)
+            rule.order = appDb.replaceRuleDao.maxOrder + 1
+            appDb.replaceRuleDao.update(rule)
         }
     }
 
     fun upOrder() {
         execute {
-            val rules = App.db.replaceRuleDao.all
+            val rules = appDb.replaceRuleDao.all
             for ((index, rule) in rules.withIndex()) {
                 rule.order = index + 1
             }
-            App.db.replaceRuleDao.update(*rules.toTypedArray())
+            appDb.replaceRuleDao.update(*rules.toTypedArray())
         }
     }
 
@@ -57,7 +53,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             rules.forEach {
                 list.add(it.copy(isEnabled = true))
             }
-            App.db.replaceRuleDao.update(*list.toTypedArray())
+            appDb.replaceRuleDao.update(*list.toTypedArray())
         }
     }
 
@@ -67,13 +63,13 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             rules.forEach {
                 list.add(it.copy(isEnabled = false))
             }
-            App.db.replaceRuleDao.update(*list.toTypedArray())
+            appDb.replaceRuleDao.update(*list.toTypedArray())
         }
     }
 
     fun delSelection(rules: LinkedHashSet<ReplaceRule>) {
         execute {
-            App.db.replaceRuleDao.delete(*rules.toTypedArray())
+            appDb.replaceRuleDao.delete(*rules.toTypedArray())
         }
     }
 
@@ -83,9 +79,9 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             FileUtils.createFileIfNotExist(file, "exportReplaceRule.json")
                 .writeText(json)
         }.onSuccess {
-            context.toast("成功导出至\n${file.absolutePath}")
+            context.toastOnUi("成功导出至\n${file.absolutePath}")
         }.onError {
-            context.toast("导出失败\n${it.localizedMessage}")
+            context.toastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 
@@ -96,25 +92,25 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             doc.createFile("", "exportReplaceRule.json")
                 ?.writeText(context, json)
         }.onSuccess {
-            context.toast("成功导出至\n${doc.uri.path}")
+            context.toastOnUi("成功导出至\n${doc.uri.path}")
         }.onError {
-            context.toast("导出失败\n${it.localizedMessage}")
+            context.toastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 
     fun addGroup(group: String) {
         execute {
-            val sources = App.db.replaceRuleDao.noGroup
+            val sources = appDb.replaceRuleDao.noGroup
             sources.map { source ->
                 source.group = group
             }
-            App.db.replaceRuleDao.update(*sources.toTypedArray())
+            appDb.replaceRuleDao.update(*sources.toTypedArray())
         }
     }
 
     fun upGroup(oldGroup: String, newGroup: String?) {
         execute {
-            val sources = App.db.replaceRuleDao.getByGroup(oldGroup)
+            val sources = appDb.replaceRuleDao.getByGroup(oldGroup)
             sources.map { source ->
                 source.group?.splitNotBlank(",")?.toHashSet()?.let {
                     it.remove(oldGroup)
@@ -123,21 +119,21 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
                     source.group = TextUtils.join(",", it)
                 }
             }
-            App.db.replaceRuleDao.update(*sources.toTypedArray())
+            appDb.replaceRuleDao.update(*sources.toTypedArray())
         }
     }
 
     fun delGroup(group: String) {
         execute {
             execute {
-                val sources = App.db.replaceRuleDao.getByGroup(group)
+                val sources = appDb.replaceRuleDao.getByGroup(group)
                 sources.map { source ->
                     source.group?.splitNotBlank(",")?.toHashSet()?.let {
                         it.remove(group)
                         source.group = TextUtils.join(",", it)
                     }
                 }
-                App.db.replaceRuleDao.update(*sources.toTypedArray())
+                appDb.replaceRuleDao.update(*sources.toTypedArray())
             }
         }
     }

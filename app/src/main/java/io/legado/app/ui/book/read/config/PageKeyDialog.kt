@@ -10,7 +10,6 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.putPrefString
-import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDialog) {
@@ -22,7 +21,7 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
         binding.contentView.setBackgroundColor(context.backgroundColor)
         binding.etPrev.setText(context.getPrefString(PreferKey.prevKeys))
         binding.etNext.setText(context.getPrefString(PreferKey.nextKeys))
-        binding.tvOk.onClick {
+        binding.tvOk.setOnClickListener {
             context.putPrefString(PreferKey.prevKeys, binding.etPrev.text?.toString())
             context.putPrefString(PreferKey.nextKeys, binding.etNext.text?.toString())
             dismiss()

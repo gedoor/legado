@@ -1,0 +1,1 @@
+emulator -avd android11 -dns-server 8.8.8.8 -no-snapshot-load

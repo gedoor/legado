@@ -1,15 +1,15 @@
 package io.legado.app.ui.association
 
 import android.os.Bundle
-import io.legado.app.App
+import androidx.activity.viewModels
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.utils.getViewModel
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUi
 
 class ImportReplaceRuleActivity :
     VMBaseActivity<ActivityTranslucenceBinding, ImportReplaceRuleViewModel>(
@@ -21,7 +21,7 @@ class ImportReplaceRuleActivity :
     }
 
     override val viewModel: ImportReplaceRuleViewModel
-        get() = getViewModel(ImportReplaceRuleViewModel::class.java)
+            by viewModels()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()
@@ -66,7 +66,7 @@ class ImportReplaceRuleActivity :
                 }
                 else -> {
                     binding.rotateLoading.hide()
-                    toast("格式不对")
+                    toastOnUi("格式不对")
                     finish()
                 }
             }
@@ -85,7 +85,7 @@ class ImportReplaceRuleActivity :
     private fun successDialog(allSource: ArrayList<ReplaceRule>) {
         alert("解析结果", "共${allSource.size}个替换规则,是否确认导入?") {
             okButton {
-                App.db.replaceRuleDao.insert(*allSource.toTypedArray())
+                appDb.replaceRuleDao.insert(*allSource.toTypedArray())
             }
             noButton()
             onDismiss {

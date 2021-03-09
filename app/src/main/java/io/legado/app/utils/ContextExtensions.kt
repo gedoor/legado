@@ -3,6 +3,8 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -12,28 +14,58 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.BatteryManager
 import android.provider.Settings
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder
-import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import androidx.preference.PreferenceManager
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileOutputStream
 
+inline fun <reified A : Activity> Context.startActivity(configIntent: Intent.() -> Unit = {}) {
+    val intent = Intent(this, A::class.java)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.apply(configIntent)
+    startActivity(intent)
+}
+
+inline fun <reified T : Service> Context.startService(configIntent: Intent.() -> Unit = {}) {
+    startService(Intent(this, T::class.java).apply(configIntent))
+}
+
+fun Context.toastOnUi(message: Int) {
+    runOnUI {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun Context.toastOnUi(message: CharSequence?) {
+    runOnUI {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun Context.longToastOnUi(message: Int) {
+    runOnUI {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+}
+
+fun Context.longToastOnUi(message: CharSequence?) {
+    runOnUI {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+}
+
+val Context.defaultSharedPreferences: SharedPreferences
+    get() = PreferenceManager.getDefaultSharedPreferences(this)
+
 fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
     defaultSharedPreferences.getBoolean(key, defValue)
-
-fun Context.getPrefBoolean(@StringRes keyId: Int, defValue: Boolean = false) =
-    defaultSharedPreferences.getBoolean(getString(keyId), defValue)
 
 fun Context.putPrefBoolean(key: String, value: Boolean = false) =
     defaultSharedPreferences.edit { putBoolean(key, value) }
@@ -102,13 +134,22 @@ val Context.navigationBarHeight: Int
         return resources.getDimensionPixelSize(resourceId)
     }
 
+fun Context.share(text: String, title: String = getString(R.string.share)) {
+    kotlin.runCatching {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra(Intent.EXTRA_SUBJECT, title)
+        intent.putExtra(Intent.EXTRA_TEXT, text)
+        intent.type = "text/plain"
+        startActivity(Intent.createChooser(intent, title))
+    }
+}
+
 @SuppressLint("SetWorldReadable")
-fun Context.shareWithQr(title: String, text: String) {
-    QRCodeEncoder.HINTS[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
-    val bitmap = QRCodeEncoder.syncEncodeQRCode(text, 600)
-    QRCodeEncoder.HINTS[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.H
+fun Context.shareWithQr(text: String, title: String = getString(R.string.share)) {
+    val bitmap = QRCodeUtils.createQRCode(text)
     if (bitmap == null) {
-        toast(R.string.text_too_long_qr_error)
+        toastOnUi(R.string.text_too_long_qr_error)
     } else {
         try {
             val file = File(externalCacheDir, "qr.png")
@@ -128,7 +169,7 @@ fun Context.shareWithQr(title: String, text: String) {
             intent.type = "image/png"
             startActivity(Intent.createChooser(intent, title))
         } catch (e: Exception) {
-            toast(e.localizedMessage ?: "ERROR")
+            toastOnUi(e.localizedMessage ?: "ERROR")
         }
     }
 }
@@ -139,7 +180,7 @@ fun Context.sendToClip(text: String) {
     val clipData = ClipData.newPlainText(null, text)
     clipboard?.let {
         clipboard.setPrimaryClip(clipData)
-        longToast(R.string.copy_complete)
+        longToastOnUi(R.string.copy_complete)
     }
 }
 
@@ -160,7 +201,7 @@ fun Context.sendMail(mail: String) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     } catch (e: Exception) {
-        toast(e.localizedMessage ?: "Error")
+        toastOnUi(e.localizedMessage ?: "Error")
     }
 }
 
@@ -200,13 +241,13 @@ fun Context.openUrl(uri: Uri) {
         try {
             startActivity(intent)
         } catch (e: Exception) {
-            toast(e.localizedMessage ?: "open url error")
+            toastOnUi(e.localizedMessage ?: "open url error")
         }
     } else {
         try {
             startActivity(Intent.createChooser(intent, "请选择浏览器"))
         } catch (e: Exception) {
-            toast(e.localizedMessage ?: "open url error")
+            toastOnUi(e.localizedMessage ?: "open url error")
         }
     }
 }

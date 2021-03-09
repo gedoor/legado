@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -15,8 +16,6 @@ import io.legado.app.help.permission.Permissions
 import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.*
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.toast
 import java.io.File
 
 class BookInfoEditActivity :
@@ -26,7 +25,7 @@ class BookInfoEditActivity :
     private val resultSelectCover = 132
 
     override val viewModel: BookInfoEditViewModel
-        get() = getViewModel(BookInfoEditViewModel::class.java)
+            by viewModels()
 
     override fun getViewBinding(): ActivityBookInfoEditBinding {
         return ActivityBookInfoEditBinding.inflate(layoutInflater)
@@ -55,15 +54,15 @@ class BookInfoEditActivity :
     }
 
     private fun initEvent() = with(binding) {
-        tvChangeCover.onClick {
+        tvChangeCover.setOnClickListener {
             viewModel.bookData.value?.let {
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
             }
         }
-        tvSelectCover.onClick {
+        tvSelectCover.setOnClickListener {
             selectImage()
         }
-        tvRefreshCover.onClick {
+        tvRefreshCover.setOnClickListener {
             viewModel.book?.customCoverUrl = tieCoverUrl.text?.toString()
             upCover()
         }
@@ -121,7 +120,7 @@ class BookInfoEditActivity :
                 }.getOrNull()?.let { byteArray ->
                     file.writeBytes(byteArray)
                     coverChangeTo(file.absolutePath)
-                } ?: toast("获取文件出错")
+                } ?: toastOnUi("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)

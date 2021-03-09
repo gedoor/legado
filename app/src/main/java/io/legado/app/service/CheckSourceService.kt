@@ -2,12 +2,12 @@ package io.legado.app.service
 
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
@@ -16,8 +16,8 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.asCoroutineDispatcher
-import org.jetbrains.anko.toast
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -70,7 +70,7 @@ class CheckSourceService : BaseService() {
 
     private fun check(ids: List<String>) {
         if (allIds.isNotEmpty()) {
-            toast("已有书源在校验,等完成后再试")
+            toastOnUi("已有书源在校验,等完成后再试")
             return
         }
         tasks.clear()
@@ -97,7 +97,7 @@ class CheckSourceService : BaseService() {
         execute {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
-                App.db.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
+                appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
                     check(source)
                 } ?: onNext(sourceUrl, "")
             }
@@ -107,22 +107,36 @@ class CheckSourceService : BaseService() {
     fun check(source: BookSource) {
         execute(context = searchCoroutine) {
             val webBook = WebBook(source)
-            val books = webBook.searchBookAwait(this, CheckSource.keyword)
+            var books = webBook.searchBookAwait(this, CheckSource.keyword)
+            if (books.isEmpty()) {
+                val exs = source.getExploreKinds()
+                if (exs.isEmpty()) {
+                    throw Exception("搜索内容为空并且没有发现")
+                }
+                var url: String? = null
+                for (ex in exs) {
+                    url = ex.url
+                    if (!url.isNullOrBlank()) {
+                        break
+                    }
+                }
+                books = webBook.exploreBookAwait(this, url!!)
+            }
             val book = webBook.getBookInfoAwait(this, books.first().toBook())
             val toc = webBook.getChapterListAwait(this, book)
             val content = webBook.getContentAwait(this, book, toc.first())
             if (content.isBlank()) {
                 throw Exception("正文内容为空")
             }
-        }.timeout(60000L)
+        }.timeout(180000L)
             .onError {
                 source.addGroup("失效")
                 source.bookSourceComment =
                     "error:${it.localizedMessage}\n${source.bookSourceComment}"
-                App.db.bookSourceDao.update(source)
+                appDb.bookSourceDao.update(source)
             }.onSuccess {
                 source.removeGroup("失效")
-                App.db.bookSourceDao.update(source)
+                appDb.bookSourceDao.update(source)
             }.onFinally {
                 onNext(source.bookSourceUrl, source.bookSourceName)
             }

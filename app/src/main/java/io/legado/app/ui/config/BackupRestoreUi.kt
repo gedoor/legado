@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
@@ -20,9 +19,9 @@ import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.longToast
-import io.legado.app.utils.toast
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.Main
-import org.jetbrains.anko.toast
+import splitties.init.appCtx
 
 object BackupRestoreUi {
     private const val selectFolderRequestCode = 21
@@ -42,7 +41,7 @@ object BackupRestoreUi {
                     Coroutine.async {
                         Backup.backup(fragment.requireContext(), backupPath)
                     }.onSuccess {
-                        fragment.toast(R.string.backup_success)
+                        fragment.toastOnUi(R.string.backup_success)
                     }
                 } else {
                     selectBackupFolder(fragment, backupSelectRequestCode)
@@ -65,7 +64,7 @@ object BackupRestoreUi {
                     AppConfig.backupPath = path
                     Backup.backup(fragment.requireContext(), path)
                 }.onSuccess {
-                    fragment.toast(R.string.backup_success)
+                    fragment.toastOnUi(R.string.backup_success)
                 }
             }
             .request()
@@ -126,24 +125,24 @@ object BackupRestoreUi {
             backupSelectRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
                     if (uri.isContentScheme()) {
-                        App.INSTANCE.contentResolver.takePersistableUriPermission(
+                        appCtx.contentResolver.takePersistableUriPermission(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
                                     or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                         )
                         AppConfig.backupPath = uri.toString()
                         Coroutine.async {
-                            Backup.backup(App.INSTANCE, uri.toString())
+                            Backup.backup(appCtx, uri.toString())
                         }.onSuccess {
-                            App.INSTANCE.toast(R.string.backup_success)
+                            appCtx.toastOnUi(R.string.backup_success)
                         }
                     } else {
                         uri.path?.let { path ->
                             AppConfig.backupPath = path
                             Coroutine.async {
-                                Backup.backup(App.INSTANCE, path)
+                                Backup.backup(appCtx, path)
                             }.onSuccess {
-                                App.INSTANCE.toast(R.string.backup_success)
+                                appCtx.toastOnUi(R.string.backup_success)
                             }
                         }
                     }
@@ -152,20 +151,20 @@ object BackupRestoreUi {
             restoreSelectRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
                     if (uri.isContentScheme()) {
-                        App.INSTANCE.contentResolver.takePersistableUriPermission(
+                        appCtx.contentResolver.takePersistableUriPermission(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
                                     or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                         )
                         AppConfig.backupPath = uri.toString()
                         Coroutine.async {
-                            Restore.restore(App.INSTANCE, uri.toString())
+                            Restore.restore(appCtx, uri.toString())
                         }
                     } else {
                         uri.path?.let { path ->
                             AppConfig.backupPath = path
                             Coroutine.async {
-                                Restore.restore(App.INSTANCE, path)
+                                Restore.restore(appCtx, path)
                             }
                         }
                     }
@@ -174,7 +173,7 @@ object BackupRestoreUi {
             selectFolderRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
                     if (uri.isContentScheme()) {
-                        App.INSTANCE.contentResolver.takePersistableUriPermission(
+                        appCtx.contentResolver.takePersistableUriPermission(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
                                     or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -187,7 +186,7 @@ object BackupRestoreUi {
             }
             oldDataRequestCode -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
-                    ImportOldData.importUri(App.INSTANCE, uri)
+                    ImportOldData.importUri(appCtx, uri)
                 }
             }
         }

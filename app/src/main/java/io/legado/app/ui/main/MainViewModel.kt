@@ -1,10 +1,10 @@
 package io.legado.app.ui.main
 
 import android.app.Application
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
@@ -14,7 +14,6 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import java.util.concurrent.ConcurrentHashMap
@@ -44,7 +43,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upAllBookToc() {
         execute {
-            upToc(App.db.bookDao.hasUpdateBooks)
+            upToc(appDb.bookDao.hasUpdateBooks)
         }
     }
 
@@ -66,36 +65,38 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     @Synchronized
     private fun updateToc() {
+        var update = false
         bookMap.forEach { bookEntry ->
             if (!updateList.contains(bookEntry.key)) {
+                update = true
                 val book = bookEntry.value
                 synchronized(this) {
                     updateList.add(book.bookUrl)
                     postEvent(EventBus.UP_BOOK, book.bookUrl)
                 }
-                App.db.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
-                    val webBook = WebBook(bookSource)
-                    webBook.getChapterList(this, book, context = upTocPool)
-                        .timeout(300000)
-                        .onSuccess(IO) {
-                            App.db.bookDao.update(book)
-                            App.db.bookChapterDao.delByBook(book.bookUrl)
-                            App.db.bookChapterDao.insert(*it.toTypedArray())
-                            if (AppConfig.preDownload) {
-                                cacheBook(webBook, book)
-                            }
+                appDb.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
+                    execute(context = upTocPool) {
+                        val webBook = WebBook(bookSource)
+                        if (book.tocUrl.isBlank()) {
+                            webBook.getBookInfoAwait(this, book)
                         }
-                        .onError {
-                            it.printStackTrace()
+                        val toc = webBook.getChapterListAwait(this, book)
+                        appDb.bookDao.update(book)
+                        appDb.bookChapterDao.delByBook(book.bookUrl)
+                        appDb.bookChapterDao.insert(*toc.toTypedArray())
+                        if (AppConfig.preDownload) {
+                            cacheBook(webBook, book)
                         }
-                        .onFinally {
-                            synchronized(this) {
-                                bookMap.remove(bookEntry.key)
-                                updateList.remove(book.bookUrl)
-                                postEvent(EventBus.UP_BOOK, book.bookUrl)
-                                upNext()
-                            }
+                    }.onError {
+                        it.printStackTrace()
+                    }.onFinally {
+                        synchronized(this) {
+                            bookMap.remove(bookEntry.key)
+                            updateList.remove(book.bookUrl)
+                            postEvent(EventBus.UP_BOOK, book.bookUrl)
+                            upNext()
                         }
+                    }
                 } ?: synchronized(this) {
                     bookMap.remove(bookEntry.key)
                     updateList.remove(book.bookUrl)
@@ -105,6 +106,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 return
             }
         }
+        if (!update) {
+            usePoolCount--
+        }
     }
 
     private fun cacheBook(webBook: WebBook, book: Book) {
@@ -112,7 +116,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             if (book.totalChapterNum > book.durChapterIndex) {
                 val downloadToIndex = min(book.totalChapterNum, book.durChapterIndex.plus(10))
                 for (i in book.durChapterIndex until downloadToIndex) {
-                    App.db.bookChapterDao.getChapter(book.bookUrl, i)?.let { chapter ->
+                    appDb.bookChapterDao.getChapter(book.bookUrl, i)?.let { chapter ->
                         if (!BookHelp.hasContent(book, chapter)) {
                             var addToCache = false
                             while (!addToCache) {
@@ -141,9 +145,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun postLoad() {
         execute {
             FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
-            if (App.db.httpTTSDao.count == 0) {
+            if (appDb.httpTTSDao.count == 0) {
                 DefaultData.httpTTS.let {
-                    App.db.httpTTSDao.insert(*it.toTypedArray())
+                    appDb.httpTTSDao.insert(*it.toTypedArray())
                 }
             }
         }

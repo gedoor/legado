@@ -5,9 +5,9 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.SourceHelp
@@ -27,6 +27,24 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     val checkSources = arrayListOf<BookSource?>()
     val selectStatus = arrayListOf<Boolean>()
 
+    fun isSelectAll(): Boolean {
+        selectStatus.forEach {
+            if (!it) {
+                return false
+            }
+        }
+        return true
+    }
+
+    fun selectCount(): Int {
+        var count = 0
+        selectStatus.forEach {
+            if (it) {
+                count++
+            }
+        }
+        return count
+    }
 
     fun importSelect(finally: () -> Unit) {
         execute {
@@ -134,9 +152,9 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = App.db.bookSourceDao.getBookSource(it.bookSourceUrl)
-                checkSources.add(has)
-                selectStatus.add(has == null)
+                val source = appDb.bookSourceDao.getBookSource(it.bookSourceUrl)
+                checkSources.add(source)
+                selectStatus.add(source == null || source.lastUpdateTime < it.lastUpdateTime)
             }
             successLiveData.postValue(allSources.size)
         }

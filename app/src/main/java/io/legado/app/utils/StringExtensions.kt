@@ -9,7 +9,6 @@ import java.io.File
 import java.util.*
 
 val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
-val imgRegex = "<img[^>]*>".toRegex()
 val notImgHtmlRegex = "</?(?!img)[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
@@ -54,7 +53,6 @@ fun String?.isJsonArray(): Boolean =
 fun String?.htmlFormat(): String {
     this ?: return ""
     return this
-        .replace(imgRegex, "\n$0\n")
         .replace(removeHtmlRegex, "\n")
         .replace(notImgHtmlRegex, "")
         .replace("\\s*\\n+\\s*".toRegex(), "\n　　")

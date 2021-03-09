@@ -7,14 +7,15 @@ import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.FragmentExploreBinding
 import io.legado.app.help.AppConfig
@@ -23,7 +24,6 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.utils.cnCompare
-import io.legado.app.utils.getViewModel
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -33,8 +33,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  */
 class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
     ExploreAdapter.CallBack {
-    override val viewModel: ExploreViewModel
-        get() = getViewModel(ExploreViewModel::class.java)
+    override val viewModel: ExploreViewModel by viewModels()
     private val binding by viewBinding(FragmentExploreBinding::bind)
     private lateinit var adapter: ExploreAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -97,7 +96,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     private fun initGroupData() {
         liveGroup?.removeObservers(viewLifecycleOwner)
-        liveGroup = App.db.bookSourceDao.liveExploreGroup()
+        liveGroup = appDb.bookSourceDao.liveExploreGroup()
         liveGroup?.observe(viewLifecycleOwner, {
             groups.clear()
             it.map { group ->
@@ -111,14 +110,14 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         liveExplore?.removeObservers(viewLifecycleOwner)
         liveExplore = when {
             searchKey.isNullOrBlank() -> {
-                App.db.bookSourceDao.liveExplore()
+                appDb.bookSourceDao.liveExplore()
             }
             searchKey.startsWith("group:") -> {
                 val key = searchKey.substringAfter("group:")
-                App.db.bookSourceDao.liveGroupExplore("%$key%")
+                appDb.bookSourceDao.liveGroupExplore("%$key%")
             }
             else -> {
-                App.db.bookSourceDao.liveExplore("%$searchKey%")
+                appDb.bookSourceDao.liveExplore("%$searchKey%")
             }
         }
         liveExplore?.observe(viewLifecycleOwner, {
@@ -151,15 +150,17 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
-        startActivity<ExploreShowActivity>(
-            Pair("exploreName", title),
-            Pair("sourceUrl", sourceUrl),
-            Pair("exploreUrl", exploreUrl)
-        )
+        startActivity<ExploreShowActivity> {
+            putExtra("exploreName", title)
+            putExtra("sourceUrl", sourceUrl)
+            putExtra("exploreUrl", exploreUrl)
+        }
     }
 
     override fun editSource(sourceUrl: String) {
-        startActivity<BookSourceEditActivity>(Pair("data", sourceUrl))
+        startActivity<BookSourceEditActivity> {
+            putExtra("data", sourceUrl)
+        }
     }
 
     override fun toTop(source: BookSource) {

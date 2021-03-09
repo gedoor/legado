@@ -5,9 +5,9 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.SourceHelp
@@ -26,6 +26,24 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     val checkSources = arrayListOf<RssSource?>()
     val selectStatus = arrayListOf<Boolean>()
 
+    fun isSelectAll(): Boolean {
+        selectStatus.forEach {
+            if (!it) {
+                return false
+            }
+        }
+        return true
+    }
+
+    fun selectCount(): Int {
+        var count = 0
+        selectStatus.forEach {
+            if (it) {
+                count++
+            }
+        }
+        return count
+    }
 
     fun importSelect(finally: () -> Unit) {
         execute {
@@ -129,7 +147,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = App.db.rssSourceDao.getByKey(it.sourceUrl)
+                val has = appDb.rssSourceDao.getByKey(it.sourceUrl)
                 checkSources.add(has)
                 selectStatus.add(has == null)
             }

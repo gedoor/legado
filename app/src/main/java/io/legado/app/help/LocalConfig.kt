@@ -2,19 +2,19 @@ package io.legado.app.help
 
 import android.content.Context
 import androidx.core.content.edit
-import io.legado.app.App
+import splitties.init.appCtx
 
 object LocalConfig {
-    private const val versionCodeKey = "versionCode"
+    private const val versionCodeKey = "appVersionCode"
 
     private val localConfig =
-        App.INSTANCE.getSharedPreferences("local", Context.MODE_PRIVATE)
+        appCtx.getSharedPreferences("local", Context.MODE_PRIVATE)
 
     var versionCode
-        get() = localConfig.getInt(versionCodeKey, 0)
+        get() = localConfig.getLong(versionCodeKey, 0)
         set(value) {
             localConfig.edit {
-                putInt(versionCodeKey, value)
+                putLong(versionCodeKey, value)
             }
         }
 
@@ -71,5 +71,5 @@ object LocalConfig {
         get() = !isLastVersion(1, "txtTocRuleVersion")
 
     val hasUpRssSources: Boolean
-        get() = !isLastVersion(1, "rssSourceVersion")
+        get() = !isLastVersion(2, "rssSourceVersion")
 }

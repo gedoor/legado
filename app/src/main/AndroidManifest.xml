@@ -297,7 +297,8 @@
         <!-- 文字处理 -->
         <activity
             android:name=".receiver.SharedReceiverActivity"
-            android:label="@string/receiving_shared_label">
+            android:label="@string/receiving_shared_label"
+            android:theme="@style/AppTheme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
@@ -417,6 +418,10 @@
     <queries>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
         </intent>
     </queries>
 

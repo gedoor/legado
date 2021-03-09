@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pk_auto_refresh" translatable="false">auto_refresh</string>
     <string name="pk_bookshelf_px" translatable="false">bookshelf_px</string>
-    <string name="pk_default_read" translatable="false">defaultToRead</string>
     <string name="legado_gzh" translatable="false">开源阅读</string>
 
     <string name="source_rule_url" translatable="false">https://alanskycn.gitee.io/teachme/</string>

@@ -2,8 +2,8 @@ package io.legado.app.ui.replace.edit
 
 import android.app.Application
 import android.content.Intent
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 
 class ReplaceEditViewModel(application: Application) : BaseViewModel(application) {
@@ -14,7 +14,7 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
         execute {
             val id = intent.getLongExtra("id", -1)
             if (id > 0) {
-                replaceRule = App.db.replaceRuleDao.findById(id)
+                replaceRule = appDb.replaceRuleDao.findById(id)
             } else {
                 val pattern = intent.getStringExtra("pattern") ?: ""
                 val isRegex = intent.getBooleanExtra("isRegex", false)
@@ -36,9 +36,9 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
     fun save(replaceRule: ReplaceRule, success: () -> Unit) {
         execute {
             if (replaceRule.order == 0) {
-                replaceRule.order = App.db.replaceRuleDao.maxOrder + 1
+                replaceRule.order = appDb.replaceRuleDao.maxOrder + 1
             }
-            App.db.replaceRuleDao.insert(replaceRule)
+            appDb.replaceRuleDao.insert(replaceRule)
         }.onSuccess {
             success()
         }

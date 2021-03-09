@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.AppConst
@@ -60,7 +59,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         findPreference<ColorPreference>(PreferKey.cBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
-                    toast(R.string.day_background_too_dark)
+                    toastOnUi(R.string.day_background_too_dark)
                     true
                 } else {
                     false
@@ -70,7 +69,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         findPreference<ColorPreference>(PreferKey.cNBackground)?.let {
             it.onSaveColor = { color ->
                 if (ColorUtils.isColorLight(color)) {
-                    toast(R.string.night_background_too_light)
+                    toastOnUi(R.string.night_background_too_light)
                     true
                 } else {
                     false
@@ -84,11 +83,11 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 val textColor = getCompatColor(R.color.primaryText)
                 when {
                     ColorUtils.getColorDifference(color, background) <= 60 -> {
-                        toast(R.string.accent_background_diff)
+                        toastOnUi(R.string.accent_background_diff)
                         true
                     }
                     ColorUtils.getColorDifference(color, textColor) <= 60 -> {
-                        toast(R.string.accent_text_diff)
+                        toastOnUi(R.string.accent_text_diff)
                         true
                     }
                     else -> false
@@ -102,11 +101,11 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 val textColor = getCompatColor(R.color.primaryText)
                 when {
                     ColorUtils.getColorDifference(color, background) <= 60 -> {
-                        toast(R.string.accent_background_diff)
+                        toastOnUi(R.string.accent_background_diff)
                         true
                     }
                     ColorUtils.getColorDifference(color, textColor) <= 60 -> {
-                        toast(R.string.accent_text_diff)
+                        toastOnUi(R.string.accent_text_diff)
                         true
                     }
                     else -> false
@@ -140,7 +139,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         when (item.itemId) {
             R.id.menu_theme_mode -> {
                 AppConfig.isNightTheme = !AppConfig.isNightTheme
-                App.INSTANCE.applyDayNight()
+                ThemeConfig.applyDayNight(requireContext())
             }
         }
         return super.onOptionsItemSelected(item)
@@ -192,6 +191,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImage)
+                        upTheme(false)
                     } else {
                         selectImage(requestCodeBgImage)
                     }
@@ -203,6 +203,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImageN)
+                        upTheme(true)
                     } else {
                         selectImage(requestCodeBgImageN)
                     }
@@ -223,7 +224,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     private fun saveThemeAlert(key: String) {
         alert(R.string.theme_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-            customView = alertBinding.root
+            customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let { themeName ->
                     when (key) {
@@ -262,7 +263,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         }
     }
 
-    private fun setBgFromUri(uri: Uri, preferenceKey: String) {
+    private fun setBgFromUri(uri: Uri, preferenceKey: String, success: () -> Unit) {
         if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
             doc?.name?.let {
@@ -273,8 +274,9 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }.getOrNull()?.let { byteArray ->
                     file.writeBytes(byteArray)
                     putPrefString(preferenceKey, file.absolutePath)
-
-                } ?: toast("获取文件出错")
+                    upPreferenceSummary(preferenceKey, file.absolutePath)
+                    success()
+                } ?: toastOnUi("获取文件出错")
             }
         } else {
             PermissionsCompat.Builder(this)
@@ -291,7 +293,8 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                             file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
                             file.writeBytes(imgFile.readBytes())
                             putPrefString(preferenceKey, file.absolutePath)
-
+                            upPreferenceSummary(preferenceKey, file.absolutePath)
+                            success()
                         }
                     }
                 }
@@ -304,12 +307,16 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         when (requestCode) {
             requestCodeBgImage -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    setBgFromUri(uri, PreferKey.bgImage)
+                    setBgFromUri(uri, PreferKey.bgImage) {
+                        upTheme(false)
+                    }
                 }
             }
             requestCodeBgImageN -> if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
-                    setBgFromUri(uri, PreferKey.bgImageN)
+                    setBgFromUri(uri, PreferKey.bgImageN) {
+                        upTheme(true)
+                    }
                 }
             }
         }

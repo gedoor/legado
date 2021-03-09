@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import org.jetbrains.anko.AnkoContext
 
 inline fun Fragment.alert(
     title: CharSequence? = null,
@@ -22,10 +21,10 @@ fun Context.alert(
 ): AlertBuilder<AlertDialog> {
     return AndroidAlertBuilder(this).apply {
         if (title != null) {
-            this.title = title
+            this.setTitle(title)
         }
         if (message != null) {
-            this.message = message
+            this.setMessage(message)
         }
         if (init != null) init()
     }
@@ -44,17 +43,16 @@ fun Context.alert(
 ): AlertBuilder<AlertDialog> {
     return AndroidAlertBuilder(this).apply {
         if (titleResource != null) {
-            this.titleResource = titleResource
+            this.setTitle(titleResource)
         }
         if (messageResource != null) {
-            this.messageResource = messageResource
+            this.setMessage(messageResource)
         }
         if (init != null) init()
     }
 }
 
 
-inline fun AnkoContext<*>.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) = ctx.alert(init)
 inline fun Fragment.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) = requireContext().alert(init)
 
 fun Context.alert(init: AlertBuilder<AlertDialog>.() -> Unit): AlertBuilder<AlertDialog> =

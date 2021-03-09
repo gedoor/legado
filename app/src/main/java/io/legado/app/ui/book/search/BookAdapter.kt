@@ -6,7 +6,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemFilletTextBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class BookAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<Book, ItemFilletTextBinding>(context) {
@@ -28,7 +28,7 @@ class BookAdapter(context: Context, val callBack: CallBack) :
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
         holder.itemView.apply {
-            onClick {
+            setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.showBookInfo(it)
                 }

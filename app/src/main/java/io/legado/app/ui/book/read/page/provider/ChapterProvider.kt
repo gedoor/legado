@@ -6,7 +6,6 @@ import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
-import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
@@ -19,6 +18,7 @@ import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.util.*
 
 
@@ -61,13 +61,15 @@ object ChapterProvider {
     private var titleBottomSpacing = 0
 
     @JvmStatic
-    var typeface: Typeface = Typeface.SANS_SERIF
+    var typeface: Typeface = Typeface.DEFAULT
 
     @JvmStatic
     lateinit var titlePaint: TextPaint
 
     @JvmStatic
     lateinit var contentPaint: TextPaint
+
+    private const val srcReplaceChar = "🖼"
 
     init {
         upStyle()
@@ -81,29 +83,62 @@ object ChapterProvider {
         bookChapter: BookChapter,
         contents: List<String>,
         chapterSize: Int,
-        imageStyle: String?,
     ): TextChapter {
         val textPages = arrayListOf<TextPage>()
         val stringBuilder = StringBuilder()
         var durY = 0f
         textPages.add(TextPage())
-        contents.forEachIndexed { index, text ->
-            val matcher = AppPattern.imgPattern.matcher(text)
-            if (matcher.find()) {
-                matcher.group(1)?.let {
-                    if (!book.isEpub()) {
+        contents.forEachIndexed { index, content ->
+            if (book.getImageStyle() == Book.imgStyleText) {
+                var text = content.replace(srcReplaceChar, "画")
+                val srcList = LinkedList<String>()
+                val sb = StringBuffer()
+                val matcher = AppPattern.imgPattern.matcher(text)
+                while (matcher.find()) {
+                    matcher.group(1)?.let { it ->
                         val src = NetworkUtils.getAbsoluteURL(bookChapter.url, it)
-                        durY = setTypeImage(
-                            book, bookChapter, src, durY, textPages, imageStyle
-                        )
+                        srcList.add(src)
+                        ImageProvider.getImage(book, bookChapter.index, src)
+                        matcher.appendReplacement(sb, srcReplaceChar)
                     }
                 }
-            } else {
+                matcher.appendTail(sb)
+                text = sb.toString()
                 val isTitle = index == 0
                 val textPaint = if (isTitle) titlePaint else contentPaint
                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
-                    durY = setTypeText(text, durY, textPages, stringBuilder, isTitle, textPaint)
+                    durY = setTypeText(
+                        text, durY, textPages, stringBuilder,
+                        isTitle, textPaint, srcList
+                    )
                 }
+            } else if (book.getImageStyle() != Book.imgStyleText) {
+                content.replace(AppPattern.imgPattern.toRegex(), "\n\$0\n")
+                    .split("\n").forEach { text ->
+                        if (text.isNotBlank()) {
+                            val matcher = AppPattern.imgPattern.matcher(text)
+                            if (matcher.find()) {
+                                matcher.group(1)?.let { it ->
+                                    if (!book.isEpub()) {
+                                        val src = NetworkUtils.getAbsoluteURL(bookChapter.url, it)
+                                        durY = setTypeImage(
+                                            book, bookChapter, src,
+                                            durY, textPages, book.getImageStyle()
+                                        )
+                                    }
+                                }
+                            } else {
+                                val isTitle = index == 0
+                                val textPaint = if (isTitle) titlePaint else contentPaint
+                                if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                                    durY = setTypeText(
+                                        text, durY, textPages,
+                                        stringBuilder, isTitle, textPaint
+                                    )
+                                }
+                            }
+                        }
+                    }
             }
         }
         textPages.last().height = durY + 20.dp
@@ -142,9 +177,12 @@ object ChapterProvider {
             var height = it.height
             var width = it.width
             when (imageStyle?.toUpperCase(Locale.ROOT)) {
-                "FULL" -> {
+                Book.imgStyleFull -> {
                     width = visibleWidth
                     height = it.height * visibleWidth / it.width
+                }
+                Book.imgStyleText -> {
+
                 }
                 else -> {
                     if (it.width > visibleWidth) {
@@ -197,10 +235,13 @@ object ChapterProvider {
         textPages: ArrayList<TextPage>,
         stringBuilder: StringBuilder,
         isTitle: Boolean,
-        textPaint: TextPaint
+        textPaint: TextPaint,
+        srcList: LinkedList<String>? = null
     ): Float {
         var durY = if (isTitle) y + titleTopSpacing else y
-        val layout = StaticLayout(
+        val layout = if (ReadBookConfig.useZhLayout) {
+            ZhLayout(text, textPaint, visibleWidth)
+        } else StaticLayout(
             text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         for (lineIndex in 0 until layout.lineCount) {
@@ -212,7 +253,13 @@ object ChapterProvider {
             if (lineIndex == 0 && layout.lineCount > 1 && !isTitle) {
                 //第一行
                 textLine.text = words
-                addCharsToLineFirst(textLine, words.toStringArray(), textPaint, desiredWidth)
+                addCharsToLineFirst(
+                    textLine,
+                    words.toStringArray(),
+                    textPaint,
+                    desiredWidth,
+                    srcList
+                )
             } else if (lineIndex == layout.lineCount - 1) {
                 //最后一行
                 textLine.text = "$words\n"
@@ -220,11 +267,18 @@ object ChapterProvider {
                 val x = if (isTitle && ReadBookConfig.titleMode == 1)
                     (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                 else 0f
-                addCharsToLineLast(textLine, words.toStringArray(), textPaint, x)
+                addCharsToLineLast(textLine, words.toStringArray(), textPaint, x, srcList)
             } else {
                 //中间行
                 textLine.text = words
-                addCharsToLineMiddle(textLine, words.toStringArray(), textPaint, desiredWidth, 0f)
+                addCharsToLineMiddle(
+                    textLine,
+                    words.toStringArray(),
+                    textPaint,
+                    desiredWidth,
+                    0f,
+                    srcList
+                )
             }
             if (durY + textPaint.textHeight > visibleHeight) {
                 //当前页面结束,设置各种值
@@ -255,21 +309,37 @@ object ChapterProvider {
         words: Array<String>,
         textPaint: TextPaint,
         desiredWidth: Float,
+        srcList: LinkedList<String>?
     ) {
         var x = 0f
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(textLine, words, textPaint, x)
+            addCharsToLineLast(textLine, words, textPaint, x, srcList)
             return
         }
         val bodyIndent = ReadBookConfig.paragraphIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
         bodyIndent.toStringArray().forEach {
             val x1 = x + icw
-            textLine.addTextChar(charData = it, start = paddingLeft + x, end = paddingLeft + x1)
+            if (srcList != null && it == srcReplaceChar) {
+                textLine.textChars.add(
+                    TextChar(
+                        srcList.removeFirst(),
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1,
+                        isImage = true
+                    )
+                )
+            } else {
+                textLine.textChars.add(
+                    TextChar(
+                        it, start = paddingLeft + x, end = paddingLeft + x1
+                    )
+                )
+            }
             x = x1
         }
         val words1 = words.copyOfRange(bodyIndent.length, words.size)
-        addCharsToLineMiddle(textLine, words1, textPaint, desiredWidth, x)
+        addCharsToLineMiddle(textLine, words1, textPaint, desiredWidth, x, srcList)
     }
 
     /**
@@ -281,9 +351,10 @@ object ChapterProvider {
         textPaint: TextPaint,
         desiredWidth: Float,
         startX: Float,
+        srcList: LinkedList<String>?
     ) {
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(textLine, words, textPaint, startX)
+            addCharsToLineLast(textLine, words, textPaint, startX, srcList)
             return
         }
         val gapCount: Int = words.lastIndex
@@ -292,7 +363,22 @@ object ChapterProvider {
         words.forEachIndexed { index, s ->
             val cw = StaticLayout.getDesiredWidth(s, textPaint)
             val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
-            textLine.addTextChar(charData = s, start = paddingLeft + x, end = paddingLeft + x1)
+            if (srcList != null && s == srcReplaceChar) {
+                textLine.textChars.add(
+                    TextChar(
+                        srcList.removeFirst(),
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1,
+                        isImage = true
+                    )
+                )
+            } else {
+                textLine.textChars.add(
+                    TextChar(
+                        s, start = paddingLeft + x, end = paddingLeft + x1
+                    )
+                )
+            }
             x = x1
         }
         exceed(textLine, words)
@@ -306,12 +392,28 @@ object ChapterProvider {
         words: Array<String>,
         textPaint: TextPaint,
         startX: Float,
+        srcList: LinkedList<String>?
     ) {
         var x = startX
         words.forEach {
             val cw = StaticLayout.getDesiredWidth(it, textPaint)
             val x1 = x + cw
-            textLine.addTextChar(charData = it, start = paddingLeft + x, end = paddingLeft + x1)
+            if (srcList != null && it == srcReplaceChar) {
+                textLine.textChars.add(
+                    TextChar(
+                        srcList.removeFirst(),
+                        start = paddingLeft + x,
+                        end = paddingLeft + x1,
+                        isImage = true
+                    )
+                )
+            } else {
+                textLine.textChars.add(
+                    TextChar(
+                        it, start = paddingLeft + x, end = paddingLeft + x1
+                    )
+                )
+            }
             x = x1
         }
         exceed(textLine, words)
@@ -355,13 +457,13 @@ object ChapterProvider {
         return kotlin.runCatching {
             when {
                 fontPath.isContentScheme() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
-                    val fd = App.INSTANCE.contentResolver
+                    val fd = appCtx.contentResolver
                         .openFileDescriptor(Uri.parse(fontPath), "r")!!
                         .fileDescriptor
                     Typeface.Builder(fd).build()
                 }
                 fontPath.isContentScheme() -> {
-                    Typeface.createFromFile(RealPathUtil.getPath(App.INSTANCE, Uri.parse(fontPath)))
+                    Typeface.createFromFile(RealPathUtil.getPath(appCtx, Uri.parse(fontPath)))
                 }
                 fontPath.isNotEmpty() -> Typeface.createFromFile(fontPath)
                 else -> when (AppConfig.systemTypefaces) {

@@ -2,29 +2,58 @@ package io.legado.app.help
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
-import io.legado.app.App
+import androidx.appcompat.app.AppCompatDelegate
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.File
 
 object ThemeConfig {
     const val configFileName = "themeConfig.json"
-    val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, configFileName)
+    val configFilePath = FileUtils.getPath(appCtx.filesDir, configFileName)
 
     val configList: ArrayList<Config> by lazy {
         val cList = getConfigs() ?: DefaultData.themeConfigs
         ArrayList(cList)
     }
 
-    fun upConfig() {
-        getConfigs()?.let {
-            it.forEach { config ->
-                addConfig(config)
+    fun applyDayNight(context: Context) {
+        ReadBookConfig.upBg()
+        applyTheme(context)
+        initNightMode()
+        postEvent(EventBus.RECREATE, "")
+    }
+
+    private fun initNightMode() {
+        val targetMode =
+            if (AppConfig.isNightTheme) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
             }
+        AppCompatDelegate.setDefaultNightMode(targetMode)
+    }
+
+    fun getBgImage(context: Context): Drawable? {
+        val bgPath = when (Theme.getTheme()) {
+            Theme.Light -> context.getPrefString(PreferKey.bgImage)
+            Theme.Dark -> context.getPrefString(PreferKey.bgImageN)
+            else -> null
+        }
+        if (bgPath.isNullOrBlank()) return null
+        return BitmapDrawable.createFromPath(bgPath)
+    }
+
+    fun upConfig() {
+        getConfigs()?.forEach { config ->
+            addConfig(config)
         }
     }
 
@@ -88,8 +117,7 @@ object ThemeConfig {
             context.putPrefInt(PreferKey.cBBackground, bBackground)
         }
         AppConfig.isNightTheme = config.isNightTheme
-        App.INSTANCE.applyDayNight()
-        postEvent(EventBus.RECREATE, "")
+        applyDayNight(context)
     }
 
     fun saveDayTheme(context: Context, name: String) {
@@ -204,7 +232,6 @@ object ThemeConfig {
         var primaryColor: String,
         var accentColor: String,
         var backgroundColor: String,
-        var backgroundImage: String? = null,
         var bottomBackground: String
     )
 

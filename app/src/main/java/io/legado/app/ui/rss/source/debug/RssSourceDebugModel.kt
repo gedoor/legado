@@ -1,8 +1,8 @@
 package io.legado.app.ui.rss.source.debug
 
 import android.app.Application
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Debug
 
@@ -16,7 +16,7 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
     fun initData(sourceUrl: String?, finally: () -> Unit) {
         sourceUrl?.let {
             execute {
-                rssSource = App.db.rssSourceDao.getByKey(sourceUrl)
+                rssSource = appDb.rssSourceDao.getByKey(sourceUrl)
             }.onFinally {
                 finally()
             }

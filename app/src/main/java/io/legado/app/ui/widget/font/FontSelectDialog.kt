@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
@@ -27,6 +26,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import splitties.init.appCtx
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -38,7 +38,7 @@ class FontSelectDialog : BaseDialogFragment(),
     private val fontFolderRequestCode = 35485
     private val fontRegex = Regex(".*\\.[ot]tf")
     private val fontFolder by lazy {
-        FileUtils.createFolderIfNotExist(App.INSTANCE.filesDir, "Fonts")
+        FileUtils.createFolderIfNotExist(appCtx.filesDir, "Fonts")
     }
     private var adapter: FontAdapter? = null
     private val binding by viewBinding(DialogFontSelectBinding::bind)
@@ -94,7 +94,7 @@ class FontSelectDialog : BaseDialogFragment(),
                     ) { _, i ->
                         AppConfig.systemTypefaces = i
                         onDefaultFontChange()
-                        dismiss()
+                        dismissAllowingStateLoss()
                     }
                 }.show()
             }
@@ -147,7 +147,7 @@ class FontSelectDialog : BaseDialogFragment(),
     private fun loadFontFiles(doc: DocumentFile) {
         execute {
             val fontItems = arrayListOf<DocItem>()
-            val docItems = DocumentUtils.listFiles(App.INSTANCE, doc.uri)
+            val docItems = DocumentUtils.listFiles(appCtx, doc.uri)
             docItems.forEach { item ->
                 if (item.name.toLowerCase(Locale.getDefault()).matches(fontRegex)) {
                     fontItems.add(item)
@@ -157,7 +157,7 @@ class FontSelectDialog : BaseDialogFragment(),
         }.onSuccess {
             adapter?.setItems(it)
         }.onError {
-            toast("getFontFiles:${it.localizedMessage}")
+            toastOnUi("getFontFiles:${it.localizedMessage}")
         }
     }
 
@@ -192,7 +192,7 @@ class FontSelectDialog : BaseDialogFragment(),
         }.onSuccess {
             adapter?.setItems(it)
         }.onError {
-            toast("getFontFiles:${it.localizedMessage}")
+            toastOnUi("getFontFiles:${it.localizedMessage}")
         }
     }
 
@@ -223,7 +223,7 @@ class FontSelectDialog : BaseDialogFragment(),
             FileUtils.deleteFile(fontFolder.absolutePath)
             callBack?.selectFont(docItem.uri.toString())
         }.onSuccess {
-            dialog?.dismiss()
+            dismissAllowingStateLoss()
         }
     }
 

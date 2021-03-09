@@ -21,7 +21,7 @@ fun <D : DialogInterface> Context.selector(
 ) {
     with(factory(this)) {
         if (title != null) {
-            this.title = title
+            this.setTitle(title)
         }
         items(items, onClick)
         show()

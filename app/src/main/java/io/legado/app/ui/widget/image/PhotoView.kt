@@ -881,7 +881,7 @@ class PhotoView @JvmOverloads constructor(
         )
     }
 
-    fun getImageViewInfo(imgView: ImageView): Info? {
+    fun getImageViewInfo(imgView: ImageView): Info {
         val p = IntArray(2)
         getLocation(imgView, p)
         val drawable: Drawable = imgView.drawable

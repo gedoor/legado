@@ -2,8 +2,8 @@ package io.legado.app.ui.book.searchContent
 
 
 import android.app.Application
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.ContentProcessor
 
@@ -16,7 +16,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
     fun initBook(bookUrl: String, success: () -> Unit) {
         this.bookUrl = bookUrl
         execute {
-            book = App.db.bookDao.getBook(bookUrl)
+            book = appDb.bookDao.getBook(bookUrl)
             book?.let {
                 contentProcessor = ContentProcessor(it.name, it.origin)
             }

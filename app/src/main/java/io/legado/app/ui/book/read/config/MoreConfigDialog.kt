@@ -111,7 +111,8 @@ class MoreConfigDialog : DialogFragment() {
                     (activity as? ReadBookActivity)?.setOrientation()
                 }
                 PreferKey.textFullJustify,
-                PreferKey.textBottomJustify -> {
+                PreferKey.textBottomJustify,
+                PreferKey.useZhLayout -> {
                     postEvent(EventBus.UP_CONFIG, true)
                 }
                 PreferKey.showBrightnessView -> {

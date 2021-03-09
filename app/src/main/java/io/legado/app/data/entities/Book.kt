@@ -2,9 +2,9 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.*
-import io.legado.app.App
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
+import io.legado.app.data.appDb
 import io.legado.app.help.AppConfig
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.GSON
@@ -146,6 +146,31 @@ data class Book(
         config().pageAnim = pageAnim
     }
 
+    fun getImageStyle(): String? {
+        return config().imageStyle
+    }
+
+    fun setImageStyle(imageStyle: String?) {
+        config().imageStyle = imageStyle
+    }
+
+    fun getDelParagraph(): Int {
+        return config().delParagraph
+    }
+
+    fun setDelParagraph(num: Int) {
+        config().delParagraph = num
+    }
+
+    fun setDelTag(tag: Long) {
+        config().delTag =
+            if ((config().delTag and tag) == tag) config().delTag and tag.inv() else config().delTag or tag
+    }
+
+    fun getDelTag(tag: Long): Boolean {
+        return config().delTag and tag == tag
+    }
+
     fun getFolderName(): String {
         //防止书名过长,只取9位
         var folderName = name.replace(AppPattern.fileNameRegex, "")
@@ -182,14 +207,14 @@ data class Book(
         newBook.canUpdate = canUpdate
         newBook.readConfig = readConfig
         delete()
-        App.db.bookDao.insert(newBook)
+        appDb.bookDao.insert(newBook)
     }
 
     fun delete() {
         if (ReadBook.book?.bookUrl == bookUrl) {
             ReadBook.book = null
         }
-        App.db.bookDao.delete(this)
+        appDb.bookDao.delete(this)
     }
 
     fun upInfoFromOld(oldBook: Book?) {
@@ -207,11 +232,23 @@ data class Book(
         }
     }
 
+    companion object {
+        const val hTag = 2L
+        const val rubyTag = 4L
+        const val imgTag = 8L
+        const val imgStyleDefault = "DEFAULT"
+        const val imgStyleFull = "FULL"
+        const val imgStyleText = "TEXT"
+    }
+
     @Parcelize
     data class ReadConfig(
         var pageAnim: Int = -1,
         var reSegment: Boolean = false,
-        var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,         // 正文使用净化替换规则
+        var imageStyle: String? = null,
+        var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,// 正文使用净化替换规则
+        var delParagraph: Int = 0,//去除段首
+        var delTag: Long = 0L,//去除标签
     ) : Parcelable
 
     class Converters {

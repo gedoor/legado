@@ -2,8 +2,8 @@ package io.legado.app.service.help
 
 import androidx.lifecycle.MutableLiveData
 import com.hankcs.hanlp.HanLP
-import io.legado.app.App
 import io.legado.app.constant.BookType
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
 import io.legado.app.help.*
 import io.legado.app.help.coroutine.Coroutine
@@ -14,12 +14,13 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
+import io.legado.app.utils.msg
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.getStackTraceString
-import org.jetbrains.anko.toast
+import splitties.init.appCtx
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -47,7 +48,7 @@ object ReadBook {
         this.book = book
         contentProcessor = ContentProcessor(book.name, book.origin)
         readRecord.bookName = book.name
-        readRecord.readTime = App.db.readRecordDao.getReadTime(book.name) ?: 0
+        readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
         isLocalBook = book.origin == BookType.local
@@ -67,9 +68,12 @@ object ReadBook {
             bookSource = null
             webBook = null
         } else {
-            App.db.bookSourceDao.getBookSource(book.origin)?.let {
+            appDb.bookSourceDao.getBookSource(book.origin)?.let {
                 bookSource = it
                 webBook = WebBook(it)
+                if (book.getImageStyle().isNullOrBlank()) {
+                    book.setImageStyle(it.getContentRule().imageStyle)
+                }
             } ?: let {
                 bookSource = null
                 webBook = null
@@ -102,7 +106,7 @@ object ReadBook {
         Coroutine.async {
             readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
             readStartTime = System.currentTimeMillis()
-            App.db.readRecordDao.insert(readRecord)
+            appDb.readRecordDao.insert(readRecord)
         }
     }
 
@@ -185,7 +189,7 @@ object ReadBook {
 
     fun skipToPage(index: Int, success: (() -> Unit)? = null) {
         durChapterPos = curTextChapter?.getReadLength(index) ?: index
-        callBack?.upContent() {
+        callBack?.upContent {
             success?.invoke()
         }
         curPageChanged()
@@ -215,7 +219,7 @@ object ReadBook {
         if (book != null && textChapter != null) {
             val key = IntentDataHelp.putData(textChapter)
             ReadAloud.play(
-                App.INSTANCE, book.name, textChapter.title, durPageIndex(), key, play
+                appCtx, book.name, textChapter.title, durPageIndex(), key, play
             )
         }
     }
@@ -259,7 +263,7 @@ object ReadBook {
         book?.let { book ->
             if (addLoading(index)) {
                 Coroutine.async {
-                    App.db.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
+                    appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                         BookHelp.getContent(book, chapter)?.let {
                             contentLoadFinish(book, chapter, it, upContent, resetPageOffset) {
                                 success?.invoke()
@@ -279,7 +283,7 @@ object ReadBook {
             if (book.isLocalBook()) return
             if (addLoading(index)) {
                 Coroutine.async {
-                    App.db.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
+                    appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                         if (BookHelp.hasContent(book, chapter)) {
                             removeLoading(chapter.index)
                         } else {
@@ -412,7 +416,7 @@ object ReadBook {
                     durChapterIndex -> {
                         curTextChapter =
                             ChapterProvider.getTextChapter(
-                                book, chapter, contents, chapterSize, imageStyle
+                                book, chapter, contents, chapterSize
                             )
                         if (upContent) callBack?.upContent(resetPageOffset = resetPageOffset)
                         callBack?.upView()
@@ -422,14 +426,14 @@ object ReadBook {
                     durChapterIndex - 1 -> {
                         prevTextChapter =
                             ChapterProvider.getTextChapter(
-                                book, chapter, contents, chapterSize, imageStyle
+                                book, chapter, contents, chapterSize
                             )
                         if (upContent) callBack?.upContent(-1, resetPageOffset)
                     }
                     durChapterIndex + 1 -> {
                         nextTextChapter =
                             ChapterProvider.getTextChapter(
-                                book, chapter, contents, chapterSize, imageStyle
+                                book, chapter, contents, chapterSize
                             )
                         if (upContent) callBack?.upContent(1, resetPageOffset)
                     }
@@ -437,13 +441,11 @@ object ReadBook {
             }
         }.onError {
             it.printStackTrace()
-            App.INSTANCE.toast("ChapterProvider ERROR:\n${it.getStackTraceString()}")
+            appCtx.toastOnUi("ChapterProvider ERROR:\n${it.msg}")
         }.onSuccess {
             success?.invoke()
         }
     }
-
-    private val imageStyle get() = webBook?.bookSource?.ruleContent?.imageStyle
 
     fun pageAnim(): Int {
         book?.let {
@@ -470,10 +472,10 @@ object ReadBook {
                 book.durChapterTime = System.currentTimeMillis()
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durChapterPos
-                App.db.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let {
+                appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let {
                     book.durChapterTitle = it.title
                 }
-                App.db.bookDao.update(book)
+                appDb.bookDao.update(book)
             }
         }
     }

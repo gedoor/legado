@@ -12,8 +12,8 @@ data class TextLine(
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,
     val isTitle: Boolean = false,
-    val isImage: Boolean = false,
-    var isReadAloud: Boolean = false
+    var isReadAloud: Boolean = false,
+    var isImage: Boolean = false
 ) {
 
     val charSize: Int get() = textChars.size
@@ -22,10 +22,6 @@ data class TextLine(
         lineTop = ChapterProvider.paddingTop + durY
         lineBottom = lineTop + textPaint.textHeight
         lineBase = lineBottom - textPaint.fontMetrics.descent
-    }
-
-    fun addTextChar(charData: String, start: Float, end: Float) {
-        textChars.add(TextChar(charData, start = start, end = end))
     }
 
     fun getTextChar(index: Int): TextChar {

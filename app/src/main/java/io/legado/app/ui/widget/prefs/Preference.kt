@@ -17,8 +17,7 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.utils.ColorUtils
-import org.jetbrains.anko.layoutInflater
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import splitties.views.onLongClick
 import kotlin.math.roundToInt
 
 class Preference(context: Context, attrs: AttributeSet) :
@@ -77,7 +76,7 @@ class Preference(context: Context, attrs: AttributeSet) :
                     var needRequestLayout = false
                     var v = it.itemView.findViewById<T>(viewId)
                     if (v == null) {
-                        val inflater: LayoutInflater = context.layoutInflater
+                        val inflater: LayoutInflater = LayoutInflater.from(context)
                         val childView = inflater.inflate(weightLayoutRes, null)
                         lay.removeAllViews()
                         lay.addView(childView)
@@ -119,7 +118,6 @@ class Preference(context: Context, attrs: AttributeSet) :
         super.onBindViewHolder(holder)
         holder?.itemView?.onLongClick {
             onLongClick?.invoke()
-            true
         }
     }
 

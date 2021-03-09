@@ -19,8 +19,6 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.share
 
 class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
@@ -72,7 +70,7 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                     if (ThemeConfig.addConfig(it)) {
                         initData()
                     } else {
-                        toast("格式不对,添加失败")
+                        toastOnUi("格式不对,添加失败")
                     }
                 }
             }
@@ -115,13 +113,13 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemThemeConfigBinding) {
             binding.apply {
-                root.onClick {
+                root.setOnClickListener {
                     ThemeConfig.applyConfig(context, ThemeConfig.configList[holder.layoutPosition])
                 }
-                ivShare.onClick {
+                ivShare.setOnClickListener {
                     share(holder.layoutPosition)
                 }
-                ivDelete.onClick {
+                ivDelete.setOnClickListener {
                     delete(holder.layoutPosition)
                 }
             }

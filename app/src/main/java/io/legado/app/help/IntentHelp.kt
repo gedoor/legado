@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import io.legado.app.R
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUi
 
 @Suppress("unused")
 object IntentHelp {
@@ -19,7 +19,7 @@ object IntentHelp {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }.onFailure {
-            context.toast(R.string.tip_cannot_jump_setting_page)
+            context.toastOnUi(R.string.tip_cannot_jump_setting_page)
         }
     }
 
@@ -30,7 +30,7 @@ object IntentHelp {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }.onFailure {
-            context.toast("无法打开设置")
+            context.toastOnUi("无法打开设置")
         }
     }
 

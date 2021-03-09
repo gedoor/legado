@@ -18,9 +18,10 @@ import io.legado.app.databinding.ItemBookSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
@@ -86,7 +87,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         with(binding) {
             val payload = payloads.getOrNull(0) as? Bundle
             if (payload == null) {
-                root.setBackgroundColor(context.backgroundColor)
+                root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 if (item.bookSourceGroup.isNullOrEmpty()) {
                     cbBookSource.text = item.bookSourceName
                 } else {
@@ -132,12 +133,12 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     }
                 }
             }
-            ivEdit.onClick {
+            ivEdit.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.edit(it)
                 }
             }
-            ivMenuMore.onClick {
+            ivMenuMore.setOnClickListener {
                 showMenu(ivMenuMore, holder.layoutPosition)
             }
         }
@@ -165,6 +166,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
                 R.id.menu_bottom -> callBack.toBottom(source)
+                R.id.menu_debug_source -> callBack.debug(source)
                 R.id.menu_del -> callBack.del(source)
                 R.id.menu_enable_explore -> {
                     callBack.update(source.copy(enabledExplore = !source.enabledExplore))
@@ -279,6 +281,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         fun update(vararg bookSource: BookSource)
         fun toTop(bookSource: BookSource)
         fun toBottom(bookSource: BookSource)
+        fun debug(bookSource: BookSource)
         fun upOrder()
         fun upCountView()
     }

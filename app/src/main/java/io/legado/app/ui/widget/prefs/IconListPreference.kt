@@ -23,7 +23,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.getSize
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 
 class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
@@ -186,9 +186,9 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                         }
                     }
                     label.isChecked = item.toString() == dialogValue
-                    root.onClick {
+                    root.setOnClickListener {
                         onChanged?.invoke(item.toString())
-                        this@IconDialog.dismiss()
+                        this@IconDialog.dismissAllowingStateLoss()
                     }
                 }
             }
@@ -197,7 +197,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                 holder: ItemViewHolder,
                 binding: ItemIconPreferenceBinding
             ) {
-                holder.itemView.onClick {
+                holder.itemView.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         onChanged?.invoke(it.toString())
                     }
