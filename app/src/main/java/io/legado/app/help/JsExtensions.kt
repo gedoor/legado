@@ -257,6 +257,10 @@ interface JsExtensions {
         return null
     }
 
+    /**
+     * 返回字体解析类
+     * @param str 支持url,本地文件,base64,自动判断,自动缓存
+     */
     fun queryTTF(str: String?): QueryTTF? {
         str ?: return null
         val key = md5Encode16(str)
@@ -283,10 +287,15 @@ interface JsExtensions {
         return qTTF
     }
 
+    /**
+     * @param text 包含错误字体的内容
+     * @param font1 错误的字体
+     * @param font2 正确的字体
+     */
     fun replaceFont(
-            text: String,
-            font1: QueryTTF?,
-            font2: QueryTTF?
+        text: String,
+        font1: QueryTTF?,
+        font2: QueryTTF?
     ): String {
         if (font1 == null || font2 == null) return text
         val contentArray = text.toCharArray()
