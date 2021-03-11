@@ -811,10 +811,11 @@
     <string name="export_folder">导出文件夹</string>
     <string name="export_charset">导出编码</string>
     <string name="export_to_web_dav">导出到WebDav</string>
-    <string name="reverse_content">反转内容</string>
-    <string name="debug">调试</string>
-    <string name="crash_log">崩溃日志</string>
+    <string name="reverse_content">Reverse content</string>
+    <string name="debug">Debug</string>
+    <string name="crash_log">Crash log</string>
     <string name="use_zh_layout">使用自定义中文分行</string>
-    <string name="image_style">图片样式</string>
+    <string name="image_style">Image style</string>
+    <string name="system_tts">System TTS</string>
 
 </resources>
