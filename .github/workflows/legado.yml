@@ -62,7 +62,7 @@ jobs:
           name: legado apk
           path: ${{ github.workspace }}/app/build/outputs/apk/app/release/*.apk
       - name: Upload App To Lanzou
-        if: ${{ env.LANZOU_PSD }}
+        if: ${{ env.ylogin }}
         run: |
           path="$GITHUB_WORKSPACE/app/build/outputs/apk/app/release"
           files=$(ls $path)
