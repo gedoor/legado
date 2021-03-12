@@ -31,6 +31,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     var content: Any? = null
     var baseUrl: String? = null
     var redirectUrl: URL? = null
+    var userReverse: Boolean = false
     private var isJSON: Boolean = false
     private var isRegex: Boolean = false
 
@@ -58,6 +59,10 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         objectChangedJS = true
         objectChangedJP = true
         return this
+    }
+
+    fun setReverse(): Boolean {
+        return this.userReverse = true
     }
 
     fun setBaseUrl(baseUrl: String?): AnalyzeRule {
