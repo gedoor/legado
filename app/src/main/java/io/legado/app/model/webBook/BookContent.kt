@@ -10,8 +10,8 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.HtmlFormat
 import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.htmlFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -109,7 +109,7 @@ object BookContent {
             }
         }
         content.deleteCharAt(content.length - 1)
-        var contentStr = content.toString().htmlFormat()
+        var contentStr = HtmlFormat.formatKeepImg(content.toString())
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
             contentStr = analyzeRule.getString(replaceRegex, value = contentStr)

@@ -8,9 +8,6 @@ import android.net.Uri
 import java.io.File
 import java.util.*
 
-val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
-val notImgHtmlRegex = "</?(?!img)[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
-
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
 fun String?.isContentScheme(): Boolean = this?.startsWith("content://") == true
@@ -49,16 +46,6 @@ fun String?.isJsonArray(): Boolean =
         val str = this.trim()
         str.startsWith("[") && str.endsWith("]")
     } ?: false
-
-fun String?.htmlFormat(): String {
-    this ?: return ""
-    return this
-        .replace(removeHtmlRegex, "\n")
-        .replace(notImgHtmlRegex, "")
-        .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
-        .replace("^[\\n\\s]+".toRegex(), "　　")
-        .replace("[\\n\\s]+$".toRegex(), "")
-}
 
 fun String.splitNotBlank(vararg delimiter: String): Array<String> = run {
     this.split(*delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
