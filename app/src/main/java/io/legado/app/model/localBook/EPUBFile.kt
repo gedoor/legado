@@ -317,7 +317,9 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
                     )
                 ).getElementsByTag("title")
                 title =
-                    if (elements != null && elements.size > 0) elements[0].text() else "--卷首--"
+                    if (elements != null && elements.size > 0 && elements[0].text()
+                            .isNotBlank()
+                    ) elements[0].text() else "--卷首--"
             }
             chapter.bookUrl = book.bookUrl
             chapter.title = title
