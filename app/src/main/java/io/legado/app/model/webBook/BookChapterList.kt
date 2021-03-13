@@ -36,7 +36,7 @@ object BookChapterList {
 
             val tocRule = bookSource.getTocRule()
             val nextUrlList = arrayListOf(baseUrl)
-            var reverse = false
+            var reverse = AnalyzeRule.userReverse
             var listRule = tocRule.chapterList ?: ""
             if (listRule.startsWith("-")) {
                 reverse = true
