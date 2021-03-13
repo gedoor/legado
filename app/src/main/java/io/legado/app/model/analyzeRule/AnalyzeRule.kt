@@ -42,6 +42,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     private var objectChangedJS = false
     private var objectChangedJP = false
 
+    @JvmStatic
+    companion object{
+        var userReverse: Boolean = false
+        fun setReverse(){
+            return userReverse=true
+        }
+    }
+
     init {
         if (ruleData is BaseBook) {
             book = ruleData
