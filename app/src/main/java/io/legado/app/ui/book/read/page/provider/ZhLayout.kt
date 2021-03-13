@@ -40,7 +40,7 @@ class ZhLayout(
         val words = text.toStringArray()
         var lineW = 0f
         var cwPre = 0f
-
+        var length = 0
         words.forEachIndexed { index, s ->
             val cw = getDesiredWidth(s, curPaint)
             var breakMod: BreakMod
@@ -81,6 +81,7 @@ class ZhLayout(
                 ) reCheck = true
 
                 /*特殊标点使用难保证显示效果，所以不考虑间隔，直接查找到能满足条件的分割字*/
+                var breakLength = 0
                 if (reCheck && index > 2) {
                     breakMod = BreakMod.NORMAL
                     for (i in (index) downTo 1) {
@@ -89,7 +90,8 @@ class ZhLayout(
                             cwPre = 0f
                         } else {
                             breakIndex++
-                            cwPre += StaticLayout.getDesiredWidth(words[i], textPaint)
+                            breakLength += words[i].length
+                            cwPre += getDesiredWidth(words[i], textPaint)
                         }
                         if (!isPostPanc(words[i]) && !isPrePanc(words[i - 1])) {
                             breakMod = BreakMod.BREAK_MORE_CHAR
@@ -101,32 +103,32 @@ class ZhLayout(
                 when (breakMod) {
                     BreakMod.NORMAL -> {//模式0 正常断行
                         offset = cw
-                        lineStart[line + 1] = index
+                        lineStart[line + 1] = length
                         breakCharCnt = 1
                     }
                     BreakMod.BREAK_ONE_CHAR -> {//模式1 当前行下移一个字
                         offset = cw + cwPre
-                        lineStart[line + 1] = index - 1
+                        lineStart[line + 1] = length - words[index - 1].length
                         breakCharCnt = 2
                     }
                     BreakMod.BREAK_MORE_CHAR -> {//模式2 当前行下移多个字
                         offset = cw + cwPre
-                        lineStart[line + 1] = index - breakIndex
+                        lineStart[line + 1] = length - breakLength
                         breakCharCnt = breakIndex + 1
                     }
                     BreakMod.CPS_1 -> {//模式3 两个后置标点压缩
                         offset = 0f
-                        lineStart[line + 1] = index + 1
+                        lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
                     BreakMod.CPS_2 -> { //模式4 前置标点压缩+前置标点压缩+字
                         offset = 0f
-                        lineStart[line + 1] = index + 1
+                        lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
                     BreakMod.CPS_3 -> {//模式5 前置标点压缩+字+后置标点压缩
                         offset = 0f
-                        lineStart[line + 1] = index + 1
+                        lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
                 }
@@ -143,7 +145,7 @@ class ZhLayout(
             if ((words.lastIndex) == index) {
                 if (!breakLine) {
                     offset = 0f
-                    lineStart[line + 1] = index + 1
+                    lineStart[line + 1] = length + s.length
                     lineWidth[line] = lineW - offset
                     lineW = offset
                     addLineArray(++line)
@@ -155,6 +157,7 @@ class ZhLayout(
                     addLineArray(++line)
                 }
             }
+            length += s.length
             cwPre = cw
         }
 
