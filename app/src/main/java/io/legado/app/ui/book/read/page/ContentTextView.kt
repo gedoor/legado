@@ -119,8 +119,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             lineTop,
             lineBase,
             lineBottom,
-            isTitle = textLine.isTitle,
-            isReadAloud = textLine.isReadAloud
+            textLine.isTitle,
+            textLine.isReadAloud,
+            textLine.isImage
         )
     }
 
@@ -135,6 +136,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineBottom: Float,
         isTitle: Boolean,
         isReadAloud: Boolean,
+        isImageLine: Boolean
     ) {
         val textPaint = if (isTitle) {
             ChapterProvider.titlePaint
@@ -145,7 +147,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (isReadAloud) context.accentColor else ReadBookConfig.textColor
         textChars.forEach {
             if (it.isImage) {
-                drawImage(canvas, it, lineTop, lineBottom)
+                drawImage(canvas, it, lineTop, lineBottom, isImageLine)
             } else {
                 canvas.drawText(it.charData, it.start, lineBase, textPaint)
             }
@@ -163,14 +165,19 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         textChar: TextChar,
         lineTop: Float,
         lineBottom: Float,
+        isImageLine: Boolean
     ) {
         ReadBook.book?.let { book ->
             ImageProvider.getImage(book, textPage.chapterIndex, textChar.charData, true)
                 ?.let {
-                    /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
-                    val h = (textChar.end - textChar.start) / it.width * it.height
-                    val div = (lineBottom - lineTop - h) / 2
-                    val rectF = RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
+                    val rectF = if (isImageLine) {
+                        RectF(textChar.start, lineTop, textChar.end, lineBottom)
+                    } else {
+                        /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
+                        val h = (textChar.end - textChar.start) / it.width * it.height
+                        val div = (lineBottom - lineTop - h) / 2
+                        RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
+                    }
                     canvas.drawBitmap(it, null, rectF, null)
                 }
         }
