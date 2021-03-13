@@ -69,7 +69,7 @@ object ChapterProvider {
     @JvmStatic
     lateinit var contentPaint: TextPaint
 
-    /*🖼字符长度是2，做自定义排版等一些处理时会异常，用卍取代*/
+    /*🖼比汉字宽，跟字一起效果的效果不是很好，用卍取代*/
     private const val srcReplaceChar = "卍"
 
     init {
