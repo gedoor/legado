@@ -15,11 +15,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # 登录蓝奏云后查看cookie
-      # LANZOU_ID ： woozooo.com -> Cookie -> ylogin
-      # LANZOU_PSD ： pc.woozooo.com -> Cookie -> phpdisk_info
-      LANZOU_ID: ${{ secrets.LANZOU_ID }}
-      LANZOU_PSD: ${{ secrets.LANZOU_PSD }}
+      # 登录蓝奏云后在控制台运行document.cookie
+      ylogin: ${{ secrets.LANZOU_ID }}
+      phpdisk_info: ${{ secrets.LANZOU_PSD }}
       # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
       LANZOU_FOLDER_ID: '2670621'
       # 是否上传到artifact
@@ -34,7 +32,7 @@ jobs:
           key: ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-
-            
+
       - name: Clear 18PlusList.txt
         run: |
           echo "清空18PlusList.txt"
@@ -64,23 +62,19 @@ jobs:
           name: legado apk
           path: ${{ github.workspace }}/app/build/outputs/apk/app/release/*.apk
       - name: Upload App To Lanzou
-        if: ${{ env.LANZOU_PSD }}
+        if: ${{ env.ylogin }}
         run: |
-          path="$GITHUB_WORKSPACE/app/build/outputs/apk/app/release/"
+          path="$GITHUB_WORKSPACE/app/build/outputs/apk/app/release"
           files=$(ls $path)
           for f in $files
           do
            if [[ $f == *"apk" ]]; then
             file=$f
-            echo "文件:$file"
+            echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 文件:$file"
             break
            fi
           done
-        
-          bash $GITHUB_WORKSPACE/.github/scripts/lzy.sh "$file" \
-          "$GITHUB_WORKSPACE/app/build/outputs/apk/app/release/$file" "${{ env.LANZOU_FOLDER_ID }}"
-          echo "分享链接: https://kunfei.lanzous.com/b0f810h4b"
-        env:
-          LANZOU_ID: ${{ env.LANZOU_ID }}
-          LANZOU_PSD: ${{ env.LANZOU_PSD }}
+
+          python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path/$file" "$LANZOU_FOLDER_ID"
+          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzous.com/b0f810h4b"
  
