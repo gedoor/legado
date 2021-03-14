@@ -8,7 +8,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.HtmlFormat
+import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.msg
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +36,7 @@ object Debug {
         if (debugSource != sourceUrl || callback == null || !print) return
         var printMsg = msg ?: ""
         if (isHtml) {
-            printMsg = HtmlFormat.format(msg)
+            printMsg = HtmlFormatter.format(msg)
         }
         if (showTime) {
             printMsg =

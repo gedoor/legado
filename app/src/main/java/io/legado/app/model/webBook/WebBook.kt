@@ -228,6 +228,7 @@ class WebBook(val bookSource: BookSource) {
                 bookChapter,
                 bookSource,
                 bookChapter.getAbsoluteURL(),
+                bookChapter.getAbsoluteURL(),
                 nextChapterUrl
             )
         } else {
@@ -249,6 +250,7 @@ class WebBook(val bookSource: BookSource) {
                 bookChapter,
                 bookSource,
                 bookChapter.getAbsoluteURL(),
+                res.url,
                 nextChapterUrl
             )
         }

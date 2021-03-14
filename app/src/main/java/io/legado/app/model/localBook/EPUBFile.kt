@@ -181,7 +181,7 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
             if (book.getDelTag(tag)) {
                 html = html.replace("<ruby>\\s?([\\u4e00-\\u9fa5])\\s?.*?</ruby>".toRegex(), "$1")
             }
-            return HtmlFormat.formatKeepImg(html)
+            return HtmlFormatter.formatKeepImg(html)
         }
         return null
     }

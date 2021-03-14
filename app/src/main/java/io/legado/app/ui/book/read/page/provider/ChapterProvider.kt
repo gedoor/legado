@@ -90,13 +90,12 @@ object ChapterProvider {
         textPages.add(TextPage())
         contents.forEachIndexed { index, content ->
             if (book.getImageStyle() == Book.imgStyleText) {
-                var text = content.replace(srcReplaceChar, "画")
+                var text = content.replace(srcReplaceChar, "▣")
                 val srcList = LinkedList<String>()
                 val sb = StringBuffer()
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
-                    matcher.group(1)?.let { it ->
-                        val src = NetworkUtils.getAbsoluteURL(bookChapter.getAbsoluteURL(), it)
+                    matcher.group(1)?.let { src ->
                         srcList.add(src)
                         ImageProvider.getImage(book, bookChapter.index, src)
                         matcher.appendReplacement(sb, srcReplaceChar)
@@ -118,12 +117,8 @@ object ChapterProvider {
                         if (text.isNotBlank()) {
                             val matcher = AppPattern.imgPattern.matcher(text)
                             if (matcher.find()) {
-                                matcher.group(1)?.let { it ->
+                                matcher.group(1)?.let { src ->
                                     if (!book.isEpub()) {
-                                        val src = NetworkUtils.getAbsoluteURL(
-                                            bookChapter.getAbsoluteURL(),
-                                            it
-                                        )
                                         durY = setTypeImage(
                                             book, bookChapter, src,
                                             durY, textPages, book.getImageStyle()

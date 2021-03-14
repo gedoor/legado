@@ -9,7 +9,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.HtmlFormat
+import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StringUtils.wordCountFormat
 import kotlinx.coroutines.CoroutineScope
@@ -197,7 +197,7 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}", log)
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取简介", log)
-            searchBook.intro = HtmlFormat.format(analyzeRule.getString(ruleIntro))
+            searchBook.intro = HtmlFormatter.format(analyzeRule.getString(ruleIntro))
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", log)
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取封面链接", log)

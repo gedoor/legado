@@ -227,7 +227,7 @@ interface JsExtensions {
     }
 
     fun htmlFormat(str: String): String {
-        return HtmlFormat.formatKeepImg(str)
+        return HtmlFormatter.formatKeepImg(str)
     }
 
     /**
