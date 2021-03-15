@@ -6,9 +6,9 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StringUtils.wordCountFormat
-import io.legado.app.utils.htmlFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ensureActive
 import splitties.init.appCtx
@@ -93,7 +93,7 @@ object BookInfo {
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取简介")
         analyzeRule.getString(infoRule.intro).let {
-            if (it.isNotEmpty()) book.intro = it.htmlFormat()
+            if (it.isNotEmpty()) book.intro = HtmlFormatter.format(it)
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.intro}")
         scope.ensureActive()

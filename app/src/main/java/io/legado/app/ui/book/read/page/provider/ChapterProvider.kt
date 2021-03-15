@@ -69,8 +69,7 @@ object ChapterProvider {
     @JvmStatic
     lateinit var contentPaint: TextPaint
 
-    /*🖼比汉字宽，跟字一起效果的效果不是很好，用卍取代*/
-    private const val srcReplaceChar = "卍"
+    private const val srcReplaceChar = "▩"
 
     init {
         upStyle()
@@ -91,13 +90,12 @@ object ChapterProvider {
         textPages.add(TextPage())
         contents.forEachIndexed { index, content ->
             if (book.getImageStyle() == Book.imgStyleText) {
-                var text = content.replace(srcReplaceChar, "画")
+                var text = content.replace(srcReplaceChar, "▣")
                 val srcList = LinkedList<String>()
                 val sb = StringBuffer()
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
-                    matcher.group(1)?.let { it ->
-                        val src = NetworkUtils.getAbsoluteURL(bookChapter.url, it)
+                    matcher.group(1)?.let { src ->
                         srcList.add(src)
                         ImageProvider.getImage(book, bookChapter.index, src)
                         matcher.appendReplacement(sb, srcReplaceChar)
@@ -119,9 +117,8 @@ object ChapterProvider {
                         if (text.isNotBlank()) {
                             val matcher = AppPattern.imgPattern.matcher(text)
                             if (matcher.find()) {
-                                matcher.group(1)?.let { it ->
+                                matcher.group(1)?.let { src ->
                                     if (!book.isEpub()) {
-                                        val src = NetworkUtils.getAbsoluteURL(bookChapter.url, it)
                                         durY = setTypeImage(
                                             book, bookChapter, src,
                                             durY, textPages, book.getImageStyle()

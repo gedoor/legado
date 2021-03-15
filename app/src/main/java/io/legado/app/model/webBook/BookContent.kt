@@ -10,8 +10,8 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.htmlFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -26,6 +26,7 @@ object BookContent {
         bookChapter: BookChapter,
         bookSource: BookSource,
         baseUrl: String,
+        redirectUrl: String,
         nextChapterUrl: String? = null
     ): String {
         body ?: throw Exception(
@@ -44,7 +45,7 @@ object BookContent {
         analyzeRule.setRedirectUrl(baseUrl)
         analyzeRule.nextChapterUrl = mNextChapterUrl
         var contentData = analyzeContent(
-            book, baseUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
+            book, baseUrl, redirectUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
         )
         content.append(contentData.content).append("\n")
 
@@ -56,20 +57,15 @@ object BookContent {
                     == NetworkUtils.getAbsoluteURL(baseUrl, mNextChapterUrl)
                 ) break
                 nextUrlList.add(nextUrl)
-                AnalyzeUrl(
+                val res = AnalyzeUrl(
                     ruleUrl = nextUrl,
                     book = book,
                     headerMapF = bookSource.getHeaderMap()
-                ).getStrResponse(bookSource.bookSourceUrl).body?.let { nextBody ->
+                ).getStrResponse(bookSource.bookSourceUrl)
+                res.body?.let { nextBody ->
                     contentData = analyzeContent(
-                        book,
-                        nextUrl,
-                        nextBody,
-                        contentRule,
-                        bookChapter,
-                        bookSource,
-                        mNextChapterUrl,
-                        false
+                        book, nextUrl, res.url, nextBody, contentRule,
+                        bookChapter, bookSource, mNextChapterUrl, false
                     )
                     nextUrl =
                         if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
@@ -85,20 +81,15 @@ object BookContent {
             }
             for (item in contentDataList) {
                 withContext(scope.coroutineContext) {
-                    AnalyzeUrl(
+                    val res = AnalyzeUrl(
                         ruleUrl = item.nextUrl,
                         book = book,
                         headerMapF = bookSource.getHeaderMap()
-                    ).getStrResponse(bookSource.bookSourceUrl).body?.let {
+                    ).getStrResponse(bookSource.bookSourceUrl)
+                    res.body?.let { nextBody ->
                         contentData = analyzeContent(
-                            book,
-                            item.nextUrl,
-                            it,
-                            contentRule,
-                            bookChapter,
-                            bookSource,
-                            mNextChapterUrl,
-                            false
+                            book, item.nextUrl, res.url, nextBody, contentRule,
+                            bookChapter, bookSource, mNextChapterUrl, false
                         )
                         item.content = contentData.content
                     }
@@ -109,7 +100,7 @@ object BookContent {
             }
         }
         content.deleteCharAt(content.length - 1)
-        var contentStr = content.toString().htmlFormat()
+        var contentStr = content.toString()
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
             contentStr = analyzeRule.getString(replaceRegex, value = contentStr)
@@ -128,6 +119,7 @@ object BookContent {
     private fun analyzeContent(
         book: Book,
         baseUrl: String,
+        redirectUrl: String,
         body: String,
         contentRule: ContentRule,
         chapter: BookChapter,
@@ -136,13 +128,14 @@ object BookContent {
         printLog: Boolean = true
     ): ContentData<List<String>> {
         val analyzeRule = AnalyzeRule(book)
-        analyzeRule.setContent(body).setBaseUrl(baseUrl)
-        analyzeRule.setRedirectUrl(baseUrl)
+        analyzeRule.setContent(body, baseUrl)
+        val rUrl = analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.nextChapterUrl = nextChapterUrl
         val nextUrlList = arrayListOf<String>()
         analyzeRule.chapter = chapter
         //获取正文
-        val content = analyzeRule.getString(contentRule.content)
+        var content = analyzeRule.getString(contentRule.content)
+        content = HtmlFormatter.formatKeepImg(content, rUrl)
         //获取下一页链接
         val nextUrlRule = contentRule.nextContentUrl
         if (!nextUrlRule.isNullOrEmpty()) {
