@@ -108,7 +108,10 @@ class BookInfoActivity :
                     viewModel.loadBookInfo(it, false)
                 }
             }
-            R.id.menu_copy_url -> viewModel.bookData.value?.bookUrl?.let {
+            R.id.menu_copy_book_url -> viewModel.bookData.value?.bookUrl?.let {
+                sendToClip(it)
+            } ?: toastOnUi(R.string.no_book)
+            R.id.menu_copy_toc_url -> viewModel.bookData.value?.tocUrl?.let {
                 sendToClip(it)
             } ?: toastOnUi(R.string.no_book)
             R.id.menu_can_update -> {

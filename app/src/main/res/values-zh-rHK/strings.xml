@@ -776,7 +776,8 @@
     <string name="style_name">样式名称:</string>
     <string name="empty_msg_import_book">点击右上角文件夹图标,选择文件夹</string>
     <string name="scan_folder">智能扫描</string>
-    <string name="copy_url">拷贝URL</string>
+    <string name="copy_book_url">拷贝书籍URL</string>
+    <string name="copy_toc_url">拷贝目录URL</string>
     <string name="no_book">没有书籍</string>
     <string name="keep_original_name">保留原名</string>
     <string name="click_regional_config">点击区域设置</string>
