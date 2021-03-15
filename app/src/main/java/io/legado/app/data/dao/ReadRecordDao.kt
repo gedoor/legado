@@ -19,7 +19,7 @@ interface ReadRecordDao {
     @Query("select sum(readTime) from readRecord where bookName = :bookName")
     fun getReadTime(bookName: String): Long?
 
-    @Query("select readTime from readRecord where androidId = :androidId and bookName = :bookName")
+    @Query("select readTime from readRecord where deviceId = :androidId and bookName = :bookName")
     fun getReadTime(androidId: String, bookName: String): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

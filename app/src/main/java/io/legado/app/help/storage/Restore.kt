@@ -149,11 +149,11 @@ object Restore {
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
                 it.forEach { readRecord ->
                     //判断是不是本机记录
-                    if (readRecord.androidId != androidId) {
+                    if (readRecord.deviceId != androidId) {
                         appDb.readRecordDao.insert(readRecord)
                     } else {
                         val time = appDb.readRecordDao
-                            .getReadTime(readRecord.androidId, readRecord.bookName)
+                            .getReadTime(readRecord.deviceId, readRecord.bookName)
                         if (time == null || time < readRecord.readTime) {
                             appDb.readRecordDao.insert(readRecord)
                         }

@@ -23,7 +23,7 @@ val appDb by lazy {
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
         RuleSub::class, EpubChapter::class],
-    version = 30,
+    version = 31,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -59,7 +59,7 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_14_15, migration_15_17, migration_17_18, migration_18_19,
                     migration_19_20, migration_20_21, migration_21_22, migration_22_23,
                     migration_23_24, migration_24_25, migration_25_26, migration_26_27,
-                    migration_27_28, migration_28_29, migration_29_30
+                    migration_27_28, migration_28_29, migration_29_30, migration_30_31
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -276,6 +276,18 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_epubChapters_bookUrl` ON `epubChapters` (`bookUrl`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_epubChapters_bookUrl_href` ON `epubChapters` (`bookUrl`, `href`)")
+            }
+        }
+
+        private val migration_30_31 = object : Migration(30, 31) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE readRecord RENAME TO readRecord1")
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `readRecord` (`deviceId` TEXT NOT NULL, `bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`deviceId`, `bookName`))
+                """
+                )
+                database.execSQL("insert into readRecord (deviceId, bookName, readTime) select androidId, bookName, readTime from readRecord1")
             }
         }
     }
