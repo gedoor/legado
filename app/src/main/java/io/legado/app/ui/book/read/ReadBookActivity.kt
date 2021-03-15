@@ -262,6 +262,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     imgStyles
                 ) { _, index ->
                     ReadBook.book?.setImageStyle(imgStyles[index])
+                    ReadBook.loadContent(false)
                 }
             }
             R.id.menu_get_progress -> ReadBook.book?.let {
