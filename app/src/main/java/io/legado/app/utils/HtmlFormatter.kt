@@ -31,11 +31,16 @@ object HtmlFormatter {
         html ?: return ""
         val sb = StringBuffer()
         val matcher = imgPattern.matcher(html)
+        var appendPos = 0
         while (matcher.find()) {
             val url = NetworkUtils.getAbsoluteURL(redirectUrl, matcher.group(1)!!)
-            matcher.appendReplacement(sb, "<img src=\"$url\" >")
+            sb.append(html.substring(appendPos, matcher.start()))
+            sb.append("<img src=\"$url\" >")
+            appendPos = matcher.end()
         }
-        matcher.appendTail(sb)
+        if (appendPos < html.length) {
+            sb.append(html.substring(appendPos, html.length))
+        }
         return sb.replace(wrapHtmlRegex, "\n")
             .replace(notImgHtmlRegex, "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
