@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import java.net.URL
 import java.util.regex.Pattern
 
@@ -33,7 +34,11 @@ object HtmlFormatter {
         val matcher = imgPattern.matcher(html)
         var appendPos = 0
         while (matcher.find()) {
-            val url = NetworkUtils.getAbsoluteURL(redirectUrl, matcher.group(1)!!)
+            val urlArray = matcher.group(1)!!.split(AnalyzeUrl.splitUrlRegex)
+            var url = NetworkUtils.getAbsoluteURL(redirectUrl, urlArray[0])
+            if (urlArray.size > 1) {
+                url = "$url,${urlArray[1]}"
+            }
             sb.append(html.substring(appendPos, matcher.start()))
             sb.append("<img src=\"$url\" >")
             appendPos = matcher.end()
