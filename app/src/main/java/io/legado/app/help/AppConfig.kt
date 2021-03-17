@@ -11,7 +11,6 @@ import splitties.init.appCtx
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val isGooglePlay = appCtx.channel == "google"
     var userAgent: String = getPrefUserAgent()
-    var replaceEnableDefault = appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
     var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
     var clickActionTC = appCtx.getPrefInt(PreferKey.clickActionTC, 2)
@@ -176,6 +175,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val preDownload get() = appCtx.getPrefBoolean(PreferKey.preDownload, true)
 
     val mediaButtonOnExit get() = appCtx.getPrefBoolean("mediaButtonOnExit", true)
+
+    val replaceEnableDefault get() =  appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
 
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
