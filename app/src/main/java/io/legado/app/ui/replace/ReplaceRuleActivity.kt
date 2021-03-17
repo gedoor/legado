@@ -54,6 +54,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private val importRequestCode = 132
     private val importRequestCodeQr = 133
     private val exportRequestCode = 234
+    private val requestCodeEdit = 213
     private lateinit var adapter: ReplaceRuleAdapter
     private lateinit var searchView: SearchView
     private var groups = hashSetOf<String>()
@@ -179,7 +180,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add_replace_rule ->
-                ReplaceEditActivity.show(this)
+                ReplaceEditActivity.startForResult(this, requestCodeEdit)
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
 
@@ -260,8 +261,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != RESULT_OK) return
         when (requestCode) {
-            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
+            requestCodeEdit -> setResult(RESULT_OK)
+            importRequestCode -> {
                 data?.data?.let { uri ->
                     kotlin.runCatching {
                         uri.readText(this)?.let {
@@ -275,14 +278,14 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                     }
                 }
             }
-            importRequestCodeQr -> if (resultCode == Activity.RESULT_OK) {
+            importRequestCodeQr -> {
                 data?.getStringExtra("result")?.let {
                     startActivity<ImportReplaceRuleActivity> {
                         putExtra("source", it)
                     }
                 }
             }
-            exportRequestCode -> if (resultCode == RESULT_OK) {
+            exportRequestCode -> {
                 data?.data?.let { uri ->
                     if (uri.isContentScheme()) {
                         DocumentFile.fromTreeUri(this, uri)?.let {
@@ -322,7 +325,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     override fun edit(rule: ReplaceRule) {
         setResult(RESULT_OK)
-        ReplaceEditActivity.show(this, rule.id)
+        ReplaceEditActivity.startForResult(this, requestCodeEdit, rule.id)
     }
 
     override fun toTop(rule: ReplaceRule) {
