@@ -1,7 +1,7 @@
 package io.legado.app.service.help
 
 import androidx.lifecycle.MutableLiveData
-import com.hankcs.hanlp.HanLP
+import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
@@ -407,8 +407,8 @@ object ReadBook {
             ImageProvider.clearOut(durChapterIndex)
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
                 chapter.title = when (AppConfig.chineseConverterType) {
-                    1 -> HanLP.convertToSimplifiedChinese(chapter.title)
-                    2 -> HanLP.convertToTraditionalChinese(chapter.title)
+                    1 -> ChineseUtils.t2s(chapter.title)
+                    2 -> ChineseUtils.s2t(chapter.title)
                     else -> chapter.title
                 }
                 val contents = contentProcessor!!.getContent(book, chapter.title, content)
