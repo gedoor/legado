@@ -209,8 +209,7 @@ dependencies {
     implementation 'io.noties.markwon:html:4.6.0'
 
     //转换繁体
-    implementation 'com.hankcs:hanlp:portable-1.7.8'
-
+    implementation 'com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.1.3'
     //epub
     implementation('com.positiondev.epublib:epublib-core:3.1') {
         exclude group: 'org.slf4j'

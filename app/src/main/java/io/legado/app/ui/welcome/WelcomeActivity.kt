@@ -2,7 +2,7 @@ package io.legado.app.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
-import com.hankcs.hanlp.HanLP
+import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -61,8 +61,8 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
             }
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
-                1 -> HanLP.convertToSimplifiedChinese("初始化")
-                2 -> HanLP.convertToTraditionalChinese("初始化")
+                1 -> ChineseUtils.t2s("初始化")
+                2 -> ChineseUtils.s2t("初始化")
                 else -> null
             }
         }
