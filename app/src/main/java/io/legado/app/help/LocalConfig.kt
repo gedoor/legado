@@ -65,7 +65,7 @@ object LocalConfig {
         get() = isLastVersion(1, "ruleHelpVersion")
 
     val hasUpHttpTTS: Boolean
-        get() = !isLastVersion(2, "httpTtsVersion")
+        get() = !isLastVersion(3, "httpTtsVersion")
 
     val hasUpTxtTocRule: Boolean
         get() = !isLastVersion(1, "txtTocRuleVersion")
