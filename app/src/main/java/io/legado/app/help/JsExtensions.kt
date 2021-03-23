@@ -11,7 +11,6 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
@@ -46,7 +45,6 @@ interface JsExtensions {
     /**
      * 并发访问网络
      */
-    @ExperimentalCoroutinesApi
     fun fetchAll(urlList: List<String>): Array<StrResponse?> {
         return runBlocking {
             val asyncArray = Array(urlList.size) {
