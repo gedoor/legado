@@ -6,10 +6,13 @@ import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.SSLHelper
+import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -41,6 +44,26 @@ interface JsExtensions {
     }
 
     /**
+     * 并发访问网络
+     */
+    @ExperimentalCoroutinesApi
+    fun fetchAll(urlList: List<String>): Array<StrResponse?> {
+        return runBlocking {
+            val asyncArray = Array(urlList.size) {
+                async {
+                    val url = urlList[it]
+                    val analyzeUrl = AnalyzeUrl(url)
+                    analyzeUrl.getStrResponse(url)
+                }
+            }
+            val resArray = Array<StrResponse?>(urlList.size) {
+                asyncArray[it].await()
+            }
+            resArray
+        }
+    }
+
+    /**
      * 访问网络,返回Response<String>
      */
     fun connect(urlStr: String): Any {
@@ -62,8 +85,8 @@ interface JsExtensions {
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url).type ?: return ""
         val zipPath = FileUtils.getPath(
-                FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-                "${MD5Utils.md5Encode16(url)}.${type}"
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            "${MD5Utils.md5Encode16(url)}.${type}"
         )
         FileUtils.deleteFile(zipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
@@ -81,8 +104,8 @@ interface JsExtensions {
     fun unzipFile(zipPath: String): String {
         if (zipPath.isEmpty()) return ""
         val unzipPath = FileUtils.getPath(
-                FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-                FileUtils.getNameExcludeExtension(zipPath)
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            FileUtils.getNameExcludeExtension(zipPath)
         )
         FileUtils.deleteFile(unzipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
@@ -104,7 +127,7 @@ interface JsExtensions {
                 for (f in it) {
                     val charsetName = EncodingDetect.getEncode(f)
                     contents.append(String(f.readBytes(), charset(charsetName)))
-                            .append("\n")
+                        .append("\n")
                 }
                 contents.deleteCharAt(contents.length - 1)
             }
@@ -118,12 +141,12 @@ interface JsExtensions {
      */
     fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
         return Jsoup.connect(urlStr)
-                .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
-                .ignoreContentType(true)
-                .followRedirects(false)
-                .headers(headers)
-                .method(Connection.Method.GET)
-                .execute()
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+            .ignoreContentType(true)
+            .followRedirects(false)
+            .headers(headers)
+            .method(Connection.Method.GET)
+            .execute()
     }
 
     /**
@@ -131,13 +154,13 @@ interface JsExtensions {
      */
     fun post(urlStr: String, body: String, headers: Map<String, String>): Connection.Response {
         return Jsoup.connect(urlStr)
-                .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
-                .ignoreContentType(true)
-                .followRedirects(false)
-                .requestBody(body)
-                .headers(headers)
-                .method(Connection.Method.POST)
-                .execute()
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+            .ignoreContentType(true)
+            .followRedirects(false)
+            .requestBody(body)
+            .headers(headers)
+            .method(Connection.Method.POST)
+            .execute()
     }
 
     /**
