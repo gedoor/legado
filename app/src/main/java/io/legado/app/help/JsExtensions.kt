@@ -45,7 +45,7 @@ interface JsExtensions {
     /**
      * 并发访问网络
      */
-    fun fetchAll(urlList: List<String>): Array<StrResponse?> {
+    fun ajaxAll(urlList: List<String>): Array<StrResponse?> {
         return runBlocking {
             val asyncArray = Array(urlList.size) {
                 async {
