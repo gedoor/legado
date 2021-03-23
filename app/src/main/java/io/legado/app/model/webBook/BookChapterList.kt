@@ -6,16 +6,16 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+
 import splitties.init.appCtx
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 object BookChapterList {
 
@@ -26,153 +26,81 @@ object BookChapterList {
         bookSource: BookSource,
         baseUrl: String,
         redirectUrl: String
-    ): List<BookChapter> = suspendCancellableCoroutine { block ->
-        kotlin.runCatching {
-            val chapterList = ArrayList<BookChapter>()
-            body ?: throw Exception(
-                appCtx.getString(R.string.error_get_web_content, baseUrl)
-            )
-            Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
+    ): List<BookChapter> {
+        val chapterList = ArrayList<BookChapter>()
+        body ?: throw Exception(
+            appCtx.getString(R.string.error_get_web_content, baseUrl)
+        )
+        Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
 
-            val tocRule = bookSource.getTocRule()
-            val nextUrlList = arrayListOf(baseUrl)
-            var reverse = false
-            var listRule = tocRule.chapterList ?: ""
-            if (listRule.startsWith("-")) {
-                reverse = true
-                listRule = listRule.substring(1)
-            }
-            if (listRule.startsWith("+")) {
-                listRule = listRule.substring(1)
-            }
-            var chapterData =
-                analyzeChapterList(
-                    scope, book, baseUrl, redirectUrl, body,
-                    tocRule, listRule, bookSource, log = true
-                )
-            chapterData.chapterList?.let {
-                chapterList.addAll(it)
-            }
-            when (chapterData.nextUrl.size) {
-                0 -> {
-                    block.resume(finish(book, chapterList, reverse))
-                }
-                1 -> {
-                    Coroutine.async(scope = scope) {
-                        var nextUrl = chapterData.nextUrl[0]
-                        while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
-                            nextUrlList.add(nextUrl)
-                            AnalyzeUrl(
-                                ruleUrl = nextUrl,
-                                book = book,
-                                headerMapF = bookSource.getHeaderMap()
-                            ).getStrResponse(bookSource.bookSourceUrl).body?.let { nextBody ->
-                                chapterData = analyzeChapterList(
-                                    this, book, nextUrl, nextUrl,
-                                    nextBody, tocRule, listRule, bookSource
-                                )
-                                nextUrl = chapterData.nextUrl.firstOrNull() ?: ""
-                                chapterData.chapterList?.let {
-                                    chapterList.addAll(it)
-                                }
-                            }
-                        }
-                        Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
-                        block.resume(finish(book, chapterList, reverse))
-                    }.onError {
-                        block.resumeWithException(it)
-                    }
-                }
-                else -> {
-                    val chapterDataList = arrayListOf<ChapterData<String>>()
-                    for (item in chapterData.nextUrl) {
-                        if (!nextUrlList.contains(item)) {
-                            val data = ChapterData(nextUrl = item)
-                            chapterDataList.add(data)
-                            nextUrlList.add(item)
-                        }
-                    }
-                    Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
-                    for (item in chapterDataList) {
-                        downloadToc(
-                            scope, item, book, bookSource,
-                            tocRule, listRule, chapterList, chapterDataList,
-                            {
-                                block.resume(finish(book, chapterList, reverse))
-                            }
-                        ) {
-                            block.cancel(it)
-                        }
-                    }
-                }
-            }
-        }.onFailure {
-            block.cancel(it)
+        val tocRule = bookSource.getTocRule()
+        val nextUrlList = arrayListOf(baseUrl)
+        var reverse = false
+        var listRule = tocRule.chapterList ?: ""
+        if (listRule.startsWith("-")) {
+            reverse = true
+            listRule = listRule.substring(1)
         }
-    }
-
-    private fun downloadToc(
-        scope: CoroutineScope,
-        chapterData: ChapterData<String>,
-        book: Book,
-        bookSource: BookSource,
-        tocRule: TocRule,
-        listRule: String,
-        chapterList: ArrayList<BookChapter>,
-        chapterDataList: ArrayList<ChapterData<String>>,
-        onFinish: () -> Unit,
-        onError: (error: Throwable) -> Unit
-    ) {
-        Coroutine.async(scope = scope) {
-            val nextBody = AnalyzeUrl(
-                ruleUrl = chapterData.nextUrl,
-                book = book,
-                headerMapF = bookSource.getHeaderMap()
-            ).getStrResponse(bookSource.bookSourceUrl).body
-                ?: throw Exception("${chapterData.nextUrl}, 下载失败")
-            val nextChapterData = analyzeChapterList(
-                this, book, chapterData.nextUrl, chapterData.nextUrl,
-                nextBody, tocRule, listRule, bookSource, false
+        if (listRule.startsWith("+")) {
+            listRule = listRule.substring(1)
+        }
+        var chapterData =
+            analyzeChapterList(
+                scope, book, baseUrl, redirectUrl, body,
+                tocRule, listRule, bookSource, log = true
             )
-            synchronized(chapterDataList) {
-                val isFinished = addChapterListIsFinish(
-                    chapterDataList,
-                    chapterData,
-                    nextChapterData.chapterList
-                )
-                if (isFinished) {
-                    chapterDataList.forEach { item ->
-                        item.chapterList?.let {
+        chapterData.chapterList?.let {
+            chapterList.addAll(it)
+        }
+        when (chapterData.nextUrl.size) {
+            0 -> Unit
+            1 -> {
+                var nextUrl = chapterData.nextUrl[0]
+                while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
+                    nextUrlList.add(nextUrl)
+                    AnalyzeUrl(
+                        ruleUrl = nextUrl,
+                        book = book,
+                        headerMapF = bookSource.getHeaderMap()
+                    ).getStrResponse(bookSource.bookSourceUrl).body?.let { nextBody ->
+                        chapterData = analyzeChapterList(
+                            scope, book, nextUrl, nextUrl,
+                            nextBody, tocRule, listRule, bookSource
+                        )
+                        nextUrl = chapterData.nextUrl.firstOrNull() ?: ""
+                        chapterData.chapterList?.let {
                             chapterList.addAll(it)
                         }
                     }
-                    onFinish()
+                }
+                Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
+            }
+            else -> {
+                Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
+                withContext(IO) {
+                    val asyncArray = Array(chapterData.nextUrl.size) {
+                        async {
+                            val urlStr = chapterData.nextUrl[it]
+                            val analyzeUrl = AnalyzeUrl(
+                                ruleUrl = urlStr,
+                                book = book,
+                                headerMapF = bookSource.getHeaderMap()
+                            )
+                            val res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
+                            analyzeChapterList(
+                                this, book, urlStr, res.url,
+                                res.body!!, tocRule, listRule, bookSource, false
+                            ).chapterList
+                        }
+                    }
+                    asyncArray.forEach { coroutine ->
+                        coroutine.await()?.let {
+                            chapterList.addAll(it)
+                        }
+                    }
                 }
             }
-        }.onError {
-            onError.invoke(it)
         }
-    }
-
-    private fun addChapterListIsFinish(
-        chapterDataList: ArrayList<ChapterData<String>>,
-        chapterData: ChapterData<String>,
-        chapterList: List<BookChapter>?
-    ): Boolean {
-        chapterData.chapterList = chapterList
-        chapterDataList.forEach {
-            if (it.chapterList == null) {
-                return false
-            }
-        }
-        return true
-    }
-
-    private fun finish(
-        book: Book,
-        chapterList: ArrayList<BookChapter>,
-        reverse: Boolean
-    ): ArrayList<BookChapter> {
         //去重
         if (!reverse) {
             chapterList.reverse()
