@@ -1,11 +1,11 @@
 package io.legado.app.ui.qrcode
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.zxing.Result
 import com.king.zxing.CameraScan.OnScanResultCallback
 import io.legado.app.R
@@ -16,7 +16,12 @@ import io.legado.app.utils.readBytes
 
 class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), OnScanResultCallback {
 
-    private val requestQrImage = 202
+    private val selectQrImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        it.readBytes(this)?.let { bytes ->
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            onScanResultCallback(QRCodeUtils.parseCodeResult(bitmap))
+        }
+    }
 
     override fun getViewBinding(): ActivityQrcodeCaptureBinding {
         return ActivityQrcodeCaptureBinding.inflate(layoutInflater)
@@ -37,12 +42,7 @@ class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), OnScanResul
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_choose_from_gallery -> {
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.addCategory(Intent.CATEGORY_OPENABLE)
-                intent.type = "image/*"
-                startActivityForResult(intent, requestQrImage)
-            }
+            R.id.action_choose_from_gallery -> selectQrImage.launch("image/*")
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -53,18 +53,6 @@ class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), OnScanResul
         setResult(RESULT_OK, intent)
         finish()
         return true
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        data?.data?.let {
-            if (resultCode == Activity.RESULT_OK && requestCode == requestQrImage) {
-                it.readBytes(this)?.let { bytes ->
-                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    onScanResultCallback(QRCodeUtils.parseCodeResult(bitmap))
-                }
-            }
-        }
     }
 
 }
