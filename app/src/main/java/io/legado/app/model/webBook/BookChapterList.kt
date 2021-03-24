@@ -76,10 +76,10 @@ object BookChapterList {
                 Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
             }
             else -> {
-                Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
+                Debug.log(bookSource.bookSourceUrl, "◇并发解析目录,总页数:${chapterData.nextUrl.size}")
                 withContext(IO) {
                     val asyncArray = Array(chapterData.nextUrl.size) {
-                        async {
+                        async(IO) {
                             val urlStr = chapterData.nextUrl[it]
                             val analyzeUrl = AnalyzeUrl(
                                 ruleUrl = urlStr,

@@ -11,6 +11,7 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
@@ -48,7 +49,7 @@ interface JsExtensions {
     fun ajaxAll(urlList: List<String>): Array<StrResponse?> {
         return runBlocking {
             val asyncArray = Array(urlList.size) {
-                async {
+                async(IO) {
                     val url = urlList[it]
                     val analyzeUrl = AnalyzeUrl(url)
                     analyzeUrl.getStrResponse(url)
