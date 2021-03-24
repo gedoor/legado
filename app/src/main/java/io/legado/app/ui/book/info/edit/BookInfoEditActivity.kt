@@ -21,6 +21,10 @@ class BookInfoEditActivity :
     VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
     ChangeCoverDialog.CallBack {
 
+    private val selectCover = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        coverChangeTo(it)
+    }
+
     override val viewModel: BookInfoEditViewModel
             by viewModels()
 
@@ -57,7 +61,7 @@ class BookInfoEditActivity :
             }
         }
         tvSelectCover.setOnClickListener {
-            selectImage()
+            selectCover.launch("image/*")
         }
         tvRefreshCover.setOnClickListener {
             viewModel.book?.customCoverUrl = tieCoverUrl.text?.toString()
@@ -91,12 +95,6 @@ class BookInfoEditActivity :
                 finish()
             }
         }
-    }
-
-    private fun selectImage() {
-        registerForActivityResult(ActivityResultContracts.GetContent()) {
-            coverChangeTo(it)
-        }.launch("image/*")
     }
 
     override fun coverChangeTo(coverUrl: String) {
