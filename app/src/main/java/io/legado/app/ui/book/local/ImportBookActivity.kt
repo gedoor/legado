@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.DocumentsContract
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
@@ -15,11 +16,10 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.Permissions
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.help.AppConfig
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
@@ -148,16 +148,12 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             }
             else -> {
                 binding.tvEmptyMsg.visible()
-                PermissionsCompat.Builder(this)
-                    .addPermissions(*Permissions.Group.STORAGE)
-                    .rationale(R.string.tip_perm_request_storage)
-                    .onGranted {
-                        rootDoc = null
-                        subDocs.clear()
-                        path = lastPath
-                        upPath()
-                    }
-                    .request()
+                registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                    rootDoc = null
+                    subDocs.clear()
+                    path = lastPath
+                    upPath()
+                }.launch(Permissions.Group.STORAGE)
             }
         }
     }

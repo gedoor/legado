@@ -171,10 +171,6 @@
         <activity
             android:name=".ui.audio.AudioPlayActivity"
             android:launchMode="singleTask" />
-        <!-- 授权界面 -->
-        <activity
-            android:name=".help.permission.PermissionActivity"
-            android:theme="@style/Activity.Permission" />
         <!-- 二维码扫描 -->
         <activity
             android:name=".ui.qrcode.QrCodeActivity"

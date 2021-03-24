@@ -3,14 +3,14 @@ package io.legado.app.ui.config
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import io.legado.app.R
+import io.legado.app.constant.Permissions
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.help.storage.ImportOldData
@@ -56,18 +56,14 @@ object BackupRestoreUi {
         fragment: Fragment,
         path: String
     ) {
-        PermissionsCompat.Builder(fragment)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                Coroutine.async {
-                    AppConfig.backupPath = path
-                    Backup.backup(fragment.requireContext(), path)
-                }.onSuccess {
-                    fragment.toastOnUi(R.string.backup_success)
-                }
+        fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            Coroutine.async {
+                AppConfig.backupPath = path
+                Backup.backup(fragment.requireContext(), path)
+            }.onSuccess {
+                fragment.toastOnUi(R.string.backup_success)
             }
-            .request()
+        }.launch(Permissions.Group.STORAGE)
     }
 
     fun selectBackupFolder(fragment: Fragment, requestCode: Int = selectFolderRequestCode) {
@@ -103,17 +99,13 @@ object BackupRestoreUi {
     }
 
     private fun restoreUsePermission(fragment: Fragment, path: String) {
-        PermissionsCompat.Builder(fragment)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                Coroutine.async {
-                    AppConfig.backupPath = path
-                    Restore.restoreDatabase(path)
-                    Restore.restoreConfig(path)
-                }
+        fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            Coroutine.async {
+                AppConfig.backupPath = path
+                Restore.restoreDatabase(path)
+                Restore.restoreConfig(path)
             }
-            .request()
+        }.launch(Permissions.Group.STORAGE)
     }
 
     fun importOldData(fragment: Fragment) {

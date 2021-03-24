@@ -68,7 +68,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             toastOnUi(R.string.error_get_book_info)
                         }
                 } ?: let {
-                    chapterListData.postValue(null)
+                    chapterListData.postValue(emptyList())
                     toastOnUi(R.string.error_no_source)
                 }
             }
@@ -104,11 +104,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 toastOnUi(R.string.chapter_list_empty)
                             }
                         }.onError {
-                            chapterListData.postValue(null)
+                            chapterListData.postValue(emptyList())
                             toastOnUi(R.string.error_get_chapter_list)
                         }
                 } ?: let {
-                    chapterListData.postValue(null)
+                    chapterListData.postValue(emptyList())
                     toastOnUi(R.string.error_no_source)
                 }
             }

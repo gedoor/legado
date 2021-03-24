@@ -8,16 +8,16 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.Permissions
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogFontSelectBinding
 import io.legado.app.help.AppConfig
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.filepicker.FilePicker
@@ -162,13 +162,9 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     private fun loadFontFilesByPermission(path: String) {
-        PermissionsCompat.Builder(this@FontSelectDialog)
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                loadFontFiles(path)
-            }
-            .request()
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            loadFontFiles(path)
+        }.launch(Permissions.Group.STORAGE)
     }
 
     private fun loadFontFiles(path: String) {

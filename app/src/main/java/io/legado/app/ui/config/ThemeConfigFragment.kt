@@ -1,8 +1,6 @@
 package io.legado.app.ui.config
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
@@ -11,19 +9,19 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
+import io.legado.app.constant.Permissions
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ThemeConfig
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
@@ -37,9 +35,6 @@ import java.io.File
 @Suppress("SameParameterValue")
 class ThemeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private val requestCodeBgImage = 234
-    private val requestCodeBgImageN = 342
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
@@ -186,38 +181,47 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
             "saveDayTheme", "saveNightTheme" -> saveThemeAlert(key)
             PreferKey.bgImage -> if (getPrefString(PreferKey.bgImage).isNullOrEmpty()) {
-                selectImage(requestCodeBgImage)
+                registerForActivityResult(ActivityResultContracts.GetContent()) {
+                    setBgFromUri(it, PreferKey.bgImage) {
+                        upTheme(false)
+                    }
+                }.launch("image/*")
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImage)
                         upTheme(false)
                     } else {
-                        selectImage(requestCodeBgImage)
+                        registerForActivityResult(ActivityResultContracts.GetContent()) {
+                            setBgFromUri(it, PreferKey.bgImage) {
+                                upTheme(false)
+                            }
+                        }.launch("image/*")
                     }
                 }
             }
             PreferKey.bgImageN -> if (getPrefString(PreferKey.bgImageN).isNullOrEmpty()) {
-                selectImage(requestCodeBgImageN)
+                registerForActivityResult(ActivityResultContracts.GetContent()) {
+                    setBgFromUri(it, PreferKey.bgImageN) {
+                        upTheme(false)
+                    }
+                }.launch("image/*")
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImageN)
                         upTheme(true)
                     } else {
-                        selectImage(requestCodeBgImageN)
+                        registerForActivityResult(ActivityResultContracts.GetContent()) {
+                            setBgFromUri(it, PreferKey.bgImageN) {
+                                upTheme(false)
+                            }
+                        }.launch("image/*")
                     }
                 }
             }
         }
         return super.onPreferenceTreeClick(preference)
-    }
-
-    private fun selectImage(requestCode: Int) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "image/*"
-        startActivityForResult(intent, requestCode)
     }
 
     @SuppressLint("InflateParams")
@@ -279,46 +283,19 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 } ?: toastOnUi("获取文件出错")
             }
         } else {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                        val imgFile = File(path)
-                        if (imgFile.exists()) {
-                            var file = requireContext().externalFilesDir
-                            file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
-                            file.writeBytes(imgFile.readBytes())
-                            putPrefString(preferenceKey, file.absolutePath)
-                            upPreferenceSummary(preferenceKey, file.absolutePath)
-                            success()
-                        }
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                    val imgFile = File(path)
+                    if (imgFile.exists()) {
+                        var file = requireContext().externalFilesDir
+                        file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
+                        file.writeBytes(imgFile.readBytes())
+                        putPrefString(preferenceKey, file.absolutePath)
+                        upPreferenceSummary(preferenceKey, file.absolutePath)
+                        success()
                     }
                 }
-                .request()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeBgImage -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    setBgFromUri(uri, PreferKey.bgImage) {
-                        upTheme(false)
-                    }
-                }
-            }
-            requestCodeBgImageN -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    setBgFromUri(uri, PreferKey.bgImageN) {
-                        upTheme(true)
-                    }
-                }
-            }
+            }.launch(Permissions.Group.STORAGE)
         }
     }
 

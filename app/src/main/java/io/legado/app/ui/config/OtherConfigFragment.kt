@@ -10,18 +10,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Process
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
+import io.legado.app.constant.Permissions
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
@@ -224,25 +224,18 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 } ?: toastOnUi("获取文件出错")
             }
         } else {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                        val imgFile = File(path)
-                        if (imgFile.exists()) {
-                            var file = requireContext().externalFilesDir
-                            file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
-                            file.writeBytes(imgFile.readBytes())
-                            putPrefString(PreferKey.defaultCover, file.absolutePath)
-                            CoverImageView.upDefaultCover()
-                        }
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                    val imgFile = File(path)
+                    if (imgFile.exists()) {
+                        var file = requireContext().externalFilesDir
+                        file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
+                        file.writeBytes(imgFile.readBytes())
+                        putPrefString(PreferKey.defaultCover, file.absolutePath)
+                        CoverImageView.upDefaultCover()
                     }
                 }
-                .request()
+            }.launch(Permissions.Group.STORAGE)
         }
     }
 

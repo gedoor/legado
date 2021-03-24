@@ -1,4 +1,4 @@
-package io.legado.app.help.permission
+package io.legado.app.constant
 
 @Suppress("unused")
 object Permissions {
