@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings({"FieldCanBeLocal", "rawtypes", "StatementWithEmptyBody", "unused"})
 public class QueryTTF {
     private static class Header {
         public int majorVersion;
@@ -84,7 +85,7 @@ public class QueryTTF {
         public int maxComponentDepth;
     }
 
-    private class CmapLayout {
+    private static class CmapLayout {
         public int version;
         public int numTables;
         public List<CmapRecord> records = new LinkedList<>();

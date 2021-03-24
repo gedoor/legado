@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
@@ -54,7 +55,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private val importRequestCode = 132
     private val importRequestCodeQr = 133
     private val exportRequestCode = 234
-    private val requestCodeEdit = 213
+    private val editActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            setResult(RESULT_OK)
+        }
     private lateinit var adapter: ReplaceRuleAdapter
     private lateinit var searchView: SearchView
     private var groups = hashSetOf<String>()
@@ -180,7 +184,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add_replace_rule ->
-                ReplaceEditActivity.startForResult(this, requestCodeEdit)
+                editActivity.launch(ReplaceEditActivity.startIntent(this))
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
 
@@ -263,7 +267,6 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != RESULT_OK) return
         when (requestCode) {
-            requestCodeEdit -> setResult(RESULT_OK)
             importRequestCode -> {
                 data?.data?.let { uri ->
                     kotlin.runCatching {
@@ -325,7 +328,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     override fun edit(rule: ReplaceRule) {
         setResult(RESULT_OK)
-        ReplaceEditActivity.startForResult(this, requestCodeEdit, rule.id)
+        editActivity.launch(ReplaceEditActivity.startIntent(this, rule.id))
     }
 
     override fun toTop(rule: ReplaceRule) {

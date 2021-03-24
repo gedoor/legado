@@ -1,6 +1,6 @@
 package io.legado.app.ui.replace.edit
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -33,21 +33,21 @@ class ReplaceEditActivity :
 
     companion object {
 
-        fun startForResult(
-            activity: Activity,
-            requestCode: Int,
+        fun startIntent(
+            context: Context,
             id: Long = -1,
             pattern: String? = null,
             isRegex: Boolean = false,
             scope: String? = null
-        ) {
-            val intent = Intent(activity, ReplaceEditActivity::class.java)
+        ): Intent {
+            val intent = Intent(context, ReplaceEditActivity::class.java)
             intent.putExtra("id", id)
             intent.putExtra("pattern", pattern)
             intent.putExtra("isRegex", isRegex)
             intent.putExtra("scope", scope)
-            activity.startActivityForResult(intent, requestCode)
+            return intent
         }
+
     }
 
     override fun getViewBinding(): ActivityReplaceEditBinding {
