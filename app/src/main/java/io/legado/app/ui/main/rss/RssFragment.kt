@@ -72,6 +72,11 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        searchView.clearFocus()
+    }
+
     private fun upGroupsMenu() = groupsMenu?.let { subMenu ->
         subMenu.removeGroup(R.id.menu_group_text)
         groups.sortedWith { o1, o2 ->

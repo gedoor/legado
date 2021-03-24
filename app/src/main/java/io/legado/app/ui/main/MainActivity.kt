@@ -30,7 +30,6 @@ import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.toastOnUi
 
@@ -122,7 +121,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     }
 
     override fun onPageSelected(position: Int) = with(binding) {
-        viewPagerMain.hideSoftInput()
         pagePosition = position
         when (position) {
             0, 1, 3 -> bottomNavigationView.menu.getItem(position).isChecked = true

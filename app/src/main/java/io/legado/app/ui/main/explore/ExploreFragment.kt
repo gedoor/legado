@@ -59,6 +59,11 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         upGroupsMenu()
     }
 
+    override fun onPause() {
+        super.onPause()
+        searchView.clearFocus()
+    }
+
     private fun initSearchView() {
         ATH.setTint(searchView, primaryTextColor)
         searchView.onActionViewExpanded()
