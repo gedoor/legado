@@ -1,0 +1,40 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    //因为安卓自带的XmlPullParserFactory
+    //me.ag2s.epublib.epub.EpubProcessorSupport
+    //修改createXmlSerializer方法可使用kxml2
+    // https://mvnrepository.com/artifact/kxml2/kxml2
+    //implementation 'kxml2:kxml2:2.3.0'
+    //去除了slf4j依赖
+    //implementation 'org.slf4j:-android:1.7.25'
+}
