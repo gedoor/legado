@@ -163,7 +163,16 @@ class FontSelectDialog : BaseDialogFragment(),
 
     private fun loadFontFilesByPermission(path: String) {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            loadFontFiles(path)
+            var hasPermission = true
+            it.forEach { (t, u) ->
+                if (!u) {
+                    hasPermission = false
+                    toastOnUi(t)
+                }
+            }
+            if (hasPermission) {
+                loadFontFiles(path)
+            }
         }.launch(Permissions.Group.STORAGE)
     }
 

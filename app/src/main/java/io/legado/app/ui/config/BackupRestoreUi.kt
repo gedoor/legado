@@ -57,11 +57,20 @@ object BackupRestoreUi {
         path: String
     ) {
         fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            Coroutine.async {
-                AppConfig.backupPath = path
-                Backup.backup(fragment.requireContext(), path)
-            }.onSuccess {
-                fragment.toastOnUi(R.string.backup_success)
+            var hasPermission = true
+            it.forEach { (t, u) ->
+                if (!u) {
+                    hasPermission = false
+                    fragment.toastOnUi(t)
+                }
+            }
+            if (hasPermission) {
+                Coroutine.async {
+                    AppConfig.backupPath = path
+                    Backup.backup(fragment.requireContext(), path)
+                }.onSuccess {
+                    fragment.toastOnUi(R.string.backup_success)
+                }
             }
         }.launch(Permissions.Group.STORAGE)
     }

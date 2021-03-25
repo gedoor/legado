@@ -149,10 +149,19 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             else -> {
                 binding.tvEmptyMsg.visible()
                 registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                    rootDoc = null
-                    subDocs.clear()
-                    path = lastPath
-                    upPath()
+                    var hasPermission = true
+                    it.forEach { (t, u) ->
+                        if (!u) {
+                            hasPermission = false
+                            toastOnUi(t)
+                        }
+                    }
+                    if (hasPermission) {
+                        rootDoc = null
+                        subDocs.clear()
+                        path = lastPath
+                        upPath()
+                    }
                 }.launch(Permissions.Group.STORAGE)
             }
         }

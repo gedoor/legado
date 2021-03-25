@@ -118,13 +118,22 @@ class BookInfoEditActivity :
             }
         } else {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                RealPathUtil.getPath(this, uri)?.let { path ->
-                    val imgFile = File(path)
-                    if (imgFile.exists()) {
-                        var file = this.externalFilesDir
-                        file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
-                        file.writeBytes(imgFile.readBytes())
-                        coverChangeTo(file.absolutePath)
+                var hasPermission = true
+                it.forEach { (t, u) ->
+                    if (!u) {
+                        hasPermission = false
+                        toastOnUi(t)
+                    }
+                }
+                if (hasPermission) {
+                    RealPathUtil.getPath(this, uri)?.let { path ->
+                        val imgFile = File(path)
+                        if (imgFile.exists()) {
+                            var file = this.externalFilesDir
+                            file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
+                            file.writeBytes(imgFile.readBytes())
+                            coverChangeTo(file.absolutePath)
+                        }
                     }
                 }
             }.launch(Permissions.Group.STORAGE)

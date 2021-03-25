@@ -280,15 +280,24 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             }
         } else {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                    val imgFile = File(path)
-                    if (imgFile.exists()) {
-                        var file = requireContext().externalFilesDir
-                        file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
-                        file.writeBytes(imgFile.readBytes())
-                        putPrefString(preferenceKey, file.absolutePath)
-                        upPreferenceSummary(preferenceKey, file.absolutePath)
-                        success()
+                var hasPermission = true
+                it.forEach { (t, u) ->
+                    if (!u) {
+                        hasPermission = false
+                        toastOnUi(t)
+                    }
+                }
+                if (hasPermission) {
+                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                        val imgFile = File(path)
+                        if (imgFile.exists()) {
+                            var file = requireContext().externalFilesDir
+                            file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
+                            file.writeBytes(imgFile.readBytes())
+                            putPrefString(preferenceKey, file.absolutePath)
+                            upPreferenceSummary(preferenceKey, file.absolutePath)
+                            success()
+                        }
                     }
                 }
             }.launch(Permissions.Group.STORAGE)
