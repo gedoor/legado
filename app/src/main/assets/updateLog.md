@@ -7,6 +7,7 @@
 * 修复繁简转换“勐”“十”问题。使用了剥离HanLP简繁代码的民间库。APK减少6M左右
 * js添加一个并发访问的方法 java.ajaxAll(urlList: Array<String>) 返回 Array<StrResponse?>
 * 优化目录并发访问
+* 添加自定义epublib,支持epub v3解析目录。by ag2s20150909
 
 **2021/03/19**
 * 修复图片地址参数缺少的bug
