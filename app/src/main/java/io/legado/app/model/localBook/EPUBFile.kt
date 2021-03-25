@@ -8,14 +8,13 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.EpubChapter
 import io.legado.app.utils.*
-import net.sf.jazzlib.ZipEntry
-import net.sf.jazzlib.ZipInputStream
-import nl.siegmann.epublib.domain.Book
-import nl.siegmann.epublib.domain.Resources
-import nl.siegmann.epublib.domain.TOCReference
-import nl.siegmann.epublib.epub.EpubReader
-import nl.siegmann.epublib.service.MediatypeService
-import nl.siegmann.epublib.util.ResourceUtil
+
+import me.ag2s.epublib.domain.Book
+import me.ag2s.epublib.domain.MediaTypes
+import me.ag2s.epublib.domain.Resources
+import me.ag2s.epublib.domain.TOCReference
+import me.ag2s.epublib.epub.EpubReader
+import me.ag2s.epublib.util.ResourceUtil
 import org.jsoup.Jsoup
 import splitties.init.appCtx
 import java.io.File
@@ -24,6 +23,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
 class EPUBFile(var book: io.legado.app.data.entities.Book) {
 
@@ -111,7 +112,7 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
                 zipEntry = inZip.nextEntry
                 if ((zipEntry == null) || zipEntry.isDirectory || zipEntry == ZipEntry("<error>")) continue
                 val resource = ResourceUtil.createResource(zipEntry, inZip)
-                if (resource.mediaType == MediatypeService.XHTML) resource.inputEncoding = "UTF-8"
+                if (resource.mediaType == MediaTypes.XHTML) resource.inputEncoding = "UTF-8"
                 if (zipEntry.name.endsWith(".opf")) {
                     /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
                     val newS = String(resource.data).replace(
