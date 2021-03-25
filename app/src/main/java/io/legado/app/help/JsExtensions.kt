@@ -46,7 +46,7 @@ interface JsExtensions {
     /**
      * 并发访问网络
      */
-    fun ajaxAll(urlList: List<String>): Array<StrResponse?> {
+    fun ajaxAll(urlList: Array<String>): Array<StrResponse?> {
         return runBlocking {
             val asyncArray = Array(urlList.size) {
                 async(IO) {
