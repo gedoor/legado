@@ -53,7 +53,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                     rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
                     rssArticle?.let { rssArticle ->
                         if (!rssArticle.description.isNullOrBlank()) {
-                            contentLiveData.postValue(rssArticle.description)
+                            contentLiveData.postValue(rssArticle.description!!)
                         } else {
                             rssSource?.let {
                                 val ruleContent = it.ruleContent

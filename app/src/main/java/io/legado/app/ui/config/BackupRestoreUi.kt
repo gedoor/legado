@@ -3,7 +3,6 @@ package io.legado.app.ui.config
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import io.legado.app.R
@@ -104,13 +103,17 @@ object BackupRestoreUi {
     }
 
     private fun restoreUsePermission(fragment: Fragment, path: String) {
-        fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            Coroutine.async {
-                AppConfig.backupPath = path
-                Restore.restoreDatabase(path)
-                Restore.restoreConfig(path)
+        PermissionsCompat.Builder(fragment)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                Coroutine.async {
+                    AppConfig.backupPath = path
+                    Restore.restoreDatabase(path)
+                    Restore.restoreConfig(path)
+                }
             }
-        }.launch(Permissions.Group.STORAGE)
+            .request()
     }
 
     fun importOldData(fragment: Fragment) {
