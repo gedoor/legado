@@ -8,17 +8,17 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.Permissions
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogReadBgTextBinding
 import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -40,6 +40,7 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     }
 
     private val binding by viewBinding(DialogReadBgTextBinding::bind)
+    private val requestCodeBg = 123
     private val requestCodeExport = 131
     private val requestCodeImport = 132
     private val configFileName = "readConfig.zip"
@@ -190,9 +191,10 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     }
 
     private fun selectImage() {
-        registerForActivityResult(ActivityResultContracts.GetContent()) {
-            setBgFromUri(it)
-        }.launch("image/*")
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "image/*"
+        startActivityForResult(intent, requestCodeBg)
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -369,7 +371,13 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
+            requestCodeBg -> if (resultCode == RESULT_OK) {
+                data?.data?.let { uri ->
+                    setBgFromUri(uri)
+                }
+            }
             requestCodeImport -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
                     importConfig(uri)
@@ -399,13 +407,20 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 } ?: toastOnUi("获取文件出错")
             }
         } else {
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                    ReadBookConfig.durConfig.setCurBg(2, path)
-                    ReadBookConfig.upBg()
-                    postEvent(EventBus.UP_CONFIG, false)
+            PermissionsCompat.Builder(this)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                        ReadBookConfig.durConfig.setCurBg(2, path)
+                        ReadBookConfig.upBg()
+                        postEvent(EventBus.UP_CONFIG, false)
+                    }
                 }
-            }.launch(Permissions.READ_EXTERNAL_STORAGE)
+                .request()
         }
     }
 }

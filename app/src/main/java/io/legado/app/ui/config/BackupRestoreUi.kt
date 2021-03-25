@@ -7,10 +7,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import io.legado.app.R
-import io.legado.app.constant.Permissions
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.help.storage.ImportOldData
@@ -56,15 +57,10 @@ object BackupRestoreUi {
         fragment: Fragment,
         path: String
     ) {
-        fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            var hasPermission = true
-            it.forEach { (t, u) ->
-                if (!u) {
-                    hasPermission = false
-                    fragment.toastOnUi(t)
-                }
-            }
-            if (hasPermission) {
+        PermissionsCompat.Builder(fragment)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
                 Coroutine.async {
                     AppConfig.backupPath = path
                     Backup.backup(fragment.requireContext(), path)
@@ -72,7 +68,7 @@ object BackupRestoreUi {
                     fragment.toastOnUi(R.string.backup_success)
                 }
             }
-        }.launch(Permissions.Group.STORAGE)
+            .request()
     }
 
     fun selectBackupFolder(fragment: Fragment, requestCode: Int = selectFolderRequestCode) {
