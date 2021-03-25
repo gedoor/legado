@@ -13,9 +13,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.constant.appInfo
 import io.legado.app.databinding.ActivityMainBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp

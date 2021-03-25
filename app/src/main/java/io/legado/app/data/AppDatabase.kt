@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.androidId
+import io.legado.app.constant.AppConst.androidId
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
 import splitties.init.appCtx
