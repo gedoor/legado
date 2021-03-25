@@ -36,6 +36,18 @@ import java.io.File
 class ThemeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private val setLightBgImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        setBgFromUri(it, PreferKey.bgImage) {
+            upTheme(false)
+        }
+    }
+
+    private val setDarkBgImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        setBgFromUri(it, PreferKey.bgImageN) {
+            upTheme(false)
+        }
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
         if (Build.VERSION.SDK_INT < 26) {
@@ -181,42 +193,26 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
             "saveDayTheme", "saveNightTheme" -> saveThemeAlert(key)
             PreferKey.bgImage -> if (getPrefString(PreferKey.bgImage).isNullOrEmpty()) {
-                registerForActivityResult(ActivityResultContracts.GetContent()) {
-                    setBgFromUri(it, PreferKey.bgImage) {
-                        upTheme(false)
-                    }
-                }.launch("image/*")
+                setLightBgImage.launch("image/*")
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImage)
                         upTheme(false)
                     } else {
-                        registerForActivityResult(ActivityResultContracts.GetContent()) {
-                            setBgFromUri(it, PreferKey.bgImage) {
-                                upTheme(false)
-                            }
-                        }.launch("image/*")
+                        setLightBgImage.launch("image/*")
                     }
                 }
             }
             PreferKey.bgImageN -> if (getPrefString(PreferKey.bgImageN).isNullOrEmpty()) {
-                registerForActivityResult(ActivityResultContracts.GetContent()) {
-                    setBgFromUri(it, PreferKey.bgImageN) {
-                        upTheme(false)
-                    }
-                }.launch("image/*")
+                setDarkBgImage.launch("image/*")
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImageN)
                         upTheme(true)
                     } else {
-                        registerForActivityResult(ActivityResultContracts.GetContent()) {
-                            setBgFromUri(it, PreferKey.bgImageN) {
-                                upTheme(false)
-                            }
-                        }.launch("image/*")
+                        setDarkBgImage.launch("image/*")
                     }
                 }
             }
