@@ -2,11 +2,9 @@ package io.legado.app.ui.filepicker
 
 import android.content.Intent
 import android.os.Build
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import io.legado.app.R
-import io.legado.app.constant.Permissions
 import io.legado.app.lib.dialogs.alert
 
 @Suppress("unused")
@@ -34,25 +32,21 @@ object FilePicker {
                             val intent = createSelectDirIntent()
                             activity.startActivityForResult(intent, requestCode)
                         }.onFailure {
-                            checkPermissions(activity) {
-                                FilePickerDialog.show(
-                                    activity.supportFragmentManager,
-                                    requestCode,
-                                    mode = FilePickerDialog.DIRECTORY
-                                )
-                            }
+                            FilePickerDialog.show(
+                                activity.supportFragmentManager,
+                                requestCode,
+                                mode = FilePickerDialog.DIRECTORY
+                            )
                         }
                     }
                     else -> {
                         val selectText = selectList[index]
                         if (selectText == activity.getString(R.string.app_folder_picker)) {
-                            checkPermissions(activity) {
-                                FilePickerDialog.show(
-                                    activity.supportFragmentManager,
-                                    requestCode,
-                                    mode = FilePickerDialog.DIRECTORY
-                                )
-                            }
+                            FilePickerDialog.show(
+                                activity.supportFragmentManager,
+                                requestCode,
+                                mode = FilePickerDialog.DIRECTORY
+                            )
                         } else {
                             otherFun?.invoke(selectText)
                         }
@@ -84,25 +78,21 @@ object FilePicker {
                             val intent = createSelectDirIntent()
                             fragment.startActivityForResult(intent, requestCode)
                         }.onFailure {
-                            checkPermissions(fragment) {
-                                FilePickerDialog.show(
-                                    fragment.childFragmentManager,
-                                    requestCode,
-                                    mode = FilePickerDialog.DIRECTORY
-                                )
-                            }
+                            FilePickerDialog.show(
+                                fragment.childFragmentManager,
+                                requestCode,
+                                mode = FilePickerDialog.DIRECTORY
+                            )
                         }
                     }
                     else -> {
                         val selectText = selectList[index]
                         if (selectText == fragment.getString(R.string.app_folder_picker)) {
-                            checkPermissions(fragment) {
-                                FilePickerDialog.show(
-                                    fragment.childFragmentManager,
-                                    requestCode,
-                                    mode = FilePickerDialog.DIRECTORY
-                                )
-                            }
+                            FilePickerDialog.show(
+                                fragment.childFragmentManager,
+                                requestCode,
+                                mode = FilePickerDialog.DIRECTORY
+                            )
                         } else {
                             otherFun?.invoke(selectText)
                         }
@@ -139,27 +129,23 @@ object FilePicker {
                             )
                             activity.startActivityForResult(intent, requestCode)
                         }.onFailure {
-                            checkPermissions(activity) {
-                                FilePickerDialog.show(
-                                    activity.supportFragmentManager,
-                                    requestCode,
-                                    mode = FilePickerDialog.FILE,
-                                    allowExtensions = allowExtensions
-                                )
-                            }
+                            FilePickerDialog.show(
+                                activity.supportFragmentManager,
+                                requestCode,
+                                mode = FilePickerDialog.FILE,
+                                allowExtensions = allowExtensions
+                            )
                         }
                     }
                     else -> {
                         val selectText = selectList[index]
                         if (selectText == activity.getString(R.string.app_file_picker)) {
-                            checkPermissions(activity) {
-                                FilePickerDialog.show(
-                                    activity.supportFragmentManager,
-                                    requestCode,
-                                    mode = FilePickerDialog.FILE,
-                                    allowExtensions = allowExtensions
-                                )
-                            }
+                            FilePickerDialog.show(
+                                activity.supportFragmentManager,
+                                requestCode,
+                                mode = FilePickerDialog.FILE,
+                                allowExtensions = allowExtensions
+                            )
                         } else {
                             otherFun?.invoke(selectText)
                         }
@@ -196,27 +182,23 @@ object FilePicker {
                             )
                             fragment.startActivityForResult(intent, requestCode)
                         }.onFailure {
-                            checkPermissions(fragment) {
-                                FilePickerDialog.show(
-                                    fragment.childFragmentManager,
-                                    requestCode,
-                                    mode = FilePickerDialog.FILE,
-                                    allowExtensions = allowExtensions
-                                )
-                            }
+                            FilePickerDialog.show(
+                                fragment.childFragmentManager,
+                                requestCode,
+                                mode = FilePickerDialog.FILE,
+                                allowExtensions = allowExtensions
+                            )
                         }
                     }
                     else -> {
                         val selectText = selectList[index]
                         if (selectText == fragment.getString(R.string.app_file_picker)) {
-                            checkPermissions(fragment) {
-                                FilePickerDialog.show(
-                                    fragment.childFragmentManager,
-                                    requestCode,
-                                    mode = FilePickerDialog.FILE,
-                                    allowExtensions = allowExtensions
-                                )
-                            }
+                            FilePickerDialog.show(
+                                fragment.childFragmentManager,
+                                requestCode,
+                                mode = FilePickerDialog.FILE,
+                                allowExtensions = allowExtensions
+                            )
                         } else {
                             otherFun?.invoke(selectText)
                         }
@@ -244,18 +226,6 @@ object FilePicker {
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
         return intent
-    }
-
-    private fun checkPermissions(fragment: Fragment, success: (() -> Unit)? = null) {
-        fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            success?.invoke()
-        }.launch(Permissions.Group.STORAGE)
-    }
-
-    private fun checkPermissions(activity: AppCompatActivity, success: (() -> Unit)? = null) {
-        activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            success?.invoke()
-        }.launch(Permissions.Group.STORAGE)
     }
 
     private fun typesOfExtensions(allowExtensions: Array<String>): Array<String> {
