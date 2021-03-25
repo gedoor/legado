@@ -5,7 +5,7 @@
 
 **2021/03/23**
 * 修复繁简转换“勐”“十”问题。使用了剥离HanLP简繁代码的民间库。APK减少6M左右
-* js添加一个并发访问的方法 java.ajaxAll(urlList: List<String>) 返回 Array<StrResponse?>
+* js添加一个并发访问的方法 java.ajaxAll(urlList: Array<String>) 返回 Array<StrResponse?>
 * 优化目录并发访问
 
 **2021/03/19**
