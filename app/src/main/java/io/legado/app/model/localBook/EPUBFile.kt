@@ -5,11 +5,11 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.EpubChapter
 import io.legado.app.utils.*
-
-import me.ag2s.epublib.domain.Book
+import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.MediaTypes
 import me.ag2s.epublib.domain.Resources
 import me.ag2s.epublib.domain.TOCReference
@@ -26,13 +26,13 @@ import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class EPUBFile(var book: io.legado.app.data.entities.Book) {
+class EPUBFile(var book: Book) {
 
     companion object {
         private var eFile: EPUBFile? = null
 
         @Synchronized
-        private fun getEFile(book: io.legado.app.data.entities.Book): EPUBFile {
+        private fun getEFile(book: Book): EPUBFile {
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = EPUBFile(book)
                 return eFile!!
@@ -42,30 +42,30 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
         }
 
         @Synchronized
-        fun getChapterList(book: io.legado.app.data.entities.Book): ArrayList<BookChapter> {
+        fun getChapterList(book: Book): ArrayList<BookChapter> {
             return getEFile(book).getChapterList()
         }
 
         @Synchronized
-        fun getContent(book: io.legado.app.data.entities.Book, chapter: BookChapter): String? {
+        fun getContent(book: Book, chapter: BookChapter): String? {
             return getEFile(book).getContent(chapter)
         }
 
         @Synchronized
         fun getImage(
-            book: io.legado.app.data.entities.Book,
+            book: Book,
             href: String
         ): InputStream? {
             return getEFile(book).getImage(href)
         }
 
         @Synchronized
-        fun upBookInfo(book: io.legado.app.data.entities.Book) {
+        fun upBookInfo(book: Book) {
             return getEFile(book).upBookInfo()
         }
     }
 
-    private var epubBook: Book? = null
+    private var epubBook: EpubBook? = null
     private var mCharset: Charset = Charset.defaultCharset()
 
     init {
@@ -102,7 +102,7 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
     }
 
     /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
-    private fun readEpub(input: InputStream?): Book? {
+    private fun readEpub(input: InputStream?): EpubBook? {
         if (input == null) return null
         try {
             val inZip = ZipInputStream(input)
@@ -156,7 +156,7 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
             }
 
             /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
-            var tag = io.legado.app.data.entities.Book.hTag
+            var tag = Book.hTag
             if (book.getDelTag(tag)) {
                 body.getElementsByTag("h1")?.remove()
                 body.getElementsByTag("h2")?.remove()
@@ -168,7 +168,7 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
             }
 
             /*选择去除正文中的img标签，目前图片支持效果待优化*/
-            tag = io.legado.app.data.entities.Book.imgTag
+            tag = Book.imgTag
             if (book.getDelTag(tag)) {
                 body.getElementsByTag("img")?.remove()
             }
@@ -177,7 +177,7 @@ class EPUBFile(var book: io.legado.app.data.entities.Book) {
             elements.select("script").remove()
             elements.select("style").remove()
             /*选择去除正文中的ruby标签，目前注释支持效果待优化*/
-            tag = io.legado.app.data.entities.Book.rubyTag
+            tag = Book.rubyTag
             var html = elements.outerHtml()
             if (book.getDelTag(tag)) {
                 html = html.replace("<ruby>\\s?([\\u4e00-\\u9fa5])\\s?.*?</ruby>".toRegex(), "$1")

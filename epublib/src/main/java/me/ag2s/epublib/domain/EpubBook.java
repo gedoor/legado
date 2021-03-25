@@ -39,7 +39,7 @@ import java.util.Map;
  * @author paul
  * @author jake
  */
-public class Book implements Serializable {
+public class EpubBook implements Serializable {
 
   private static final long serialVersionUID = 2068355170895770100L;
 
