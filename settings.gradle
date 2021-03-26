@@ -1,2 +1,1 @@
-include ':app'
-include ':epublib'
+include ':app',':epublib'

@@ -2,31 +2,30 @@ package me.ag2s.epublib.epub;
 
 import android.util.Log;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.Author;
-import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Identifier;
 import me.ag2s.epublib.domain.MediaTypes;
 import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.domain.TOCReference;
 import me.ag2s.epublib.domain.TableOfContents;
-import me.ag2s.epublib.util.ResourceUtil;
 import me.ag2s.epublib.util.StringUtil;
+
 //import io.documentnode.minilog.Logger;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 //import javax.xml.stream.FactoryConfigurationError;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xmlpull.v1.XmlSerializer;
 
 /**
  * Writes the ncx document as defined by namespace http://www.daisy.org/z3986/2005/ncx/
@@ -75,7 +74,7 @@ public class NCXDocument {
 
     }
 
-    public static Resource read(Book book, EpubReader epubReader) {
+    public static Resource read(EpubBook book, EpubReader epubReader) {
         Log.d(TAG, book.getVersion());
         String version = book.getVersion();
         if (version.startsWith("2.")) {
@@ -89,28 +88,28 @@ public class NCXDocument {
     }
 
     private static List<TOCReference> readTOCReferences(NodeList navpoints,
-                                                        Book book) {
+                                                        EpubBook book) {
         Log.d(TAG, book.getVersion());
         String version = book.getVersion();
         if (version.startsWith("2.")) {
-            return NCXDocumentV2.readTOCReferences(navpoints,book);
+            return NCXDocumentV2.readTOCReferences(navpoints, book);
         } else if (version.startsWith("3.")) {
-            return NCXDocumentV3.readTOCReferences(navpoints,book);
+            return NCXDocumentV3.readTOCReferences(navpoints, book);
         } else {
-            return NCXDocumentV2.readTOCReferences(navpoints,book);
+            return NCXDocumentV2.readTOCReferences(navpoints, book);
         }
 
     }
 
-    static TOCReference readTOCReference(Element navpointElement, Book book) {
+    static TOCReference readTOCReference(Element navpointElement, EpubBook book) {
         Log.d(TAG, book.getVersion());
         String version = book.getVersion();
         if (version.startsWith("2.")) {
-            return NCXDocumentV2.readTOCReference(navpointElement,book);
+            return NCXDocumentV2.readTOCReference(navpointElement, book);
         } else if (version.startsWith("3.")) {
-            return NCXDocumentV3.readTOCReference(navpointElement,book);
+            return NCXDocumentV3.readTOCReference(navpointElement, book);
         } else {
-            return NCXDocumentV2.readTOCReference(navpointElement,book);
+            return NCXDocumentV2.readTOCReference(navpointElement, book);
         }
 
     }
@@ -138,7 +137,7 @@ public class NCXDocument {
     }
 
 
-    public static void write(EpubWriter epubWriter, Book book,
+    public static void write(EpubWriter epubWriter, EpubBook book,
                              ZipOutputStream resultStream) throws IOException {
         resultStream
                 .putNextEntry(new ZipEntry(book.getSpine().getTocResource().getHref()));
@@ -158,13 +157,13 @@ public class NCXDocument {
      * @throws IllegalArgumentException
      * @1throws FactoryConfigurationError
      */
-    public static void write(XmlSerializer xmlSerializer, Book book)
+    public static void write(XmlSerializer xmlSerializer, EpubBook book)
             throws IllegalArgumentException, IllegalStateException, IOException {
         write(xmlSerializer, book.getMetadata().getIdentifiers(), book.getTitle(),
                 book.getMetadata().getAuthors(), book.getTableOfContents());
     }
 
-    public static Resource createNCXResource(Book book)
+    public static Resource createNCXResource(EpubBook book)
             throws IllegalArgumentException, IllegalStateException, IOException {
         return createNCXResource(book.getMetadata().getIdentifiers(),
                 book.getTitle(), book.getMetadata().getAuthors(),

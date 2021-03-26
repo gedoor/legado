@@ -6,22 +6,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xmlpull.v1.XmlSerializer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.domain.Author;
-import me.ag2s.epublib.domain.Book;
-import me.ag2s.epublib.domain.Identifier;
-import me.ag2s.epublib.domain.MediaTypes;
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.domain.TOCReference;
 import me.ag2s.epublib.domain.TableOfContents;
@@ -69,7 +61,7 @@ public class NCXDocumentV3 extends NCXDocument {
 
     }
 
-    public static Resource read(Book book, EpubReader epubReader) {
+    public static Resource read(EpubBook book, EpubReader epubReader) {
         Resource ncxResource = null;
         if (book.getSpine().getTocResource() == null) {
             Log.e(TAG, "Book does not contain a table of contents file");
@@ -99,7 +91,7 @@ public class NCXDocumentV3 extends NCXDocument {
         return ncxResource;
     }
 
-    public static List<TOCReference> doToc(Node n, Book book) {
+    public static List<TOCReference> doToc(Node n, EpubBook book) {
         List<TOCReference> result = new ArrayList<>();
 
         if (n == null || n.getNodeType() != Document.ELEMENT_NODE) {
@@ -118,7 +110,7 @@ public class NCXDocumentV3 extends NCXDocument {
 
 
     static List<TOCReference> readTOCReferences(NodeList navpoints,
-                                                Book book) {
+                                                EpubBook book) {
         if (navpoints == null) {
             return new ArrayList<>();
         }
@@ -146,7 +138,7 @@ public class NCXDocumentV3 extends NCXDocument {
     }
 
 
-    static TOCReference readTOCReference(Element navpointElement, Book book) {
+    static TOCReference readTOCReference(Element navpointElement, EpubBook book) {
         String label = readNavLabel(navpointElement);
         //Log.d(TAG, "label:" + label);
         String tocResourceRoot = StringUtil

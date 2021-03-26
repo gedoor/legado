@@ -22,7 +22,7 @@ object LocalBook {
 
     fun getChapterList(book: Book): ArrayList<BookChapter> {
         return if (book.isEpub()) {
-            EPUBFile.getChapterList(book)
+            EpubFile.getChapterList(book)
         } else {
             AnalyzeTxtFile().analyze(book)
         }
@@ -30,7 +30,7 @@ object LocalBook {
 
     fun getContext(book: Book, chapter: BookChapter): String? {
         return if (book.isEpub()) {
-            EPUBFile.getContent(book, chapter)
+            EpubFile.getContent(book, chapter)
         } else {
             AnalyzeTxtFile.getContent(book, chapter)
         }
@@ -83,7 +83,7 @@ object LocalBook {
                 "${MD5Utils.md5Encode16(path)}.jpg"
             )
         )
-        if (book.isEpub()) EPUBFile.upBookInfo(book)
+        if (book.isEpub()) EpubFile.upBookInfo(book)
         appDb.bookDao.insert(book)
         return book
     }

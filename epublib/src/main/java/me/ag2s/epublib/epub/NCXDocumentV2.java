@@ -19,7 +19,7 @@ import java.util.zip.ZipOutputStream;
 
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.Author;
-import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Identifier;
 import me.ag2s.epublib.domain.MediaTypes;
 import me.ag2s.epublib.domain.Resource;
@@ -75,10 +75,10 @@ public class NCXDocumentV2 extends NCXDocument{
 
   }
 
-  public static Resource read(Book book, EpubReader epubReader) {
+  public static Resource read(EpubBook book, EpubReader epubReader) {
     Resource ncxResource = null;
     if (book.getSpine().getTocResource() == null) {
-      Log.e(TAG,"Book does not contain a table of contents file");
+      Log.e(TAG, "Book does not contain a table of contents file");
       return ncxResource;
     }
     try {
@@ -102,12 +102,12 @@ public class NCXDocumentV2 extends NCXDocument{
   }
 
   static List<TOCReference> readTOCReferences(NodeList navpoints,
-                                              Book book) {
+                                              EpubBook book) {
     if (navpoints == null) {
       return new ArrayList<>();
     }
     List<TOCReference> result = new ArrayList<>(
-        navpoints.getLength());
+            navpoints.getLength());
     for (int i = 0; i < navpoints.getLength(); i++) {
       Node node = navpoints.item(i);
       if (node.getNodeType() != Document.ELEMENT_NODE) {
@@ -122,13 +122,13 @@ public class NCXDocumentV2 extends NCXDocument{
     return result;
   }
 
-  static TOCReference readTOCReference(Element navpointElement, Book book) {
+  static TOCReference readTOCReference(Element navpointElement, EpubBook book) {
     String label = readNavLabel(navpointElement);
     //Log.d(TAG,"label:"+label);
     String tocResourceRoot = StringUtil
-        .substringBeforeLast(book.getSpine().getTocResource().getHref(), '/');
+            .substringBeforeLast(book.getSpine().getTocResource().getHref(), '/');
     if (tocResourceRoot.length() == book.getSpine().getTocResource().getHref()
-        .length()) {
+            .length()) {
       tocResourceRoot = "";
     } else {
       tocResourceRoot = tocResourceRoot + "/";
@@ -174,10 +174,10 @@ public class NCXDocumentV2 extends NCXDocument{
   }
 
 
-  public static void write(EpubWriter epubWriter, Book book,
-      ZipOutputStream resultStream) throws IOException {
+  public static void write(EpubWriter epubWriter, EpubBook book,
+                           ZipOutputStream resultStream) throws IOException {
     resultStream
-        .putNextEntry(new ZipEntry(book.getSpine().getTocResource().getHref()));
+            .putNextEntry(new ZipEntry(book.getSpine().getTocResource().getHref()));
     XmlSerializer out = EpubProcessorSupport.createXmlSerializer(resultStream);
     write(out, book);
     out.flush();
@@ -195,17 +195,17 @@ public class NCXDocumentV2 extends NCXDocument{
    * @throws IllegalStateException
    * @throws IllegalArgumentException
    */
-  public static void write(XmlSerializer xmlSerializer, Book book)
-      throws IllegalArgumentException, IllegalStateException, IOException {
+  public static void write(XmlSerializer xmlSerializer, EpubBook book)
+          throws IllegalArgumentException, IllegalStateException, IOException {
     write(xmlSerializer, book.getMetadata().getIdentifiers(), book.getTitle(),
-        book.getMetadata().getAuthors(), book.getTableOfContents());
+            book.getMetadata().getAuthors(), book.getTableOfContents());
   }
 
-  public static Resource createNCXResource(Book book)
-      throws IllegalArgumentException, IllegalStateException, IOException {
+  public static Resource createNCXResource(EpubBook book)
+          throws IllegalArgumentException, IllegalStateException, IOException {
     return createNCXResource(book.getMetadata().getIdentifiers(),
-        book.getTitle(), book.getMetadata().getAuthors(),
-        book.getTableOfContents());
+            book.getTitle(), book.getMetadata().getAuthors(),
+            book.getTableOfContents());
   }
 
   public static Resource createNCXResource(List<Identifier> identifiers,

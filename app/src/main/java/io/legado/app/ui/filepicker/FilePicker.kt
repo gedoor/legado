@@ -2,11 +2,11 @@ package io.legado.app.ui.filepicker
 
 import android.content.Intent
 import android.os.Build
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import io.legado.app.R
-import io.legado.app.constant.Permissions
+import io.legado.app.help.permission.Permissions
+import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 
 @Suppress("unused")
@@ -247,15 +247,23 @@ object FilePicker {
     }
 
     private fun checkPermissions(fragment: Fragment, success: (() -> Unit)? = null) {
-        fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            success?.invoke()
-        }.launch(Permissions.Group.STORAGE)
+        PermissionsCompat.Builder(fragment)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                success?.invoke()
+            }
+            .request()
     }
 
     private fun checkPermissions(activity: AppCompatActivity, success: (() -> Unit)? = null) {
-        activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            success?.invoke()
-        }.launch(Permissions.Group.STORAGE)
+        PermissionsCompat.Builder(activity)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                success?.invoke()
+            }
+            .request()
     }
 
     private fun typesOfExtensions(allowExtensions: Array<String>): Array<String> {

@@ -1,21 +1,12 @@
 package me.ag2s.epublib.epub;
 
 import android.util.Log;
-import android.widget.Toast;
 
-import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.domain.Book;
-import me.ag2s.epublib.domain.Guide;
-import me.ag2s.epublib.domain.GuideReference;
-import me.ag2s.epublib.domain.MediaType;
-import me.ag2s.epublib.domain.Resource;
-import me.ag2s.epublib.domain.Resources;
-import me.ag2s.epublib.domain.Spine;
-import me.ag2s.epublib.domain.SpineReference;
-import me.ag2s.epublib.domain.MediaTypes;
-import me.ag2s.epublib.util.ResourceUtil;
-import me.ag2s.epublib.util.StringUtil;
-//import io.documentnode.minilog.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -27,11 +18,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+
+import me.ag2s.epublib.Constants;
+import me.ag2s.epublib.domain.EpubBook;
+import me.ag2s.epublib.domain.Guide;
+import me.ag2s.epublib.domain.GuideReference;
+import me.ag2s.epublib.domain.MediaType;
+import me.ag2s.epublib.domain.MediaTypes;
+import me.ag2s.epublib.domain.Resource;
+import me.ag2s.epublib.domain.Resources;
+import me.ag2s.epublib.domain.Spine;
+import me.ag2s.epublib.domain.SpineReference;
+import me.ag2s.epublib.util.ResourceUtil;
+import me.ag2s.epublib.util.StringUtil;
+
+//import io.documentnode.minilog.Logger;
 
 /**
  * Reads the opf package document as defined by namespace http://www.idpf.org/2007/opf
@@ -47,8 +50,8 @@ public class PackageDocumentReader extends PackageDocumentBase {
 
 
   public static void read(
-      Resource packageResource, EpubReader epubReader, Book book,
-      Resources resources)
+          Resource packageResource, EpubReader epubReader, EpubBook book,
+          Resources resources)
       throws UnsupportedEncodingException, SAXException, IOException, ParserConfigurationException {
     Document packageDocument = ResourceUtil.getAsDocument(packageResource);
     String packageHref = packageResource.getHref();
@@ -151,16 +154,16 @@ public class PackageDocumentReader extends PackageDocumentBase {
    * @param resources
    */
   private static void readGuide(Document packageDocument,
-      EpubReader epubReader, Book book, Resources resources) {
+                                EpubReader epubReader, EpubBook book, Resources resources) {
     Element guideElement = DOMUtil
-        .getFirstElementByTagNameNS(packageDocument.getDocumentElement(),
-            NAMESPACE_OPF, OPFTags.guide);
+            .getFirstElementByTagNameNS(packageDocument.getDocumentElement(),
+                    NAMESPACE_OPF, OPFTags.guide);
     if (guideElement == null) {
       return;
     }
     Guide guide = book.getGuide();
     NodeList guideReferences = guideElement
-        .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.reference);
+            .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.reference);
     for (int i = 0; i < guideReferences.getLength(); i++) {
       Element referenceElement = (Element) guideReferences.item(i);
       String resourceHref = DOMUtil
@@ -400,17 +403,18 @@ public class PackageDocumentReader extends PackageDocumentBase {
   /**
    * Finds the cover resource in the packageDocument and adds it to the book if found.
    * Keeps the cover resource in the resources map
+   *
    * @param packageDocument
    * @param book
    * @1param resources
    */
-  private static void readCover(Document packageDocument, Book book) {
+  private static void readCover(Document packageDocument, EpubBook book) {
 
     Collection<String> coverHrefs = findCoverHrefs(packageDocument);
     for (String coverHref : coverHrefs) {
       Resource resource = book.getResources().getByHref(coverHref);
       if (resource == null) {
-        Log.e(TAG,"Cover resource " + coverHref + " not found");
+        Log.e(TAG, "Cover resource " + coverHref + " not found");
         continue;
       }
       if (resource.getMediaType() == MediaTypes.XHTML) {

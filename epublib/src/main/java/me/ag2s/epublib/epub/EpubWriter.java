@@ -2,11 +2,8 @@ package me.ag2s.epublib.epub;
 
 import android.util.Log;
 
-import me.ag2s.epublib.domain.Book;
-import me.ag2s.epublib.domain.MediaTypes;
-import me.ag2s.epublib.domain.Resource;
-import me.ag2s.epublib.util.IOUtil;
-//import io.documentnode.minilog.Logger;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,7 +12,13 @@ import java.io.Writer;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.xmlpull.v1.XmlSerializer;
+
+import me.ag2s.epublib.domain.EpubBook;
+import me.ag2s.epublib.domain.MediaTypes;
+import me.ag2s.epublib.domain.Resource;
+import me.ag2s.epublib.util.IOUtil;
+
+//import io.documentnode.minilog.Logger;
 
 /**
  * Generates an epub file. Not thread-safe, single use object.
@@ -41,7 +44,7 @@ public class EpubWriter {
   }
 
 
-  public void write(Book book, OutputStream out) throws IOException {
+  public void write(EpubBook book, OutputStream out) throws IOException {
     book = processBook(book);
     ZipOutputStream resultStream = new ZipOutputStream(out);
     writeMimeType(resultStream);
@@ -52,14 +55,14 @@ public class EpubWriter {
     resultStream.close();
   }
 
-  private Book processBook(Book book) {
+  private EpubBook processBook(EpubBook book) {
     if (bookProcessor != null) {
       book = bookProcessor.processBook(book);
     }
     return book;
   }
 
-  private void initTOCResource(Book book) {
+  private void initTOCResource(EpubBook book) {
     Resource tocResource;
     try {
       tocResource = NCXDocument.createNCXResource(book);
@@ -77,8 +80,8 @@ public class EpubWriter {
   }
 
 
-  private void writeResources(Book book, ZipOutputStream resultStream)
-      throws IOException {
+  private void writeResources(EpubBook book, ZipOutputStream resultStream)
+          throws IOException {
     for (Resource resource : book.getResources().getAll()) {
       writeResource(resource, resultStream);
     }
@@ -107,11 +110,11 @@ public class EpubWriter {
   }
 
 
-  private void writePackageDocument(Book book, ZipOutputStream resultStream)
-      throws IOException {
+  private void writePackageDocument(EpubBook book, ZipOutputStream resultStream)
+          throws IOException {
     resultStream.putNextEntry(new ZipEntry("OEBPS/content.opf"));
     XmlSerializer xmlSerializer = EpubProcessorSupport
-        .createXmlSerializer(resultStream);
+            .createXmlSerializer(resultStream);
     PackageDocumentWriter.write(this, xmlSerializer, book);
     xmlSerializer.flush();
 //		String resultAsString = result.toString();

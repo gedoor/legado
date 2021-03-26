@@ -1,7 +1,16 @@
 [
   {
-    "articleStyle": 0,
     "customOrder": 1,
+    "enableJs": true,
+    "enabled": true,
+    "singleUrl": true,
+    "sourceIcon": "http:\/\/ku.mumuceo.com\/static\/images\/applogo\/yuedu.png",
+    "sourceName": "使用说明",
+    "sourceUrl": "https://www.yuque.com/legado"
+  },
+  {
+    "articleStyle": 0,
+    "customOrder": 2,
     "enableJs": true,
     "enabled": true,
     "loadWithBaseUrl": false,
@@ -19,7 +28,7 @@
     "style": ""
   },
   {
-    "customOrder": 1,
+    "customOrder": 3,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,

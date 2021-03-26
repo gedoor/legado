@@ -1,10 +1,11 @@
 package me.ag2s.epublib.browsersupport;
 
-import me.ag2s.epublib.domain.Book;
-import me.ag2s.epublib.domain.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import me.ag2s.epublib.domain.EpubBook;
+import me.ag2s.epublib.domain.Resource;
 
 /**
  * A helper class for epub browser applications.
@@ -18,7 +19,7 @@ import java.util.List;
 public class Navigator implements Serializable {
 
   private static final long serialVersionUID = 1076126986424925474L;
-  private Book book;
+  private EpubBook book;
   private int currentSpinePos;
   private Resource currentResource;
   private int currentPagePos;
@@ -30,7 +31,7 @@ public class Navigator implements Serializable {
     this(null);
   }
 
-  public Navigator(Book book) {
+  public Navigator(EpubBook book) {
     this.book = book;
     this.currentSpinePos = 0;
     if (book != null) {
@@ -158,7 +159,7 @@ public class Navigator implements Serializable {
     return gotoSpineSection(book.getSpine().size() - 1, source);
   }
 
-  public void gotoBook(Book book, Object source) {
+  public void gotoBook(EpubBook book, Object source) {
     NavigationEvent navigationEvent = new NavigationEvent(source, this);
     this.book = book;
     this.currentFragmentId = null;
@@ -193,7 +194,7 @@ public class Navigator implements Serializable {
     this.currentResource = book.getSpine().getResource(currentIndex);
   }
 
-  public Book getBook() {
+  public EpubBook getBook() {
     return book;
   }
 

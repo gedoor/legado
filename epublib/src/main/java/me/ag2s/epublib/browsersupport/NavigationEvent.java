@@ -1,9 +1,10 @@
 package me.ag2s.epublib.browsersupport;
 
-import me.ag2s.epublib.domain.Book;
+import java.util.EventObject;
+
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.util.StringUtil;
-import java.util.EventObject;
 
 /**
  * Used to tell NavigationEventListener just what kind of navigation action
@@ -19,7 +20,7 @@ public class NavigationEvent extends EventObject {
   private Resource oldResource;
   private int oldSpinePos;
   private Navigator navigator;
-  private Book oldBook;
+  private EpubBook oldBook;
   private int oldSectionPos;
   private String oldFragmentId;
 
@@ -59,7 +60,7 @@ public class NavigationEvent extends EventObject {
     this.oldFragmentId = oldFragmentId;
   }
 
-  public Book getOldBook() {
+  public EpubBook getOldBook() {
     return oldBook;
   }
 
@@ -122,11 +123,11 @@ public class NavigationEvent extends EventObject {
   }
 
 
-  public void setOldBook(Book oldBook) {
+  public void setOldBook(EpubBook oldBook) {
     this.oldBook = oldBook;
   }
 
-  public Book getCurrentBook() {
+  public EpubBook getCurrentBook() {
     return getNavigator().getBook();
   }
 
