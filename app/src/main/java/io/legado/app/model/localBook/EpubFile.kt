@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.text.TextUtils
-import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.utils.*
@@ -130,11 +129,8 @@ class EpubFile(var book: Book) {
 
     private fun getContent(chapter: BookChapter): String? {
         /*获取当前章节文本*/
-        var string = getChildChapter(chapter, chapter.url)
-        val childContends = appDb.epubChapterDao.get(book.bookUrl, chapter.url)
-        childContends.forEach {
-            string += "\n" + getChildChapter(chapter, it.href)
-        }
+        val string = getChildChapter(chapter, chapter.url)
+
         return string
     }
 
