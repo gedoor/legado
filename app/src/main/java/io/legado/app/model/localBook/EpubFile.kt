@@ -129,7 +129,7 @@ class EpubFile(var book: Book) {
 
     private fun getContent(chapter: BookChapter): String? {
         /*获取当前章节文本*/
-        var string = getChildChapter(chapter, chapter.url)
+        val string = getChildChapter(chapter, chapter.url)
 
         return string
     }
