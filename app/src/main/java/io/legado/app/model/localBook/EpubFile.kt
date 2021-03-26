@@ -26,15 +26,15 @@ import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class EPUBFile(var book: Book) {
+class EpubFile(var book: Book) {
 
     companion object {
-        private var eFile: EPUBFile? = null
+        private var eFile: EpubFile? = null
 
         @Synchronized
-        private fun getEFile(book: Book): EPUBFile {
+        private fun getEFile(book: Book): EpubFile {
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
-                eFile = EPUBFile(book)
+                eFile = EpubFile(book)
                 return eFile!!
             }
             eFile?.book = book
