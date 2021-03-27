@@ -1,7 +1,6 @@
 package io.legado.app.ui.config
 
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
@@ -10,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Process
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -38,14 +38,15 @@ import java.io.File
 class OtherConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestCodeCover = 231
-
     private val packageManager = appCtx.packageManager
     private val componentName = ComponentName(
         appCtx,
         SharedReceiverActivity::class.java.name
     )
     private val webPort get() = getPrefInt(PreferKey.webPort, 1122)
+    private val selectCoverImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        setCoverFromUri(it)
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
@@ -88,13 +89,13 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 }
             PreferKey.cleanCache -> clearCache()
             PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
-                selectImage(requestCodeCover)
+                selectCoverImage.launch("image/*")
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.defaultCover)
                     } else {
-                        selectImage(requestCodeCover)
+                        selectCoverImage.launch("image/*")
                     }
                 }
             }
@@ -183,14 +184,6 @@ class OtherConfigFragment : BasePreferenceFragment(),
         }.show()
     }
 
-    @Suppress("SameParameterValue")
-    private fun selectImage(requestCode: Int) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "image/*"
-        startActivityForResult(intent, requestCode)
-    }
-
     private fun isProcessTextEnabled(): Boolean {
         return packageManager.getComponentEnabledSetting(componentName) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED
     }
@@ -243,17 +236,6 @@ class OtherConfigFragment : BasePreferenceFragment(),
                     }
                 }
                 .request()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeCover -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    setCoverFromUri(uri)
-                }
-            }
         }
     }
 

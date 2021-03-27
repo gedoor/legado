@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
@@ -40,13 +41,15 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     }
 
     private val binding by viewBinding(DialogReadBgTextBinding::bind)
-    private val requestCodeBg = 123
     private val requestCodeExport = 131
     private val requestCodeImport = 132
     private val configFileName = "readConfig.zip"
     private lateinit var adapter: BgAdapter
     private var primaryTextColor = 0
     private var secondaryTextColor = 0
+    private val selectBgImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        setBgFromUri(it)
+    }
 
     override fun onStart() {
         super.onStart()
@@ -108,7 +111,9 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 tvName.text = getString(R.string.select_image)
                 ivBg.setImageResource(R.drawable.ic_image)
                 ivBg.setColorFilter(primaryTextColor)
-                root.setOnClickListener { selectImage() }
+                root.setOnClickListener {
+                    selectBgImage.launch("image/*")
+                }
             }
         }
         requireContext().assets.list("bg")?.let {
@@ -188,13 +193,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 toastOnUi("数量已是最少,不能删除.")
             }
         }
-    }
-
-    private fun selectImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "image/*"
-        startActivityForResult(intent, requestCodeBg)
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -373,11 +371,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            requestCodeBg -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    setBgFromUri(uri)
-                }
-            }
             requestCodeImport -> if (resultCode == RESULT_OK) {
                 data?.data?.let { uri ->
                     importConfig(uri)
