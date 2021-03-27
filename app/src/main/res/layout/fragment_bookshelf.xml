@@ -13,7 +13,7 @@
         app:title="@string/bookshelf"
         app:contentLayout="@layout/view_tab_layout_min" />
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager_bookshelf"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -3,12 +3,10 @@ package io.legado.app.ui.main
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
-import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.BuildConfig
 import io.legado.app.R
@@ -36,14 +34,15 @@ import io.legado.app.utils.toastOnUi
 
 class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     BottomNavigationView.OnNavigationItemSelectedListener,
-    BottomNavigationView.OnNavigationItemReselectedListener,
-    ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
+    BottomNavigationView.OnNavigationItemReselectedListener {
     override val viewModel: MainViewModel by viewModels()
     private var exitTime: Long = 0
     private var bookshelfReselected: Long = 0
     private var exploreReselected: Long = 0
     private var pagePosition = 0
-    private val fragmentMap = hashMapOf<Int, Fragment>()
+    private val fragmentMap = hashMapOf<Long, Fragment>()
+
+    val viewPager get() = binding.viewPagerMain
 
     override fun getViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
@@ -53,8 +52,21 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         ATH.applyEdgeEffectColor(viewPagerMain)
         ATH.applyBottomNavigationColor(bottomNavigationView)
         viewPagerMain.offscreenPageLimit = 3
-        viewPagerMain.adapter = TabFragmentPageAdapter(supportFragmentManager)
-        viewPagerMain.addOnPageChangeListener(this@MainActivity)
+        viewPagerMain.adapter = TabFragmentPageAdapter()
+        viewPagerMain.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                viewPagerMain.isUserInputEnabled = (viewPagerMain.currentItem != 0)
+                pagePosition = position
+                when (position) {
+                    0, 1, 3 -> bottomNavigationView.menu.getItem(position).isChecked = true
+                    2 -> if (AppConfig.isShowRSS) {
+                        bottomNavigationView.menu.getItem(position).isChecked = true
+                    } else {
+                        bottomNavigationView.menu.getItem(3).isChecked = true
+                    }
+                }
+            }
+        })
         bottomNavigationView.elevation =
             if (AppConfig.elevation < 0) elevation else AppConfig.elevation.toFloat()
         bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
@@ -92,14 +104,14 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 if (System.currentTimeMillis() - bookshelfReselected > 300) {
                     bookshelfReselected = System.currentTimeMillis()
                 } else {
-                    (fragmentMap[0] as? BookshelfFragment)?.gotoTop()
+                    (fragmentMap[0L] as? BookshelfFragment)?.gotoTop()
                 }
             }
             R.id.menu_explore -> {
                 if (System.currentTimeMillis() - exploreReselected > 300) {
                     exploreReselected = System.currentTimeMillis()
                 } else {
-                    (fragmentMap[1] as? ExploreFragment)?.compressExplore()
+                    (fragmentMap[1L] as? ExploreFragment)?.compressExplore()
                 }
             }
         }
@@ -117,18 +129,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 DefaultData.importDefaultTocRules()//版本更新时更新自带本地txt目录规则
             }
             viewModel.upVersion()
-        }
-    }
-
-    override fun onPageSelected(position: Int) = with(binding) {
-        pagePosition = position
-        when (position) {
-            0, 1, 3 -> bottomNavigationView.menu.getItem(position).isChecked = true
-            2 -> if (AppConfig.isShowRSS) {
-                bottomNavigationView.menu.getItem(position).isChecked = true
-            } else {
-                bottomNavigationView.menu.getItem(3).isChecked = true
-            }
         }
     }
 
@@ -186,36 +186,29 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
-    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
-        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private inner class TabFragmentPageAdapter :
+        FragmentStateAdapter(this) {
 
-        private fun getId(position: Int): Int {
+        override fun getItemId(position: Int): Long {
             return when (position) {
                 2 -> if (AppConfig.isShowRSS) 2 else 3
-                else -> position
+                else -> position.toLong()
             }
         }
 
-        override fun getItemPosition(`object`: Any): Int {
-            return POSITION_NONE
-        }
-
-        override fun getItem(position: Int): Fragment {
-            return when (getId(position)) {
-                0 -> BookshelfFragment()
-                1 -> ExploreFragment()
-                2 -> RssFragment()
-                else -> MyFragment()
-            }
-        }
-
-        override fun getCount(): Int {
+        override fun getItemCount(): Int {
             return if (AppConfig.isShowRSS) 4 else 3
         }
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as Fragment
-            fragmentMap[getId(position)] = fragment
+        override fun createFragment(position: Int): Fragment {
+            val id = getItemId(position)
+            val fragment = when (id) {
+                0L -> BookshelfFragment()
+                1L -> ExploreFragment()
+                2L -> RssFragment()
+                else -> MyFragment()
+            }
+            fragmentMap[id] = fragment
             return fragment
         }
 
