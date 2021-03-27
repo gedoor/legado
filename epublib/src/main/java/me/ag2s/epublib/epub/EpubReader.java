@@ -14,6 +14,7 @@ import java.util.zip.ZipInputStream;
 
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.MediaType;
 import me.ag2s.epublib.domain.MediaTypes;
 import me.ag2s.epublib.domain.Resource;
@@ -30,7 +31,7 @@ public class EpubReader {
 
     private static final String TAG = EpubReader.class.getName();
     private final BookProcessor bookProcessor = BookProcessor.IDENTITY_BOOKPROCESSOR;
-
+    @SuppressWarnings("unused")
     public Book readEpub(InputStream in) throws IOException {
         return readEpub(in, Constants.CHARACTER_ENCODING);
     }
@@ -97,8 +98,12 @@ public class EpubReader {
         return readEpub(resources);
     }
 
+    @SuppressWarnings("unused")
     public Book readEpub(Resources resources) {
         return readEpub(resources, new Book());
+    }
+    public EpubBook readEpubBook(Resources resources) {
+        return (EpubBook) readEpub(resources, new Book());
     }
 
     public Book readEpub(Resources resources, Book result) {

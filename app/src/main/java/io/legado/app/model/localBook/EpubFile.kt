@@ -120,7 +120,7 @@ class EpubFile(var book: Book) {
                 }
                 resources.add(resource)
             } while (zipEntry != null)
-            if (resources.size() > 0) return EpubReader().readEpub(resources)
+            if (resources.size() > 0) return EpubReader().readEpubBook(resources)
         } catch (e: Exception) {
             e.printStackTrace()
         }

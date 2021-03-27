@@ -5,4 +5,5 @@ package me.ag2s.epublib.domain;
  */
 @SuppressWarnings("unused declaration")
 public class EpubBook extends Book {
+
 }
