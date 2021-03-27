@@ -16,9 +16,9 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogFontSelectBinding
 import io.legado.app.help.AppConfig
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog

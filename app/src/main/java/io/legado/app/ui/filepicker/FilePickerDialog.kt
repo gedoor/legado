@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.databinding.DialogFileChooserBinding
-import io.legado.app.help.permission.Permissions
+import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.filepicker.adapter.FileAdapter
 import io.legado.app.ui.filepicker.adapter.PathAdapter

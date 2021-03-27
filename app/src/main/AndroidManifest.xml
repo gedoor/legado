@@ -173,7 +173,7 @@
             android:launchMode="singleTask" />
         <!-- 授权界面 -->
         <activity
-            android:name=".help.permission.PermissionActivity"
+            android:name="io.legado.app.lib.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
         <!-- 二维码扫描 -->
         <activity
@@ -367,16 +367,47 @@
             android:name=".ui.association.FileAssociationActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Transparent">
+            <!-- VIEW (Open with) action -->
+            <!-- Works when an app knows the media type of a file, e.g. Gmail or Chrome. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="file" />
+                <data android:scheme="app" />
                 <data android:scheme="content" />
+                <data android:scheme="file" />
+                <!-- text -->
                 <data android:mimeType="text/plain" />
+                <!-- json -->
                 <data android:mimeType="application/json" />
-                <data android:mimeType="application/epub" />
+                <!-- EPUB -->
+                <data android:mimeType="application/epub+zip" />
+            </intent-filter>
+            <!-- Works when an app doesn't know the media type, e.g. Dropbox -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:host="*" />
+
+                <data android:scheme="app" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <!-- This media type is necessary, otherwise it won't match on the file extension -->
+                <data android:mimeType="*/*" />
+                <!--TXT-->
+                <data android:pathPattern=".*\\.txt" />
+                <data android:pathPattern=".*\\.TXT" />
+                <!--JSON-->
+                <data android:pathPattern=".*\\.json" />
+                <data android:pathPattern=".*\\.JSON" />
+                <!-- EPUB -->
+                <data android:pathPattern=".*\\.epub" />
+                <data android:pathPattern=".*\\.EPUB" />
             </intent-filter>
         </activity>
 

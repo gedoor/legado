@@ -12,8 +12,8 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityBookInfoEditBinding
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
+import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.*
 import java.io.File

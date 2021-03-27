@@ -1,9 +1,8 @@
-package io.legado.app.help.permission
+package io.legado.app.lib.permission
 
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import java.util.*
 
 @Suppress("unused")
 class PermissionsCompat private constructor() {
@@ -12,17 +11,6 @@ class PermissionsCompat private constructor() {
 
     fun request() {
         RequestManager.pushRequest(request)
-    }
-
-    companion object {
-        // 检查权限, 如果已经拥有返回 true
-        fun check(activity: AppCompatActivity, vararg permissions: String): Boolean {
-            val request = Request(activity)
-            val pers = ArrayList<String>()
-            pers.addAll(listOf(*permissions))
-            val data = request.getDeniedPermissions(pers.toTypedArray())
-            return data == null
-        }
     }
 
     class Builder {
@@ -46,22 +34,19 @@ class PermissionsCompat private constructor() {
             return this
         }
 
-        fun onGranted(callback: (requestCode: Int) -> Unit): Builder {
+        fun onGranted(callback: () -> Unit): Builder {
             request.setOnGrantedCallback(object : OnPermissionsGrantedCallback {
-                override fun onPermissionsGranted(requestCode: Int) {
-                    callback(requestCode)
+                override fun onPermissionsGranted() {
+                    callback()
                 }
             })
             return this
         }
 
-        fun onDenied(callback: (requestCode: Int, deniedPermissions: Array<String>) -> Unit): Builder {
+        fun onDenied(callback: (deniedPermissions: Array<String>) -> Unit): Builder {
             request.setOnDeniedCallback(object : OnPermissionsDeniedCallback {
-                override fun onPermissionsDenied(
-                    requestCode: Int,
-                    deniedPermissions: Array<String>
-                ) {
-                    callback(requestCode, deniedPermissions)
+                override fun onPermissionsDenied(deniedPermissions: Array<String>) {
+                    callback(deniedPermissions)
                 }
             })
             return this

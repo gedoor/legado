@@ -51,18 +51,10 @@ class ImportRssSourceActivity :
             viewModel.importSource(it)
             return
         }
-        intent.getStringExtra("filePath")?.let {
-            viewModel.importSourceFromFilePath(it)
-            return
-        }
         intent.data?.let {
             when (it.path) {
                 "/importonline" -> it.getQueryParameter("src")?.let { url ->
-                    if (url.startsWith("http", false)) {
-                        viewModel.importSource(url)
-                    } else {
-                        viewModel.importSourceFromFilePath(url)
-                    }
+                    viewModel.importSource(url)
                 }
                 else -> {
                     binding.rotateLoading.hide()

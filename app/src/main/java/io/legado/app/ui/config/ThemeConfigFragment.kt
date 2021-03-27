@@ -22,10 +22,10 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ThemeConfig
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference

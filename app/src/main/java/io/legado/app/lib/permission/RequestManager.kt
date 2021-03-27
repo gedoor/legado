@@ -1,4 +1,4 @@
-package io.legado.app.help.permission
+package io.legado.app.lib.permission
 
 import android.os.Handler
 import android.os.Looper
@@ -58,11 +58,11 @@ internal object RequestManager : OnPermissionsResultCallback {
         }
     }
 
-    override fun onPermissionsGranted(requestCode: Int) {
+    override fun onPermissionsGranted() {
         startNextRequest()
     }
 
-    override fun onPermissionsDenied(requestCode: Int, deniedPermissions: Array<String>) {
+    override fun onPermissionsDenied(deniedPermissions: Array<String>) {
         startNextRequest()
     }
 

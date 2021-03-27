@@ -17,9 +17,9 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogReadBgTextBinding
 import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
