@@ -173,7 +173,7 @@
             android:launchMode="singleTask" />
         <!-- 授权界面 -->
         <activity
-            android:name=".help.permission.PermissionActivity"
+            android:name="io.legado.app.lib.permission.PermissionActivity"
             android:theme="@style/Activity.Permission" />
         <!-- 二维码扫描 -->
         <activity
