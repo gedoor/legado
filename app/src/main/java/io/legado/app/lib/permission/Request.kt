@@ -1,6 +1,5 @@
 package io.legado.app.lib.permission
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.StringRes
@@ -12,6 +11,7 @@ import io.legado.app.R
 import io.legado.app.utils.startActivity
 import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate")
 internal class Request : OnRequestPermissionsResultCallback {
 
     internal val requestTime: Long
@@ -75,7 +75,7 @@ internal class Request : OnRequestPermissionsResultCallback {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             if (deniedPermissions == null) {
-                onPermissionsGranted(requestCode)
+                onPermissionsGranted()
             } else {
                 val rationale =
                     if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
@@ -98,7 +98,7 @@ internal class Request : OnRequestPermissionsResultCallback {
                     putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
                 }
             } else {
-                onPermissionsGranted(requestCode)
+                onPermissionsGranted()
             }
         }
     }
@@ -151,26 +151,25 @@ internal class Request : OnRequestPermissionsResultCallback {
         }
     }
 
-    private fun onPermissionsGranted(requestCode: Int) {
+    private fun onPermissionsGranted() {
         try {
-            grantedCallback?.onPermissionsGranted(requestCode)
+            grantedCallback?.onPermissionsGranted()
         } catch (ignore: Exception) {
         }
 
-        RequestPlugins.sResultCallback?.onPermissionsGranted(requestCode)
+        RequestPlugins.sResultCallback?.onPermissionsGranted()
     }
 
     private fun onPermissionsDenied(requestCode: Int, deniedPermissions: Array<String>) {
         try {
-            deniedCallback?.onPermissionsDenied(requestCode, deniedPermissions)
+            deniedCallback?.onPermissionsDenied(deniedPermissions)
         } catch (ignore: Exception) {
         }
 
-        RequestPlugins.sResultCallback?.onPermissionsDenied(requestCode, deniedPermissions)
+        RequestPlugins.sResultCallback?.onPermissionsDenied(deniedPermissions)
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray
     ) {
@@ -184,14 +183,14 @@ internal class Request : OnRequestPermissionsResultCallback {
                 onPermissionsDenied(requestCode, deniedPermissions)
             }
         } else {
-            onPermissionsGranted(requestCode)
+            onPermissionsGranted()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onSettingActivityResult() {
         val deniedPermissions = deniedPermissions
         if (deniedPermissions == null) {
-            onPermissionsGranted(this.requestCode)
+            onPermissionsGranted()
         } else {
             onPermissionsDenied(this.requestCode, deniedPermissions)
         }

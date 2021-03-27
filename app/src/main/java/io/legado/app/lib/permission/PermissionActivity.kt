@@ -5,12 +5,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.KeyEvent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import io.legado.app.R
 import io.legado.app.utils.toastOnUi
 
 class PermissionActivity : AppCompatActivity() {
+
+    private val startSettingActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            RequestPlugins.sRequestCallback?.onSettingActivityResult()
+            finish()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +37,7 @@ class PermissionActivity : AppCompatActivity() {
             -> try {
                 val settingIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 settingIntent.data = Uri.fromParts("package", packageName, null)
-                startActivityForResult(settingIntent, Request.TYPE_REQUEST_SETTING)
+                startSettingActivity.launch(settingIntent)
             } catch (e: Exception) {
                 toastOnUi(R.string.tip_cannot_jump_setting_page)
                 finish()
@@ -46,16 +53,9 @@ class PermissionActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         RequestPlugins.sRequestCallback?.onRequestPermissionsResult(
-            requestCode,
             permissions,
             grantResults
         )
-        finish()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        RequestPlugins.sRequestCallback?.onActivityResult(requestCode, resultCode, data)
         finish()
     }
 

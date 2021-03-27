@@ -2,8 +2,8 @@ package io.legado.app.lib.permission
 
 interface OnPermissionsResultCallback {
 
-    fun onPermissionsGranted(requestCode: Int)
+    fun onPermissionsGranted()
 
-    fun onPermissionsDenied(requestCode: Int, deniedPermissions: Array<String>)
+    fun onPermissionsDenied(deniedPermissions: Array<String>)
 
 }

@@ -34,22 +34,19 @@ class PermissionsCompat private constructor() {
             return this
         }
 
-        fun onGranted(callback: (requestCode: Int) -> Unit): Builder {
+        fun onGranted(callback: () -> Unit): Builder {
             request.setOnGrantedCallback(object : OnPermissionsGrantedCallback {
-                override fun onPermissionsGranted(requestCode: Int) {
-                    callback(requestCode)
+                override fun onPermissionsGranted() {
+                    callback()
                 }
             })
             return this
         }
 
-        fun onDenied(callback: (requestCode: Int, deniedPermissions: Array<String>) -> Unit): Builder {
+        fun onDenied(callback: (deniedPermissions: Array<String>) -> Unit): Builder {
             request.setOnDeniedCallback(object : OnPermissionsDeniedCallback {
-                override fun onPermissionsDenied(
-                    requestCode: Int,
-                    deniedPermissions: Array<String>
-                ) {
-                    callback(requestCode, deniedPermissions)
+                override fun onPermissionsDenied(deniedPermissions: Array<String>) {
+                    callback(deniedPermissions)
                 }
             })
             return this
