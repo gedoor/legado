@@ -197,9 +197,9 @@ public abstract class ProxyInputStream extends FilterInputStream {
      *
      * @since Commons IO 2.0
      * @param n number of bytes that the caller asked to be read
-     * @throws IOException if the pre-processing fails
      */
-    protected void beforeRead(int n) throws IOException {
+    @SuppressWarnings("unused")
+    protected void beforeRead(int n) {
     }
 
     /**
@@ -217,9 +217,9 @@ public abstract class ProxyInputStream extends FilterInputStream {
      *
      * @since Commons IO 2.0
      * @param n number of bytes read, or -1 if the end of stream was reached
-     * @throws IOException if the post-processing fails
      */
-    protected void afterRead(int n) throws IOException {
+    @SuppressWarnings("unused")
+    protected void afterRead(int n) {
     }
 
     /**

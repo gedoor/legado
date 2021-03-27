@@ -19,10 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.domain.EpubBook;
+import me.ag2s.epublib.domain.Book;
 import me.ag2s.epublib.domain.Guide;
 import me.ag2s.epublib.domain.GuideReference;
 import me.ag2s.epublib.domain.MediaType;
@@ -34,8 +32,6 @@ import me.ag2s.epublib.domain.SpineReference;
 import me.ag2s.epublib.util.ResourceUtil;
 import me.ag2s.epublib.util.StringUtil;
 
-//import io.documentnode.minilog.Logger;
-
 /**
  * Reads the opf package document as defined by namespace http://www.idpf.org/2007/opf
  *
@@ -44,22 +40,22 @@ import me.ag2s.epublib.util.StringUtil;
  */
 public class PackageDocumentReader extends PackageDocumentBase {
 
-  private static String TAG= PackageDocumentReader.class.getName();
+  private static final String TAG= PackageDocumentReader.class.getName();
   private static final String[] POSSIBLE_NCX_ITEM_IDS = new String[]{"toc",
       "ncx", "ncxtoc","htmltoc"};
 
 
   public static void read(
-          Resource packageResource, EpubReader epubReader, EpubBook book,
-          Resources resources)
-      throws UnsupportedEncodingException, SAXException, IOException, ParserConfigurationException {
+      Resource packageResource, EpubReader epubReader, Book book,
+      Resources resources)
+      throws SAXException, IOException {
     Document packageDocument = ResourceUtil.getAsDocument(packageResource);
     String packageHref = packageResource.getHref();
     resources = fixHrefs(packageHref, resources);
     readGuide(packageDocument, epubReader, book, resources);
 
     // Books sometimes use non-identifier ids. We map these here to legal ones
-    Map<String, String> idMapping = new HashMap<String, String>();
+    Map<String, String> idMapping = new HashMap<>();
     String version=DOMUtil.getAttribute(packageDocument.getDocumentElement(),PREFIX_OPF,PackageDocumentBase.version);
 
     resources = readManifest(packageDocument, packageHref, epubReader,
@@ -90,13 +86,14 @@ public class PackageDocumentReader extends PackageDocumentBase {
   /**
    * Reads the manifest containing the resource ids, hrefs and mediatypes.
    *
-   * @param packageDocument
-   * @param packageHref
-   * @param epubReader
-   * @param resources
-   * @param idMapping
+   * @param packageDocument e
+   * @param packageHref e
+   * @param epubReader e
+   * @param resources e
+   * @param idMapping e
    * @return a Map with resources, with their id's as key.
    */
+  @SuppressWarnings("unused")
   private static Resources readManifest(Document packageDocument,
       String packageHref,
       EpubReader epubReader, Resources resources,
@@ -118,7 +115,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
           .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.id);
       String href = DOMUtil
           .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
-      String properties=DOMUtil.getAttribute(itemElement,NAMESPACE_OPF,OPFAttributes.properties);
+
       try {
         href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
       } catch (UnsupportedEncodingException e) {
@@ -132,7 +129,10 @@ public class PackageDocumentReader extends PackageDocumentBase {
         continue;
       }
       resource.setId(id);
+      //for epub3
+      String properties=DOMUtil.getAttribute(itemElement,NAMESPACE_OPF,OPFAttributes.properties);
       resource.setProperties(properties);
+
       MediaType mediaType = MediaTypes.getMediaTypeByName(mediaTypeName);
       if (mediaType != null) {
         resource.setMediaType(mediaType);
@@ -148,22 +148,23 @@ public class PackageDocumentReader extends PackageDocumentBase {
    * Reads the book's guide.
    * Here some more attempts are made at finding the cover page.
    *
-   * @param packageDocument
-   * @param epubReader
-   * @param book
-   * @param resources
+   * @param packageDocument r
+   * @param epubReader  r
+   * @param book r
+   * @param resources g
    */
+  @SuppressWarnings("unused")
   private static void readGuide(Document packageDocument,
-                                EpubReader epubReader, EpubBook book, Resources resources) {
+      EpubReader epubReader, Book book, Resources resources) {
     Element guideElement = DOMUtil
-            .getFirstElementByTagNameNS(packageDocument.getDocumentElement(),
-                    NAMESPACE_OPF, OPFTags.guide);
+        .getFirstElementByTagNameNS(packageDocument.getDocumentElement(),
+            NAMESPACE_OPF, OPFTags.guide);
     if (guideElement == null) {
       return;
     }
     Guide guide = book.getGuide();
     NodeList guideReferences = guideElement
-            .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.reference);
+        .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.reference);
     for (int i = 0; i < guideReferences.getLength(); i++) {
       Element referenceElement = (Element) guideReferences.item(i);
       String resourceHref = DOMUtil
@@ -204,8 +205,8 @@ public class PackageDocumentReader extends PackageDocumentBase {
    * Example:
    * If the packageHref is "OEBPS/content.opf" then a resource href like "OEBPS/foo/bar.html" will be turned into "foo/bar.html"
    *
-   * @param packageHref
-   * @param resourcesByHref
+   * @param packageHref f
+   * @param resourcesByHref g
    * @return The stripped package href
    */
   static Resources fixHrefs(String packageHref,
@@ -228,9 +229,9 @@ public class PackageDocumentReader extends PackageDocumentBase {
   /**
    * Reads the document's spine, containing all sections in reading order.
    *
-   * @param packageDocument
-   * @param resources
-   * @param idMapping
+   * @param packageDocument b
+   * @param resources b
+   * @param idMapping b
    * @return the document's spine, containing all sections in reading order.
    */
   private static Spine readSpine(Document packageDocument, Resources resources,
@@ -251,8 +252,8 @@ public class PackageDocumentReader extends PackageDocumentBase {
         .setTocResource(findTableOfContentsResource(tocResourceId, resources));
     NodeList spineNodes = packageDocument
         .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.itemref);
-    List<SpineReference> spineReferences = new ArrayList<SpineReference>(
-        spineNodes.getLength());
+    List<SpineReference> spineReferences = new ArrayList<>(
+            spineNodes.getLength());
     for (int i = 0; i < spineNodes.getLength(); i++) {
       Element spineItem = (Element) spineNodes.item(i);
       String itemref = DOMUtil
@@ -267,7 +268,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
       }
       Resource resource = resources.getByIdOrHref(id);
       if (resource == null) {
-        Log.e(TAG,"resource with id \'" + id + "\' not found");
+        Log.e(TAG, "resource with id '" + id + "' not found");
         continue;
       }
 
@@ -286,13 +287,12 @@ public class PackageDocumentReader extends PackageDocumentBase {
    * Creates a spine out of all resources in the resources.
    * The generated spine consists of all XHTML pages in order of their href.
    *
-   * @param resources
+   * @param resources f
    * @return a spine created out of all resources in the resources.
    */
   private static Spine generateSpineFromResources(Resources resources) {
     Spine result = new Spine();
-    List<String> resourceHrefs = new ArrayList<String>();
-    resourceHrefs.addAll(resources.getAllHrefs());
+    List<String> resourceHrefs = new ArrayList<>(resources.getAllHrefs());
     Collections.sort(resourceHrefs, String.CASE_INSENSITIVE_ORDER);
     for (String resourceHref : resourceHrefs) {
       Resource resource = resources.getByHref(resourceHref);
@@ -312,8 +312,8 @@ public class PackageDocumentReader extends PackageDocumentBase {
    * Here we try several ways of finding this table of contents resource.
    * We try the given attribute value, some often-used ones and finally look through all resources for the first resource with the table of contents mimetype.
    *
-   * @param tocResourceId
-   * @param resources
+   * @param tocResourceId g
+   * @param resources g
    * @return the Resource containing the table of contents
    */
   static Resource findTableOfContentsResource(String tocResourceId,
@@ -331,13 +331,13 @@ public class PackageDocumentReader extends PackageDocumentBase {
     tocResource = resources.findFirstResourceByMediaType(MediaTypes.NCX);
 
     if (tocResource == null) {
-      for (int i = 0; i < POSSIBLE_NCX_ITEM_IDS.length; i++) {
-        tocResource = resources.getByIdOrHref(POSSIBLE_NCX_ITEM_IDS[i]);
+      for (String possibleNcxItemId : POSSIBLE_NCX_ITEM_IDS) {
+        tocResource = resources.getByIdOrHref(possibleNcxItemId);
         if (tocResource != null) {
           break;
         }
         tocResource = resources
-            .getByIdOrHref(POSSIBLE_NCX_ITEM_IDS[i].toUpperCase());
+                .getByIdOrHref(possibleNcxItemId.toUpperCase());
         if (tocResource != null) {
           break;
         }
@@ -363,13 +363,13 @@ public class PackageDocumentReader extends PackageDocumentBase {
    * Find all resources that have something to do with the coverpage and the cover image.
    * Search the meta tags and the guide references
    *
-   * @param packageDocument
+   * @param packageDocument s
    * @return all resources that have something to do with the coverpage and the cover image.
    */
   // package
   static Set<String> findCoverHrefs(Document packageDocument) {
 
-    Set<String> result = new HashSet<String>();
+    Set<String> result = new HashSet<>();
 
     // try and find a meta tag with name = 'cover' and a non-blank id
     String coverResourceId = DOMUtil
@@ -403,18 +403,16 @@ public class PackageDocumentReader extends PackageDocumentBase {
   /**
    * Finds the cover resource in the packageDocument and adds it to the book if found.
    * Keeps the cover resource in the resources map
-   *
-   * @param packageDocument
-   * @param book
-   * @1param resources
+   * @param packageDocument s
+   * @param book x
    */
-  private static void readCover(Document packageDocument, EpubBook book) {
+  private static void readCover(Document packageDocument, Book book) {
 
     Collection<String> coverHrefs = findCoverHrefs(packageDocument);
     for (String coverHref : coverHrefs) {
       Resource resource = book.getResources().getByHref(coverHref);
       if (resource == null) {
-        Log.e(TAG, "Cover resource " + coverHref + " not found");
+        Log.e(TAG,"Cover resource " + coverHref + " not found");
         continue;
       }
       if (resource.getMediaType() == MediaTypes.XHTML) {

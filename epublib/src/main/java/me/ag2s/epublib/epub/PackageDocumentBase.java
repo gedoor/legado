@@ -14,8 +14,11 @@ public class PackageDocumentBase {
   public static final String NAMESPACE_DUBLIN_CORE = "http://purl.org/dc/elements/1.1/";
   public static final String PREFIX_DUBLIN_CORE = "dc";
   //public static final String PREFIX_OPF = "opf";
-  //Some Epub Reader not reconize opt:packge,So just let it empty;
+  //在EPUB3标准中，packge前面没有opf头，一些epub阅读器也不支持opf头。
+  //Some Epub Reader not reconize op:packge,So just let it empty;
   public static final String PREFIX_OPF = "";
+  //添加 version 变量来区分Epub文件的版本
+  //Add the version field to distinguish the version of EPUB file
   public static final String version="version";
   public static final String dateFormat = "yyyy-MM-dd";
 
@@ -76,6 +79,10 @@ public class PackageDocumentBase {
     String version = "version";
     String scheme = "scheme";
     String property = "property";
+    //add for epub3
+    /**
+     * add for epub3
+     */
     String properties="properties";
   }
 

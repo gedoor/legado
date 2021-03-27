@@ -15,7 +15,7 @@ public class CollectionUtil {
    */
   private static class IteratorEnumerationAdapter<T> implements Enumeration<T> {
 
-    private Iterator<T> iterator;
+    private final Iterator<T> iterator;
 
     public IteratorEnumerationAdapter(Iterator<T> iter) {
       this.iterator = iter;
@@ -34,21 +34,22 @@ public class CollectionUtil {
 
   /**
    * Creates an Enumeration out of the given Iterator.
-   * @param <T>
-   * @param it
+   * @param <T>  g
+   * @param it g
    * @return an Enumeration created out of the given Iterator.
    */
+  @SuppressWarnings("unused")
   public static <T> Enumeration<T> createEnumerationFromIterator(
       Iterator<T> it) {
-    return new IteratorEnumerationAdapter<T>(it);
+    return new IteratorEnumerationAdapter<>(it);
   }
 
 
   /**
    * Returns the first element of the list, null if the list is null or empty.
    *
-   * @param <T>
-   * @param list
+   * @param <T> f
+   * @param list f
    * @return the first element of the list, null if the list is null or empty.
    */
   public static <T> T first(List<T> list) {
@@ -61,7 +62,7 @@ public class CollectionUtil {
   /**
    * Whether the given collection is null or has no elements.
    *
-   * @param collection
+   * @param collection g
    * @return Whether the given collection is null or has no elements.
    */
   public static boolean isEmpty(Collection<?> collection) {

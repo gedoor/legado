@@ -25,7 +25,7 @@ public class Guide implements Serializable {
 
   public static final String DEFAULT_COVER_TITLE = GuideReference.COVER;
 
-  private List<GuideReference> references = new ArrayList<GuideReference>();
+  private List<GuideReference> references = new ArrayList<>();
   private static final int COVERPAGE_NOT_FOUND = -1;
   private static final int COVERPAGE_UNITIALIZED = -2;
 
@@ -51,7 +51,7 @@ public class Guide implements Serializable {
     }
     return null;
   }
-
+  @SuppressWarnings("UnusedReturnValue")
   public int setCoverReference(GuideReference guideReference) {
     if (coverPageIndex >= 0) {
       references.set(coverPageIndex, guideReference);
@@ -100,7 +100,7 @@ public class Guide implements Serializable {
     setCoverReference(coverpageGuideReference);
   }
 
-
+  @SuppressWarnings("UnusedReturnValue")
   public ResourceReference addReference(GuideReference reference) {
     this.references.add(reference);
     uncheckCoverPage();
@@ -111,13 +111,13 @@ public class Guide implements Serializable {
    * A list of all GuideReferences that have the given
    * referenceTypeName (ignoring case).
    *
-   * @param referenceTypeName
+   * @param referenceTypeName referenceTypeName
    * @return A list of all GuideReferences that have the given
    *    referenceTypeName (ignoring case).
    */
   public List<GuideReference> getGuideReferencesByType(
       String referenceTypeName) {
-    List<GuideReference> result = new ArrayList<GuideReference>();
+    List<GuideReference> result = new ArrayList<>();
     for (GuideReference guideReference : references) {
       if (referenceTypeName.equalsIgnoreCase(guideReference.getType())) {
         result.add(guideReference);

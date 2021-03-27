@@ -27,9 +27,9 @@ public class Resource implements Serializable {
 
 
   private String properties;
-  protected String originalHref;
+  protected final String originalHref;
   private MediaType mediaType;
-  private String inputEncoding = Constants.CHARACTER_ENCODING;
+  private String inputEncoding;
   protected byte[] data;
 
   /**
@@ -147,7 +147,7 @@ public class Resource implements Serializable {
    *
    * @return The contents of the Resource.
    *
-   * @throws IOException
+   * @throws IOException IOException
    */
   public InputStream getInputStream() throws IOException {
     return new ByteArrayInputStream(getData());
@@ -174,7 +174,7 @@ public class Resource implements Serializable {
    * Sets the data of the Resource.
    * If the data is a of a different type then the original data then make sure to change the MediaType.
    *
-   * @param data
+   * @param data the data of the Resource
    */
   public void setData(byte[] data) {
     this.data = data;
@@ -201,7 +201,7 @@ public class Resource implements Serializable {
   /**
    * Sets the Resource's id: Make sure it is unique and a valid identifier.
    *
-   * @param id
+   * @param id Resource's id
    */
   public void setId(String id) {
     this.id = id;
@@ -233,7 +233,7 @@ public class Resource implements Serializable {
   /**
    * Sets the Resource's href.
    *
-   * @param href
+   * @param href Resource's href.
    */
   public void setHref(String href) {
     this.href = href;
@@ -252,7 +252,7 @@ public class Resource implements Serializable {
   /**
    * Sets the Resource's input character encoding.
    *
-   * @param encoding
+   * @param encoding Resource's input character encoding.
    */
   public void setInputEncoding(String encoding) {
     this.inputEncoding = encoding;
@@ -264,7 +264,7 @@ public class Resource implements Serializable {
    * Does all sorts of smart things (courtesy of apache commons io XMLStreamREader) to handle encodings, byte order markers, etc.
    *
    * @return the contents of the Resource as Reader.
-   * @throws IOException
+   * @throws IOException IOException
    */
   public Reader getReader() throws IOException {
     return new XmlStreamReader(new ByteArrayInputStream(getData()),
@@ -315,7 +315,7 @@ public class Resource implements Serializable {
   public void setProperties(String properties) {
     this.properties = properties;
   }
-
+  @SuppressWarnings("NullableProblems")
   public String toString() {
     return StringUtil.toString("id", id,
         "title", title,
