@@ -7,13 +7,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.*
 import androidx.lifecycle.LiveData
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
@@ -33,7 +31,6 @@ import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.filepicker.FilePicker
 import io.legado.app.ui.filepicker.FilePickerDialog
-import io.legado.app.ui.main.MainActivity
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.main.bookshelf.books.BooksFragment
 import io.legado.app.utils.*
@@ -51,17 +48,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private val binding by viewBinding(FragmentBookshelfBinding::bind)
     override val viewModel: BookshelfViewModel by viewModels()
     private val activityViewModel: MainViewModel by activityViewModels()
+    private lateinit var adapter: FragmentStatePagerAdapter
     private lateinit var tabLayout: TabLayout
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Long, BooksFragment>()
-
-    private var currentPosition = 0     //当前滑动位置
-    private var oldPosition = 0          //上一个滑动位置
-    private var currentState = 0        //记录当前手指按下状态
-    private var scrolledPixList = mutableListOf<Int>() //记录手指滑动时的像素坐标记录
-
-    private val mainActivity get() = activity as MainActivity
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         tabLayout = binding.titleBar.findViewById(R.id.tab_layout)
@@ -110,64 +101,15 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private val selectedGroup: BookGroup
         get() = bookGroups[tabLayout.selectedTabPosition]
 
-    private fun initView() = with(binding) {
-        ATH.applyEdgeEffectColor(viewPagerBookshelf)
+    private fun initView() {
+        ATH.applyEdgeEffectColor(binding.viewPagerBookshelf)
         tabLayout.isTabIndicatorFullWidth = false
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
         tabLayout.setSelectedTabIndicatorColor(requireContext().accentColor)
-        viewPagerBookshelf.offscreenPageLimit = 1
-        viewPagerBookshelf.adapter = TabFragmentPageAdapter()
-        TabLayoutMediator(tabLayout, viewPagerBookshelf) { tab, i ->
-            tab.text = bookGroups[i].groupName
-        }.attach()
-        viewPagerBookshelf.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            //页面滚动的位置信息回调： position 当前滚动到哪个页面，positionOffset 位置偏移百分比, positionOffsetPixels 当前所在页面偏移量
-            //此回调会触发完onPageScrollStateChanged 的 state 值为1时后面才触发回调
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                currentPosition = position
-                if (currentState == 1) {
-                    //手指按下滑动坐标记录
-                    scrolledPixList.add(positionOffsetPixels)
-                }
-            }
-
-
-            // 滚动状态改变回调，state的值分别有0，1，2 ;
-            // 0为ViewPager所有事件(1,2)已结束触发
-            // 1为在viewPager里按下并滑动触发多次
-            // 2是手指抬起触发
-            override fun onPageScrollStateChanged(state: Int) {
-                currentState = state
-                if (state == 0) {
-                    if (currentPosition == oldPosition) {
-                        when (currentPosition) {
-                            0 -> {
-                                if (scrolledPixList.size > 1 && scrolledPixList.last() == 0 || scrolledPixList.last() - scrolledPixList[0] > 0) {
-                                    //有可能出现滑到一半放弃的情况也是可以出现currentPosition == oldPositon=0，则先判断是否是往右滑时放弃
-                                    return
-                                }
-                                //若还有上一个bottom fragment页面则切换
-                                mainActivity.viewPager.currentItem.takeIf { it > 0 }
-                                    ?.also { mainActivity.viewPager.setCurrentItem(it - 1, true) }
-                            }
-
-                            (viewPagerBookshelf.adapter as FragmentStateAdapter).itemCount - 1 -> {
-                                //若还有下一个bottom fragment页面则切换
-                                mainActivity.viewPager.currentItem.takeIf { it < mainActivity.viewPager.adapter!!.itemCount - 1 }
-                                    ?.also { mainActivity.viewPager.setCurrentItem(it + 1, true) }
-                            }
-                        }
-                    }
-                    oldPosition = currentPosition
-                    scrolledPixList.clear()//清空滑动记录
-                }
-            }
-
-        })
+        tabLayout.setupWithViewPager(binding.viewPagerBookshelf)
+        binding.viewPagerBookshelf.offscreenPageLimit = 1
+        adapter = TabFragmentPageAdapter(childFragmentManager)
+        binding.viewPagerBookshelf.adapter = adapter
     }
 
     private fun initBookGroupData() {
@@ -199,7 +141,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             if (data != bookGroups) {
                 bookGroups.clear()
                 bookGroups.addAll(data)
-                binding.viewPagerBookshelf.adapter?.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
                 selectLastTab()
             }
         }
@@ -309,21 +251,29 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         }
     }
 
-    private inner class TabFragmentPageAdapter :
-        FragmentStateAdapter(this) {
+    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
+        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-        override fun getItemId(position: Int): Long {
-            val group = bookGroups[position]
-            return group.groupId
+        override fun getPageTitle(position: Int): CharSequence {
+            return bookGroups[position].groupName
         }
 
-        override fun getItemCount(): Int {
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
+
+        override fun getItem(position: Int): Fragment {
+            val group = bookGroups[position]
+            return BooksFragment.newInstance(position, group.groupId)
+        }
+
+        override fun getCount(): Int {
             return bookGroups.size
         }
 
-        override fun createFragment(position: Int): Fragment {
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val fragment = super.instantiateItem(container, position) as BooksFragment
             val group = bookGroups[position]
-            val fragment = BooksFragment.newInstance(position, group.groupId)
             fragmentMap[group.groupId] = fragment
             return fragment
         }
