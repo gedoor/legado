@@ -1,6 +1,5 @@
 package me.ag2s.epublib.domain;
 
-import me.ag2s.epublib.domain.MediaType;
 import me.ag2s.epublib.util.StringUtil;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,16 +53,16 @@ public class MediaTypes {
   public static final MediaType PLS = new MediaType("application/pls+xml",
       ".pls");
 
-  public static MediaType[] mediaTypes = new MediaType[]{
+  public static final MediaType[] mediaTypes = new MediaType[]{
       XHTML, EPUB, JPG, PNG, GIF, CSS, SVG, TTF, NCX, XPGT, OPENTYPE, WOFF,
       SMIL, PLS, JAVASCRIPT, MP3, MP4, OGG
   };
 
-  public static Map<String, MediaType> mediaTypesByName = new HashMap<String, MediaType>();
+  public static final Map<String, MediaType> mediaTypesByName = new HashMap<>();
 
   static {
-    for (int i = 0; i < mediaTypes.length; i++) {
-      mediaTypesByName.put(mediaTypes[i].getName(), mediaTypes[i]);
+    for (MediaType mediaType : mediaTypes) {
+      mediaTypesByName.put(mediaType.getName(), mediaType);
     }
   }
 
@@ -75,7 +74,7 @@ public class MediaTypes {
    * Gets the MediaType based on the file extension.
    * Null of no matching extension found.
    *
-   * @param filename
+   * @param filename filename
    * @return the MediaType based on the file extension.
    */
   public static MediaType determineMediaType(String filename) {

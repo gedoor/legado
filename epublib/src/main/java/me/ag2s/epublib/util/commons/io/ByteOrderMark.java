@@ -150,6 +150,7 @@ public class ByteOrderMark implements Serializable {
      * @return the length of the BOM's bytes
      */
     @Override
+    @SuppressWarnings("NullableProblems")
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(getClass().getSimpleName());

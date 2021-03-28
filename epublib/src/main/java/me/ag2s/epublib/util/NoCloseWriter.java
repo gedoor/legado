@@ -11,16 +11,17 @@ import java.io.Writer;
  *
  * @author paul
  */
+@SuppressWarnings("unused")
 public class NoCloseWriter extends Writer {
 
-  private Writer writer;
+  private final Writer writer;
 
   public NoCloseWriter(Writer writer) {
     this.writer = writer;
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() {
   }
 
   @Override

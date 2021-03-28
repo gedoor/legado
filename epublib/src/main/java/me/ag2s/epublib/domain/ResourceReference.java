@@ -20,7 +20,7 @@ public class ResourceReference implements Serializable {
   /**
    * Besides setting the resource it also sets the fragmentId to null.
    *
-   * @param resource
+   * @param resource resource
    */
   public void setResource(Resource resource) {
     this.resource = resource;

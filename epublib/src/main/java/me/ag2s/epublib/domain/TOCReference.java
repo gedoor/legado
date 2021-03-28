@@ -17,11 +17,8 @@ public class TOCReference extends TitledResourceReference
 
   private static final long serialVersionUID = 5787958246077042456L;
   private List<TOCReference> children;
-  private static final Comparator<TOCReference> COMPARATOR_BY_TITLE_IGNORE_CASE =
-      (tocReference1, tocReference2) ->
-          String.CASE_INSENSITIVE_ORDER
-              .compare(tocReference1.getTitle(), tocReference2.getTitle());
-
+  private static final Comparator<TOCReference> COMPARATOR_BY_TITLE_IGNORE_CASE = (tocReference1, tocReference2) -> String.CASE_INSENSITIVE_ORDER.compare(tocReference1.getTitle(), tocReference2.getTitle());
+  @Deprecated
   public TOCReference() {
     this(null, null, null);
   }
@@ -39,7 +36,7 @@ public class TOCReference extends TitledResourceReference
     super(resource, title, fragmentId);
     this.children = children;
   }
-
+  @SuppressWarnings("unused")
   public static Comparator<TOCReference> getComparatorByTitleIgnoreCase() {
     return COMPARATOR_BY_TITLE_IGNORE_CASE;
   }

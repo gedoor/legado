@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Identifier implements Serializable {
 
   private static final long serialVersionUID = 955949951416391810L;
-
+  @SuppressWarnings("unused")
   public interface Scheme {
 
     String UUID = "UUID";
@@ -48,7 +48,7 @@ public class Identifier implements Serializable {
    * If no identifier has bookId == true then the first bookId identifier
    * is written as the primary.
    *
-   * @param identifiers
+   * @param identifiers i
    * @return The first identifier for which the bookId is true is made
    * 		the bookId identifier.
    */
@@ -119,7 +119,8 @@ public class Identifier implements Serializable {
     return StringUtil.equals(scheme, ((Identifier) otherIdentifier).scheme)
         && StringUtil.equals(value, ((Identifier) otherIdentifier).value);
   }
-
+  @SuppressWarnings("NullableProblems")
+  @Override
   public String toString() {
     if (StringUtil.isBlank(scheme)) {
       return "" + value;

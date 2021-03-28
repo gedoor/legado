@@ -11,9 +11,10 @@ import java.io.OutputStream;
  *
  * @author paul
  */
+@SuppressWarnings("unused")
 public class NoCloseOutputStream extends OutputStream {
 
-  private OutputStream outputStream;
+  private final OutputStream outputStream;
 
   public NoCloseOutputStream(OutputStream outputStream) {
     this.outputStream = outputStream;

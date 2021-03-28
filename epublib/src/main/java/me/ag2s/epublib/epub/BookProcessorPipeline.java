@@ -2,25 +2,23 @@ package me.ag2s.epublib.epub;
 
 import android.util.Log;
 
+import me.ag2s.epublib.domain.Book;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import me.ag2s.epublib.domain.EpubBook;
-
-//import io.documentnode.minilog.Logger;
-
 /**
  * A book processor that combines several other bookprocessors
- * <p>
+ *
  * Fixes coverpage/coverimage.
  * Cleans up the XHTML.
  *
  * @author paul.siegmann
  */
+@SuppressWarnings("unused declaration")
 public class BookProcessorPipeline implements BookProcessor {
 
-  private static String TAG= BookProcessorPipeline.class.getName();
+  private static final String TAG= BookProcessorPipeline.class.getName();
   private List<BookProcessor> bookProcessors;
 
   public BookProcessorPipeline() {
@@ -32,7 +30,7 @@ public class BookProcessorPipeline implements BookProcessor {
   }
 
   @Override
-  public EpubBook processBook(EpubBook book) {
+  public Book processBook(Book book) {
     if (bookProcessors == null) {
       return book;
     }
@@ -40,7 +38,7 @@ public class BookProcessorPipeline implements BookProcessor {
       try {
         book = bookProcessor.processBook(book);
       } catch (Exception e) {
-        Log.e(TAG, e.getMessage(), e);
+        Log.e(TAG,e.getMessage(), e);
       }
     }
     return book;
@@ -48,14 +46,14 @@ public class BookProcessorPipeline implements BookProcessor {
 
   public void addBookProcessor(BookProcessor bookProcessor) {
     if (this.bookProcessors == null) {
-      bookProcessors = new ArrayList<BookProcessor>();
+      bookProcessors = new ArrayList<>();
     }
     this.bookProcessors.add(bookProcessor);
   }
 
   public void addBookProcessors(Collection<BookProcessor> bookProcessors) {
     if (this.bookProcessors == null) {
-      this.bookProcessors = new ArrayList<BookProcessor>();
+      this.bookProcessors = new ArrayList<>();
     }
     this.bookProcessors.addAll(bookProcessors);
   }

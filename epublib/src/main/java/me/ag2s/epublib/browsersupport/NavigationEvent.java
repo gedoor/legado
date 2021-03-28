@@ -2,7 +2,7 @@ package me.ag2s.epublib.browsersupport;
 
 import java.util.EventObject;
 
-import me.ag2s.epublib.domain.EpubBook;
+import me.ag2s.epublib.domain.Book;
 import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.util.StringUtil;
 
@@ -13,6 +13,7 @@ import me.ag2s.epublib.util.StringUtil;
  * @author paul
  *
  */
+@SuppressWarnings("unused")
 public class NavigationEvent extends EventObject {
 
   private static final long serialVersionUID = -6346750144308952762L;
@@ -20,7 +21,7 @@ public class NavigationEvent extends EventObject {
   private Resource oldResource;
   private int oldSpinePos;
   private Navigator navigator;
-  private EpubBook oldBook;
+  private Book oldBook;
   private int oldSectionPos;
   private String oldFragmentId;
 
@@ -60,7 +61,7 @@ public class NavigationEvent extends EventObject {
     this.oldFragmentId = oldFragmentId;
   }
 
-  public EpubBook getOldBook() {
+  public Book getOldBook() {
     return oldBook;
   }
 
@@ -123,11 +124,11 @@ public class NavigationEvent extends EventObject {
   }
 
 
-  public void setOldBook(EpubBook oldBook) {
+  public void setOldBook(Book oldBook) {
     this.oldBook = oldBook;
   }
 
-  public EpubBook getCurrentBook() {
+  public Book getCurrentBook() {
     return getNavigator().getBook();
   }
 
@@ -135,6 +136,7 @@ public class NavigationEvent extends EventObject {
     return oldResource != getCurrentResource();
   }
 
+  @SuppressWarnings("NullableProblems")
   public String toString() {
     return StringUtil.toString(
         "oldSectionPos", oldSectionPos,
