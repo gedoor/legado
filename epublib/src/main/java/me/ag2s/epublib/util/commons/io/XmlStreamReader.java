@@ -30,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,6 +106,7 @@ public class XmlStreamReader extends Reader {
      *
      * @return the default encoding to use.
      */
+    @SuppressWarnings("unused")
     public String getDefaultEncoding() {
         return defaultEncoding;
     }
@@ -121,6 +123,7 @@ public class XmlStreamReader extends Reader {
      * @param file File to create a Reader from.
      * @throws IOException thrown if there is a problem reading the file.
      */
+    @SuppressWarnings("unused")
     public XmlStreamReader(File file) throws IOException {
         this(new FileInputStream(file));
     }
@@ -224,6 +227,7 @@ public class XmlStreamReader extends Reader {
      * @throws IOException thrown if there is a problem reading the stream of
      *         the URL.
      */
+    @SuppressWarnings("unused")
     public XmlStreamReader(URL url) throws IOException {
         this(url.openConnection(), null);
     }
@@ -249,15 +253,16 @@ public class XmlStreamReader extends Reader {
      */
     public XmlStreamReader(URLConnection conn, String defaultEncoding) throws IOException {
         this.defaultEncoding = defaultEncoding;
+        @SuppressWarnings("unused")
         boolean lenient = true;
         String contentType = conn.getContentType();
         InputStream is = conn.getInputStream();
         BOMInputStream bom = new BOMInputStream(new BufferedInputStream(is, BUFFER_SIZE), false, BOMS);
         BOMInputStream pis = new BOMInputStream(bom, true, XML_GUESS_BYTES);
         if (conn instanceof HttpURLConnection || contentType != null) {
-            this.encoding = doHttpStream(bom, pis, contentType, lenient);
+            this.encoding = doHttpStream(bom, pis, contentType, true);
         } else {
-            this.encoding = doRawStream(bom, pis, lenient);
+            this.encoding = doRawStream(bom, pis, true);
         }
         this.reader = new InputStreamReader(pis, encoding);
     }
@@ -509,11 +514,11 @@ public class XmlStreamReader extends Reader {
         // BOM is UTF-8
         if (bomEnc.equals(UTF_8)) {
             if (xmlGuessEnc != null && !xmlGuessEnc.equals(UTF_8)) {
-                String msg = MessageFormat.format(RAW_EX_1, new Object[] { bomEnc, xmlGuessEnc, xmlEnc });
+                String msg = MessageFormat.format(RAW_EX_1, bomEnc, xmlGuessEnc, xmlEnc);
                 throw new XmlStreamReaderException(msg, bomEnc, xmlGuessEnc, xmlEnc);
             }
             if (xmlEnc != null && !xmlEnc.equals(UTF_8)) {
-                String msg = MessageFormat.format(RAW_EX_1, new Object[] { bomEnc, xmlGuessEnc, xmlEnc });
+                String msg = MessageFormat.format(RAW_EX_1, bomEnc, xmlGuessEnc, xmlEnc);
                 throw new XmlStreamReaderException(msg, bomEnc, xmlGuessEnc, xmlEnc);
             }
             return bomEnc;
@@ -522,18 +527,18 @@ public class XmlStreamReader extends Reader {
         // BOM is UTF-16BE or UTF-16LE
         if (bomEnc.equals(UTF_16BE) || bomEnc.equals(UTF_16LE)) {
             if (xmlGuessEnc != null && !xmlGuessEnc.equals(bomEnc)) {
-                String msg = MessageFormat.format(RAW_EX_1, new Object[] { bomEnc, xmlGuessEnc, xmlEnc });
+                String msg = MessageFormat.format(RAW_EX_1, bomEnc, xmlGuessEnc, xmlEnc);
                 throw new XmlStreamReaderException(msg, bomEnc, xmlGuessEnc, xmlEnc);
             }
             if (xmlEnc != null && !xmlEnc.equals(UTF_16) && !xmlEnc.equals(bomEnc)) {
-                String msg = MessageFormat.format(RAW_EX_1, new Object[] { bomEnc, xmlGuessEnc, xmlEnc });
+                String msg = MessageFormat.format(RAW_EX_1, bomEnc, xmlGuessEnc, xmlEnc);
                 throw new XmlStreamReaderException(msg, bomEnc, xmlGuessEnc, xmlEnc);
             }
             return bomEnc;
         }
 
         // BOM is something else
-        String msg = MessageFormat.format(RAW_EX_2, new Object[] { bomEnc, xmlGuessEnc, xmlEnc });
+        String msg = MessageFormat.format(RAW_EX_2, bomEnc, xmlGuessEnc, xmlEnc);
         throw new XmlStreamReaderException(msg, bomEnc, xmlGuessEnc, xmlEnc);
     }
 
@@ -697,7 +702,7 @@ public class XmlStreamReader extends Reader {
                 }
                 Matcher m = ENCODING_PATTERN.matcher(prolog);
                 if (m.find()) {
-                    encoding = m.group(1).toUpperCase();
+                    encoding = Objects.requireNonNull(m.group(1)).toUpperCase();
                     encoding = encoding.substring(1, encoding.length() - 1);
                 }
             }

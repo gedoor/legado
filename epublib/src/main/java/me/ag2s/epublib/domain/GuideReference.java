@@ -20,7 +20,7 @@ public class GuideReference extends TitledResourceReference
   /**
    * the book cover(s), jacket information, etc.
    */
-  public static String COVER = "cover";
+  public static final String COVER = "cover";
 
   /**
    * human-readable page with title, author, publisher, and other metadata

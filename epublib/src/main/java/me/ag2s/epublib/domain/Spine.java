@@ -22,13 +22,13 @@ public class Spine implements Serializable {
   private List<SpineReference> spineReferences;
 
   public Spine() {
-    this(new ArrayList<SpineReference>());
+    this(new ArrayList<>());
   }
 
   /**
    * Creates a spine out of all the resources in the table of contents.
    *
-   * @param tableOfContents
+   * @param tableOfContents tableOfContents
    */
   public Spine(TableOfContents tableOfContents) {
     this.spineReferences = createSpineReferences(
@@ -41,8 +41,8 @@ public class Spine implements Serializable {
 
   public static List<SpineReference> createSpineReferences(
       Collection<Resource> resources) {
-    List<SpineReference> result = new ArrayList<SpineReference>(
-        resources.size());
+    List<SpineReference> result = new ArrayList<>(
+            resources.size());
     for (Resource resource : resources) {
       result.add(new SpineReference(resource));
     }
@@ -61,7 +61,7 @@ public class Spine implements Serializable {
    * Gets the resource at the given index.
    * Null if not found.
    *
-   * @param index
+   * @param index index
    * @return the resource at the given index.
    */
   public Resource getResource(int index) {
@@ -76,7 +76,7 @@ public class Spine implements Serializable {
    *
    * Null if not found.
    *
-   * @param resourceId
+   * @param resourceId resourceId
    * @return the first resource that has the given resourceId.
    */
   public int findFirstResourceById(String resourceId) {
@@ -96,12 +96,12 @@ public class Spine implements Serializable {
   /**
    * Adds the given spineReference to the spine references and returns it.
    *
-   * @param spineReference
+   * @param spineReference spineReference
    * @return the given spineReference
    */
   public SpineReference addSpineReference(SpineReference spineReference) {
     if (spineReferences == null) {
-      this.spineReferences = new ArrayList<SpineReference>();
+      this.spineReferences = new ArrayList<>();
     }
     spineReferences.add(spineReference);
     return spineReference;
@@ -112,6 +112,7 @@ public class Spine implements Serializable {
    *
    * @return the given spineReference
    */
+  @SuppressWarnings("unused")
   public SpineReference addResource(Resource resource) {
     return addSpineReference(new SpineReference(resource));
   }
@@ -130,7 +131,7 @@ public class Spine implements Serializable {
    * The epubwriter will look for it here first, followed by some clever tricks to find it elsewhere if not found.
    * Put it here to be sure of the expected behaviours.
    *
-   * @param tocResource
+   * @param tocResource tocResource
    */
   public void setTocResource(Resource tocResource) {
     this.tocResource = tocResource;
@@ -149,7 +150,7 @@ public class Spine implements Serializable {
   /**
    * The position within the spine of the given resource.
    *
-   * @param currentResource
+   * @param currentResource currentResource
    * @return something &lt; 0 if not found.
    *
    */

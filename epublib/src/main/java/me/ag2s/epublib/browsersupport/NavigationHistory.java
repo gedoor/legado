@@ -1,15 +1,15 @@
 package me.ag2s.epublib.browsersupport;
 
+import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.Resource;
 import java.util.ArrayList;
 import java.util.List;
-
-import me.ag2s.epublib.domain.EpubBook;
-import me.ag2s.epublib.domain.Resource;
 
 /**
  * A history of the user's locations with the epub.
  *
  * @author paul.siegmann
+ *
  */
 public class NavigationHistory implements NavigationEventListener {
 
@@ -36,8 +36,8 @@ public class NavigationHistory implements NavigationEventListener {
   }
 
   private long lastUpdateTime = 0;
-  private List<Location> locations = new ArrayList<Location>();
-  private Navigator navigator;
+  private List<Location> locations = new ArrayList<>();
+  private final Navigator navigator;
   private int currentPos = -1;
   private int currentSize = 0;
   private int maxHistorySize = DEFAULT_MAX_HISTORY_SIZE;
@@ -58,11 +58,11 @@ public class NavigationHistory implements NavigationEventListener {
     return currentSize;
   }
 
-  public void initBook(EpubBook book) {
+  public void initBook(Book book) {
     if (book == null) {
       return;
     }
-    locations = new ArrayList<Location>();
+    locations = new ArrayList<>();
     currentPos = -1;
     currentSize = 0;
     if (navigator.getCurrentResource() != null) {
@@ -103,8 +103,8 @@ public class NavigationHistory implements NavigationEventListener {
    * <br/>
    * If this nr of locations becomes larger then the historySize then the
    * first item(s) will be removed.
-   *
-   * @param location
+   *v
+   * @param location  d
    */
   public void addLocation(Location location) {
     // do nothing if the new location matches the current location
@@ -149,9 +149,9 @@ public class NavigationHistory implements NavigationEventListener {
    * Moves the current positions delta positions.
    *
    * move(-1) to go one position back in history.<br/>
-   * move(1) to go one position forward.<br/>
+   * move(1) to go one position forward.<br/>发
    *
-   * @param delta
+   * @param delta f
    *
    * @return Whether we actually moved. If the requested value is illegal
    * it will return false, true otherwise.

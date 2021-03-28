@@ -120,6 +120,7 @@ public class XmlStreamReaderException extends IOException {
      * @return the MIME type in the content-type, null if there was not
      *         content-type or the encoding detection did not involve HTTP.
      */
+    @SuppressWarnings("unused")
     public String getContentTypeMime() {
         return contentTypeMime;
     }

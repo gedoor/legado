@@ -12,7 +12,7 @@ public interface NavigationEventListener {
   /**
    * Called whenever the user navigates to another position in the book.
    *
-   * @param navigationEvent
+   * @param navigationEvent f
    */
   void navigationPerformed(NavigationEvent navigationEvent);
 }

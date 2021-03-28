@@ -29,7 +29,7 @@ public class TableOfContents implements Serializable {
   private List<TOCReference> tocReferences;
 
   public TableOfContents() {
-    this(new ArrayList<TOCReference>());
+    this(new ArrayList<>());
   }
 
   public TableOfContents(List<TOCReference> tocReferences) {
@@ -48,6 +48,7 @@ public class TableOfContents implements Serializable {
    * Calls addTOCReferenceAtLocation after splitting the path using the DEFAULT_PATH_SEPARATOR.
    * @return the new TOCReference
    */
+  @SuppressWarnings("unused")
   public TOCReference addSection(Resource resource, String path) {
     return addSection(resource, path, DEFAULT_PATH_SEPARATOR);
   }
@@ -55,9 +56,9 @@ public class TableOfContents implements Serializable {
   /**
    * Calls addTOCReferenceAtLocation after splitting the path using the given pathSeparator.
    *
-   * @param resource
-   * @param path
-   * @param pathSeparator
+   * @param resource resource
+   * @param path path
+   * @param pathSeparator pathSeparator
    * @return the new TOCReference
    */
   public TOCReference addSection(Resource resource, String path,
@@ -69,8 +70,8 @@ public class TableOfContents implements Serializable {
   /**
    * Finds the first TOCReference in the given list that has the same title as the given Title.
    *
-   * @param title
-   * @param tocReferences
+   * @param title title
+   * @param tocReferences tocReferences
    * @return null if not found.
    */
   private static TOCReference findTocReferenceByTitle(String title,
@@ -95,8 +96,8 @@ public class TableOfContents implements Serializable {
    * will point to the given Resource</li>
    * </ul>
    *
-   * @param resource
-   * @param pathElements
+   * @param resource resource
+   * @param pathElements pathElements
    * @return the new TOCReference
    */
   public TOCReference addSection(Resource resource, String[] pathElements) {
@@ -105,8 +106,7 @@ public class TableOfContents implements Serializable {
     }
     TOCReference result = null;
     List<TOCReference> currentTocReferences = this.tocReferences;
-    for (int i = 0; i < pathElements.length; i++) {
-      String currentTitle = pathElements[i];
+    for (String currentTitle : pathElements) {
       result = findTocReferenceByTitle(currentTitle, currentTocReferences);
       if (result == null) {
         result = new TOCReference(currentTitle, null);
@@ -130,10 +130,11 @@ public class TableOfContents implements Serializable {
    * If this TOCReference didn't exist yet it will be created and have a title of ""</li>
    * </ul>
    *
-   * @param resource
-   * @param pathElements
+   * @param resource resource
+   * @param pathElements pathElements
    * @return the new TOCReference
    */
+  @SuppressWarnings("unused")
   public TOCReference addSection(Resource resource, int[] pathElements,
       String sectionTitlePrefix, String sectionNumberSeparator) {
     if (pathElements == null || pathElements.length == 0) {

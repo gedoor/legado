@@ -85,6 +85,7 @@ public class BOMInputStream extends ProxyInputStream {
      * a {@link ByteOrderMark#UTF_8} BOM.
      * @param delegate the InputStream to delegate to
      */
+    @SuppressWarnings("unused")
     public BOMInputStream(InputStream delegate) {
         this(delegate, false, ByteOrderMark.UTF_8);
     }
@@ -96,6 +97,7 @@ public class BOMInputStream extends ProxyInputStream {
      * @param include true to include the UTF-8 BOM or
      * false to exclude it
      */
+    @SuppressWarnings("unused")
     public BOMInputStream(InputStream delegate, boolean include) {
         this(delegate, include, ByteOrderMark.UTF_8);
     }
@@ -106,6 +108,7 @@ public class BOMInputStream extends ProxyInputStream {
      * @param delegate the InputStream to delegate to
      * @param boms The BOMs to detect and exclude
      */
+    @SuppressWarnings("unused")
     public BOMInputStream(InputStream delegate, ByteOrderMark... boms) {
         this(delegate, false, boms);
     }
@@ -118,6 +121,7 @@ public class BOMInputStream extends ProxyInputStream {
      * false to exclude them
      * @param boms The BOMs to detect and optionally exclude
      */
+    @SuppressWarnings("unused")
     public BOMInputStream(InputStream delegate, boolean include, ByteOrderMark... boms) {
         super(delegate);
         if (boms == null || boms.length == 0) {
@@ -134,6 +138,7 @@ public class BOMInputStream extends ProxyInputStream {
      * if it does not
      * @throws IOException if an error reading the first bytes of the stream occurs
      */
+    @SuppressWarnings("unused")
     public boolean hasBOM() throws IOException {
         return (getBOM() != null);
     }
@@ -148,6 +153,7 @@ public class BOMInputStream extends ProxyInputStream {
      * is configured to detect
      * @throws IOException if an error reading the first bytes of the stream occurs
      */
+    @SuppressWarnings("unused")
     public boolean hasBOM(ByteOrderMark bom) throws IOException {
         if (!boms.contains(bom)) {
             throw new IllegalArgumentException("Stream not configure to detect " + bom);

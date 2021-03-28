@@ -21,10 +21,10 @@ class DOMUtil {
   /**
    * First tries to get the attribute value by doing an getAttributeNS on the element, if that gets an empty element it does a getAttribute without namespace.
    *
-   * @param element
-   * @param namespace
-   * @param attribute
-   * @return
+   * @param element element
+   * @param namespace namespace
+   * @param attribute attribute
+   * @return String Attribute
    */
   public static String getAttribute(Element element, String namespace,
       String attribute) {
@@ -38,16 +38,17 @@ class DOMUtil {
   /**
    * Gets all descendant elements of the given parentElement with the given namespace and tagname and returns their text child as a list of String.
    *
-   * @param parentElement
-   * @param namespace
-   * @param tagname
-   * @return
+   * @param parentElement parentElement
+   * @param namespace namespace
+   * @param tagName tagName
+   * @return List<String>
    */
   public static List<String> getElementsTextChild(Element parentElement,
-      String namespace, String tagname) {
+      String namespace, String tagName) {
     NodeList elements = parentElement
-        .getElementsByTagNameNS(namespace, tagname);
-    List<String> result = new ArrayList<String>(elements.getLength());
+        .getElementsByTagNameNS(namespace, tagName);
+    //ArrayList 初始化时指定长度提高性能
+    List<String> result = new ArrayList<>(elements.getLength());
     for (int i = 0; i < elements.getLength(); i++) {
       result.add(getTextChildrenContent((Element) elements.item(i)));
     }
@@ -58,13 +59,13 @@ class DOMUtil {
    * Finds in the current document the first element with the given namespace and elementName and with the given findAttributeName and findAttributeValue.
    * It then returns the value of the given resultAttributeName.
    *
-   * @param document
-   * @param namespace
-   * @param elementName
-   * @param findAttributeName
-   * @param findAttributeValue
-   * @param resultAttributeName
-   * @return
+   * @param document document
+   * @param namespace namespace
+   * @param elementName elementName
+   * @param findAttributeName findAttributeName
+   * @param findAttributeValue findAttributeValue
+   * @param resultAttributeName resultAttributeName
+   * @return String value
    */
   public static String getFindAttributeValue(Document document,
       String namespace, String elementName, String findAttributeName,
@@ -85,10 +86,10 @@ class DOMUtil {
   /**
    * Gets the first element that is a child of the parentElement and has the given namespace and tagName
    *
-   * @param parentElement
-   * @param namespace
-   * @param tagName
-   * @return
+   * @param parentElement parentElement
+   * @param namespace namespace
+   * @param tagName tagName
+   * @return Element
    */
   public static Element getFirstElementByTagNameNS(Element parentElement,
       String namespace, String tagName) {
@@ -111,8 +112,8 @@ class DOMUtil {
    * when the text is Chinese characters then on Android each Characater is represented in the DOM as
    * an individual Text node.
    *
-   * @param parentElement
-   * @return
+   * @param parentElement parentElement
+   * @return String value
    */
   public static String getTextChildrenContent(Element parentElement) {
     if (parentElement == null) {

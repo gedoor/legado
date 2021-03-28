@@ -18,9 +18,9 @@ import java.util.Collection;
 public class MediaType implements Serializable {
 
   private static final long serialVersionUID = -7256091153727506788L;
-  private String name;
-  private String defaultExtension;
-  private Collection<String> extensions;
+  private final String name;
+  private final String defaultExtension;
+  private final Collection<String> extensions;
 
   public MediaType(String name, String defaultExtension) {
     this(name, defaultExtension, new String[]{defaultExtension});
@@ -39,11 +39,11 @@ public class MediaType implements Serializable {
   }
 
   public MediaType(String name, String defaultExtension,
-      Collection<String> extensions) {
+      Collection<String> mextensions) {
     super();
     this.name = name;
     this.defaultExtension = defaultExtension;
-    this.extensions = extensions;
+    this.extensions = mextensions;
   }
 
   public String getName() {
@@ -66,7 +66,7 @@ public class MediaType implements Serializable {
     }
     return name.equals(((MediaType) otherMediaType).getName());
   }
-
+  @SuppressWarnings("NullableProblems")
   public String toString() {
     return name;
   }

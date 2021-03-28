@@ -1,5 +1,5 @@
 package me.ag2s.epublib.domain;
-
+@SuppressWarnings("unused")
 public enum ManifestItemProperties implements ManifestProperties {
   COVER_IMAGE("cover-image"),
   MATHML("mathml"),
@@ -9,7 +9,7 @@ public enum ManifestItemProperties implements ManifestProperties {
   SVG("svg"),
   SWITCH("switch");
 
-  private String name;
+  private final String name;
 
   ManifestItemProperties(String name) {
     this.name = name;

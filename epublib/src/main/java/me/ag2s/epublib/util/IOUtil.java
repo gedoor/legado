@@ -23,10 +23,10 @@ public class IOUtil {
   /**
    * Gets the contents of the Reader as a byte[], with the given character encoding.
    *
-   * @param in
-   * @param encoding
+   * @param in g
+   * @param encoding g
    * @return the contents of the Reader as a byte[], with the given character encoding.
-   * @throws IOException
+   * @throws IOException g
    */
   public static byte[] toByteArray(Reader in, String encoding)
       throws IOException {
@@ -39,9 +39,9 @@ public class IOUtil {
   /**
    * Returns the contents of the InputStream as a byte[]
    *
-   * @param in
+   * @param in f
    * @return the contents of the InputStream as a byte[]
-   * @throws IOException
+   * @throws IOException f
    */
   public static byte[] toByteArray(InputStream in) throws IOException {
     ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -59,7 +59,7 @@ public class IOUtil {
    * @param in the stream to read data from
    * @param size the size of the array to create
    * @return the array, or null
-   * @throws IOException
+   * @throws IOException f
    */
   public static byte[] toByteArray(InputStream in, int size)
       throws IOException {
@@ -89,8 +89,8 @@ public class IOUtil {
    * (nrRead + totalNrRead) &lt; Integer.MAX_VALUE then nrRead + totalNrRead
    * is returned, -1 otherwise.
    *
-   * @param nrRead
-   * @param totalNrNread
+   * @param nrRead f
+   * @param totalNrNread f
    * @return if totalNrRead &lt; 0 then totalNrRead is returned, if
    *    (nrRead + totalNrRead) &lt; Integer.MAX_VALUE then nrRead + totalNrRead
    *    is returned, -1 otherwise.
@@ -109,15 +109,15 @@ public class IOUtil {
   /**
    * Copies the contents of the InputStream to the OutputStream.
    *
-   * @param in
-   * @param out
+   * @param in f
+   * @param out f
    * @return the nr of bytes read, or -1 if the amount &gt; Integer.MAX_VALUE
-   * @throws IOException
+   * @throws IOException f
    */
   public static int copy(InputStream in, OutputStream out)
       throws IOException {
     byte[] buffer = new byte[IO_COPY_BUFFER_SIZE];
-    int readSize = -1;
+    int readSize ;
     int result = 0;
     while ((readSize = in.read(buffer)) >= 0) {
       out.write(buffer, 0, readSize);
@@ -130,14 +130,14 @@ public class IOUtil {
   /**
    * Copies the contents of the Reader to the Writer.
    *
-   * @param in
-   * @param out
+   * @param in f
+   * @param out f
    * @return the nr of characters read, or -1 if the amount &gt; Integer.MAX_VALUE
-   * @throws IOException
+   * @throws IOException f
    */
   public static int copy(Reader in, Writer out) throws IOException {
     char[] buffer = new char[IO_COPY_BUFFER_SIZE];
-    int readSize = -1;
+    int readSize;
     int result = 0;
     while ((readSize = in.read(buffer)) >= 0) {
       out.write(buffer, 0, readSize);
@@ -148,7 +148,7 @@ public class IOUtil {
   }
 
   public static String Stream2String(InputStream inputStream) {
-    String str="";
+    String str;
     try {
       BufferedInputStream bis = new BufferedInputStream(inputStream);
       ByteArrayOutputStream buf = new ByteArrayOutputStream();
