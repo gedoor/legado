@@ -38,11 +38,13 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val selectLightBg = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        it ?: return@registerForActivityResult
         setBgFromUri(it, PreferKey.bgImage) {
             upTheme(false)
         }
     }
     private val selectDarkBg = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        it ?: return@registerForActivityResult
         setBgFromUri(it, PreferKey.bgImageN) {
             upTheme(true)
         }

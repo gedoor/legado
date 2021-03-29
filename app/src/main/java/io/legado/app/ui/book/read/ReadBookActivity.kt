@@ -83,11 +83,15 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
     private val sourceEditActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            upView()
+            if (it.resultCode == RESULT_OK) {
+                upView()
+            }
         }
     private val replaceActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            viewModel.replaceRuleChanged()
+            if (it.resultCode == RESULT_OK) {
+                viewModel.replaceRuleChanged()
+            }
         }
     private val searchContentActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

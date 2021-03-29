@@ -64,7 +64,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
     private val editActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            setResult(RESULT_OK)
+            if (it.resultCode == RESULT_OK) {
+                setResult(RESULT_OK)
+            }
         }
     private val importDoc = registerForActivityResult(FilePicker()) { uri ->
         kotlin.runCatching {

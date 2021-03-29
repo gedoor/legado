@@ -45,6 +45,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
     )
     private val webPort get() = getPrefInt(PreferKey.webPort, 1122)
     private val selectCoverImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        it ?: return@registerForActivityResult
         setCoverFromUri(it)
     }
 
