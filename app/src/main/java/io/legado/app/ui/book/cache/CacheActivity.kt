@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.cache
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -26,7 +25,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.service.help.CacheBook
 import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.filepicker.FilePickerParam
 import io.legado.app.ui.widget.dialog.TextListDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
@@ -36,11 +35,25 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
-
 class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>(),
-    FilePickerDialog.CallBack,
     CacheAdapter.CallBack {
-    private val exportRequestCode = 32
+
+    private val exportDir = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+            ACache.get(this@CacheActivity).put(exportBookPathKey, uri.toString())
+            startExport(uri.toString())
+        } else {
+            uri.path?.let { path ->
+                ACache.get(this@CacheActivity).put(exportBookPathKey, path)
+                startExport(path)
+            }
+        }
+    }
     private val exportBookPathKey = "exportBookPath"
     lateinit var adapter: CacheAdapter
     private var groupLiveData: LiveData<List<BookGroup>>? = null
@@ -215,9 +228,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         if (!path.isNullOrEmpty()) {
             default.add(path)
         }
-        FilePicker.selectFolder(this, exportRequestCode, otherActions = default) {
-            startExport(it)
-        }
+        exportDir.launch(
+            FilePickerParam(
+                otherActions = default.toTypedArray()
+            )
+        )
     }
 
     private fun startExport(path: String) {
@@ -244,27 +259,4 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }.show()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            exportRequestCode -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    if (uri.isContentScheme()) {
-                        contentResolver.takePersistableUriPermission(
-                            uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        )
-                        ACache.get(this@CacheActivity).put(exportBookPathKey, uri.toString())
-                        startExport(uri.toString())
-                    } else {
-                        uri.path?.let { path ->
-                            ACache.get(this@CacheActivity).put(exportBookPathKey, path)
-                            startExport(path)
-                        }
-                    }
-                }
-            }
-
-        }
-    }
 }
