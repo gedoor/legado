@@ -41,7 +41,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         binding.viewPager.adapter = adapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = fragments.keys.elementAt(position)
-        }
+        }.attach()
         viewModel.titleLiveData.observe(this, {
             binding.titleBar.title = it
         })

@@ -34,16 +34,15 @@ class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterLi
         tabLayout = binding.titleBar.findViewById(R.id.tab_layout)
         tabLayout.isTabIndicatorFullWidth = false
         tabLayout.setSelectedTabIndicatorColor(accentColor)
-        intent.getStringExtra("bookUrl")?.let {
-            viewModel.initBook(it) {
-                binding.viewPager.adapter = TabFragmentPageAdapter()
-                TabLayoutMediator(tabLayout, binding.viewPager) { tab, position ->
-                    when (position) {
-                        0 -> tab.setText(R.string.chapter_list)
-                        else -> tab.setText(R.string.bookmark)
-                    }
-                }
+        binding.viewPager.adapter = TabFragmentPageAdapter()
+        TabLayoutMediator(tabLayout, binding.viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.setText(R.string.chapter_list)
+                else -> tab.setText(R.string.bookmark)
             }
+        }.attach()
+        intent.getStringExtra("bookUrl")?.let {
+            viewModel.initBook(it)
         }
     }
 
