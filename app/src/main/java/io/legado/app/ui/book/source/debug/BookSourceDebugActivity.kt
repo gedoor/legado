@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.source.debug
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,10 +11,8 @@ import io.legado.app.databinding.ActivitySourceDebugBinding
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.startActivityForResult
-
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.launch
 
@@ -26,7 +23,11 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
 
     private lateinit var adapter: BookSourceDebugAdapter
     private lateinit var searchView: SearchView
-    private val qrRequestCode = 101
+    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
+        it?.let {
+            startSearch(it)
+        }
+    }
 
     override fun getViewBinding(): ActivitySourceDebugBinding {
         return ActivitySourceDebugBinding.inflate(layoutInflater)
@@ -96,7 +97,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_scan -> {
-                startActivityForResult<QrCodeActivity>(qrRequestCode)
+                qrCodeResult.launch(null)
             }
             R.id.menu_help -> showHelp()
         }
@@ -108,16 +109,4 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
         TextDialog.show(supportFragmentManager, text, TextDialog.MD)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            qrRequestCode -> {
-                if (resultCode == RESULT_OK) {
-                    data?.getStringExtra("result")?.let {
-                        startSearch(it)
-                    }
-                }
-            }
-        }
-    }
 }

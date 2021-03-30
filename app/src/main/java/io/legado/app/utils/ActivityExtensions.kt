@@ -1,19 +1,10 @@
 package io.legado.app.utils
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowInsets
 import android.view.WindowMetrics
-
-
-inline fun <reified A : Activity> Activity.startActivityForResult(
-    requestCode: Int,
-    configIntent: Intent.() -> Unit = {}
-) {
-    startActivityForResult(Intent(this, A::class.java).apply(configIntent), requestCode)
-}
 
 fun Activity.getSize(): DisplayMetrics {
     val displayMetrics = DisplayMetrics()

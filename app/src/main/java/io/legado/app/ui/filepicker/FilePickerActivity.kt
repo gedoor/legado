@@ -1,13 +1,11 @@
 package io.legado.app.ui.filepicker
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContract
+import android.webkit.MimeTypeMap
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.CallSuper
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.Theme
@@ -28,7 +26,7 @@ class FilePickerActivity :
             onResult(Intent().setData(it))
         }
 
-    private val selectDoc = registerForActivityResult(GetContent()) {
+    private val selectDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
         onResult(Intent().setData(it))
     }
 
@@ -65,7 +63,7 @@ class FilePickerActivity :
                     } else {
                         selectDoc.launch(typesOfExtensions(allowExtensions))
                     }
-                    2 -> if (mode == FilePicker.DIRECTORY) {
+                    1 -> if (mode == FilePicker.DIRECTORY) {
                         checkPermissions {
                             FilePickerDialog.show(
                                 supportFragmentManager,
@@ -117,7 +115,14 @@ class FilePickerActivity :
                 when (it) {
                     "*" -> types.add("*/*")
                     "txt", "xml" -> types.add("text/*")
-                    else -> types.add("application/$it")
+                    else -> {
+                        val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension("json")
+                        if (mime == null) {
+                            types.add("application/octet-stream")
+                        } else {
+                            types.add(mime)
+                        }
+                    }
                 }
             }
         }
@@ -129,17 +134,4 @@ class FilePickerActivity :
         finish()
     }
 
-    class GetContent : ActivityResultContract<Array<String>, Uri>() {
-        @CallSuper
-        override fun createIntent(context: Context, input: Array<String>): Intent {
-            return Intent(Intent.ACTION_GET_CONTENT)
-                .addCategory(Intent.CATEGORY_OPENABLE)
-                .putExtra(Intent.EXTRA_MIME_TYPES, input)
-                .setType("*/*")
-        }
-
-        override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
-            return if (intent == null || resultCode != RESULT_OK) null else intent.data
-        }
-    }
 }
