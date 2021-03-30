@@ -18,6 +18,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
@@ -25,6 +26,8 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
+import io.legado.app.ui.filepicker.FilePicker
+import io.legado.app.ui.filepicker.FilePickerParam
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -37,7 +40,9 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private val viewModel: SpeakEngineViewModel by viewModels()
     private var httpTTSData: LiveData<List<HttpTTS>>? = null
     var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
+    private val importDoc = registerForActivityResult(FilePicker()) {
 
+    }
 
     override fun onStart() {
         super.onStart()
@@ -101,10 +106,21 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         when (item?.itemId) {
             R.id.menu_add -> editHttpTTS()
             R.id.menu_default -> viewModel.importDefault()
-            R.id.menu_import_local -> {
-            }
-            R.id.menu_import_onLine -> {
-            }
+            R.id.menu_import_local -> importDoc.launch(
+                FilePickerParam(
+                    mode = FilePicker.FILE,
+                    allowExtensions = arrayOf("txt", "json")
+                )
+            )
+            R.id.menu_import_onLine -> alert(R.string.import_on_line) {
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+                customView { alertBinding.root }
+                okButton {
+                    alertBinding.editView.text?.toString()?.let { url ->
+                        viewModel.importOnLine(url)
+                    }
+                }
+            }.show()
 
         }
         return true

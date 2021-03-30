@@ -18,7 +18,7 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun importOnLine(url: String, finally: (msg: String) -> Unit) {
+    fun importOnLine(url: String) {
         execute {
             RxHttp.get(url).toText("utf-8").await().let { json ->
                 GSON.fromJsonArray<HttpTTS>(json)?.let {
@@ -26,9 +26,9 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
                 }
             }
         }.onSuccess {
-            finally("导入成功")
+            toastOnUi("导入成功")
         }.onError {
-            finally("导入失败")
+            toastOnUi("导入失败")
         }
     }
 
