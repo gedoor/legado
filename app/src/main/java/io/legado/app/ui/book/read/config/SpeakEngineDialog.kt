@@ -100,6 +100,8 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         when (item?.itemId) {
             R.id.menu_add -> editHttpTTS()
             R.id.menu_default -> viewModel.importDefault()
+            R.id.menu_import_onLine -> {
+            }
         }
         return true
     }

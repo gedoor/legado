@@ -191,8 +191,8 @@
     <string name="flow_sys">Follow system</string>
     <string name="add">Add</string>
     <string name="import_book_source">Import book sources</string>
-    <string name="import_book_source_local">Import local sources</string>
-    <string name="import_book_source_on_line">Import online sources</string>
+    <string name="import_local">Import local</string>
+    <string name="import_on_line">Import online</string>
     <string name="replace_rule_title">Replacement</string>
     <string name="replace_rule_edit">Edit replacement rule</string>
     <string name="replace_rule">Pattern</string>

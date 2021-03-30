@@ -188,8 +188,8 @@
     <string name="flow_sys">跟隨系統</string>
     <string name="add">添加</string>
     <string name="import_book_source">導入書源</string>
-    <string name="import_book_source_local">本地導入</string>
-    <string name="import_book_source_on_line">網絡導入</string>
+    <string name="import_local">本地導入</string>
+    <string name="import_on_line">網絡導入</string>
     <string name="replace_rule_title">替換淨化</string>
     <string name="replace_rule_edit">替換規則編輯</string>
     <string name="replace_rule">替換規則</string>

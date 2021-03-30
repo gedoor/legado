@@ -108,14 +108,14 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> startActivity<RssSourceEditActivity>()
-            R.id.menu_import_source_local -> importDoc.launch(
+            R.id.menu_import_local -> importDoc.launch(
                 FilePickerParam(
                     mode = FilePicker.FILE,
                     allowExtensions = arrayOf("txt", "json")
                 )
             )
-            R.id.menu_import_source_onLine -> showImportDialog()
-            R.id.menu_import_source_qr -> qrCodeResult.launch(null)
+            R.id.menu_import_onLine -> showImportDialog()
+            R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(supportFragmentManager, "rssGroupManage")
             R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection()) {
@@ -266,7 +266,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             .getAsString(importRecordKey)
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
-        alert(titleResource = R.string.import_book_source_on_line) {
+        alert(titleResource = R.string.import_on_line) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setFilterValues(cacheUrls)
                 editView.delCallBack = {

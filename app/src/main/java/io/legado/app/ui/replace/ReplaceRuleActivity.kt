@@ -216,14 +216,14 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
 
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
-            R.id.menu_import_source_onLine -> showImportDialog()
-            R.id.menu_import_source_local -> importDoc.launch(
+            R.id.menu_import_onLine -> showImportDialog()
+            R.id.menu_import_local -> importDoc.launch(
                 FilePickerParam(
                     mode = FilePicker.FILE,
                     allowExtensions = arrayOf("txt", "json")
                 )
             )
-            R.id.menu_import_source_qr -> qrCodeResult.launch(null)
+            R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_help -> showHelp()
             else -> if (item.groupId == R.id.replace_group) {
                 searchView.setQuery("group:${item.title}", true)
