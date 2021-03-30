@@ -60,4 +60,10 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    fun export(uri: Uri) {
+        execute {
+            val httpTTS = appDb.httpTTSDao.all
+            uri.writeBytes(context, "httpTts.json", GSON.toJson(httpTTS).toByteArray())
+        }
+    }
 }

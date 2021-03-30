@@ -41,9 +41,14 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private val viewModel: SpeakEngineViewModel by viewModels()
     private var httpTTSData: LiveData<List<HttpTTS>>? = null
     private var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
-    private val importDoc = registerForActivityResult(FilePicker()) {
+    private val importDocResult = registerForActivityResult(FilePicker()) {
         it?.let {
             viewModel.importLocal(it)
+        }
+    }
+    private val exportDirResult = registerForActivityResult(FilePicker()) {
+        it?.let {
+            viewModel.export(it)
         }
     }
 
@@ -109,13 +114,14 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         when (item?.itemId) {
             R.id.menu_add -> editHttpTTS()
             R.id.menu_default -> viewModel.importDefault()
-            R.id.menu_import_local -> importDoc.launch(
+            R.id.menu_import_local -> importDocResult.launch(
                 FilePickerParam(
                     mode = FilePicker.FILE,
                     allowExtensions = arrayOf("txt", "json")
                 )
             )
             R.id.menu_import_onLine -> importAlert()
+            R.id.menu_export -> exportDirResult.launch(null)
         }
         return true
     }
