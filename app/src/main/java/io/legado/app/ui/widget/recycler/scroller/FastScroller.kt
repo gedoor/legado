@@ -152,12 +152,10 @@ class FastScroller : LinearLayout {
 
     fun attachRecyclerView(recyclerView: RecyclerView) {
         mRecyclerView = recyclerView
-        if (mRecyclerView != null) {
-            mRecyclerView!!.addOnScrollListener(mScrollListener)
-            post {
-                // set initial positions for bubble and handle
-                setViewPositions(getScrollProportion(mRecyclerView))
-            }
+        mRecyclerView!!.addOnScrollListener(mScrollListener)
+        post {
+            // set initial positions for bubble and handle
+            setViewPositions(getScrollProportion(mRecyclerView))
         }
     }
 
