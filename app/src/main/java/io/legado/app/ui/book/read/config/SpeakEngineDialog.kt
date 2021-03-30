@@ -36,12 +36,15 @@ import splitties.init.appCtx
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
+    private val ttsUrlKey = "ttsUrlKey"
     lateinit var adapter: Adapter
     private val viewModel: SpeakEngineViewModel by viewModels()
     private var httpTTSData: LiveData<List<HttpTTS>>? = null
-    var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
+    private var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
     private val importDoc = registerForActivityResult(FilePicker()) {
-
+        it?.let {
+            viewModel.importLocal(it)
+        }
     }
 
     override fun onStart() {
@@ -112,18 +115,36 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                     allowExtensions = arrayOf("txt", "json")
                 )
             )
-            R.id.menu_import_onLine -> alert(R.string.import_on_line) {
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-                customView { alertBinding.root }
-                okButton {
-                    alertBinding.editView.text?.toString()?.let { url ->
-                        viewModel.importOnLine(url)
-                    }
-                }
-            }.show()
-
+            R.id.menu_import_onLine -> importAlert()
         }
         return true
+    }
+
+    private fun importAlert() {
+        val aCache = ACache.get(requireContext(), cacheDir = false)
+        val cacheUrls: MutableList<String> = aCache
+            .getAsString(ttsUrlKey)
+            ?.splitNotBlank(",")
+            ?.toMutableList() ?: mutableListOf()
+        alert(R.string.import_on_line) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setFilterValues(cacheUrls)
+                editView.delCallBack = {
+                    cacheUrls.remove(it)
+                    aCache.put(ttsUrlKey, cacheUrls.joinToString(","))
+                }
+            }
+            customView { alertBinding.root }
+            okButton {
+                alertBinding.editView.text?.toString()?.let { url ->
+                    if (!cacheUrls.contains(url)) {
+                        cacheUrls.add(0, url)
+                        aCache.put(ttsUrlKey, cacheUrls.joinToString(","))
+                    }
+                    viewModel.importOnLine(url)
+                }
+            }
+        }.show()
     }
 
     @SuppressLint("InflateParams")
@@ -189,7 +210,6 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 }
             }
         }
-
 
     }
 
