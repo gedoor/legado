@@ -17,7 +17,7 @@ import java.util.List;
 
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.Author;
-import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Identifier;
 import me.ag2s.epublib.domain.MediaType;
 import me.ag2s.epublib.domain.MediaTypes;
@@ -96,7 +96,7 @@ public class NCXDocumentV3 {
      * @return Resource
      */
     @SuppressWarnings("unused")
-    public static Resource read(Book book, EpubReader epubReader) {
+    public static Resource read(EpubBook book, EpubReader epubReader) {
         Resource ncxResource = null;
         if (book.getSpine().getTocResource() == null) {
             Log.e(TAG, "Book does not contain a table of contents file");
@@ -126,7 +126,7 @@ public class NCXDocumentV3 {
         return ncxResource;
     }
 
-    private static List<TOCReference> doToc(Node n, Book book) {
+    private static List<TOCReference> doToc(Node n, EpubBook book) {
         List<TOCReference> result = new ArrayList<>();
 
         if (n == null || n.getNodeType() != Document.ELEMENT_NODE) {
@@ -143,7 +143,7 @@ public class NCXDocumentV3 {
 
 
     static List<TOCReference> readTOCReferences(NodeList navpoints,
-                                                Book book) {
+                                                EpubBook book) {
         if (navpoints == null) {
             return new ArrayList<>();
         }
@@ -169,7 +169,7 @@ public class NCXDocumentV3 {
     }
 
 
-    static TOCReference readTOCReference(Element navpointElement, Book book) {
+    static TOCReference readTOCReference(Element navpointElement, EpubBook book) {
         //章节的名称
         String label = readNavLabel(navpointElement);
         //Log.d(TAG, "label:" + label);
@@ -260,7 +260,7 @@ public class NCXDocumentV3 {
 
     }
 
-    public static Resource createNCXResource(Book book)
+    public static Resource createNCXResource(EpubBook book)
             throws IllegalArgumentException, IllegalStateException, IOException {
         return createNCXResource(book.getMetadata().getIdentifiers(),
                 book.getTitle(), book.getMetadata().getAuthors(),
@@ -289,7 +289,7 @@ public class NCXDocumentV3 {
      * @throws IllegalStateException    IllegalStateException
      * @throws IllegalArgumentException IllegalArgumentException
      */
-    public static void write(XmlSerializer xmlSerializer, Book book)
+    public static void write(XmlSerializer xmlSerializer, EpubBook book)
             throws IllegalArgumentException, IllegalStateException, IOException {
         write(xmlSerializer, book.getMetadata().getIdentifiers(), book.getTitle(),
                 book.getMetadata().getAuthors(), book.getTableOfContents());

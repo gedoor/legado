@@ -2,7 +2,7 @@ package me.ag2s.epublib.browsersupport;
 
 import java.util.EventObject;
 
-import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.util.StringUtil;
 
@@ -20,9 +20,9 @@ public class NavigationEvent extends EventObject {
 
   private Resource oldResource;
   private int oldSpinePos;
-  private Navigator navigator;
-  private Book oldBook;
-  private int oldSectionPos;
+    private Navigator navigator;
+    private EpubBook oldBook;
+    private int oldSectionPos;
   private String oldFragmentId;
 
   public NavigationEvent(Object source) {
@@ -61,9 +61,9 @@ public class NavigationEvent extends EventObject {
     this.oldFragmentId = oldFragmentId;
   }
 
-  public Book getOldBook() {
-    return oldBook;
-  }
+    public EpubBook getOldBook() {
+        return oldBook;
+    }
 
   // package
   void setOldPagePos(int oldPagePos) {
@@ -124,13 +124,13 @@ public class NavigationEvent extends EventObject {
   }
 
 
-  public void setOldBook(Book oldBook) {
-    this.oldBook = oldBook;
-  }
+    public void setOldBook(EpubBook oldBook) {
+        this.oldBook = oldBook;
+    }
 
-  public Book getCurrentBook() {
-    return getNavigator().getBook();
-  }
+    public EpubBook getCurrentBook() {
+        return getNavigator().getBook();
+    }
 
   public boolean isResourceChanged() {
     return oldResource != getCurrentResource();

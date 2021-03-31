@@ -1,15 +1,15 @@
 package me.ag2s.epublib.browsersupport;
 
-import me.ag2s.epublib.domain.Book;
-import me.ag2s.epublib.domain.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import me.ag2s.epublib.domain.EpubBook;
+import me.ag2s.epublib.domain.Resource;
 
 /**
  * A history of the user's locations with the epub.
  *
  * @author paul.siegmann
- *
  */
 public class NavigationHistory implements NavigationEventListener {
 
@@ -58,7 +58,7 @@ public class NavigationHistory implements NavigationEventListener {
     return currentSize;
   }
 
-  public void initBook(Book book) {
+  public void initBook(EpubBook book) {
     if (book == null) {
       return;
     }

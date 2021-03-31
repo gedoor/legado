@@ -2,8 +2,15 @@ package me.ag2s.epublib.epub;
 
 import android.util.Log;
 
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Guide;
 import me.ag2s.epublib.domain.GuideReference;
 import me.ag2s.epublib.domain.MediaTypes;
@@ -11,13 +18,6 @@ import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.domain.Spine;
 import me.ag2s.epublib.domain.SpineReference;
 import me.ag2s.epublib.util.StringUtil;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.xmlpull.v1.XmlSerializer;
 
 /**
  * Writes the opf package document as defined by namespace http://www.idpf.org/2007/opf
@@ -29,7 +29,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
     private static final String TAG = PackageDocumentWriter.class.getName();
 
     public static void write(EpubWriter epubWriter, XmlSerializer serializer,
-                             Book book) {
+                             EpubBook book) {
         try {
             serializer.startDocument(Constants.CHARACTER_ENCODING, false);
             serializer.setPrefix(PREFIX_OPF, NAMESPACE_OPF);
@@ -66,7 +66,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
      * @throws IllegalArgumentException 1@throws XMLStreamException
      */
     @SuppressWarnings("unused")
-    private static void writeSpine(Book book, EpubWriter epubWriter,
+    private static void writeSpine(EpubBook book, EpubWriter epubWriter,
                                    XmlSerializer serializer)
             throws IllegalArgumentException, IllegalStateException, IOException {
         serializer.startTag(NAMESPACE_OPF, OPFTags.spine);
@@ -93,7 +93,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
     }
 
 
-    private static void writeManifest(Book book, EpubWriter epubWriter,
+    private static void writeManifest(EpubBook book, EpubWriter epubWriter,
                                       XmlSerializer serializer)
             throws IllegalArgumentException, IllegalStateException, IOException {
         serializer.startTag(NAMESPACE_OPF, OPFTags.manifest);
@@ -102,7 +102,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 
         //For EPUB3
         if (book.isEpub3()) {
-            serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.properties,NCXDocumentV3.V3_NCX_PROPERTIES);
+            serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.properties, NCXDocumentV3.V3_NCX_PROPERTIES);
             serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.id, NCXDocumentV3.NCX_ITEM_ID);
             serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.href, NCXDocumentV3.DEFAULT_NCX_HREF);
             serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.media_type, NCXDocumentV3.V3_NCX_MEDIATYPE.getName());
@@ -124,7 +124,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
         serializer.endTag(NAMESPACE_OPF, OPFTags.manifest);
     }
 
-    private static List<Resource> getAllResourcesSortById(Book book) {
+    private static List<Resource> getAllResourcesSortById(EpubBook book) {
         List<Resource> allResources = new ArrayList<>(
                 book.getResources().getAll());
         Collections.sort(allResources, (resource1, resource2) -> resource1.getId().compareToIgnoreCase(resource2.getId()));
@@ -134,13 +134,13 @@ public class PackageDocumentWriter extends PackageDocumentBase {
     /**
      * Writes a resources as an item element
      *
-     * @param resource g
+     * @param resource   g
      * @param serializer g
-     * @throws IOException g
-     * @throws IllegalStateException g
+     * @throws IOException              g
+     * @throws IllegalStateException    g
      * @throws IllegalArgumentException 1@throws XMLStreamException
      */
-    private static void writeItem(Book book, Resource resource,
+    private static void writeItem(EpubBook book, Resource resource,
                                   XmlSerializer serializer)
             throws IllegalArgumentException, IllegalStateException, IOException {
         if (resource == null ||
@@ -204,7 +204,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
         }
     }
 
-    private static void writeGuide(Book book, EpubWriter epubWriter,
+    private static void writeGuide(EpubBook book, EpubWriter epubWriter,
                                    XmlSerializer serializer)
             throws IllegalArgumentException, IllegalStateException, IOException {
         serializer.startTag(NAMESPACE_OPF, OPFTags.guide);

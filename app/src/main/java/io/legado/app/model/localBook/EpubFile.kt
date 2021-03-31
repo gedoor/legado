@@ -62,19 +62,19 @@ class EpubFile(var book: Book) {
         }
     }
 
-    private var epubBook: EpubBook? = null
     private var mCharset: Charset = Charset.defaultCharset()
+    private var epubBook: EpubBook? = null
+        get() {
+            if (field != null) {
+                return field
+            }
+            field = readEpub()
+            return field
+        }
 
     init {
         try {
-            val inputStream = if (book.bookUrl.isContentScheme()) {
-                val uri = Uri.parse(book.bookUrl)
-                appCtx.contentResolver.openInputStream(uri)
-            } else {
-                File(book.bookUrl).inputStream()
-            }
-            epubBook = readEpub(inputStream)
-            if (epubBook != null) {
+            epubBook?.let {
                 if (book.coverUrl.isNullOrEmpty()) {
                     book.coverUrl = FileUtils.getPath(
                         appCtx.externalFilesDir,
@@ -84,8 +84,8 @@ class EpubFile(var book: Book) {
                 }
                 if (!File(book.coverUrl!!).exists()) {
                     /*部分书籍DRM处理后，封面获取异常，待优化*/
-                    epubBook!!.coverImage?.inputStream?.use {
-                        val cover = BitmapFactory.decodeStream(it)
+                    it.coverImage?.inputStream?.use { input ->
+                        val cover = BitmapFactory.decodeStream(input)
                         val out = FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
                         cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
                         out.flush()
@@ -99,9 +99,15 @@ class EpubFile(var book: Book) {
     }
 
     /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
-    private fun readEpub(input: InputStream?): EpubBook? {
-        if (input == null) return null
+    private fun readEpub(): EpubBook? {
         try {
+            val input = if (book.bookUrl.isContentScheme()) {
+                val uri = Uri.parse(book.bookUrl)
+                appCtx.contentResolver.openInputStream(uri)
+            } else {
+                File(book.bookUrl).inputStream()
+            }
+            input ?: return null
             val inZip = ZipInputStream(input)
             var zipEntry: ZipEntry?
             val resources = Resources()
@@ -120,7 +126,7 @@ class EpubFile(var book: Book) {
                 }
                 resources.add(resource)
             } while (zipEntry != null)
-            if (resources.size() > 0) return EpubReader().readEpubBook(resources)
+            if (resources.size() > 0) return EpubReader().readEpub(resources)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -129,9 +135,7 @@ class EpubFile(var book: Book) {
 
     private fun getContent(chapter: BookChapter): String? {
         /*获取当前章节文本*/
-        val string = getChildChapter(chapter, chapter.url)
-
-        return string
+        return getChildChapter(chapter, chapter.url)
     }
 
     private fun getChildChapter(chapter: BookChapter, href: String): String? {

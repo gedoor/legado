@@ -13,7 +13,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.domain.Book;
 import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.MediaType;
 import me.ag2s.epublib.domain.MediaTypes;
@@ -27,22 +26,21 @@ import me.ag2s.epublib.util.StringUtil;
  *
  * @author paul
  */
+@SuppressWarnings("ALL")
 public class EpubReader {
 
     private static final String TAG = EpubReader.class.getName();
     private final BookProcessor bookProcessor = BookProcessor.IDENTITY_BOOKPROCESSOR;
-    @SuppressWarnings("unused")
-    public Book readEpub(InputStream in) throws IOException {
+
+    public EpubBook readEpub(InputStream in) throws IOException {
         return readEpub(in, Constants.CHARACTER_ENCODING);
     }
 
-    @SuppressWarnings("unused")
-    public Book readEpub(ZipInputStream in) throws IOException {
+    public EpubBook readEpub(ZipInputStream in) throws IOException {
         return readEpub(in, Constants.CHARACTER_ENCODING);
     }
 
-    @SuppressWarnings("unused")
-    public Book readEpub(ZipFile zipfile) throws IOException {
+    public EpubBook readEpub(ZipFile zipfile) throws IOException {
         return readEpub(zipfile, Constants.CHARACTER_ENCODING);
     }
 
@@ -54,7 +52,7 @@ public class EpubReader {
      * @return the Book as read from the inputstream
      * @throws IOException IOException
      */
-    public Book readEpub(InputStream in, String encoding) throws IOException {
+    public EpubBook readEpub(InputStream in, String encoding) throws IOException {
         return readEpub(new ZipInputStream(in), encoding);
     }
 
@@ -67,18 +65,17 @@ public class EpubReader {
      * @return this Book without loading all resources into memory.
      * @throws IOException IOException
      */
-    @SuppressWarnings("unused")
-    public Book readEpubLazy(ZipFile zipFile, String encoding)
+    public EpubBook readEpubLazy(ZipFile zipFile, String encoding)
             throws IOException {
         return readEpubLazy(zipFile, encoding,
                 Arrays.asList(MediaTypes.mediaTypes));
     }
 
-    public Book readEpub(ZipInputStream in, String encoding) throws IOException {
+    public EpubBook readEpub(ZipInputStream in, String encoding) throws IOException {
         return readEpub(ResourcesLoader.loadResources(in, encoding));
     }
 
-    public Book readEpub(ZipFile in, String encoding) throws IOException {
+    public EpubBook readEpub(ZipFile in, String encoding) throws IOException {
         return readEpub(ResourcesLoader.loadResources(in, encoding));
     }
 
@@ -91,24 +88,20 @@ public class EpubReader {
      * @return this Book without loading all resources into memory.
      * @throws IOException IOException
      */
-    public Book readEpubLazy(ZipFile zipFile, String encoding,
-                             List<MediaType> lazyLoadedTypes) throws IOException {
+    public EpubBook readEpubLazy(ZipFile zipFile, String encoding,
+                                 List<MediaType> lazyLoadedTypes) throws IOException {
         Resources resources = ResourcesLoader
                 .loadResources(zipFile, encoding, lazyLoadedTypes);
         return readEpub(resources);
     }
 
-    @SuppressWarnings("unused")
-    public Book readEpub(Resources resources) {
-        return readEpub(resources, new Book());
-    }
-    public EpubBook readEpubBook(Resources resources) {
-        return (EpubBook) readEpub(resources, new Book());
+    public EpubBook readEpub(Resources resources) {
+        return readEpub(resources, new EpubBook());
     }
 
-    public Book readEpub(Resources resources, Book result) {
+    public EpubBook readEpub(Resources resources, EpubBook result) {
         if (result == null) {
-            result = new Book();
+            result = new EpubBook();
         }
         handleMimeType(result, resources);
         String packageResourceHref = getPackageResourceHref(resources);
@@ -122,14 +115,14 @@ public class EpubReader {
     }
 
 
-    private Book postProcessBook(Book book) {
+    private EpubBook postProcessBook(EpubBook book) {
         if (bookProcessor != null) {
             book = bookProcessor.processBook(book);
         }
         return book;
     }
 
-    private Resource processNcxResource(Resource packageResource, Book book) {
+    private Resource processNcxResource(Resource packageResource, EpubBook book) {
         Log.d(TAG, "OPF:getHref()" + packageResource.getHref());
         if (book.isEpub3()) {
             return NCXDocumentV3.read(book, this);
@@ -139,7 +132,7 @@ public class EpubReader {
 
     }
 
-    private Resource processPackageResource(String packageResourceHref, Book book,
+    private Resource processPackageResource(String packageResourceHref, EpubBook book,
                                             Resources resources) {
         Resource packageResource = resources.remove(packageResourceHref);
         try {
@@ -173,8 +166,7 @@ public class EpubReader {
         return result;
     }
 
-    @SuppressWarnings("unused")
-    private void handleMimeType(Book result, Resources resources) {
+    private void handleMimeType(EpubBook result, Resources resources) {
         resources.remove("mimetype");
         //result.setResources(resources);
     }

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Guide;
 import me.ag2s.epublib.domain.GuideReference;
 import me.ag2s.epublib.domain.MediaType;
@@ -46,8 +46,8 @@ public class PackageDocumentReader extends PackageDocumentBase {
 
 
   public static void read(
-      Resource packageResource, EpubReader epubReader, Book book,
-      Resources resources)
+          Resource packageResource, EpubReader epubReader, EpubBook book,
+          Resources resources)
       throws SAXException, IOException {
     Document packageDocument = ResourceUtil.getAsDocument(packageResource);
     String packageHref = packageResource.getHref();
@@ -155,17 +155,17 @@ public class PackageDocumentReader extends PackageDocumentBase {
    */
   @SuppressWarnings("unused")
   private static void readGuide(Document packageDocument,
-      EpubReader epubReader, Book book, Resources resources) {
-    Element guideElement = DOMUtil
-        .getFirstElementByTagNameNS(packageDocument.getDocumentElement(),
-            NAMESPACE_OPF, OPFTags.guide);
-    if (guideElement == null) {
-      return;
-    }
-    Guide guide = book.getGuide();
-    NodeList guideReferences = guideElement
-        .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.reference);
-    for (int i = 0; i < guideReferences.getLength(); i++) {
+                                EpubReader epubReader, EpubBook book, Resources resources) {
+      Element guideElement = DOMUtil
+              .getFirstElementByTagNameNS(packageDocument.getDocumentElement(),
+                      NAMESPACE_OPF, OPFTags.guide);
+      if (guideElement == null) {
+          return;
+      }
+      Guide guide = book.getGuide();
+      NodeList guideReferences = guideElement
+              .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.reference);
+      for (int i = 0; i < guideReferences.getLength(); i++) {
       Element referenceElement = (Element) guideReferences.item(i);
       String resourceHref = DOMUtil
           .getAttribute(referenceElement, NAMESPACE_OPF, OPFAttributes.href);
@@ -400,23 +400,24 @@ public class PackageDocumentReader extends PackageDocumentBase {
     return result;
   }
 
-  /**
-   * Finds the cover resource in the packageDocument and adds it to the book if found.
-   * Keeps the cover resource in the resources map
-   * @param packageDocument s
-   * @param book x
-   */
-  private static void readCover(Document packageDocument, Book book) {
+    /**
+     * Finds the cover resource in the packageDocument and adds it to the book if found.
+     * Keeps the cover resource in the resources map
+     *
+     * @param packageDocument s
+     * @param book            x
+     */
+    private static void readCover(Document packageDocument, EpubBook book) {
 
-    Collection<String> coverHrefs = findCoverHrefs(packageDocument);
-    for (String coverHref : coverHrefs) {
-      Resource resource = book.getResources().getByHref(coverHref);
-      if (resource == null) {
-        Log.e(TAG,"Cover resource " + coverHref + " not found");
-        continue;
-      }
-      if (resource.getMediaType() == MediaTypes.XHTML) {
-        book.setCoverPage(resource);
+        Collection<String> coverHrefs = findCoverHrefs(packageDocument);
+        for (String coverHref : coverHrefs) {
+            Resource resource = book.getResources().getByHref(coverHref);
+            if (resource == null) {
+                Log.e(TAG, "Cover resource " + coverHref + " not found");
+                continue;
+            }
+            if (resource.getMediaType() == MediaTypes.XHTML) {
+                book.setCoverPage(resource);
       } else if (MediaTypes.isBitmapImage(resource.getMediaType())) {
         book.setCoverImage(resource);
       }
