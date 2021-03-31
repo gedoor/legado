@@ -128,7 +128,9 @@ class FilePickerActivity :
     }
 
     override fun onResult(data: Intent) {
-        setResult(RESULT_OK, data)
+        if (data.data != null) {
+            setResult(RESULT_OK, data)
+        }
         finish()
     }
 
