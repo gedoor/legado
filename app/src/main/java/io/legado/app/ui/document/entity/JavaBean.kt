@@ -1,4 +1,4 @@
-package io.legado.app.ui.filepicker.entity
+package io.legado.app.ui.document.entity
 
 import java.io.Serializable
 import java.lang.reflect.Field

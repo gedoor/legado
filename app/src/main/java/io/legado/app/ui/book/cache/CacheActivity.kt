@@ -24,8 +24,8 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.service.help.CacheBook
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerParam
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.widget.dialog.TextListDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers

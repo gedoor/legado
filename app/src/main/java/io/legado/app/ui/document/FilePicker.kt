@@ -1,4 +1,4 @@
-package io.legado.app.ui.filepicker
+package io.legado.app.ui.document
 
 import android.app.Activity.RESULT_OK
 import android.content.Context

@@ -20,7 +20,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.ui.filepicker.FilePicker
+import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO

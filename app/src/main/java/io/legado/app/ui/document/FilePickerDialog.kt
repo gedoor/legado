@@ -1,4 +1,4 @@
-package io.legado.app.ui.filepicker
+package io.legado.app.ui.document
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.databinding.DialogFileChooserBinding
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.ui.filepicker.FilePicker.Companion.DIRECTORY
-import io.legado.app.ui.filepicker.FilePicker.Companion.FILE
-import io.legado.app.ui.filepicker.adapter.FileAdapter
-import io.legado.app.ui.filepicker.adapter.PathAdapter
+import io.legado.app.ui.document.FilePicker.Companion.DIRECTORY
+import io.legado.app.ui.document.FilePicker.Companion.FILE
+import io.legado.app.ui.document.adapter.FileAdapter
+import io.legado.app.ui.document.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding

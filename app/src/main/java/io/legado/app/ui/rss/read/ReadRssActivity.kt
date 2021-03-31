@@ -23,8 +23,8 @@ import io.legado.app.service.help.Download
 import io.legado.app.ui.association.ImportBookSourceActivity
 import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.association.ImportRssSourceActivity
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerParam
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.utils.*
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils

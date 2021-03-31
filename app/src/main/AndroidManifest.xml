@@ -296,7 +296,7 @@
             android:hardwareAccelerated="true" />
         <!-- 选择文件 -->
         <activity
-            android:name=".ui.filepicker.FilePickerActivity"
+            android:name=".ui.document.FilePickerActivity"
             android:configChanges="orientation|screenSize"
             android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.Transparent" />

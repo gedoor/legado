@@ -1,4 +1,4 @@
-package io.legado.app.ui.filepicker.adapter
+package io.legado.app.ui.document.adapter
 
 
 import android.content.Context
@@ -9,9 +9,9 @@ import io.legado.app.databinding.ItemFileFilepickerBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.getPrimaryDisabledTextColor
 import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.ui.filepicker.entity.FileItem
-import io.legado.app.ui.filepicker.utils.ConvertUtils
-import io.legado.app.ui.filepicker.utils.FilePickerIcon
+import io.legado.app.ui.document.entity.FileItem
+import io.legado.app.ui.document.utils.ConvertUtils
+import io.legado.app.ui.document.utils.FilePickerIcon
 import io.legado.app.utils.FileUtils
 
 import java.io.File
