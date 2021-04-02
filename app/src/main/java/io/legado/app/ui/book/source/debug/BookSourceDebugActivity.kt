@@ -90,7 +90,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.source_debug, menu)
+        menuInflater.inflate(R.menu.book_source_debug, menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
