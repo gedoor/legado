@@ -32,7 +32,7 @@ object BookChapterList {
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
-
+        Debug.log(bookSource.bookSourceUrl, body, state = 30)
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(baseUrl)
         var reverse = false
