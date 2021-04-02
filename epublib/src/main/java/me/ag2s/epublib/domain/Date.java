@@ -1,10 +1,10 @@
 package me.ag2s.epublib.domain;
 
-import me.ag2s.epublib.epub.PackageDocumentBase;
-
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+
+import me.ag2s.epublib.epub.PackageDocumentBase;
 
 /**
  * A Date used by the book's metadata.
@@ -47,6 +47,10 @@ public class Date implements Serializable {
 
     private Event event;
     private String dateString;
+
+    public Date() {
+        this(new java.util.Date(), Event.CREATION);
+    }
 
     public Date(java.util.Date date) {
         this(date, (Event) null);
