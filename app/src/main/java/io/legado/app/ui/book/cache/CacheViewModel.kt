@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.cache
 
 import android.app.Application
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -239,6 +238,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 val content1 = contentProcessor
                     .getContent(book, chapter.title, content ?: "null", false, useReplace)
                     .joinToString("\n")
+                    .replace(chapter.title,"")
+
                 epubBook.addSection(
                     chapter.title,
                     ResourceUtil.createHTMLResource(chapter.title, content1)
