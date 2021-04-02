@@ -1,6 +1,6 @@
-package io.legado.app.ui.filepicker
+package io.legado.app.ui.document
 
-import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -16,10 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.databinding.DialogFileChooserBinding
-import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.ui.filepicker.adapter.FileAdapter
-import io.legado.app.ui.filepicker.adapter.PathAdapter
+import io.legado.app.ui.document.FilePicker.Companion.DIRECTORY
+import io.legado.app.ui.document.FilePicker.Companion.FILE
+import io.legado.app.ui.document.adapter.FileAdapter
+import io.legado.app.ui.document.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -33,12 +33,9 @@ class FilePickerDialog : DialogFragment(),
 
     companion object {
         const val tag = "FileChooserDialog"
-        const val DIRECTORY = 0
-        const val FILE = 1
 
         fun show(
             manager: FragmentManager,
-            requestCode: Int,
             mode: Int = FILE,
             title: String? = null,
             initPath: String? = null,
@@ -51,7 +48,6 @@ class FilePickerDialog : DialogFragment(),
             FilePickerDialog().apply {
                 val bundle = Bundle()
                 bundle.putInt("mode", mode)
-                bundle.putInt("requestCode", requestCode)
                 bundle.putString("title", title)
                 bundle.putBoolean("isShowHomeDir", isShowHomeDir)
                 bundle.putBoolean("isShowUpDir", isShowUpDir)
@@ -71,20 +67,6 @@ class FilePickerDialog : DialogFragment(),
     override var isShowHomeDir: Boolean = false
     override var isShowUpDir: Boolean = true
     override var isShowHideDir: Boolean = false
-    private val queryPermission =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            var hasPermission = true
-            it.forEach { (t, u) ->
-                if (!u) {
-                    hasPermission = false
-                    toastOnUi(t)
-                }
-            }
-            if (hasPermission) {
-                refreshCurrentDirPath(initPath)
-            }
-        }
-    private var requestCode: Int = 0
     var title: String? = null
     private var initPath = FileUtils.getSdCardPath()
     private var mode: Int = FILE
@@ -111,7 +93,6 @@ class FilePickerDialog : DialogFragment(),
         binding.toolBar.setBackgroundColor(primaryColor)
         view.setBackgroundResource(R.color.background_card)
         arguments?.let {
-            requestCode = it.getInt("requestCode")
             mode = it.getInt("mode", FILE)
             title = it.getString("title")
             isShowHomeDir = it.getBoolean("isShowHomeDir")
@@ -132,7 +113,7 @@ class FilePickerDialog : DialogFragment(),
         }
         initMenu()
         initContentView()
-        queryPermission.launch(Permissions.Group.STORAGE)
+        refreshCurrentDirPath(initPath)
     }
 
     private fun initMenu() {
@@ -166,11 +147,6 @@ class FilePickerDialog : DialogFragment(),
         when (item?.itemId) {
             R.id.menu_ok -> fileAdapter.currentPath?.let {
                 setData(it)
-                dismissAllowingStateLoss()
-            }
-            else -> item?.title?.let {
-                (parentFragment as? CallBack)?.onMenuClick(it.toString())
-                (activity as? CallBack)?.onMenuClick(it.toString())
                 dismissAllowingStateLoss()
             }
         }
@@ -225,14 +201,16 @@ class FilePickerDialog : DialogFragment(),
 
     private fun setData(path: String) {
         val data = Intent().setData(Uri.fromFile(File(path)))
-        (parentFragment as? CallBack)
-            ?.onActivityResult(requestCode, Activity.RESULT_OK, data)
-        (activity as? CallBack)
-            ?.onActivityResult(requestCode, Activity.RESULT_OK, data)
+        (parentFragment as? CallBack)?.onResult(data)
+        (activity as? CallBack)?.onResult(data)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        activity?.finish()
     }
 
     interface CallBack {
-        fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-        fun onMenuClick(menu: String) {}
+        fun onResult(data: Intent)
     }
 }

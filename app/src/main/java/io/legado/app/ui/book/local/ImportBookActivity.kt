@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.local
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -21,8 +20,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -36,17 +34,31 @@ import java.util.*
  * 导入本地书籍界面
  */
 class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookViewModel>(),
-    FilePickerDialog.CallBack,
     PopupMenu.OnMenuItemClickListener,
-    SelectActionBar.CallBack,
-    ImportBookAdapter.CallBack {
-    private val requestCodeSelectFolder = 342
+    ImportBookAdapter.CallBack,
+    SelectActionBar.CallBack {
     private var rootDoc: DocumentFile? = null
     private val subDocs = arrayListOf<DocumentFile>()
     private lateinit var adapter: ImportBookAdapter
     private var localUriLiveData: LiveData<List<String>>? = null
     private var sdPath = FileUtils.getSdCardPath()
     private var path = sdPath
+    private val selectFolder = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+            AppConfig.importBookPath = uri.toString()
+            initRootDoc()
+        } else {
+            uri.path?.let { path ->
+                AppConfig.importBookPath = path
+                initRootDoc()
+            }
+        }
+    }
 
     override val viewModel: ImportBookViewModel
             by viewModels()
@@ -69,7 +81,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_select_folder -> FilePicker.selectFolder(this, requestCodeSelectFolder)
+            R.id.menu_select_folder -> selectFolder.launch(null)
             R.id.menu_scan_folder -> scanFolder()
         }
         return super.onCompatOptionsItemSelected(item)
@@ -129,14 +141,14 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         when {
             lastPath.isNullOrEmpty() -> {
                 binding.tvEmptyMsg.visible()
-                FilePicker.selectFolder(this, requestCodeSelectFolder)
+                selectFolder.launch(null)
             }
             lastPath.isContentScheme() -> {
                 val rootUri = Uri.parse(lastPath)
                 rootDoc = DocumentFile.fromTreeUri(this, rootUri)
                 if (rootDoc == null) {
                     binding.tvEmptyMsg.visible()
-                    FilePicker.selectFolder(this, requestCodeSelectFolder)
+                    selectFolder.launch(null)
                 } else {
                     subDocs.clear()
                     upPath()
@@ -144,7 +156,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             }
             Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
                 binding.tvEmptyMsg.visible()
-                FilePicker.selectFolder(this, requestCodeSelectFolder)
+                selectFolder.launch(null)
             }
             else -> {
                 binding.tvEmptyMsg.visible()
@@ -271,29 +283,6 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private val find: (docItem: DocItem) -> Unit = {
         launch {
             adapter.addItem(it)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeSelectFolder -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    if (uri.isContentScheme()) {
-                        contentResolver.takePersistableUriPermission(
-                            uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        )
-                        AppConfig.importBookPath = uri.toString()
-                        initRootDoc()
-                    } else {
-                        uri.path?.let { path ->
-                            AppConfig.importBookPath = path
-                            initRootDoc()
-                        }
-                    }
-                }
-            }
         }
     }
 

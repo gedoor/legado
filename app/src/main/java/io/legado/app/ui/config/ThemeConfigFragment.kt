@@ -1,8 +1,6 @@
 package io.legado.app.ui.config
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
@@ -11,6 +9,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import io.legado.app.R
@@ -38,8 +37,18 @@ import java.io.File
 class ThemeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestCodeBgImage = 234
-    private val requestCodeBgImageN = 342
+    private val selectLightBg = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        it ?: return@registerForActivityResult
+        setBgFromUri(it, PreferKey.bgImage) {
+            upTheme(false)
+        }
+    }
+    private val selectDarkBg = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        it ?: return@registerForActivityResult
+        setBgFromUri(it, PreferKey.bgImageN) {
+            upTheme(true)
+        }
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_theme)
@@ -186,38 +195,31 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
             "saveDayTheme", "saveNightTheme" -> saveThemeAlert(key)
             PreferKey.bgImage -> if (getPrefString(PreferKey.bgImage).isNullOrEmpty()) {
-                selectImage(requestCodeBgImage)
+                selectLightBg.launch("image/*")
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImage)
                         upTheme(false)
                     } else {
-                        selectImage(requestCodeBgImage)
+                        selectLightBg.launch("image/*")
                     }
                 }
             }
             PreferKey.bgImageN -> if (getPrefString(PreferKey.bgImageN).isNullOrEmpty()) {
-                selectImage(requestCodeBgImageN)
+                selectDarkBg.launch("image/*")
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImageN)
                         upTheme(true)
                     } else {
-                        selectImage(requestCodeBgImageN)
+                        selectDarkBg.launch("image/*")
                     }
                 }
             }
         }
         return super.onPreferenceTreeClick(preference)
-    }
-
-    private fun selectImage(requestCode: Int) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "image/*"
-        startActivityForResult(intent, requestCode)
     }
 
     @SuppressLint("InflateParams")
@@ -299,26 +301,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     }
                 }
                 .request()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeBgImage -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    setBgFromUri(uri, PreferKey.bgImage) {
-                        upTheme(false)
-                    }
-                }
-            }
-            requestCodeBgImageN -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    setBgFromUri(uri, PreferKey.bgImageN) {
-                        upTheme(true)
-                    }
-                }
-            }
         }
     }
 

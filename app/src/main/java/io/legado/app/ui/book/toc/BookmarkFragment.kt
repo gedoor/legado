@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.DialogBookmarkBinding
 import io.legado.app.databinding.FragmentBookmarkBinding
@@ -35,7 +36,9 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.bookMarkCallBack = this
         initRecyclerView()
-        initData()
+        viewModel.bookData.observe(this) {
+            initData(it)
+        }
     }
 
     private fun initRecyclerView() {
@@ -46,20 +49,20 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
         binding.recyclerView.adapter = adapter
     }
 
-    private fun initData() {
-        viewModel.book?.let { book ->
-            bookmarkLiveData?.removeObservers(viewLifecycleOwner)
-            bookmarkLiveData =
-                LivePagedListBuilder(
-                    appDb.bookmarkDao.observeByBook(book.bookUrl, book.name, book.author), 20
-                ).build()
-            bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.submitList(it) })
-        }
+    private fun initData(book: Book) {
+        bookmarkLiveData?.removeObservers(viewLifecycleOwner)
+        bookmarkLiveData =
+            LivePagedListBuilder(
+                appDb.bookmarkDao.observeByBook(book.bookUrl, book.name, book.author), 20
+            ).build()
+        bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.submitList(it) })
     }
 
     override fun startBookmarkSearch(newText: String?) {
         if (newText.isNullOrBlank()) {
-            initData()
+            viewModel.bookData.value?.let {
+                initData(it)
+            }
         } else {
             bookmarkLiveData?.removeObservers(viewLifecycleOwner)
             bookmarkLiveData = LivePagedListBuilder(

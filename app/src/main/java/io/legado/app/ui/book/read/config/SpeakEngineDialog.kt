@@ -18,6 +18,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
@@ -25,6 +26,8 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -33,10 +36,21 @@ import splitties.init.appCtx
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
+    private val ttsUrlKey = "ttsUrlKey"
     lateinit var adapter: Adapter
     private val viewModel: SpeakEngineViewModel by viewModels()
     private var httpTTSData: LiveData<List<HttpTTS>>? = null
-    var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
+    private var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
+    private val importDocResult = registerForActivityResult(FilePicker()) {
+        it?.let {
+            viewModel.importLocal(it)
+        }
+    }
+    private val exportDirResult = registerForActivityResult(FilePicker()) {
+        it?.let {
+            viewModel.export(it)
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -100,8 +114,43 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         when (item?.itemId) {
             R.id.menu_add -> editHttpTTS()
             R.id.menu_default -> viewModel.importDefault()
+            R.id.menu_import_local -> importDocResult.launch(
+                FilePickerParam(
+                    mode = FilePicker.FILE,
+                    allowExtensions = arrayOf("txt", "json")
+                )
+            )
+            R.id.menu_import_onLine -> importAlert()
+            R.id.menu_export -> exportDirResult.launch(null)
         }
         return true
+    }
+
+    private fun importAlert() {
+        val aCache = ACache.get(requireContext(), cacheDir = false)
+        val cacheUrls: MutableList<String> = aCache
+            .getAsString(ttsUrlKey)
+            ?.splitNotBlank(",")
+            ?.toMutableList() ?: mutableListOf()
+        alert(R.string.import_on_line) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setFilterValues(cacheUrls)
+                editView.delCallBack = {
+                    cacheUrls.remove(it)
+                    aCache.put(ttsUrlKey, cacheUrls.joinToString(","))
+                }
+            }
+            customView { alertBinding.root }
+            okButton {
+                alertBinding.editView.text?.toString()?.let { url ->
+                    if (!cacheUrls.contains(url)) {
+                        cacheUrls.add(0, url)
+                        aCache.put(ttsUrlKey, cacheUrls.joinToString(","))
+                    }
+                    viewModel.importOnLine(url)
+                }
+            }
+        }.show()
     }
 
     @SuppressLint("InflateParams")
@@ -167,7 +216,6 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 }
             }
         }
-
 
     }
 

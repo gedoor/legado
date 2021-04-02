@@ -150,7 +150,7 @@ class FastScrollRecyclerView : RecyclerView {
         super.onAttachedToWindow()
         mFastScroller.attachRecyclerView(this)
         val parent = parent
-        if (parent is ViewGroup) {
+        if (parent is ViewGroup && parent.indexOfChild(mFastScroller) == -1) {
             parent.addView(mFastScroller)
             mFastScroller.setLayoutParams(parent)
         }

@@ -154,7 +154,9 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
         if (AppConfig.isGooglePlay) {
             ThemeConfig.getBgImage(this)?.let {
-                window.decorView.background = it
+                kotlin.runCatching {
+                    window.decorView.background = it
+                }
             }
         }
     }

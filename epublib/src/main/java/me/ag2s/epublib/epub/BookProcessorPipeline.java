@@ -2,14 +2,15 @@ package me.ag2s.epublib.epub;
 
 import android.util.Log;
 
-import me.ag2s.epublib.domain.Book;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import me.ag2s.epublib.domain.EpubBook;
+
 /**
  * A book processor that combines several other bookprocessors
- *
+ * <p>
  * Fixes coverpage/coverimage.
  * Cleans up the XHTML.
  *
@@ -30,7 +31,7 @@ public class BookProcessorPipeline implements BookProcessor {
   }
 
   @Override
-  public Book processBook(Book book) {
+  public EpubBook processBook(EpubBook book) {
     if (bookProcessors == null) {
       return book;
     }
@@ -38,7 +39,7 @@ public class BookProcessorPipeline implements BookProcessor {
       try {
         book = bookProcessor.processBook(book);
       } catch (Exception e) {
-        Log.e(TAG,e.getMessage(), e);
+        Log.e(TAG, e.getMessage(), e);
       }
     }
     return book;

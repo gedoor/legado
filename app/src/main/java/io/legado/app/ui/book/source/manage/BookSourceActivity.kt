@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.source.manage
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -31,9 +30,9 @@ import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.association.ImportBookSourceActivity
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerDialog
-import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
@@ -45,15 +44,11 @@ import java.io.File
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
     PopupMenu.OnMenuItemClickListener,
     BookSourceAdapter.CallBack,
-    FilePickerDialog.CallBack,
     SelectActionBar.CallBack,
     SearchView.OnQueryTextListener {
     override val viewModel: BookSourceViewModel
             by viewModels()
     private val importRecordKey = "bookSourceRecordKey"
-    private val qrRequestCode = 101
-    private val importRequestCode = 132
-    private val exportRequestCode = 65
     private lateinit var adapter: BookSourceAdapter
     private lateinit var searchView: SearchView
     private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
@@ -62,6 +57,37 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var sort = Sort.Default
     private var sortAscending = true
     private var snackBar: Snackbar? = null
+    private val qrResult = registerForActivityResult(QrCodeResult()) {
+        it ?: return@registerForActivityResult
+        startActivity<ImportBookSourceActivity> {
+            putExtra("source", it)
+        }
+    }
+    private val importDoc = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        try {
+            uri.readText(this)?.let {
+                val dataKey = IntentDataHelp.putData(it)
+                startActivity<ImportBookSourceActivity> {
+                    putExtra("dataKey", dataKey)
+                }
+            }
+        } catch (e: Exception) {
+            toastOnUi("readTextError:${e.localizedMessage}")
+        }
+    }
+    private val exportDir = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            DocumentFile.fromTreeUri(this, uri)?.let {
+                viewModel.exportSelection(adapter.getSelection(), it)
+            }
+        } else {
+            uri.path?.let {
+                viewModel.exportSelection(adapter.getSelection(), File(it))
+            }
+        }
+    }
 
     override fun getViewBinding(): ActivityBookSourceBinding {
         return ActivityBookSourceBinding.inflate(layoutInflater)
@@ -95,15 +121,19 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add_book_source -> startActivity<BookSourceEditActivity>()
-            R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
+            R.id.menu_import_qr -> qrResult.launch(null)
             R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection()) {
                 startActivity(Intent.createChooser(it, getString(R.string.share_selected_source)))
             }
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
-            R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, allowExtensions = arrayOf("txt", "json"))
-            R.id.menu_import_source_onLine -> showImportDialog()
+            R.id.menu_import_local -> importDoc.launch(
+                FilePickerParam(
+                    mode = FilePicker.FILE,
+                    allowExtensions = arrayOf("txt", "json")
+                )
+            )
+            R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_sort_manual -> {
                 item.isChecked = true
                 sortCheck(Sort.Default)
@@ -292,7 +322,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
             R.id.menu_add_group -> selectionAddToGroups()
             R.id.menu_remove_group -> selectionRemoveFromGroups()
-            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
+            R.id.menu_export_selection -> exportDir.launch(null)
         }
         return true
     }
@@ -372,7 +402,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             .getAsString(importRecordKey)
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
-        alert(titleResource = R.string.import_book_source_on_line) {
+        alert(titleResource = R.string.import_on_line) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setFilterValues(cacheUrls)
                 editView.delCallBack = {
@@ -464,46 +494,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     override fun debug(bookSource: BookSource) {
         startActivity<BookSourceDebugActivity> {
             putExtra("key", bookSource.bookSourceUrl)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            qrRequestCode -> if (resultCode == RESULT_OK) {
-                data?.getStringExtra("result")?.let {
-                    startActivity<ImportBookSourceActivity> {
-                        putExtra("source", it)
-                    }
-                }
-            }
-            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    try {
-                        uri.readText(this)?.let {
-                            val dataKey = IntentDataHelp.putData(it)
-                            startActivity<ImportBookSourceActivity> {
-                                putExtra("dataKey", dataKey)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        toastOnUi("readTextError:${e.localizedMessage}")
-                    }
-                }
-            }
-            exportRequestCode -> {
-                data?.data?.let { uri ->
-                    if (uri.isContentScheme()) {
-                        DocumentFile.fromTreeUri(this, uri)?.let {
-                            viewModel.exportSelection(adapter.getSelection(), it)
-                        }
-                    } else {
-                        uri.path?.let {
-                            viewModel.exportSelection(adapter.getSelection(), File(it))
-                        }
-                    }
-                }
-            }
         }
     }
 

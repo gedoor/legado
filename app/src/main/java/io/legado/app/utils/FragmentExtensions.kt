@@ -10,10 +10,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
-import splitties.systemservices.connectivityManager
-
-@Suppress("DEPRECATION")
-fun Fragment.isOnline() = connectivityManager.activeNetworkInfo?.isConnected == true
 
 fun Fragment.getPrefBoolean(key: String, defValue: Boolean = false) =
     requireContext().defaultSharedPreferences.getBoolean(key, defValue)
@@ -63,11 +59,4 @@ inline fun <reified T : Activity> Fragment.startActivity(
     configIntent: Intent.() -> Unit = {}
 ) {
     startActivity(Intent(requireContext(), T::class.java).apply(configIntent))
-}
-
-inline fun <reified T : Activity> Fragment.startActivityForResult(
-    requestCode: Int,
-    configIntent: Intent.() -> Unit = {}
-) {
-    startActivityForResult(Intent(requireContext(), T::class.java).apply(configIntent), requestCode)
 }

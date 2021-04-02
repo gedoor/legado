@@ -46,7 +46,7 @@ import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.book.toc.ChapterListActivity
+import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.login.SourceLogin
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
@@ -71,23 +71,26 @@ class ReadBookActivity : ReadBookBaseActivity(),
     ColorPickerDialogListener {
 
     private val tocActivity =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            it.data?.let { data ->
-                data.getIntExtra("index", ReadBook.durChapterIndex).let { index ->
-                    if (index != ReadBook.durChapterIndex) {
-                        val chapterPos = data.getIntExtra("chapterPos", 0)
-                        viewModel.openChapter(index, chapterPos)
-                    }
+        registerForActivityResult(TocActivityResult()) {
+            it?.let {
+                if (it.first != ReadBook.durChapterIndex) {
+                    viewModel.openChapter(it.first, it.second)
                 }
             }
         }
     private val sourceEditActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            upView()
+            if (it.resultCode == RESULT_OK) {
+                viewModel.upBookSource {
+                    upView()
+                }
+            }
         }
     private val replaceActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            viewModel.replaceRuleChanged()
+            if (it.resultCode == RESULT_OK) {
+                viewModel.replaceRuleChanged()
+            }
         }
     private val searchContentActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -727,9 +730,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      */
     override fun openChapterList() {
         ReadBook.book?.let {
-            tocActivity.launch(Intent(this, ChapterListActivity::class.java).apply {
-                putExtra("bookUrl", it.bookUrl)
-            })
+            tocActivity.launch(it.bookUrl)
         }
     }
 

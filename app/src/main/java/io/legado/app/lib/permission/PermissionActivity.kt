@@ -13,7 +13,7 @@ import io.legado.app.utils.toastOnUi
 
 class PermissionActivity : AppCompatActivity() {
 
-    private val startSettingActivity =
+    private val settingActivityResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             RequestPlugins.sRequestCallback?.onSettingActivityResult()
             finish()
@@ -37,7 +37,7 @@ class PermissionActivity : AppCompatActivity() {
             -> try {
                 val settingIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 settingIntent.data = Uri.fromParts("package", packageName, null)
-                startSettingActivity.launch(settingIntent)
+                settingActivityResult.launch(settingIntent)
             } catch (e: Exception) {
                 toastOnUi(R.string.tip_cannot_jump_setting_page)
                 finish()

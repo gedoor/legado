@@ -1,6 +1,5 @@
 package io.legado.app.ui.main.my
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
@@ -21,10 +20,8 @@ import io.legado.app.ui.about.AboutActivity
 import io.legado.app.ui.about.DonateActivity
 import io.legado.app.ui.about.ReadRecordActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
-import io.legado.app.ui.config.BackupRestoreUi
 import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigViewModel
-import io.legado.app.ui.filepicker.FilePickerDialog
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.prefs.NameListPreference
@@ -33,7 +30,7 @@ import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class MyFragment : BaseFragment(R.layout.fragment_my_config), FilePickerDialog.CallBack {
+class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
     private val binding by viewBinding(FragmentMyConfigBinding::bind)
 
@@ -57,11 +54,6 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config), FilePickerDialog.C
                 TextDialog.show(childFragmentManager, text, TextDialog.MD)
             }
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
     }
 
     /**

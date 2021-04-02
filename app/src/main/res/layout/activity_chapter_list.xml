@@ -12,7 +12,7 @@
         app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_tab_layout" />
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

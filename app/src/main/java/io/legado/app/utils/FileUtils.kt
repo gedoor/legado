@@ -3,7 +3,7 @@ package io.legado.app.utils
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
-import io.legado.app.ui.filepicker.utils.ConvertUtils
+import io.legado.app.ui.document.utils.ConvertUtils
 import splitties.init.appCtx
 import java.io.*
 import java.nio.charset.Charset

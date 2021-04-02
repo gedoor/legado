@@ -73,6 +73,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 val bookMap = hashMapOf<String, String?>()
                 bookMap["name"] = it.name
                 bookMap["author"] = it.author
+                bookMap["intro"] = it.getDisplayIntro()
                 exportList.add(bookMap)
             }
             GSON.toJson(exportList)

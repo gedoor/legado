@@ -1,6 +1,6 @@
 package me.ag2s.epublib.epub;
 
-import me.ag2s.epublib.domain.Book;
+import me.ag2s.epublib.domain.EpubBook;
 
 /**
  * Post-processes a book.
@@ -16,5 +16,5 @@ public interface BookProcessor {
    */
   BookProcessor IDENTITY_BOOKPROCESSOR = book -> book;
 
-  Book processBook(Book book);
+    EpubBook processBook(EpubBook book);
 }

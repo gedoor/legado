@@ -1,8 +1,6 @@
 package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -29,8 +27,8 @@ import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.book.search.SearchActivity
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.main.bookshelf.books.BooksFragment
 import io.legado.app.utils.*
@@ -41,10 +39,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  */
 class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf),
     TabLayout.OnTabSelectedListener,
-    FilePickerDialog.CallBack,
     SearchView.OnQueryTextListener {
 
-    private val requestCodeImportBookshelf = 312
     private val binding by viewBinding(FragmentBookshelfBinding::bind)
     override val viewModel: BookshelfViewModel by viewModels()
     private val activityViewModel: MainViewModel by activityViewModels()
@@ -53,6 +49,11 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Long, BooksFragment>()
+    private val importBookshelf = registerForActivityResult(FilePicker()) {
+        it?.readText(requireContext())?.let { text ->
+            viewModel.importBookshelf(text, selectedGroup.groupId)
+        }
+    }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         tabLayout = binding.titleBar.findViewById(R.id.tab_layout)
@@ -229,26 +230,14 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             }
             noButton()
             neutralButton(R.string.select_file) {
-                FilePicker.selectFile(
-                    this@BookshelfFragment,
-                    requestCodeImportBookshelf,
-                    allowExtensions = arrayOf("txt", "json")
+                importBookshelf.launch(
+                    FilePickerParam(
+                        mode = FilePicker.FILE,
+                        allowExtensions = arrayOf("txt", "json")
+                    )
                 )
             }
         }.show()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeImportBookshelf -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    uri.readText(requireContext())?.let {
-                        viewModel.importBookshelf(it, selectedGroup.groupId)
-                    }
-                }
-            }
-        }
     }
 
     private inner class TabFragmentPageAdapter(fm: FragmentManager) :

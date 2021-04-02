@@ -1,13 +1,12 @@
 package io.legado.app.ui.book.read.config
 
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
@@ -24,15 +23,15 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toByteArray
 import java.io.File
 
-class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
+class BgTextConfigDialog : BaseDialogFragment() {
 
     companion object {
         const val TEXT_COLOR = 121
@@ -40,13 +39,27 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
     }
 
     private val binding by viewBinding(DialogReadBgTextBinding::bind)
-    private val requestCodeBg = 123
-    private val requestCodeExport = 131
-    private val requestCodeImport = 132
     private val configFileName = "readConfig.zip"
     private lateinit var adapter: BgAdapter
     private var primaryTextColor = 0
     private var secondaryTextColor = 0
+    private val importFormNet = "网络导入"
+    private val selectBgImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        setBgFromUri(it)
+    }
+    private val selectExportDir = registerForActivityResult(FilePicker()) {
+        it?.let {
+            exportConfig(it)
+        }
+    }
+    private val selectImportDoc = registerForActivityResult(FilePicker()) {
+        it ?: return@registerForActivityResult
+        if (it.toString() == importFormNet) {
+            importNetConfigAlert()
+        } else {
+            importConfig(it)
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -108,7 +121,9 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 tvName.text = getString(R.string.select_image)
                 ivBg.setImageResource(R.drawable.ic_image)
                 ivBg.setColorFilter(primaryTextColor)
-                root.setOnClickListener { selectImage() }
+                root.setOnClickListener {
+                    selectBgImage.launch("image/*")
+                }
             }
         }
         requireContext().assets.list("bg")?.let {
@@ -159,25 +174,20 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 .show(requireActivity())
         }
         binding.ivImport.setOnClickListener {
-            val importFormNet = "网络导入"
-            val otherActions = arrayListOf(importFormNet)
-            FilePicker.selectFile(
-                this@BgTextConfigDialog,
-                requestCodeImport,
-                title = getString(R.string.import_str),
-                allowExtensions = arrayOf("zip"),
-                otherActions = otherActions
-            ) { action ->
-                when (action) {
-                    importFormNet -> importNetConfigAlert()
-                }
-            }
+            selectImportDoc.launch(
+                FilePickerParam(
+                    mode = FilePicker.FILE,
+                    title = getString(R.string.import_str),
+                    allowExtensions = arrayOf("zip"),
+                    otherActions = arrayOf(importFormNet)
+                )
+            )
         }
         binding.ivExport.setOnClickListener {
-            FilePicker.selectFolder(
-                this@BgTextConfigDialog,
-                requestCodeExport,
-                title = getString(R.string.export_str)
+            selectExportDir.launch(
+                FilePickerParam(
+                    title = getString(R.string.export_str)
+                )
             )
         }
         binding.ivDelete.setOnClickListener {
@@ -188,13 +198,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
                 toastOnUi("数量已是最少,不能删除.")
             }
         }
-    }
-
-    private fun selectImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "image/*"
-        startActivityForResult(intent, requestCodeBg)
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -367,27 +370,6 @@ class BgTextConfigDialog : BaseDialogFragment(), FilePickerDialog.CallBack {
         }.onError {
             it.printStackTrace()
             longToast("导入失败:${it.localizedMessage}")
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeBg -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    setBgFromUri(uri)
-                }
-            }
-            requestCodeImport -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    importConfig(uri)
-                }
-            }
-            requestCodeExport -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    exportConfig(uri)
-                }
-            }
         }
     }
 

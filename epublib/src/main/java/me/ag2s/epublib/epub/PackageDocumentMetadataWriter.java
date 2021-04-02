@@ -1,39 +1,42 @@
 package me.ag2s.epublib.epub;
 
-import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.domain.Author;
-import me.ag2s.epublib.domain.Book;
-import me.ag2s.epublib.domain.Date;
-import me.ag2s.epublib.domain.Identifier;
-import me.ag2s.epublib.util.StringUtil;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
-import org.xmlpull.v1.XmlSerializer;
+
+import me.ag2s.epublib.Constants;
+import me.ag2s.epublib.domain.Author;
+import me.ag2s.epublib.domain.Date;
+import me.ag2s.epublib.domain.EpubBook;
+import me.ag2s.epublib.domain.Identifier;
+import me.ag2s.epublib.util.StringUtil;
 
 public class PackageDocumentMetadataWriter extends PackageDocumentBase {
 
   /**
    * Writes the book's metadata.
    *
-   * @param book book
+   * @param book       book
    * @param serializer serializer
-   * @throws  IOException IOException
-   * @throws  IllegalStateException IllegalStateException
+   * @throws IOException              IOException
+   * @throws IllegalStateException    IllegalStateException
    * @throws IllegalArgumentException IllegalArgumentException
    */
-  public static void writeMetaData(Book book, XmlSerializer serializer)
-      throws IllegalArgumentException, IllegalStateException, IOException {
+  public static void writeMetaData(EpubBook book, XmlSerializer serializer)
+          throws IllegalArgumentException, IllegalStateException, IOException {
     serializer.startTag(NAMESPACE_OPF, OPFTags.metadata);
     serializer.setPrefix(PREFIX_DUBLIN_CORE, NAMESPACE_DUBLIN_CORE);
     serializer.setPrefix(PREFIX_OPF, NAMESPACE_OPF);
 
     writeIdentifiers(book.getMetadata().getIdentifiers(), serializer);
     writeSimpleMetdataElements(DCTags.title, book.getMetadata().getTitles(),
-        serializer);
+            serializer);
     writeSimpleMetdataElements(DCTags.subject, book.getMetadata().getSubjects(),
-        serializer);
+            serializer);
     writeSimpleMetdataElements(DCTags.description,
         book.getMetadata().getDescriptions(), serializer);
     writeSimpleMetdataElements(DCTags.publisher,

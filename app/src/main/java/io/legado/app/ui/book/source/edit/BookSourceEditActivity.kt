@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.source.edit
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Gravity
@@ -25,10 +24,10 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerDialog
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.login.SourceLogin
-import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
@@ -36,13 +35,10 @@ import kotlin.math.abs
 
 class BookSourceEditActivity :
     VMBaseActivity<ActivityBookSourceEditBinding, BookSourceEditViewModel>(false),
-    FilePickerDialog.CallBack,
     KeyboardToolPop.CallBack {
     override val viewModel: BookSourceEditViewModel
             by viewModels()
 
-    private val qrRequestCode = 101
-    private val selectPathRequestCode = 102
     private val adapter = BookSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
@@ -50,6 +46,20 @@ class BookSourceEditActivity :
     private val infoEntities: ArrayList<EditEntity> = ArrayList()
     private val tocEntities: ArrayList<EditEntity> = ArrayList()
     private val contentEntities: ArrayList<EditEntity> = ArrayList()
+    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
+        it ?: return@registerForActivityResult
+        viewModel.importSource(it) { source ->
+            upRecyclerView(source)
+        }
+    }
+    private val selectDoc = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            sendText(uri.toString())
+        } else {
+            sendText(uri.path.toString())
+        }
+    }
 
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
@@ -98,7 +108,7 @@ class BookSourceEditActivity :
             }
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getSource()))
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
-            R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
+            R.id.menu_qr_code_camera -> qrCodeResult.launch(null)
             R.id.menu_share_str -> share(GSON.toJson(getSource()))
             R.id.menu_share_qr -> shareWithQr(
                 GSON.toJson(getSource()),
@@ -397,7 +407,11 @@ class BookSourceEditActivity :
                 0 -> insertText(AppConst.urlOption)
                 1 -> showRuleHelp()
                 2 -> showRegexHelp()
-                3 -> FilePicker.selectFile(this, selectPathRequestCode)
+                3 -> selectDoc.launch(
+                    FilePickerParam(
+                        mode = FilePicker.FILE
+                    )
+                )
             }
         }
     }
@@ -423,28 +437,6 @@ class BookSourceEditActivity :
 
     private fun closePopupWindow() {
         mSoftKeyboardTool?.dismiss()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            qrRequestCode -> if (resultCode == RESULT_OK) {
-                data?.getStringExtra("result")?.let {
-                    viewModel.importSource(it) { source ->
-                        upRecyclerView(source)
-                    }
-                }
-            }
-            selectPathRequestCode -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    if (uri.isContentScheme()) {
-                        sendText(uri.toString())
-                    } else {
-                        sendText(uri.path.toString())
-                    }
-                }
-            }
-        }
     }
 
     private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {

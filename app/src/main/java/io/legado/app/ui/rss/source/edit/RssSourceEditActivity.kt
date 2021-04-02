@@ -1,7 +1,6 @@
 package io.legado.app.ui.rss.source.edit
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.Gravity
@@ -20,7 +19,7 @@ import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
-import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -34,9 +33,15 @@ class RssSourceEditActivity :
 
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
-    private val qrRequestCode = 101
     private val adapter = RssSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
+    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
+        it?.let {
+            viewModel.importSource(it) { source: RssSource ->
+                upRecyclerView(source)
+            }
+        }
+    }
 
     override fun getViewBinding(): ActivityRssSourceEditBinding {
         return ActivityRssSourceEditBinding.inflate(layoutInflater)
@@ -107,7 +112,7 @@ class RssSourceEditActivity :
                 }
             }
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getRssSource()))
-            R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
+            R.id.menu_qr_code_camera -> qrCodeResult.launch(null)
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_share_str -> share(GSON.toJson(getRssSource()))
             R.id.menu_share_qr -> shareWithQr(
@@ -269,16 +274,4 @@ class RssSourceEditActivity :
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            qrRequestCode -> if (resultCode == RESULT_OK) {
-                data?.getStringExtra("result")?.let {
-                    viewModel.importSource(it) { source: RssSource ->
-                        upRecyclerView(source)
-                    }
-                }
-            }
-        }
-    }
 }
