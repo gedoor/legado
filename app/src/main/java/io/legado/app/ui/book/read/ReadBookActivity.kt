@@ -81,7 +81,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private val sourceEditActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
-                upView()
+                viewModel.upBookSource {
+                    upView()
+                }
             }
         }
     private val replaceActivity =
