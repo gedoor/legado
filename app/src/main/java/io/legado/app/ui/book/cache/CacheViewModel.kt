@@ -1,8 +1,14 @@
 package io.legado.app.ui.book.cache
 
 import android.app.Application
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
@@ -16,6 +22,7 @@ import io.legado.app.utils.*
 import me.ag2s.epublib.domain.*
 import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.util.ResourceUtil
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.charset.Charset
@@ -161,8 +168,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         //set metadata
         setEpubMetadata(book,epubBook)
         //set cover
-        //Todo
-        //epubBook.coverImage= Resource(FileInputStream(BookHelp.getImage(book, book.coverUrl)),"cover.jpg")
+        setCover(book, epubBook)
 
         //set css
         epubBook.resources.add(
@@ -189,8 +195,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         //set metadata
         setEpubMetadata(book,epubBook)
         //set cover
-        //Todo
-        //epubBook.coverImage= Resource(FileInputStream(BookHelp.getImage(book, book.coverUrl)),"cover.jpg")
+        setCover(book, epubBook)
 
         //set css
         epubBook.resources.add(
@@ -204,6 +209,26 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         //设置正文
         setEpubContent(book, epubBook)
         EpubWriter().write(epubBook, FileOutputStream(bookFile))
+    }
+    private fun setCover(book: Book, epubBook: EpubBook) {
+
+        Glide.with(context)
+            .asBitmap()
+            .load(book.coverUrl)
+            .into(object : CustomTarget<Bitmap>(){
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    val stream = ByteArrayOutputStream()
+                    resource.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    val byteArray: ByteArray = stream.toByteArray()
+                    resource.recycle()
+                    epubBook.coverImage= Resource(byteArray,"cover.jpg")
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+
+                }
+
+            })
     }
 
     private fun setEpubContent(book: Book, epubBook: EpubBook) {

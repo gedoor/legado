@@ -239,7 +239,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         adapter.getItem(exportPosition)?.let { book ->
             Snackbar.make(binding.titleBar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
                 .show()
-            viewModel.export(path, book) {
+            viewModel.exportEPUB(path, book) {
                 binding.titleBar.snackbar(it)
             }
         }
