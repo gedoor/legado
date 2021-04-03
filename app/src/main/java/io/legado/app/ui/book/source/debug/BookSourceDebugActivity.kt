@@ -97,18 +97,14 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_scan -> qrCodeResult.launch(null)
-            R.id.menu_search_src -> {
-
-            }
-            R.id.menu_book_src -> {
-
-            }
-            R.id.menu_toc_src -> {
-
-            }
-            R.id.menu_content_src -> {
-                
-            }
+            R.id.menu_search_src ->
+                TextDialog.show(supportFragmentManager, viewModel.searchSrc)
+            R.id.menu_book_src ->
+                TextDialog.show(supportFragmentManager, viewModel.bookSrc)
+            R.id.menu_toc_src ->
+                TextDialog.show(supportFragmentManager, viewModel.tocSrc)
+            R.id.menu_content_src ->
+                TextDialog.show(supportFragmentManager, viewModel.contentSrc)
             R.id.menu_help -> showHelp()
         }
         return super.onCompatOptionsItemSelected(item)
