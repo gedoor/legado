@@ -27,13 +27,26 @@ import me.ag2s.epublib.epub.EpubProcessorSupport;
  * @author paul
  */
 public class ResourceUtil {
-
+    /**
+     * 快速创建HTML类型的Resource
+     * @param title 章节的标题
+     * @param string 章节的正文
+     * @return 返回Resource
+     */
     public static Resource createHTMLResource(String title, String string) {
         String html = createHtml(title, string);
         MediaType mediaTypeProperty = MediaTypes.XHTML;
         byte[] data = html.getBytes();
         return new Resource(data, mediaTypeProperty);
     }
+
+    /**
+     * 快速创建HTML类型的Resource
+     * @param title 章节的标题
+     * @param string 章节的正文
+     * @param href Resource的href
+     * @return 返回Resource
+     */
 
     @SuppressWarnings("unused")
     public static Resource createHTMLResource(String title, String string, String href) {
@@ -65,6 +78,13 @@ public class ResourceUtil {
         return html;
     }
 
+    /**
+     * 快速从File创建Resource
+     * @param file File
+     * @return
+     * @throws IOException
+     */
+
     @SuppressWarnings("unused")
     public static Resource createResource(File file) throws IOException {
         if (file == null) {
@@ -77,7 +97,7 @@ public class ResourceUtil {
 
 
     /**
-     * Creates a resource with as contents a html page with the given title.
+     * 创建一个只带标题的HTMl类型的Resource,常用于封面页，大卷页
      *
      * @param title v
      * @param href  v
