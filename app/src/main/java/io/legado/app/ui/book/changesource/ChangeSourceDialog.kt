@@ -84,6 +84,8 @@ class ChangeSourceDialog : BaseDialogFragment(),
         binding.toolBar.inflateMenu(R.menu.change_source)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
+        binding.toolBar.menu.findItem(R.id.menu_check_author)
+            ?.isChecked = AppConfig.changeSourceCheckAuthor
         binding.toolBar.menu.findItem(R.id.menu_load_info)
             ?.isChecked = AppConfig.changeSourceLoadInfo
         binding.toolBar.menu.findItem(R.id.menu_load_toc)
@@ -160,6 +162,10 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.menu_check_author -> {
+                AppConfig.changeSourceCheckAuthor = !item.isChecked
+                item.isChecked = !item.isChecked
+            }
             R.id.menu_load_toc -> {
                 putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
                 item.isChecked = !item.isChecked

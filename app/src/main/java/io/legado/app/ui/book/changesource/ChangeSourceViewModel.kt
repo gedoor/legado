@@ -130,15 +130,19 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             .timeout(60000L)
             .onSuccess(IO) {
                 it.forEach { searchBook ->
-                    if (searchBook.name == name && searchBook.author == author) {
-                        if (searchBook.latestChapterTitle.isNullOrEmpty()) {
-                            if (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) {
-                                loadBookInfo(webBook, searchBook.toBook())
+                    if (searchBook.name == name) {
+                        if ((AppConfig.changeSourceCheckAuthor && searchBook.author == author)
+                            || !AppConfig.changeSourceCheckAuthor
+                        ) {
+                            if (searchBook.latestChapterTitle.isNullOrEmpty()) {
+                                if (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) {
+                                    loadBookInfo(webBook, searchBook.toBook())
+                                } else {
+                                    searchFinish(searchBook)
+                                }
                             } else {
                                 searchFinish(searchBook)
                             }
-                        } else {
-                            searchFinish(searchBook)
                         }
                     }
                 }

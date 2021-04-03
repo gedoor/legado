@@ -41,6 +41,7 @@ object PreferKey {
     const val webDavCreateDir = "webDavCreateDir"
     const val exportToWebDav = "webDavCacheBackup"
     const val exportType = "exportType"
+    const val changeSourceCheckAuthor = "changeSourceCheckAuthor"
     const val changeSourceLoadToc = "changeSourceLoadToc"
     const val changeSourceLoadInfo = "changeSourceLoadInfo"
     const val chineseConverterType = "chineseConverterType"
