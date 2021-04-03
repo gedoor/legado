@@ -811,5 +811,6 @@
     <string name="use_zh_layout">使用自定义中文分行</string>
     <string name="image_style">图片样式</string>
     <string name="system_tts">系统TTS</string>
+    <string name="export_type">导出格式</string>
 
 </resources>

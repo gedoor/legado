@@ -106,7 +106,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun getAllContents(book: Book, append: (text: String) -> Unit) {
+    private fun getAllContents(book: Book, append: (text: String) -> Unit) {
         val useReplace = AppConfig.exportUseReplace
         val contentProcessor = ContentProcessor(book.name, book.origin)
         append("${book.name}\n${context.getString(R.string.author_show, book.author)}")
@@ -159,13 +159,13 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    private suspend fun exportEpub(doc: DocumentFile, book: Book) {
+    private fun exportEpub(doc: DocumentFile, book: Book) {
         val filename = "${book.name} by ${book.author}.epub"
         DocumentUtils.delete(doc, filename)
         val epubBook = EpubBook()
         epubBook.version = "2.0"
         //set metadata
-        setEpubMetadata(book,epubBook)
+        setEpubMetadata(book, epubBook)
         //set cover
         setCover(book, epubBook)
 
@@ -187,12 +187,12 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun exportEpub(file: File, book: Book) {
+    private fun exportEpub(file: File, book: Book) {
         val filename = "${book.name} by ${book.author}.epub"
         val epubBook = EpubBook()
         epubBook.version = "2.0"
         //set metadata
-        setEpubMetadata(book,epubBook)
+        setEpubMetadata(book, epubBook)
         //set cover
         setCover(book, epubBook)
 
