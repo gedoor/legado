@@ -23,7 +23,6 @@
         android:singleLine="true"
         android:textColor="@color/primaryText"
         android:maxWidth="160dp"
-        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
 
@@ -40,9 +39,9 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_checked"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_margin="8dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="8dp"
         android:src="@drawable/ic_check"
         android:visibility="invisible"
         app:tint="@color/primaryText"

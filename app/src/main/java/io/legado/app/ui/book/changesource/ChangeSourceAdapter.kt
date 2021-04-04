@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.DiffRecyclerAdapter
@@ -51,13 +50,7 @@ class ChangeSourceAdapter(
         binding.apply {
             if (bundle == null) {
                 tvOrigin.text = item.originName
-                val author = if (item.author.isEmpty()) {
-                    context.getString(R.string.empty)
-                } else {
-                    item.author
-                }
-                tvAuthor.text = context.getString(R.string.author_show, author)
-                tvAuthor.isGone = viewModel.author == item.author
+                tvAuthor.text = item.author
                 tvLast.text = item.getDisplayLastChapterTitle()
                 if (callBack.bookUrl == item.bookUrl) {
                     ivChecked.visible()
