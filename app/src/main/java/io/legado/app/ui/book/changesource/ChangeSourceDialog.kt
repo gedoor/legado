@@ -93,7 +93,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     private fun initRecyclerView() {
-        adapter = ChangeSourceAdapter(requireContext(), this)
+        adapter = ChangeSourceAdapter(requireContext(), viewModel, this)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
@@ -165,6 +165,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
             R.id.menu_check_author -> {
                 AppConfig.changeSourceCheckAuthor = !item.isChecked
                 item.isChecked = !item.isChecked
+                viewModel.loadDbSearchBook()
             }
             R.id.menu_load_toc -> {
                 putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
