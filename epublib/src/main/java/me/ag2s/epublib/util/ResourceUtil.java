@@ -71,7 +71,7 @@ public class ResourceUtil {
         html += "<head><title>" + title + "</title>" +
                 "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\"/>" +
                 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>";
-        html += "<body><h1>" + title + "</h1>" +
+        html += "<body><h2>" + title + "</h2>" +
                 body +
                 "</body></html>";
 
@@ -81,8 +81,8 @@ public class ResourceUtil {
     /**
      * 快速从File创建Resource
      * @param file File
-     * @return
-     * @throws IOException
+     * @return Resource
+     * @throws IOException IOException
      */
 
     @SuppressWarnings("unused")

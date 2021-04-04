@@ -170,12 +170,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         setCover(book, epubBook)
 
         //set css
-        epubBook.resources.add(
-            Resource(
-                "h1 {color: blue;}p {text-indent:2em;}".encodeToByteArray(),
-                "css/style.css"
-            )
-        )
+        setCSS(epubBook)
         //设置正文
         setEpubContent(book, epubBook)
 
@@ -195,32 +190,39 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         setEpubMetadata(book, epubBook)
         //set cover
         setCover(book, epubBook)
-
         //set css
-        epubBook.resources.add(
-            Resource(
-                "h1 {color: blue;}p {text-indent:2em;}".encodeToByteArray(),
-                "css/style.css"
-            )
-        )
+        setCSS(epubBook)
+
+
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
         //设置正文
         setEpubContent(book, epubBook)
         EpubWriter().write(epubBook, FileOutputStream(bookFile))
     }
+
+    private fun setCSS(epubBook: EpubBook) {
+        //set css
+        epubBook.resources.add(
+            Resource(
+                "body{background:white;margin:0;}h2{color:#005a9c;text-align:left;}p{text-indent:2em;text-align:justify;}".encodeToByteArray(),
+                "css/style.css"
+            )
+        )
+    }
+
     private fun setCover(book: Book, epubBook: EpubBook) {
 
         Glide.with(context)
             .asBitmap()
             .load(book.coverUrl)
-            .into(object : CustomTarget<Bitmap>(){
+            .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     val stream = ByteArrayOutputStream()
                     resource.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val byteArray: ByteArray = stream.toByteArray()
                     resource.recycle()
-                    epubBook.coverImage= Resource(byteArray,"cover.jpg")
+                    epubBook.coverImage = Resource(byteArray, "cover.jpg")
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
@@ -238,7 +240,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 val content1 = contentProcessor
                     .getContent(book, chapter.title, content ?: "null", false, useReplace)
                     .joinToString("\n")
-                    .replace(chapter.title,"")
+                    .replace(chapter.title, "")
 
                 epubBook.addSection(
                     chapter.title,
@@ -248,7 +250,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun setEpubMetadata(book: Book,epubBook: EpubBook) {
+    private fun setEpubMetadata(book: Book, epubBook: EpubBook) {
         val metadata = Metadata()
         metadata.titles.add(book.name)//书籍的名称
         metadata.authors.add(Author(book.author))//书籍的作者
@@ -257,7 +259,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         metadata.publishers.add("Legado APP")//数据的创建者
         metadata.descriptions.add(book.getDisplayIntro())//书籍的简介
         //metadata.subjects.add("")//书籍的主题，在静读天下里面有使用这个分类书籍
-        epubBook.metadata=metadata
+        epubBook.metadata = metadata
     }
 
     //////end of EPUB
