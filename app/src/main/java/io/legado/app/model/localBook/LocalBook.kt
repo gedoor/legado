@@ -72,6 +72,16 @@ object LocalBook {
         if (smhStart != -1 && smhEnd != -1) {
             name = (name.substring(smhStart + 1, smhEnd))
         }
+        if (author == "" && fileName.contains(" by ")) {
+            val rstr = fileName.reversed()
+            // find last ' by ' near '.txt' or '.epub' using reversed string
+            val pattern = """^(txt|bupe)\.(.*) yb (.*)$""".toRegex()
+            val matches = pattern.findAll(input = rstr)
+            matches.forEach { matchResult ->
+                name = matchResult.groupValues[3].reversed()
+                author = matchResult.groupValues[2].reversed()
+            }
+        }
         val book = Book(
             bookUrl = path,
             name = name,
