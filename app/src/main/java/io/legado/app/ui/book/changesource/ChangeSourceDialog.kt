@@ -77,7 +77,12 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     private fun showTitle() {
         binding.toolBar.title = viewModel.name
-        binding.toolBar.subtitle = getString(R.string.author_show, viewModel.author)
+        val author = if (viewModel.author.isBlank()) {
+            getString(R.string.empty)
+        } else {
+            viewModel.author
+        }
+        binding.toolBar.subtitle = getString(R.string.author_show, author)
     }
 
     private fun initMenu() {

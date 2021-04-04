@@ -51,7 +51,12 @@ class ChangeSourceAdapter(
         binding.apply {
             if (bundle == null) {
                 tvOrigin.text = item.originName
-                tvAuthor.text = context.getString(R.string.author_show, item.author)
+                val author = if (item.author.isEmpty()) {
+                    context.getString(R.string.empty)
+                } else {
+                    item.author
+                }
+                tvAuthor.text = context.getString(R.string.author_show, author)
                 tvAuthor.isGone = viewModel.author == item.author
                 tvLast.text = item.getDisplayLastChapterTitle()
                 if (callBack.bookUrl == item.bookUrl) {
