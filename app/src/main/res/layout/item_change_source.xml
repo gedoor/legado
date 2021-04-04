@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:textColor="@color/primaryText"
+        android:textColor="@color/secondaryText"
         android:maxWidth="160dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
