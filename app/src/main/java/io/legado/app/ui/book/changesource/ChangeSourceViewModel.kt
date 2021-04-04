@@ -63,12 +63,15 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         execute {
             searchBooks.clear()
             upAdapter()
-            appDb.searchBookDao.getChangeSourceSearch(name, author, searchGroup).let {
-                searchBooks.addAll(it)
-                searchBooksLiveData.postValue(searchBooks.toList())
-                if (it.size <= 1) {
-                    startSearch()
-                }
+            val sbs = if (AppConfig.changeSourceCheckAuthor) {
+                appDb.searchBookDao.getChangeSourceSearch(name, author, searchGroup)
+            } else {
+                appDb.searchBookDao.getChangeSourceSearch(name, "", searchGroup)
+            }
+            searchBooks.addAll(sbs)
+            searchBooksLiveData.postValue(searchBooks.toList())
+            if (sbs.size <= 1) {
+                startSearch()
             }
         }
     }
@@ -130,15 +133,19 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             .timeout(60000L)
             .onSuccess(IO) {
                 it.forEach { searchBook ->
-                    if (searchBook.name == name && searchBook.author == author) {
-                        if (searchBook.latestChapterTitle.isNullOrEmpty()) {
-                            if (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) {
-                                loadBookInfo(webBook, searchBook.toBook())
+                    if (searchBook.name == name) {
+                        if ((AppConfig.changeSourceCheckAuthor && searchBook.author.contains(author))
+                            || !AppConfig.changeSourceCheckAuthor
+                        ) {
+                            if (searchBook.latestChapterTitle.isNullOrEmpty()) {
+                                if (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) {
+                                    loadBookInfo(webBook, searchBook.toBook())
+                                } else {
+                                    searchFinish(searchBook)
+                                }
                             } else {
                                 searchFinish(searchBook)
                             }
-                        } else {
-                            searchFinish(searchBook)
                         }
                     }
                 }

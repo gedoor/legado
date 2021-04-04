@@ -38,6 +38,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_export_type"
+        android:title="@string/export_type"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_export_charset"
         android:title="@string/export_charset"
         app:showAsAction="never" />

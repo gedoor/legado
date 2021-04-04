@@ -818,5 +818,7 @@
     <string name="use_zh_layout">使用自定义中文分行</string>
     <string name="image_style">Image style</string>
     <string name="system_tts">System TTS</string>
+    <string name="export_type">导出格式</string>
+    <string name="checkAuthor">校验作者</string>
 
 </resources>

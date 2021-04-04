@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/menu_scan"
+        android:icon="@drawable/ic_scan"
+        android:title="@string/scan_qr_code"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_search_src"
+        android:title="搜索源码"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_book_src"
+        android:title="书籍源码"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_toc_src"
+        android:title="目录源码"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_content_src"
+        android:title="正文源码"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:title="@string/help"
+        app:showAsAction="never" />
+
+</menu>

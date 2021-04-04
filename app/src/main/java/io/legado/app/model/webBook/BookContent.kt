@@ -33,6 +33,7 @@ object BookContent {
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
+        Debug.log(bookSource.bookSourceUrl, body, state = 40)
         val mNextChapterUrl = if (!nextChapterUrl.isNullOrEmpty()) {
             nextChapterUrl
         } else {

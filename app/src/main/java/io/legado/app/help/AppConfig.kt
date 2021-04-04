@@ -161,6 +161,18 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.exportToWebDav, value)
         }
 
+    var exportType: Int
+        get() = appCtx.getPrefInt(PreferKey.exportType)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.exportType, value)
+        }
+
+    var changeSourceCheckAuthor: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.changeSourceCheckAuthor)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.changeSourceCheckAuthor, value)
+        }
+
     val autoChangeSource: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.autoChangeSource, true)
 
@@ -176,7 +188,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val mediaButtonOnExit get() = appCtx.getPrefBoolean("mediaButtonOnExit", true)
 
-    val replaceEnableDefault get() =  appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
+    val replaceEnableDefault get() = appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
 
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)

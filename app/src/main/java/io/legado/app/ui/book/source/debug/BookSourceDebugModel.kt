@@ -10,8 +10,11 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
     Debug.Callback {
 
     private var webBook: WebBook? = null
-
-    private var callback: ((Int, String)-> Unit)? = null
+    private var callback: ((Int, String) -> Unit)? = null
+    var searchSrc: String? = null
+    var bookSrc: String? = null
+    var tocSrc: String? = null
+    var contentSrc: String? = null
 
     fun init(sourceUrl: String?) {
         sourceUrl?.let {
@@ -39,7 +42,13 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
     }
 
     override fun printLog(state: Int, msg: String) {
-        callback?.invoke(state, msg)
+        when (state) {
+            10 -> searchSrc = msg
+            20 -> bookSrc = msg
+            30 -> tocSrc = msg
+            40 -> contentSrc = msg
+            else -> callback?.invoke(state, msg)
+        }
     }
 
     override fun onCleared() {

@@ -77,13 +77,15 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     private fun showTitle() {
         binding.toolBar.title = viewModel.name
-        binding.toolBar.subtitle = getString(R.string.author_show, viewModel.author)
+        binding.toolBar.subtitle = viewModel.author
     }
 
     private fun initMenu() {
         binding.toolBar.inflateMenu(R.menu.change_source)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
+        binding.toolBar.menu.findItem(R.id.menu_check_author)
+            ?.isChecked = AppConfig.changeSourceCheckAuthor
         binding.toolBar.menu.findItem(R.id.menu_load_info)
             ?.isChecked = AppConfig.changeSourceLoadInfo
         binding.toolBar.menu.findItem(R.id.menu_load_toc)
@@ -91,7 +93,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     private fun initRecyclerView() {
-        adapter = ChangeSourceAdapter(requireContext(), this)
+        adapter = ChangeSourceAdapter(requireContext(), viewModel, this)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
@@ -160,6 +162,11 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.menu_check_author -> {
+                AppConfig.changeSourceCheckAuthor = !item.isChecked
+                item.isChecked = !item.isChecked
+                viewModel.loadDbSearchBook()
+            }
             R.id.menu_load_toc -> {
                 putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
                 item.isChecked = !item.isChecked
