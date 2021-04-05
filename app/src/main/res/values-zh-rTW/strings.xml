@@ -815,5 +815,10 @@
     <string name="system_tts">系统TTS</string>
     <string name="export_type">导出格式</string>
     <string name="checkAuthor">校验作者</string>
+    <string name="search_src">搜索源码</string>
+    <string name="boo_src">书籍源码</string>
+    <string name="toc_src">目录源码</string>
+    <string name="content_src">正文源码</string>
+    <string name="list_src">列表源码</string>
 
 </resources>

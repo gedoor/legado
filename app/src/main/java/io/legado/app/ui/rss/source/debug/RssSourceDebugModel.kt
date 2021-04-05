@@ -8,10 +8,10 @@ import io.legado.app.model.Debug
 
 class RssSourceDebugModel(application: Application) : BaseViewModel(application),
     Debug.Callback {
-
     private var rssSource: RssSource? = null
-
     private var callback: ((Int, String) -> Unit)? = null
+    var listSrc: String? = null
+    var contentSrc: String? = null
 
     fun initData(sourceUrl: String?, finally: () -> Unit) {
         sourceUrl?.let {
@@ -36,7 +36,11 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
     }
 
     override fun printLog(state: Int, msg: String) {
-        callback?.invoke(state, msg)
+        when (state) {
+            10 -> listSrc = msg
+            20 -> contentSrc = msg
+            else -> callback?.invoke(state, msg)
+        }
     }
 
     override fun onCleared() {
