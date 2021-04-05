@@ -9,6 +9,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
+import java.util.regex.Pattern
 
 
 object LocalBook {
@@ -55,33 +56,59 @@ object LocalBook {
             path = uri.path!!
             File(path).name
         }
-        val str = fileName.substringBeforeLast(".")
-        val authorIndex = str.indexOf("作者")
-        var name: String
-        var author: String
-        if (authorIndex == -1) {
-            name = str
-            author = ""
-        } else {
-            name = str.substring(0, authorIndex)
-            author = str.substring(authorIndex)
-            author = BookHelp.formatBookAuthor(author)
-        }
-        val smhStart = name.indexOf("《")
-        val smhEnd = name.indexOf("》")
-        if (smhStart != -1 && smhEnd != -1) {
-            name = (name.substring(smhStart + 1, smhEnd))
-        }
-        if (author == "" && fileName.contains(" by ")) {
-            val rstr = fileName.reversed()
-            // find last ' by ' near '.txt' or '.epub' using reversed string
-            val pattern = """^(txt|bupe)\.(.*) yb (.*)$""".toRegex()
-            val matches = pattern.findAll(input = rstr)
-            matches.forEach { matchResult ->
-                name = matchResult.groupValues[3].reversed()
-                author = matchResult.groupValues[2].reversed()
+
+        val name: String
+        val author: String
+
+        if (("《" in fileName && "》" in fileName)
+            || "作者" in fileName
+            || (fileName.contains(" by ", true))
+        ) {
+
+            //匹配(知轩藏书常用格式) 《书名》其它信息作者：作者名.txt
+            val m1 = Pattern
+                .compile("《(.*?)》.*?作者：(.*?).txt")
+                .matcher(fileName)
+            //匹配 书名 by 作者名.txt
+            val m2 = Pattern
+                .compile("(.*?) by (.*?).txt")
+                .matcher(fileName)
+
+            if (m1.find()) {
+                name = m1.group(1)
+                author = m1.group(2)
+                BookHelp.formatBookAuthor(author)
+            } else if (m2.find()) {
+                name = m2.group(1)
+                author = m2.group(2)
+                BookHelp.formatBookAuthor(author)
+            } else {
+
+                val st = fileName.indexOf("《");
+                val e = fileName.indexOf("》");
+                name = if (e > st && st != -1) {
+                    fileName.substring(st + 1, e)
+                } else {
+                    fileName
+                }
+
+
+                val s = fileName.indexOf("作者")
+                author = if (s != -1 && s + 2 < fileName.length) {
+                    fileName.substring(s + 2).replace(".txt", "")
+                } else {
+                    ""
+                }
+                BookHelp.formatBookAuthor(author)
+
             }
+        } else {
+
+            name = fileName.replace(".txt", "")
+            author = ""
         }
+
+
         val book = Book(
             bookUrl = path,
             name = name,

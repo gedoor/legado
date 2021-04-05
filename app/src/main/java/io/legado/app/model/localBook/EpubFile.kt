@@ -196,7 +196,11 @@ class EpubFile(var book: Book) {
             book.intro = "书籍导入异常"
         } else {
             val metadata = epubBook!!.metadata
-            book.name = book.originName
+            book.name = metadata.firstTitle
+            if (book.name.isEmpty()) {
+                book.name = book.originName.replace(".epub", "")
+            }
+
             if (metadata.authors.size > 0) {
                 val author =
                     metadata.authors[0].toString().replace("^, |, $".toRegex(), "")
