@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.cache
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -42,10 +41,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private val exportDir = registerForActivityResult(FilePicker()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
-            contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
             ACache.get(this@CacheActivity).put(exportBookPathKey, uri.toString())
             startExport(uri.toString())
         } else {

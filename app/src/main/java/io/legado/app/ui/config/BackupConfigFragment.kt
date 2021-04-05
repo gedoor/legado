@@ -1,6 +1,5 @@
 package io.legado.app.ui.config
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
@@ -40,11 +39,6 @@ class BackupConfigFragment : BasePreferenceFragment(),
     private val selectBackupPath = registerForActivityResult(FilePicker()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
-            appCtx.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
             AppConfig.backupPath = uri.toString()
         } else {
             AppConfig.backupPath = uri.path
@@ -53,11 +47,6 @@ class BackupConfigFragment : BasePreferenceFragment(),
     private val backupDir = registerForActivityResult(FilePicker()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
-            appCtx.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
             AppConfig.backupPath = uri.toString()
             Coroutine.async {
                 Backup.backup(appCtx, uri.toString())
@@ -78,11 +67,6 @@ class BackupConfigFragment : BasePreferenceFragment(),
     private val restoreDir = registerForActivityResult(FilePicker()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
-            appCtx.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
             AppConfig.backupPath = uri.toString()
             Coroutine.async {
                 Restore.restore(appCtx, uri.toString())

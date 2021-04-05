@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.local
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -46,10 +45,6 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private val selectFolder = registerForActivityResult(FilePicker()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
-            contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
             AppConfig.importBookPath = uri.toString()
             initRootDoc()
         } else {
