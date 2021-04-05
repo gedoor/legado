@@ -65,22 +65,29 @@ object LocalBook {
             || (fileName.contains(" by ", true))
         ) {
 
+
             //匹配(知轩藏书常用格式) 《书名》其它信息作者：作者名.txt
             val m1 = Pattern
-                .compile("《(.*?)》.*?作者：(.*?).txt")
+                .compile("《(.*?)》.*?作者：(.*?)\\.txt")
                 .matcher(fileName)
             //匹配 书名 by 作者名.txt
             val m2 = Pattern
-                .compile("(.*?) by (.*?).txt")
-                .matcher(fileName)
+                .compile("txt\\.(.*?) yb (.*?)$")
+                .matcher(fileName.reversed())
 
             if (m1.find()) {
                 name = m1.group(1) ?: fileName.replace(".txt", "")
                 author = m1.group(2) ?: ""
                 BookHelp.formatBookAuthor(author)
             } else if (m2.find()) {
-                name = m2.group(1) ?: fileName.replace(".txt", "")
-                author = m2.group(2) ?: ""
+                var temp = m2.group(2)
+                name = if (temp==null||temp == "") {
+                    fileName.replace(".txt", "")
+                } else {
+                    temp.reversed()
+                }
+                temp = m2.group(1) ?: ""
+                author = temp.reversed()
                 BookHelp.formatBookAuthor(author)
             } else {
 
@@ -89,7 +96,7 @@ object LocalBook {
                 name = if (e > st && st != -1) {
                     fileName.substring(st + 1, e)
                 } else {
-                    fileName
+                    fileName.replace(".txt", "")
                 }
 
 
