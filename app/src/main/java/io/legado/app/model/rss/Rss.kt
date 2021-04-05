@@ -3,6 +3,7 @@ package io.legado.app.model.rss
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleData
@@ -38,7 +39,7 @@ object Rss {
         scope: CoroutineScope,
         rssArticle: RssArticle,
         ruleContent: String,
-        rssSource: RssSource?,
+        rssSource: RssSource,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
@@ -46,9 +47,11 @@ object Rss {
                 rssArticle.link,
                 baseUrl = rssArticle.origin,
                 ruleData = rssArticle,
-                headerMapF = rssSource?.getHeaderMap()
+                headerMapF = rssSource.getHeaderMap()
             )
             val body = analyzeUrl.getStrResponse(rssArticle.origin).body
+            Debug.log(rssSource.sourceUrl, "≡获取成功:${rssSource.sourceUrl}")
+            Debug.log(rssSource.sourceUrl, body, state = 20)
             val analyzeRule = AnalyzeRule(rssArticle)
             analyzeRule.setContent(body)
                 .setBaseUrl(NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link))

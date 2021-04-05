@@ -31,6 +31,7 @@ object RssParserByRule {
             )
         }
         Debug.log(sourceUrl, "≡获取成功:$sourceUrl")
+        Debug.log(sourceUrl, body, state = 10)
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
             Debug.log(sourceUrl, "⇒列表规则为空, 使用默认规则解析")
