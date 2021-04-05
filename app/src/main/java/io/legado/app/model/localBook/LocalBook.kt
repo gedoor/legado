@@ -75,17 +75,17 @@ object LocalBook {
                 .matcher(fileName)
 
             if (m1.find()) {
-                name = m1.group(1)
-                author = m1.group(2)
+                name = m1.group(1) ?: fileName.replace(".txt", "")
+                author = m1.group(2) ?: ""
                 BookHelp.formatBookAuthor(author)
             } else if (m2.find()) {
-                name = m2.group(1)
-                author = m2.group(2)
+                name = m2.group(1) ?: fileName.replace(".txt", "")
+                author = m2.group(2) ?: ""
                 BookHelp.formatBookAuthor(author)
             } else {
 
-                val st = fileName.indexOf("《");
-                val e = fileName.indexOf("》");
+                val st = fileName.indexOf("《")
+                val e = fileName.indexOf("》")
                 name = if (e > st && st != -1) {
                     fileName.substring(st + 1, e)
                 } else {

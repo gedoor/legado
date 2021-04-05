@@ -13,6 +13,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
@@ -23,6 +24,7 @@ import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.util.ResourceUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.charset.Charset
 
@@ -205,7 +207,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         //set css
         epubBook.resources.add(
             Resource(
-                "body{background:white;margin:0;}h2{color:#005a9c;text-align:left;}p{text-indent:2em;text-align:justify;}".encodeToByteArray(),
+                "body{background:white;margin:0;}h2{color:#005a9c;text-align:left;}p{text-indent:2em;text-align:justify;}img{width:100%;height:100%;max-width: 100%;max-height:100%;}".encodeToByteArray(),
                 "css/style.css"
             )
         )
@@ -222,6 +224,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     resource.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val byteArray: ByteArray = stream.toByteArray()
                     resource.recycle()
+                    stream.close()
                     epubBook.coverImage = Resource(byteArray, "cover.jpg")
                 }
 
@@ -232,13 +235,15 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             })
     }
 
+
     private fun setEpubContent(book: Book, epubBook: EpubBook) {
         val useReplace = AppConfig.exportUseReplace
         val contentProcessor = ContentProcessor(book.name, book.origin)
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
-                val content1 = contentProcessor
-                    .getContent(book, chapter.title, content ?: "null", false, useReplace)
+                var content1 = fixPic(epubBook, book, content ?: "null", chapter)
+                content1 = contentProcessor
+                    .getContent(book, chapter.title, content1, false, useReplace)
                     .joinToString("\n")
                     .replace(chapter.title, "")
 
@@ -248,6 +253,36 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 )
             }
         }
+    }
+
+    private fun setPic(src: String, book: Book, epubBook: EpubBook) {
+        val vFile = BookHelp.getImage(book, src)
+        if (vFile.exists()) {
+            val img = Resource(FileInputStream(vFile), MD5Utils.md5Encode16(src) + ".jpg")
+            epubBook.resources.add(img)
+        }
+    }
+
+    private fun fixPic(
+        epubBook: EpubBook,
+        book: Book,
+        content: String,
+        chapter: BookChapter
+    ): String {
+        val data = StringBuilder("")
+        content.split("\n").forEach { text ->
+            var text1 = text
+            val matcher = AppPattern.imgPattern.matcher(text)
+            if (matcher.find()) {
+                matcher.group(1)?.let {
+                    val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
+                    setPic(src, book, epubBook)
+                    text1 = text.replace(src, MD5Utils.md5Encode16(src) + ".jpg")
+                }
+            }
+            data.append(text1).append("\n")
+        }
+        return data.toString()
     }
 
     private fun setEpubMetadata(book: Book, epubBook: EpubBook) {
