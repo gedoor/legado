@@ -217,7 +217,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
         Glide.with(context)
             .asBitmap()
-            .load(book.coverUrl)
+            .load(book.getDisplayCover())
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     val stream = ByteArrayOutputStream()
@@ -290,7 +290,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     private fun setEpubMetadata(book: Book, epubBook: EpubBook) {
         val metadata = Metadata()
         metadata.titles.add(book.name)//书籍的名称
-        metadata.authors.add(Author(book.author))//书籍的作者
+        metadata.authors.add(Author(book.getRealAuthor()))//书籍的作者
         metadata.language = "zh"//数据的语言
         metadata.dates.add(Date())//数据的创建日期
         metadata.publishers.add("Legado APP")//数据的创建者
