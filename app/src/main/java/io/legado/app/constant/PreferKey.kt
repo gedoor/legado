@@ -72,6 +72,7 @@ object PreferKey {
     const val exportCharset = "exportCharset"
     const val exportUseReplace = "exportUseReplace"
     const val useZhLayout = "useZhLayout"
+    const val fullScreenGesturesSupport = "fullScreenGesturesSupport"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

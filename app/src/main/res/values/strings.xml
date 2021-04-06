@@ -694,6 +694,7 @@
     <string name="information">Information</string>
     <string name="switchLayout">Switch Layout</string>
     <string name="text_font_weight_converter">Text font weight switching</string>
+    <string name="full_screen_gestures_support">Full screen gestures support</string>
 
     <!--color-->
     <string name="primary">Primary</string>
