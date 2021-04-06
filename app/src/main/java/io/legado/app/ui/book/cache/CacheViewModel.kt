@@ -127,10 +127,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter)?.let { content ->
                 content.split("\n").forEachIndexed { index, text ->
-                    val matcher = AppPattern.imgPattern.matcher(text)
-                    if (matcher.find()) {
-                        matcher.group(1)?.let {
-                            val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
+                    val matches = AppPattern.imgPattern.toRegex().findAll(input = text)
+                    matches.forEach { matchResult ->
+                        matchResult.groupValues[1].let {
+                            val src=NetworkUtils.getAbsoluteURL(chapter.url, it)
                             srcList.add(Triple(chapter.title, index, src))
                         }
                     }
@@ -272,14 +272,16 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val data = StringBuilder("")
         content.split("\n").forEach { text ->
             var text1 = text
-            val matcher = AppPattern.imgPattern.matcher(text)
-            if (matcher.find()) {
-                matcher.group(1)?.let {
-                    val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
+            val matches = AppPattern.imgPattern.toRegex().findAll(input = text)
+            matches.forEach { matchResult ->
+                matchResult.groupValues[1].let {
+                    val src=NetworkUtils.getAbsoluteURL(chapter.url, it)
                     setPic(src, book, epubBook)
-                    text1 = text.replace(src, MD5Utils.md5Encode16(src) + ".jpg")
+                    text1 = text1.replace(src, MD5Utils.md5Encode16(src) + ".jpg")
+
                 }
             }
+
             data.append(text1).append("\n")
         }
         return data.toString()
