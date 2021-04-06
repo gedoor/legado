@@ -29,7 +29,8 @@ import me.ag2s.epublib.epub.EpubProcessorSupport;
 public class ResourceUtil {
     /**
      * 快速创建HTML类型的Resource
-     * @param title 章节的标题
+     *
+     * @param title  章节的标题
      * @param string 章节的正文
      * @return 返回Resource
      */
@@ -42,9 +43,10 @@ public class ResourceUtil {
 
     /**
      * 快速创建HTML类型的Resource
-     * @param title 章节的标题
+     *
+     * @param title  章节的标题
      * @param string 章节的正文
-     * @param href Resource的href
+     * @param href   Resource的href
      * @return 返回Resource
      */
 
@@ -60,12 +62,14 @@ public class ResourceUtil {
     private static String createHtml(String title, String txt) {
         StringBuilder body = new StringBuilder();
         for (String s : txt.split("\\r?\\n")) {
-            s=StringUtil.FixTrim(s);
+            s = StringUtil.FixTrim(s);
             if (s.length() != 0) {
-                if(s.contains("<img")){
+                if (s.contains("<img")) {
+                    //加上div的话多看能点看大图，但掌阅的图会因为排版变得非常小。
                     //body.append("<div class=\"duokan-image-single img-note\">")
-                            body.append(s);//.append("</div>");
-                }else {
+                    body.append(s);
+                    //.append("</div>");
+                } else {
                     body.append("<p>").append(s).append("</p>");
                 }
 
@@ -86,6 +90,7 @@ public class ResourceUtil {
 
     /**
      * 快速从File创建Resource
+     *
      * @param file File
      * @return Resource
      * @throws IOException IOException
