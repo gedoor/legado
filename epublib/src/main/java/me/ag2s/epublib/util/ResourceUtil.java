@@ -60,9 +60,15 @@ public class ResourceUtil {
     private static String createHtml(String title, String txt) {
         StringBuilder body = new StringBuilder();
         for (String s : txt.split("\\r?\\n")) {
-            s = s.trim();
+            s=StringUtil.FixTrim(s);
             if (s.length() != 0) {
-                body.append("<p>").append(s).append("</p>");
+                if(s.contains("<img")){
+                    //body.append("<div class=\"duokan-image-single img-note\">")
+                            body.append(s);//.append("</div>");
+                }else {
+                    body.append("<p>").append(s).append("</p>");
+                }
+
             }
 
         }

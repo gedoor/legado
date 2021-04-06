@@ -3,6 +3,8 @@ package me.ag2s.epublib.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Various String utility functions.
@@ -271,4 +273,18 @@ public class StringUtil {
         }
         return text.substring(cPos + 1);
     }
+    public static String FixTrim(String s) {
+        if (s==null){
+            return "null";
+        }
+        Pattern r = Pattern.compile("^[\\s]{1,9}(.*?)[\\s]{1,9}$");
+        Matcher m = r.matcher(s);
+        if (m.find()) {
+            s= m.group(1);
+        }
+        //移除GBK中文全角空格
+        s = s.replace("　", "");
+        return s;
+    }
+
 }
