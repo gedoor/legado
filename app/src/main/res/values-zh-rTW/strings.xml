@@ -693,7 +693,7 @@
     <string name="information">訊息</string>
     <string name="switchLayout">切換布局</string>
     <string name="text_font_weight_converter">文章字重轉換</string>
-    <string name="full_screen_gestures_support">全面屏手勢支援</string>
+    <string name="full_screen_gestures_support">全面屏手勢優化</string>
   
     <!--color-->
     <string name="primary">主色調</string>
