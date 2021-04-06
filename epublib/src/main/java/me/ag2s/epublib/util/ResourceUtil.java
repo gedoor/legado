@@ -62,6 +62,7 @@ public class ResourceUtil {
     private static String createHtml(String title, String txt) {
         StringBuilder body = new StringBuilder();
         for (String s : txt.split("\\r?\\n")) {
+            //移除多余的开头结尾的空白字符，节省epub的体积
             s = StringUtil.FixTrim(s);
             if (s.length() != 0) {
                 if (s.contains("<img")) {
