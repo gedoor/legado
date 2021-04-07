@@ -77,15 +77,15 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private var firstCharIndex: Int = 0
 
     val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
-    private val tlRect = RectF(0f, 0f, width * 0.33f, height * 0.33f)
-    private val tcRect = RectF(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
-    private val trRect = RectF(width * 0.36f, 0f, width - 0f, height * 0.33f)
-    private val mlRect = RectF(0f, height * 0.33f, width * 0.33f, height * 0.66f)
-    private val mcRect = RectF(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-    private val mrRect = RectF(width * 0.66f, height * 0.33f, width - 0f, height * 0.66f)
-    private val blRect = RectF(0f, height * 0.66f, width * 0.33f, height - 0f)
-    private val bcRect = RectF(width * 0.33f, height * 0.66f, width * 0.66f, height - 0f)
-    private val brRect = RectF(width * 0.66f, height * 0.66f, width - 0f, height - 0f)
+    private val tlRect = RectF()
+    private val tcRect = RectF()
+    private val trRect = RectF()
+    private val mlRect = RectF()
+    private val mcRect = RectF()
+    private val mrRect = RectF()
+    private val blRect = RectF()
+    private val bcRect = RectF()
+    private val brRect = RectF()
     private val autoPageRect by lazy { Rect() }
     private val autoPagePint by lazy { Paint().apply { color = context.accentColor } }
     private val boundary by lazy { BreakIterator.getWordInstance(Locale.getDefault()) }
@@ -99,19 +99,25 @@ class ReadView(context: Context, attrs: AttributeSet) :
             setWillNotDraw(false)
             upPageAnim()
         }
+        setRect9x()
+    }
+
+    public fun setRect9x() {
+        val edge = if (AppConfig.fullScreenGesturesSupport) { 200f } else { 0f }
+        tlRect.set(0f + edge, 0f, width * 0.33f, height * 0.33f)
+        tcRect.set(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
+        trRect.set(width * 0.36f, 0f, width - 0f - edge, height * 0.33f)
+        mlRect.set(0f + edge, height * 0.33f, width * 0.33f, height * 0.66f)
+        mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+        mrRect.set(width * 0.66f, height * 0.33f, width - 0f - edge, height * 0.66f)
+        blRect.set(0f + edge, height * 0.66f, width * 0.33f, height - 10f - edge)
+        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 0f - edge)
+        brRect.set(width * 0.66f, height * 0.66f, width - 0f - edge, height - 0f - edge)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        tlRect.set(0f, 0f, width * 0.33f, height * 0.33f)
-        tcRect.set(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
-        trRect.set(width * 0.36f, 0f, width - 0f, height * 0.33f)
-        mlRect.set(0f, height * 0.33f, width * 0.33f, height * 0.66f)
-        mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-        mrRect.set(width * 0.66f, height * 0.33f, width - 0f, height * 0.66f)
-        blRect.set(0f, height * 0.66f, width * 0.33f, height - 10f)
-        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 0f)
-        brRect.set(width * 0.66f, height * 0.66f, width - 0f, height - 0f)
+        setRect9x()
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
     }

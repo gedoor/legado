@@ -12,22 +12,22 @@
 
     <item
         android:id="@+id/menu_search_src"
-        android:title="搜索源码"
+        android:title="@string/search_src"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_book_src"
-        android:title="书籍源码"
+        android:title="@string/boo_src"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_toc_src"
-        android:title="目录源码"
+        android:title="@string/toc_src"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_content_src"
-        android:title="正文源码"
+        android:title="@string/content_src"
         app:showAsAction="never" />
 
     <item
