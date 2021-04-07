@@ -103,6 +103,13 @@
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:key="fullScreenGesturesSupport"
+        android:title="@string/full_screen_gestures_support"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
     <io.legado.app.ui.widget.prefs.Preference
         android:key="customPageKey"
         android:title="@string/custom_page_key"
