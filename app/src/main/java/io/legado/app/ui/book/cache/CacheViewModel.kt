@@ -13,6 +13,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
@@ -23,6 +24,7 @@ import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.util.ResourceUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.charset.Charset
 
@@ -125,10 +127,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter)?.let { content ->
                 content.split("\n").forEachIndexed { index, text ->
-                    val matcher = AppPattern.imgPattern.matcher(text)
-                    if (matcher.find()) {
-                        matcher.group(1)?.let {
-                            val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
+                    val matches = AppPattern.imgPattern.toRegex().findAll(input = text)
+                    matches.forEach { matchResult ->
+                        matchResult.groupValues[1].let {
+                            val src=NetworkUtils.getAbsoluteURL(chapter.url, it)
                             srcList.add(Triple(chapter.title, index, src))
                         }
                     }
@@ -205,7 +207,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         //set css
         epubBook.resources.add(
             Resource(
-                "body{background:white;margin:0;}h2{color:#005a9c;text-align:left;}p{text-indent:2em;text-align:justify;}".encodeToByteArray(),
+                "body,div{background:white;margin:0 auto;padding:0;outline:none;width:100%;}h2{color:#005a9c;text-align:left;}p{text-indent:2em;text-align:justify;}img{display:inline-block;width:100%;height:100%;max-width: 100%;max-height:100%;}".encodeToByteArray(),
                 "css/style.css"
             )
         )
@@ -215,13 +217,14 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
         Glide.with(context)
             .asBitmap()
-            .load(book.coverUrl)
+            .load(book.getDisplayCover())
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     val stream = ByteArrayOutputStream()
                     resource.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val byteArray: ByteArray = stream.toByteArray()
                     resource.recycle()
+                    stream.close()
                     epubBook.coverImage = Resource(byteArray, "cover.jpg")
                 }
 
@@ -232,13 +235,15 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             })
     }
 
+
     private fun setEpubContent(book: Book, epubBook: EpubBook) {
         val useReplace = AppConfig.exportUseReplace
         val contentProcessor = ContentProcessor(book.name, book.origin)
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
-                val content1 = contentProcessor
-                    .getContent(book, chapter.title, content ?: "null", false, useReplace)
+                var content1 = fixPic(epubBook, book, content ?: "null", chapter)
+                content1 = contentProcessor
+                    .getContent(book, chapter.title, content1, false, useReplace)
                     .joinToString("\n")
                     .replace(chapter.title, "")
 
@@ -250,10 +255,42 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    private fun setPic(src: String, book: Book, epubBook: EpubBook) {
+        val vFile = BookHelp.getImage(book, src)
+        if (vFile.exists()) {
+            val img = Resource(FileInputStream(vFile), MD5Utils.md5Encode16(src) + ".jpg")
+            epubBook.resources.add(img)
+        }
+    }
+
+    private fun fixPic(
+        epubBook: EpubBook,
+        book: Book,
+        content: String,
+        chapter: BookChapter
+    ): String {
+        val data = StringBuilder("")
+        content.split("\n").forEach { text ->
+            var text1 = text
+            val matches = AppPattern.imgPattern.toRegex().findAll(input = text)
+            matches.forEach { matchResult ->
+                matchResult.groupValues[1].let {
+                    val src=NetworkUtils.getAbsoluteURL(chapter.url, it)
+                    setPic(src, book, epubBook)
+                    text1 = text1.replace(src, MD5Utils.md5Encode16(src) + ".jpg")
+
+                }
+            }
+
+            data.append(text1).append("\n")
+        }
+        return data.toString()
+    }
+
     private fun setEpubMetadata(book: Book, epubBook: EpubBook) {
         val metadata = Metadata()
         metadata.titles.add(book.name)//书籍的名称
-        metadata.authors.add(Author(book.author))//书籍的作者
+        metadata.authors.add(Author(book.getRealAuthor()))//书籍的作者
         metadata.language = "zh"//数据的语言
         metadata.dates.add(Date())//数据的创建日期
         metadata.publishers.add("Legado APP")//数据的创建者
