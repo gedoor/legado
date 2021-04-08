@@ -22,6 +22,8 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     CoroutineScope by MainScope(),
     Debug.Callback {
 
+    private val notPrintState = arrayOf(10, 20, 30, 40)
+
     override fun onOpen() {
         launch(IO) {
             kotlin.runCatching {
@@ -77,7 +79,7 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     }
 
     override fun printLog(state: Int, msg: String) {
-        if (state in arrayOf(10, 20, 30, 40)) {
+        if (state in notPrintState) {
             return
         }
         runOnIO {
