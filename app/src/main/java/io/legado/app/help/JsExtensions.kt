@@ -338,4 +338,117 @@ interface JsExtensions {
         Debug.log(msg)
         return msg
     }
+
+    /**
+     * AES 解码为 ByteArray
+     */
+    fun aesDecodeToByteArray(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+
+        return EncoderUtils.decryptAES(
+            data = str.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * AES 解码为 String
+     */
+
+    fun aesDecodeToString(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesDecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 已经base64的AES 解码为 ByteArray
+     */
+
+    fun aesBase64DecodeToByteArray(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.decryptBase64AES(
+            data = str.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 已经base64的AES 解码为 String
+     */
+
+    fun aesBase64DecodeToString(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesBase64DecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 加密aes为ByteArray
+     */
+    fun aesEncodeByteArray(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.encryptAES(
+            data.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 加密aes为String
+     */
+    fun aesEncodeString(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesEncodeByteArray(data, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 加密aes为Base64后的ByteArray
+     */
+    fun aesBase64EncodeByteArray(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.encryptAES2Base64(
+            data.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 加密aes为Base64后的String
+     */
+    fun aesBase64EncodeString(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesBase64EncodeByteArray(data, key, transformation, iv)?.let { String(it) }
+    }
+
 }

@@ -275,7 +275,7 @@ public class StringUtil {
     }
     public static String FixTrim(String s) {
         if (s==null){
-            return "null";
+            return "";
         }
         Pattern r = Pattern.compile("^[\\s]{1,9}(.*?)[\\s]{1,9}$");
         Matcher m = r.matcher(s);

@@ -207,7 +207,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         //set css
         epubBook.resources.add(
             Resource(
-                "body,div{background:white;margin:0 auto;padding:0;outline:none;width:100%;}h2{color:#005a9c;text-align:left;}p{text-indent:2em;text-align:justify;}img{display:inline-block;width:100%;height:100%;max-width: 100%;max-height:100%;}".encodeToByteArray(),
+                "body,div{background:white;outline:none;width:100%;}h2{color:#005a9c;text-align:left;}p{text-indent:2em;text-align:justify;}img{display:inline-block;width:100%;height:auto;max-width: 100%;max-height:100%;}".encodeToByteArray(),
                 "css/style.css"
             )
         )
