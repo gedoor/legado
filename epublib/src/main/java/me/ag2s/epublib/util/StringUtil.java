@@ -282,6 +282,9 @@ public class StringUtil {
         if (m.find()) {
             s= m.group(1);
         }
+        if(s==null){
+            return "";
+        }
         //移除GBK中文全角空格
         s = s.replace("　", "");
         return s;
