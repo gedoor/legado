@@ -149,6 +149,24 @@ object BookHelp {
         }
     }
 
+    fun hasImageContent(book: Book, bookChapter: BookChapter): Boolean {
+        if (!hasContent(book, bookChapter)) {
+            return false
+        }
+        getContent(book, bookChapter)?.let {
+            val matcher = AppPattern.imgPattern.matcher(it)
+            while (matcher.find()) {
+                matcher.group(1)?.let { src ->
+                    val image = getImage(book, src)
+                    if (!image.exists()) {
+                        return false
+                    }
+                }
+            }
+        }
+        return true
+    }
+
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (book.isLocalTxt()) {
             return LocalBook.getContext(book, bookChapter)
