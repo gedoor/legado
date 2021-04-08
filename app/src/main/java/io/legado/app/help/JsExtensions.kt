@@ -341,6 +341,10 @@ interface JsExtensions {
 
     /**
      * AES 解码为 ByteArray
+     * @param str 传入的AES加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
      */
     fun aesDecodeToByteArray(
         str: String,
@@ -359,6 +363,10 @@ interface JsExtensions {
 
     /**
      * AES 解码为 String
+     * @param str 传入的AES加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
      */
 
     fun aesDecodeToString(
@@ -372,6 +380,10 @@ interface JsExtensions {
 
     /**
      * 已经base64的AES 解码为 ByteArray
+     * @param str 传入的AES Base64加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
      */
 
     fun aesBase64DecodeToByteArray(
@@ -390,6 +402,10 @@ interface JsExtensions {
 
     /**
      * 已经base64的AES 解码为 String
+     * @param str 传入的AES Base64加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
      */
 
     fun aesBase64DecodeToString(
@@ -403,6 +419,10 @@ interface JsExtensions {
 
     /**
      * 加密aes为ByteArray
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
      */
     fun aesEncodeByteArray(
         data: String, key: String, transformation: String,
@@ -418,6 +438,10 @@ interface JsExtensions {
 
     /**
      * 加密aes为String
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
      */
     fun aesEncodeString(
         data: String, key: String, transformation: String,
@@ -427,7 +451,11 @@ interface JsExtensions {
     }
 
     /**
-     * 加密aes为Base64后的ByteArray
+     * 加密aes后Base64化的ByteArray
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
      */
     fun aesBase64EncodeByteArray(
         data: String, key: String, transformation: String,
@@ -442,7 +470,11 @@ interface JsExtensions {
     }
 
     /**
-     * 加密aes为Base64后的String
+     * 加密aes后Base64化的String
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
      */
     fun aesBase64EncodeString(
         data: String, key: String, transformation: String,
