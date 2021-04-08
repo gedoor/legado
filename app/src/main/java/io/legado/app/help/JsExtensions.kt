@@ -424,7 +424,7 @@ interface JsExtensions {
      * @param transformation AES加密的方式
      * @param iv ECB模式的偏移向量
      */
-    fun aesEncodeByteArray(
+    fun aesEncodeToByteArray(
         data: String, key: String, transformation: String,
         iv: String = ""
     ): ByteArray? {
@@ -443,11 +443,11 @@ interface JsExtensions {
      * @param transformation AES加密的方式
      * @param iv ECB模式的偏移向量
      */
-    fun aesEncodeString(
+    fun aesEncodeToString(
         data: String, key: String, transformation: String,
         iv: String = ""
     ): String? {
-        return aesEncodeByteArray(data, key, transformation, iv)?.let { String(it) }
+        return aesEncodeToByteArray(data, key, transformation, iv)?.let { String(it) }
     }
 
     /**
@@ -457,7 +457,7 @@ interface JsExtensions {
      * @param transformation AES加密的方式
      * @param iv ECB模式的偏移向量
      */
-    fun aesBase64EncodeByteArray(
+    fun aesEncodeToBase64ByteArray(
         data: String, key: String, transformation: String,
         iv: String = ""
     ): ByteArray? {
@@ -476,11 +476,11 @@ interface JsExtensions {
      * @param transformation AES加密的方式
      * @param iv ECB模式的偏移向量
      */
-    fun aesBase64EncodeString(
+    fun aesEncodeToBase64String(
         data: String, key: String, transformation: String,
         iv: String = ""
     ): String? {
-        return aesBase64EncodeByteArray(data, key, transformation, iv)?.let { String(it) }
+        return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
     }
 
 }
