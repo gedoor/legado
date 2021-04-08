@@ -77,6 +77,9 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     }
 
     override fun printLog(state: Int, msg: String) {
+        if (state in arrayOf(10, 20, 30, 40)) {
+            return
+        }
         runOnIO {
             runCatching {
                 send(msg)
