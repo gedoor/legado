@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
@@ -214,7 +215,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         intent?.getStringExtra("key")?.let {
             searchView.setQuery(it, true)
         } ?: let {
-            searchView.requestFocus()
+            searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+                .requestFocus()
         }
     }
 
