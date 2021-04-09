@@ -67,9 +67,7 @@ public class ResourceUtil {
             if (s.length() != 0) {
                 if (s.contains("<img")) {
                     //加上div的话多看能点看大图，但掌阅的图会因为排版变得非常小。
-                    //body.append("<div class=\"duokan-image-single img-note\">")
-                    body.append(s);
-                    //.append("</div>");
+                    body.append("<div class=\"duokan-image-single img-note\">").append(s).append("</div>");
                 } else {
                     body.append("<p>").append(s).append("</p>");
                 }

@@ -275,12 +275,15 @@ public class StringUtil {
     }
     public static String FixTrim(String s) {
         if (s==null){
-            return "null";
+            return "";
         }
         Pattern r = Pattern.compile("^[\\s]{1,9}(.*?)[\\s]{1,9}$");
         Matcher m = r.matcher(s);
         if (m.find()) {
             s= m.group(1);
+        }
+        if(s==null){
+            return "";
         }
         //移除GBK中文全角空格
         s = s.replace("　", "");

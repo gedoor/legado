@@ -338,4 +338,149 @@ interface JsExtensions {
         Debug.log(msg)
         return msg
     }
+
+    /**
+     * AES 解码为 ByteArray
+     * @param str 传入的AES加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesDecodeToByteArray(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+
+        return EncoderUtils.decryptAES(
+            data = str.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * AES 解码为 String
+     * @param str 传入的AES加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+
+    fun aesDecodeToString(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesDecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 已经base64的AES 解码为 ByteArray
+     * @param str 传入的AES Base64加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+
+    fun aesBase64DecodeToByteArray(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.decryptBase64AES(
+            data = str.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 已经base64的AES 解码为 String
+     * @param str 传入的AES Base64加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+
+    fun aesBase64DecodeToString(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesBase64DecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 加密aes为ByteArray
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesEncodeToByteArray(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.encryptAES(
+            data.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 加密aes为String
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesEncodeToString(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesEncodeToByteArray(data, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 加密aes后Base64化的ByteArray
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesEncodeToBase64ByteArray(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.encryptAES2Base64(
+            data.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 加密aes后Base64化的String
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesEncodeToBase64String(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
+    }
+
 }
