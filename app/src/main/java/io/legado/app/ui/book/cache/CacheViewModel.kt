@@ -130,7 +130,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     val matches = AppPattern.imgPattern.toRegex().findAll(input = text)
                     matches.forEach { matchResult ->
                         matchResult.groupValues[1].let {
-                            val src=NetworkUtils.getAbsoluteURL(chapter.url, it)
+                            val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
                             srcList.add(Triple(chapter.title, index, src))
                         }
                     }
@@ -245,7 +245,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 content1 = contentProcessor
                     .getContent(book, chapter.title, content1, false, useReplace)
                     .joinToString("\n")
-                    .replace(chapter.title, "")
+                    .replaceFirst(chapter.title, "")
 
                 epubBook.addSection(
                     chapter.title,
@@ -275,7 +275,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             val matches = AppPattern.imgPattern.toRegex().findAll(input = text)
             matches.forEach { matchResult ->
                 matchResult.groupValues[1].let {
-                    val src=NetworkUtils.getAbsoluteURL(chapter.url, it)
+                    val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
                     setPic(src, book, epubBook)
                     text1 = text1.replace(src, MD5Utils.md5Encode16(src) + ".jpg")
 
