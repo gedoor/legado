@@ -243,10 +243,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             BookHelp.getContent(book, chapter).let { content ->
                 var content1 = fixPic(epubBook, book, content ?: "null", chapter)
                 content1 = contentProcessor
-                    .getContent(book, chapter.title, content1, false, useReplace)
+                    .getContent(book, "", content1, false, useReplace)
                     .joinToString("\n")
-                    .replaceFirst(chapter.title, "")
-
                 epubBook.addSection(
                     chapter.title,
                     ResourceUtil.createHTMLResource(chapter.title, content1)
