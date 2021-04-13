@@ -20,7 +20,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     override val viewModel: RssSortViewModel
             by viewModels()
-    private val fragments = linkedMapOf<String, RssArticlesFragment>()
+    private var sorts = linkedMapOf<String, String>()
     private lateinit var adapter: TabFragmentPageAdapter
     private val upSourceResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -40,7 +40,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         adapter = TabFragmentPageAdapter()
         binding.viewPager.adapter = adapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = fragments.keys.elementAt(position)
+            tab.text = sorts.keys.elementAt(position)
         }.attach()
         viewModel.titleLiveData.observe(this, {
             binding.titleBar.title = it
@@ -77,11 +77,10 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     }
 
     private fun upFragments() {
-        fragments.clear()
-        viewModel.rssSource?.sortUrls()?.forEach {
-            fragments[it.key] = RssArticlesFragment.create(it.key, it.value)
+        viewModel.rssSource?.sortUrls()?.let {
+            sorts = it
         }
-        if (fragments.size == 1) {
+        if (sorts.size == 1) {
             binding.tabLayout.gone()
         } else {
             binding.tabLayout.visible()
@@ -92,11 +91,18 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     private inner class TabFragmentPageAdapter : FragmentStateAdapter(this) {
 
         override fun getItemCount(): Int {
-            return fragments.size
+            return sorts.size
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position + (viewModel.rssSource?.articleStyle ?: 0).toLong() * 100
         }
 
         override fun createFragment(position: Int): Fragment {
-            return fragments.values.elementAt(position)
+            return RssArticlesFragment.create(
+                sorts.keys.elementAt(position),
+                sorts.values.elementAt(position)
+            )
         }
     }
 
