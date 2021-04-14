@@ -95,7 +95,8 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         }
 
         override fun getItemId(position: Int): Long {
-            return position + (viewModel.rssSource?.articleStyle ?: 0).toLong() * 100
+            val style = viewModel.rssSource?.articleStyle ?: 0
+            return style * 100 + super.getItemId(position)
         }
 
         override fun createFragment(position: Int): Fragment {
