@@ -110,7 +110,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                         appDb.ruleSubDao.findByUrl(ruleSub.url)
                     }
                     if (rs != null && rs.id != ruleSub.id) {
-                        toastOnUi(R.string.url_already)
+                        toastOnUi("${getString(R.string.url_already)}(${rs.name})")
                         return@launch
                     }
                     withContext(IO) {
