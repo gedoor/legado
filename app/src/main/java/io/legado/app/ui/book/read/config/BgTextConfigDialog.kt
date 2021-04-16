@@ -148,11 +148,9 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 cancelButton()
             }.show()
         }
-        binding.swDarkStatusIcon.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView?.isPressed == true) {
-                setCurStatusIconDark(isChecked)
-                (activity as? ReadBookActivity)?.upSystemUiVisibility()
-            }
+        binding.swDarkStatusIcon.setOnCheckedChangeListener { _, isChecked ->
+            setCurStatusIconDark(isChecked)
+            (activity as? ReadBookActivity)?.upSystemUiVisibility()
         }
         binding.tvTextColor.setOnClickListener {
             ColorPickerDialog.newBuilder()

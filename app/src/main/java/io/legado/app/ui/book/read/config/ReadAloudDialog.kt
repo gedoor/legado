@@ -81,8 +81,8 @@ class ReadAloudDialog : BaseDialogFragment() {
             tvSetting.setTextColor(textColor)
             cbTtsFollowSys.setTextColor(textColor)
         }
-        initOnChange()
         initData()
+        initOnChange()
         initEvent()
     }
 
@@ -96,12 +96,10 @@ class ReadAloudDialog : BaseDialogFragment() {
     }
 
     private fun initOnChange() = with(binding) {
-        cbTtsFollowSys.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) {
-                requireContext().putPrefBoolean("ttsFollowSys", isChecked)
-                seekTtsSpeechRate.isEnabled = !isChecked
-                upTtsSpeechRate()
-            }
+        cbTtsFollowSys.setOnCheckedChangeListener { _, isChecked ->
+            requireContext().putPrefBoolean("ttsFollowSys", isChecked)
+            seekTtsSpeechRate.isEnabled = !isChecked
+            upTtsSpeechRate()
         }
         seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
