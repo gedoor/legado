@@ -82,7 +82,6 @@ class ReadAloudDialog : BaseDialogFragment() {
             cbTtsFollowSys.setTextColor(textColor)
         }
         initData()
-        initOnChange()
         initEvent()
     }
 
@@ -93,30 +92,6 @@ class ReadAloudDialog : BaseDialogFragment() {
         cbTtsFollowSys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seekTtsSpeechRate.isEnabled = !cbTtsFollowSys.isChecked
         seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate
-    }
-
-    private fun initOnChange() = with(binding) {
-        cbTtsFollowSys.setOnCheckedChangeListener { _, isChecked ->
-            requireContext().putPrefBoolean("ttsFollowSys", isChecked)
-            seekTtsSpeechRate.isEnabled = !isChecked
-            upTtsSpeechRate()
-        }
-        seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                AppConfig.ttsSpeechRate = seekBar.progress
-                upTtsSpeechRate()
-            }
-        })
-        seekTimer.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                upTimerText(progress)
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                ReadAloud.setTimer(requireContext(), seekTimer.progress)
-            }
-        })
     }
 
     private fun initEvent() = with(binding) {
@@ -138,6 +113,27 @@ class ReadAloudDialog : BaseDialogFragment() {
         ivPlayNext.setOnClickListener { ReadAloud.nextParagraph(requireContext()) }
         llCatalog.setOnClickListener { callBack?.openChapterList() }
         llToBackstage.setOnClickListener { callBack?.finish() }
+        cbTtsFollowSys.setOnCheckedChangeListener { _, isChecked ->
+            requireContext().putPrefBoolean("ttsFollowSys", isChecked)
+            seekTtsSpeechRate.isEnabled = !isChecked
+            upTtsSpeechRate()
+        }
+        seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                AppConfig.ttsSpeechRate = seekBar.progress
+                upTtsSpeechRate()
+            }
+        })
+        seekTimer.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                upTimerText(progress)
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                ReadAloud.setTimer(requireContext(), seekTimer.progress)
+            }
+        })
     }
 
     private fun upPlayState() {
