@@ -85,42 +85,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
             }
         }
-        findPreference<ColorPreference>(PreferKey.cAccent)?.let {
-            it.onSaveColor = { color ->
-                val background =
-                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
-                val textColor = getCompatColor(R.color.primaryText)
-                when {
-                    ColorUtils.getColorDifference(color, background) <= 60 -> {
-                        toastOnUi(R.string.accent_background_diff)
-                        true
-                    }
-                    ColorUtils.getColorDifference(color, textColor) <= 60 -> {
-                        toastOnUi(R.string.accent_text_diff)
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }
-        findPreference<ColorPreference>(PreferKey.cNAccent)?.let {
-            it.onSaveColor = { color ->
-                val background =
-                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
-                val textColor = getCompatColor(R.color.primaryText)
-                when {
-                    ColorUtils.getColorDifference(color, background) <= 60 -> {
-                        toastOnUi(R.string.accent_background_diff)
-                        true
-                    }
-                    ColorUtils.getColorDifference(color, textColor) <= 60 -> {
-                        toastOnUi(R.string.accent_text_diff)
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
