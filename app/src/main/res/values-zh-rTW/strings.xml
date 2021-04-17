@@ -109,8 +109,8 @@
     <string name="web_dav_set_import_old">WebDav設定/匯入舊版本資料</string>
     <string name="backup">備份</string>
     <string name="restore">復原</string>
-    <string name="backup_permission">備份請給與儲存權限</string>
-    <string name="restore_permission">復原請給與儲存權限</string>
+    <string name="backup_permission">備份請給予儲存權限</string>
+    <string name="restore_permission">復原請給予儲存權限</string>
     <string name="ok">確認</string>
     <string name="cancel">取消</string>
     <string name="backup_confirmation">確認備份嗎？</string>
@@ -686,14 +686,14 @@
     <string name="follow_official_account">關注公眾號</string>
     <string name="wechat">微信</string>
     <string name="thanks">您的支援是我更新的動力</string>
-    <string name="about_official_account">公眾號[開源閱讀]</string>
+    <string name="about_official_account">公眾號[开源阅读]</string>
     <string name="source_auto_changing">正在自動換源</string>
     <string name="click_to_apply">點擊加入</string>
     <string name="middle">中</string>
     <string name="information">訊息</string>
     <string name="switchLayout">切換布局</string>
     <string name="text_font_weight_converter">文章字重轉換</string>
-    <string name="full_screen_gestures_support">全面屏手勢優化</string>
+    <string name="full_screen_gestures_support">全面屏手勢最佳化</string>
   
     <!--color-->
     <string name="primary">主色調</string>
@@ -754,7 +754,7 @@
     <string name="language">語言</string>
     <string name="import_rss_source">匯入訂閱源</string>
     <string name="donate_summary">您的支援是我更新的動力</string>
-    <string name="about_summary">公眾號[開源閱讀軟體]</string>
+    <string name="about_summary">公眾號[开源阅读軟體]</string>
     <string name="read_record">閱讀記錄</string>
     <string name="read_record_summary">閱讀時間記錄</string>
     <string name="local_tts">本機TTS</string>
@@ -782,7 +782,7 @@
     <string name="empty_msg_import_book">點擊右上角資料夾圖示,選擇資料夾</string>
     <string name="scan_folder">智慧掃描</string>
     <string name="copy_book_url">複製書籍URL</string>
-    <string name="copy_toc_url">複製目录URL</string>
+    <string name="copy_toc_url">複製目錄URL</string>
     <string name="no_book">沒有書籍</string>
     <string name="keep_original_name">保留原名</string>
     <string name="click_regional_config">點擊區域設定</string>
@@ -810,17 +810,17 @@
     <string name="export_folder">匯出資料夾</string>
     <string name="export_charset">匯出編碼</string>
     <string name="export_to_web_dav">匯出到WebDav</string>
-    <string name="reverse_content">反转内容</string>
-    <string name="debug">调试</string>
-    <string name="image_style">图片样式</string>
-    <string name="system_tts">系统TTS</string>
-    <string name="export_type">导出格式</string>
-    <string name="checkAuthor">校验作者</string>
-    <string name="search_src">搜索源码</string>
-    <string name="boo_src">书籍源码</string>
-    <string name="toc_src">目录源码</string>
-    <string name="content_src">正文源码</string>
-    <string name="list_src">列表源码</string>
-    <string name="url_already">此url已订阅</string>
+    <string name="reverse_content">反轉內容</string>
+    <string name="debug">除錯</string>
+    <string name="image_style">圖片樣式</string>
+    <string name="system_tts">系統TTS</string>
+    <string name="export_type">匯出格式</string>
+    <string name="checkAuthor">校驗作者</string>
+    <string name="search_src">搜尋原始碼</string>
+    <string name="boo_src">書籍原始碼</string>
+    <string name="toc_src">目錄原始碼</string>
+    <string name="content_src">正文原始碼</string>
+    <string name="list_src">列表原始碼</string>
+    <string name="url_already">此url已訂閱</string>
 
 </resources>
