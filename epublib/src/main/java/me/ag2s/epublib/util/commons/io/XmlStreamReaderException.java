@@ -28,10 +28,9 @@ import java.io.IOException;
  * do an alternate processing with the stream. Note that the original
  * InputStream given to the XmlStreamReader cannot be used as that one has been
  * already read.
+ * </p>
  *
- * @author Alejandro Abdelnur
- * @version $Id: XmlStreamReaderException.java 1004112 2010-10-04 04:48:25Z niallp $
- * @since Commons IO 2.0
+ * @since 2.0
  */
 public class XmlStreamReaderException extends IOException {
 
@@ -52,14 +51,15 @@ public class XmlStreamReaderException extends IOException {
      * determined.
      * <p>
      * Instances of this exception are thrown by the XmlStreamReader.
+     * </p>
      *
      * @param msg message describing the reason for the exception.
      * @param bomEnc BOM encoding.
      * @param xmlGuessEnc XML guess encoding.
      * @param xmlEnc XML prolog encoding.
      */
-    public XmlStreamReaderException(String msg, String bomEnc,
-            String xmlGuessEnc, String xmlEnc) {
+    public XmlStreamReaderException(final String msg, final String bomEnc,
+                                    final String xmlGuessEnc, final String xmlEnc) {
         this(msg, null, null, bomEnc, xmlGuessEnc, xmlEnc);
     }
 
@@ -68,6 +68,7 @@ public class XmlStreamReaderException extends IOException {
      * determined.
      * <p>
      * Instances of this exception are thrown by the XmlStreamReader.
+     * </p>
      *
      * @param msg message describing the reason for the exception.
      * @param ctMime MIME type in the content-type.
@@ -76,8 +77,8 @@ public class XmlStreamReaderException extends IOException {
      * @param xmlGuessEnc XML guess encoding.
      * @param xmlEnc XML prolog encoding.
      */
-    public XmlStreamReaderException(String msg, String ctMime, String ctEnc,
-            String bomEnc, String xmlGuessEnc, String xmlEnc) {
+    public XmlStreamReaderException(final String msg, final String ctMime, final String ctEnc,
+                                    final String bomEnc, final String xmlGuessEnc, final String xmlEnc) {
         super(msg);
         contentTypeMime = ctMime;
         contentTypeEncoding = ctEnc;
@@ -120,7 +121,6 @@ public class XmlStreamReaderException extends IOException {
      * @return the MIME type in the content-type, null if there was not
      *         content-type or the encoding detection did not involve HTTP.
      */
-    @SuppressWarnings("unused")
     public String getContentTypeMime() {
         return contentTypeMime;
     }

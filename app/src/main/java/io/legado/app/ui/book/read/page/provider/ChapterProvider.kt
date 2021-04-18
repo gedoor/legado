@@ -118,12 +118,12 @@ object ChapterProvider {
                             val matcher = AppPattern.imgPattern.matcher(text)
                             if (matcher.find()) {
                                 matcher.group(1)?.let { src ->
-                                    if (!book.isEpub()) {
+                                    //if (!book.isEpub()) {
                                         durY = setTypeImage(
                                             book, bookChapter, src,
                                             durY, textPages, book.getImageStyle()
                                         )
-                                    }
+                                    //}
                                 }
                             } else {
                                 val isTitle = index == 0
