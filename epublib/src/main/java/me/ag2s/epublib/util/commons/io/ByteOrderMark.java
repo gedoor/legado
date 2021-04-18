@@ -59,6 +59,7 @@ public class ByteOrderMark implements Serializable {
      * @see <a href="http://unicode.org/faq/utf_bom.html#BOM">Byte Order Mark (BOM) FAQ</a>
      * @since 2.5
      */
+    @SuppressWarnings("unused")
     public static final char UTF_BOM = '\uFEFF';
 
     private final String charsetName;
