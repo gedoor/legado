@@ -31,12 +31,13 @@ public class IOUtil {
 
     /**
      * Represents the end-of-file (or stream).
+     *
      * @since 2.5 (made public)
      */
     public static final int EOF = -1;
 
 
-    public static final int DEFAULT_BUFFER_SIZE = 1024*8;
+    public static final int DEFAULT_BUFFER_SIZE = 1024 * 8;
     private static final byte[] SKIP_BYTE_BUFFER = new byte[DEFAULT_BUFFER_SIZE];
 
     // Allocated in the relevant skip method if necessary.
@@ -77,10 +78,11 @@ public class IOUtil {
      */
     public static byte[] toByteArray(InputStream in) throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        copy(in, result,DEFAULT_BUFFER_SIZE);
+        copy(in, result);
         result.flush();
         return result.toByteArray();
     }
+
 
     /**
      * Reads data from the InputStream, using the specified buffer size.
@@ -105,7 +107,7 @@ public class IOUtil {
                 result = new ByteArrayOutputStream();
             }
 
-            copy(in, result,DEFAULT_BUFFER_SIZE);
+            copy(in, result);
             result.flush();
             return result.toByteArray();
         } catch (OutOfMemoryError error) {
@@ -138,7 +140,15 @@ public class IOUtil {
         }
     }
 
-//
+    //
+    public static void copy(InputStream in, OutputStream result) throws IOException {
+        int buffer=in.available();
+        if(buffer>IOUtil.DEFAULT_BUFFER_SIZE||buffer==0){
+            buffer=IOUtil.DEFAULT_BUFFER_SIZE;
+        }
+        copy(in, result,buffer);
+    }
+
     /**
      * Copies bytes from an <code>InputStream</code> to an <code>OutputStream</code> using an internal buffer of the
      * given size.
@@ -146,12 +156,12 @@ public class IOUtil {
      * This method buffers the input internally, so there is no need to use a <code>BufferedInputStream</code>.
      * </p>
      *
-     * @param input the <code>InputStream</code> to read from
-     * @param output the <code>OutputStream</code> to write to
+     * @param input      the <code>InputStream</code> to read from
+     * @param output     the <code>OutputStream</code> to write to
      * @param bufferSize the bufferSize used to copy from the input to the output
      * @return the number of bytes copied. or {@code 0} if {@code input is null}.
      * @throws NullPointerException if the output is null
-     * @throws IOException if an I/O error occurs
+     * @throws IOException          if an I/O error occurs
      * @since 2.5
      */
     public static long copy(final InputStream input, final OutputStream output, final int bufferSize)
@@ -168,7 +178,7 @@ public class IOUtil {
      * <p>
      * This method uses {@link InputStreamReader}.
      *
-     * @param input the <code>InputStream</code> to read from
+     * @param input  the <code>InputStream</code> to read from
      * @param output the <code>Writer</code> to write to
      * @throws NullPointerException if the input or output is null
      * @throws IOException          if an I/O error occurs
@@ -190,8 +200,8 @@ public class IOUtil {
      * <p>
      * This method uses {@link InputStreamReader}.
      *
-     * @param input the <code>InputStream</code> to read from
-     * @param output the <code>Writer</code> to write to
+     * @param input        the <code>InputStream</code> to read from
+     * @param output       the <code>Writer</code> to write to
      * @param inputCharset the charset to use for the input stream, null means platform default
      * @throws NullPointerException if the input or output is null
      * @throws IOException          if an I/O error occurs
@@ -215,8 +225,8 @@ public class IOUtil {
      * <p>
      * This method uses {@link InputStreamReader}.
      *
-     * @param input the <code>InputStream</code> to read from
-     * @param output the <code>Writer</code> to write to
+     * @param input            the <code>InputStream</code> to read from
+     * @param output           the <code>Writer</code> to write to
      * @param inputCharsetName the name of the requested charset for the InputStream, null means platform default
      * @throws NullPointerException                         if the input or output is null
      * @throws IOException                                  if an I/O error occurs
@@ -227,7 +237,7 @@ public class IOUtil {
      */
     public static void copy(final InputStream input, final Writer output, final String inputCharsetName)
             throws IOException {
-        copy(input, output,Charset.forName(inputCharsetName));
+        copy(input, output, Charset.forName(inputCharsetName));
     }
 
     /**
@@ -241,7 +251,7 @@ public class IOUtil {
      * number of chars cannot be returned as an int. For large streams
      * use the <code>copyLarge(Reader, Writer)</code> method.
      *
-     * @param input the <code>Reader</code> to read from
+     * @param input  the <code>Reader</code> to read from
      * @param output the <code>Appendable</code> to write to
      * @return the number of characters copied, or -1 if &gt; Integer.MAX_VALUE
      * @throws NullPointerException if the input or output is null
@@ -259,7 +269,7 @@ public class IOUtil {
      * <code>BufferedReader</code>.
      * </p>
      *
-     * @param input the <code>Reader</code> to read from
+     * @param input  the <code>Reader</code> to read from
      * @param output the <code>Appendable</code> to write to
      * @param buffer the buffer to be used for the copy
      * @return the number of characters copied
@@ -291,7 +301,7 @@ public class IOUtil {
      * <p>
      * This method uses {@link OutputStreamWriter}.
      *
-     * @param input the <code>Reader</code> to read from
+     * @param input  the <code>Reader</code> to read from
      * @param output the <code>OutputStream</code> to write to
      * @throws NullPointerException if the input or output is null
      * @throws IOException          if an I/O error occurs
@@ -320,8 +330,8 @@ public class IOUtil {
      * This method uses {@link OutputStreamWriter}.
      * </p>
      *
-     * @param input the <code>Reader</code> to read from
-     * @param output the <code>OutputStream</code> to write to
+     * @param input         the <code>Reader</code> to read from
+     * @param output        the <code>OutputStream</code> to write to
      * @param outputCharset the charset to use for the OutputStream, null means platform default
      * @throws NullPointerException if the input or output is null
      * @throws IOException          if an I/O error occurs
@@ -352,8 +362,8 @@ public class IOUtil {
      * <p>
      * This method uses {@link OutputStreamWriter}.
      *
-     * @param input the <code>Reader</code> to read from
-     * @param output the <code>OutputStream</code> to write to
+     * @param input             the <code>Reader</code> to read from
+     * @param output            the <code>OutputStream</code> to write to
      * @param outputCharsetName the name of the requested charset for the OutputStream, null means platform default
      * @throws NullPointerException                         if the input or output is null
      * @throws IOException                                  if an I/O error occurs
@@ -378,7 +388,7 @@ public class IOUtil {
      * number of chars cannot be returned as an int. For large streams
      * use the <code>copyLarge(Reader, Writer)</code> method.
      *
-     * @param input the <code>Reader</code> to read from
+     * @param input  the <code>Reader</code> to read from
      * @param output the <code>Writer</code> to write to
      * @return the number of characters copied, or -1 if &gt; Integer.MAX_VALUE
      * @throws NullPointerException if the input or output is null
@@ -404,11 +414,11 @@ public class IOUtil {
      * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
      * </p>
      *
-     * @param input the <code>InputStream</code> to read from
+     * @param input  the <code>InputStream</code> to read from
      * @param output the <code>OutputStream</code> to write to
      * @return the number of bytes copied. or {@code 0} if {@code input is null}.
      * @throws NullPointerException if the output is null
-     * @throws IOException if an I/O error occurs
+     * @throws IOException          if an I/O error occurs
      * @since 1.3
      */
     public static long copyLarge(final InputStream input, final OutputStream output)
@@ -424,7 +434,7 @@ public class IOUtil {
      * <code>BufferedInputStream</code>.
      * </p>
      *
-     * @param input the <code>InputStream</code> to read from
+     * @param input  the <code>InputStream</code> to read from
      * @param output the <code>OutputStream</code> to write to
      * @param buffer the buffer to use for the copy
      * @return the number of bytes copied. or {@code 0} if {@code input is null}.
@@ -458,11 +468,11 @@ public class IOUtil {
      * </p>
      * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
      *
-     * @param input the <code>InputStream</code> to read from
-     * @param output the <code>OutputStream</code> to write to
+     * @param input       the <code>InputStream</code> to read from
+     * @param output      the <code>OutputStream</code> to write to
      * @param inputOffset : number of bytes to skip from input before copying
-     * -ve values are ignored
-     * @param length : number of bytes to copy. -ve means all
+     *                    -ve values are ignored
+     * @param length      : number of bytes to copy. -ve means all
      * @return the number of bytes copied
      * @throws NullPointerException if the input or output is null
      * @throws IOException          if an I/O error occurs
@@ -486,12 +496,12 @@ public class IOUtil {
      * this is done to guarantee that the correct number of characters are skipped.
      * </p>
      *
-     * @param input the <code>InputStream</code> to read from
-     * @param output the <code>OutputStream</code> to write to
+     * @param input       the <code>InputStream</code> to read from
+     * @param output      the <code>OutputStream</code> to write to
      * @param inputOffset : number of bytes to skip from input before copying
-     * -ve values are ignored
-     * @param length : number of bytes to copy. -ve means all
-     * @param buffer the buffer to use for the copy
+     *                    -ve values are ignored
+     * @param length      : number of bytes to copy. -ve means all
+     * @param buffer      the buffer to use for the copy
      * @return the number of bytes copied
      * @throws NullPointerException if the input or output is null
      * @throws IOException          if an I/O error occurs
@@ -531,7 +541,7 @@ public class IOUtil {
      * <p>
      * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
      *
-     * @param input the <code>Reader</code> to read from
+     * @param input  the <code>Reader</code> to read from
      * @param output the <code>Writer</code> to write to
      * @return the number of characters copied
      * @throws NullPointerException if the input or output is null
@@ -549,7 +559,7 @@ public class IOUtil {
      * <code>BufferedReader</code>.
      * <p>
      *
-     * @param input the <code>Reader</code> to read from
+     * @param input  the <code>Reader</code> to read from
      * @param output the <code>Writer</code> to write to
      * @param buffer the buffer to be used for the copy
      * @return the number of characters copied
@@ -576,11 +586,11 @@ public class IOUtil {
      * <p>
      * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
      *
-     * @param input the <code>Reader</code> to read from
-     * @param output the <code>Writer</code> to write to
+     * @param input       the <code>Reader</code> to read from
+     * @param output      the <code>Writer</code> to write to
      * @param inputOffset : number of chars to skip from input before copying
-     * -ve values are ignored
-     * @param length : number of chars to copy. -ve means all
+     *                    -ve values are ignored
+     * @param length      : number of chars to copy. -ve means all
      * @return the number of chars copied
      * @throws NullPointerException if the input or output is null
      * @throws IOException          if an I/O error occurs
@@ -599,12 +609,12 @@ public class IOUtil {
      * <code>BufferedReader</code>.
      * <p>
      *
-     * @param input the <code>Reader</code> to read from
-     * @param output the <code>Writer</code> to write to
+     * @param input       the <code>Reader</code> to read from
+     * @param output      the <code>Writer</code> to write to
      * @param inputOffset : number of chars to skip from input before copying
-     * -ve values are ignored
-     * @param length : number of chars to copy. -ve means all
-     * @param buffer the buffer to be used for the copy
+     *                    -ve values are ignored
+     * @param length      : number of chars to copy. -ve means all
+     * @param buffer      the buffer to be used for the copy
      * @return the number of chars copied
      * @throws NullPointerException if the input or output is null
      * @throws IOException          if an I/O error occurs
@@ -648,7 +658,7 @@ public class IOUtil {
      * this is done to guarantee that the correct number of bytes are skipped.
      * </p>
      *
-     * @param input byte stream to skip
+     * @param input  byte stream to skip
      * @param toSkip number of bytes to skip.
      * @return number of bytes actually skipped.
      * @throws IOException              if there is a problem reading the file
@@ -684,7 +694,7 @@ public class IOUtil {
      * This implementation guarantees that it will read as many bytes
      * as possible before giving up.
      *
-     * @param input ReadableByteChannel to skip
+     * @param input  ReadableByteChannel to skip
      * @param toSkip number of bytes to skip.
      * @return number of bytes actually skipped.
      * @throws IOException              if there is a problem reading the ReadableByteChannel
@@ -721,7 +731,7 @@ public class IOUtil {
      * this is done to guarantee that the correct number of characters are skipped.
      * </p>
      *
-     * @param input character stream to skip
+     * @param input  character stream to skip
      * @param toSkip number of characters to skip.
      * @return number of characters actually skipped.
      * @throws IOException              if there is a problem reading the file
@@ -765,7 +775,7 @@ public class IOUtil {
      * this is done to guarantee that the correct number of characters are skipped.
      * </p>
      *
-     * @param input stream to skip
+     * @param input  stream to skip
      * @param toSkip the number of bytes to skip
      * @throws IOException              if there is a problem reading the file
      * @throws IllegalArgumentException if toSkip is negative
@@ -786,7 +796,7 @@ public class IOUtil {
     /**
      * Skips the requested number of bytes or fail if there are not enough left.
      *
-     * @param input ReadableByteChannel to skip
+     * @param input  ReadableByteChannel to skip
      * @param toSkip the number of bytes to skip
      * @throws IOException              if there is a problem reading the ReadableByteChannel
      * @throws IllegalArgumentException if toSkip is negative
@@ -814,7 +824,7 @@ public class IOUtil {
      * this is done to guarantee that the correct number of characters are skipped.
      * </p>
      *
-     * @param input stream to skip
+     * @param input  stream to skip
      * @param toSkip the number of characters to skip
      * @throws IOException              if there is a problem reading the file
      * @throws IllegalArgumentException if toSkip is negative
@@ -828,6 +838,7 @@ public class IOUtil {
             throw new EOFException("Chars to skip: " + toSkip + " actual: " + skipped);
         }
     }
+
     /**
      * Returns the length of the given array in a null-safe manner.
      *
@@ -871,6 +882,7 @@ public class IOUtil {
     public static int length(final Object[] array) {
         return array == null ? 0 : array.length;
     }
+
     /**
      * Closes the given {@link Closeable} as a null-safe operation.
      *
@@ -903,7 +915,7 @@ public class IOUtil {
      * Closes the given {@link Closeable} as a null-safe operation.
      *
      * @param closeable The resource to close, may be null.
-     * @param consumer Consume the IOException thrown by {@link Closeable#close()}.
+     * @param consumer  Consume the IOException thrown by {@link Closeable#close()}.
      * @throws IOException if an I/O error occurs.
      * @since 2.7
      */
