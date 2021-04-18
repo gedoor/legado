@@ -823,5 +823,6 @@
     <string name="toc_src">目录源码</string>
     <string name="content_src">正文源码</string>
     <string name="list_src">列表源码</string>
+    <string name="url_already">此url已订阅</string>
 
 </resources>

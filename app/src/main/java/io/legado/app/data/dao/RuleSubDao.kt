@@ -16,6 +16,9 @@ interface RuleSubDao {
     @get:Query("select customOrder from ruleSubs order by customOrder limit 0,1")
     val maxOrder: Int
 
+    @Query("select * from ruleSubs where url = :url")
+    fun findByUrl(url: String): RuleSub?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg ruleSub: RuleSub)
 

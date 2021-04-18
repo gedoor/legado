@@ -123,7 +123,7 @@ class FilePickerActivity :
                     "txt", "xml" -> types.add("text/*")
                     else -> {
                         val mime = MimeTypeMap.getSingleton()
-                            .getMimeTypeFromExtension("json")
+                            .getMimeTypeFromExtension(it)
                             ?: "application/octet-stream"
                         types.add(mime)
                     }
