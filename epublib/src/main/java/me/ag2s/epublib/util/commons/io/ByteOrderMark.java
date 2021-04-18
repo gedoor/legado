@@ -18,15 +18,16 @@ package me.ag2s.epublib.util.commons.io;
  */
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
- * Byte Order Mark (BOM) representation -
- * see {@link BOMInputStream}.
+ * Byte Order Mark (BOM) representation - see {@link BOMInputStream}.
  *
  * @see BOMInputStream
- * @see <a href="http://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia - Byte Order Mark</a>
- * @version $Id: ByteOrderMark.java 1005099 2010-10-06 16:13:01Z niallp $
- * @since Commons IO 2.0
+ * @see <a href="http://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia: Byte Order Mark</a>
+ * @see <a href="http://www.w3.org/TR/2006/REC-xml-20060816/#sec-guessing">W3C: Autodetection of Character Encodings
+ *      (Non-Normative)</a>
+ * @since 2.0
  */
 public class ByteOrderMark implements Serializable {
 
@@ -34,10 +35,32 @@ public class ByteOrderMark implements Serializable {
 
     /** UTF-8 BOM */
     public static final ByteOrderMark UTF_8    = new ByteOrderMark("UTF-8",    0xEF, 0xBB, 0xBF);
-    /** UTF-16BE BOM (Big Endian) */
+
+    /** UTF-16BE BOM (Big-Endian) */
     public static final ByteOrderMark UTF_16BE = new ByteOrderMark("UTF-16BE", 0xFE, 0xFF);
-    /** UTF-16LE BOM (Little Endian) */
+
+    /** UTF-16LE BOM (Little-Endian) */
     public static final ByteOrderMark UTF_16LE = new ByteOrderMark("UTF-16LE", 0xFF, 0xFE);
+
+    /**
+     * UTF-32BE BOM (Big-Endian)
+     * @since 2.2
+     */
+    public static final ByteOrderMark UTF_32BE = new ByteOrderMark("UTF-32BE", 0x00, 0x00, 0xFE, 0xFF);
+
+    /**
+     * UTF-32LE BOM (Little-Endian)
+     * @since 2.2
+     */
+    public static final ByteOrderMark UTF_32LE = new ByteOrderMark("UTF-32LE", 0xFF, 0xFE, 0x00, 0x00);
+
+    /**
+     * Unicode BOM character; external form depends on the encoding.
+     * @see <a href="http://unicode.org/faq/utf_bom.html#BOM">Byte Order Mark (BOM) FAQ</a>
+     * @since 2.5
+     */
+    @SuppressWarnings("unused")
+    public static final char UTF_BOM = '\uFEFF';
 
     private final String charsetName;
     private final int[] bytes;
@@ -52,8 +75,8 @@ public class ByteOrderMark implements Serializable {
      * @throws IllegalArgumentException if the bytes are null or zero
      * length
      */
-    public ByteOrderMark(String charsetName, int... bytes) {
-        if (charsetName == null || charsetName.length() == 0) {
+    public ByteOrderMark(final String charsetName, final int... bytes) {
+        if (charsetName == null || charsetName.isEmpty()) {
             throw new IllegalArgumentException("No charsetName specified");
         }
         if (bytes == null || bytes.length == 0) {
@@ -88,7 +111,7 @@ public class ByteOrderMark implements Serializable {
      * @param pos The position
      * @return The specified byte
      */
-    public int get(int pos) {
+    public int get(final int pos) {
         return bytes[pos];
     }
 
@@ -98,7 +121,7 @@ public class ByteOrderMark implements Serializable {
      * @return a copy of the BOM's bytes
      */
     public byte[] getBytes() {
-        byte[] copy = new byte[bytes.length];
+        final byte[] copy = new byte[bytes.length];
         for (int i = 0; i < bytes.length; i++) {
             copy[i] = (byte)bytes[i];
         }
@@ -113,11 +136,11 @@ public class ByteOrderMark implements Serializable {
      * false
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof ByteOrderMark)) {
             return false;
         }
-        ByteOrderMark bom = (ByteOrderMark)obj;
+        final ByteOrderMark bom = (ByteOrderMark)obj;
         if (bytes.length != bom.length()) {
             return false;
         }
@@ -133,12 +156,12 @@ public class ByteOrderMark implements Serializable {
      * Return the hashcode for this BOM.
      *
      * @return the hashcode for this BOM.
-     * @see Object#hashCode()
+     * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
         int hashCode = getClass().hashCode();
-        for (int b : bytes) {
+        for (final int b : bytes) {
             hashCode += b;
         }
         return hashCode;
@@ -152,7 +175,7 @@ public class ByteOrderMark implements Serializable {
     @Override
     @SuppressWarnings("NullableProblems")
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append(getClass().getSimpleName());
         builder.append('[');
         builder.append(charsetName);
@@ -162,7 +185,7 @@ public class ByteOrderMark implements Serializable {
                 builder.append(",");
             }
             builder.append("0x");
-            builder.append(Integer.toHexString(0xFF & bytes[i]).toUpperCase());
+            builder.append(Integer.toHexString(0xFF & bytes[i]).toUpperCase(Locale.ROOT));
         }
         builder.append(']');
         return builder.toString();

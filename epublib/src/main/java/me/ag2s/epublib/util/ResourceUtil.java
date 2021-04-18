@@ -75,16 +75,15 @@ public class ResourceUtil {
             }
 
         }
-        String html = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-        html += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">";
-        html += "<head><title>" + title + "</title>" +
+
+        return "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">" +
+                "<head><title>" + title + "</title>" +
                 "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\"/>" +
-                "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>";
-        html += "<body><h2>" + title + "</h2>" +
+                "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>" +
+                "<body><h2>" + title + "</h2>" +
                 body +
                 "</body></html>";
-
-        return html;
     }
 
     /**

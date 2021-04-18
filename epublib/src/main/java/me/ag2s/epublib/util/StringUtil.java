@@ -273,21 +273,25 @@ public class StringUtil {
         }
         return text.substring(cPos + 1);
     }
+    // 移除字符串首尾空字符的高效方法(利用ASCII值判断,包括全角空格)
     public static String FixTrim(String s) {
-        if (s==null){
+        if (s == null || s.isEmpty()) {
             return "";
         }
-        Pattern r = Pattern.compile("^[\\s]{1,9}(.*?)[\\s]{1,9}$");
-        Matcher m = r.matcher(s);
-        if (m.find()) {
-            s= m.group(1);
+        int start = 0;
+        int len = s.length();
+        int end = len - 1;
+        while (start < end && (s.charAt(start) <= 0x20 || s.charAt(start) == '　')) {
+            ++start;
         }
-        if(s==null){
-            return "";
+        while (start < end && (s.charAt(end) <= 0x20 || s.charAt(end) == '　')) {
+            --end;
         }
-        //移除GBK中文全角空格
-        s = s.replace("　", "");
-        return s;
+        if (end < len) {
+            ++end;
+        }
+        return (start > 0 || end < len) ? s.substring(start, end) : s;
+
     }
 
 }

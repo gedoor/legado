@@ -102,6 +102,7 @@ public class EpubWriter {
     try {
       resultStream.putNextEntry(new ZipEntry("OEBPS/" + resource.getHref()));
       InputStream inputStream = resource.getInputStream();
+
       IOUtil.copy(inputStream, resultStream);
       inputStream.close();
     } catch (Exception e) {
