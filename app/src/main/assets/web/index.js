@@ -152,7 +152,7 @@ function rule2json() {
 	RuleJSON.lastUpdateTime = new Date().getTime();
 	RuleJSON.customOrder = RuleJSON.customOrder == '' ? 0 : parseInt(RuleJSON.customOrder);
 	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
-	RuleJSON.bookSourceType == RuleJSON.bookSourceType == '' ? 0 : parseInt(RuleJSON.weight);
+	RuleJSON.bookSourceType == RuleJSON.bookSourceType == '' ? 0 : parseInt(RuleJSON.bookSourceType);
 	RuleJSON.enabled = RuleJSON.enabled == '' || String(RuleJSON.enabled).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	RuleJSON.enabledExplore = RuleJSON.enabledExplore == '' || String(RuleJSON.enabledExplore).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	return RuleJSON;
