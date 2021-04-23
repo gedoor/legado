@@ -146,11 +146,6 @@ public class IOUtil {
 
     //
     public static void copy(InputStream in, OutputStream result) throws IOException {
-        int buffer=in.available();
-        if(buffer>IOUtil.DEFAULT_BUFFER_SIZE||buffer==0){
-            buffer=IOUtil.DEFAULT_BUFFER_SIZE;
-        }
-        Log.d(TAG,"buffer size:"+buffer);
         copy(in, result,DEFAULT_BUFFER_SIZE);
     }
 
