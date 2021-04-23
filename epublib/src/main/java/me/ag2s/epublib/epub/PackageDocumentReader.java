@@ -245,18 +245,18 @@ public class PackageDocumentReader extends PackageDocumentBase {
             return generateSpineFromResources(resources);
         }
         Spine result = new Spine();
-        String tocResourceId = DOMUtil
-                .getAttribute(spineElement, NAMESPACE_OPF, OPFAttributes.toc);
-        result
-                .setTocResource(findTableOfContentsResource(tocResourceId, resources));
-        NodeList spineNodes = packageDocument
-                .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.itemref);
-        List<SpineReference> spineReferences = new ArrayList<>(
-                spineNodes.getLength());
+        String tocResourceId = DOMUtil.getAttribute(spineElement, NAMESPACE_OPF, OPFAttributes.toc);
+        Log.v(TAG,tocResourceId);
+        result.setTocResource(findTableOfContentsResource(tocResourceId, resources));
+        NodeList spineNodes = DOMUtil.getElementsByTagNameNS(packageDocument, NAMESPACE_OPF, OPFTags.itemref);
+        if(spineNodes==null){
+            Log.e(TAG,"spineNodes is null");
+            return result;
+        }
+        List<SpineReference> spineReferences = new ArrayList<>(spineNodes.getLength());
         for (int i = 0; i < spineNodes.getLength(); i++) {
             Element spineItem = (Element) spineNodes.item(i);
-            String itemref = DOMUtil
-                    .getAttribute(spineItem, NAMESPACE_OPF, OPFAttributes.idref);
+            String itemref = DOMUtil.getAttribute(spineItem, NAMESPACE_OPF, OPFAttributes.idref);
             if (StringUtil.isBlank(itemref)) {
                 Log.e(TAG, "itemref with missing or empty idref"); // XXX
                 continue;
@@ -265,6 +265,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
             if (id == null) {
                 id = itemref;
             }
+
             Resource resource = resources.getByIdOrHref(id);
             if (resource == null) {
                 Log.e(TAG, "resource with id '" + id + "' not found");

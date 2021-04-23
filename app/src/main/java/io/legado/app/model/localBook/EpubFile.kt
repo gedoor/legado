@@ -114,30 +114,16 @@ class EpubFile(var book: Book) {
                 }
                 input ?: return null
                 FileUtils.writeInputStream(file, input)
+                if (!file.exists()){
+                    return EpubReader().readEpub(input)
+                }
 
             }
-            return EpubReader().readEpubLazy(ZipFile(file),"utf-8")
+
+            //通过懒加载读取epub
+            return EpubReader().readEpubLazy(ZipFile(file), "utf-8")
 
 
-//            val inZip = ZipInputStream(input)
-//            var zipEntry: ZipEntry?
-//            val resources = Resources()
-//            do {
-//                zipEntry = inZip.nextEntry
-//                if ((zipEntry == null) || zipEntry.isDirectory || zipEntry == ZipEntry("<error>")) continue
-//                val resource = ResourceUtil.createResource(zipEntry, inZip)
-//                if (resource.mediaType == MediaTypes.XHTML) resource.inputEncoding = "UTF-8"
-//                if (zipEntry.name.endsWith(".opf")) {
-//                    /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
-//                    val newS = String(resource.data).replace(
-//                        "\\smlns=\"http://www.idpf.org/2007/opf\"".toRegex(),
-//                        " xmlns=\"http://www.idpf.org/2007/opf\""
-//                    )
-//                    resource.data = newS.toByteArray()
-//                }
-//                resources.add(resource)
-//            } while (zipEntry != null)
-//            if (resources.size() > 0) return EpubReader().readEpub(resources)
         } catch (e: Exception) {
             e.printStackTrace()
         }
