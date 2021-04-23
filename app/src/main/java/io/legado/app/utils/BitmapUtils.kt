@@ -28,6 +28,7 @@ object BitmapUtils {
      */
     fun decodeBitmap(path: String, width: Int, height: Int): Bitmap? {
         val op = BitmapFactory.Options()
+        op.inPreferredConfig=Config.RGB_565
         var ips=FileInputStream(path)
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
@@ -54,6 +55,7 @@ object BitmapUtils {
      */
     fun decodeBitmap(path: String): Bitmap? {
         val opts = BitmapFactory.Options()
+        opts.inPreferredConfig=Config.RGB_565
         var ips=FileInputStream(path)
         opts.inJustDecodeBounds = true
         BitmapFactory.decodeStream(ips,null,opts)

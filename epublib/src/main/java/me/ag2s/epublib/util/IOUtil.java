@@ -450,7 +450,7 @@ public class IOUtil {
                 output.write(buffer, 0, n);
                 count += n;
             }
-            input.close();
+            //input.close();
         }
         return count;
     }

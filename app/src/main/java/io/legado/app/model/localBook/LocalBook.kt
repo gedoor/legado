@@ -138,6 +138,13 @@ object LocalBook {
                 val bookFile = FileUtils.getFile(cacheFolder, book.originName)
                 bookFile.delete()
             }
+            if(book.isEpub()){
+                val bookFile=BookHelp.getEpubFile(book).parentFile
+                if (bookFile!=null&&bookFile.exists()){
+                    FileUtils.delete(bookFile,true)
+                }
+
+            }
 
             if (deleteOriginal) {
                 if (book.bookUrl.isContentScheme()) {

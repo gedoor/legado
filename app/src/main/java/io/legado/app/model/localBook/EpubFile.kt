@@ -2,12 +2,14 @@ package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.externalFilesDir
 import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.epub.EpubReader
 import org.jsoup.Jsoup
@@ -27,6 +29,7 @@ class EpubFile(var book: Book) {
 
         @Synchronized
         private fun getEFile(book: Book): EpubFile {
+            BookHelp.getEpubFile(book)
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = EpubFile(book)
                 return eFile!!
@@ -98,28 +101,8 @@ class EpubFile(var book: Book) {
     /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
     private fun readEpub(): EpubBook? {
         try {
-            //f
-            val file = FileUtils.getFile(
-                BookHelp.downloadDir,
-                BookHelp.cacheFolderName,
-                book.getFolderName(),
-                "index.epubx"
-            )
-            if (!file.exists()) {
-                val input = if (book.bookUrl.isContentScheme()) {
-                    val uri = Uri.parse(book.bookUrl)
-                    appCtx.contentResolver.openInputStream(uri)
-                } else {
-                    File(book.bookUrl).inputStream()
-                }
-                input ?: return null
-                FileUtils.writeInputStream(file, input)
-                if (!file.exists()){
-                    return EpubReader().readEpub(input)
-                }
 
-            }
-
+            val file = BookHelp.getEpubFile(book)
             //通过懒加载读取epub
             return EpubReader().readEpubLazy(ZipFile(file), "utf-8")
 
