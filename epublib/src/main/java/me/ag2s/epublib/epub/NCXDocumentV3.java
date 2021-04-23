@@ -107,12 +107,21 @@ public class NCXDocumentV3 {
             if (ncxResource == null) {
                 return null;
             }
-            //Log.d(TAG, ncxResource.getHref());
+            //一些epub 3 文件没有按照epub3的标准使用删除掉ncx目录文件
+            if (ncxResource.getHref().endsWith(".ncx")){
+                Log.v(TAG,"该epub文件不标准，使用了epub2的目录文件");
+                return NCXDocumentV2.read(book, epubReader);
+            }
+            Log.d(TAG, ncxResource.getHref());
 
             Document ncxDocument = ResourceUtil.getAsDocument(ncxResource);
-            //Log.d(TAG, ncxDocument.getNodeName());
+            Log.d(TAG, ncxDocument.getNodeName());
 
             Element navMapElement = (Element) ncxDocument.getElementsByTagName(XHTMLTgs.nav).item(0);
+            if(navMapElement==null){
+                Log.d(TAG,"epub3目录文件未发现nav节点，尝试使用epub2的规则解析");
+                return NCXDocumentV2.read(book, epubReader);
+            }
             navMapElement = (Element) navMapElement.getElementsByTagName(XHTMLTgs.ol).item(0);
             Log.d(TAG, navMapElement.getTagName());
 

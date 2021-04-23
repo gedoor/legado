@@ -148,9 +148,9 @@ public class NCXDocumentV2 {
         if (resource == null) {
             Log.e(TAG, "Resource with href " + href + " in NCX document not found");
         }
-        Log.d(TAG, "label:" + label);
-        Log.d(TAG, "href:" + href);
-        Log.d(TAG, "fragmentId:" + fragmentId);
+        Log.v(TAG, "label:" + label);
+        Log.v(TAG, "href:" + href);
+        Log.v(TAG, "fragmentId:" + fragmentId);
         TOCReference result = new TOCReference(label, resource, fragmentId);
         List<TOCReference> childTOCReferences = readTOCReferences(
                 navpointElement.getChildNodes(), book);
