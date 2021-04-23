@@ -113,7 +113,7 @@ object BookHelp {
         )
     }
 
-    private fun getImageSuffix(src: String): String {
+    fun getImageSuffix(src: String): String {
         var suffix = src.substringAfterLast(".").substringBefore(",")
         if (suffix.length > 5) {
             suffix = ".jpg"

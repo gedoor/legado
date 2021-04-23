@@ -24,7 +24,6 @@ import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.util.ResourceUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.charset.Charset
 
@@ -184,6 +183,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+
     private fun exportEpub(file: File, book: Book) {
         val filename = "${book.name} by ${book.author}.epub"
         val epubBook = EpubBook()
@@ -254,9 +254,12 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun setPic(src: String, book: Book, epubBook: EpubBook) {
+
+        val href = "${MD5Utils.md5Encode16(src)}${BookHelp.getImageSuffix(src)}"
         val vFile = BookHelp.getImage(book, src)
+        val fp = FileResourceProvider(vFile.parent)
         if (vFile.exists()) {
-            val img = Resource(FileInputStream(vFile), MD5Utils.md5Encode16(src) + ".jpg")
+            val img = LazyResource(fp, href)
             epubBook.resources.add(img)
         }
     }
@@ -275,7 +278,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 matchResult.groupValues[1].let {
                     val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
                     setPic(src, book, epubBook)
-                    text1 = text1.replace(src, MD5Utils.md5Encode16(src) + ".jpg")
+                    text1 = text1.replace(
+                        src,
+                        "${MD5Utils.md5Encode16(src)}${BookHelp.getImageSuffix(src)}"
+                    )
 
                 }
             }
