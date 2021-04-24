@@ -29,10 +29,10 @@ object BitmapUtils {
     fun decodeBitmap(path: String, width: Int, height: Int): Bitmap? {
         val op = BitmapFactory.Options()
         op.inPreferredConfig = Config.RGB_565
-        val ips = FileInputStream(path)
+        var ips = FileInputStream(path)
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
-        BitmapFactory.decodeFileDescriptor(ips.fd, null, op)
+        BitmapFactory.decodeStream(ips, null, op)
         //获取比例大小
         val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
         val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
@@ -45,7 +45,8 @@ object BitmapUtils {
             }
         }
         op.inJustDecodeBounds = false
-        return BitmapFactory.decodeFileDescriptor(ips.fd, null, op)
+        ips = FileInputStream(path)
+        return BitmapFactory.decodeStream(ips, null, op)
     }
 
     /** 从path中获取Bitmap图片
@@ -56,13 +57,14 @@ object BitmapUtils {
 
         val opts = BitmapFactory.Options()
         opts.inPreferredConfig = Config.RGB_565
-        val ips = FileInputStream(path)
+        var ips = FileInputStream(path)
         opts.inJustDecodeBounds = true
-        BitmapFactory.decodeFileDescriptor(ips.fd, null, opts)
+        BitmapFactory.decodeStream(ips, null, opts)
         opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
         opts.inJustDecodeBounds = false
+        ips = FileInputStream(path)
 
-        return BitmapFactory.decodeFileDescriptor(ips.fd, null, opts)
+        return BitmapFactory.decodeStream(ips, null, opts)
     }
 
     /**
