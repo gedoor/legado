@@ -822,5 +822,7 @@
     <string name="content_src">正文原始碼</string>
     <string name="list_src">列表原始碼</string>
     <string name="url_already">此url已訂閱</string>
+    <string name="high_brush_title">高刷</string>
+    <string name="high_brush_summary">使用屏幕最高刷新率</string>
 
 </resources>
