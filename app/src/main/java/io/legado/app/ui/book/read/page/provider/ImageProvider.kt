@@ -54,7 +54,9 @@ object ImageProvider {
                 ChapterProvider.visibleWidth,
                 ChapterProvider.visibleHeight
             )
-            setCache(chapterIndex, src, bitmap)
+            if (bitmap != null) {
+                setCache(chapterIndex, src, bitmap)
+            }
             bitmap
         } catch (e: Exception) {
             null

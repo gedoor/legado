@@ -2,16 +2,6 @@ package me.ag2s.epublib.epub;
 
 import android.util.Log;
 
-import me.ag2s.epublib.domain.EpubResourceProvider;
-import me.ag2s.epublib.domain.LazyResource;
-import me.ag2s.epublib.domain.LazyResourceProvider;
-import me.ag2s.epublib.domain.MediaType;
-import me.ag2s.epublib.domain.MediaTypes;
-import me.ag2s.epublib.domain.Resource;
-import me.ag2s.epublib.domain.Resources;
-import me.ag2s.epublib.util.CollectionUtil;
-import me.ag2s.epublib.util.ResourceUtil;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +11,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+
+import me.ag2s.epublib.domain.EpubResourceProvider;
+import me.ag2s.epublib.domain.LazyResource;
+import me.ag2s.epublib.domain.LazyResourceProvider;
+import me.ag2s.epublib.domain.MediaType;
+import me.ag2s.epublib.domain.MediaTypes;
+import me.ag2s.epublib.domain.Resource;
+import me.ag2s.epublib.domain.Resources;
+import me.ag2s.epublib.util.CollectionUtil;
+import me.ag2s.epublib.util.ResourceUtil;
 
 
 /**
@@ -72,6 +72,12 @@ public class ResourcesLoader {
             } else {
                 resource = ResourceUtil
                         .createResource(zipEntry, zipFile.getInputStream(zipEntry));
+                /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
+                if (href.endsWith("opf")) {
+                    String string = new String(resource.getData()).replace("smlns=\"", "xmlns=\"");
+                    resource.setData(string.getBytes());
+                }
+
             }
 
             if (resource.getMediaType() == MediaTypes.XHTML) {
@@ -123,9 +129,15 @@ public class ResourcesLoader {
             if ((zipEntry == null) || zipEntry.isDirectory()) {
                 continue;
             }
+            String href = zipEntry.getName();
 
             // store resource
             Resource resource = ResourceUtil.createResource(zipEntry, zipInputStream);
+            ///*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
+            if (href.endsWith("opf")) {
+                String string = new String(resource.getData()).replace("smlns=\"", "xmlns=\"");
+                resource.setData(string.getBytes());
+            }
             if (resource.getMediaType() == MediaTypes.XHTML) {
                 resource.setInputEncoding(defaultHtmlEncoding);
             }

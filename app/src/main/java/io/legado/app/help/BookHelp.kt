@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import android.net.Uri
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
@@ -53,6 +54,28 @@ object BookHelp {
                 }
             }
         }
+    }
+
+    fun getEpubFile(book: Book,): File {
+        val file = FileUtils.getFile(
+            downloadDir,
+            cacheFolderName,
+            book.getFolderName(),
+            "index.epubx"
+        )
+        if(!file.exists()){
+            val input = if (book.bookUrl.isContentScheme()) {
+                val uri = Uri.parse(book.bookUrl)
+                appCtx.contentResolver.openInputStream(uri)
+            } else {
+                File(book.bookUrl).inputStream()
+            }
+            if (input != null) {
+                FileUtils.writeInputStream(file, input)
+            }
+
+        }
+        return file
     }
 
     suspend fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
@@ -113,7 +136,7 @@ object BookHelp {
         )
     }
 
-    private fun getImageSuffix(src: String): String {
+    fun getImageSuffix(src: String): String {
         var suffix = src.substringAfterLast(".").substringBefore(",")
         if (suffix.length > 5) {
             suffix = ".jpg"

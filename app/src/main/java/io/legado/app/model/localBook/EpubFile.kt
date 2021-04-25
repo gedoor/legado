@@ -2,16 +2,16 @@ package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.utils.*
+import io.legado.app.help.BookHelp
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.externalFilesDir
 import me.ag2s.epublib.domain.EpubBook
-import me.ag2s.epublib.domain.MediaTypes
-import me.ag2s.epublib.domain.Resources
 import me.ag2s.epublib.epub.EpubReader
-import me.ag2s.epublib.util.ResourceUtil
 import org.jsoup.Jsoup
 import splitties.init.appCtx
 import java.io.File
@@ -20,8 +20,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.*
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
+import java.util.zip.ZipFile
 
 class EpubFile(var book: Book) {
 
@@ -30,6 +29,7 @@ class EpubFile(var book: Book) {
 
         @Synchronized
         private fun getEFile(book: Book): EpubFile {
+            BookHelp.getEpubFile(book)
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = EpubFile(book)
                 return eFile!!
@@ -101,32 +101,12 @@ class EpubFile(var book: Book) {
     /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
     private fun readEpub(): EpubBook? {
         try {
-            val input = if (book.bookUrl.isContentScheme()) {
-                val uri = Uri.parse(book.bookUrl)
-                appCtx.contentResolver.openInputStream(uri)
-            } else {
-                File(book.bookUrl).inputStream()
-            }
-            input ?: return null
-            val inZip = ZipInputStream(input)
-            var zipEntry: ZipEntry?
-            val resources = Resources()
-            do {
-                zipEntry = inZip.nextEntry
-                if ((zipEntry == null) || zipEntry.isDirectory || zipEntry == ZipEntry("<error>")) continue
-                val resource = ResourceUtil.createResource(zipEntry, inZip)
-                if (resource.mediaType == MediaTypes.XHTML) resource.inputEncoding = "UTF-8"
-                if (zipEntry.name.endsWith(".opf")) {
-                    /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
-                    val newS = String(resource.data).replace(
-                        "\\smlns=\"http://www.idpf.org/2007/opf\"".toRegex(),
-                        " xmlns=\"http://www.idpf.org/2007/opf\""
-                    )
-                    resource.data = newS.toByteArray()
-                }
-                resources.add(resource)
-            } while (zipEntry != null)
-            if (resources.size() > 0) return EpubReader().readEpub(resources)
+
+            val file = BookHelp.getEpubFile(book)
+            //通过懒加载读取epub
+            return EpubReader().readEpubLazy(ZipFile(file), "utf-8")
+
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
