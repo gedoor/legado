@@ -1,5 +1,7 @@
 package me.ag2s.epublib.util;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
@@ -18,6 +20,7 @@ import java.nio.CharBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 
+import me.ag2s.epublib.epub.PackageDocumentReader;
 import me.ag2s.epublib.util.commons.io.IOConsumer;
 
 /**
@@ -28,6 +31,7 @@ import me.ag2s.epublib.util.commons.io.IOConsumer;
  * and using my own implementation saves the inclusion of a 200Kb jar file.
  */
 public class IOUtil {
+    private static final String TAG = IOUtil.class.getName();
 
     /**
      * Represents the end-of-file (or stream).
@@ -142,11 +146,7 @@ public class IOUtil {
 
     //
     public static void copy(InputStream in, OutputStream result) throws IOException {
-        int buffer=in.available();
-        if(buffer>IOUtil.DEFAULT_BUFFER_SIZE||buffer==0){
-            buffer=IOUtil.DEFAULT_BUFFER_SIZE;
-        }
-        copy(in, result,buffer);
+        copy(in, result,DEFAULT_BUFFER_SIZE);
     }
 
     /**
@@ -450,6 +450,7 @@ public class IOUtil {
                 output.write(buffer, 0, n);
                 count += n;
             }
+            //input.close();
         }
         return count;
     }

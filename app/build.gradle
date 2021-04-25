@@ -178,7 +178,8 @@ dependencies {
     implementation 'com.github.gedoor:rhino-android:1.5'
 
     //网络
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    //noinspection GradleDependency
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.ljx.rxhttp:rxhttp:2.5.7'
     kapt 'com.ljx.rxhttp:rxhttp-compiler:2.5.7'
 
