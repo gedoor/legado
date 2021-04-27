@@ -13,6 +13,8 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 
@@ -75,29 +77,26 @@ object BookContent {
             }
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
         } else if (contentData.nextUrl.size > 1) {
-            val contentDataList = arrayListOf<ContentData<String>>()
-            for (item in contentData.nextUrl) {
-                if (!nextUrlList.contains(item))
-                    contentDataList.add(ContentData(nextUrl = item))
-            }
-            for (item in contentDataList) {
-                withContext(scope.coroutineContext) {
-                    val res = AnalyzeUrl(
-                        ruleUrl = item.nextUrl,
-                        book = book,
-                        headerMapF = bookSource.getHeaderMap()
-                    ).getStrResponse(bookSource.bookSourceUrl)
-                    res.body?.let { nextBody ->
-                        contentData = analyzeContent(
-                            book, item.nextUrl, res.url, nextBody, contentRule,
-                            bookChapter, bookSource, mNextChapterUrl, false
+            Debug.log(bookSource.bookSourceUrl, "◇并发解析目录,总页数:${contentData.nextUrl.size}")
+            withContext(IO) {
+                val asyncArray = Array(contentData.nextUrl.size) {
+                    async(IO) {
+                        val urlStr = contentData.nextUrl[it]
+                        val analyzeUrl = AnalyzeUrl(
+                            ruleUrl = urlStr,
+                            book = book,
+                            headerMapF = bookSource.getHeaderMap()
                         )
-                        item.content = contentData.content
+                        val res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
+                        analyzeContent(
+                            book, urlStr, res.url, res.body!!, contentRule,
+                            bookChapter, bookSource, mNextChapterUrl, false
+                        ).content
                     }
                 }
-            }
-            for (item in contentDataList) {
-                content.append(item.content).append("\n")
+                asyncArray.forEach { coroutine ->
+                    content.append(coroutine.await()).append("\n")
+                }
             }
         }
         content.deleteCharAt(content.length - 1)
