@@ -19,8 +19,8 @@
     "headerPaddingLeft": 19,
     "headerPaddingRight": 16,
     "headerPaddingTop": 10,
-    "letterSpacing": -0.14,
-    "lineSpacingExtra": 7,
+    "letterSpacing": 0,
+    "lineSpacingExtra": 10,
     "name": "微信读书",
     "paddingBottom": 4,
     "paddingLeft": 22,
@@ -50,6 +50,7 @@
     "titleTopSpacing": 0
   },
   {
+    "name": "预设1",
     "bgStr": "#FFFFFF",
     "bgStrNight": "#000000",
     "textColor": "#000000",
@@ -60,6 +61,7 @@
     "darkStatusIconNight": false
   },
   {
+    "name": "预设2",
     "bgStr": "#DDC090",
     "bgStrNight": "#3C3F43",
     "textColor": "#3E3422",
@@ -70,6 +72,7 @@
     "darkStatusIconNight": false
   },
   {
+    "name": "预设3",
     "bgStr": "#C2D8AA",
     "bgStrNight": "#3C3F43",
     "textColor": "#596C44",
@@ -80,6 +83,7 @@
     "darkStatusIconNight": false
   },
   {
+    "name": "预设4",
     "bgStr": "#DBB8E2",
     "bgStrNight": "#3C3F43",
     "textColor": "#68516C",
@@ -90,6 +94,7 @@
     "darkStatusIconNight": false
   },
   {
+    "name": "预设5",
     "bgStr": "#ABCEE0",
     "bgStrNight": "#3C3F43",
     "textColor": "#3D4C54",
