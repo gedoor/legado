@@ -15,8 +15,10 @@ import io.legado.app.constant.EventBus
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogReadBgTextBinding
 import io.legado.app.databinding.ItemBgImageBinding
+import io.legado.app.help.DefaultData
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.bottomBackground
@@ -107,12 +109,6 @@ class BgTextConfigDialog : BaseDialogFragment() {
         binding.ivExport.setColorFilter(primaryTextColor)
         binding.ivDelete.setColorFilter(primaryTextColor)
         binding.tvBgImage.setTextColor(primaryTextColor)
-    }
-
-    @SuppressLint("InflateParams")
-    private fun initData() = with(ReadBookConfig.durConfig) {
-        binding.tvName.text = name.ifBlank { "文字" }
-        binding.swDarkStatusIcon.isChecked = curStatusIconDark()
         adapter = BgAdapter(requireContext(), secondaryTextColor)
         binding.recyclerView.adapter = adapter
         adapter.addHeaderView {
@@ -132,6 +128,12 @@ class BgTextConfigDialog : BaseDialogFragment() {
     }
 
     @SuppressLint("InflateParams")
+    private fun initData() = with(ReadBookConfig.durConfig) {
+        binding.tvName.text = name.ifBlank { "文字" }
+        binding.swDarkStatusIcon.isChecked = curStatusIconDark()
+    }
+
+    @SuppressLint("InflateParams")
     private fun initEvent() = with(ReadBookConfig.durConfig) {
         binding.ivEdit.setOnClickListener {
             alert(R.string.style_name) {
@@ -147,6 +149,17 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 }
                 cancelButton()
             }.show()
+        }
+        binding.tvRestore.setOnClickListener {
+            val defaultConfigs = DefaultData.readConfigs
+            val layoutNames = defaultConfigs.map { it.name }
+            selector("选择预设布局", layoutNames) { _, i ->
+                if (i >= 0) {
+                    ReadBookConfig.durConfig = defaultConfigs[i]
+                    initData()
+                    postEvent(EventBus.UP_CONFIG, true)
+                }
+            }
         }
         binding.swDarkStatusIcon.setOnCheckedChangeListener { _, isChecked ->
             setCurStatusIconDark(isChecked)
