@@ -98,19 +98,23 @@ class BgTextConfigDialog : BaseDialogFragment() {
         (activity as ReadBookActivity).bottomDialog--
     }
 
-    private fun initView() {
+    private fun initView() = with(binding) {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         primaryTextColor = requireContext().getPrimaryTextColor(isLight)
         secondaryTextColor = requireContext().getSecondaryTextColor(isLight)
-        binding.rootView.setBackgroundColor(bg)
-        binding.swDarkStatusIcon.setTextColor(primaryTextColor)
-        binding.ivImport.setColorFilter(primaryTextColor)
-        binding.ivExport.setColorFilter(primaryTextColor)
-        binding.ivDelete.setColorFilter(primaryTextColor)
-        binding.tvBgImage.setTextColor(primaryTextColor)
+        rootView.setBackgroundColor(bg)
+        tvNameTitle.setTextColor(primaryTextColor)
+        tvName.setTextColor(secondaryTextColor)
+        ivEdit.setColorFilter(secondaryTextColor)
+        tvRestore.setTextColor(primaryTextColor)
+        swDarkStatusIcon.setTextColor(primaryTextColor)
+        ivImport.setColorFilter(primaryTextColor)
+        ivExport.setColorFilter(primaryTextColor)
+        ivDelete.setColorFilter(primaryTextColor)
+        tvBgImage.setTextColor(primaryTextColor)
         adapter = BgAdapter(requireContext(), secondaryTextColor)
-        binding.recyclerView.adapter = adapter
+        recyclerView.adapter = adapter
         adapter.addHeaderView {
             ItemBgImageBinding.inflate(layoutInflater, it, false).apply {
                 tvName.setTextColor(secondaryTextColor)
