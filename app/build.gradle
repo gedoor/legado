@@ -190,7 +190,7 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd-websocket:2.3.1'
 
     //二维码
-    implementation 'com.king.zxing:zxing-lite:2.0.2'
+    implementation 'com.king.zxing:zxing-lite:2.0.3'
 
     //颜色选择
     implementation 'com.jaredrummler:colorpicker:1.1.0'
