@@ -454,7 +454,7 @@
     <string name="net_error_10003">Data parsing failed</string>
     <!--error string end-->
 
-    <string name="source_http_header">请求头(header)</string>
+    <string name="source_http_header">H</string>
     <string name="debug_source">Debug source</string>
     <string name="import_by_qr_code">Import from QR code</string>
     <string name="share_selected_source">Share selected sources</string>
@@ -772,10 +772,10 @@
     <string name="select_theme">Switch default theme</string>
     <string name="sort_by_lastUpdateTime">Sort by update time</string>
     <string name="search_content">Search content</string>
-    <string name="rss_source_empty">关注公众号[开源阅读]获取订阅源!</string>
+    <string name="rss_source_empty">Follow [开源阅读] at WeChat for more RSS source!</string>
     <string name="explore_empty">当前没有发现源,关注公众号[开源阅读]添加带发现的书源!</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
-    <string name="theme_name">主题名称</string>
+    <string name="theme_name">Theme name</string>
     <string name="auto_clear_expired">自动清除过期搜索数据</string>
     <string name="auto_clear_expired_summary">超过一天的搜索数据</string>
     <string name="re_segment">重新分段</string>
@@ -784,13 +784,13 @@
     <string name="scan_folder">智能扫描</string>
     <string name="copy_book_url">拷贝书籍URL</string>
     <string name="copy_toc_url">拷贝目录URL</string>
-    <string name="no_book">没有书籍</string>
-    <string name="keep_original_name">保留原名</string>
+    <string name="no_book">NO BOOK</string>
+    <string name="keep_original_name">Keep original name</string>
     <string name="click_regional_config">点击区域设置</string>
-    <string name="colse">关闭</string>
-    <string name="next_page">下一页</string>
-    <string name="prev_page">上一页</string>
-    <string name="non_action">无操作</string>
+    <string name="colse">Close</string>
+    <string name="next_page">Next Page</string>
+    <string name="prev_page">Prev Page</string>
+    <string name="non_action">No Action</string>
     <string name="body_title">正文标题</string>
     <string name="show_hide">显示/隐藏</string>
     <string name="header_footer">footer <![CDATA[&]]> header</string>
