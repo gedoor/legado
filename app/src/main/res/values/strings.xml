@@ -454,7 +454,7 @@
     <string name="net_error_10003">Data parsing failed</string>
     <!--error string end-->
 
-    <string name="source_http_header">H</string>
+    <string name="source_http_header">HTTP Header</string>
     <string name="debug_source">Debug source</string>
     <string name="import_by_qr_code">Import from QR code</string>
     <string name="share_selected_source">Share selected sources</string>
