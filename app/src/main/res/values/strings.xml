@@ -397,7 +397,6 @@
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
-    <string name="source_http_header">请求头(header)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
     <string name="r_book_list">书籍列表规则(bookList)</string>
@@ -455,9 +454,10 @@
     <string name="net_error_10003">Data parsing failed</string>
     <!--error string end-->
 
-
+    <string name="source_http_header">HTTP Header</string>
     <string name="debug_source">Debug source</string>
     <string name="import_by_qr_code">Import from QR code</string>
+    <string name="share_selected_source">Share selected sources</string>
     <string name="scan_qr_code">Scan QR code</string>
     <string name="click_on_selected_show_menu">Tap to display Menu when selected </string>
     <string name="theme">Theme</string>
@@ -721,7 +721,6 @@
     <string name="import_old_summary">Select a legacy backup folder</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
-
     <string name="starting_download">Starting download</string>
     <string name="already_in_download">This book is already in Download list</string>
     <string name="click_to_open">click to open</string>
@@ -744,7 +743,6 @@
     <string name="replace_enable_default_t">Enable replace rule by default</string>
     <string name="replace_enable_default_s">For new added books</string>
     <string name="select_restore_file">Select restore file</string>
-    <string name="select_theme">Switch default theme</string>
     <string name="day_background_too_dark">Day background can not be too dark!</string>
     <string name="day_bottom_bar_too_dark">Day bottom can not be too dark!</string>
     <string name="night_background_too_light">Night background can not be too bright!</string>
@@ -771,13 +769,13 @@
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
-    <string name="share_selected_source">Share selected sources</string>
+    <string name="select_theme">Switch default theme</string>
     <string name="sort_by_lastUpdateTime">Sort by update time</string>
     <string name="search_content">Search content</string>
-    <string name="rss_source_empty">关注公众号[开源阅读]获取订阅源!</string>
+    <string name="rss_source_empty">Follow [开源阅读] at WeChat for more RSS source!</string>
     <string name="explore_empty">当前没有发现源,关注公众号[开源阅读]添加带发现的书源!</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
-    <string name="theme_name">主题名称</string>
+    <string name="theme_name">Theme name</string>
     <string name="auto_clear_expired">自动清除过期搜索数据</string>
     <string name="auto_clear_expired_summary">超过一天的搜索数据</string>
     <string name="re_segment">重新分段</string>
@@ -786,13 +784,13 @@
     <string name="scan_folder">智能扫描</string>
     <string name="copy_book_url">拷贝书籍URL</string>
     <string name="copy_toc_url">拷贝目录URL</string>
-    <string name="no_book">没有书籍</string>
-    <string name="keep_original_name">保留原名</string>
+    <string name="no_book">NO BOOK</string>
+    <string name="keep_original_name">Keep original name</string>
     <string name="click_regional_config">点击区域设置</string>
-    <string name="colse">关闭</string>
-    <string name="next_page">下一页</string>
-    <string name="prev_page">上一页</string>
-    <string name="non_action">无操作</string>
+    <string name="colse">Close</string>
+    <string name="next_page">Next Page</string>
+    <string name="prev_page">Prev Page</string>
+    <string name="non_action">No Action</string>
     <string name="body_title">正文标题</string>
     <string name="show_hide">显示/隐藏</string>
     <string name="header_footer">footer <![CDATA[&]]> header</string>
