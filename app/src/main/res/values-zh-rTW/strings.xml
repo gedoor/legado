@@ -812,6 +812,8 @@
     <string name="export_to_web_dav">匯出到WebDav</string>
     <string name="reverse_content">反轉內容</string>
     <string name="debug">除錯</string>
+    <string name="crash_log">當機日誌</string>
+    <string name="use_zh_layout">使用自訂中文分行</string>
     <string name="image_style">圖片樣式</string>
     <string name="system_tts">系統TTS</string>
     <string name="export_type">匯出格式</string>
@@ -823,6 +825,6 @@
     <string name="list_src">列表原始碼</string>
     <string name="url_already">此url已訂閱</string>
     <string name="high_brush_title">高刷</string>
-    <string name="high_brush_summary">使用屏幕最高刷新率</string>
+    <string name="high_brush_summary">使用螢幕最高刷新率</string>
 
 </resources>
