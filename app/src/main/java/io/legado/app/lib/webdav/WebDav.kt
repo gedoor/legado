@@ -1,14 +1,12 @@
 package io.legado.app.lib.webdav
 
 import io.legado.app.help.http.HttpHelper
-import io.legado.app.utils.await
+import io.legado.app.help.http.await
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.Jsoup
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toInputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -238,9 +236,11 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            return RxHttp.get(url)
+            val requestBuilder = Request.Builder()
+                .url(url)
                 .addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                .toInputStream().await()
+            return HttpHelper.client.newCall(request = requestBuilder.build()).await()
+                .body?.byteStream()
         }
         return null
     }

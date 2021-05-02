@@ -36,7 +36,7 @@ object HttpHelper {
             .connectionSpecs(specs)
             .followRedirects(true)
             .followSslRedirects(true)
-            .addInterceptor(getHeaderInterceptor())
+            .addInterceptor(headerInterceptor())
 
         builder.build()
     }
@@ -85,7 +85,7 @@ object HttpHelper {
         return client
     }
 
-    private fun getHeaderInterceptor(): Interceptor {
+    private fun headerInterceptor(): Interceptor {
         return Interceptor { chain ->
             val request = chain.request()
                 .newBuilder()
