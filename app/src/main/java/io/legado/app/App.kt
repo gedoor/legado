@@ -15,7 +15,7 @@ import io.legado.app.help.ActivityHelp
 import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.ThemeConfig.applyDayNight
-import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.LanguageUtils
 import io.legado.app.utils.defaultSharedPreferences
 import rxhttp.wrapper.param.RxHttp
@@ -26,7 +26,7 @@ class App : MultiDexApplication() {
         super.onCreate()
         CrashHandler(this)
         LanguageUtils.setConfiguration(this)
-        RxHttp.init(HttpHelper.client, BuildConfig.DEBUG)
+        RxHttp.init(okHttpClient, BuildConfig.DEBUG)
         RxHttp.setOnParamAssembly {
             it.addHeader(AppConst.UA_NAME, AppConfig.userAgent)
         }
