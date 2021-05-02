@@ -1,5 +1,6 @@
 package io.legado.app.lib.webdav
 
+import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.await
 import io.legado.app.help.http.okHttpClient
 import okhttp3.*
@@ -236,11 +237,10 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            val requestBuilder = Request.Builder()
-                .url(url)
-                .addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            return okHttpClient.newCall(request = requestBuilder.build()).await()
-                .body?.byteStream()
+            return HttpHelper.newCall({
+                url(url)
+                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+            }).body?.byteStream()
         }
         return null
     }
