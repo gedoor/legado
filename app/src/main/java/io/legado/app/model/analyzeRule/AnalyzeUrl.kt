@@ -312,14 +312,14 @@ class AnalyzeUrl(
                 if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                     RxHttp.postForm(url)
                         .setAssemblyEnabled(false)
-                        .setOkClient(OkHttpHelper.getProxyClient(proxy))
+                        .setOkClient(getProxyClient(proxy))
                         .addAllEncoded(fieldMap)
                         .addAllHeader(headerMap)
                         .toStrResponse().await()
                 } else {
                     RxHttp.postJson(url)
                         .setAssemblyEnabled(false)
-                        .setOkClient(OkHttpHelper.getProxyClient(proxy))
+                        .setOkClient(getProxyClient(proxy))
                         .addAll(body)
                         .addAllHeader(headerMap)
                         .toStrResponse().await()
@@ -327,7 +327,7 @@ class AnalyzeUrl(
             }
             else -> RxHttp.get(url)
                 .setAssemblyEnabled(false)
-                .setOkClient(OkHttpHelper.getProxyClient(proxy))
+                .setOkClient(getProxyClient(proxy))
                 .addAllEncoded(fieldMap)
                 .addAllHeader(headerMap)
                 .toStrResponse().await()
@@ -341,14 +341,14 @@ class AnalyzeUrl(
                 if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                     RxHttp.postForm(url)
                         .setAssemblyEnabled(false)
-                        .setOkClient(OkHttpHelper.getProxyClient(proxy))
+                        .setOkClient(getProxyClient(proxy))
                         .addAllEncoded(fieldMap)
                         .addAllHeader(headerMap)
                         .toByteArray().await()
                 } else {
                     RxHttp.postJson(url)
                         .setAssemblyEnabled(false)
-                        .setOkClient(OkHttpHelper.getProxyClient(proxy))
+                        .setOkClient(getProxyClient(proxy))
                         .addAll(body)
                         .addAllHeader(headerMap)
                         .toByteArray().await()
@@ -356,7 +356,7 @@ class AnalyzeUrl(
             }
             else -> RxHttp.get(url)
                 .setAssemblyEnabled(false)
-                .setOkClient(OkHttpHelper.getProxyClient(proxy))
+                .setOkClient(getProxyClient(proxy))
                 .addAllEncoded(fieldMap)
                 .addAllHeader(headerMap)
                 .toByteArray().await()

@@ -1,7 +1,7 @@
 package io.legado.app.lib.webdav
 
-import io.legado.app.help.http.HttpHelper
 import io.legado.app.help.http.await
+import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -21,17 +21,19 @@ class WebDav(urlStr: String) {
     companion object {
         // 指定返回哪些属性
         private const val DIR =
-            """<?xml version="1.0"?>
-                <a:propfind xmlns:a="DAV:">
-                    <a:prop>
-                        <a:displayname/>
-                        <a:resourcetype/>
-                        <a:getcontentlength/>
-                        <a:creationdate/>
-                        <a:getlastmodified/>
-                        %s
-                    </a:prop>
-                </a:propfind>"""
+            """
+            <?xml version="1.0"?>
+            <a:propfind xmlns:a="DAV:">
+                <a:prop>
+                    <a:displayname/>
+                    <a:resourcetype/>
+                    <a:getcontentlength/>
+                    <a:creationdate/>
+                    <a:getlastmodified/>
+                    %s
+                </a:prop>
+            </a:propfind>
+            """
     }
 
     private val url: URL = URL(urlStr)
@@ -92,7 +94,7 @@ class WebDav(urlStr: String) {
     }
 
     @Throws(IOException::class)
-    private suspend fun propFindResponse(propsList: ArrayList<String>, depth: Int = 1): Response? {
+    private suspend fun propFindResponse(propsList: ArrayList<String>): Response? {
         val requestProps = StringBuilder()
         for (p in propsList) {
             requestProps.append("<a:").append(p).append("/>\n")
@@ -102,19 +104,17 @@ class WebDav(urlStr: String) {
         } else {
             String.format(DIR, requestProps.toString() + "\n")
         }
-        httpUrl?.let { url ->
-            // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
-            // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
-            val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
-            val request = Request.Builder()
-                .url(url)
-                .method("PROPFIND", requestBody)
-
-            HttpAuth.auth?.let {
-                request.header("Authorization", Credentials.basic(it.user, it.pass))
-            }
-            request.header("Depth", if (depth < 0) "infinity" else depth.toString())
-            return okHttpClient.newCall(request.build()).await()
+        val url = httpUrl
+        val auth = HttpAuth.auth
+        if (url != null && auth != null) {
+            return okHttpClient.newCall {
+                url(url)
+                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
+                // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
+                val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
+                method("PROPFIND", requestBody)
+            }.await()
         }
         return null
     }
@@ -159,11 +159,14 @@ class WebDav(urlStr: String) {
      * @return 是否创建成功
      */
     suspend fun makeAsDir(): Boolean {
-        httpUrl?.let { url ->
-            val request = Request.Builder()
-                .url(url)
-                .method("MKCOL", null)
-            return execRequest(request)
+        val url = httpUrl
+        val auth = HttpAuth.auth
+        if (url != null && auth != null) {
+            return okHttpClient.newCall {
+                url(url)
+                method("MKCOL", null)
+                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+            }.await().isSuccessful
         }
         return false
     }
@@ -197,11 +200,14 @@ class WebDav(urlStr: String) {
         if (!file.exists()) return false
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = file.asRequestBody(contentType?.toMediaType())
-        httpUrl?.let {
-            val request = Request.Builder()
-                .url(it)
-                .put(fileBody)
-            return execRequest(request)
+        val url = httpUrl
+        val auth = HttpAuth.auth
+        if (url != null && auth != null) {
+            return okHttpClient.newCall {
+                url(url)
+                put(fileBody)
+                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+            }.await().isSuccessful
         }
         return false
     }
@@ -209,27 +215,16 @@ class WebDav(urlStr: String) {
     suspend fun upload(byteArray: ByteArray, contentType: String? = null): Boolean {
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = byteArray.toRequestBody(contentType?.toMediaType())
-        httpUrl?.let {
-            val request = Request.Builder()
-                .url(it)
-                .put(fileBody)
-            return execRequest(request)
+        val url = httpUrl
+        val auth = HttpAuth.auth
+        if (url != null && auth != null) {
+            return okHttpClient.newCall {
+                url(url)
+                put(fileBody)
+                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+            }.await().isSuccessful
         }
         return false
-    }
-
-    /**
-     * 执行请求，获取响应结果
-     * @param requestBuilder 因为还需要追加验证信息，所以此处传递Request.Builder的对象，而不是Request的对象
-     * @return 请求执行的结果
-     */
-    @Throws(IOException::class)
-    private suspend fun execRequest(requestBuilder: Request.Builder): Boolean {
-        HttpAuth.auth?.let {
-            requestBuilder.header("Authorization", Credentials.basic(it.user, it.pass))
-        }
-        val response = okHttpClient.newCall(requestBuilder.build()).await()
-        return response.isSuccessful
     }
 
     @Throws(IOException::class)
@@ -237,10 +232,10 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            return HttpHelper.newCall({
+            return okHttpClient.newCall {
                 url(url)
                 addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }).body?.byteStream()
+            }.await().body?.byteStream()
         }
         return null
     }
