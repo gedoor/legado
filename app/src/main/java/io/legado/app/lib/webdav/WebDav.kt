@@ -21,8 +21,7 @@ class WebDav(urlStr: String) {
     companion object {
         // 指定返回哪些属性
         private const val DIR =
-            """
-            <?xml version="1.0"?>
+            """<?xml version="1.0"?>
             <a:propfind xmlns:a="DAV:">
                 <a:prop>
                     <a:displayname/>
@@ -32,8 +31,7 @@ class WebDav(urlStr: String) {
                     <a:getlastmodified/>
                     %s
                 </a:prop>
-            </a:propfind>
-            """
+            </a:propfind>"""
     }
 
     private val url: URL = URL(urlStr)
