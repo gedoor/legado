@@ -1,8 +1,8 @@
 package io.legado.app.lib.webdav
 
-import io.legado.app.help.http.await
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -58,16 +58,9 @@ class WebDav(urlStr: String) {
      * @return 远程文件是否存在
      */
     suspend fun indexFileInfo(): Boolean {
-        propFindResponse(ArrayList())?.let { response ->
-            if (!response.isSuccessful) {
-                this.exists = false
-                return false
-            }
-            response.body?.let {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                if (it.string().isNotEmpty()) {
-                    return true
-                }
+        propFindResponse(ArrayList())?.let {
+            if (it.text().isNotEmpty()) {
+                return true
             }
         }
         return false
@@ -80,19 +73,13 @@ class WebDav(urlStr: String) {
      * @return 文件列表
      */
     suspend fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
-        propFindResponse(propsList)?.let { response ->
-            if (response.isSuccessful) {
-                response.body?.let { body ->
-                    @Suppress("BlockingMethodInNonBlockingContext")
-                    return parseDir(body.string())
-                }
-            }
+        propFindResponse(propsList)?.text()?.let { body ->
+            return parseDir(body)
         }
         return ArrayList()
     }
 
-    @Throws(IOException::class)
-    private suspend fun propFindResponse(propsList: ArrayList<String>): Response? {
+    private suspend fun propFindResponse(propsList: ArrayList<String>): ResponseBody? {
         val requestProps = StringBuilder()
         for (p in propsList) {
             requestProps.append("<a:").append(p).append("/>\n")
@@ -105,14 +92,18 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            return okHttpClient.newCall {
-                url(url)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
-                // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
-                val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
-                method("PROPFIND", requestBody)
-            }.await()
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                    // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
+                    // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
+                    val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
+                    method("PROPFIND", requestBody)
+                }
+            }.onFailure {
+                it.printStackTrace()
+            }.getOrNull()
         }
         return null
     }
@@ -160,11 +151,12 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            return okHttpClient.newCall {
+            okHttpClient.newCall {
                 url(url)
                 method("MKCOL", null)
                 addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }.await().isSuccessful
+            }
+            return true
         }
         return false
     }
@@ -201,11 +193,12 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            return okHttpClient.newCall {
+            okHttpClient.newCall {
                 url(url)
                 put(fileBody)
                 addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }.await().isSuccessful
+            }
+            return true
         }
         return false
     }
@@ -216,11 +209,12 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            return okHttpClient.newCall {
+            okHttpClient.newCall {
                 url(url)
                 put(fileBody)
                 addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }.await().isSuccessful
+            }
+            return true
         }
         return false
     }
@@ -233,7 +227,7 @@ class WebDav(urlStr: String) {
             return okHttpClient.newCall {
                 url(url)
                 addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }.await().body?.byteStream()
+            }.byteStream()
         }
         return null
     }

@@ -6,9 +6,10 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.help.DefaultData
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
 import io.legado.app.utils.*
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toText
 
 class SpeakEngineViewModel(application: Application) : BaseViewModel(application) {
 
@@ -20,7 +21,9 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
 
     fun importOnLine(url: String) {
         execute {
-            RxHttp.get(url).toText("utf-8").await().let { json ->
+            okHttpClient.newCall {
+                url(url)
+            }.text("utf-8").let { json ->
                 import(json)
             }
         }.onSuccess {

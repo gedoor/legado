@@ -9,10 +9,11 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.SourceHelp
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.*
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toText
 
 class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     var groupName: String? = null
@@ -106,7 +107,9 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importSourceUrl(url: String) {
-        RxHttp.get(url).toText("utf-8").await().let { body ->
+        okHttpClient.newCall {
+            url(url)
+        }.text("utf-8").let { body ->
             val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
             for (item in items) {
                 val jsonItem = Restore.jsonPath.parse(item)

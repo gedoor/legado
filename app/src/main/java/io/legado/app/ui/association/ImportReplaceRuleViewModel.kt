@@ -4,10 +4,11 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
 import io.legado.app.help.storage.OldReplace
 import io.legado.app.utils.isAbsUrl
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toText
 
 class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     val errorLiveData = MutableLiveData<String>()
@@ -18,7 +19,9 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     fun import(text: String) {
         execute {
             if (text.isAbsUrl()) {
-                RxHttp.get(text).toText("utf-8").await().let {
+                okHttpClient.newCall {
+                    url(text)
+                }.text("utf-8").let {
                     val rules = OldReplace.jsonToReplaceRules(it)
                     allRules.addAll(rules)
                 }

@@ -17,6 +17,8 @@ import io.legado.app.databinding.DialogReadBgTextBinding
 import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.DefaultData
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.permission.Permissions
@@ -29,8 +31,6 @@ import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toByteArray
 import java.io.File
 
 class BgTextConfigDialog : BaseDialogFragment() {
@@ -308,7 +308,9 @@ class BgTextConfigDialog : BaseDialogFragment() {
 
     private fun importNetConfig(url: String) {
         execute {
-            RxHttp.get(url).toByteArray().await().let {
+            okHttpClient.newCall {
+                url(url)
+            }.bytes().let {
                 importConfig(it)
             }
         }.onError {

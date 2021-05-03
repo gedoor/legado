@@ -1,5 +1,7 @@
 package io.legado.app.help.http
 
+import io.legado.app.constant.AppConst
+import io.legado.app.help.AppConfig
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.UTF8BOMFighter
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -92,9 +94,15 @@ fun getProxyClient(proxy: String? = null): OkHttpClient {
     return okHttpClient
 }
 
-fun OkHttpClient.newCall(builder: Request.Builder.() -> Unit): Call {
-    val requestBuilder = Request.Builder().apply(builder)
-    return this.newCall(requestBuilder.build())
+suspend fun OkHttpClient.newCall(builder: Request.Builder.() -> Unit): ResponseBody {
+    val requestBuilder = Request.Builder()
+    requestBuilder.header(AppConst.UA_NAME, AppConfig.userAgent)
+    requestBuilder.apply(builder)
+    val response = this.newCall(requestBuilder.build()).await()
+    if (!response.isSuccessful) {
+        throw IOException("服务器没有响应。")
+    }
+    return response.body!!
 }
 
 suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->
