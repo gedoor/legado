@@ -6,6 +6,9 @@ import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.UTF8BOMFighter
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -105,6 +108,17 @@ suspend fun OkHttpClient.newCall(builder: Request.Builder.() -> Unit): ResponseB
     return response.body!!
 }
 
+suspend fun OkHttpClient.newCallStrResponse(builder: Request.Builder.() -> Unit): StrResponse {
+    val requestBuilder = Request.Builder()
+    requestBuilder.header(AppConst.UA_NAME, AppConfig.userAgent)
+    requestBuilder.apply(builder)
+    val response = this.newCall(requestBuilder.build()).await()
+    if (!response.isSuccessful) {
+        throw IOException("服务器没有响应。")
+    }
+    return StrResponse(response, response.body!!.text())
+}
+
 suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->
 
     block.invokeOnCancellation {
@@ -139,4 +153,35 @@ fun ResponseBody.text(encode: String? = null): String {
     //根据内容判断
     charsetName = EncodingDetect.getHtmlEncode(responseBytes)
     return String(responseBytes, Charset.forName(charsetName))
+}
+
+fun Request.Builder.get(url: String, queryMap: Map<String, String>, encoded: Boolean = false) {
+    val httpBuilder = url.toHttpUrl().newBuilder()
+    queryMap.forEach {
+        if (encoded) {
+            httpBuilder.addEncodedQueryParameter(it.key, it.value)
+        } else {
+            httpBuilder.addQueryParameter(it.key, it.value)
+        }
+    }
+    url(httpBuilder.build())
+}
+
+fun Request.Builder.postForm(form: Map<String, String>, encoded: Boolean = false) {
+    val formBody = FormBody.Builder()
+    form.forEach {
+        if (encoded) {
+            formBody.addEncoded(it.key, it.value)
+        } else {
+            formBody.add(it.key, it.value)
+        }
+    }
+    post(formBody.build())
+}
+
+fun Request.Builder.postJson(json: String?) {
+    json?.let {
+        val requestBody = json.toRequestBody("application/json; charset=UTF-8".toMediaType())
+        post(requestBody)
+    }
 }
