@@ -15,6 +15,7 @@ import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 
@@ -47,11 +48,11 @@ object BookContent {
         val analyzeRule = AnalyzeRule(book).setContent(body, baseUrl)
         analyzeRule.setRedirectUrl(baseUrl)
         analyzeRule.nextChapterUrl = mNextChapterUrl
+        scope.ensureActive()
         var contentData = analyzeContent(
             book, baseUrl, redirectUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
         )
         content.append(contentData.content).append("\n")
-
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
@@ -60,6 +61,7 @@ object BookContent {
                     == NetworkUtils.getAbsoluteURL(baseUrl, mNextChapterUrl)
                 ) break
                 nextUrlList.add(nextUrl)
+                scope.ensureActive()
                 val res = AnalyzeUrl(
                     ruleUrl = nextUrl,
                     book = book,
@@ -95,6 +97,7 @@ object BookContent {
                     }
                 }
                 asyncArray.forEach { coroutine ->
+                    scope.ensureActive()
                     content.append(coroutine.await()).append("\n")
                 }
             }
