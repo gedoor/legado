@@ -21,13 +21,14 @@ suspend fun OkHttpClient.newCall(
     val requestBuilder = Request.Builder()
     requestBuilder.header(AppConst.UA_NAME, AppConfig.userAgent)
     requestBuilder.apply(builder)
+    var response: Response? = null
     for (i in 0..retry) {
-        val response = this.newCall(requestBuilder.build()).await()
+        response = this.newCall(requestBuilder.build()).await()
         if (response.isSuccessful) {
             return response.body!!
         }
     }
-    throw IOException("服务器没有响应。")
+    throw IOException(response?.message ?: "服务器没有响应。")
 }
 
 suspend fun OkHttpClient.newCallStrResponse(
@@ -37,13 +38,14 @@ suspend fun OkHttpClient.newCallStrResponse(
     val requestBuilder = Request.Builder()
     requestBuilder.header(AppConst.UA_NAME, AppConfig.userAgent)
     requestBuilder.apply(builder)
+    var response: Response? = null
     for (i in 0..retry) {
-        val response = this.newCall(requestBuilder.build()).await()
+        response = this.newCall(requestBuilder.build()).await()
         if (response.isSuccessful) {
             return StrResponse(response, response.body!!.text())
         }
     }
-    throw IOException("服务器没有响应。")
+    throw IOException(response?.message ?: "服务器没有响应。")
 }
 
 suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->
