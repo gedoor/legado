@@ -308,9 +308,7 @@ class AnalyzeUrl(
         }
         return getProxyClient(proxy).newCallStrResponse(retry) {
             removeHeader(UA_NAME)
-            headerMap.forEach {
-                addHeader(it.key, it.value)
-            }
+            addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {
                     url(url)
@@ -330,9 +328,7 @@ class AnalyzeUrl(
         @Suppress("BlockingMethodInNonBlockingContext")
         return getProxyClient(proxy).newCall(retry) {
             removeHeader(UA_NAME)
-            headerMap.forEach {
-                addHeader(it.key, it.value)
-            }
+            addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {
                     url(url)

@@ -82,6 +82,12 @@ fun ResponseBody.text(encode: String? = null): String {
     return String(responseBytes, Charset.forName(charsetName))
 }
 
+fun Request.Builder.addHeaders(headers: Map<String, String>) {
+    headers.forEach {
+        addHeader(it.key, it.value)
+    }
+}
+
 fun Request.Builder.get(url: String, queryMap: Map<String, String>, encoded: Boolean = false) {
     val httpBuilder = url.toHttpUrl().newBuilder()
     queryMap.forEach {
