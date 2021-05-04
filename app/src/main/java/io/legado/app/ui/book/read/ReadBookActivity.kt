@@ -80,6 +80,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
     private val sourceEditActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            it ?: return@registerForActivityResult
             if (it.resultCode == RESULT_OK) {
                 viewModel.upBookSource {
                     upView()
