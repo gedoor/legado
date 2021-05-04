@@ -302,7 +302,7 @@ class AnalyzeUrl(
             params.sourceRegex = sourceRegex
             params.postData = body?.toByteArray()
             params.tag = tag
-            return HttpHelper.ajax(params)
+            return getWebViewSrc(params)
         }
         return getProxyClient(proxy).newCallStrResponse {
             removeHeader(UA_NAME)
