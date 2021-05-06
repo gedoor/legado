@@ -72,6 +72,14 @@ class OtherConfigFragment : BasePreferenceFragment(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             PreferKey.userAgent -> showUserAgentDialog()
+            PreferKey.preDownloadNum -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.pre_download))
+                .setMaxValue(9999)
+                .setMinValue(1)
+                .setValue(AppConfig.preDownloadNum)
+                .show {
+                    AppConfig.preDownloadNum = it
+                }
             PreferKey.threadCount -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.threads_num_title))
                 .setMaxValue(999)

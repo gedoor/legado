@@ -137,7 +137,7 @@ object ReadBook {
                     callBack?.upContent()
                 }
                 loadContent(durChapterIndex.plus(1), upContent, false)
-                if (AppConfig.preDownload) {
+                if (AppConfig.preDownloadNum) {
                     GlobalScope.launch(Dispatchers.IO) {
                         for (i in 2..9) {
                             delay(1000)
@@ -169,7 +169,7 @@ object ReadBook {
                     callBack?.upContent()
                 }
                 loadContent(durChapterIndex.minus(1), upContent, false)
-                if (AppConfig.preDownload) {
+                if (AppConfig.preDownloadNum) {
                     GlobalScope.launch(Dispatchers.IO) {
                         for (i in 2..9) {
                             delay(1000)
