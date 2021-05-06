@@ -140,8 +140,8 @@ object ReadBook {
                 loadContent(durChapterIndex.plus(1), upContent, false)
                 GlobalScope.launch(Dispatchers.IO) {
                     val maxChapterIndex =
-                        min(chapterSize, durChapterIndex + AppConfig.preDownloadNum)
-                    for (i in 2 until maxChapterIndex) {
+                        min(chapterSize - 1, durChapterIndex + AppConfig.preDownloadNum)
+                    for (i in 2..maxChapterIndex) {
                         delay(1000)
                         download(durChapterIndex + i)
                     }
@@ -172,8 +172,8 @@ object ReadBook {
                 loadContent(durChapterIndex.minus(1), upContent, false)
                 GlobalScope.launch(Dispatchers.IO) {
                     val maxChapterIndex =
-                        min(chapterSize, durChapterIndex + AppConfig.preDownloadNum)
-                    for (i in 2 until maxChapterIndex) {
+                        min(chapterSize - 1, durChapterIndex + AppConfig.preDownloadNum)
+                    for (i in 2..maxChapterIndex) {
                         delay(1000)
                         download(durChapterIndex - i)
                     }
