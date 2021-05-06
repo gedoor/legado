@@ -6,6 +6,8 @@
 **2021/05/04**
 * 修复bug
 * url参数添加重置次数,retry
+* 修改默认tts, 手动导入
+* 升级android studio
 
 **2021/04/30**
 * epub插图,epublib优化,图片解码优化,epub读取导出优化。by ag2s20150909
