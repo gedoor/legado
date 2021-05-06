@@ -10,6 +10,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.androidId
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
+import io.legado.app.help.AppConfig
 import splitties.init.appCtx
 import java.util.*
 
@@ -88,6 +89,13 @@ abstract class AppDatabase : RoomDatabase() {
                     """insert into book_groups(groupId, groupName, 'order', show) select ${AppConst.bookGroupNoneId}, '未分组', -7, 1
                     where not exists (select * from book_groups where groupId = ${AppConst.bookGroupNoneId})"""
                 )
+                if (AppConfig.isGooglePlay) {
+                    db.execSQL(
+                        """
+                        delete from rssSources where sourceUrl = 'https://github.com/gedoor/legado/releases'
+                    """
+                    )
+                }
             }
         }
 

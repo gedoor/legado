@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.legado.app.ui.widget.dynamiclayout.DynamicFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/content_view"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/refresh_layout"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/title_bar">
+    android:layout_height="match_parent">
 
-    <io.legado.app.ui.widget.recycler.RefreshRecyclerView
-        android:id="@+id/refresh_recycler_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</io.legado.app.ui.widget.dynamiclayout.DynamicFrameLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

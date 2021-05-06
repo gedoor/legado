@@ -152,7 +152,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //room
-    def room_version = '2.2.6'
+    def room_version = '2.3.0'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
@@ -178,10 +178,7 @@ dependencies {
     implementation 'com.github.gedoor:rhino-android:1.5'
 
     //网络
-    //noinspection GradleDependency
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    implementation 'com.ljx.rxhttp:rxhttp:2.5.7'
-    kapt 'com.ljx.rxhttp:rxhttp-compiler:2.5.7'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
@@ -191,7 +188,7 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd-websocket:2.3.1'
 
     //二维码
-    implementation 'com.king.zxing:zxing-lite:2.0.2'
+    implementation 'com.king.zxing:zxing-lite:2.0.3'
 
     //颜色选择
     implementation 'com.jaredrummler:colorpicker:1.1.0'

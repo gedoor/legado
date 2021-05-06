@@ -4,9 +4,7 @@ import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
-import io.legado.app.help.http.CookieStore
-import io.legado.app.help.http.SSLHelper
-import io.legado.app.help.http.StrResponse
+import io.legado.app.help.http.*
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
@@ -16,8 +14,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
 import org.jsoup.Jsoup
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toByteArray
 import splitties.init.appCtx
 import java.io.File
 import java.net.URLEncoder
@@ -292,7 +288,7 @@ interface JsExtensions {
             str.isAbsUrl() -> runBlocking {
                 var x = CacheManager.getByteArray(key)
                 if (x == null) {
-                    x = RxHttp.get(str).toByteArray().await()
+                    x = okHttpClient.newCall { url(str) }.bytes()
                     x.let {
                         CacheManager.put(key, it)
                     }

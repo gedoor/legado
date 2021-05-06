@@ -16,6 +16,7 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.databinding.FragmentRssArticlesBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -50,18 +51,18 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.init(arguments)
         initView()
-        binding.refreshRecyclerView.startLoading()
         initView()
         initData()
     }
 
     private fun initView() = with(binding) {
-        ATH.applyEdgeEffectColor(refreshRecyclerView.recyclerView)
-        refreshRecyclerView.recyclerView.layoutManager = if (activityViewModel.isGridLayout) {
-            refreshRecyclerView.recyclerView.setPadding(8, 0, 8, 0)
+        refreshLayout.setColorSchemeColors(accentColor)
+        ATH.applyEdgeEffectColor(recyclerView)
+        recyclerView.layoutManager = if (activityViewModel.isGridLayout) {
+            recyclerView.setPadding(8, 0, 8, 0)
             GridLayoutManager(requireContext(), 2)
         } else {
-            refreshRecyclerView.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
+            recyclerView.addItemDecoration(VerticalDivider(requireContext()))
             LinearLayoutManager(requireContext())
 
         }
@@ -70,18 +71,15 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
             2 -> RssArticlesAdapter2(requireContext(), this@RssArticlesFragment)
             else -> RssArticlesAdapter(requireContext(), this@RssArticlesFragment)
         }
-        refreshRecyclerView.recyclerView.adapter = adapter
+        recyclerView.adapter = adapter
         loadMoreView = LoadMoreView(requireContext())
         adapter.addFooterView {
             ViewLoadMoreBinding.bind(loadMoreView)
         }
-        refreshRecyclerView.onRefreshStart = {
-            activityViewModel.rssSource?.let {
-                viewModel.loadContent(it)
-            }
+        refreshLayout.setOnRefreshListener {
+            loadArticles()
         }
-        refreshRecyclerView.recyclerView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1)) {
@@ -89,6 +87,10 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
                 }
             }
         })
+        refreshLayout.post {
+            refreshLayout.isRefreshing = true
+            loadArticles()
+        }
     }
 
     private fun initData() {
@@ -98,6 +100,12 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
             rssArticlesData?.observe(viewLifecycleOwner, { list ->
                 adapter.setItems(list)
             })
+        }
+    }
+
+    private fun loadArticles() {
+        activityViewModel.rssSource?.let {
+            viewModel.loadContent(it)
         }
     }
 
@@ -113,7 +121,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
 
     override fun observeLiveBus() {
         viewModel.loadFinally.observe(viewLifecycleOwner) {
-            binding.refreshRecyclerView.stopLoading()
+            binding.refreshLayout.isRefreshing = false
             if (it) {
                 loadMoreView.startLoad()
             } else {

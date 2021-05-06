@@ -37,7 +37,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override val viewModel: ReadRssViewModel
             by viewModels()
-    private val savePathRequestCode = 132
     private val imagePathKey = ""
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null

@@ -16,9 +16,6 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.utils.*
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toByteArray
-import rxhttp.wrapper.param.toStrResponse
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -58,6 +55,7 @@ class AnalyzeUrl(
     private var charset: String? = null
     private var method = RequestMethod.GET
     private var proxy: String? = null
+    private var retry: Int = 0
 
     init {
         baseUrl = baseUrl.split(splitUrlRegex, 1)[0]
@@ -200,6 +198,7 @@ class AnalyzeUrl(
                 option.js?.let {
                     evalJS(it)
                 }
+                retry = option.retry
             }
         }
         headerMap[UA_NAME] ?: let {
@@ -305,62 +304,43 @@ class AnalyzeUrl(
             params.sourceRegex = sourceRegex
             params.postData = body?.toByteArray()
             params.tag = tag
-            return HttpHelper.ajax(params)
+            return getWebViewSrc(params)
         }
-        return when (method) {
-            RequestMethod.POST -> {
-                if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
-                    RxHttp.postForm(url)
-                        .setAssemblyEnabled(false)
-                        .setOkClient(HttpHelper.getProxyClient(proxy))
-                        .addAllEncoded(fieldMap)
-                        .addAllHeader(headerMap)
-                        .toStrResponse().await()
-                } else {
-                    RxHttp.postJson(url)
-                        .setAssemblyEnabled(false)
-                        .setOkClient(HttpHelper.getProxyClient(proxy))
-                        .addAll(body)
-                        .addAllHeader(headerMap)
-                        .toStrResponse().await()
+        return getProxyClient(proxy).newCallStrResponse(retry) {
+            removeHeader(UA_NAME)
+            addHeaders(headerMap)
+            when (method) {
+                RequestMethod.POST -> {
+                    url(url)
+                    if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
+                        postForm(fieldMap, true)
+                    } else {
+                        postJson(body)
+                    }
                 }
+                else -> get(url, fieldMap, true)
             }
-            else -> RxHttp.get(url)
-                .setAssemblyEnabled(false)
-                .setOkClient(HttpHelper.getProxyClient(proxy))
-                .addAllEncoded(fieldMap)
-                .addAllHeader(headerMap)
-                .toStrResponse().await()
         }
     }
 
     suspend fun getByteArray(tag: String? = null): ByteArray {
         setCookie(tag)
-        return when (method) {
-            RequestMethod.POST -> {
-                if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
-                    RxHttp.postForm(url)
-                        .setAssemblyEnabled(false)
-                        .setOkClient(HttpHelper.getProxyClient(proxy))
-                        .addAllEncoded(fieldMap)
-                        .addAllHeader(headerMap)
-                        .toByteArray().await()
-                } else {
-                    RxHttp.postJson(url)
-                        .setAssemblyEnabled(false)
-                        .setOkClient(HttpHelper.getProxyClient(proxy))
-                        .addAll(body)
-                        .addAllHeader(headerMap)
-                        .toByteArray().await()
+        @Suppress("BlockingMethodInNonBlockingContext")
+        return getProxyClient(proxy).newCall(retry) {
+            removeHeader(UA_NAME)
+            addHeaders(headerMap)
+            when (method) {
+                RequestMethod.POST -> {
+                    url(url)
+                    if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
+                        postForm(fieldMap, true)
+                    } else {
+                        postJson(body)
+                    }
                 }
+                else -> get(url, fieldMap, true)
             }
-            else -> RxHttp.get(url)
-                .setAssemblyEnabled(false)
-                .setOkClient(HttpHelper.getProxyClient(proxy))
-                .addAllEncoded(fieldMap)
-                .addAllHeader(headerMap)
-                .toByteArray().await()
-        }
+        }.bytes()
     }
 
     private fun setCookie(tag: String?) {
@@ -393,7 +373,8 @@ class AnalyzeUrl(
         val headers: Any?,
         val body: Any?,
         val type: String?,
-        val js: String?
+        val js: String?,
+        val retry: Int = 0
     )
 
 }

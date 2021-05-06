@@ -46,10 +46,6 @@ internal class Request : OnRequestPermissionsResultCallback {
         this.permissions?.addAll(listOf(*permissions))
     }
 
-    fun setRequestCode(requestCode: Int) {
-        this.requestCode = requestCode
-    }
-
     fun setOnGrantedCallback(callback: OnPermissionsGrantedCallback) {
         grantedCallback = callback
     }
@@ -81,13 +77,10 @@ internal class Request : OnRequestPermissionsResultCallback {
                     if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
                 if (rationale != null) {
                     showSettingDialog(rationale) {
-                        onPermissionsDenied(
-                            requestCode,
-                            deniedPermissions
-                        )
+                        onPermissionsDenied(deniedPermissions)
                     }
                 } else {
-                    onPermissionsDenied(requestCode, deniedPermissions)
+                    onPermissionsDenied(deniedPermissions)
                 }
             }
         } else {
@@ -160,7 +153,7 @@ internal class Request : OnRequestPermissionsResultCallback {
         RequestPlugins.sResultCallback?.onPermissionsGranted()
     }
 
-    private fun onPermissionsDenied(requestCode: Int, deniedPermissions: Array<String>) {
+    private fun onPermissionsDenied(deniedPermissions: Array<String>) {
         try {
             deniedCallback?.onPermissionsDenied(deniedPermissions)
         } catch (ignore: Exception) {
@@ -178,9 +171,9 @@ internal class Request : OnRequestPermissionsResultCallback {
             val rationale =
                 if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
             if (rationale != null) {
-                showSettingDialog(rationale) { onPermissionsDenied(requestCode, deniedPermissions) }
+                showSettingDialog(rationale) { onPermissionsDenied(deniedPermissions) }
             } else {
-                onPermissionsDenied(requestCode, deniedPermissions)
+                onPermissionsDenied(deniedPermissions)
             }
         } else {
             onPermissionsGranted()
@@ -192,7 +185,7 @@ internal class Request : OnRequestPermissionsResultCallback {
         if (deniedPermissions == null) {
             onPermissionsGranted()
         } else {
-            onPermissionsDenied(this.requestCode, deniedPermissions)
+            onPermissionsDenied(deniedPermissions)
         }
     }
 

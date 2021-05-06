@@ -29,11 +29,6 @@ class PermissionsCompat private constructor() {
             return this
         }
 
-        fun requestCode(requestCode: Int): Builder {
-            request.setRequestCode(requestCode)
-            return this
-        }
-
         fun onGranted(callback: () -> Unit): Builder {
             request.setOnGrantedCallback(object : OnPermissionsGrantedCallback {
                 override fun onPermissionsGranted() {

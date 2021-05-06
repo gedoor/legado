@@ -14,6 +14,7 @@ import androidx.viewbinding.ViewBinding
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ThemeConfig
@@ -66,6 +67,26 @@ abstract class BaseActivity<VB : ViewBinding>(
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            getPrefBoolean(PreferKey.highBrush)
+        ) {
+            /**
+             * 添加高刷新率支持
+             */
+            // 获取系统window支持的模式
+            @Suppress("DEPRECATION")
+            val modes = window.windowManager.defaultDisplay.supportedModes
+            // 对获取的模式，基于刷新率的大小进行排序，从小到大排序
+            modes.sortBy {
+                it.refreshRate
+            }
+            window.let {
+                val lp = it.attributes
+                // 取出最大的那一个刷新率，直接设置给window
+                lp.preferredDisplayModeId = modes.last().modeId
+                it.attributes = lp
+            }
+        }
         window.decorView.disableAutoFill()
         initTheme()
         super.onCreate(savedInstanceState)
@@ -152,11 +173,9 @@ abstract class BaseActivity<VB : ViewBinding>(
                 ATH.applyBackgroundTint(window.decorView)
             }
         }
-        if (AppConfig.isGooglePlay) {
-            ThemeConfig.getBgImage(this)?.let {
-                kotlin.runCatching {
-                    window.decorView.background = it
-                }
+        ThemeConfig.getBgImage(this)?.let {
+            kotlin.runCatching {
+                window.decorView.background = it
             }
         }
     }

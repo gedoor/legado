@@ -16,6 +16,8 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
 import io.legado.app.utils.DocumentUtils
@@ -24,8 +26,6 @@ import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toByteArray
 import java.io.File
 import java.util.*
 
@@ -147,7 +147,9 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
 
     private suspend fun webData2bitmap(data: String): ByteArray? {
         return if (URLUtil.isValidUrl(data)) {
-            RxHttp.get(data).toByteArray().await()
+            okHttpClient.newCall {
+                url(data)
+            }.bytes()
         } else {
             Base64.decode(data.split(",").toTypedArray()[1], Base64.DEFAULT)
         }
