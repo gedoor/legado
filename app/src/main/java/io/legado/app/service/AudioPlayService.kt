@@ -16,6 +16,7 @@ import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
+import androidx.media.AudioFocusRequestCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -52,7 +53,7 @@ class AudioPlayService : BaseService(),
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var audioManager: AudioManager
-    private var mFocusRequest: AudioFocusRequest? = null
+    private var mFocusRequest: AudioFocusRequestCompat? = null
     private var title: String = ""
     private var subtitle: String = ""
     private val mediaPlayer = MediaPlayer()
@@ -479,7 +480,7 @@ class AudioPlayService : BaseService(),
      * @return 音频焦点
      */
     private fun requestFocus(): Boolean {
-        return MediaHelp.requestFocus(audioManager, this, mFocusRequest)
+        return MediaHelp.requestFocus(audioManager, mFocusRequest)
     }
 
     private fun thisPendingIntent(action: String): PendingIntent? {
