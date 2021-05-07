@@ -149,8 +149,6 @@ dependencies {
 
     //lifecycle
     def lifecycle_version = '2.3.1'
-    //2.3.0 弃用lifecycle-extensions
-    //implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //room
