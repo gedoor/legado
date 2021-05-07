@@ -53,6 +53,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
         upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
+        upPreferenceSummary(PreferKey.preDownloadNum, AppConfig.preDownloadNum.toString())
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
         upPreferenceSummary(PreferKey.webPort, webPort.toString())
         upPreferenceSummary(PreferKey.defaultCover, getPrefString(PreferKey.defaultCover))
@@ -72,6 +73,14 @@ class OtherConfigFragment : BasePreferenceFragment(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             PreferKey.userAgent -> showUserAgentDialog()
+            PreferKey.preDownloadNum -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.pre_download))
+                .setMaxValue(9999)
+                .setMinValue(1)
+                .setValue(AppConfig.preDownloadNum)
+                .show {
+                    AppConfig.preDownloadNum = it
+                }
             PreferKey.threadCount -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.threads_num_title))
                 .setMaxValue(999)
@@ -106,6 +115,9 @@ class OtherConfigFragment : BasePreferenceFragment(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
+            PreferKey.preDownloadNum -> {
+                upPreferenceSummary(key, AppConfig.preDownloadNum.toString())
+            }
             PreferKey.threadCount -> {
                 upPreferenceSummary(key, AppConfig.threadCount.toString())
                 postEvent(PreferKey.threadCount, "")
@@ -141,6 +153,8 @@ class OtherConfigFragment : BasePreferenceFragment(),
     private fun upPreferenceSummary(preferenceKey: String, value: String?) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
+            PreferKey.preDownloadNum -> preference.summary =
+                getString(R.string.pre_download_s, value)
             PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
             else -> if (preference is ListPreference) {

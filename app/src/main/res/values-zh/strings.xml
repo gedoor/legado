@@ -804,7 +804,7 @@
     <string name="export_bookshelf">导出书单</string>
     <string name="import_bookshelf">导入书单</string>
     <string name="pre_download">预下载</string>
-    <string name="pre_download_s">预先下载10章正文</string>
+    <string name="pre_download_s">预先下载%s章正文</string>
     <string name="sort_enable">启用排序</string>
     <string name="background_image">背景图片</string>
     <string name="export_folder">导出文件夹</string>
