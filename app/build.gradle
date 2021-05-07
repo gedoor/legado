@@ -111,20 +111,20 @@ kapt {
 
 dependencies {
     implementation project(path: ':epublib')
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation "com.android.support:multidex:1.0.3"
+    implementation 'androidx.multidex:multidex:2.0.1'
     //kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     //androidX
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
-    implementation "androidx.activity:activity-ktx:1.2.0"
-    implementation "androidx.fragment:fragment-ktx:1.3.0"
+    implementation "androidx.activity:activity-ktx:1.2.3"
+    implementation "androidx.fragment:fragment-ktx:1.3.3"
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation "androidx.collection:collection-ktx:1.1.0"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -135,8 +135,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     //media
-    def media2_version = "1.1.2"
+    def media2_version = "1.1.3"
     implementation "androidx.media2:media2-session:$media2_version"
+    implementation "androidx.media:media:1.3.1"
     //implementation "androidx.media2:media2-player:$media2_version"
     //implementation 'com.google.android.exoplayer:exoplayer:2.13.0'
 
@@ -147,8 +148,9 @@ dependencies {
     implementation("com.louiscad.splitties:splitties-views:$splitties_version")
 
     //lifecycle
-    def lifecycle_version = '2.2.0'
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    def lifecycle_version = '2.3.1'
+    //2.3.0 弃用lifecycle-extensions
+    //implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //room
@@ -158,13 +160,13 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
 
     //paging
-    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.0'
 
     //liveEventBus
     implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
 
     //协程
-    def coroutines_version = '1.4.2'
+    def coroutines_version = '1.4.3'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
