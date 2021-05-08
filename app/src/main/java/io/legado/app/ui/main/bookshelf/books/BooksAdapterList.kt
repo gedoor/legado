@@ -7,8 +7,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfListBinding
-import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
 import splitties.views.onLongClick
 
@@ -27,7 +25,6 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
     ) = with(binding) {
         val bundle = payloads.getOrNull(0) as? Bundle
         if (bundle == null) {
-            root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
             tvName.text = item.name
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
