@@ -102,8 +102,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
         setRect9x()
     }
 
-    public fun setRect9x() {
-        val edge = if (AppConfig.fullScreenGesturesSupport) { 200f } else { 0f }
+    fun setRect9x() {
+        val edge = if (AppConfig.fullScreenGesturesSupport) 200f else 0f
         tlRect.set(0f + edge, 0f, width * 0.33f, height * 0.33f)
         tcRect.set(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
         trRect.set(width * 0.36f, 0f, width - 0f - edge, height * 0.33f)
