@@ -33,7 +33,8 @@ abstract class BaseActivity<VB : ViewBinding>(
     val fullScreen: Boolean = true,
     private val theme: Theme = Theme.Auto,
     private val toolBarTheme: Theme = Theme.Auto,
-    private val transparent: Boolean = false
+    private val transparent: Boolean = false,
+    private val imageBg: Boolean = true
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
@@ -173,9 +174,13 @@ abstract class BaseActivity<VB : ViewBinding>(
                 ATH.applyBackgroundTint(window.decorView)
             }
         }
-        ThemeConfig.getBgImage(this)?.let {
-            kotlin.runCatching {
-                window.decorView.background = it
+        if (imageBg) {
+            ThemeConfig.getBgImage(this)?.let {
+                try {
+                    window.decorView.background = it
+                } catch (e: OutOfMemoryError) {
+                    toastOnUi("Image Bg Out Of Memory")
+                }
             }
         }
     }
