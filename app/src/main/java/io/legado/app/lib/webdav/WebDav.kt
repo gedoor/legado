@@ -9,7 +9,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.Jsoup
 import java.io.File
-import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
@@ -58,12 +57,7 @@ class WebDav(urlStr: String) {
      * @return 远程文件是否存在
      */
     suspend fun indexFileInfo(): Boolean {
-        propFindResponse(ArrayList())?.let {
-            if (it.text().isNotEmpty()) {
-                return true
-            }
-        }
-        return false
+        return !propFindResponse(ArrayList()).isNullOrEmpty()
     }
 
     /**
@@ -73,13 +67,13 @@ class WebDav(urlStr: String) {
      * @return 文件列表
      */
     suspend fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
-        propFindResponse(propsList)?.text()?.let { body ->
+        propFindResponse(propsList)?.let { body ->
             return parseDir(body)
         }
         return ArrayList()
     }
 
-    private suspend fun propFindResponse(propsList: ArrayList<String>): ResponseBody? {
+    private suspend fun propFindResponse(propsList: ArrayList<String>): String? {
         val requestProps = StringBuilder()
         for (p in propsList) {
             requestProps.append("<a:").append(p).append("/>\n")
@@ -100,7 +94,7 @@ class WebDav(urlStr: String) {
                     // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
                     val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
                     method("PROPFIND", requestBody)
-                }
+                }.text()
             }.onFailure {
                 it.printStackTrace()
             }.getOrNull()
@@ -220,7 +214,6 @@ class WebDav(urlStr: String) {
         return false
     }
 
-    @Throws(IOException::class)
     private suspend fun getInputStream(): InputStream? {
         val url = httpUrl
         val auth = HttpAuth.auth
