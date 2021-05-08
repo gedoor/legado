@@ -157,9 +157,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
 
-    //paging
-    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
-
     //liveEventBus
     implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
 
