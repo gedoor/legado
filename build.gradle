@@ -4,7 +4,7 @@ buildscript {
     ext.kotlin_version = '1.5.0'
     repositories {
         google()
-        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url 'https://maven.aliyun.com/repository/public/'}
         maven { url "https://s3.amazonaws.com/fabric-artifacts/public" }
         maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
         maven { url "https://plugins.gradle.org/m2/" }
@@ -19,7 +19,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url 'https://maven.aliyun.com/repository/public/'}
         maven { url "https://jitpack.io" }
         maven { url "https://maven.google.com/" }
     }

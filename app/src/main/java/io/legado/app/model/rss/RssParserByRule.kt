@@ -51,7 +51,7 @@ object RssParserByRule {
             Debug.log(sourceUrl, "└列表大小:${collections.size}")
             if (!rssSource.ruleNextPage.isNullOrEmpty()) {
                 Debug.log(sourceUrl, "┌获取下一页链接")
-                if (rssSource.ruleNextPage!!.toUpperCase(Locale.getDefault()) == "PAGE") {
+                if (rssSource.ruleNextPage!!.uppercase(Locale.getDefault()) == "PAGE") {
                     nextUrl = sortUrl
                 } else {
                     nextUrl = analyzeRule.getString(rssSource.ruleNextPage)

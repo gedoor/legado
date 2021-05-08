@@ -141,7 +141,7 @@ class FontSelectDialog : BaseDialogFragment(),
         val fontDir =
             FileUtils.createFolderIfNotExist(requireContext().externalFilesDir, "font")
         fontDir.listFiles { pathName ->
-            pathName.name.toLowerCase(Locale.getDefault()).matches(fontRegex)
+            pathName.name.lowercase(Locale.getDefault()).matches(fontRegex)
         }?.forEach {
             fontItems.add(
                 DocItem(
@@ -161,7 +161,7 @@ class FontSelectDialog : BaseDialogFragment(),
             val fontItems = arrayListOf<DocItem>()
             val docItems = DocumentUtils.listFiles(appCtx, doc.uri)
             docItems.forEach { item ->
-                if (item.name.toLowerCase(Locale.getDefault()).matches(fontRegex)) {
+                if (item.name.lowercase(Locale.getDefault()).matches(fontRegex)) {
                     fontItems.add(item)
                 }
             }
@@ -188,7 +188,7 @@ class FontSelectDialog : BaseDialogFragment(),
             val fontItems = arrayListOf<DocItem>()
             val file = File(path)
             file.listFiles { pathName ->
-                pathName.name.toLowerCase(Locale.getDefault()).matches(fontRegex)
+                pathName.name.lowercase(Locale.getDefault()).matches(fontRegex)
             }?.forEach {
                 fontItems.add(
                     DocItem(

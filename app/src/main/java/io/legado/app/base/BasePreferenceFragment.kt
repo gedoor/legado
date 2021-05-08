@@ -54,6 +54,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
             }
         }
         f.setTargetFragment(this, 0)
+
         f.show(parentFragmentManager, dialogFragmentTag)
     }
 

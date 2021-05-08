@@ -525,7 +525,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         }
 
         fun hasDateInfo(data: ByteArray?): Boolean {
-            return (data != null && data.size > 15 && data[13] == '-'.toByte()
+            return (data != null && data.size > 15 && data[13] == '-'.code.toByte()
                     && indexOf(data, mSeparator) > 14)
         }
 
@@ -546,7 +546,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         @Suppress("SameParameterValue")
         private fun indexOf(data: ByteArray, c: Char): Int {
             for (i in data.indices) {
-                if (data[i] == c.toByte()) {
+                if (data[i] == c.code.toByte()) {
                     return i
                 }
             }

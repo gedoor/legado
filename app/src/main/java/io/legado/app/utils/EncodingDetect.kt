@@ -26,14 +26,14 @@ object EncodingDetect {
                 }
                 val content = metaTag.attr("content")
                 val httpEquiv = metaTag.attr("http-equiv")
-                if (httpEquiv.toLowerCase(Locale.getDefault()) == "content-type") {
-                    charsetStr = if (content.toLowerCase(Locale.getDefault()).contains("charset")) {
+                if (httpEquiv.lowercase(Locale.getDefault()) == "content-type") {
+                    charsetStr = if (content.lowercase(Locale.getDefault()).contains("charset")) {
                         content.substring(
-                            content.toLowerCase(Locale.getDefault())
+                            content.lowercase(Locale.getDefault())
                                 .indexOf("charset") + "charset=".length
                         )
                     } else {
-                        content.substring(content.toLowerCase(Locale.getDefault()).indexOf(";") + 1)
+                        content.substring(content.lowercase(Locale.getDefault()).indexOf(";") + 1)
                     }
                     if (!TextUtils.isEmpty(charsetStr)) {
                         return charsetStr

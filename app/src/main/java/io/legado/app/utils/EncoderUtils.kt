@@ -12,7 +12,7 @@ object EncoderUtils {
     fun escape(src: String): String {
         val tmp = StringBuilder()
         for (char in src) {
-            val charCode = char.toInt()
+            val charCode = char.code
             if (charCode in 48..57 || charCode in 65..90 || charCode in 97..122) {
                 tmp.append(char)
                 continue
