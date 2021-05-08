@@ -1,7 +1,6 @@
 package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.room.*
 import io.legado.app.data.entities.BookSource
 
@@ -40,9 +39,6 @@ interface BookSourceDao {
 
     @Query("select distinct bookSourceGroup from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' and trim(bookSourceGroup) <> ''")
     fun liveExploreGroup(): LiveData<List<String>>
-
-    @Query("select * from book_sources where enabledExplore = 1 order by customOrder asc")
-    fun observeFind(): DataSource.Factory<Int, BookSource>
 
     @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%'")
     fun getByGroup(group: String): List<BookSource>

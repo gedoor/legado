@@ -1,6 +1,6 @@
 package io.legado.app.data.dao
 
-import androidx.paging.DataSource
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.Bookmark
 
@@ -16,10 +16,10 @@ interface BookmarkDao {
         bookUrl: String,
         bookName: String,
         bookAuthor: String
-    ): DataSource.Factory<Int, Bookmark>
+    ): LiveData<List<Bookmark>>
 
     @Query("SELECT * FROM bookmarks where bookUrl = :bookUrl and chapterName like '%'||:key||'%' or content like '%'||:key||'%'")
-    fun liveDataSearch(bookUrl: String, key: String): DataSource.Factory<Int, Bookmark>
+    fun liveDataSearch(bookUrl: String, key: String): LiveData<List<Bookmark>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookmark: Bookmark)
