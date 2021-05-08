@@ -144,19 +144,20 @@ class WebDav(urlStr: String) {
 
     /**
      * 根据自己的URL，在远程处创建对应的文件夹
-     *
      * @return 是否创建成功
      */
     suspend fun makeAsDir(): Boolean {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            okHttpClient.newCall {
-                url(url)
-                method("MKCOL", null)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }
-            return true
+            //防止报错
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    method("MKCOL", null)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                }
+            }.isSuccess
         }
         return false
     }
