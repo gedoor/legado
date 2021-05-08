@@ -1,5 +1,6 @@
 package io.legado.app.lib.webdav
 
+import io.legado.app.help.http.mkCol
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
@@ -148,9 +149,9 @@ class WebDav(urlStr: String) {
             return kotlin.runCatching {
                 okHttpClient.newCall {
                     url(url)
-                    method("MKCOL", null)
+                    mkCol()
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                }
+                }.close()
             }.isSuccess
         }
         return false
@@ -192,7 +193,7 @@ class WebDav(urlStr: String) {
                 url(url)
                 put(fileBody)
                 addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }
+            }.close()
             return true
         }
         return false
@@ -208,7 +209,7 @@ class WebDav(urlStr: String) {
                 url(url)
                 put(fileBody)
                 addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }
+            }.close()
             return true
         }
         return false

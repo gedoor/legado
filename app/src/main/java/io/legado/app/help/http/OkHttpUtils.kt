@@ -120,3 +120,7 @@ fun Request.Builder.postJson(json: String?) {
         post(requestBody)
     }
 }
+
+fun Request.Builder.mkCol() {
+    method("MKCOL", null)
+}
