@@ -124,3 +124,26 @@ fun Request.Builder.postJson(json: String?) {
 fun Request.Builder.mkCol() {
     method("MKCOL", null)
 }
+
+fun Request.Builder.propFind(fields: List<String>?) {
+    var propFind =
+        """<?xml version="1.0"?>
+            <a:propfind xmlns:a="DAV:">
+                <a:prop>
+                    %s
+                </a:prop>
+            </a:propfind>"""
+    // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
+    // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
+    if (fields.isNullOrEmpty()) {
+        method("PROPFIND", null)
+    } else {
+        val requestProps = StringBuilder()
+        for (p in fields) {
+            requestProps.append("<a:").append(p).append("/>\n")
+        }
+        propFind = String.format(propFind, requestProps.toString() + "\n")
+        val requestBody = propFind.toRequestBody("text/plain".toMediaType())
+        method("PROPFIND", requestBody)
+    }
+}
