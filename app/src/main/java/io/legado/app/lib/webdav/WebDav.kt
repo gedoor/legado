@@ -63,17 +63,19 @@ class WebDav(urlStr: String) {
     /**
      * 列出当前路径下的文件
      *
-     * @param propsList 指定列出文件的哪些属性
      * @return 文件列表
      */
-    suspend fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
-        propFindResponse(propsList)?.let { body ->
+    suspend fun listFiles(): List<WebDav> {
+        propFindResponse()?.let { body ->
             return parseDir(body)
         }
         return ArrayList()
     }
 
-    private suspend fun propFindResponse(propsList: ArrayList<String>): String? {
+    /**
+     * @param propsList 指定列出文件的哪些属性
+     */
+    private suspend fun propFindResponse(propsList: List<String> = emptyList()): String? {
         val requestProps = StringBuilder()
         for (p in propsList) {
             requestProps.append("<a:").append(p).append("/>\n")
