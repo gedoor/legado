@@ -5,7 +5,6 @@ import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -35,8 +34,7 @@ import io.legado.app.utils.toastOnUi
 
 class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     BottomNavigationView.OnNavigationItemSelectedListener,
-    BottomNavigationView.OnNavigationItemReselectedListener,
-    ViewPager.OnPageChangeListener by ViewPager.SimpleOnPageChangeListener() {
+    BottomNavigationView.OnNavigationItemReselectedListener {
     override val viewModel: MainViewModel by viewModels()
     private var exitTime: Long = 0
     private var bookshelfReselected: Long = 0
@@ -55,7 +53,15 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         viewPagerMain.adapter = TabFragmentPageAdapter()
         viewPagerMain.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                this@MainActivity.onPageSelected(position)
+                pagePosition = position
+                when (position) {
+                    0, 1, 3 -> bottomNavigationView.menu.getItem(position).isChecked = true
+                    2 -> if (AppConfig.isShowRSS) {
+                        bottomNavigationView.menu.getItem(position).isChecked = true
+                    } else {
+                        bottomNavigationView.menu.getItem(3).isChecked = true
+                    }
+                }
             }
         })
         bottomNavigationView.elevation =
@@ -124,18 +130,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 DefaultData.importDefaultTocRules()//版本更新时更新自带本地txt目录规则
             }
             viewModel.upVersion()
-        }
-    }
-
-    override fun onPageSelected(position: Int) = with(binding) {
-        pagePosition = position
-        when (position) {
-            0, 1, 3 -> bottomNavigationView.menu.getItem(position).isChecked = true
-            2 -> if (AppConfig.isShowRSS) {
-                bottomNavigationView.menu.getItem(position).isChecked = true
-            } else {
-                bottomNavigationView.menu.getItem(3).isChecked = true
-            }
         }
     }
 
