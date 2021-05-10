@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.toc
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -74,7 +73,6 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
         activity?.finish()
     }
 
-    @SuppressLint("InflateParams")
     override fun onLongClick(bookmark: Bookmark) {
         requireContext().alert(R.string.bookmark) {
             setMessage(bookmark.chapterName)
