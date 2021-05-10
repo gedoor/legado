@@ -1,6 +1,8 @@
 package io.legado.app.lib.webdav
 
-import io.legado.app.help.http.*
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -15,6 +17,21 @@ import java.util.*
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class WebDav(urlStr: String) {
+    companion object {
+        // 指定返回哪些属性
+        private const val DIR =
+            """<?xml version="1.0"?>
+            <a:propfind xmlns:a="DAV:">
+                <a:prop>
+                    <a:displayname/>
+                    <a:resourcetype/>
+                    <a:getcontentlength/>
+                    <a:creationdate/>
+                    <a:getlastmodified/>
+                    %s
+                </a:prop>
+            </a:propfind>"""
+    }
 
     private val url: URL = URL(urlStr)
     private val httpUrl: String? by lazy {
@@ -46,17 +63,26 @@ class WebDav(urlStr: String) {
     /**
      * 列出当前路径下的文件
      *
-     * @param fields 指定列出文件的哪些属性
+     * @param propsList 指定列出文件的哪些属性
      * @return 文件列表
      */
-    suspend fun listFiles(fields: ArrayList<String> = ArrayList()): List<WebDav> {
-        propFindResponse(fields)?.let { body ->
+    suspend fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
+        propFindResponse(propsList)?.let { body ->
             return parseDir(body)
         }
         return ArrayList()
     }
 
-    private suspend fun propFindResponse(fields: ArrayList<String>?): String? {
+    private suspend fun propFindResponse(propsList: ArrayList<String>): String? {
+        val requestProps = StringBuilder()
+        for (p in propsList) {
+            requestProps.append("<a:").append(p).append("/>\n")
+        }
+        val requestPropsStr: String = if (requestProps.toString().isEmpty()) {
+            DIR.replace("%s", "")
+        } else {
+            String.format(DIR, requestProps.toString() + "\n")
+        }
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
@@ -64,7 +90,10 @@ class WebDav(urlStr: String) {
                 okHttpClient.newCall {
                     url(url)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                    propFind(fields)
+                    // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
+                    // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
+                    val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
+                    method("PROPFIND", requestBody)
                 }.text()
             }.onFailure {
                 it.printStackTrace()
@@ -119,7 +148,7 @@ class WebDav(urlStr: String) {
             return kotlin.runCatching {
                 okHttpClient.newCall {
                     url(url)
-                    mkCol()
+                    method("MKCOL", null)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
                 }.close()
             }.isSuccess

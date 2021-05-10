@@ -275,7 +275,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             } else {
                 toastOnUi(R.string.no_book)
             }
-        } else if (exportPosition > 0) {
+        } else if (exportPosition >= 0) {
             adapter.getItem(exportPosition)?.let { book ->
                 Snackbar.make(binding.titleBar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
                     .show()
