@@ -190,12 +190,13 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            okHttpClient.newCall {
-                url(url)
-                put(fileBody)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }.close()
-            return true
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    put(fileBody)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                }.close()
+            }.isSuccess
         }
         return false
     }
@@ -206,12 +207,13 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            okHttpClient.newCall {
-                url(url)
-                put(fileBody)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }.close()
-            return true
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    put(fileBody)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                }.close()
+            }.isSuccess
         }
         return false
     }
@@ -220,10 +222,12 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            return okHttpClient.newCall {
-                url(url)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }.byteStream()
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                }.byteStream()
+            }.getOrNull()
         }
         return null
     }
