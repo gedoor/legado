@@ -253,6 +253,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             return group.groupId
         }
 
+        override fun containsItem(itemId: Long): Boolean {
+            return fragmentMap.containsKey(itemId)
+        }
+
         override fun getItemCount(): Int {
             return bookGroups.size
         }

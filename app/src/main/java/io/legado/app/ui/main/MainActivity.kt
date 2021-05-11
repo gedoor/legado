@@ -197,6 +197,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             }
         }
 
+        override fun containsItem(itemId: Long): Boolean {
+            return fragmentMap.containsKey(itemId)
+        }
+
         override fun getItemCount(): Int {
             return if (AppConfig.isShowRSS) 4 else 3
         }
