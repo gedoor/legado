@@ -25,7 +25,7 @@ class RootView : LinearLayout {
 
     private val parentViewPager: ViewPager2?
         get() = (activity as? MainActivity)?.getViewPager()
-    private val childViewPager: View
+    private val childViewPager: View?
         get() = findViewById(R.id.view_pager_bookshelf)
 
     init {
@@ -35,8 +35,8 @@ class RootView : LinearLayout {
     private fun canChildScroll(orientation: Int, delta: Float): Boolean {
         val direction = -delta.sign.toInt()
         return when (orientation) {
-            0 -> childViewPager.canScrollHorizontally(direction)
-            1 -> childViewPager.canScrollVertically(direction)
+            0 -> childViewPager?.canScrollHorizontally(direction) ?: false
+            1 -> childViewPager?.canScrollVertically(direction) ?: false
             else -> throw IllegalArgumentException()
         }
     }
