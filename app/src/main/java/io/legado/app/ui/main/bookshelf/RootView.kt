@@ -23,12 +23,10 @@ class RootView : LinearLayout {
     private var initialX = 0f
     private var initialY = 0f
 
-    private val parentViewPager: ViewPager2
-        get() {
-            return (activity as MainActivity).getViewPager()
-        }
-
-    private val childViewPager: View get() = findViewById(R.id.view_pager_bookshelf)
+    private val parentViewPager: ViewPager2?
+        get() = (activity as? MainActivity)?.getViewPager()
+    private val childViewPager: View
+        get() = findViewById(R.id.view_pager_bookshelf)
 
     init {
         touchSlop = ViewConfiguration.get(context).scaledTouchSlop
@@ -49,7 +47,7 @@ class RootView : LinearLayout {
     }
 
     private fun handleInterceptTouchEvent(e: MotionEvent) {
-        val orientation = parentViewPager.orientation
+        val orientation = parentViewPager?.orientation ?: return
         // Early return if child can't scroll in same direction as parent
         if (!canChildScroll(orientation, -1f) && !canChildScroll(orientation, 1f)) {
             return
