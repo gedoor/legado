@@ -256,18 +256,16 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                     when (AppConfig.exportType) {
                         1 -> viewModel.exportEPUB(path, book) {
                             exportSize--
+                            toastOnUi(it)
                             if (exportSize <= 0) {
-                                binding.titleBar.snackbar(it)
-                            } else {
-                                toastOnUi(it)
+                                binding.titleBar.snackbar(R.string.complete)
                             }
                         }
                         else -> viewModel.export(path, book) {
                             exportSize--
+                            toastOnUi(it)
                             if (exportSize <= 0) {
-                                binding.titleBar.snackbar(it)
-                            } else {
-                                toastOnUi(it)
+                                binding.titleBar.snackbar(R.string.complete)
                             }
                         }
                     }
