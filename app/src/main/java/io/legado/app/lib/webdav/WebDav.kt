@@ -92,6 +92,7 @@ class WebDav(urlStr: String) {
                 okHttpClient.newCall {
                     url(url)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                    addHeader("Depth", "1")
                     // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
                     // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
                     val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
