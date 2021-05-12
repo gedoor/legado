@@ -19,7 +19,7 @@ class RootView : LinearLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    private var touchSlop = 0
+    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
     private var initialX = 0f
     private var initialY = 0f
 
@@ -27,10 +27,6 @@ class RootView : LinearLayout {
         get() = (activity as? MainActivity)?.getViewPager()
     private val childViewPager: View?
         get() = findViewById(R.id.view_pager_bookshelf)
-
-    init {
-        touchSlop = ViewConfiguration.get(context).scaledTouchSlop
-    }
 
     private fun canChildScroll(orientation: Int, delta: Float): Boolean {
         val direction = -delta.sign.toInt()
