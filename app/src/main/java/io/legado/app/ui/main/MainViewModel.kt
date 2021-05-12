@@ -119,11 +119,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         if (!BookHelp.hasContent(book, chapter)) {
                             var addToCache = false
                             while (!addToCache) {
-                                if (CacheBook.downloadCount() < 5) {
+                                if (CacheBook.downloadCount() < 10) {
                                     CacheBook.download(this, webBook, book, chapter)
                                     addToCache = true
                                 } else {
-                                    delay(1000)
+                                    delay(100)
                                 }
                             }
                         }
