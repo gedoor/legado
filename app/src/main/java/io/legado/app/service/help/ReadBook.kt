@@ -21,6 +21,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
+import kotlin.math.max
 import kotlin.math.min
 
 
@@ -141,9 +142,9 @@ object ReadBook {
                 GlobalScope.launch(Dispatchers.IO) {
                     val maxChapterIndex =
                         min(chapterSize - 1, durChapterIndex + AppConfig.preDownloadNum)
-                    for (i in 2..maxChapterIndex) {
+                    for (i in durChapterIndex.plus(2)..maxChapterIndex) {
                         delay(1000)
-                        download(durChapterIndex + i)
+                        download(i)
                     }
                 }
             }
@@ -171,11 +172,10 @@ object ReadBook {
                 }
                 loadContent(durChapterIndex.minus(1), upContent, false)
                 GlobalScope.launch(Dispatchers.IO) {
-                    val maxChapterIndex =
-                        min(chapterSize - 1, durChapterIndex + AppConfig.preDownloadNum)
-                    for (i in 2..maxChapterIndex) {
+                    val minChapterIndex = max(0, durChapterIndex - 5)
+                    for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
                         delay(1000)
-                        download(durChapterIndex - i)
+                        download(i)
                     }
                 }
             }
