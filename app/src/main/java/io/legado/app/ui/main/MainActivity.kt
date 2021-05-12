@@ -5,6 +5,7 @@ import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,6 +31,7 @@ import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.toastOnUi
+import java.lang.reflect.Field
 
 
 class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
@@ -46,29 +48,32 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         return ActivityMainBinding.inflate(layoutInflater)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) = with(binding) {
-        ATH.applyEdgeEffectColor(viewPagerMain)
-        ATH.applyBottomNavigationColor(bottomNavigationView)
-        viewPagerMain.offscreenPageLimit = 3
-        viewPagerMain.adapter = TabFragmentPageAdapter()
-        viewPagerMain.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                pagePosition = position
-                when (position) {
-                    0, 1, 3 -> bottomNavigationView.menu.getItem(position).isChecked = true
-                    2 -> if (AppConfig.isShowRSS) {
-                        bottomNavigationView.menu.getItem(position).isChecked = true
-                    } else {
-                        bottomNavigationView.menu.getItem(3).isChecked = true
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        binding.apply {
+            ATH.applyEdgeEffectColor(viewPagerMain)
+            ATH.applyBottomNavigationColor(bottomNavigationView)
+            viewPagerMain.offscreenPageLimit = 3
+            viewPagerMain.adapter = TabFragmentPageAdapter()
+            viewPagerMain.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    pagePosition = position
+                    when (position) {
+                        0, 1, 3 -> bottomNavigationView.menu.getItem(position).isChecked = true
+                        2 -> if (AppConfig.isShowRSS) {
+                            bottomNavigationView.menu.getItem(position).isChecked = true
+                        } else {
+                            bottomNavigationView.menu.getItem(3).isChecked = true
+                        }
                     }
                 }
-            }
-        })
-        bottomNavigationView.elevation =
-            if (AppConfig.elevation < 0) elevation else AppConfig.elevation.toFloat()
-        bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
-        bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
-        bottomNavigationView.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
+            })
+            bottomNavigationView.elevation =
+                if (AppConfig.elevation < 0) elevation else AppConfig.elevation.toFloat()
+            bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
+            bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
+            bottomNavigationView.menu.findItem(R.id.menu_rss).isVisible = AppConfig.isShowRSS
+        }
+        resetViewPager2TouchSlop()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -83,6 +88,22 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         binding.viewPagerMain.postDelayed({
             viewModel.postLoad()
         }, 3000)
+    }
+
+    /**
+     * 重新设置viewpager2的滑动灵敏度
+     */
+    private fun resetViewPager2TouchSlop() = kotlin.runCatching {
+        val recyclerViewField: Field = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+        recyclerViewField.isAccessible = true
+
+        val recyclerView = recyclerViewField.get(binding.viewPagerMain) as RecyclerView
+
+        val touchSlopField: Field = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+        touchSlopField.isAccessible = true
+
+        val touchSlop = touchSlopField.get(recyclerView) as Int
+        touchSlopField.set(recyclerView, touchSlop * 4)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean = with(binding) {

@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import io.legado.app.R
@@ -36,6 +38,7 @@ import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.main.bookshelf.books.BooksFragment
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import java.lang.reflect.Field
 
 /**
  * 书架界面
@@ -63,6 +66,23 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         setSupportToolbar(binding.titleBar.toolbar)
         initView()
         initBookGroupData()
+        resetViewPager2TouchSlop()
+    }
+
+    /**
+     * 重新设置viewpager2的滑动灵敏度
+     */
+    private fun resetViewPager2TouchSlop() = kotlin.runCatching {
+        val recyclerViewField: Field = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+        recyclerViewField.isAccessible = true
+
+        val recyclerView = recyclerViewField.get(binding.viewPagerBookshelf) as RecyclerView
+
+        val touchSlopField: Field = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+        touchSlopField.isAccessible = true
+
+        val touchSlop = touchSlopField.get(recyclerView) as Int
+        touchSlopField.set(recyclerView, touchSlop * 4)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
