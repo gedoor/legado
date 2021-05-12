@@ -72,6 +72,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             }
         }
 
+    var showUnread: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.showUnread, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.showUnread, value)
+        }
+
     val isTransparentStatusBar: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.transparentStatusBar, true)
 

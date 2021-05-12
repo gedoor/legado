@@ -7,6 +7,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfListBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.utils.invisible
 import splitties.views.onLongClick
 
@@ -51,8 +52,12 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
             binding.rlLoading.show()
         } else {
             binding.rlLoading.hide()
-            binding.bvUnread.setHighlight(item.lastCheckCount > 0)
-            binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())
+            if (AppConfig.showUnread) {
+                binding.bvUnread.setHighlight(item.lastCheckCount > 0)
+                binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())
+            } else {
+                binding.bvUnread.invisible()
+            }
         }
     }
 

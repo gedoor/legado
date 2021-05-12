@@ -22,6 +22,7 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.DialogBookshelfConfigBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.FragmentBookshelfBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
@@ -170,6 +171,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     .apply {
                         rgLayout.checkByIndex(bookshelfLayout)
                         rgSort.checkByIndex(bookshelfSort)
+                        swShowUnread.isChecked = AppConfig.showUnread
                     }
             customView { alertBinding.root }
             okButton {
@@ -181,6 +183,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     }
                     if (bookshelfSort != rgSort.getCheckedIndex()) {
                         putPrefInt(PreferKey.bookshelfSort, rgSort.getCheckedIndex())
+                        changed = true
+                    }
+                    if (AppConfig.showUnread != swShowUnread.isChecked) {
+                        AppConfig.showUnread = swShowUnread.isChecked
                         changed = true
                     }
                     if (changed) {
