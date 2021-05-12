@@ -97,6 +97,9 @@ android {
         jvmTarget = "1.8"
     }
     buildToolsVersion '30.0.3'
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked"
+    }
 }
 
 resourcePlaceholders {

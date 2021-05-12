@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"FieldCanBeLocal", "rawtypes", "StatementWithEmptyBody", "unused"})
+@SuppressWarnings({"FieldCanBeLocal", "StatementWithEmptyBody", "unused"})
 public class QueryTTF {
     private static class Header {
         public int majorVersion;
@@ -223,7 +223,8 @@ public class QueryTTF {
     private final List<Integer> loca = new LinkedList<>();
     private final CmapLayout Cmap = new CmapLayout();
     private final List<GlyfLayout> glyf = new LinkedList<>();
-    private final Pair[] pps = new Pair[]{
+    @SuppressWarnings("unchecked")
+    private final Pair<Integer, Integer>[] pps = new Pair[]{
             Pair.of(3, 10),
             Pair.of(0, 4),
             Pair.of(3, 1),
@@ -515,7 +516,7 @@ public class QueryTTF {
     private int getGlyfIndex(int code) {
         if (code == 0) return 0;
         int fmtKey = 0;
-        for (@SuppressWarnings("unchecked") Pair<Integer, Integer> item : pps) {
+        for (Pair<Integer, Integer> item : pps) {
             for (CmapRecord record : Cmap.records) {
                 if ((item.getLeft() == record.platformID) && (item.getRight() == record.encodingID)) {
                     fmtKey = record.offset;

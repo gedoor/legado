@@ -11,6 +11,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.0'
+        //noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "de.timfreiheit.resourceplaceholders:placeholders:0.3"
     }
@@ -19,7 +20,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        maven { url 'https://maven.aliyun.com/repository/public/'}
+        maven { url 'https://maven.aliyun.com/repository/public/' }
         maven { url "https://jitpack.io" }
         maven { url "https://maven.google.com/" }
     }
