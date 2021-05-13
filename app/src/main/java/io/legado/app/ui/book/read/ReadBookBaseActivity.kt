@@ -39,7 +39,7 @@ import io.legado.app.utils.requestInputMethod
  * 阅读界面
  */
 abstract class ReadBookBaseActivity :
-    VMBaseActivity<ActivityBookReadBinding, ReadBookViewModel>() {
+    VMBaseActivity<ActivityBookReadBinding, ReadBookViewModel>(imageBg = false) {
 
     override val viewModel: ReadBookViewModel
             by viewModels()

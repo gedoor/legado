@@ -16,7 +16,7 @@ import android.widget.ScrollView
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.R
 import io.legado.app.help.AppConfig
@@ -219,9 +219,9 @@ object ATH {
         }
     }
 
-    fun setEdgeEffectColor(viewPager: ViewPager?, @ColorInt color: Int) {
+    fun setEdgeEffectColor(viewPager: ViewPager2?, @ColorInt color: Int) {
         try {
-            val clazz = ViewPager::class.java
+            val clazz = ViewPager2::class.java
             for (name in arrayOf("mLeftEdge", "mRightEdge")) {
                 val field = clazz.getDeclaredField(name)
                 field.isAccessible = true
@@ -280,7 +280,7 @@ object ATH {
     fun applyEdgeEffectColor(view: View?) {
         when (view) {
             is RecyclerView -> view.edgeEffectFactory = DEFAULT_EFFECT_FACTORY
-            is ViewPager -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
+            is ViewPager2 -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
             is ScrollView -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
         }
     }

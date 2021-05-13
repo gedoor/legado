@@ -115,9 +115,13 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                     CacheBook.stop(this@CacheActivity)
                 }
             }
+            R.id.menu_export_all -> exportAll()
             R.id.menu_enable_replace -> AppConfig.exportUseReplace = !item.isChecked
             R.id.menu_export_web_dav -> AppConfig.exportToWebDav = !item.isChecked
-            R.id.menu_export_folder -> export(-1)
+            R.id.menu_export_folder -> {
+                exportPosition = -1
+                selectExportFolder()
+            }
             R.id.menu_export_type -> showExportTypeConfig()
             R.id.menu_export_charset -> showCharsetConfig()
             R.id.menu_log ->
@@ -212,7 +216,17 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     override fun export(position: Int) {
         exportPosition = position
         val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
-        if (path.isNullOrEmpty() || position < 0) {
+        if (path.isNullOrEmpty()) {
+            selectExportFolder()
+        } else {
+            startExport(path)
+        }
+    }
+
+    private fun exportAll() {
+        exportPosition = -10
+        val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
+        if (path.isNullOrEmpty()) {
             selectExportFolder()
         } else {
             startExport(path)
@@ -233,15 +247,43 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     private fun startExport(path: String) {
-        adapter.getItem(exportPosition)?.let { book ->
-            Snackbar.make(binding.titleBar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
-                .show()
-            when (AppConfig.exportType) {
-                1 -> viewModel.exportEPUB(path, book) {
-                    binding.titleBar.snackbar(it)
+        if (exportPosition == -10) {
+            if (adapter.getItems().isNotEmpty()) {
+                Snackbar.make(binding.titleBar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
+                    .show()
+                var exportSize = adapter.getItems().size
+                adapter.getItems().forEach { book ->
+                    when (AppConfig.exportType) {
+                        1 -> viewModel.exportEPUB(path, book) {
+                            exportSize--
+                            toastOnUi(it)
+                            if (exportSize <= 0) {
+                                binding.titleBar.snackbar(R.string.complete)
+                            }
+                        }
+                        else -> viewModel.export(path, book) {
+                            exportSize--
+                            toastOnUi(it)
+                            if (exportSize <= 0) {
+                                binding.titleBar.snackbar(R.string.complete)
+                            }
+                        }
+                    }
                 }
-                else -> viewModel.export(path, book) {
-                    binding.titleBar.snackbar(it)
+            } else {
+                toastOnUi(R.string.no_book)
+            }
+        } else if (exportPosition >= 0) {
+            adapter.getItem(exportPosition)?.let { book ->
+                Snackbar.make(binding.titleBar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
+                    .show()
+                when (AppConfig.exportType) {
+                    1 -> viewModel.exportEPUB(path, book) {
+                        binding.titleBar.snackbar(it)
+                    }
+                    else -> viewModel.export(path, book) {
+                        binding.titleBar.snackbar(it)
+                    }
                 }
             }
         }

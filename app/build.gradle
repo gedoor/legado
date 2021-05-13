@@ -97,6 +97,9 @@ android {
         jvmTarget = "1.8"
     }
     buildToolsVersion '30.0.3'
+//    tasks.withType(JavaCompile) {
+//        options.compilerArgs << "-Xlint:unchecked"
+//    }
 }
 
 resourcePlaceholders {
@@ -149,8 +152,6 @@ dependencies {
 
     //lifecycle
     def lifecycle_version = '2.3.1'
-    //2.3.0 弃用lifecycle-extensions
-    //implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //room
@@ -158,9 +159,6 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
-
-    //paging
-    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
 
     //liveEventBus
     implementation 'com.jeremyliao:live-event-bus-x:1.5.7'

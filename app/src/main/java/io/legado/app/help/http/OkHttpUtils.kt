@@ -28,7 +28,7 @@ suspend fun OkHttpClient.newCall(
             return response.body!!
         }
     }
-    throw IOException(response!!.message)
+    return response!!.body ?: throw IOException(response.message)
 }
 
 suspend fun OkHttpClient.newCallStrResponse(
@@ -45,7 +45,7 @@ suspend fun OkHttpClient.newCallStrResponse(
             return StrResponse(response, response.body!!.text())
         }
     }
-    throw IOException(response!!.message)
+    return StrResponse(response!!, response.body?.text() ?: response.message)
 }
 
 suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->

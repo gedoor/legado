@@ -826,5 +826,8 @@
     <string name="url_already">此url已訂閱</string>
     <string name="high_brush_title">高刷</string>
     <string name="high_brush_summary">使用螢幕最高刷新率</string>
+    <string name="export_all">导出所有</string>
+    <string name="complete">完成</string>
+    <string name="show_unread">显示未读标志</string>
 
 </resources>

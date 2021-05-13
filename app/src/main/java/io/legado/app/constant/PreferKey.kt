@@ -4,6 +4,7 @@ object PreferKey {
     const val language = "language"
     const val themeMode = "themeMode"
     const val userAgent = "userAgent"
+    const val showUnread = "showUnread"
     const val hideStatusBar = "hideStatusBar"
     const val clickActionTL = "clickActionTopLeft"
     const val clickActionTC = "clickActionTopCenter"

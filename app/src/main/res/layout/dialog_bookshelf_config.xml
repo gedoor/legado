@@ -101,5 +101,15 @@
 
     </LinearLayout>
 
+    <io.legado.app.lib.theme.view.ATESwitch
+        android:id="@+id/sw_show_unread"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="@string/show_unread"
+        app:layout_constraintTop_toBottomOf="@+id/ll_layout"
+        app:layout_constraintLeft_toLeftOf="@+id/ll_layout"
+        app:layout_constraintRight_toRightOf="@id/ll_layout" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

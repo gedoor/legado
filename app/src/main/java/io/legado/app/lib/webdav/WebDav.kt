@@ -9,7 +9,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.Jsoup
 import java.io.File
-import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
@@ -58,28 +57,25 @@ class WebDav(urlStr: String) {
      * @return 远程文件是否存在
      */
     suspend fun indexFileInfo(): Boolean {
-        propFindResponse(ArrayList())?.let {
-            if (it.text().isNotEmpty()) {
-                return true
-            }
-        }
-        return false
+        return !propFindResponse(ArrayList()).isNullOrEmpty()
     }
 
     /**
      * 列出当前路径下的文件
      *
-     * @param propsList 指定列出文件的哪些属性
      * @return 文件列表
      */
-    suspend fun listFiles(propsList: ArrayList<String> = ArrayList()): List<WebDav> {
-        propFindResponse(propsList)?.text()?.let { body ->
+    suspend fun listFiles(): List<WebDav> {
+        propFindResponse()?.let { body ->
             return parseDir(body)
         }
         return ArrayList()
     }
 
-    private suspend fun propFindResponse(propsList: ArrayList<String>): ResponseBody? {
+    /**
+     * @param propsList 指定列出文件的哪些属性
+     */
+    private suspend fun propFindResponse(propsList: List<String> = emptyList()): String? {
         val requestProps = StringBuilder()
         for (p in propsList) {
             requestProps.append("<a:").append(p).append("/>\n")
@@ -96,11 +92,12 @@ class WebDav(urlStr: String) {
                 okHttpClient.newCall {
                     url(url)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                    addHeader("Depth", "1")
                     // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
                     // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
                     val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
                     method("PROPFIND", requestBody)
-                }
+                }.text()
             }.onFailure {
                 it.printStackTrace()
             }.getOrNull()
@@ -144,19 +141,20 @@ class WebDav(urlStr: String) {
 
     /**
      * 根据自己的URL，在远程处创建对应的文件夹
-     *
      * @return 是否创建成功
      */
     suspend fun makeAsDir(): Boolean {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            okHttpClient.newCall {
-                url(url)
-                method("MKCOL", null)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }
-            return true
+            //防止报错
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    method("MKCOL", null)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                }.close()
+            }.isSuccess
         }
         return false
     }
@@ -193,12 +191,13 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            okHttpClient.newCall {
-                url(url)
-                put(fileBody)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }
-            return true
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    put(fileBody)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                }.close()
+            }.isSuccess
         }
         return false
     }
@@ -209,25 +208,27 @@ class WebDav(urlStr: String) {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            okHttpClient.newCall {
-                url(url)
-                put(fileBody)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }
-            return true
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    put(fileBody)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                }.close()
+            }.isSuccess
         }
         return false
     }
 
-    @Throws(IOException::class)
     private suspend fun getInputStream(): InputStream? {
         val url = httpUrl
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
-            return okHttpClient.newCall {
-                url(url)
-                addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-            }.byteStream()
+            return kotlin.runCatching {
+                okHttpClient.newCall {
+                    url(url)
+                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                }.byteStream()
+            }.getOrNull()
         }
         return null
     }

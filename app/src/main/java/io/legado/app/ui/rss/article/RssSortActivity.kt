@@ -22,6 +22,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             by viewModels()
     private var sorts = linkedMapOf<String, String>()
     private lateinit var adapter: TabFragmentPageAdapter
+    private val fragmentMap = hashMapOf<Long, Fragment>()
     private val upSourceResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -99,12 +100,20 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             return style * 100 + super.getItemId(position)
         }
 
+        override fun containsItem(itemId: Long): Boolean {
+            return fragmentMap.containsKey(itemId)
+        }
+
         override fun createFragment(position: Int): Fragment {
-            return RssArticlesFragment.create(
+            val itemId = getItemId(position)
+            val fragment = RssArticlesFragment.create(
                 sorts.keys.elementAt(position),
                 sorts.values.elementAt(position)
             )
+            fragmentMap[itemId] = fragment
+            return fragment
         }
+        
     }
 
 }

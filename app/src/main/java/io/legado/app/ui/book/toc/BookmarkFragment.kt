@@ -1,14 +1,11 @@
 package io.legado.app.ui.book.toc
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
@@ -31,7 +28,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
     override val viewModel: ChapterListViewModel by activityViewModels()
     private val binding by viewBinding(FragmentBookmarkBinding::bind)
     private lateinit var adapter: BookmarkAdapter
-    private var bookmarkLiveData: LiveData<PagedList<Bookmark>>? = null
+    private var bookmarkLiveData: LiveData<List<Bookmark>>? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.bookMarkCallBack = this
@@ -43,7 +40,7 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(binding.recyclerView)
-        adapter = BookmarkAdapter(this)
+        adapter = BookmarkAdapter(requireContext(), this)
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
@@ -51,11 +48,8 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
 
     private fun initData(book: Book) {
         bookmarkLiveData?.removeObservers(viewLifecycleOwner)
-        bookmarkLiveData =
-            LivePagedListBuilder(
-                appDb.bookmarkDao.observeByBook(book.bookUrl, book.name, book.author), 20
-            ).build()
-        bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.submitList(it) })
+        bookmarkLiveData = appDb.bookmarkDao.observeByBook(book.bookUrl, book.name, book.author)
+        bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.setItems(it) })
     }
 
     override fun startBookmarkSearch(newText: String?) {
@@ -65,13 +59,8 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
             }
         } else {
             bookmarkLiveData?.removeObservers(viewLifecycleOwner)
-            bookmarkLiveData = LivePagedListBuilder(
-                appDb.bookmarkDao.liveDataSearch(
-                    viewModel.bookUrl,
-                    newText
-                ), 20
-            ).build()
-            bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.submitList(it) })
+            bookmarkLiveData = appDb.bookmarkDao.liveDataSearch(viewModel.bookUrl, newText)
+            bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.setItems(it) })
         }
     }
 
@@ -84,7 +73,6 @@ class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_
         activity?.finish()
     }
 
-    @SuppressLint("InflateParams")
     override fun onLongClick(bookmark: Bookmark) {
         requireContext().alert(R.string.bookmark) {
             setMessage(bookmark.chapterName)
