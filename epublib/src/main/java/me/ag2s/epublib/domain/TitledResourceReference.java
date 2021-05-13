@@ -69,8 +69,11 @@ public class TitledResourceReference extends ResourceReference
 
     @Override
     public Resource getResource() {
-        //修复getTitle为null的bug
-        resource.setTitle(title);
+        //resource为null时不设置标题
+        if(this.resource!=null&&this.title!=null){
+            resource.setTitle(title);
+        }
+
         return resource;
     }
 
