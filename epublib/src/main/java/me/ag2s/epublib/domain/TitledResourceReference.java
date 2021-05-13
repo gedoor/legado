@@ -1,5 +1,7 @@
 package me.ag2s.epublib.domain;
 
+import android.util.Log;
+
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.util.StringUtil;
 
@@ -72,6 +74,8 @@ public class TitledResourceReference extends ResourceReference
         //resource为null时不设置标题
         if(this.resource!=null&&this.title!=null){
             resource.setTitle(title);
+        }else {
+            Log.e(TitledResourceReference.class.getSimpleName(),"警告：resource 为null,忽略设置标题。");
         }
 
         return resource;

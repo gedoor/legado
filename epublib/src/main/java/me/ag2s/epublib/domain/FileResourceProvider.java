@@ -16,21 +16,27 @@ public class FileResourceProvider implements LazyResourceProvider {
 
     /**
      * 创建一个文件夹里面文件夹的LazyResourceProvider，用于LazyResource。
-     * @param dir 文件的目录
+     * @param parentDir 文件的目录
      */
-    public FileResourceProvider(String dir) {
-        this.dir = dir;
+    public FileResourceProvider(String parentDir) {
+        this.dir = parentDir;
     }
 
     /**
      * 创建一个文件夹里面文件夹的LazyResourceProvider，用于LazyResource。
-     * @param dirfile 文件夹
+     * @param parentFile 文件夹
      */
     @SuppressWarnings("unused")
-    public FileResourceProvider(File dirfile) {
-        this.dir = dirfile.getPath();
+    public FileResourceProvider(File parentFile) {
+        this.dir = parentFile.getPath();
     }
 
+    /**
+     * 根据子文件名href,再父目录下读取文件获取FileInputStream
+     * @param href 子文件名href
+     * @return 对应href的FileInputStream
+     * @throws IOException 抛出IOException
+     */
     @Override
     public InputStream getResourceStream(String href) throws IOException {
         return new FileInputStream(new File(dir, href));
