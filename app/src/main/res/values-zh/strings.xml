@@ -829,5 +829,7 @@
     <string name="export_all">导出所有</string>
     <string name="complete">完成</string>
     <string name="show_unread">显示未读标志</string>
+    <string name="use_default_cover">总是使用默认封面</string>
+    <string name="use_default_cover_s">总是显示默认封面,不显示网络封面</string>
 
 </resources>

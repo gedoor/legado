@@ -78,6 +78,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.showUnread, value)
         }
 
+    val useDefaultCover: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
+
     val isTransparentStatusBar: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.transparentStatusBar, true)
 

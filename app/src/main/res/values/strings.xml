@@ -830,5 +830,7 @@
     <string name="export_all">export_all</string>
     <string name="complete">complete</string>
     <string name="show_unread">Show unread</string>
+    <string name="use_default_cover">always use default cover</string>
+    <string name="use_default_cover_s">always use default cover,not use network</string>
 
 </resources>
