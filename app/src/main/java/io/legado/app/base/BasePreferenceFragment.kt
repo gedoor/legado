@@ -53,6 +53,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
                 )
             }
         }
+        @Suppress("DEPRECATION")
         f.setTargetFragment(this, 0)
 
         f.show(parentFragmentManager, dialogFragmentTag)
