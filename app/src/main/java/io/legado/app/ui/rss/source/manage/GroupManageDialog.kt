@@ -21,6 +21,7 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemGroupManageBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
@@ -128,6 +129,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             payloads: MutableList<Any>
         ) {
             with(binding) {
+                root.setBackgroundColor(context.backgroundColor)
                 tvGroup.text = item
             }
         }
