@@ -19,6 +19,7 @@
     <color name="background_card">@color/md_grey_100</color>
     <color name="background_menu">@color/md_grey_200</color>
     <color name="background_prefs">#7fffffff</color>
+
     <color name="transparent">#00000000</color>
 
     <color name="transparent10">#10000000</color>
