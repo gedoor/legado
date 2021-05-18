@@ -773,7 +773,11 @@
     <string name="sort_by_lastUpdateTime">Sort by update time</string>
     <string name="search_content">Search content</string>
     <string name="rss_source_empty">Follow Wechat official account [开源阅读] to get Subscription source</string>
+<<<<<<< HEAD
     <string name="explore_empty">Empty now,Follow Wechat official account [开源阅读] to get Discovery source</string>
+=======
+    <string name="explore_empty">Empty now,Wechat official account [开源阅读] to get Discovery source</string>
+>>>>>>> 39008a9f0006a3eee1ef43d908c6a98475e51f10
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">Theme name</string>
     <string name="auto_clear_expired">"Clear expired search histories automatically "</string>
