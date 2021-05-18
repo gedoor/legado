@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:padding="3dp"
         app:max="10"
-        app:title="字号" />
+        app:title="@string/title_font_size" />
 
     <io.legado.app.ui.widget.DetailSeekBar
         android:id="@+id/dsb_title_top"
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:padding="3dp"
         app:max="100"
-        app:title="上间距" />
+        app:title="@string/title_margin_top" />
 
     <io.legado.app.ui.widget.DetailSeekBar
         android:id="@+id/dsb_title_bottom"
@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:padding="3dp"
         app:max="100"
-        app:title="下间距" />
+        app:title="@string/title_margin_bottom" />
 
     <io.legado.app.ui.widget.text.AccentTextView
         android:id="@+id/tv_header_padding"
