@@ -723,7 +723,7 @@
     <string name="disabled">Disabled</string>
     <string name="starting_download">Starting download</string>
     <string name="already_in_download">This book is already in Download list</string>
-    <string name="click_to_open">click to open</string>
+    <string name="click_to_open">Click to open</string>
     <string name="follow_public_account_summary">Follow [开源阅读] to support me by clicking on ads</string>
     <string name="weChat_appreciation_code">WeChat Tipping Code</string>
     <string name="alipay">AliPay</string>
@@ -765,7 +765,7 @@
     <string name="import_str">Import</string>
     <string name="export_str">Export</string>
     <string name="save_theme_config">Save theme config</string>
-    <string name="save_day_theme_summary">在状态栏</string>
+    <string name="save_day_theme_summary">Save day theme config</string>
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
