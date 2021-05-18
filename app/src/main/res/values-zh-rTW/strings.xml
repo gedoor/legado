@@ -831,5 +831,8 @@
     <string name="show_unread">显示未读标志</string>
     <string name="use_default_cover">总是使用默认封面</string>
     <string name="use_default_cover_s">总是显示默认封面,不显示网络封面</string>
+    <string name="title_font_size">字號</string>
+    <string name="title_margin_top">上邊距</string>
+    <string name="title_margin_bottom">下邊距</string>
 
 </resources>

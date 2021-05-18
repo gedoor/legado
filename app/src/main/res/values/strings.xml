@@ -352,7 +352,7 @@
     <string name="sort">Sort</string>
     <string name="sort_auto">Sort automatically</string>
     <string name="sort_manual">Sort manually</string>
-    <string name="sort_name">Sort name</string>
+    <string name="sort_name">Sort by name</string>
     <string name="go_to_top">Scroll to the top</string>
     <string name="go_to_bottom">Scroll to the bottom</string>
     <string name="read_y">Read: %s</string>
@@ -765,7 +765,7 @@
     <string name="import_str">Import</string>
     <string name="export_str">Export</string>
     <string name="save_theme_config">Save theme config</string>
-    <string name="save_day_theme_summary">Save day theme config</string>
+    <string name="save_day_theme_summary">在状态栏</string>
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
@@ -807,5 +807,33 @@
     <string name="pre_download_s">Download 10 chapters in advance</string>
     <string name="sort_enable">Enable sorting</string>
     <string name="background_image">Background image</string>
-
+    <string name="copy_book_url">Copy book URL</string>
+    <string name="copy_toc_url">Copy chapters URL</string>
+    <string name="export_folder">Export to a folder</string>
+    <string name="export_charset">Exported text coding</string>
+    <string name="export_to_web_dav">Export to WebDav</string>
+    <string name="reverse_content">Reverse content</string>
+    <string name="debug">Debug</string>
+    <string name="crash_log">Crash log</string>
+    <string name="use_zh_layout">Custom Chinese line feed</string>
+    <string name="image_style">Style of Images</string>
+    <string name="system_tts">System tts</string>
+    <string name="export_type">Exported file format</string>
+    <string name="checkAuthor">Check by author</string>
+    <string name="url_already">"This URL has subscribed "</string>
+    <string name="high_brush_title">High screen refresh rate</string>
+    <string name="high_brush_summary">Use maximum screen refresh rate</string>
+    <string name="export_all">Export all</string>
+    <string name="complete">Finished</string>
+    <string name="show_unread">"Show unread flag "</string>
+    <string name="use_default_cover">Always show default cover</string>
+    <string name="use_default_cover_s">Always show the default cover, do not show the network cover</string>
+    <string name="search_src">Search source code</string>
+    <string name="boo_src">Book source code</string>
+     <string name="toc_src">Chapters source code</string>
+    <string name="content_src">Content source code</string>
+    <string name="list_src">List source code</string>
+    <string name="title_font_size">Font size</string>
+    <string name="title_margin_top">Margin top</string>
+    <string name="title_margin_bottom">Marigin bottom</string>
 </resources>
