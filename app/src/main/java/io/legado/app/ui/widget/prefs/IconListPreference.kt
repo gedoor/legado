@@ -188,7 +188,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                     label.isChecked = item.toString() == dialogValue
                     root.setOnClickListener {
                         onChanged?.invoke(item.toString())
-                        this@IconDialog.dismiss()
+                        this@IconDialog.dismissAllowingStateLoss()
                     }
                 }
             }

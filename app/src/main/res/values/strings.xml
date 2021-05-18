@@ -191,8 +191,8 @@
     <string name="flow_sys">Follow system</string>
     <string name="add">Add</string>
     <string name="import_book_source">Import book sources</string>
-    <string name="import_book_source_local">Import local sources</string>
-    <string name="import_book_source_on_line">Import online sources</string>
+    <string name="import_local">Import local</string>
+    <string name="import_on_line">Import online</string>
     <string name="replace_rule_title">Replacement</string>
     <string name="replace_rule_edit">Edit replacement rule</string>
     <string name="replace_rule">Pattern</string>
@@ -397,7 +397,6 @@
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
-    <string name="source_http_header">请求头(header)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
     <string name="r_book_list">书籍列表规则(bookList)</string>
@@ -455,9 +454,10 @@
     <string name="net_error_10003">Data parsing failed</string>
     <!--error string end-->
 
-
+    <string name="source_http_header">HTTP Header</string>
     <string name="debug_source">Debug source</string>
     <string name="import_by_qr_code">Import from QR code</string>
+    <string name="share_selected_source">Share selected sources</string>
     <string name="scan_qr_code">Scan QR code</string>
     <string name="click_on_selected_show_menu">Tap to display Menu when selected </string>
     <string name="theme">Theme</string>
@@ -694,6 +694,7 @@
     <string name="information">Information</string>
     <string name="switchLayout">Switch Layout</string>
     <string name="text_font_weight_converter">Text font weight switching</string>
+    <string name="full_screen_gestures_support">Full screen gestures support</string>
 
     <!--color-->
     <string name="primary">Primary</string>
@@ -720,7 +721,6 @@
     <string name="import_old_summary">Select a legacy backup folder</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
-
     <string name="starting_download">Starting download</string>
     <string name="already_in_download">This book is already in Download list</string>
     <string name="click_to_open">click to open</string>
@@ -743,7 +743,6 @@
     <string name="replace_enable_default_t">Enable replace rule by default</string>
     <string name="replace_enable_default_s">For new added books</string>
     <string name="select_restore_file">Select restore file</string>
-    <string name="select_theme">Switch default theme</string>
     <string name="day_background_too_dark">Day background can not be too dark!</string>
     <string name="day_bottom_bar_too_dark">Day bottom can not be too dark!</string>
     <string name="night_background_too_light">Night background can not be too bright!</string>
@@ -770,7 +769,7 @@
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
-    <string name="share_selected_source">Share selected sources</string>
+    <string name="select_theme">Switch default theme</string>
     <string name="sort_by_lastUpdateTime">Sort by update time</string>
     <string name="search_content">Search content</string>
     <string name="rss_source_empty">follow Wechat official account [开源阅读] to get Subscription source</string>

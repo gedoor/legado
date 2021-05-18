@@ -18,8 +18,10 @@ import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.association.ImportRssSourceActivity
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 规则订阅界面
@@ -100,11 +102,20 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
             }
             customView { alertBinding.root }
             okButton {
-                ruleSub.type = alertBinding.spType.selectedItemPosition
-                ruleSub.name = alertBinding.etName.text?.toString() ?: ""
-                ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
-                launch(IO) {
-                    appDb.ruleSubDao.insert(ruleSub)
+                launch {
+                    ruleSub.type = alertBinding.spType.selectedItemPosition
+                    ruleSub.name = alertBinding.etName.text?.toString() ?: ""
+                    ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
+                    val rs = withContext(IO) {
+                        appDb.ruleSubDao.findByUrl(ruleSub.url)
+                    }
+                    if (rs != null && rs.id != ruleSub.id) {
+                        toastOnUi("${getString(R.string.url_already)}(${rs.name})")
+                        return@launch
+                    }
+                    withContext(IO) {
+                        appDb.ruleSubDao.insert(ruleSub)
+                    }
                 }
             }
             cancelButton()

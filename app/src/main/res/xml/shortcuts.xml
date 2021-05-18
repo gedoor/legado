@@ -22,6 +22,26 @@
     </shortcut>
 
     <shortcut
+        android:shortcutId="readAloud"
+        android:enabled="true"
+        android:icon="@drawable/icon_read_book"
+        android:shortcutShortLabel="@string/read_aloud"
+        android:shortcutLongLabel="@string/read_aloud"
+        android:shortcutDisabledMessage="@string/read_aloud"
+        tools:ignore="UnusedAttribute">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="${applicationId}"
+            android:targetClass="io.legado.app.receiver.SharedReceiverActivity">
+            <extra
+                android:name="action"
+                android:value="readAloud" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
         android:shortcutId="bookshelf"
         android:enabled="true"
         android:icon="@drawable/icon_read_book"
@@ -36,4 +56,5 @@
             android:targetClass="io.legado.app.ui.main.MainActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
+
 </shortcuts>

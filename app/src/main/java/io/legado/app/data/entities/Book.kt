@@ -107,6 +107,8 @@ data class Book(
 
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
 
+    fun getDisplayTag() = if (customTag.isNullOrBlank()) kind else customTag
+
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
 
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
@@ -144,6 +146,31 @@ data class Book(
 
     fun setPageAnim(pageAnim: Int) {
         config().pageAnim = pageAnim
+    }
+
+    fun getImageStyle(): String? {
+        return config().imageStyle
+    }
+
+    fun setImageStyle(imageStyle: String?) {
+        config().imageStyle = imageStyle
+    }
+
+    fun getDelParagraph(): Int {
+        return config().delParagraph
+    }
+
+    fun setDelParagraph(num: Int) {
+        config().delParagraph = num
+    }
+
+    fun setDelTag(tag: Long) {
+        config().delTag =
+            if ((config().delTag and tag) == tag) config().delTag and tag.inv() else config().delTag or tag
+    }
+
+    fun getDelTag(tag: Long): Boolean {
+        return config().delTag and tag == tag
     }
 
     fun getFolderName(): String {
@@ -207,11 +234,23 @@ data class Book(
         }
     }
 
+    companion object {
+        const val hTag = 2L
+        const val rubyTag = 4L
+        const val imgTag = 8L
+        const val imgStyleDefault = "DEFAULT"
+        const val imgStyleFull = "FULL"
+        const val imgStyleText = "TEXT"
+    }
+
     @Parcelize
     data class ReadConfig(
         var pageAnim: Int = -1,
         var reSegment: Boolean = false,
-        var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,         // 正文使用净化替换规则
+        var imageStyle: String? = null,
+        var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,// 正文使用净化替换规则
+        var delParagraph: Int = 0,//去除段首
+        var delTag: Long = 0L,//去除标签
     ) : Parcelable
 
     class Converters {

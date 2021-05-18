@@ -1,12 +1,10 @@
 package io.legado.app.help
 
-import com.hankcs.hanlp.HanLP
+import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 
 class ContentProcessor(private val bookName: String, private val bookOrigin: String) {
@@ -23,14 +21,16 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
         replaceRules.addAll(appDb.replaceRuleDao.findEnabledByScope(bookName, bookOrigin))
     }
 
-    suspend fun getContent(
+    @Synchronized
+    fun getContent(
         book: Book,
         title: String, //已经经过简繁转换
         content: String,
-        isRead: Boolean = true
+        isRead: Boolean = true,
+        useReplace: Boolean = book.getUseReplaceRule()
     ): List<String> {
         var content1 = content
-        if (book.getUseReplaceRule()) {
+        if (useReplace) {
             replaceRules.forEach { item ->
                 if (item.pattern.isNotEmpty()) {
                     try {
@@ -40,9 +40,7 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
                             content1.replace(item.pattern, item.replacement)
                         }
                     } catch (e: Exception) {
-                        withContext(Dispatchers.Main) {
-                            appCtx.toastOnUi("${item.name}替换出错")
-                        }
+                        appCtx.toastOnUi("${item.name}替换出错")
                     }
                 }
             }
@@ -53,18 +51,16 @@ class ContentProcessor(private val bookName: String, private val bookOrigin: Str
             }
             try {
                 when (AppConfig.chineseConverterType) {
-                    1 -> content1 = HanLP.convertToSimplifiedChinese(content1)
-                    2 -> content1 = HanLP.convertToTraditionalChinese(content1)
+                    1 -> content1 = ChineseUtils.t2s(content1)
+                    2 -> content1 = ChineseUtils.s2t(content1)
                 }
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    appCtx.toastOnUi("简繁转换出错")
-                }
+                appCtx.toastOnUi("简繁转换出错")
             }
         }
         val contents = arrayListOf<String>()
         content1.split("\n").forEach {
-            val str = it.replace("^[\\n\\s\\r]+".toRegex(), "")
+            val str = it.replace("^[\\n\\r]+".toRegex(), "").trim()
             if (contents.isEmpty()) {
                 contents.add(title)
                 if (str != title && str.isNotEmpty()) {

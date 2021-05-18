@@ -1,7 +1,6 @@
 package io.legado.app.ui.config
 
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
@@ -10,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Process
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -20,10 +20,10 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.permission.Permissions
-import io.legado.app.help.permission.PermissionsCompat
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
@@ -38,19 +38,22 @@ import java.io.File
 class OtherConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestCodeCover = 231
-
     private val packageManager = appCtx.packageManager
     private val componentName = ComponentName(
         appCtx,
         SharedReceiverActivity::class.java.name
     )
     private val webPort get() = getPrefInt(PreferKey.webPort, 1122)
+    private val selectCoverImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        it ?: return@registerForActivityResult
+        setCoverFromUri(it)
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
         upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
+        upPreferenceSummary(PreferKey.preDownloadNum, AppConfig.preDownloadNum.toString())
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
         upPreferenceSummary(PreferKey.webPort, webPort.toString())
         upPreferenceSummary(PreferKey.defaultCover, getPrefString(PreferKey.defaultCover))
@@ -70,6 +73,14 @@ class OtherConfigFragment : BasePreferenceFragment(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             PreferKey.userAgent -> showUserAgentDialog()
+            PreferKey.preDownloadNum -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.pre_download))
+                .setMaxValue(9999)
+                .setMinValue(1)
+                .setValue(AppConfig.preDownloadNum)
+                .show {
+                    AppConfig.preDownloadNum = it
+                }
             PreferKey.threadCount -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.threads_num_title))
                 .setMaxValue(999)
@@ -88,13 +99,13 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 }
             PreferKey.cleanCache -> clearCache()
             PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
-                selectImage(requestCodeCover)
+                selectCoverImage.launch("image/*")
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.defaultCover)
                     } else {
-                        selectImage(requestCodeCover)
+                        selectCoverImage.launch("image/*")
                     }
                 }
             }
@@ -104,6 +115,9 @@ class OtherConfigFragment : BasePreferenceFragment(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
+            PreferKey.preDownloadNum -> {
+                upPreferenceSummary(key, AppConfig.preDownloadNum.toString())
+            }
             PreferKey.threadCount -> {
                 upPreferenceSummary(key, AppConfig.threadCount.toString())
                 postEvent(PreferKey.threadCount, "")
@@ -139,8 +153,15 @@ class OtherConfigFragment : BasePreferenceFragment(),
     private fun upPreferenceSummary(preferenceKey: String, value: String?) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
+            PreferKey.preDownloadNum -> preference.summary =
+                getString(R.string.pre_download_s, value)
             PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
+            PreferKey.defaultCover -> preference.summary = if (value.isNullOrBlank()) {
+                getString(R.string.select_image)
+            } else {
+                value
+            }
             else -> if (preference is ListPreference) {
                 val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.
@@ -181,14 +202,6 @@ class OtherConfigFragment : BasePreferenceFragment(),
             }
             noButton()
         }.show()
-    }
-
-    @Suppress("SameParameterValue")
-    private fun selectImage(requestCode: Int) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "image/*"
-        startActivityForResult(intent, requestCode)
     }
 
     private fun isProcessTextEnabled(): Boolean {
@@ -243,17 +256,6 @@ class OtherConfigFragment : BasePreferenceFragment(),
                     }
                 }
                 .request()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            requestCodeCover -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    setCoverFromUri(uri)
-                }
-            }
         }
     }
 

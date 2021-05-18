@@ -1,7 +1,6 @@
 package io.legado.app.ui.rss.source.manage
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -25,9 +24,9 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.association.ImportRssSourceActivity
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerDialog
-import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -37,23 +36,51 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import java.io.File
 
-
+/**
+ * 订阅源管理
+ */
 class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceViewModel>(),
     PopupMenu.OnMenuItemClickListener,
-    FilePickerDialog.CallBack,
     SelectActionBar.CallBack,
     RssSourceAdapter.CallBack {
 
     override val viewModel: RssSourceViewModel
             by viewModels()
     private val importRecordKey = "rssSourceRecordKey"
-    private val qrRequestCode = 101
-    private val importRequestCode = 124
-    private val exportRequestCode = 65
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
+    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
+        it ?: return@registerForActivityResult
+        startActivity<ImportRssSourceActivity> {
+            putExtra("source", it)
+        }
+    }
+    private val importDoc = registerForActivityResult(FilePicker()) { uri ->
+        kotlin.runCatching {
+            uri?.readText(this)?.let {
+                val dataKey = IntentDataHelp.putData(it)
+                startActivity<ImportRssSourceActivity> {
+                    putExtra("dataKey", dataKey)
+                }
+            }
+        }.onFailure {
+            toastOnUi("readTextError:${it.localizedMessage}")
+        }
+    }
+    private val exportDir = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            DocumentFile.fromTreeUri(this, uri)?.let {
+                viewModel.exportSelection(adapter.getSelection(), it)
+            }
+        } else {
+            uri.path?.let {
+                viewModel.exportSelection(adapter.getSelection(), File(it))
+            }
+        }
+    }
 
     override fun getViewBinding(): ActivityRssSourceBinding {
         return ActivityRssSourceBinding.inflate(layoutInflater)
@@ -81,10 +108,14 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> startActivity<RssSourceEditActivity>()
-            R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, allowExtensions = arrayOf("txt", "json"))
-            R.id.menu_import_source_onLine -> showImportDialog()
-            R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(qrRequestCode)
+            R.id.menu_import_local -> importDoc.launch(
+                FilePickerParam(
+                    mode = FilePicker.FILE,
+                    allowExtensions = arrayOf("txt", "json")
+                )
+            )
+            R.id.menu_import_onLine -> showImportDialog()
+            R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(supportFragmentManager, "rssGroupManage")
             R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection()) {
@@ -105,7 +136,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
-            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
+            R.id.menu_export_selection -> exportDir.launch(null)
             R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
         }
@@ -235,7 +266,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             .getAsString(importRecordKey)
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
-        alert(titleResource = R.string.import_book_source_on_line) {
+        alert(titleResource = R.string.import_on_line) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setFilterValues(cacheUrls)
                 editView.delCallBack = {
@@ -258,46 +289,6 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             }
             cancelButton()
         }.show()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    kotlin.runCatching {
-                        uri.readText(this)?.let {
-                            val dataKey = IntentDataHelp.putData(it)
-                            startActivity<ImportRssSourceActivity> {
-                                putExtra("dataKey", dataKey)
-                            }
-                        }
-                    }.onFailure {
-                        toastOnUi("readTextError:${it.localizedMessage}")
-                    }
-                }
-            }
-            qrRequestCode -> if (resultCode == RESULT_OK) {
-                data?.getStringExtra("result")?.let {
-                    startActivity<ImportRssSourceActivity> {
-                        putExtra("source", it)
-                    }
-                }
-            }
-            exportRequestCode -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    if (uri.isContentScheme()) {
-                        DocumentFile.fromTreeUri(this, uri)?.let {
-                            viewModel.exportSelection(adapter.getSelection(), it)
-                        }
-                    } else {
-                        uri.path?.let {
-                            viewModel.exportSelection(adapter.getSelection(), File(it))
-                        }
-                    }
-                }
-            }
-        }
     }
 
     override fun del(source: RssSource) {

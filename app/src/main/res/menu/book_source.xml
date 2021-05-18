@@ -85,19 +85,19 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_import_source_local"
+        android:id="@+id/menu_import_local"
         android:icon="@drawable/ic_import"
-        android:title="@string/import_book_source_local"
+        android:title="@string/import_local"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_import_source_onLine"
+        android:id="@+id/menu_import_onLine"
         android:icon="@drawable/ic_import"
-        android:title="@string/import_book_source_on_line"
+        android:title="@string/import_on_line"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_import_source_qr"
+        android:id="@+id/menu_import_qr"
         android:icon="@drawable/ic_import"
         android:title="@string/import_by_qr_code"
         app:showAsAction="never" />

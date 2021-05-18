@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.getPrefString
 import splitties.init.appCtx
@@ -132,34 +133,40 @@ class CoverImageView @JvmOverloads constructor(
 
     fun load(path: String?, name: String?, author: String?) {
         setText(name, author)
-        ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
-            .placeholder(defaultDrawable)
-            .error(defaultDrawable)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    loadFailed = true
-                    return false
-                }
+        if (AppConfig.useDefaultCover) {
+            ImageLoader.load(context, defaultDrawable)
+                .centerCrop()
+                .into(this)
+        } else {
+            ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
+                .placeholder(defaultDrawable)
+                .error(defaultDrawable)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        loadFailed = true
+                        return false
+                    }
 
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    loadFailed = false
-                    return false
-                }
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        loadFailed = false
+                        return false
+                    }
 
-            })
-            .centerCrop()
-            .into(this)
+                })
+                .centerCrop()
+                .into(this)
+        }
     }
 
     companion object {

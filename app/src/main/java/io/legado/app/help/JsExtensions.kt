@@ -4,17 +4,16 @@ import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
-import io.legado.app.help.http.CookieStore
-import io.legado.app.help.http.SSLHelper
+import io.legado.app.help.http.*
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
 import org.jsoup.Jsoup
-import rxhttp.wrapper.param.RxHttp
-import rxhttp.wrapper.param.toByteArray
 import splitties.init.appCtx
 import java.io.File
 import java.net.URLEncoder
@@ -41,6 +40,25 @@ interface JsExtensions {
     }
 
     /**
+     * 并发访问网络
+     */
+    fun ajaxAll(urlList: Array<String>): Array<StrResponse?> {
+        return runBlocking {
+            val asyncArray = Array(urlList.size) {
+                async(IO) {
+                    val url = urlList[it]
+                    val analyzeUrl = AnalyzeUrl(url)
+                    analyzeUrl.getStrResponse(url)
+                }
+            }
+            val resArray = Array<StrResponse?>(urlList.size) {
+                asyncArray[it].await()
+            }
+            resArray
+        }
+    }
+
+    /**
      * 访问网络,返回Response<String>
      */
     fun connect(urlStr: String): Any {
@@ -62,8 +80,8 @@ interface JsExtensions {
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url).type ?: return ""
         val zipPath = FileUtils.getPath(
-                FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-                "${MD5Utils.md5Encode16(url)}.${type}"
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            "${MD5Utils.md5Encode16(url)}.${type}"
         )
         FileUtils.deleteFile(zipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
@@ -81,8 +99,8 @@ interface JsExtensions {
     fun unzipFile(zipPath: String): String {
         if (zipPath.isEmpty()) return ""
         val unzipPath = FileUtils.getPath(
-                FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-                FileUtils.getNameExcludeExtension(zipPath)
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            FileUtils.getNameExcludeExtension(zipPath)
         )
         FileUtils.deleteFile(unzipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
@@ -104,7 +122,7 @@ interface JsExtensions {
                 for (f in it) {
                     val charsetName = EncodingDetect.getEncode(f)
                     contents.append(String(f.readBytes(), charset(charsetName)))
-                            .append("\n")
+                        .append("\n")
                 }
                 contents.deleteCharAt(contents.length - 1)
             }
@@ -118,12 +136,12 @@ interface JsExtensions {
      */
     fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
         return Jsoup.connect(urlStr)
-                .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
-                .ignoreContentType(true)
-                .followRedirects(false)
-                .headers(headers)
-                .method(Connection.Method.GET)
-                .execute()
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+            .ignoreContentType(true)
+            .followRedirects(false)
+            .headers(headers)
+            .method(Connection.Method.GET)
+            .execute()
     }
 
     /**
@@ -131,13 +149,13 @@ interface JsExtensions {
      */
     fun post(urlStr: String, body: String, headers: Map<String, String>): Connection.Response {
         return Jsoup.connect(urlStr)
-                .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
-                .ignoreContentType(true)
-                .followRedirects(false)
-                .requestBody(body)
-                .headers(headers)
-                .method(Connection.Method.POST)
-                .execute()
+            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+            .ignoreContentType(true)
+            .followRedirects(false)
+            .requestBody(body)
+            .headers(headers)
+            .method(Connection.Method.POST)
+            .execute()
     }
 
     /**
@@ -227,7 +245,7 @@ interface JsExtensions {
     }
 
     fun htmlFormat(str: String): String {
-        return str.htmlFormat()
+        return HtmlFormatter.formatKeepImg(str)
     }
 
     /**
@@ -257,6 +275,10 @@ interface JsExtensions {
         return null
     }
 
+    /**
+     * 返回字体解析类
+     * @param str 支持url,本地文件,base64,自动判断,自动缓存
+     */
     fun queryTTF(str: String?): QueryTTF? {
         str ?: return null
         val key = md5Encode16(str)
@@ -266,7 +288,7 @@ interface JsExtensions {
             str.isAbsUrl() -> runBlocking {
                 var x = CacheManager.getByteArray(key)
                 if (x == null) {
-                    x = RxHttp.get(str).toByteArray().await()
+                    x = okHttpClient.newCall { url(str) }.bytes()
                     x.let {
                         CacheManager.put(key, it)
                     }
@@ -283,15 +305,20 @@ interface JsExtensions {
         return qTTF
     }
 
+    /**
+     * @param text 包含错误字体的内容
+     * @param font1 错误的字体
+     * @param font2 正确的字体
+     */
     fun replaceFont(
-            text: String,
-            font1: QueryTTF?,
-            font2: QueryTTF?
+        text: String,
+        font1: QueryTTF?,
+        font2: QueryTTF?
     ): String {
         if (font1 == null || font2 == null) return text
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
-            val oldCode = s.toInt()
+            val oldCode = s.code
             if (font1.inLimit(s)) {
                 val code = font2.getCodeByGlyf(font1.getGlyfByCode(oldCode))
                 if (code != 0) contentArray[index] = code.toChar()
@@ -303,7 +330,153 @@ interface JsExtensions {
     /**
      * 输出调试日志
      */
-    fun log(msg: String) {
+    fun log(msg: String): String {
         Debug.log(msg)
+        return msg
     }
+
+    /**
+     * AES 解码为 ByteArray
+     * @param str 传入的AES加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesDecodeToByteArray(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+
+        return EncoderUtils.decryptAES(
+            data = str.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * AES 解码为 String
+     * @param str 传入的AES加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+
+    fun aesDecodeToString(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesDecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 已经base64的AES 解码为 ByteArray
+     * @param str 传入的AES Base64加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+
+    fun aesBase64DecodeToByteArray(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.decryptBase64AES(
+            data = str.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 已经base64的AES 解码为 String
+     * @param str 传入的AES Base64加密的数据
+     * @param key AES 解密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+
+    fun aesBase64DecodeToString(
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesBase64DecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 加密aes为ByteArray
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesEncodeToByteArray(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.encryptAES(
+            data.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 加密aes为String
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesEncodeToString(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesEncodeToByteArray(data, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * 加密aes后Base64化的ByteArray
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesEncodeToBase64ByteArray(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): ByteArray? {
+        return EncoderUtils.encryptAES2Base64(
+            data.encodeToByteArray(),
+            key = key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )
+    }
+
+    /**
+     * 加密aes后Base64化的String
+     * @param data 传入的原始数据
+     * @param key AES加密的key
+     * @param transformation AES加密的方式
+     * @param iv ECB模式的偏移向量
+     */
+    fun aesEncodeToBase64String(
+        data: String, key: String, transformation: String,
+        iv: String = ""
+    ): String? {
+        return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
+    }
+
 }

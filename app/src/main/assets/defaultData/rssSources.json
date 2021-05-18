@@ -1,7 +1,16 @@
 [
   {
-    "articleStyle": 0,
     "customOrder": 1,
+    "enableJs": true,
+    "enabled": true,
+    "singleUrl": true,
+    "sourceIcon": "http:\/\/ku.mumuceo.com\/static\/images\/applogo\/yuedu.png",
+    "sourceName": "使用说明",
+    "sourceUrl": "https://www.yuque.com/legado"
+  },
+  {
+    "articleStyle": 0,
+    "customOrder": 2,
     "enableJs": true,
     "enabled": true,
     "loadWithBaseUrl": false,
@@ -17,5 +26,14 @@
     "sourceName": "阅读下载",
     "sourceUrl": "https:\/\/github.com\/gedoor\/legado\/releases",
     "style": ""
+  },
+  {
+    "customOrder": 3,
+    "enableJs": true,
+    "enabled": true,
+    "singleUrl": true,
+    "sourceIcon": "http:\/\/mmbiz.qpic.cn\/mmbiz_png\/hpfMV8hEuL2eS6vnCxvTzoOiaCAibV6exBzJWq9xMic9xDg3YXAick87tsfafic0icRwkQ5ibV0bJ84JtSuxhPuEDVquA\/0?wx_fmt=png",
+    "sourceName": "小说拾遗",
+    "sourceUrl": "snssdk1128:\/\/user\/profile\/562564899806367"
   }
 ]

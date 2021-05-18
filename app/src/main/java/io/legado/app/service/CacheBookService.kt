@@ -184,7 +184,7 @@ class CacheBookService : BaseService() {
                     postDownloading(true)
                     return@async
                 }
-                if (!BookHelp.hasContent(book, bookChapter)) {
+                if (!BookHelp.hasImageContent(book, bookChapter)) {
                     webBook.getContent(this, book, bookChapter, context = searchPool)
                         .timeout(60000L)
                         .onError {

@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
@@ -72,21 +71,20 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private fun initView() = with(binding) {
         adapter = TocRegexAdapter(requireContext())
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recyclerView)
         tvCancel.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
         tvOk.setOnClickListener {
             adapter.getItems().forEach { tocRule ->
                 if (selectedName == tocRule.name) {
                     val callBack = activity as? CallBack
                     callBack?.onTocRegexDialogResult(tocRule.rule)
-                    dismiss()
+                    dismissAllowingStateLoss()
                     return@setOnClickListener
                 }
             }
@@ -95,7 +93,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private fun initData() {
         tocRegexLiveData?.removeObservers(viewLifecycleOwner)
-        tocRegexLiveData = appDb.txtTocRule.observeAll()
+        tocRegexLiveData = appDb.txtTocRuleDao.observeAll()
         tocRegexLiveData?.observe(viewLifecycleOwner, { tocRules ->
             initSelectedName(tocRules)
             adapter.setItems(tocRules)
@@ -137,7 +135,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         if (!cacheUrls.contains(defaultUrl)) {
             cacheUrls.add(0, defaultUrl)
         }
-        requireContext().alert(titleResource = R.string.import_book_source_on_line) {
+        requireContext().alert(titleResource = R.string.import_on_line) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
             alertBinding.apply {
                 editView.setFilterValues(cacheUrls)
@@ -225,7 +223,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                         getItem(holder.layoutPosition)?.let {
                             it.enable = isChecked
                             launch(IO) {
-                                appDb.txtTocRule.update(it)
+                                appDb.txtTocRuleDao.update(it)
                             }
                         }
                     }
@@ -236,7 +234,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 ivDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { item ->
                         launch(IO) {
-                            appDb.txtTocRule.delete(item)
+                            appDb.txtTocRuleDao.delete(item)
                         }
                     }
                 }
@@ -258,7 +256,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                     item.serialNumber = index + 1
                 }
                 launch(IO) {
-                    appDb.txtTocRule.update(*getItems().toTypedArray())
+                    appDb.txtTocRuleDao.update(*getItems().toTypedArray())
                 }
             }
             isMoved = false

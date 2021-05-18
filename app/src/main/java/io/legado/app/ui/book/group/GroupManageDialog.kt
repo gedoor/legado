@@ -71,7 +71,9 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
         binding.tvOk.setTextColor(requireContext().accentColor)
         binding.tvOk.visible()
-        binding.tvOk.setOnClickListener { dismiss() }
+        binding.tvOk.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
     }
 
     private fun initData() {

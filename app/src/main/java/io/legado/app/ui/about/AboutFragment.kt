@@ -8,14 +8,12 @@ import androidx.annotation.StringRes
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
-import io.legado.app.constant.appInfo
+import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.openUrl
-import io.legado.app.utils.sendMail
-import io.legado.app.utils.sendToClip
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 
 class AboutFragment : PreferenceFragmentCompat() {
 
@@ -34,6 +32,7 @@ class AboutFragment : PreferenceFragmentCompat() {
         Pair("(QQ群6)870270970", "FeCF8iSxfQbe90HPvGsvcqs5P5oSeY5n"),
         Pair("(QQ群7)15987187", "S2g2TMD0LGd3sefUADd1AbyPEW2o2XfC"),
         Pair("(QQ群8)1079926194", "gg2qFH8q9IPFaCHV3H7CqCN-YljvazE1"),
+        Pair("(QQ群9)892108780", "Ci_O3aysKjEBfplOWeCud-rxl71TjU2Q")
     )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -63,6 +62,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "disclaimer" -> requireContext().openUrl(disclaimerUrl)
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
+            "crashLog" -> showCrashLogs()
             "tg" -> openUrl(R.string.tg_url)
             "discord" -> openUrl(R.string.discord_url)
         }
@@ -108,6 +108,22 @@ class AboutFragment : PreferenceFragmentCompat() {
             toastOnUi("添加失败,请手动添加")
         }
         return false
+    }
+
+    private fun showCrashLogs() {
+        context?.externalCacheDir?.let { exCacheDir ->
+            val crashDir = FileUtils.getFile(exCacheDir, "crash")
+            val crashLogs = crashDir.listFiles()
+            val crashLogNames = arrayListOf<String>()
+            crashLogs?.forEach {
+                crashLogNames.add(it.name)
+            }
+            context?.selector(R.string.crash_log, crashLogNames) { _, select ->
+                crashLogs?.getOrNull(select)?.let { logFile ->
+                    TextDialog.show(childFragmentManager, logFile.readText())
+                }
+            }
+        }
     }
 
 }

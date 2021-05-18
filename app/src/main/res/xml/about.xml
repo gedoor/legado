@@ -89,6 +89,11 @@
         app:layout="@layout/view_preference_category">
 
         <io.legado.app.ui.widget.prefs.Preference
+            android:key="crashLog"
+            android:title="@string/crash_log"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="license"
             android:title="@string/license"
             app:iconSpaceReserved="false" />

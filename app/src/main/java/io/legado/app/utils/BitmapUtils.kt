@@ -9,6 +9,7 @@ import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
 import splitties.init.appCtx
+import java.io.FileInputStream
 import java.io.IOException
 import kotlin.math.*
 
@@ -25,11 +26,12 @@ object BitmapUtils {
      * @param height 想要显示的图片的高度
      * @return
      */
-    fun decodeBitmap(path: String, width: Int, height: Int): Bitmap {
+    fun decodeBitmap(path: String, width: Int, height: Int): Bitmap? {
         val op = BitmapFactory.Options()
+        val ips = FileInputStream(path)
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, op) //获取尺寸信息
+        BitmapFactory.decodeFileDescriptor(ips.fd,null,op)
         //获取比例大小
         val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
         val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
@@ -42,21 +44,23 @@ object BitmapUtils {
             }
         }
         op.inJustDecodeBounds = false
-        return BitmapFactory.decodeFile(path, op)
+        return BitmapFactory.decodeFileDescriptor(ips.fd,null,op)
+
     }
 
     /** 从path中获取Bitmap图片
      * @param path 图片路径
      * @return
      */
-    fun decodeBitmap(path: String): Bitmap {
+    fun decodeBitmap(path: String): Bitmap? {
+
         val opts = BitmapFactory.Options()
+        val ips = FileInputStream(path)
         opts.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, opts)
+        BitmapFactory.decodeFileDescriptor(ips.fd,null,opts)
         opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
         opts.inJustDecodeBounds = false
-
-        return BitmapFactory.decodeFile(path, opts)
+        return BitmapFactory.decodeFileDescriptor(ips.fd,null,opts)
     }
 
     /**

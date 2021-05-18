@@ -51,18 +51,10 @@ class ImportReplaceRuleActivity :
             viewModel.import(it)
             return
         }
-        intent.getStringExtra("filePath")?.let {
-            viewModel.importFromFilePath(it)
-            return
-        }
         intent.data?.let {
             when (it.path) {
                 "/importonline" -> it.getQueryParameter("src")?.let { url ->
-                    if (url.startsWith("http", false)) {
-                        viewModel.import(url)
-                    } else {
-                        viewModel.importFromFilePath(url)
-                    }
+                    viewModel.import(url)
                 }
                 else -> {
                     binding.rotateLoading.hide()

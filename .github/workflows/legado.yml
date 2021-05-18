@@ -6,11 +6,6 @@ on:
   push:
     branches:
       - master
-#    tags:
-#      - '3.*'
-#  pull_request:
-#    branches:
-#      - master
 #  watch:
 #    types: [started]
 #  schedule:
@@ -20,21 +15,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # 登录蓝奏云后查看cookie
-      # LANZOU_ID ： woozooo.com -> Cookie -> ylogin
-      # LANZOU_PSD ： pc.woozooo.com -> Cookie -> phpdisk_info
-      LANZOU_ID: ${{ secrets.LANZOU_ID }}
-      LANZOU_PSD: ${{ secrets.LANZOU_PSD }}
-      # 蓝奏云里的文件夹名（需手动在蓝奏云创建）
-      LANZOU_FOLDER: '阅读3测试版'
+      # 登录蓝奏云后在控制台运行document.cookie
+      ylogin: ${{ secrets.LANZOU_ID }}
+      phpdisk_info: ${{ secrets.LANZOU_PSD }}
+      # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
+      LANZOU_FOLDER_ID: '2670621'
       # 是否上传到artifact
       UPLOAD_ARTIFACT: 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Set Up JDK
-        uses: actions/setup-java@v1
+      - uses: actions/cache@v2
         with:
-          java-version: 14
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-
+
       - name: Clear 18PlusList.txt
         run: |
           echo "清空18PlusList.txt"
@@ -56,35 +54,27 @@ jobs:
         run: |
           echo "开始进行release构建"
           chmod +x gradlew
-          ./gradlew assembleAppRelease
+          ./gradlew assembleAppRelease --build-cache --parallel
       - name: Upload App To Artifact
         if: ${{ env.UPLOAD_ARTIFACT != 'false' }}
         uses: actions/upload-artifact@v2
         with:
           name: legado apk
           path: ${{ github.workspace }}/app/build/outputs/apk/app/release/*.apk
-      - name: Set Up Python 3
-        if: ${{ env.LANZOU_PSD }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Dependence Install
-        if: ${{ env.LANZOU_PSD }}
-        run: |
-          pip install requests
-          pip install lanzou-api
-      - name: Download Script
-        if: ${{ env.LANZOU_PSD }}
-        shell: python
-        run: |
-          import requests,os
-          res = requests.get('https://raw.githubusercontent.com/Celeter/build/master/.github/scripts/API_lanzou.py')
-          with open(os.environ["FILE_PATH"], 'wb') as f:
-            f.write(res.content)
-        env:
-          FILE_PATH: ${{ github.workspace }}/.github/lzy.py
       - name: Upload App To Lanzou
-        if: ${{ env.LANZOU_PSD }}
-        run: python $GITHUB_WORKSPACE/.github/lzy.py
-        env:
-          UPLOAD_FOLDER: ${{ github.workspace }}/app/build/outputs/apk/app/release/
+        if: ${{ env.ylogin }}
+        run: |
+          path="$GITHUB_WORKSPACE/app/build/outputs/apk/app/release"
+          files=$(ls $path)
+          for f in $files
+          do
+           if [[ $f == *"apk" ]]; then
+            file=$f
+            echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 文件:$file"
+            break
+           fi
+          done
+
+          python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path/$file" "$LANZOU_FOLDER_ID"
+          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzous.com/b0f810h4b"
+ 

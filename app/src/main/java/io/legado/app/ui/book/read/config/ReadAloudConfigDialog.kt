@@ -63,7 +63,7 @@ class ReadAloudConfigDialog : DialogFragment() {
             get() {
                 val eid = appCtx.getPrefLong(PreferKey.speakEngine)
                 val ht = appDb.httpTTSDao.get(eid)
-                return ht?.name ?: getString(R.string.local_tts)
+                return ht?.name ?: getString(R.string.system_tts)
             }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

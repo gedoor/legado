@@ -3,7 +3,7 @@ package io.legado.app.utils
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
-import io.legado.app.ui.filepicker.utils.ConvertUtils
+import io.legado.app.ui.document.utils.ConvertUtils
 import splitties.init.appCtx
 import java.io.*
 import java.nio.charset.Charset
@@ -510,6 +510,44 @@ object FileUtils {
             }
             fos = FileOutputStream(filepath)
             fos.write(data)
+            true
+        } catch (e: IOException) {
+            false
+        } finally {
+            closeSilently(fos)
+        }
+    }
+    /**
+     * 保存文件内容
+     */
+    fun writeInputStream(filepath: String, data: InputStream): Boolean {
+        val file = File(filepath)
+        return writeInputStream(file,data)
+    }
+
+    /**
+     * 保存文件内容
+     */
+    fun writeInputStream(file: File, data: InputStream): Boolean {
+        var fos: FileOutputStream? = null
+        return try {
+            if (!file.exists()) {
+                file.parentFile?.mkdirs()
+                file.createNewFile()
+            }
+            val buffer=ByteArray(1024*4)
+            fos = FileOutputStream(file)
+            while (true) {
+                val len = data.read(buffer, 0, buffer.size)
+                if (len == -1) {
+                    break
+                } else {
+                    fos.write(buffer, 0, len)
+                }
+            }
+            data.close()
+            fos.flush()
+
             true
         } catch (e: IOException) {
             false

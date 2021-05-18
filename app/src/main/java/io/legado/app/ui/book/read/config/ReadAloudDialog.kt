@@ -81,7 +81,6 @@ class ReadAloudDialog : BaseDialogFragment() {
             tvSetting.setTextColor(textColor)
             cbTtsFollowSys.setTextColor(textColor)
         }
-        initOnChange()
         initData()
         initEvent()
     }
@@ -95,13 +94,29 @@ class ReadAloudDialog : BaseDialogFragment() {
         seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate
     }
 
-    private fun initOnChange() = with(binding) {
-        cbTtsFollowSys.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) {
-                requireContext().putPrefBoolean("ttsFollowSys", isChecked)
-                seekTtsSpeechRate.isEnabled = !isChecked
-                upTtsSpeechRate()
-            }
+    private fun initEvent() = with(binding) {
+        llMainMenu.setOnClickListener {
+            callBack?.showMenuBar()
+            dismissAllowingStateLoss()
+        }
+        llSetting.setOnClickListener {
+            ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
+        }
+        tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
+        tvNext.setOnClickListener { ReadBook.moveToNextChapter(true) }
+        ivStop.setOnClickListener {
+            ReadAloud.stop(requireContext())
+            dismissAllowingStateLoss()
+        }
+        ivPlayPause.setOnClickListener { callBack?.onClickReadAloud() }
+        ivPlayPrev.setOnClickListener { ReadAloud.prevParagraph(requireContext()) }
+        ivPlayNext.setOnClickListener { ReadAloud.nextParagraph(requireContext()) }
+        llCatalog.setOnClickListener { callBack?.openChapterList() }
+        llToBackstage.setOnClickListener { callBack?.finish() }
+        cbTtsFollowSys.setOnCheckedChangeListener { _, isChecked ->
+            requireContext().putPrefBoolean("ttsFollowSys", isChecked)
+            seekTtsSpeechRate.isEnabled = !isChecked
+            upTtsSpeechRate()
         }
         seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
@@ -119,21 +134,6 @@ class ReadAloudDialog : BaseDialogFragment() {
                 ReadAloud.setTimer(requireContext(), seekTimer.progress)
             }
         })
-    }
-
-    private fun initEvent() = with(binding) {
-        llMainMenu.setOnClickListener { callBack?.showMenuBar(); dismiss() }
-        llSetting.setOnClickListener {
-            ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
-        }
-        tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
-        tvNext.setOnClickListener { ReadBook.moveToNextChapter(true) }
-        ivStop.setOnClickListener { ReadAloud.stop(requireContext()); dismiss() }
-        ivPlayPause.setOnClickListener { callBack?.onClickReadAloud() }
-        ivPlayPrev.setOnClickListener { ReadAloud.prevParagraph(requireContext()) }
-        ivPlayNext.setOnClickListener { ReadAloud.nextParagraph(requireContext()) }
-        llCatalog.setOnClickListener { callBack?.openChapterList() }
-        llToBackstage.setOnClickListener { callBack?.finish() }
     }
 
     private fun upPlayState() {

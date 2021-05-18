@@ -2,7 +2,7 @@
     <!--App-->
     <string name="app_name">閱讀</string>
     <string name="receiving_shared_label">閱讀·搜尋</string>
-    <string name="tip_perm_request_storage">閱讀需要存取記憶卡權限，請前往“設定”—“應用程式權限”—打開所需權限</string>
+    <string name="tip_perm_request_storage">閱讀需要存取記憶卡權限，請前往「設定」—「應用程式權限」—打開所需權限</string>
 
     <!--Other-->
     <string name="menu_backup">Home</string>
@@ -109,8 +109,8 @@
     <string name="web_dav_set_import_old">WebDav設定/匯入舊版本資料</string>
     <string name="backup">備份</string>
     <string name="restore">復原</string>
-    <string name="backup_permission">備份請給與儲存權限</string>
-    <string name="restore_permission">復原請給與儲存權限</string>
+    <string name="backup_permission">備份請給予儲存權限</string>
+    <string name="restore_permission">復原請給予儲存權限</string>
     <string name="ok">確認</string>
     <string name="cancel">取消</string>
     <string name="backup_confirmation">確認備份嗎？</string>
@@ -190,8 +190,8 @@
     <string name="flow_sys">跟隨系統</string>
     <string name="add">新增</string>
     <string name="import_book_source">匯入書源</string>
-    <string name="import_book_source_local">本機匯入</string>
-    <string name="import_book_source_on_line">網路匯入</string>
+    <string name="import_local">本機匯入</string>
+    <string name="import_on_line">網路匯入</string>
     <string name="replace_rule_title">取代淨化</string>
     <string name="replace_rule_edit">取代規則編輯</string>
     <string name="replace_rule">取代規則</string>
@@ -686,13 +686,14 @@
     <string name="follow_official_account">關注公眾號</string>
     <string name="wechat">微信</string>
     <string name="thanks">您的支援是我更新的動力</string>
-    <string name="about_official_account">公眾號[開源閱讀]</string>
+    <string name="about_official_account">公眾號[开源阅读]</string>
     <string name="source_auto_changing">正在自動換源</string>
     <string name="click_to_apply">點擊加入</string>
     <string name="middle">中</string>
     <string name="information">訊息</string>
     <string name="switchLayout">切換布局</string>
     <string name="text_font_weight_converter">文章字重轉換</string>
+    <string name="full_screen_gestures_support">全面屏手勢最佳化</string>
   
     <!--color-->
     <string name="primary">主色調</string>
@@ -753,7 +754,7 @@
     <string name="language">語言</string>
     <string name="import_rss_source">匯入訂閱源</string>
     <string name="donate_summary">您的支援是我更新的動力</string>
-    <string name="about_summary">公眾號[開源閱讀軟體]</string>
+    <string name="about_summary">公眾號[开源阅读軟體]</string>
     <string name="read_record">閱讀記錄</string>
     <string name="read_record_summary">閱讀時間記錄</string>
     <string name="local_tts">本機TTS</string>
@@ -780,7 +781,8 @@
     <string name="style_name">樣式名稱:</string>
     <string name="empty_msg_import_book">點擊右上角資料夾圖示,選擇資料夾</string>
     <string name="scan_folder">智慧掃描</string>
-    <string name="copy_url">複製URL</string>
+    <string name="copy_book_url">複製書籍URL</string>
+    <string name="copy_toc_url">複製目錄URL</string>
     <string name="no_book">沒有書籍</string>
     <string name="keep_original_name">保留原名</string>
     <string name="click_regional_config">點擊區域設定</string>
@@ -797,13 +799,37 @@
     <string name="current_progress_exceeds_cloud">目前進度超過雲端進度,是否同步?</string>
     <string name="sync_book_progress_t">同步閱讀進度</string>
     <string name="sync_book_progress_s">進入退出閱讀介面時同步閱讀進度</string>
-    <string name="create_bookmark_error">创建书签失败</string>
-    <string name="single_url">单URL</string>
-    <string name="export_bookshelf">导出书单</string>
-    <string name="import_bookshelf">导入书单</string>
-    <string name="pre_download">预下载</string>
-    <string name="pre_download_s">预先下载10章正文</string>
-    <string name="sort_enable">启用排序</string>
-    <string name="background_image">背景图片</string>
+    <string name="create_bookmark_error">建立書籤失敗</string>
+    <string name="single_url">單URL</string>
+    <string name="export_bookshelf">匯出書單</string>
+    <string name="import_bookshelf">匯入書單</string>
+    <string name="pre_download">預下載</string>
+    <string name="pre_download_s">預先下載%s章正文</string>
+    <string name="sort_enable">啟用排序</string>
+    <string name="background_image">背景圖片</string>
+    <string name="export_folder">匯出資料夾</string>
+    <string name="export_charset">匯出編碼</string>
+    <string name="export_to_web_dav">匯出到WebDav</string>
+    <string name="reverse_content">反轉內容</string>
+    <string name="debug">除錯</string>
+    <string name="crash_log">當機日誌</string>
+    <string name="use_zh_layout">使用自訂中文分行</string>
+    <string name="image_style">圖片樣式</string>
+    <string name="system_tts">系統TTS</string>
+    <string name="export_type">匯出格式</string>
+    <string name="checkAuthor">校驗作者</string>
+    <string name="search_src">搜尋原始碼</string>
+    <string name="boo_src">書籍原始碼</string>
+    <string name="toc_src">目錄原始碼</string>
+    <string name="content_src">正文原始碼</string>
+    <string name="list_src">列表原始碼</string>
+    <string name="url_already">此url已訂閱</string>
+    <string name="high_brush_title">高刷</string>
+    <string name="high_brush_summary">使用螢幕最高刷新率</string>
+    <string name="export_all">导出所有</string>
+    <string name="complete">完成</string>
+    <string name="show_unread">显示未读标志</string>
+    <string name="use_default_cover">总是使用默认封面</string>
+    <string name="use_default_cover_s">总是显示默认封面,不显示网络封面</string>
 
 </resources>

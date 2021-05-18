@@ -24,6 +24,7 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.dp
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.splitNotBlank
@@ -64,12 +65,15 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
         adapter.setItems(viewModel.allSources)
         binding.tvCancel.visible()
         binding.tvCancel.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
         binding.tvOk.visible()
         binding.tvOk.setOnClickListener {
+            val waitDialog = WaitDialog(requireContext())
+            waitDialog.show()
             viewModel.importSelect {
-                dismiss()
+                waitDialog.dismiss()
+                dismissAllowingStateLoss()
             }
         }
         upSelectText()

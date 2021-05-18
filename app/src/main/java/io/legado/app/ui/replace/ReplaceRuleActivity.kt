@@ -2,11 +2,11 @@ package io.legado.app.ui.replace
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
@@ -28,9 +28,9 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.association.ImportReplaceRuleActivity
-import io.legado.app.ui.filepicker.FilePicker
-import io.legado.app.ui.filepicker.FilePickerDialog
-import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -46,20 +46,52 @@ import java.io.File
 class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRuleViewModel>(),
     SearchView.OnQueryTextListener,
     PopupMenu.OnMenuItemClickListener,
-    FilePickerDialog.CallBack,
     SelectActionBar.CallBack,
     ReplaceRuleAdapter.CallBack {
     override val viewModel: ReplaceRuleViewModel by viewModels()
     private val importRecordKey = "replaceRuleRecordKey"
-    private val importRequestCode = 132
-    private val importRequestCodeQr = 133
-    private val exportRequestCode = 234
     private lateinit var adapter: ReplaceRuleAdapter
     private lateinit var searchView: SearchView
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var replaceRuleLiveData: LiveData<List<ReplaceRule>>? = null
     private var dataInit = false
+    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
+        it ?: return@registerForActivityResult
+        startActivity<ImportReplaceRuleActivity> {
+            putExtra("source", it)
+        }
+    }
+    private val editActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                setResult(RESULT_OK)
+            }
+        }
+    private val importDoc = registerForActivityResult(FilePicker()) { uri ->
+        kotlin.runCatching {
+            uri?.readText(this)?.let {
+                val dataKey = IntentDataHelp.putData(it)
+                startActivity<ImportReplaceRuleActivity> {
+                    putExtra("dataKey", dataKey)
+                }
+            }
+        }.onFailure {
+            toastOnUi("readTextError:${it.localizedMessage}")
+        }
+    }
+    private val exportDir = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            DocumentFile.fromTreeUri(this, uri)?.let {
+                viewModel.exportSelection(adapter.getSelection(), it)
+            }
+        } else {
+            uri.path?.let {
+                viewModel.exportSelection(adapter.getSelection(), File(it))
+            }
+        }
+    }
 
     override fun getViewBinding(): ActivityReplaceRuleBinding {
         return ActivityReplaceRuleBinding.inflate(layoutInflater)
@@ -179,15 +211,19 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add_replace_rule ->
-                ReplaceEditActivity.show(this)
+                editActivity.launch(ReplaceEditActivity.startIntent(this))
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
 
             R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
-            R.id.menu_import_source_onLine -> showImportDialog()
-            R.id.menu_import_source_local -> FilePicker
-                .selectFile(this, importRequestCode, allowExtensions = arrayOf("txt", "json"))
-            R.id.menu_import_source_qr -> startActivityForResult<QrCodeActivity>(importRequestCodeQr)
+            R.id.menu_import_onLine -> showImportDialog()
+            R.id.menu_import_local -> importDoc.launch(
+                FilePickerParam(
+                    mode = FilePicker.FILE,
+                    allowExtensions = arrayOf("txt", "json")
+                )
+            )
+            R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_help -> showHelp()
             else -> if (item.groupId == R.id.replace_group) {
                 searchView.setQuery("group:${item.title}", true)
@@ -200,7 +236,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         when (item?.itemId) {
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
-            R.id.menu_export_selection -> FilePicker.selectFolder(this, exportRequestCode)
+            R.id.menu_export_selection -> exportDir.launch(null)
         }
         return false
     }
@@ -258,46 +294,6 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         return false
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            importRequestCode -> if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    kotlin.runCatching {
-                        uri.readText(this)?.let {
-                            val dataKey = IntentDataHelp.putData(it)
-                            startActivity<ImportReplaceRuleActivity> {
-                                putExtra("dataKey", dataKey)
-                            }
-                        }
-                    }.onFailure {
-                        toastOnUi("readTextError:${it.localizedMessage}")
-                    }
-                }
-            }
-            importRequestCodeQr -> if (resultCode == Activity.RESULT_OK) {
-                data?.getStringExtra("result")?.let {
-                    startActivity<ImportReplaceRuleActivity> {
-                        putExtra("source", it)
-                    }
-                }
-            }
-            exportRequestCode -> if (resultCode == RESULT_OK) {
-                data?.data?.let { uri ->
-                    if (uri.isContentScheme()) {
-                        DocumentFile.fromTreeUri(this, uri)?.let {
-                            viewModel.exportSelection(adapter.getSelection(), it)
-                        }
-                    } else {
-                        uri.path?.let {
-                            viewModel.exportSelection(adapter.getSelection(), File(it))
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         Coroutine.async { ReadBook.contentProcessor?.upReplaceRules() }
@@ -322,7 +318,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     override fun edit(rule: ReplaceRule) {
         setResult(RESULT_OK)
-        ReplaceEditActivity.show(this, rule.id)
+        editActivity.launch(ReplaceEditActivity.startIntent(this, rule.id))
     }
 
     override fun toTop(rule: ReplaceRule) {

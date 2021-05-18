@@ -190,8 +190,8 @@
     <string name="flow_sys">跟随系统</string>
     <string name="add">添加</string>
     <string name="import_book_source">导入书源</string>
-    <string name="import_book_source_local">本地导入</string>
-    <string name="import_book_source_on_line">网络导入</string>
+    <string name="import_local">本地导入</string>
+    <string name="import_on_line">网络导入</string>
     <string name="replace_rule_title">替换净化</string>
     <string name="replace_rule_edit">替换规则编辑</string>
     <string name="replace_rule">替换规则</string>
@@ -693,6 +693,7 @@
     <string name="information">信息</string>
     <string name="switchLayout">切换布局</string>
     <string name="text_font_weight_converter">文章字重切换</string>
+    <string name="full_screen_gestures_support">全面屏手势优化</string>
 
     <!--color-->
     <string name="primary">主色调</string>
@@ -780,7 +781,8 @@
     <string name="style_name">样式名称:</string>
     <string name="empty_msg_import_book">点击右上角文件夹图标,选择文件夹</string>
     <string name="scan_folder">智能扫描</string>
-    <string name="copy_url">拷贝URL</string>
+    <string name="copy_book_url">拷贝书籍URL</string>
+    <string name="copy_toc_url">拷贝目录URL</string>
     <string name="no_book">没有书籍</string>
     <string name="keep_original_name">保留原名</string>
     <string name="click_regional_config">点击区域设置</string>
@@ -802,8 +804,32 @@
     <string name="export_bookshelf">导出书单</string>
     <string name="import_bookshelf">导入书单</string>
     <string name="pre_download">预下载</string>
-    <string name="pre_download_s">预先下载10章正文</string>
+    <string name="pre_download_s">预先下载%s章正文</string>
     <string name="sort_enable">启用排序</string>
     <string name="background_image">背景图片</string>
+    <string name="export_folder">导出文件夹</string>
+    <string name="export_charset">导出编码</string>
+    <string name="export_to_web_dav">导出到WebDav</string>
+    <string name="reverse_content">反转内容</string>
+    <string name="debug">调试</string>
+    <string name="crash_log">崩溃日志</string>
+    <string name="use_zh_layout">使用自定义中文分行</string>
+    <string name="image_style">图片样式</string>
+    <string name="system_tts">系统TTS</string>
+    <string name="export_type">导出格式</string>
+    <string name="checkAuthor">校验作者</string>
+    <string name="search_src">搜索源码</string>
+    <string name="boo_src">书籍源码</string>
+    <string name="toc_src">目录源码</string>
+    <string name="content_src">正文源码</string>
+    <string name="list_src">列表源码</string>
+    <string name="url_already">此url已订阅</string>
+    <string name="high_brush_title">高刷</string>
+    <string name="high_brush_summary">使用屏幕最高刷新率</string>
+    <string name="export_all">导出所有</string>
+    <string name="complete">完成</string>
+    <string name="show_unread">显示未读标志</string>
+    <string name="use_default_cover">总是使用默认封面</string>
+    <string name="use_default_cover_s">总是显示默认封面,不显示网络封面</string>
 
 </resources>

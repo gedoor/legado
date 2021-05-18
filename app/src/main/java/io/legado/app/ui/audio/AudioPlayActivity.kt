@@ -1,7 +1,6 @@
 package io.legado.app.ui.audio
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.icu.text.SimpleDateFormat
 import android.os.Build
@@ -25,7 +24,7 @@ import io.legado.app.help.ImageLoader
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
-import io.legado.app.ui.book.toc.ChapterListActivity
+import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
@@ -42,13 +41,19 @@ class AudioPlayActivity :
     override val viewModel: AudioPlayViewModel
             by viewModels()
 
-    private var requestCodeChapter = 8461
     private var adjustProgress = false
     private val progressTimeFormat by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             SimpleDateFormat("mm:ss", Locale.getDefault())
         } else {
             java.text.SimpleDateFormat("mm:ss", Locale.getDefault())
+        }
+    }
+    private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
+        it?.let {
+            if (it.first != AudioPlay.durChapterIndex) {
+                AudioPlay.skipTo(this, it.first)
+            }
         }
     }
 
@@ -107,9 +112,7 @@ class AudioPlayActivity :
         })
         binding.ivChapter.setOnClickListener {
             AudioPlay.book?.let {
-                startActivityForResult<ChapterListActivity>(requestCodeChapter) {
-                    putExtra("bookUrl", it.bookUrl)
-                }
+                tocActivityResult.launch(it.bookUrl)
             }
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -180,19 +183,6 @@ class AudioPlayActivity :
         super.onDestroy()
         if (AudioPlay.status != Status.PLAY) {
             AudioPlay.stop(this)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                requestCodeChapter -> data?.getIntExtra("index", AudioPlay.durChapterIndex)?.let {
-                    if (it != AudioPlay.durChapterIndex) {
-                        AudioPlay.skipTo(this, it)
-                    }
-                }
-            }
         }
     }
 

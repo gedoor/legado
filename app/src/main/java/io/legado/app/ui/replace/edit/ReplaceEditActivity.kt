@@ -14,15 +14,12 @@ import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceEditBinding
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getSize
-
-import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import kotlin.math.abs
 
@@ -36,20 +33,21 @@ class ReplaceEditActivity :
 
     companion object {
 
-        fun show(
+        fun startIntent(
             context: Context,
             id: Long = -1,
             pattern: String? = null,
             isRegex: Boolean = false,
             scope: String? = null
-        ) {
+        ): Intent {
             val intent = Intent(context, ReplaceEditActivity::class.java)
             intent.putExtra("id", id)
             intent.putExtra("pattern", pattern)
             intent.putExtra("isRegex", isRegex)
             intent.putExtra("scope", scope)
-            context.startActivity(intent)
+            return intent
         }
+
     }
 
     override fun getViewBinding(): ActivityReplaceEditBinding {
@@ -86,7 +84,7 @@ class ReplaceEditActivity :
                     toastOnUi(R.string.replace_rule_invalid)
                 } else {
                     viewModel.save(rule) {
-                        postEvent(EventBus.REPLACE_RULE_SAVE, "")
+                        setResult(RESULT_OK)
                         finish()
                     }
                 }

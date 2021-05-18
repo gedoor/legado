@@ -23,6 +23,7 @@ import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlin.math.min
 
@@ -113,19 +114,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val lineTop = textLine.lineTop + relativeOffset
         val lineBase = textLine.lineBase + relativeOffset
         val lineBottom = textLine.lineBottom + relativeOffset
-        if (textLine.isImage) {
-            drawImage(canvas, textLine, lineTop, lineBottom)
-        } else {
-            drawChars(
-                canvas,
-                textLine.textChars,
-                lineTop,
-                lineBase,
-                lineBottom,
-                isTitle = textLine.isTitle,
-                isReadAloud = textLine.isReadAloud
-            )
-        }
+        drawChars(
+            canvas,
+            textLine.textChars,
+            lineTop,
+            lineBase,
+            lineBottom,
+            textLine.isTitle,
+            textLine.isReadAloud,
+            textLine.isImage
+        )
     }
 
     /**
@@ -139,6 +137,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineBottom: Float,
         isTitle: Boolean,
         isReadAloud: Boolean,
+        isImageLine: Boolean
     ) {
         val textPaint = if (isTitle) {
             ChapterProvider.titlePaint
@@ -148,7 +147,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         textPaint.color =
             if (isReadAloud) context.accentColor else ReadBookConfig.textColor
         textChars.forEach {
-            canvas.drawText(it.charData, it.start, lineBase, textPaint)
+            if (it.isImage) {
+                drawImage(canvas, it, lineTop, lineBottom, isImageLine)
+            } else {
+                canvas.drawText(it.charData, it.start, lineBase, textPaint)
+            }
             if (it.selected) {
                 canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
             }
@@ -160,18 +163,28 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     private fun drawImage(
         canvas: Canvas,
-        textLine: TextLine,
+        textChar: TextChar,
         lineTop: Float,
         lineBottom: Float,
+        isImageLine: Boolean
     ) {
-        textLine.textChars.forEach { textChar ->
-            ReadBook.book?.let { book ->
-                val rectF = RectF(textChar.start, lineTop, textChar.end, lineBottom)
-                ImageProvider.getImage(book, textPage.chapterIndex, textChar.charData, true)
-                    ?.let {
-                        canvas.drawBitmap(it, null, rectF, null)
+        ReadBook.book?.let { book ->
+            ImageProvider.getImage(book, textPage.chapterIndex, textChar.charData, true)
+                ?.let {
+                    val rectF = if (isImageLine) {
+                        RectF(textChar.start, lineTop, textChar.end, lineBottom)
+                    } else {
+                        /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
+                        val h = (textChar.end - textChar.start) / it.width * it.height
+                        val div = (lineBottom - lineTop - h) / 2
+                        RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
                     }
-            }
+                    kotlin.runCatching {
+                        canvas.drawBitmap(it, null, rectF, null)
+                    }.onFailure { e ->
+                        context.toastOnUi(e.localizedMessage)
+                    }
+                }
         }
     }
 

@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
-import com.hankcs.hanlp.HanLP
+import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
@@ -180,8 +180,8 @@ class SearchContentActivity :
                     //搜索替换后的正文
                     withContext(Dispatchers.IO) {
                         chapter.title = when (AppConfig.chineseConverterType) {
-                            1 -> HanLP.convertToSimplifiedChinese(chapter.title)
-                            2 -> HanLP.convertToTraditionalChinese(chapter.title)
+                            1 -> ChineseUtils.t2s(chapter.title)
+                            2 -> ChineseUtils.s2t(chapter.title)
                             else -> chapter.title
                         }
                         replaceContents =

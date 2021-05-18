@@ -1,5 +1,7 @@
 package io.legado.app.help.storage
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
@@ -9,23 +11,24 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import io.legado.app.constant.EventBus
+import io.legado.app.constant.AppConst.androidId
 import io.legado.app.constant.PreferKey
-import io.legado.app.constant.androidId
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
 import io.legado.app.help.DefaultData
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ThemeConfig
-import io.legado.app.service.help.ReadBook
-import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import splitties.systemservices.alarmManager
 import java.io.File
+import kotlin.system.exitProcess
+
 
 object Restore {
     private val ignoreConfigPath = FileUtils.getPath(appCtx.filesDir, "restoreIgnore.json")
@@ -138,7 +141,7 @@ object Restore {
                 appDb.ruleSubDao.insert(*it.toTypedArray())
             }
             fileToListT<TxtTocRule>(path, DefaultData.txtTocRuleFileName)?.let {
-                appDb.txtTocRule.insert(*it.toTypedArray())
+                appDb.txtTocRuleDao.insert(*it.toTypedArray())
             }
             fileToListT<HttpTTS>(path, DefaultData.httpTtsFileName)?.let {
                 appDb.httpTTSDao.insert(*it.toTypedArray())
@@ -146,11 +149,11 @@ object Restore {
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
                 it.forEach { readRecord ->
                     //判断是不是本机记录
-                    if (readRecord.androidId != androidId) {
+                    if (readRecord.deviceId != androidId) {
                         appDb.readRecordDao.insert(readRecord)
                     } else {
                         val time = appDb.readRecordDao
-                            .getReadTime(readRecord.androidId, readRecord.bookName)
+                            .getReadTime(readRecord.deviceId, readRecord.bookName)
                         if (time == null || time < readRecord.readTime) {
                             appDb.readRecordDao.insert(readRecord)
                         }
@@ -207,7 +210,6 @@ object Restore {
                             is Long -> edit.putLong(it.key, value)
                             is Float -> edit.putFloat(it.key, value)
                             is String -> edit.putString(it.key, value)
-                            else -> Unit
                         }
                     }
                 }
@@ -220,17 +222,19 @@ object Restore {
                 hideNavigationBar = appCtx.getPrefBoolean(PreferKey.hideNavigationBar)
                 autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
             }
-            ChapterProvider.upStyle()
-            ReadBook.loadContent(resetPageOffset = false)
         }
+        appCtx.toastOnUi(R.string.restore_success)
         withContext(Main) {
-            appCtx.toastOnUi(R.string.restore_success)
+            delay(100)
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(appCtx.getPrefString(PreferKey.launcherIcon))
             }
-            LanguageUtils.setConfiguration(appCtx)
-            ThemeConfig.applyDayNight(appCtx)
-            postEvent(EventBus.SHOW_RSS, "")
+            appCtx.packageManager.getLaunchIntentForPackage(appCtx.packageName)?.let { intent ->
+                val restartIntent =
+                    PendingIntent.getActivity(appCtx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+                alarmManager[AlarmManager.RTC, System.currentTimeMillis() + 300] = restartIntent
+                exitProcess(0)
+            }
         }
     }
 

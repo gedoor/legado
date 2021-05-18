@@ -121,17 +121,13 @@ class PaddingConfigDialog : BaseDialogFragment() {
             footerPaddingRight = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.cbShowTopLine.onCheckedChangeListener = { cb, isChecked ->
-            if (cb.isPressed) {
-                showHeaderLine = isChecked
-                postEvent(EventBus.UP_CONFIG, true)
-            }
+        binding.cbShowTopLine.onCheckedChangeListener = { _, isChecked ->
+            showHeaderLine = isChecked
+            postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.cbShowBottomLine.onCheckedChangeListener = { cb, isChecked ->
-            if (cb.isPressed) {
-                showFooterLine = isChecked
-                postEvent(EventBus.UP_CONFIG, true)
-            }
+        binding.cbShowBottomLine.onCheckedChangeListener = { _, isChecked ->
+            showFooterLine = isChecked
+            postEvent(EventBus.UP_CONFIG, true)
         }
     }
 

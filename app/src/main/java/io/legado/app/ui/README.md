@@ -10,11 +10,11 @@
 * book\source 书源界面
 * book\changeCover 封面换源界面
 * book\changeSource 换源界面
-* book\chapterList 目录界面
+* book\toc 目录界面
 * book\download 下载界面
 * book\explore 发现界面
 * book\local 书籍导入界面
-* fileChooser 文件选择界面
+* document 文件选择界面
 * config 配置界面
 * main 主界面
 * qrCode 二维码扫描界面

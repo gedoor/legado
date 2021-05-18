@@ -31,6 +31,7 @@ object RssParserByRule {
             )
         }
         Debug.log(sourceUrl, "≡获取成功:$sourceUrl")
+        Debug.log(sourceUrl, body, state = 10)
         var ruleArticles = rssSource.ruleArticles
         if (ruleArticles.isNullOrBlank()) {
             Debug.log(sourceUrl, "⇒列表规则为空, 使用默认规则解析")
@@ -39,6 +40,7 @@ object RssParserByRule {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule(ruleData)
             analyzeRule.setContent(body).setBaseUrl(sortUrl)
+            analyzeRule.setRedirectUrl(sortUrl)
             var reverse = false
             if (ruleArticles.startsWith("-")) {
                 reverse = true
@@ -49,7 +51,7 @@ object RssParserByRule {
             Debug.log(sourceUrl, "└列表大小:${collections.size}")
             if (!rssSource.ruleNextPage.isNullOrEmpty()) {
                 Debug.log(sourceUrl, "┌获取下一页链接")
-                if (rssSource.ruleNextPage!!.toUpperCase(Locale.getDefault()) == "PAGE") {
+                if (rssSource.ruleNextPage!!.uppercase(Locale.getDefault()) == "PAGE") {
                     nextUrl = sortUrl
                 } else {
                     nextUrl = analyzeRule.getString(rssSource.ruleNextPage)

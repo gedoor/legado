@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'de.timfreiheit.resourceplaceholders'
-apply plugin: 'com.google.firebase.crashlytics'
 
 static def releaseTime() {
     return new Date().format("yy.MMddHH", TimeZone.getTimeZone("GMT+8"))
@@ -98,6 +97,9 @@ android {
         jvmTarget = "1.8"
     }
     buildToolsVersion '30.0.3'
+//    tasks.withType(JavaCompile) {
+//        options.compilerArgs << "-Xlint:unchecked"
+//    }
 }
 
 resourcePlaceholders {
@@ -111,36 +113,34 @@ kapt {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.13.1'
+    implementation project(path: ':epublib')
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation "com.android.support:multidex:1.0.3"
+    implementation 'androidx.multidex:multidex:2.0.1'
     //kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    //fireBase
-    implementation 'com.google.firebase:firebase-analytics-ktx:18.0.0'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.0'
 
     //androidX
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
-    implementation "androidx.activity:activity-ktx:1.1.0"
-    implementation "androidx.fragment:fragment-ktx:1.2.5"
+    implementation "androidx.activity:activity-ktx:1.2.3"
+    implementation "androidx.fragment:fragment-ktx:1.3.3"
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation "androidx.collection:collection-ktx:1.1.0"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
 
     //media
-    def media2_version = "1.1.2"
+    def media2_version = "1.1.3"
     implementation "androidx.media2:media2-session:$media2_version"
+    implementation "androidx.media:media:1.3.1"
     //implementation "androidx.media2:media2-player:$media2_version"
     //implementation 'com.google.android.exoplayer:exoplayer:2.13.0'
 
@@ -151,24 +151,20 @@ dependencies {
     implementation("com.louiscad.splitties:splitties-views:$splitties_version")
 
     //lifecycle
-    def lifecycle_version = '2.2.0'
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    def lifecycle_version = '2.3.1'
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //room
-    def room_version = '2.2.6'
+    def room_version = '2.3.0'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
-
-    //paging
-    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
 
     //liveEventBus
     implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
 
     //协程
-    def coroutines_version = '1.3.7'
+    def coroutines_version = '1.4.3'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
@@ -182,9 +178,7 @@ dependencies {
     implementation 'com.github.gedoor:rhino-android:1.5'
 
     //网络
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.ljx.rxhttp:rxhttp:2.5.3'
-    kapt 'com.ljx.rxhttp:rxhttp-compiler:2.5.3'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
@@ -194,7 +188,7 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd-websocket:2.3.1'
 
     //二维码
-    implementation 'com.king.zxing:zxing-lite:2.0.2'
+    implementation 'com.king.zxing:zxing-lite:2.0.3'
 
     //颜色选择
     implementation 'com.jaredrummler:colorpicker:1.1.0'
@@ -209,14 +203,6 @@ dependencies {
     implementation 'io.noties.markwon:html:4.6.0'
 
     //转换繁体
-    implementation 'com.hankcs:hanlp:portable-1.7.8'
-
-    //epub
-    implementation('com.positiondev.epublib:epublib-core:3.1') {
-        exclude group: 'org.slf4j'
-        exclude group: 'xmlpull'
-    }
+    implementation 'com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.1.3'
 
 }
-
-apply plugin: 'com.google.gms.google-services'

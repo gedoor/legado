@@ -16,6 +16,7 @@ import io.legado.app.databinding.ItemRssSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.utils.ColorUtils
 
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
@@ -68,7 +69,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         with(binding) {
             val bundle = payloads.getOrNull(0) as? Bundle
             if (bundle == null) {
-                root.setBackgroundColor(context.backgroundColor)
+                root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 if (item.sourceGroup.isNullOrEmpty()) {
                     cbSource.text = item.sourceName
                 } else {

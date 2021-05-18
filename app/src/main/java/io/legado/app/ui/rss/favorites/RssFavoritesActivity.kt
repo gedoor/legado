@@ -28,7 +28,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
     }
 
     private fun initView() {
-        binding.refreshRecyclerView.recyclerView.let {
+        binding.recyclerView.let {
             it.layoutManager = LinearLayoutManager(this)
             it.addItemDecoration(VerticalDivider(this))
             adapter = RssFavoritesAdapter(this, this)

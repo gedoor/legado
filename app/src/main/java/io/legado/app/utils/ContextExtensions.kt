@@ -17,7 +17,6 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
@@ -67,9 +66,6 @@ val Context.defaultSharedPreferences: SharedPreferences
 
 fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
     defaultSharedPreferences.getBoolean(key, defValue)
-
-fun Context.getPrefBoolean(@StringRes keyId: Int, defValue: Boolean = false) =
-    defaultSharedPreferences.getBoolean(getString(keyId), defValue)
 
 fun Context.putPrefBoolean(key: String, value: Boolean = false) =
     defaultSharedPreferences.edit { putBoolean(key, value) }
@@ -138,11 +134,7 @@ val Context.navigationBarHeight: Int
         return resources.getDimensionPixelSize(resourceId)
     }
 
-fun Context.share(text: String) {
-    share(getString(R.string.share), text)
-}
-
-fun Context.share(title: String, text: String) {
+fun Context.share(text: String, title: String = getString(R.string.share)) {
     kotlin.runCatching {
         val intent = Intent(Intent.ACTION_SEND)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -154,7 +146,7 @@ fun Context.share(title: String, text: String) {
 }
 
 @SuppressLint("SetWorldReadable")
-fun Context.shareWithQr(title: String, text: String) {
+fun Context.shareWithQr(text: String, title: String = getString(R.string.share)) {
     val bitmap = QRCodeUtils.createQRCode(text)
     if (bitmap == null) {
         toastOnUi(R.string.text_too_long_qr_error)

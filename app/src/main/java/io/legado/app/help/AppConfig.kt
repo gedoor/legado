@@ -2,7 +2,6 @@ package io.legado.app.help
 
 import android.content.Context
 import android.content.SharedPreferences
-import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.utils.*
@@ -10,44 +9,44 @@ import splitties.init.appCtx
 
 @Suppress("MemberVisibilityCanBePrivate")
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
-    private val context get() = appCtx
-    val isGooglePlay = context.channel == "google"
+    val isGooglePlay = appCtx.channel == "google"
     var userAgent: String = getPrefUserAgent()
-    var replaceEnableDefault = context.getPrefBoolean(PreferKey.replaceEnableDefault, true)
-    var isEInkMode = context.getPrefString(PreferKey.themeMode) == "3"
-    var clickActionTL = context.getPrefInt(PreferKey.clickActionTL, 2)
-    var clickActionTC = context.getPrefInt(PreferKey.clickActionTC, 2)
-    var clickActionTR = context.getPrefInt(PreferKey.clickActionTR, 1)
-    var clickActionML = context.getPrefInt(PreferKey.clickActionML, 2)
-    var clickActionMC = context.getPrefInt(PreferKey.clickActionMC, 0)
-    var clickActionMR = context.getPrefInt(PreferKey.clickActionMR, 1)
-    var clickActionBL = context.getPrefInt(PreferKey.clickActionBL, 2)
-    var clickActionBC = context.getPrefInt(PreferKey.clickActionBC, 1)
-    var clickActionBR = context.getPrefInt(PreferKey.clickActionBR, 1)
+    var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
+    var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
+    var clickActionTC = appCtx.getPrefInt(PreferKey.clickActionTC, 2)
+    var clickActionTR = appCtx.getPrefInt(PreferKey.clickActionTR, 1)
+    var clickActionML = appCtx.getPrefInt(PreferKey.clickActionML, 2)
+    var clickActionMC = appCtx.getPrefInt(PreferKey.clickActionMC, 0)
+    var clickActionMR = appCtx.getPrefInt(PreferKey.clickActionMR, 1)
+    var clickActionBL = appCtx.getPrefInt(PreferKey.clickActionBL, 2)
+    var clickActionBC = appCtx.getPrefInt(PreferKey.clickActionBC, 1)
+    var clickActionBR = appCtx.getPrefInt(PreferKey.clickActionBR, 1)
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.themeMode -> isEInkMode = context.getPrefString(PreferKey.themeMode) == "3"
+            PreferKey.themeMode -> isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
             PreferKey.clickActionTL -> clickActionTL =
-                context.getPrefInt(PreferKey.clickActionTL, 2)
+                appCtx.getPrefInt(PreferKey.clickActionTL, 2)
             PreferKey.clickActionTC -> clickActionTC =
-                context.getPrefInt(PreferKey.clickActionTC, 2)
+                appCtx.getPrefInt(PreferKey.clickActionTC, 2)
             PreferKey.clickActionTR -> clickActionTR =
-                context.getPrefInt(PreferKey.clickActionTR, 2)
+                appCtx.getPrefInt(PreferKey.clickActionTR, 2)
             PreferKey.clickActionML -> clickActionML =
-                context.getPrefInt(PreferKey.clickActionML, 2)
+                appCtx.getPrefInt(PreferKey.clickActionML, 2)
             PreferKey.clickActionMC -> clickActionMC =
-                context.getPrefInt(PreferKey.clickActionMC, 2)
+                appCtx.getPrefInt(PreferKey.clickActionMC, 2)
             PreferKey.clickActionMR -> clickActionMR =
-                context.getPrefInt(PreferKey.clickActionMR, 2)
+                appCtx.getPrefInt(PreferKey.clickActionMR, 2)
             PreferKey.clickActionBL -> clickActionBL =
-                context.getPrefInt(PreferKey.clickActionBL, 2)
+                appCtx.getPrefInt(PreferKey.clickActionBL, 2)
             PreferKey.clickActionBC -> clickActionBC =
-                context.getPrefInt(PreferKey.clickActionBC, 2)
+                appCtx.getPrefInt(PreferKey.clickActionBC, 2)
             PreferKey.clickActionBR -> clickActionBR =
-                context.getPrefInt(PreferKey.clickActionBR, 2)
+                appCtx.getPrefInt(PreferKey.clickActionBR, 2)
             PreferKey.readBodyToLh -> ReadBookConfig.readBodyToLh =
-                context.getPrefBoolean(PreferKey.readBodyToLh, true)
+                appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
+            PreferKey.useZhLayout -> ReadBookConfig.useZhLayout =
+                appCtx.getPrefBoolean(PreferKey.useZhLayout)
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
         }
     }
@@ -62,97 +61,153 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     }
 
     var isNightTheme: Boolean
-        get() = isNightTheme(context)
+        get() = isNightTheme(appCtx)
         set(value) {
             if (isNightTheme != value) {
                 if (value) {
-                    context.putPrefString(PreferKey.themeMode, "2")
+                    appCtx.putPrefString(PreferKey.themeMode, "2")
                 } else {
-                    context.putPrefString(PreferKey.themeMode, "1")
+                    appCtx.putPrefString(PreferKey.themeMode, "1")
                 }
             }
         }
 
+    var showUnread: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.showUnread, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.showUnread, value)
+        }
+
+    val useDefaultCover: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
+
     val isTransparentStatusBar: Boolean
-        get() = context.getPrefBoolean(PreferKey.transparentStatusBar, true)
+        get() = appCtx.getPrefBoolean(PreferKey.transparentStatusBar, true)
 
     val immNavigationBar: Boolean
-        get() = context.getPrefBoolean(PreferKey.immNavigationBar, true)
+        get() = appCtx.getPrefBoolean(PreferKey.immNavigationBar, true)
 
     val screenOrientation: String?
-        get() = context.getPrefString(PreferKey.screenOrientation)
+        get() = appCtx.getPrefString(PreferKey.screenOrientation)
 
     var backupPath: String?
-        get() = context.getPrefString(PreferKey.backupPath)
+        get() = appCtx.getPrefString(PreferKey.backupPath)
         set(value) {
             if (value.isNullOrEmpty()) {
-                context.removePref(PreferKey.backupPath)
+                appCtx.removePref(PreferKey.backupPath)
             } else {
-                context.putPrefString(PreferKey.backupPath, value)
+                appCtx.putPrefString(PreferKey.backupPath, value)
             }
         }
 
     val isShowRSS: Boolean
-        get() = context.getPrefBoolean(PreferKey.showRss, true)
+        get() = appCtx.getPrefBoolean(PreferKey.showRss, true)
 
     val autoRefreshBook: Boolean
-        get() = context.getPrefBoolean(R.string.pk_auto_refresh)
+        get() = appCtx.getPrefBoolean(PreferKey.autoRefresh)
 
     var threadCount: Int
-        get() = context.getPrefInt(PreferKey.threadCount, 16)
+        get() = appCtx.getPrefInt(PreferKey.threadCount, 16)
         set(value) {
-            context.putPrefInt(PreferKey.threadCount, value)
+            appCtx.putPrefInt(PreferKey.threadCount, value)
         }
 
     var importBookPath: String?
-        get() = context.getPrefString("importBookPath")
+        get() = appCtx.getPrefString("importBookPath")
         set(value) {
             if (value == null) {
-                context.removePref("importBookPath")
+                appCtx.removePref("importBookPath")
             } else {
-                context.putPrefString("importBookPath", value)
+                appCtx.putPrefString("importBookPath", value)
             }
         }
 
     var ttsSpeechRate: Int
-        get() = context.getPrefInt(PreferKey.ttsSpeechRate, 5)
+        get() = appCtx.getPrefInt(PreferKey.ttsSpeechRate, 5)
         set(value) {
-            context.putPrefInt(PreferKey.ttsSpeechRate, value)
+            appCtx.putPrefInt(PreferKey.ttsSpeechRate, value)
         }
 
     var chineseConverterType: Int
-        get() = context.getPrefInt(PreferKey.chineseConverterType)
+        get() = appCtx.getPrefInt(PreferKey.chineseConverterType)
         set(value) {
-            context.putPrefInt(PreferKey.chineseConverterType, value)
+            appCtx.putPrefInt(PreferKey.chineseConverterType, value)
         }
 
     var systemTypefaces: Int
-        get() = context.getPrefInt(PreferKey.systemTypefaces)
+        get() = appCtx.getPrefInt(PreferKey.systemTypefaces)
         set(value) {
-            context.putPrefInt(PreferKey.systemTypefaces, value)
+            appCtx.putPrefInt(PreferKey.systemTypefaces, value)
         }
 
     var elevation: Int
-        get() = context.getPrefInt(PreferKey.barElevation, AppConst.sysElevation)
+        get() = appCtx.getPrefInt(PreferKey.barElevation, AppConst.sysElevation)
         set(value) {
-            context.putPrefInt(PreferKey.barElevation, value)
+            appCtx.putPrefInt(PreferKey.barElevation, value)
+        }
+
+    var exportCharset: String
+        get() {
+            val c = appCtx.getPrefString(PreferKey.exportCharset)
+            if (c.isNullOrBlank()) {
+                return "UTF-8"
+            }
+            return c
+        }
+        set(value) {
+            appCtx.putPrefString(PreferKey.exportCharset, value)
+        }
+
+    var exportUseReplace: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.exportUseReplace, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.exportUseReplace, value)
+        }
+
+    var exportToWebDav: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.exportToWebDav)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.exportToWebDav, value)
+        }
+
+    var exportType: Int
+        get() = appCtx.getPrefInt(PreferKey.exportType)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.exportType, value)
+        }
+
+    var changeSourceCheckAuthor: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.changeSourceCheckAuthor)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.changeSourceCheckAuthor, value)
         }
 
     val autoChangeSource: Boolean
-        get() = context.getPrefBoolean(PreferKey.autoChangeSource, true)
+        get() = appCtx.getPrefBoolean(PreferKey.autoChangeSource, true)
 
-    val changeSourceLoadInfo get() = context.getPrefBoolean(PreferKey.changeSourceLoadToc)
+    val changeSourceLoadInfo get() = appCtx.getPrefBoolean(PreferKey.changeSourceLoadToc)
 
-    val changeSourceLoadToc get() = context.getPrefBoolean(PreferKey.changeSourceLoadToc)
+    val changeSourceLoadToc get() = appCtx.getPrefBoolean(PreferKey.changeSourceLoadToc)
 
-    val importKeepName get() = context.getPrefBoolean(PreferKey.importKeepName)
+    val importKeepName get() = appCtx.getPrefBoolean(PreferKey.importKeepName)
 
-    val syncBookProgress get() = context.getPrefBoolean(PreferKey.syncBookProgress, true)
+    val syncBookProgress get() = appCtx.getPrefBoolean(PreferKey.syncBookProgress, true)
 
-    val preDownload get() = context.getPrefBoolean(PreferKey.preDownload, true)
+    var preDownloadNum
+        get() = appCtx.getPrefInt(PreferKey.preDownloadNum, 10)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.preDownloadNum, value)
+        }
+
+    val mediaButtonOnExit get() = appCtx.getPrefBoolean("mediaButtonOnExit", true)
+
+    val replaceEnableDefault get() = appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
+
+    val fullScreenGesturesSupport: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.fullScreenGesturesSupport, false)
 
     private fun getPrefUserAgent(): String {
-        val ua = context.getPrefString(PreferKey.userAgent)
+        val ua = appCtx.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {
             return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36"
         }

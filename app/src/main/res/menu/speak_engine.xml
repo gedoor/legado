@@ -15,4 +15,19 @@
         android:title="@string/import_default_rule"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_import_local"
+        android:title="@string/import_local"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_onLine"
+        android:title="@string/import_on_line"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export"
+        android:title="@string/export"
+        app:showAsAction="never" />
+
 </menu>

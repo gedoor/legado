@@ -6,17 +6,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.viewpager.widget.ViewPager
 
 /**
  * Created by GKF on 2018/3/16.
  */
-
 @Suppress("MemberVisibilityCanBePrivate")
 class ItemTouchCallback(private val callback: Callback) : ItemTouchHelper.Callback() {
 
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
-    private var viewPager: ViewPager? = null
 
     /**
      * 是否可以拖拽
@@ -107,7 +104,6 @@ class ItemTouchCallback(private val callback: Callback) : ItemTouchHelper.Callba
         super.onSelectedChanged(viewHolder, actionState)
         val swiping = actionState == ItemTouchHelper.ACTION_STATE_DRAG
         swipeRefreshLayout?.isEnabled = !swiping
-        viewPager?.requestDisallowInterceptTouchEvent(swiping)
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {

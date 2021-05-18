@@ -38,7 +38,7 @@ object BookWebDav {
             return url
         }
 
-    suspend fun initWebDav(): Boolean {
+    private suspend fun initWebDav(): Boolean {
         val account = appCtx.getPrefString(PreferKey.webDavAccount)
         val password = appCtx.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
@@ -122,19 +122,16 @@ object BookWebDav {
         }
     }
 
-    suspend fun exportWebDav(path: String, fileName: String) {
+    suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         try {
             if (initWebDav()) {
                 // 默认导出到legado文件夹下exports目录
                 val exportsWebDavUrl = rootWebDavUrl + EncoderUtils.escape("exports") + "/"
                 // 在legado文件夹创建exports目录,如果不存在的话
                 WebDav(exportsWebDavUrl).makeAsDir()
-                val file = File("${path}${File.separator}${fileName}")
                 // 如果导出的本地文件存在,开始上传
-                if (file.exists()) {
-                    val putUrl = exportsWebDavUrl + fileName
-                    WebDav(putUrl).upload("${path}${File.separator}${fileName}")
-                }
+                val putUrl = exportsWebDavUrl + fileName
+                WebDav(putUrl).upload(byteArray)
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {

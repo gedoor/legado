@@ -8,7 +8,7 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.htmlFormat
+import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.msg
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +36,7 @@ object Debug {
         if (debugSource != sourceUrl || callback == null || !print) return
         var printMsg = msg ?: ""
         if (isHtml) {
-            printMsg = printMsg.htmlFormat()
+            printMsg = HtmlFormatter.format(msg)
         }
         if (showTime) {
             printMsg =
@@ -186,6 +186,12 @@ object Debug {
     }
 
     private fun infoDebug(scope: CoroutineScope, webBook: WebBook, book: Book) {
+        if (book.tocUrl.isNotBlank()) {
+            log(debugSource, "目录url不为空,详情页已解析")
+            log(debugSource, showTime = false)
+            tocDebug(scope, webBook, book)
+            return
+        }
         log(debugSource, "︾开始解析详情页")
         val info = webBook.getBookInfo(scope, book)
             .onSuccess {
@@ -206,7 +212,7 @@ object Debug {
                 if (it.isNotEmpty()) {
                     log(debugSource, "︽目录页解析完成")
                     log(debugSource, showTime = false)
-                    val nextChapterUrl = if (it.size > 1) it[1].url else null
+                    val nextChapterUrl = it.getOrNull(1)?.url
                     contentDebug(scope, webBook, book, it[0], nextChapterUrl)
                 } else {
                     log(debugSource, "︽目录列表为空", state = -1)

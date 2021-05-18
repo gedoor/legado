@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.isJsonArray
@@ -23,7 +24,6 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
         execute {
             //如果是普通的url，需要根据返回的内容判断是什么
             if (uri.scheme == "file" || uri.scheme == "content") {
-                var scheme = ""
                 val content = if (uri.scheme == "file") {
                     File(uri.path.toString()).readText()
                 } else {
@@ -34,36 +34,51 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                         //暂时根据文件内容判断属于什么
                         when {
                             content.contains("bookSourceUrl") -> {
-                                scheme = "booksource"
+                                successLiveData.postValue(
+                                    Intent(
+                                        context,
+                                        ImportBookSourceActivity::class.java
+                                    ).apply {
+                                        val dataKey = IntentDataHelp.putData(content)
+                                        putExtra("dataKey", dataKey)
+                                    }
+                                )
+                                return@execute
                             }
                             content.contains("sourceUrl") -> {
-                                scheme = "rsssource"
+                                successLiveData.postValue(
+                                    Intent(
+                                        context,
+                                        ImportRssSourceActivity::class.java
+                                    ).apply {
+                                        val dataKey = IntentDataHelp.putData(content)
+                                        putExtra("dataKey", dataKey)
+                                    }
+                                )
+                                return@execute
                             }
                             content.contains("pattern") -> {
-                                scheme = "replace"
+                                successLiveData.postValue(
+                                    Intent(
+                                        context,
+                                        ImportReplaceRuleActivity::class.java
+                                    ).apply {
+                                        val dataKey = IntentDataHelp.putData(content)
+                                        putExtra("dataKey", dataKey)
+                                    }
+                                )
+                                return@execute
                             }
                         }
                     }
-                    if (scheme.isEmpty()) {
-                        val book = if (uri.scheme == "content") {
-                            LocalBook.importFile(uri)
-                        } else {
-                            LocalBook.importFile(uri)
-                        }
-                        val intent = Intent(context, ReadBookActivity::class.java)
-                        intent.putExtra("bookUrl", book.bookUrl)
-                        successLiveData.postValue(intent)
+                    val book = if (uri.scheme == "content") {
+                        LocalBook.importFile(uri)
                     } else {
-                        val url = if (uri.scheme == "content") {
-                            "yuedu://${scheme}/importonline?src=$uri"
-                        } else {
-                            "yuedu://${scheme}/importonline?src=${uri.path}"
-                        }
-                        val data = Uri.parse(url)
-                        val newIndent = Intent(Intent.ACTION_VIEW)
-                        newIndent.data = data
-                        successLiveData.postValue(newIndent)
+                        LocalBook.importFile(uri)
                     }
+                    val intent = Intent(context, ReadBookActivity::class.java)
+                    intent.putExtra("bookUrl", book.bookUrl)
+                    successLiveData.postValue(intent)
                 } else {
                     throw Exception("文件不存在")
                 }

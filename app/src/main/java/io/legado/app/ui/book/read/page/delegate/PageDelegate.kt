@@ -3,7 +3,7 @@ package io.legado.app.ui.book.read.page.delegate
 import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 import androidx.annotation.CallSuper
 import com.google.android.material.snackbar.Snackbar
@@ -37,7 +37,7 @@ abstract class PageDelegate(protected val readView: ReadView) {
     protected var viewHeight: Int = readView.height
 
     protected val scroller: Scroller by lazy {
-        Scroller(readView.context, DecelerateInterpolator())
+        Scroller(readView.context, LinearInterpolator())
     }
 
     private val snackBar: Snackbar by lazy {

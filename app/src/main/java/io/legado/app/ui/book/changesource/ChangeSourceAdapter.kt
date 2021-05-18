@@ -16,7 +16,11 @@ import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
 
-class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
+class ChangeSourceAdapter(
+    context: Context,
+    val viewModel: ChangeSourceViewModel,
+    val callBack: CallBack
+) :
     DiffRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
 
     override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
@@ -46,6 +50,7 @@ class ChangeSourceAdapter(context: Context, val callBack: CallBack) :
         binding.apply {
             if (bundle == null) {
                 tvOrigin.text = item.originName
+                tvAuthor.text = item.author
                 tvLast.text = item.getDisplayLastChapterTitle()
                 if (callBack.bookUrl == item.bookUrl) {
                     ivChecked.visible()

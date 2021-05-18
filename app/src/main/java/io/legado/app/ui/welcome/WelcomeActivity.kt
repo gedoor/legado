@@ -2,14 +2,14 @@ package io.legado.app.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
-import com.hankcs.hanlp.HanLP
-import io.legado.app.R
+import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityWelcomeBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.storage.BookWebDav
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
@@ -36,6 +36,23 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
     private fun init() {
         Coroutine.async {
+            val books = appDb.bookDao.all
+            books.forEach { book ->
+                BookWebDav.getBookProgress(book)?.let { bookProgress ->
+                    if (bookProgress.durChapterIndex > book.durChapterIndex ||
+                        (bookProgress.durChapterIndex == book.durChapterIndex &&
+                                bookProgress.durChapterPos > book.durChapterPos)
+                    ) {
+                        book.durChapterIndex = bookProgress.durChapterIndex
+                        book.durChapterPos = bookProgress.durChapterPos
+                        book.durChapterTitle = bookProgress.durChapterTitle
+                        book.durChapterTime = bookProgress.durChapterTime
+                        appDb.bookDao.update(book)
+                    }
+                }
+            }
+        }
+        Coroutine.async {
             appDb.cacheDao.clearDeadline(System.currentTimeMillis())
             //清除过期数据
             if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
@@ -44,8 +61,8 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
             }
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
-                1 -> HanLP.convertToSimplifiedChinese("初始化")
-                2 -> HanLP.convertToTraditionalChinese("初始化")
+                1 -> ChineseUtils.t2s("初始化")
+                2 -> ChineseUtils.s2t("初始化")
                 else -> null
             }
         }
@@ -54,7 +71,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
     private fun startMainActivity() {
         startActivity<MainActivity>()
-        if (getPrefBoolean(R.string.pk_default_read)) {
+        if (getPrefBoolean(PreferKey.defaultToRead)) {
             startActivity<ReadBookActivity>()
         }
         finish()
