@@ -105,6 +105,14 @@ class BookInfoActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_can_update)?.isChecked =
+            viewModel.bookData.value?.canUpdate ?: true
+        menu.findItem(R.id.menu_login)?.isVisible =
+            !viewModel.bookSource?.loginUrl.isNullOrBlank()
+        return super.onMenuOpened(featureId, menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_edit -> {
@@ -154,12 +162,6 @@ class BookInfoActivity :
             R.id.menu_clear_cache -> viewModel.clearCache()
         }
         return super.onCompatOptionsItemSelected(item)
-    }
-
-    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
-        menu.findItem(R.id.menu_can_update)?.isChecked =
-            viewModel.bookData.value?.canUpdate ?: true
-        return super.onMenuOpened(featureId, menu)
     }
 
     private fun showBook(book: Book) = with(binding) {

@@ -20,6 +20,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_login"
+        android:title="@string/login"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_copy_book_url"
         android:title="@string/copy_book_url"
         app:showAsAction="never" />
