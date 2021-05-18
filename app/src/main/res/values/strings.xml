@@ -772,8 +772,8 @@
     <string name="select_theme">Switch default theme</string>
     <string name="sort_by_lastUpdateTime">Sort by update time</string>
     <string name="search_content">Search content</string>
-    <string name="rss_source_empty">follow Wechat official account [开源阅读] to get Subscription source</string>
-    <string name="explore_empty">empty now,Wechat official account [开源阅读] to get Discovery source</string>
+    <string name="rss_source_empty">Follow Wechat official account [开源阅读] to get Subscription source</string>
+    <string name="explore_empty">Empty now,Follow Wechat official account [开源阅读] to get Discovery source</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">Theme name</string>
     <string name="auto_clear_expired">"Clear expired search histories automatically "</string>
@@ -797,8 +797,8 @@
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">Pull the cloud  progress</string>
     <string name="current_progress_exceeds_cloud">The current progress exceeds the cloud progress. Do you want to synchronize?</string>
-    <string name="sync_book_progress_t">"Synchronous reading progress "</string>
-    <string name="sync_book_progress_s">"Synchronize reading progress when entering / exiting the reading interface "</string>
+    <string name="sync_book_progress_t">Synchronous reading progress</string>
+    <string name="sync_book_progress_s">Synchronize reading progress when entering / exiting the reading interface</string>
     <string name="create_bookmark_error">Failed to create bookmark</string>
     <string name="single_url">Single URL</string>
     <string name="export_bookshelf">Export the list of books</string>
@@ -820,12 +820,12 @@
     <string name="system_tts">System tts</string>
     <string name="export_type">Exported file format</string>
     <string name="checkAuthor">Check by author</string>
-    <string name="url_already">"This URL has subscribed "</string>
+    <string name="url_already">This URL has subscribed</string>
     <string name="high_brush_title">High screen refresh rate</string>
     <string name="high_brush_summary">Use maximum screen refresh rate</string>
     <string name="export_all">Export all</string>
     <string name="complete">Finished</string>
-    <string name="show_unread">"Show unread flag "</string>
+    <string name="show_unread">Show unread flag</string>
     <string name="use_default_cover">Always show default cover</string>
     <string name="use_default_cover_s">Always show the default cover, do not show the network cover</string>
     <string name="search_src">Search source code</string>
