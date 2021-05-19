@@ -1,24 +1,12 @@
 package io.legado.app.help
 
+import android.content.Context
 import io.legado.app.R
 import splitties.init.appCtx
 
 object ReadTipConfig {
     val tips by lazy {
         appCtx.resources.getStringArray(R.array.read_tip).toList()
-    }
-    val headerModes by lazy {
-        linkedMapOf(
-            Pair(0, appCtx.getString(R.string.hide_when_status_bar_show)),
-            Pair(1, appCtx.getString(R.string.show)),
-            Pair(2, appCtx.getString(R.string.hide))
-        )
-    }
-    val footerModes by lazy {
-        linkedMapOf(
-            Pair(0, appCtx.getString(R.string.show)),
-            Pair(1, appCtx.getString(R.string.hide))
-        )
     }
     const val none = 0
     const val chapterTitle = 1
@@ -90,4 +78,19 @@ object ReadTipConfig {
         set(value) {
             ReadBookConfig.config.tipColor = value
         }
+
+    fun getHeaderModes(context: Context): LinkedHashMap<Int, String> {
+        return linkedMapOf(
+            Pair(0, context.getString(R.string.hide_when_status_bar_show)),
+            Pair(1, context.getString(R.string.show)),
+            Pair(2, context.getString(R.string.hide))
+        )
+    }
+
+    fun getFooterModes(context: Context): LinkedHashMap<Int, String> {
+        return linkedMapOf(
+            Pair(0, context.getString(R.string.show)),
+            Pair(1, context.getString(R.string.hide))
+        )
+    }
 }
