@@ -805,7 +805,7 @@
     <string name="import_bookshelf">Import the list of books</string>
     <string name="pre_download">Download in advance</string>
     <string name="pre_download_s">Download 10 chapters in advance</string>
-    <string name="sort_enable">Enable sorting</string>
+    <string name="is_enabled">Is enabled</string>
     <string name="background_image">Background image</string>
     <string name="copy_book_url">Copy book URL</string>
     <string name="copy_toc_url">Copy chapters URL</string>
