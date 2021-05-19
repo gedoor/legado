@@ -830,10 +830,13 @@
     <string name="use_default_cover_s">Always show the default cover, do not show the network cover</string>
     <string name="search_src">Search source code</string>
     <string name="boo_src">Book source code</string>
-     <string name="toc_src">Chapters source code</string>
+    <string name="toc_src">Chapters source code</string>
     <string name="content_src">Content source code</string>
     <string name="list_src">List source code</string>
     <string name="title_font_size">Font size</string>
     <string name="title_margin_top">Margin top</string>
     <string name="title_margin_bottom">Marigin bottom</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="hide_when_status_bar_show">Hide when status bar show</string>
 </resources>

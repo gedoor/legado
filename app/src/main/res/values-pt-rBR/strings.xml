@@ -832,5 +832,11 @@
     <string name="show_unread">Mostrar não lido</string>
     <string name="use_default_cover">sempre usar capa padrão</string>
     <string name="use_default_cover_s">sempre usar capa padrão,não usar rede</string>
+    <string name="title_font_size">Font size</string>
+    <string name="title_margin_top">Margin top</string>
+    <string name="title_margin_bottom">Marigin bottom</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="hide_when_status_bar_show">Hide when status bar show</string>
 
 </resources>

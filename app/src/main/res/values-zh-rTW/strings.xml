@@ -834,5 +834,8 @@
     <string name="title_font_size">字號</string>
     <string name="title_margin_top">上邊距</string>
     <string name="title_margin_bottom">下邊距</string>
+    <string name="show">显示</string>
+    <string name="hide">隐藏</string>
+    <string name="hide_when_status_bar_show">状态栏显示时隐藏</string>
 
 </resources>
