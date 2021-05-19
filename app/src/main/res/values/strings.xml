@@ -782,7 +782,6 @@
     <string name="style_name">Style name:</string>
     <string name="empty_msg_import_book">Click the folder icon in the upper right corner and select the folder</string>
     <string name="scan_folder">Intelligent scanning</string>
-    <string name="copy_url">Copy URL</string>
     <string name="no_book">No books</string>
     <string name="keep_original_name">Keep the original name</string>
     <string name="click_regional_config">Screen touch control</string>
