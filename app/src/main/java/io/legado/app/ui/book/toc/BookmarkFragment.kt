@@ -22,10 +22,10 @@ import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-class BookmarkFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_bookmark),
+class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark),
     BookmarkAdapter.Callback,
-    ChapterListViewModel.BookmarkCallBack {
-    override val viewModel: ChapterListViewModel by activityViewModels()
+    TocViewModel.BookmarkCallBack {
+    override val viewModel: TocViewModel by activityViewModels()
     private val binding by viewBinding(FragmentBookmarkBinding::bind)
     private lateinit var adapter: BookmarkAdapter
     private var bookmarkLiveData: LiveData<List<Bookmark>>? = null

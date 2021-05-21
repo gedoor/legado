@@ -837,5 +837,6 @@
     <string name="show">显示</string>
     <string name="hide">隐藏</string>
     <string name="hide_when_status_bar_show">状态栏显示时隐藏</string>
+    <string name="reverse_toc">反转目录</string>
 
 </resources>

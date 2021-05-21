@@ -28,10 +28,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.min
 
-class ChapterListFragment : VMBaseFragment<ChapterListViewModel>(R.layout.fragment_chapter_list),
+class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapter_list),
     ChapterListAdapter.Callback,
-    ChapterListViewModel.ChapterListCallBack {
-    override val viewModel: ChapterListViewModel by activityViewModels()
+    TocViewModel.ChapterListCallBack {
+    override val viewModel: TocViewModel by activityViewModels()
     private val binding by viewBinding(FragmentChapterListBinding::bind)
     lateinit var adapter: ChapterListAdapter
     private var durChapterIndex = 0

@@ -838,5 +838,6 @@
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
+    <string name="reverse_toc">反转目录</string>
 
 </resources>

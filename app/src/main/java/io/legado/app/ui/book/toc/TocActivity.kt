@@ -2,6 +2,7 @@ package io.legado.app.ui.book.toc
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
@@ -19,8 +20,8 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
 
-class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterListViewModel>() {
-    override val viewModel: ChapterListViewModel
+class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
+    override val viewModel: TocViewModel
             by viewModels()
 
     private lateinit var tabLayout: TabLayout
@@ -47,7 +48,7 @@ class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterLi
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.search_view, menu)
+        menuInflater.inflate(R.menu.book_toc, menu)
         val search = menu.findItem(R.id.menu_search)
         searchView = search.actionView as SearchView
         ATH.setTint(searchView!!, primaryTextColor)
@@ -73,6 +74,13 @@ class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterLi
             }
         })
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_reverse_toc -> viewModel.reverseToc()
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     private inner class TabFragmentPageAdapter : FragmentStateAdapter(this) {

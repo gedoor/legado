@@ -246,7 +246,7 @@
             android:screenOrientation="behind" />
         <!-- 目录 -->
         <activity
-            android:name=".ui.book.toc.ChapterListActivity"
+            android:name=".ui.book.toc.TocActivity"
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
         <!-- 正文搜索 -->
