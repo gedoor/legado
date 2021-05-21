@@ -37,7 +37,7 @@ android {
         multiDexEnabled true
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [
+                arguments += [
                         "room.incremental"     : "true",
                         "room.expandProjection": "true",
                         "room.schemaLocation"  : "$projectDir/schemas".toString()
