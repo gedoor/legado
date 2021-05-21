@@ -5,8 +5,8 @@ import android.content.Intent
 import android.text.TextUtils
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.BuildConfig
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.DefaultData
@@ -106,14 +106,12 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
 
     fun shareSelection(sources: List<RssSource>, success: ((intent: Intent) -> Unit)) {
         execute {
+            val tmpSharePath = "${context.filesDir}/shareRssSource.json"
+            FileUtils.delete(tmpSharePath)
             val intent = Intent(Intent.ACTION_SEND)
-            val file = FileUtils.createFileWithReplace("${context.filesDir}/shareRssSource.json")
+            val file = FileUtils.createFileWithReplace(tmpSharePath)
             file.writeText(GSON.toJson(sources))
-            val fileUri = FileProvider.getUriForFile(
-                context,
-                BuildConfig.APPLICATION_ID + ".fileProvider",
-                file
-            )
+            val fileUri = FileProvider.getUriForFile(context, AppConst.authority, file)
             intent.type = "text/*"
             intent.putExtra(Intent.EXTRA_STREAM, fileUri)
             intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION

@@ -12,7 +12,6 @@ import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
-import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -133,14 +132,9 @@ class DownloadService : BaseService() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {   //7.0版本以上
-                val uriForFile: Uri =
-                    FileProvider.getUriForFile(
-                        this,
-                        "${BuildConfig.APPLICATION_ID}.fileProvider",
-                        file
-                    )
+                val contentUrl = FileProvider.getUriForFile(this, AppConst.authority, file)
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.setDataAndType(uriForFile, "application/vnd.android.package-archive")
+                intent.setDataAndType(contentUrl, "application/vnd.android.package-archive")
             } else {
                 val uri: Uri = Uri.fromFile(file)
                 intent.setDataAndType(uri, "application/vnd.android.package-archive")

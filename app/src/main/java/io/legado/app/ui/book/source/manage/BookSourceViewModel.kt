@@ -5,8 +5,8 @@ import android.content.Intent
 import android.text.TextUtils
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.BuildConfig
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
@@ -164,14 +164,12 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun shareSelection(sources: List<BookSource>, success: ((intent: Intent) -> Unit)) {
         execute {
+            val tmpSharePath = "${context.filesDir}/shareBookSource.json"
+            FileUtils.delete(tmpSharePath)
             val intent = Intent(Intent.ACTION_SEND)
-            val file = FileUtils.createFileWithReplace("${context.filesDir}/shareBookSource.json")
+            val file = FileUtils.createFileWithReplace(tmpSharePath)
             file.writeText(GSON.toJson(sources))
-            val fileUri = FileProvider.getUriForFile(
-                context,
-                BuildConfig.APPLICATION_ID + ".fileProvider",
-                file
-            )
+            val fileUri = FileProvider.getUriForFile(context, AppConst.authority, file)
             intent.type = "text/*"
             intent.putExtra(Intent.EXTRA_STREAM, fileUri)
             intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
