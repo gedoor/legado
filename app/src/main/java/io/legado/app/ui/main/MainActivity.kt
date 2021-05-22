@@ -42,6 +42,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private var pagePosition = 0
     private val fragmentMap = hashMapOf<Long, Fragment>()
     private var bottomMenuCount = 2
+    private val realPositions = arrayOf(0, 1, 2, 3)
 
     override fun getViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
@@ -182,32 +183,30 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     }
 
     private fun upBottomMenu() {
+        val showDiscovery = AppConfig.showDiscovery
+        val showRss = AppConfig.showRSS
         binding.bottomNavigationView.menu.let { menu ->
-            menu.findItem(R.id.menu_discovery).isVisible = AppConfig.showDiscovery
-            menu.findItem(R.id.menu_rss).isVisible = AppConfig.showRSS
+            menu.findItem(R.id.menu_discovery).isVisible = showDiscovery
+            menu.findItem(R.id.menu_rss).isVisible = showRss
         }
         bottomMenuCount = 2
-        if (AppConfig.showDiscovery) {
-            bottomMenuCount++
-        }
-        if (AppConfig.showRSS) {
-            bottomMenuCount++
-        }
-    }
-
-    private fun getRealBottomMenuPosition(position: Int): Int {
-        return when (position) {
-            1 -> when {
-                AppConfig.showDiscovery -> 1
-                AppConfig.showRSS -> 2
-                else -> 3
+        realPositions[1] = 1
+        realPositions[2] = 2
+        when {
+            showDiscovery -> bottomMenuCount++
+            showRss -> {
+                realPositions[1] = 2
+                realPositions[2] = 3
             }
-            2 -> if (AppConfig.showDiscovery) {
-                if (AppConfig.showRSS) 2 else 3
-            } else {
-                3
+            else -> {
+                realPositions[1] = 3
+                realPositions[2] = 3
             }
-            else -> position
+        }
+        if (showRss) {
+            bottomMenuCount++
+        } else {
+            realPositions[2] = 3
         }
     }
 
@@ -215,7 +214,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         override fun onPageSelected(position: Int) {
             pagePosition = position
             binding.bottomNavigationView.menu
-                .getItem(getRealBottomMenuPosition(position)).isChecked = true
+                .getItem(realPositions[position]).isChecked = true
         }
     }
 
@@ -231,7 +230,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
 
         override fun getItemId(position: Int): Long {
-            return getRealBottomMenuPosition(position).toLong()
+            return realPositions[position].toLong()
         }
 
         override fun createFragment(position: Int): Fragment {
