@@ -471,7 +471,7 @@
     <string name="sure_del_file">Você tem certeza que quer excluir este arquivo?</string>
     <string name="files_tree">Pasta</string>
     <string name="intelligent_import">Importação inteligente</string>
-    <string name="find">Descoberta</string>
+    <string name="discovery">Descoberta</string>
     <string name="switch_display_style">Mudar o modo de exibição</string>
     <string name="import_per">Importação de livros locais requer permissão de armazenamento</string>
     <string name="night_theme">Tema Noturno</string>
@@ -839,5 +839,6 @@
     <string name="hide">Hide</string>
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
     <string name="reverse_toc">反转目录</string>
+    <string name="show_discovery">显示发现</string>
 
 </resources>

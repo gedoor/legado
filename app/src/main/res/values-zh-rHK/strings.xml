@@ -460,7 +460,7 @@
     <string name="sure_del_file">確定刪除文件嗎?</string>
     <string name="files_tree">手機目錄</string>
     <string name="intelligent_import">智能導入</string>
-    <string name="find">發現</string>
+    <string name="discovery">發現</string>
     <string name="switch_display_style">切換顯示樣式</string>
     <string name="import_per">導入本地書籍需存儲權限</string>
     <string name="night_theme">夜間模式</string>
@@ -837,5 +837,6 @@
     <string name="diy_edit_source_group">輸入自訂源分組名稱</string>
     <string name="diy_edit_source_group_title">【%s】</string>
     <string name="reverse_toc">反转目录</string>
+    <string name="show_discovery">显示发现</string>
 
 </resources>

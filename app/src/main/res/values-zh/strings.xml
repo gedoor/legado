@@ -470,7 +470,7 @@
     <string name="sure_del_file">确定删除文件吗?</string>
     <string name="files_tree">手机目录</string>
     <string name="intelligent_import">智能导入</string>
-    <string name="find">发现</string>
+    <string name="discovery">发现</string>
     <string name="switch_display_style">切换显示样式</string>
     <string name="import_per">导入本地书籍需存储权限</string>
     <string name="night_theme">夜间模式</string>
@@ -838,5 +838,6 @@
     <string name="hide">隐藏</string>
     <string name="hide_when_status_bar_show">状态栏显示时隐藏</string>
     <string name="reverse_toc">反转目录</string>
+    <string name="show_discovery">显示发现</string>
 
 </resources>

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:contentInsetStartWithNavigation="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/find" />
+        app:title="@string/discovery" />
 
     <io.legado.app.ui.widget.dynamiclayout.DynamicFrameLayout
         android:id="@+id/content_view"

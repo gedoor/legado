@@ -23,6 +23,7 @@ object PreferKey {
     const val ttsSpeechRate = "ttsSpeechRate"
     const val prevKeys = "prevKeyCodes"
     const val nextKeys = "nextKeyCodes"
+    const val showDiscovery = "showDiscovery"
     const val showRss = "showRss"
     const val bookshelfLayout = "bookshelfLayout"
     const val bookshelfSort = "bookshelfSort"

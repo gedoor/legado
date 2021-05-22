@@ -8,9 +8,9 @@
         android:icon="@drawable/ic_bottom_books"
         android:title="@string/bookshelf" />
     <item
-        android:id="@+id/menu_explore"
+        android:id="@+id/menu_discovery"
         android:icon="@drawable/ic_bottom_explore"
-        android:title="@string/find" />
+        android:title="@string/discovery" />
     <item
         android:id="@+id/menu_rss"
         android:icon="@drawable/ic_bottom_rss_feed"

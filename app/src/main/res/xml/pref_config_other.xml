@@ -32,6 +32,12 @@
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
+            android:key="showDiscovery"
+            android:title="@string/show_discovery"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
             android:key="showRss"
             android:title="@string/show_rss"
             app:iconSpaceReserved="false" />

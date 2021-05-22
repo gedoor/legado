@@ -470,7 +470,7 @@
     <string name="sure_del_file">確定刪除文件嗎?</string>
     <string name="files_tree">手機目錄</string>
     <string name="intelligent_import">智慧匯入</string>
-    <string name="find">發現</string>
+    <string name="discovery">發現</string>
     <string name="switch_display_style">切換顯示樣式</string>
     <string name="import_per">匯入本機書籍需儲存權限</string>
     <string name="night_theme">夜間模式</string>
@@ -838,5 +838,6 @@
     <string name="hide">隐藏</string>
     <string name="hide_when_status_bar_show">状态栏显示时隐藏</string>
     <string name="reverse_toc">反转目录</string>
+    <string name="show_discovery">显示发现</string>
 
 </resources>

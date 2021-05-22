@@ -13,7 +13,7 @@
         app:attachToActivity="false"
         app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/find" />
+        app:title="@string/discovery" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_find"

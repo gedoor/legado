@@ -471,7 +471,7 @@
     <string name="sure_del_file">Are you sure to delete this file?</string>
     <string name="files_tree">Directory</string>
     <string name="intelligent_import">Intelligent import</string>
-    <string name="find">Discovery</string>
+    <string name="discovery">Discovery</string>
     <string name="switch_display_style">Switch display styles</string>
     <string name="import_per">Import local books requires storage permission</string>
     <string name="night_theme">Night Theme</string>
@@ -803,7 +803,7 @@
     <string name="export_bookshelf">Export the list of books</string>
     <string name="import_bookshelf">Import the list of books</string>
     <string name="pre_download">Download in advance</string>
-    <string name="pre_download_s">Download 10 chapters in advance</string>
+    <string name="pre_download_s">Download %s chapters in advance</string>
     <string name="is_enabled">Is enabled</string>
     <string name="background_image">Background image</string>
     <string name="copy_book_url">Copy book URL</string>
@@ -839,4 +839,5 @@
     <string name="hide">Hide</string>
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
     <string name="reverse_toc">Reverse toc</string>
+    <string name="show_discovery">Show</string>
 </resources>

@@ -133,7 +133,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
             PreferKey.processText -> sharedPreferences?.let {
                 setProcessTextEnable(it.getBoolean(key, true))
             }
-            PreferKey.showRss -> postEvent(EventBus.SHOW_RSS, "")
+            PreferKey.showDiscovery, PreferKey.showRss -> postEvent(EventBus.NOTIFY_MAIN, "")
             PreferKey.defaultCover -> upPreferenceSummary(
                 key, getPrefString(PreferKey.defaultCover)
             )
