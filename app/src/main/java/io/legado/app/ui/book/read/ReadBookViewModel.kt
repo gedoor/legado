@@ -10,7 +10,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.PreciseSearch
@@ -30,9 +29,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun initData(intent: Intent) {
         execute {
             ReadBook.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-            IntentDataHelp.getData<Book>(intent.getStringExtra("key"))?.let {
-                initBook(it)
-            } ?: intent.getStringExtra("bookUrl")?.let {
+            intent.getStringExtra("bookUrl")?.let {
                 appDb.bookDao.getBook(it)?.let { book ->
                     initBook(book)
                 }
@@ -40,9 +37,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 initBook(it)
             }
         }.onFinally {
-            if (ReadBook.inBookshelf) {
-                ReadBook.saveRead()
-            }
+            ReadBook.saveRead()
         }
     }
 
