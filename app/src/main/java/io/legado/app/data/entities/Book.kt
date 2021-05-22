@@ -124,6 +124,14 @@ data class Book(
         return readConfig!!
     }
 
+    fun setReverseToc(reverseToc: Boolean) {
+        config().reverseToc = reverseToc
+    }
+
+    fun getReverseToc(): Boolean {
+        return config().reverseToc
+    }
+
     fun setUseReplaceRule(useReplaceRule: Boolean) {
         config().useReplaceRule = useReplaceRule
     }
@@ -154,14 +162,6 @@ data class Book(
 
     fun setImageStyle(imageStyle: String?) {
         config().imageStyle = imageStyle
-    }
-
-    fun getDelParagraph(): Int {
-        return config().delParagraph
-    }
-
-    fun setDelParagraph(num: Int) {
-        config().delParagraph = num
     }
 
     fun setDelTag(tag: Long) {
@@ -208,15 +208,8 @@ data class Book(
         newBook.customTag = customTag
         newBook.canUpdate = canUpdate
         newBook.readConfig = readConfig
-        delete()
+        delete(this)
         appDb.bookDao.insert(newBook)
-    }
-
-    fun delete() {
-        if (ReadBook.book?.bookUrl == bookUrl) {
-            ReadBook.book = null
-        }
-        appDb.bookDao.delete(this)
     }
 
     fun upInfoFromOld(oldBook: Book?) {
@@ -241,15 +234,23 @@ data class Book(
         const val imgStyleDefault = "DEFAULT"
         const val imgStyleFull = "FULL"
         const val imgStyleText = "TEXT"
+
+        fun delete(book: Book?) {
+            book ?: return
+            if (ReadBook.book?.bookUrl == book.bookUrl) {
+                ReadBook.book = null
+            }
+            appDb.bookDao.delete(book)
+        }
     }
 
     @Parcelize
     data class ReadConfig(
+        var reverseToc: Boolean = false,
         var pageAnim: Int = -1,
         var reSegment: Boolean = false,
         var imageStyle: String? = null,
         var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,// 正文使用净化替换规则
-        var delParagraph: Int = 0,//去除段首
         var delTag: Long = 0L,//去除标签
     ) : Parcelable
 
