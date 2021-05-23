@@ -107,10 +107,12 @@ object BookChapterList {
         }
         val lh = LinkedHashSet(chapterList)
         val list = ArrayList(lh)
-        list.reverse()
+        if (!book.getReverseToc()) {
+            list.reverse()
+        }
         Debug.log(book.origin, "◇目录总数:${list.size}")
-        for ((index, item) in list.withIndex()) {
-            item.index = index
+        list.forEachIndexed { index, bookChapter ->
+            bookChapter.index = index
         }
         book.latestChapterTitle = list.last().title
         book.durChapterTitle =
