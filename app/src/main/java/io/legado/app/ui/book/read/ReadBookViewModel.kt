@@ -246,9 +246,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
-        ReadBook.prevTextChapter = null
-        ReadBook.curTextChapter = null
-        ReadBook.nextTextChapter = null
+        ReadBook.clearTextChapter()
         ReadBook.callBack?.upContent()
         if (index != ReadBook.durChapterIndex) {
             ReadBook.durChapterIndex = index

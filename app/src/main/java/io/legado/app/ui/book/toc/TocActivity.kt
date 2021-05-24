@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.toc
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -78,9 +79,23 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_reverse_toc -> viewModel.reverseToc()
+            R.id.menu_reverse_toc -> viewModel.reverseToc {
+                setResult(RESULT_OK, Intent().apply {
+                    putExtra("index", it.durChapterIndex)
+                    putExtra("chapterPos", it.durChapterPos)
+                })
+            }
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (tabLayout.isGone) {
+            searchView?.onActionViewCollapsed()
+            tabLayout.visible()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private inner class TabFragmentPageAdapter : FragmentStateAdapter(this) {
@@ -98,12 +113,4 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
 
     }
 
-    override fun onBackPressed() {
-        if (tabLayout.isGone) {
-            searchView?.onActionViewCollapsed()
-            tabLayout.visible()
-        } else {
-            super.onBackPressed()
-        }
-    }
 }

@@ -73,9 +73,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private val tocActivity =
         registerForActivityResult(TocActivityResult()) {
             it?.let {
-                if (it.first != ReadBook.durChapterIndex) {
-                    viewModel.openChapter(it.first, it.second)
-                }
+                viewModel.openChapter(it.first, it.second)
             }
         }
     private val sourceEditActivity =

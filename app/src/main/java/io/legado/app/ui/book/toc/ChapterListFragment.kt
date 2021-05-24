@@ -137,8 +137,10 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     }
 
     override fun openChapter(bookChapter: BookChapter) {
-        activity?.setResult(RESULT_OK, Intent().putExtra("index", bookChapter.index))
-        activity?.finish()
+        activity?.run {
+            setResult(RESULT_OK, Intent().putExtra("index", bookChapter.index))
+            finish()
+        }
     }
 
 }

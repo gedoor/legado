@@ -66,11 +66,13 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
 
 
     override fun onClick(bookmark: Bookmark) {
-        val bookmarkData = Intent()
-        bookmarkData.putExtra("index", bookmark.chapterIndex)
-        bookmarkData.putExtra("chapterPos", bookmark.chapterPos)
-        activity?.setResult(Activity.RESULT_OK, bookmarkData)
-        activity?.finish()
+        activity?.run {
+            setResult(Activity.RESULT_OK, Intent().apply {
+                putExtra("index", bookmark.chapterIndex)
+                putExtra("chapterPos", bookmark.chapterPos)
+            })
+            finish()
+        }
     }
 
     override fun onLongClick(bookmark: Bookmark) {
