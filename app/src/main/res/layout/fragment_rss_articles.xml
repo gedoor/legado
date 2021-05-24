@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.legado.app.ui.widget.RecyclerViewAtViewPager2
+    <io.legado.app.ui.widget.recycler.RecyclerViewAtPager2
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
