@@ -139,7 +139,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
             }
             if (!scope.isActive) return
             equalData.sortByDescending { it.origins.size }
-            equalData.addAll(containsData)
+            equalData.addAll(containsData.sortedByDescending { it.origins.size })
             if (!precision) {
                 equalData.addAll(otherData)
             }
