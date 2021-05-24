@@ -1,55 +1,40 @@
-package io.legado.app.ui.widget;
+package io.legado.app.ui.widget
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
+import android.content.Context
+import androidx.recyclerview.widget.RecyclerView
+import android.util.AttributeSet
+import android.view.MotionEvent
+import kotlin.math.abs
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
+class RecyclerViewAtViewPager2 : RecyclerView {
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-public class RecyclerViewAtViewPager2 extends RecyclerView {
-
-    public RecyclerViewAtViewPager2(@NonNull Context context) {
-        super(context);
-    }
-
-    public RecyclerViewAtViewPager2(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public RecyclerViewAtViewPager2(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    private int startX, startY;
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                startX = (int) ev.getX();
-                startY = (int) ev.getY();
-                getParent().requestDisallowInterceptTouchEvent(true);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int endX = (int) ev.getX();
-                int endY = (int) ev.getY();
-                int disX = Math.abs(endX - startX);
-                int disY = Math.abs(endY - startY);
+    private var startX = 0
+    private var startY = 0
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        when (ev.action) {
+            MotionEvent.ACTION_DOWN -> {
+                startX = ev.x.toInt()
+                startY = ev.y.toInt()
+                parent.requestDisallowInterceptTouchEvent(true)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val endX = ev.x.toInt()
+                val endY = ev.y.toInt()
+                val disX = abs(endX - startX)
+                val disY = abs(endY - startY)
                 if (disX > disY) {
                     if (disX > 50) {
-                        getParent().requestDisallowInterceptTouchEvent(false);
+                        parent.requestDisallowInterceptTouchEvent(false)
                     }
                 } else {
-                    getParent().requestDisallowInterceptTouchEvent(true);
+                    parent.requestDisallowInterceptTouchEvent(true)
                 }
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                getParent().requestDisallowInterceptTouchEvent(false);
-                break;
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> parent.requestDisallowInterceptTouchEvent(false)
         }
-        return super.dispatchTouchEvent(ev);
+        return super.dispatchTouchEvent(ev)
     }
 }
