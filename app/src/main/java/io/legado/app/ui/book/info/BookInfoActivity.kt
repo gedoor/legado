@@ -17,6 +17,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
 import io.legado.app.constant.Theme
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ActivityBookInfoBinding
@@ -37,6 +38,9 @@ import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class BookInfoActivity :
@@ -49,11 +53,14 @@ class BookInfoActivity :
     private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
         it?.let {
             viewModel.bookData.value?.let { book ->
-                if (book.durChapterIndex != it.first) {
-                    book.durChapterIndex = it.first
-                    book.durChapterPos = it.second
+                launch {
+                    withContext(IO) {
+                        book.durChapterIndex = it.first
+                        book.durChapterPos = it.second
+                        appDb.bookDao.update(book)
+                    }
+                    startReadActivity(book)
                 }
-                startReadActivity(book)
             }
         } ?: let {
             if (!viewModel.inBookshelf) {
