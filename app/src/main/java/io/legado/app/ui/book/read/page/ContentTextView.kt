@@ -497,17 +497,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun createBookmark(): Bookmark? {
         val page = relativePage(selectStart[0])
         page.getTextChapter()?.let { chapter ->
-            val chapterPos = chapter.getReadLength(page.index) +
-                    page.getSelectStartLength(selectStart[1], selectStart[2])
             ReadBook.book?.let { book ->
-                return Bookmark(
-                    bookUrl = book.bookUrl,
-                    bookName = book.name,
-                    chapterIndex = page.chapterIndex,
-                    chapterPos = chapterPos,
-                    chapterName = chapter.title,
+                return book.createBookMark().apply {
+                    chapterIndex = page.chapterIndex
+                    chapterPos = chapter.getReadLength(page.index) +
+                            page.getSelectStartLength(selectStart[1], selectStart[2])
+                    chapterName = chapter.title
                     bookText = selectedText
-                )
+                }
             }
         }
         return null

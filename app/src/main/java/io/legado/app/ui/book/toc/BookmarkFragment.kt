@@ -48,19 +48,19 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
 
     private fun initData(book: Book) {
         bookmarkLiveData?.removeObservers(viewLifecycleOwner)
-        bookmarkLiveData = appDb.bookmarkDao.observeByBook(book.bookUrl, book.name, book.author)
+        bookmarkLiveData = appDb.bookmarkDao.observeByBook(book.name, book.author)
         bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.setItems(it) })
     }
 
     override fun startBookmarkSearch(newText: String?) {
-        if (newText.isNullOrBlank()) {
-            viewModel.bookData.value?.let {
-                initData(it)
+        viewModel.bookData.value?.let { book ->
+            if (newText.isNullOrBlank()) {
+                initData(book)
+            } else {
+                bookmarkLiveData?.removeObservers(viewLifecycleOwner)
+                bookmarkLiveData = appDb.bookmarkDao.liveDataSearch(book.name, book.author, newText)
+                bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.setItems(it) })
             }
-        } else {
-            bookmarkLiveData?.removeObservers(viewLifecycleOwner)
-            bookmarkLiveData = appDb.bookmarkDao.liveDataSearch(viewModel.bookUrl, newText)
-            bookmarkLiveData?.observe(viewLifecycleOwner, { adapter.setItems(it) })
         }
     }
 

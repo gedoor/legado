@@ -227,6 +227,13 @@ data class Book(
         }
     }
 
+    fun createBookMark(): Bookmark {
+        return Bookmark(
+            bookName = name,
+            bookAuthor = author,
+        )
+    }
+
     companion object {
         const val hTag = 2L
         const val rubyTag = 4L

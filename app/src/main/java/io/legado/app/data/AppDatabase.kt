@@ -24,7 +24,7 @@ val appDb by lazy {
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
         RuleSub::class],
-    version = 32,
+    version = 33,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -60,7 +60,7 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_19_20, migration_20_21, migration_21_22, migration_22_23,
                     migration_23_24, migration_24_25, migration_25_26, migration_26_27,
                     migration_27_28, migration_28_29, migration_29_30, migration_30_31,
-                    migration_31_32
+                    migration_31_32, migration_32_33
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -302,6 +302,33 @@ abstract class AppDatabase : RoomDatabase() {
         private val migration_31_32 = object : Migration(31, 32) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE `epubChapters`")
+            }
+        }
+
+        private val migration_32_33 = object : Migration(32, 33) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE bookmarks RENAME TO bookmarks_old")
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `bookmarks` (`time` INTEGER NOT NULL,
+                    `bookName` TEXT NOT NULL, `bookAuthor` TEXT NOT NULL, `chapterIndex` INTEGER NOT NULL, 
+                    `chapterPos` INTEGER NOT NULL, `chapterName` TEXT NOT NULL, `bookText` TEXT NOT NULL, 
+                    `content` TEXT NOT NULL, PRIMARY KEY(`time`))
+                """
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_bookmarks_bookName_bookAuthor` ON `bookmarks` (`bookName`, `bookAuthor`)
+                """
+                )
+                database.execSQL(
+                    """
+                    insert into bookmarks (time, bookName, bookAuthor, chapterIndex, chapterPos, chapterName, bookText, content)
+                    select time, ifNull(b.name, bookName) bookName, ifNull(b.author, bookAuthor) bookAuthor, 
+                    chapterIndex, chapterPos, chapterName, bookText, content from bookmarks_old o
+                    left join books b on o.bookUrl = b.bookUrl
+                """
+                )
             }
         }
     }
