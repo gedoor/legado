@@ -59,6 +59,10 @@ class BookInfoActivity :
                         book.durChapterPos = it.second
                         appDb.bookDao.update(book)
                     }
+                    viewModel.chapterListData.value?.let { chapterList ->
+                        binding.tvToc.text =
+                            getString(R.string.toc_s, chapterList[book.durChapterIndex].title)
+                    }
                     startReadActivity(book)
                 }
             }

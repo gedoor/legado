@@ -68,9 +68,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             if (ReadBook.durChapterIndex != book.durChapterIndex) {
                 ReadBook.durChapterIndex = book.durChapterIndex
                 ReadBook.durChapterPos = book.durChapterPos
-                ReadBook.prevTextChapter = null
-                ReadBook.curTextChapter = null
-                ReadBook.nextTextChapter = null
+                ReadBook.clearTextChapter()
             }
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
