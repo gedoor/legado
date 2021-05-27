@@ -55,6 +55,7 @@ class BookInfoActivity :
             viewModel.bookData.value?.let { book ->
                 launch {
                     withContext(IO) {
+                        viewModel.durChapterIndex = it.first
                         book.durChapterIndex = it.first
                         book.durChapterPos = it.second
                         appDb.bookDao.update(book)
@@ -75,6 +76,7 @@ class BookInfoActivity :
     private val readBookResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
+        viewModel.refreshData(intent)
         if (it.resultCode == RESULT_OK) {
             viewModel.inBookshelf = true
             upTvBookshelf()
