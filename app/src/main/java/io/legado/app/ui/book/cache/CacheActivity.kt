@@ -67,7 +67,12 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)
-        binding.titleBar.subtitle = intent.getStringExtra("groupName") ?: getString(R.string.all)
+        launch {
+            binding.titleBar.subtitle = withContext(IO) {
+                appDb.bookGroupDao.getByID(groupId)?.groupName
+                    ?: getString(R.string.no_group)
+            }
+        }
         initRecyclerView()
         initGroupData()
         initBookData()

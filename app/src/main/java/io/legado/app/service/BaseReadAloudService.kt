@@ -26,6 +26,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 
 abstract class BaseReadAloudService : BaseService(),
@@ -202,7 +203,11 @@ abstract class BaseReadAloudService : BaseService(),
      * @return 音频焦点
      */
     fun requestFocus(): Boolean {
-        return MediaHelp.requestFocus(audioManager, mFocusRequest)
+        val requestFocus = MediaHelp.requestFocus(audioManager, mFocusRequest)
+        if (!requestFocus) {
+            toastOnUi("未获取到音频焦点")
+        }
+        return requestFocus
     }
 
     /**

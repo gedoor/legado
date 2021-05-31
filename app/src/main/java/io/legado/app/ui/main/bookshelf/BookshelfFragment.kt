@@ -87,11 +87,9 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
             R.id.menu_add_url -> addBookByUrl()
             R.id.menu_arrange_bookshelf -> startActivity<ArrangeBookActivity> {
                 putExtra("groupId", selectedGroup.groupId)
-                putExtra("groupName", selectedGroup.groupName)
             }
             R.id.menu_download -> startActivity<CacheActivity> {
                 putExtra("groupId", selectedGroup.groupId)
-                putExtra("groupName", selectedGroup.groupName)
             }
             R.id.menu_export_bookshelf -> {
                 val fragment = fragmentMap[selectedGroup.groupId]

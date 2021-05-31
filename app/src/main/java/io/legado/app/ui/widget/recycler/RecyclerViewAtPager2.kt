@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
 class RecyclerViewAtPager2 : RecyclerView {
+
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -17,6 +18,7 @@ class RecyclerViewAtPager2 : RecyclerView {
 
     private var startX = 0
     private var startY = 0
+
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -37,8 +39,10 @@ class RecyclerViewAtPager2 : RecyclerView {
                     parent.requestDisallowInterceptTouchEvent(true)
                 }
             }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> parent.requestDisallowInterceptTouchEvent(false)
+            MotionEvent.ACTION_UP,
+            MotionEvent.ACTION_CANCEL -> parent.requestDisallowInterceptTouchEvent(false)
         }
         return super.dispatchTouchEvent(ev)
     }
+
 }
