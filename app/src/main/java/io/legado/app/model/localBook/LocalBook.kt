@@ -29,7 +29,7 @@ object LocalBook {
         }
     }
 
-    fun getContext(book: Book, chapter: BookChapter): String? {
+    fun getContent(book: Book, chapter: BookChapter): String? {
         return if (book.isEpub()) {
             EpubFile.getContent(book, chapter)
         } else {

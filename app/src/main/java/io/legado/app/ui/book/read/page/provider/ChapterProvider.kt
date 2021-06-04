@@ -119,10 +119,10 @@ object ChapterProvider {
                             if (matcher.find()) {
                                 matcher.group(1)?.let { src ->
                                     //if (!book.isEpub()) {
-                                        durY = setTypeImage(
-                                            book, bookChapter, src,
-                                            durY, textPages, book.getImageStyle()
-                                        )
+                                    durY = setTypeImage(
+                                        book, bookChapter, src,
+                                        durY, textPages, book.getImageStyle()
+                                    )
                                     //}
                                 }
                             } else {
@@ -324,13 +324,14 @@ object ChapterProvider {
                         srcList.removeFirst(),
                         start = paddingLeft + x,
                         end = paddingLeft + x1,
-                        isImage = true
+                        isImage = true,
+                        isIndent = true
                     )
                 )
             } else {
                 textLine.textChars.add(
                     TextChar(
-                        it, start = paddingLeft + x, end = paddingLeft + x1
+                        it, start = paddingLeft + x, end = paddingLeft + x1, isIndent = true
                     )
                 )
             }

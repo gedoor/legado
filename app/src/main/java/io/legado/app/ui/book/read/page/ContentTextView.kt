@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -10,6 +11,8 @@ import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
+import io.legado.app.data.entities.DrawLineEntity
+import io.legado.app.data.entities.IdealEntity
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.service.help.ReadBook
@@ -27,6 +30,7 @@ import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlin.math.min
 
+
 /**
  * 阅读内容界面
  */
@@ -37,6 +41,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
             style = Paint.Style.FILL
+        }
+    }
+
+    private val drawLinePaint by lazy {
+        Paint().apply {
+            color = context.getCompatColor(R.color.btn_bg_press_2)
+            style = Paint.Style.FILL
+            strokeWidth = 4f
+            isAntiAlias = true
+            isDither = true
         }
     }
     private var callBack: CallBack
@@ -152,9 +166,59 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             } else {
                 canvas.drawText(it.charData, it.start, lineBase, textPaint)
             }
-            if (it.selected) {
-                canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
+
+            drawLine(canvas, it, lineTop, lineBottom)
+
+        }
+    }
+
+
+    /**
+     * 选中，划线，画想法
+     */
+    private fun drawLine(canvas: Canvas, textChar: TextChar, lineTop: Float, lineBottom: Float) {
+
+        // 缩进字符就不选中了
+        if (textChar.isIndent) return
+
+        // todo 划线
+        val drawLineEntity = textChar.drawLineEntity
+        val idealEntity = textChar.idealEntity
+
+        if (drawLineEntity != null) {
+            drawLinePaint.pathEffect = null
+            drawLinePaint.color = context.getCompatColor(drawLineEntity.getLineColor())
+            when (drawLineEntity.lineStyle) {
+                DrawLineEntity.LineStyle.SHAPE -> { // 矩形线
+                    canvas.drawRect(
+                        textChar.start,
+                        lineTop,
+                        textChar.end,
+                        lineBottom,
+                        drawLinePaint
+                    )
+                }
+                DrawLineEntity.LineStyle.STEEP -> { // 直线
+                    canvas.drawLine(
+                        textChar.start,
+                        lineBottom,
+                        textChar.end,
+                        lineBottom,
+                        drawLinePaint
+                    )
+                }
+                else -> {   // 波浪线
+                }
             }
+        } else if (idealEntity != null) {
+            drawLinePaint.pathEffect = DashPathEffect(floatArrayOf(4f, 4f), 0f)
+            drawLinePaint.color = context.getCompatColor(idealEntity.getLineColor())
+            canvas.drawLine(textChar.start, lineBottom, textChar.end, lineBottom, drawLinePaint)
+        }
+
+        // 选中
+        if (textChar.selected) {
+            canvas.drawRect(textChar.start, lineTop, textChar.end, lineBottom, selectedPaint)
         }
     }
 
@@ -260,7 +324,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     return
                 }
             }
-
         }
     }
 
@@ -282,10 +345,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (x > textChar.start && x < textChar.end) {
                             if (selectStart[0] != relativePos || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
-                                if (selectToInt(relativePos, lineIndex, charIndex) > selectToInt(
-                                        selectEnd
-                                    )
-                                ) {
+                                if (selectToInt(relativePos, lineIndex, charIndex) > selectToInt(selectEnd)) {
                                     return
                                 }
                                 selectStart[0] = relativePos

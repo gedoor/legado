@@ -420,14 +420,33 @@ class ReadBookActivity : ReadBookBaseActivity(),
             MotionEvent.ACTION_DOWN -> textActionMenu.dismiss()
             MotionEvent.ACTION_MOVE -> {
                 when (v.id) {
-                    R.id.cursor_left -> readView.curPage.selectStartMove(
-                        event.rawX + cursorLeft.width,
-                        event.rawY - cursorLeft.height
-                    )
-                    R.id.cursor_right -> readView.curPage.selectEndMove(
-                        event.rawX - cursorRight.width,
-                        event.rawY - cursorRight.height
-                    )
+                    R.id.cursor_left -> {
+                        with(readView) {
+                            curPage.selectStartMoveIndex(
+                                firstRelativePage,
+                                firstLineIndex,
+                                firstCharIndex
+                            )
+
+                            curPage.selectStartMove(
+                                event.rawX + cursorLeft.width,
+                                event.rawY - cursorLeft.height
+                            )
+                        }
+                    }
+                    R.id.cursor_right -> {
+                        with(readView) {
+                            curPage.selectEndMoveIndex(
+                                firstRelativePage,
+                                firstLineIndex,
+                                firstCharIndex
+                            )
+                            curPage.selectEndMove(
+                                event.rawX + cursorRight.width,
+                                event.rawY - cursorRight.height
+                            )
+                        }
+                    }
                 }
             }
             MotionEvent.ACTION_UP -> showTextActionMenu()
@@ -540,7 +559,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      */
     override fun onMenuActionFinally() = with(binding) {
         textActionMenu.dismiss()
-        readView.curPage.cancelSelect()
+        readView.cancelSelect()
         readView.isTextSelected = false
     }
 

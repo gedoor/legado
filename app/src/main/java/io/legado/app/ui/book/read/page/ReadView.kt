@@ -72,9 +72,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
     var isTextSelected = false
     private var pressOnTextSelected = false
-    private var firstRelativePage = 0
-    private var firstLineIndex: Int = 0
-    private var firstCharIndex: Int = 0
+    var firstRelativePage = 0
+    var firstLineIndex: Int = 0
+    var firstCharIndex: Int = 0
 
     val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
     private val tlRect = RectF()
@@ -155,11 +155,19 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+
+        if (event.pointerCount > 1) {
+            isSelected = false
+            longPressed = false
+            removeCallbacks(longPressRunnable)
+            //cancelSelect()
+            return super.onTouchEvent(event)
+        }
         callBack.screenOffTimerStart()
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (isTextSelected) {
-                    curPage.cancelSelect()
+                    cancelSelect()
                     isTextSelected = false
                     pressOnTextSelected = true
                 } else {
@@ -243,6 +251,14 @@ class ReadView(context: Context, attrs: AttributeSet) :
             invalidate()
         }
         pageDelegate?.onScroll()
+    }
+
+
+    /**
+     * 取消选中
+     */
+    fun cancelSelect() {
+        curPage.cancelSelect()
     }
 
     /**
@@ -357,6 +373,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
      * 单击
      */
     private fun onSingleTapUp() {
+        cancelSelect()
         when {
             isTextSelected -> isTextSelected = false
             mcRect.contains(startX, startY) -> if (!isAbortAnim) {
@@ -402,7 +419,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     /**
      * 选择文本
      */
-    private fun selectText(x: Float, y: Float) {
+    fun selectText(x: Float, y: Float) {
         curPage.selectText(x, y) { relativePage, lineIndex, charIndex ->
             when {
                 relativePage > firstRelativePage -> {
@@ -435,7 +452,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun onDestroy() {
         pageDelegate?.onDestroy()
-        curPage.cancelSelect()
+        cancelSelect()
     }
 
     fun fillPage(direction: PageDirection): Boolean {
