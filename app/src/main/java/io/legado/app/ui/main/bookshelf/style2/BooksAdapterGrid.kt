@@ -13,8 +13,8 @@ import io.legado.app.help.AppConfig
 import io.legado.app.utils.invisible
 import splitties.views.onLongClick
 
-class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
-    BaseBooksAdapter<BooksAdapterGrid.ItemViewHolder>(context) {
+class BooksAdapterGrid(context: Context, callBack: CallBack) :
+    BaseBooksAdapter<BooksAdapterGrid.ItemViewHolder>(context, callBack) {
 
     override fun getItemCount(): Int {
         return callBack.getItemCount()

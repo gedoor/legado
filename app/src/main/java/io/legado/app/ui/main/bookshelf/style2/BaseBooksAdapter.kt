@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.data.entities.Book
 
-abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(val context: Context) :
-    RecyclerView.Adapter<VH>() {
+abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
+    val context: Context,
+    val callBack: CallBack
+) : RecyclerView.Adapter<VH>() {
 
     val diffItemCallback: DiffUtil.ItemCallback<Book>
         get() = object : DiffUtil.ItemCallback<Book>() {
@@ -62,14 +64,14 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(val context: Conte
         }
 
     fun notification(bookUrl: String) {
-//        for (i in 0 until itemCount) {
-//            getItem(i)?.let {
-//                if (it.bookUrl == bookUrl) {
-//                    notifyItemChanged(i, bundleOf(Pair("refresh", null)))
-//                    return
-//                }
-//            }
-//        }
+        for (i in 0 until itemCount) {
+            callBack.getItem(i).let {
+                if (it is Book && it.bookUrl == bookUrl) {
+                    notifyItemChanged(i, bundleOf(Pair("refresh", null)))
+                    return
+                }
+            }
+        }
     }
 
 

@@ -15,8 +15,8 @@ import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
-class BooksAdapterList(context: Context, private val callBack: CallBack) :
-    BaseBooksAdapter<BooksAdapterList.ItemViewHolder>(context) {
+class BooksAdapterList(context: Context, callBack: CallBack) :
+    BaseBooksAdapter<BooksAdapterList.ItemViewHolder>(context, callBack) {
 
     override fun getItemCount(): Int {
         return callBack.getItemCount()
