@@ -5,14 +5,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.*
 import androidx.lifecycle.LiveData
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppConst
@@ -22,7 +19,6 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.DialogBookshelfConfigBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.FragmentBookshelfBinding
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
@@ -48,7 +44,7 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
     private val binding by viewBinding(FragmentBookshelfBinding::bind)
     override val viewModel: BookshelfViewModel by viewModels()
     private val activityViewModel: MainViewModel by activityViewModels()
-    private lateinit var adapter: FragmentStateAdapter
+    private lateinit var adapter: FragmentStatePagerAdapter
     private lateinit var tabLayout: TabLayout
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
@@ -109,12 +105,10 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         tabLayout.isTabIndicatorFullWidth = false
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
         tabLayout.setSelectedTabIndicatorColor(requireContext().accentColor)
+        tabLayout.setupWithViewPager(binding.viewPagerBookshelf)
         binding.viewPagerBookshelf.offscreenPageLimit = 1
-        adapter = TabFragmentPageAdapter()
+        adapter = TabFragmentPageAdapter(childFragmentManager)
         binding.viewPagerBookshelf.adapter = adapter
-        TabLayoutMediator(tabLayout, binding.viewPagerBookshelf) { tab, i ->
-            tab.text = bookGroups[i].groupName
-        }.attach()
     }
 
     private fun initBookGroupData() {
@@ -169,7 +163,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     .apply {
                         rgLayout.checkByIndex(bookshelfLayout)
                         rgSort.checkByIndex(bookshelfSort)
-                        swShowUnread.isChecked = AppConfig.showUnread
                     }
             customView { alertBinding.root }
             okButton {
@@ -181,10 +174,6 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
                     }
                     if (bookshelfSort != rgSort.getCheckedIndex()) {
                         putPrefInt(PreferKey.bookshelfSort, rgSort.getCheckedIndex())
-                        changed = true
-                    }
-                    if (AppConfig.showUnread != swShowUnread.isChecked) {
-                        AppConfig.showUnread = swShowUnread.isChecked
                         changed = true
                     }
                     if (changed) {
@@ -249,25 +238,29 @@ class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_b
         }.show()
     }
 
-    private inner class TabFragmentPageAdapter :
-        FragmentStateAdapter(this) {
+    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
+        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-        override fun getItemId(position: Int): Long {
+        override fun getPageTitle(position: Int): CharSequence {
+            return bookGroups[position].groupName
+        }
+
+        override fun getItemPosition(`object`: Any): Int {
+            return POSITION_NONE
+        }
+
+        override fun getItem(position: Int): Fragment {
             val group = bookGroups[position]
-            return group.groupId
+            return BooksFragment.newInstance(position, group.groupId)
         }
 
-        override fun containsItem(itemId: Long): Boolean {
-            return fragmentMap.containsKey(itemId)
-        }
-
-        override fun getItemCount(): Int {
+        override fun getCount(): Int {
             return bookGroups.size
         }
 
-        override fun createFragment(position: Int): Fragment {
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val fragment = super.instantiateItem(container, position) as BooksFragment
             val group = bookGroups[position]
-            val fragment = BooksFragment.newInstance(position, group.groupId)
             fragmentMap[group.groupId] = fragment
             return fragment
         }

@@ -48,7 +48,7 @@ import kotlin.math.max
 /**
  * 书架界面
  */
-class BookshelfFragment : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf1),
+class BookshelfFragment1 : VMBaseFragment<BookshelfViewModel>(R.layout.fragment_bookshelf1),
     SearchView.OnQueryTextListener,
     BaseBooksAdapter.CallBack {
 
