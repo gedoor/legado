@@ -838,5 +838,7 @@
     <string name="diy_edit_source_group_title">【%s】</string>
     <string name="reverse_toc">反转目录</string>
     <string name="show_discovery">显示发现</string>
+    <string name="style">样式</string>
+    <string name="group_style">分组样式</string>
 
 </resources>

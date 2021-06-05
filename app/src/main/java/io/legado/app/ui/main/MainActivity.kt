@@ -27,7 +27,9 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.elevation
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.ui.main.bookshelf.BookshelfFragment
+import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
+import io.legado.app.ui.main.bookshelf.style1.BookshelfFragment1
+import io.legado.app.ui.main.bookshelf.style2.BookshelfFragment2
 import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
@@ -101,7 +103,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 if (System.currentTimeMillis() - bookshelfReselected > 300) {
                     bookshelfReselected = System.currentTimeMillis()
                 } else {
-                    (fragmentMap[0] as? BookshelfFragment)?.gotoTop()
+                    (fragmentMap[getFragmentId(0)] as? BaseBookshelfFragment)?.gotoTop()
                 }
             }
             R.id.menu_discovery -> {
@@ -210,6 +212,14 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    private fun getFragmentId(position: Int): Int {
+        val p = realPositions[position]
+        if (p == 0) {
+            return if (AppConfig.bookGroupStyle == 1) 11 else 0
+        }
+        return p
+    }
+
     private inner class PageChangeCallback : ViewPager.SimpleOnPageChangeListener() {
 
         override fun onPageSelected(position: Int) {
@@ -225,7 +235,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         private fun getId(position: Int): Int {
-            return realPositions[position]
+            return getFragmentId(position)
         }
 
         override fun getItemPosition(`object`: Any): Int {
@@ -234,7 +244,8 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
         override fun getItem(position: Int): Fragment {
             return when (getId(position)) {
-                0 -> BookshelfFragment()
+                0 -> BookshelfFragment1()
+                11 -> BookshelfFragment2()
                 1 -> ExploreFragment()
                 2 -> RssFragment()
                 else -> MyFragment()

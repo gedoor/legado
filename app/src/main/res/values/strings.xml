@@ -840,4 +840,7 @@
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
     <string name="reverse_toc">Reverse toc</string>
     <string name="show_discovery">Show</string>
+    <string name="style">Style</string>
+    <string name="group_style">Group style</string>
+
 </resources>

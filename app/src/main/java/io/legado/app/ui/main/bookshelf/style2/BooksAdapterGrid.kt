@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.bookshelf1
+package io.legado.app.ui.main.bookshelf.style2
 
 import android.content.Context
 import android.os.Bundle

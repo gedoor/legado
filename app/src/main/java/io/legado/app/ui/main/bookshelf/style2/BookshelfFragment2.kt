@@ -1,29 +1,32 @@
-package io.legado.app.ui.main.bookshelf.books
+package io.legado.app.ui.main.bookshelf.style2
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.base.BaseFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
-import io.legado.app.databinding.FragmentBooksBinding
+import io.legado.app.data.entities.BookGroup
+import io.legado.app.databinding.FragmentBookshelf1Binding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.main.MainViewModel
+import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.observeEvent
@@ -34,35 +37,49 @@ import kotlin.math.max
 /**
  * 书架界面
  */
-class BooksFragment : BaseFragment(R.layout.fragment_books),
+class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
+    SearchView.OnQueryTextListener,
     BaseBooksAdapter.CallBack {
 
-    companion object {
-        fun newInstance(position: Int, groupId: Long): BooksFragment {
-            return BooksFragment().apply {
-                val bundle = Bundle()
-                bundle.putInt("position", position)
-                bundle.putLong("groupId", groupId)
-                arguments = bundle
-            }
-        }
-    }
-
-    private val binding by viewBinding(FragmentBooksBinding::bind)
-    private val activityViewModel: MainViewModel
-            by activityViewModels()
+    private val binding by viewBinding(FragmentBookshelf1Binding::bind)
+    private lateinit var searchView: SearchView
     private lateinit var booksAdapter: BaseBooksAdapter<*>
+    override var groupId = AppConst.bookGroupNoneId
+    private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private var bookshelfLiveData: LiveData<List<Book>>? = null
-    private var position = 0
-    private var groupId = -1L
+    private var bookGroups: List<BookGroup> = emptyList()
+    override var books: List<Book> = emptyList()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.let {
-            position = it.getInt("position", 0)
-            groupId = it.getLong("groupId", -1)
-        }
+        searchView = binding.titleBar.findViewById(R.id.search_view)
+        setSupportToolbar(binding.titleBar.toolbar)
+        initSearchView()
         initRecyclerView()
-        upRecyclerData()
+        initGroupData()
+        initBooksData()
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu) {
+        menuInflater.inflate(R.menu.main_bookshelf, menu)
+        menu.findItem(R.id.menu_search).isVisible = false
+    }
+
+    private fun initSearchView() {
+        ATH.setTint(searchView, primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.queryHint = getString(R.string.screen_find)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+
+                return false
+            }
+        })
     }
 
     private fun initRecyclerView() {
@@ -70,7 +87,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         binding.refreshLayout.setColorSchemeColors(accentColor)
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
-            activityViewModel.upToc(booksAdapter.getItems())
+            activityViewModel.upToc(books)
         }
         val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
         if (bookshelfLayout == 0) {
@@ -100,7 +117,21 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         })
     }
 
-    private fun upRecyclerData() {
+    private fun initGroupData() {
+        bookGroupLiveData?.removeObservers(this)
+        bookGroupLiveData = appDb.bookGroupDao.liveDataShow().apply {
+            observe(viewLifecycleOwner) {
+                if (it.size != bookGroups.size) {
+                    bookGroups = it
+                    booksAdapter.notifyDataSetChanged()
+                } else {
+
+                }
+            }
+        }
+    }
+
+    private fun initBooksData() {
         bookshelfLiveData?.removeObservers(this)
         bookshelfLiveData = when (groupId) {
             AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
@@ -111,24 +142,37 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }.apply {
             observe(viewLifecycleOwner) { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
-                val books = when (getPrefInt(PreferKey.bookshelfSort)) {
-                    1 -> list.sortedByDescending { it.latestChapterTime }
+                books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                    1 -> list.sortedByDescending {
+                        it.latestChapterTime
+                    }
                     2 -> list.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
-                    3 -> list.sortedBy { it.order }
-                    else -> list.sortedByDescending { it.durChapterTime }
+                    3 -> list.sortedBy {
+                        it.order
+                    }
+                    else -> list.sortedByDescending {
+                        it.durChapterTime
+                    }
                 }
-                booksAdapter.setItems(books)
+                booksAdapter.notifyDataSetChanged()
             }
         }
     }
 
-    fun getBooks(): List<Book> {
-        return booksAdapter.getItems()
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        startActivity<SearchActivity> {
+            putExtra("key", query)
+        }
+        return false
     }
 
-    fun gotoTop() {
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return false
+    }
+
+    override fun gotoTop() {
         if (AppConfig.isEInkMode) {
             binding.rvBookshelf.scrollToPosition(0)
         } else {
@@ -136,31 +180,50 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         }
     }
 
-    fun getBooksCount(): Int {
-        return booksAdapter.itemCount
-    }
+    override fun onItemClick(position: Int) {
+        if (position < bookGroups.size) {
+            val bookGroup = bookGroups[position]
 
-    override fun open(book: Book) {
-        when (book.type) {
-            BookType.audio ->
-                startActivity<AudioPlayActivity> {
+        } else {
+            val book = books[position - bookGroups.size]
+            when (book.type) {
+                BookType.audio ->
+                    startActivity<AudioPlayActivity> {
+                        putExtra("bookUrl", book.bookUrl)
+                    }
+                else -> startActivity<ReadBookActivity> {
                     putExtra("bookUrl", book.bookUrl)
                 }
-            else -> startActivity<ReadBookActivity> {
-                putExtra("bookUrl", book.bookUrl)
             }
         }
     }
 
-    override fun openBookInfo(book: Book) {
-        startActivity<BookInfoActivity> {
-            putExtra("name", book.name)
-            putExtra("author", book.author)
+    override fun onItemLongClick(position: Int) {
+        if (position < bookGroups.size) {
+
+        } else {
+            val book = books[position - bookGroups.size]
+            startActivity<BookInfoActivity> {
+                putExtra("name", book.name)
+                putExtra("author", book.author)
+            }
         }
     }
 
     override fun isUpdate(bookUrl: String): Boolean {
         return bookUrl in activityViewModel.updateList
+    }
+
+    override fun getItemCount(): Int {
+        return bookGroups.size + books.size
+    }
+
+    override fun getItem(position: Int): Any {
+        return if (position < bookGroups.size) {
+            bookGroups[position]
+        } else {
+            books[position - bookGroups.size]
+        }
     }
 
     override fun observeLiveBus() {

@@ -840,4 +840,6 @@
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
     <string name="reverse_toc">Reverse toc</string>
     <string name="show_discovery">显示发现</string>
+    <string name="style">样式</string>
+    <string name="group_style">分组样式</string>
 </resources>

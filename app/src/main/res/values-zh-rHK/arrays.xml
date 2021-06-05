@@ -6,6 +6,11 @@
         <item>音頻</item>
     </string-array>
 
+    <string-array name="group_style">
+        <item>标签</item>
+        <item>文件夹</item>
+    </string-array>
+
     <string-array name="theme_mode">
         <item>跟隨系統</item>
         <item>亮色主題</item>

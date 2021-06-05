@@ -839,5 +839,7 @@
     <string name="hide_when_status_bar_show">状态栏显示时隐藏</string>
     <string name="reverse_toc">反转目录</string>
     <string name="show_discovery">显示发现</string>
+    <string name="style">样式</string>
+    <string name="group_style">分组样式</string>
 
 </resources>

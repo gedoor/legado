@@ -14,6 +14,27 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <io.legado.app.ui.widget.text.AccentTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:text="@string/group_style"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/sp_group_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/group_style"
+                app:theme="@style/Spinner" />
+
+        </LinearLayout>
+
         <io.legado.app.ui.widget.text.AccentTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

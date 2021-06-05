@@ -840,4 +840,6 @@
     <string name="hide_when_status_bar_show">Ocultar quando a barra de status é mostrada</string>
     <string name="reverse_toc">TOC reverso</string>
     <string name="show_discovery">Mostrar</string>
+    <string name="style">样式</string>
+    <string name="group_style">分组样式</string>
 </resources>
