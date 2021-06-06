@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.DialogBookshelfConfigBinding
@@ -93,7 +94,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     var changed = false
                     if (AppConfig.bookGroupStyle != spGroupStyle.selectedItemPosition) {
                         AppConfig.bookGroupStyle = spGroupStyle.selectedItemPosition
-                        changed = true
+                        postEvent(EventBus.NOTIFY_MAIN, false)
                     }
                     if (bookshelfLayout != rgLayout.getCheckedIndex()) {
                         putPrefInt(PreferKey.bookshelfLayout, rgLayout.getCheckedIndex())
@@ -104,7 +105,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         changed = true
                     }
                     if (changed) {
-                        activity?.recreate()
+                        postEvent(EventBus.RECREATE, "")
                     }
                 }
             }

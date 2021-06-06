@@ -172,11 +172,13 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         observeEvent<String>(EventBus.RECREATE) {
             recreate()
         }
-        observeEvent<String>(EventBus.NOTIFY_MAIN) {
+        observeEvent<Boolean>(EventBus.NOTIFY_MAIN) {
             binding.apply {
                 upBottomMenu()
                 viewPagerMain.adapter?.notifyDataSetChanged()
-                viewPagerMain.setCurrentItem(bottomMenuCount - 1, false)
+                if (it) {
+                    viewPagerMain.setCurrentItem(bottomMenuCount - 1, false)
+                }
             }
         }
         observeEvent<String>(PreferKey.threadCount) {
