@@ -808,7 +808,7 @@
     <string name="background_image">Background image</string>
     <string name="copy_book_url">Copy book URL</string>
     <string name="copy_toc_url">Copy chapters URL</string>
-    <string name="export_folder">Export to a folder</string>
+    <string name="export_folder">Export folder</string>
     <string name="export_charset">Exported text coding</string>
     <string name="export_to_web_dav">Export to WebDav</string>
     <string name="reverse_content">Reverse content</string>
@@ -842,5 +842,6 @@
     <string name="show_discovery">Show</string>
     <string name="style">Style</string>
     <string name="group_style">Group style</string>
+    <string name="export_file_name">Export file name</string>
 
 </resources>

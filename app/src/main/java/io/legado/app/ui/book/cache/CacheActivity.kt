@@ -127,6 +127,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 exportPosition = -1
                 selectExportFolder()
             }
+            R.id.menu_export_file_name -> alertExportFileName()
             R.id.menu_export_type -> showExportTypeConfig()
             R.id.menu_export_charset -> showCharsetConfig()
             R.id.menu_log ->
@@ -292,6 +293,19 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
             }
         }
+    }
+
+    private fun alertExportFileName() {
+        alert(R.string.export_file_name) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setText(AppConfig.bookExportFileName)
+            }
+            customView { alertBinding.root }
+            okButton {
+                AppConfig.bookExportFileName = alertBinding.editView.text?.toString()
+            }
+            cancelButton()
+        }.show()
     }
 
     private fun showExportTypeConfig() {

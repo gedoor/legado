@@ -10,6 +10,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -26,10 +27,21 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.charset.Charset
+import javax.script.SimpleBindings
 
 
 class CacheViewModel(application: Application) : BaseViewModel(application) {
 
+    fun getExportFileName(book: Book): String {
+        val jsStr = AppConfig.bookExportFileName
+        if (jsStr.isNullOrBlank()) {
+            return "${book.name} by ${book.author}"
+        }
+        val bindings = SimpleBindings()
+        bindings["name"] = book.name
+        bindings["author"] = book.author
+        return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
+    }
 
     fun export(path: String, book: Book, finally: (msg: String) -> Unit) {
         execute {
@@ -50,7 +62,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun export(doc: DocumentFile, book: Book) {
-        val filename = "${book.name} by ${book.author}.txt"
+        val filename = "${getExportFileName(book)}.txt"
         DocumentUtils.delete(doc, filename)
         DocumentUtils.createFileIfNotExist(doc, filename)?.let { bookDoc ->
             val stringBuilder = StringBuilder()
@@ -80,7 +92,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private suspend fun export(file: File, book: Book) {
-        val filename = "${book.name} by ${book.author}.txt"
+        val filename = "${getExportFileName(book)}.txt"
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
         val stringBuilder = StringBuilder()
@@ -161,7 +173,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun exportEpub(doc: DocumentFile, book: Book) {
-        val filename = "${book.name} by ${book.author}.epub"
+        val filename = "${getExportFileName(book)}.epub"
         DocumentUtils.delete(doc, filename)
         val epubBook = EpubBook()
         epubBook.version = "2.0"
@@ -185,7 +197,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
 
     private fun exportEpub(file: File, book: Book) {
-        val filename = "${book.name} by ${book.author}.epub"
+        val filename = "${getExportFileName(book)}.epub"
         val epubBook = EpubBook()
         epubBook.version = "2.0"
         //set metadata

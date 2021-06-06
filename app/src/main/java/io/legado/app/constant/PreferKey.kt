@@ -28,6 +28,7 @@ object PreferKey {
     const val showRss = "showRss"
     const val bookshelfLayout = "bookshelfLayout"
     const val bookshelfSort = "bookshelfSort"
+    const val bookExportFileName = "bookExportFileName"
     const val recordLog = "recordLog"
     const val processText = "process_text"
     const val cleanCache = "cleanCache"
