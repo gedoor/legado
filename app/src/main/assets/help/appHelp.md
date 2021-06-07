@@ -25,7 +25,7 @@
 * 导入后返回书源管理界面；
 * 新版qq下载路径:Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/
 
-![导入书源](https://gitee.com/gekunfei/web/raw/master/legado/importSource.jpg)
+![导入书源](https://cdn.jsdelivr.net/gh/gedoor/gedoor.github.io@master/images/importSource.jpg)
 
 2. 如何新建大佬发的单独书源？
 * 复制书源代码；
