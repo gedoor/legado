@@ -113,6 +113,9 @@ data class Book(
 
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
 
+    //自定义简介有自动更新的需求时，可通过更新intro再调用upCustomIntro()完成
+    fun upCustomIntro() = customIntro = intro
+
     fun fileCharset(): Charset {
         return charset(charset ?: "UTF-8")
     }
