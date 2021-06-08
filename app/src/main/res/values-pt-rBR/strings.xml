@@ -423,7 +423,7 @@
     <string name="rule_web_js">WebViewJs(webJs)</string>
     <string name="rule_source_regex">资源正则(fonteRegex)</string>
     <string name="rule_replace_regex">替换规则(substRegex)</string>
-    <string name="rule_image_style">图片样式(imagemEstilo)</string>
+    <string name="rule_image_style">图片样式(imagemFormato)</string>
 
     <string name="source_icon">图标(fonteÍcone)</string>
     <string name="r_articles">列表规则(regrasArtigos)</string>
@@ -435,7 +435,7 @@
     <string name="r_description">描述规则(regraDescrição)</string>
     <string name="r_image">图片url规则(regraImagem)</string>
     <string name="r_content">内容规则(regraConteúdo)</string>
-    <string name="r_style">样式(estilo)</string>
+    <string name="r_style">样式(formato)</string>
     <string name="r_link">链接规则(regraLink)</string>
     <!-- source end-->
 
@@ -779,7 +779,7 @@
     <string name="auto_clear_expired">Excluir automaticamente dados vencidos da busca</string>
     <string name="auto_clear_expired_summary">Histórico de busca mais de um dia</string>
     <string name="re_segment">Re-segmentar</string>
-    <string name="style_name">Estilo do nome:</string>
+    <string name="style_name">Formato do nome:</string>
     <string name="empty_msg_import_book">Clique no ícone da pasta no canto superior direito e selecione a pasta</string>
     <string name="scan_folder">Busca inteligente</string>    
     <string name="no_book">Sem livros</string>
@@ -808,18 +808,18 @@
     <string name="background_image">Imagem de fundo</string>
     <string name="copy_book_url">Copiar a URL do livro</string>
     <string name="copy_toc_url">Copiar a URL dos capítulos</string>
-    <string name="export_folder">Exportar para uma pasta</string>
+    <string name="export_folder">Exportar a pasta</string>
     <string name="export_charset">Codificação de texto exportada</string>
     <string name="export_to_web_dav">Exportar para WebDav</string>
     <string name="reverse_content">Conteúdo reverso</string>
     <string name="debug">Depurar</string>
     <string name="crash_log">Log de falhas</string>
     <string name="use_zh_layout">Utilização de filiais chinesas personalizadas</string>
-    <string name="image_style">Estilo de imagem</string>
+    <string name="image_style">Formato de imagem</string>
     <string name="system_tts">Sistema TTS</string>
     <string name="export_type">Formato de exportação</string>
     <string name="checkAuthor">Verificar por autor</string>
-    <string name="url_already">Esta URL foi subscrita</string>
+    <string name="url_already">Esta URL foi substituída</string>
     <string name="high_brush_title">Alta taxa de atualização da tela</string>
     <string name="high_brush_summary">Use a maior taxa de atualização da tela</string>
     <string name="export_all">Exportar tudo</string>
@@ -840,7 +840,7 @@
     <string name="hide_when_status_bar_show">Ocultar quando a barra de status é mostrada</string>
     <string name="reverse_toc">TOC reverso</string>
     <string name="show_discovery">Mostrar</string>
-    <string name="style">样式</string>
-    <string name="group_style">分组样式</string>
-    <string name="export_file_name">导出文件名</string>
+    <string name="style">Formato</string>
+    <string name="group_style">Formato de grupo</string>
+    <string name="export_file_name">Exportar o nome do arquivo</string>
 </resources>
