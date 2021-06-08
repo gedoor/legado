@@ -15,7 +15,6 @@ import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
 import java.io.File
 import java.util.concurrent.CopyOnWriteArraySet
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.math.abs
 import kotlin.math.max
@@ -56,14 +55,14 @@ object BookHelp {
         }
     }
 
-    fun getEpubFile(book: Book,): File {
+    fun getEpubFile(book: Book): File {
         val file = FileUtils.getFile(
             downloadDir,
             cacheFolderName,
             book.getFolderName(),
             "index.epubx"
         )
-        if(!file.exists()){
+        if (!file.exists()) {
             val input = if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
                 appCtx.contentResolver.openInputStream(uri)
@@ -341,12 +340,12 @@ object BookHelp {
     
     private fun getChapterNum(chapterName: String?): Int {
         chapterName ?: return -1
-        chapterName = StringUtils.fullToHalf(chapterName).replace(regexA, "")
+        val chapterName1 = StringUtils.fullToHalf(chapterName).replace(regexA, "")
         return StringUtils.stringToInt(
             (
-                chapterNamePattern1.matcher(chapterName).takeIf{it.find()}
-                ?:chapterNamePattern2.matcher(chapterName).takeIf{it.find()}
-            )?.group(1)
+                    chapterNamePattern1.matcher(chapterName1).takeIf { it.find() }
+                        ?: chapterNamePattern2.matcher(chapterName1).takeIf { it.find() }
+                    )?.group(1)
             ?:"-1"
         )
     }
@@ -354,6 +353,7 @@ object BookHelp {
     @Suppress("SpellCheckingInspection")
     private val regexOther by lazy {
         // 所有非字母数字中日韩文字 CJK区+扩展A-F区
+        @Suppress("RegExpDuplicateCharacterInClass")
         return@lazy "[^\\w\\u4E00-\\u9FEF〇\\u3400-\\u4DBF\\u20000-\\u2A6DF\\u2A700-\\u2EBEF]".toRegex()
     }
 
