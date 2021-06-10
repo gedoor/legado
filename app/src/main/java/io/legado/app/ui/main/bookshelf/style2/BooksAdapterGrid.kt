@@ -9,12 +9,13 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ItemBookshelfGridBinding
+import io.legado.app.databinding.ItemBookshelfGridGroupBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.invisible
 import splitties.views.onLongClick
 
 class BooksAdapterGrid(context: Context, callBack: CallBack) :
-    BaseBooksAdapter<BooksAdapterGrid.ItemViewHolder>(context, callBack) {
+    BaseBooksAdapter<RecyclerView.ViewHolder>(context, callBack) {
 
     override fun getItemCount(): Int {
         return callBack.getItemCount()
@@ -23,56 +24,82 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ItemViewHolder {
-        return ItemViewHolder(
+    ): RecyclerView.ViewHolder {
+        return BookViewHolder(
             ItemBookshelfGridBinding.inflate(LayoutInflater.from(context), parent, false)
         )
     }
 
     override fun onBindViewHolder(
-        holder: ItemViewHolder,
+        holder: RecyclerView.ViewHolder,
         position: Int,
         payloads: MutableList<Any>
     ) {
-        holder.binding.run {
-            val bundle = payloads.getOrNull(0) as? Bundle
-            if (bundle == null) {
-                super.onBindViewHolder(holder, position, payloads)
-            } else {
-                when (val item = callBack.getItem(position)) {
-                    is Book -> {
-                        bundle.keySet().forEach {
-                            when (it) {
-                                "name" -> tvName.text = item.name
-                                "cover" -> ivCover.load(
-                                    item.getDisplayCover(),
-                                    item.name,
-                                    item.author
-                                )
-                                "refresh" -> upRefresh(this, item)
-                            }
-                        }
-                    }
-                    is BookGroup -> {
-                        tvName.text = item.groupName
-                    }
-                }
+        val bundle = payloads.getOrNull(0) as? Bundle
+        when {
+            bundle == null -> super.onBindViewHolder(holder, position, payloads)
+            holder is BookViewHolder -> onBindBook(holder.binding, position, bundle)
+            holder is GroupViewHolder -> onBindGroup(holder.binding, position, bundle)
+        }
+    }
 
+    private fun onBindGroup(binding: ItemBookshelfGridGroupBinding, position: Int, bundle: Bundle) {
+        binding.run {
+            val item = callBack.getItem(position)
+            if (item is BookGroup) {
+                tvName.text = item.groupName
             }
         }
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.binding.run {
-            when (val item = callBack.getItem(position)) {
-                is Book -> {
-                    tvName.text = item.name
-                    ivCover.load(item.getDisplayCover(), item.name, item.author)
-                    upRefresh(this, item)
+    private fun onBindBook(binding: ItemBookshelfGridBinding, position: Int, bundle: Bundle) {
+        binding.run {
+            val item = callBack.getItem(position)
+            if (item is Book) {
+                bundle.keySet().forEach {
+                    when (it) {
+                        "name" -> tvName.text = item.name
+                        "cover" -> ivCover.load(
+                            item.getDisplayCover(),
+                            item.name,
+                            item.author
+                        )
+                        "refresh" -> upRefresh(this, item)
+                    }
                 }
-                is BookGroup -> {
-                    tvName.text = item.groupName
-                }
+            }
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is BookViewHolder -> onBindBook(holder.binding, position)
+            is GroupViewHolder -> onBindGroup(holder.binding, position)
+        }
+    }
+
+    private fun onBindGroup(binding: ItemBookshelfGridGroupBinding, position: Int) {
+        binding.run {
+            val item = callBack.getItem(position)
+            if (item is BookGroup) {
+                tvName.text = item.groupName
+            }
+            root.setOnClickListener {
+                callBack.onItemClick(position)
+            }
+            root.onLongClick {
+                callBack.onItemLongClick(position)
+            }
+        }
+    }
+
+    private fun onBindBook(binding: ItemBookshelfGridBinding, position: Int) {
+        binding.run {
+            val item = callBack.getItem(position)
+            if (item is Book) {
+                tvName.text = item.name
+                ivCover.load(item.getDisplayCover(), item.name, item.author)
+                upRefresh(this, item)
             }
             root.setOnClickListener {
                 callBack.onItemClick(position)
@@ -98,7 +125,10 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
         }
     }
 
-    class ItemViewHolder(val binding: ItemBookshelfGridBinding) :
+    class BookViewHolder(val binding: ItemBookshelfGridBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
+    class GroupViewHolder(val binding: ItemBookshelfGridGroupBinding) :
         RecyclerView.ViewHolder(binding.root)
 
 }
