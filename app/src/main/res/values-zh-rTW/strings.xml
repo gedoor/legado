@@ -781,6 +781,7 @@
     <string name="style_name">樣式名稱:</string>
     <string name="empty_msg_import_book">點擊右上角資料夾圖示,選擇資料夾</string>
     <string name="scan_folder">智慧掃描</string>
+    <string name="import_file_name">導入文件名</string>
     <string name="copy_book_url">複製書籍URL</string>
     <string name="copy_toc_url">複製目錄URL</string>
     <string name="no_book">沒有書籍</string>
