@@ -102,6 +102,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefString(PreferKey.bookExportFileName, value)
         }
 
+    var bookImportFileName: String?
+        get() = appCtx.getPrefString(PreferKey.bookImportFileName)
+        set(value) {
+            appCtx.putPrefString(PreferKey.bookImportFileName, value)
+        }
+
     var backupPath: String?
         get() = appCtx.getPrefString(PreferKey.backupPath)
         set(value) {
