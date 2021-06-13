@@ -781,7 +781,8 @@
     <string name="re_segment">Re-segmentar</string>
     <string name="style_name">Formato do nome:</string>
     <string name="empty_msg_import_book">Clique no ícone da pasta no canto superior direito e selecione a pasta</string>
-    <string name="scan_folder">Busca inteligente</string>    
+    <string name="scan_folder">Busca inteligente</string>
+    <string name="import_file_name">导入文件名</string>
     <string name="no_book">Sem livros</string>
     <string name="keep_original_name">Manter o nome original</string>
     <string name="click_regional_config">O controle de toque da tela</string>
