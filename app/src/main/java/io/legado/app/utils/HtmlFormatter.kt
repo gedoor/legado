@@ -24,25 +24,18 @@ object HtmlFormatter {
         html ?: return ""
         var formatHtml = formatKeepImg(html)
         val sb = StringBuffer()
-        var appendPos = 0
-        while (appendPos < formatHtml.length) {
-            val matcher = AppPattern.imgPattern.matcher(formatHtml)
-            if(matcher.find()) {
-                val urlArray = matcher.group(1)!!.split(AnalyzeUrl.splitUrlRegex)
-                var url = NetworkUtils.getAbsoluteURL(redirectUrl, urlArray[0])
-                if (urlArray.size > 1) {
-                    url = "$url,${urlArray[1]}"
-                }
-                sb.append(formatHtml.substring(appendPos, matcher.start()))
-                sb.append("<img src=\"$url\" >")
-                appendPos = matcher.end()
-                formatHtml = formatHtml.substring(appendPos, formatHtml.length)
-                appendPos = 0
-            } else {
-                sb.append(formatHtml)
-                appendPos = formatHtml.length
+        val matcher = AppPattern.imgPattern.matcher(formatHtml)
+        while (matcher.find()) {
+            val urlArray = matcher.group(1)!!.split(AnalyzeUrl.splitUrlRegex)
+            var url = NetworkUtils.getAbsoluteURL(redirectUrl, urlArray[0])
+            if (urlArray.size > 1) {
+                url = "$url,${urlArray[1]}"
             }
+            //将Matcher上次匹配结尾到本次匹配结尾这段字符串序列追加到sb中，且是先将其中匹配到的部分替换后再追加
+            matcher.appendReplacement(sb, "<img src=\"$url\" >")
         }
+        //将Matcher最后那个匹配之后的字串匹配到追加到sb中
+        matcher.appendTail(sb)
 
         return sb.toString()
     }
