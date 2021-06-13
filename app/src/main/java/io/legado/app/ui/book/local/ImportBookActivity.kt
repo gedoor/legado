@@ -15,8 +15,10 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityImportBookBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.document.FilePicker
@@ -78,6 +80,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         when (item.itemId) {
             R.id.menu_select_folder -> selectFolder.launch(null)
             R.id.menu_scan_folder -> scanFolder()
+            R.id.menu_import_file_name -> alertImportFileName()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -273,6 +276,19 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                 }
             }
         }
+    }
+
+    private fun alertImportFileName() {
+        alert(R.string.import_file_name) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setText(AppConfig.bookImportFileName)
+            }
+            customView { alertBinding.root }
+            okButton {
+                AppConfig.bookImportFileName = alertBinding.editView.text?.toString()
+            }
+            cancelButton()
+        }.show()
     }
 
     private val find: (docItem: DocItem) -> Unit = {
