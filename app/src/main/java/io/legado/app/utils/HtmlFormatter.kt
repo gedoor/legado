@@ -24,25 +24,16 @@ object HtmlFormatter {
         html ?: return ""
         var formatHtml = formatKeepImg(html)
         val sb = StringBuffer()
-        var appendPos = 0
-        while (appendPos < formatHtml.length) {
-            val matcher = AppPattern.imgPattern.matcher(formatHtml)
-            if(matcher.find()) {
-                val urlArray = matcher.group(1)!!.split(AnalyzeUrl.splitUrlRegex)
-                var url = NetworkUtils.getAbsoluteURL(redirectUrl, urlArray[0])
-                if (urlArray.size > 1) {
-                    url = "$url,${urlArray[1]}"
-                }
-                sb.append(formatHtml.substring(appendPos, matcher.start()))
-                sb.append("<img src=\"$url\" >")
-                appendPos = matcher.end()
-                formatHtml = formatHtml.substring(appendPos, formatHtml.length)
-                appendPos = 0
-            } else {
-                sb.append(formatHtml)
-                appendPos = formatHtml.length
+        val matcher = AppPattern.imgPattern.matcher(formatHtml)
+        while (matcher.find()) {
+            val urlArray = matcher.group(1)!!.split(AnalyzeUrl.splitUrlRegex)
+            var url = NetworkUtils.getAbsoluteURL(redirectUrl, urlArray[0])
+            if (urlArray.size > 1) {
+                url = "$url,${urlArray[1]}"
             }
+            matcher.appendReplacement(sb, "<img src=\"$url\" >")
         }
+        matcher.appendTail(sb)
 
         return sb.toString()
     }
