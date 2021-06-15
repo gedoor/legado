@@ -13,7 +13,7 @@ object HtmlFormatter {
         html ?: return ""
         return html.replace(wrapHtmlRegex, "\n")
             .replace(otherRegex, "")
-            .replace("^[\\n\\s]+".toRegex(), "　　")
+            .replace("^[\\n\\s]*".toRegex(), "　　")
             .replace("[\\n\\s]+$".toRegex(), "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
     }

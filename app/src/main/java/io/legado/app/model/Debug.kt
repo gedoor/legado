@@ -187,7 +187,7 @@ object Debug {
 
     private fun infoDebug(scope: CoroutineScope, webBook: WebBook, book: Book) {
         if (book.tocUrl.isNotBlank()) {
-            log(debugSource, "目录url不为空,详情页已解析")
+            log(debugSource, "≡已获取目录链接,跳过详情页")
             log(debugSource, showTime = false)
             tocDebug(scope, webBook, book)
             return

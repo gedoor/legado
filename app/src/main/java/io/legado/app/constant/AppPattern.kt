@@ -9,7 +9,7 @@ object AppPattern {
     val EXP_PATTERN: Pattern = Pattern.compile("\\{\\{([\\w\\W]*?)\\}\\}")
     //图片有data-开头的数据属性时优先用数据属性作为src，没有数据属性时才匹配src
     val imgPattern: Pattern =
-        Pattern.compile("<img .*?src.*?=.*?\"(.*?(?:,\\{.*\\})?)\".*?>", Pattern.CASE_INSENSITIVE)
+        Pattern.compile("<img\\s*[^>]*src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>", Pattern.CASE_INSENSITIVE)
 
     val nameRegex = Regex("\\s+作\\s*者.*|\\s+\\S+\\s+著")
     val authorRegex = Regex("^.*?作\\s*者[:：\\s]*|\\s+著")

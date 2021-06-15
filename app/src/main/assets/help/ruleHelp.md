@@ -11,6 +11,12 @@
 : regex规则,不可省略,只可以用在书籍列表和目录列表
 ```
 
+* 获取登录后的cookie
+```
+java.getCookie("http://baidu.com", null) => userid=1234;pwd=adbcd
+java.getCookie("http://baidu.com", "userid") => 1234
+```
+
 * 请求头,支持http代理,socks4 socks5代理设置
 ```
 socks5代理
@@ -39,6 +45,49 @@ cache 变量-缓存操作类,方法见 io.legado.app.help.CacheManager
 chapter 变量-当前目录类,方法见 io.legado.app.data.entities.BookChapter
 title 变量-当前标题,String
 src 内容,源码
+```
+
+* url添加js参数,解析url时执行,可在访问url时处理url,例
+```
+https://www.baidu.com,{"js":"java.headerMap.put('xxx', 'yyy')"}
+https://www.baidu.com,{"js":"java.url=java.url+'yyyy'"}
+```
+
+* 增加js方法，用于重定向拦截
+  * `java.get(urlStr: String, headers: Map<String, String>)`
+  * `java.post(urlStr: String, body: String, headers: Map<String, String>)`
+* 对于搜索重定向的源，可以使用此方法获得重定向后的url
+```
+(()=>{
+  if(page==1){
+    let url='https://www.yooread.net/e/search/index.php,'+JSON.stringify({
+    "method":"POST",
+    "body":"show=title&tempid=1&keyboard="+key
+    });
+    return java.put('surl',String(java.connect(url).raw().request().url()));
+  } else {
+    return java.get('surl')+'&page='+(page-1)
+  }
+})()
+或者
+(()=>{
+  let base='https://www.yooread.net/e/search/';
+  if(page==1){
+    let url=base+'index.php';
+    let body='show=title&tempid=1&keyboard='+key;
+    return base+java.put('surl',java.post(url,body,{}).header("Location"));
+  } else {
+    return base+java.get('surl')+'&page='+(page-1);
+  }
+})()
+```
+
+* 正文图片链接支持修改headers
+```
+let options = {
+"headers": {"User-Agent": "xxxx","Referrer":baseUrl,"Cookie":"aaa=vbbb;"}
+};
+'<img src="'+src+","+JSON.stringify(options)+'">'
 ```
 
  ## 部分js对象属性说明
@@ -95,14 +144,16 @@ variable // 自定义书籍变量信息(用于书源规则检索书籍信息)
 ### 字体解析使用
 > 使用方法,在正文替换规则中使用,原理根据f1字体的字形数据到f2中查找字形对应的编码
 ```
-@js:
-var b64=String(src).match(/ttf;base64,([^\)]+)/);
-if (b64) {
-    var f1 = java.queryBase64TTF(b64[1])
-    var f2 = java.queryTTF("/storage/emulated/0/Fonts/Source Han Sans CN Regular.ttf")
-    java.replaceFont(result, f1, f2)
-}else{
-    result
-}
+<js>
+(function(){
+  var b64=String(src).match(/ttf;base64,([^\)]+)/);
+  if(b64){
+    var f1 = java.queryBase64TTF(b64[1]);
+    var f2 = java.queryTTF("https://alanskycn.gitee.io/teachme/assets/font/Source Han Sans CN Regular.ttf");
+    return java.replaceFont(result, f1, f2);
+  }
+  return result;
+})()
+</js>
 ```
 

@@ -190,12 +190,12 @@ object BookChapterList {
                     chapterList.add(bookChapter)
                 }
             }
-            Debug.log(bookSource.bookSourceUrl, "└解析目录列表完成", log)
-            Debug.log(bookSource.bookSourceUrl, "┌首章名称", log)
+            Debug.log(bookSource.bookSourceUrl, "└目录列表解析完成", log)
+            Debug.log(bookSource.bookSourceUrl, "┌获取首章名称", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].title}", log)
-            Debug.log(bookSource.bookSourceUrl, "┌首章链接", log)
+            Debug.log(bookSource.bookSourceUrl, "┌获取首章链接", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].url}", log)
-            Debug.log(bookSource.bookSourceUrl, "┌首章信息", log)
+            Debug.log(bookSource.bookSourceUrl, "┌获取首章信息", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].tag}", log)
         }
         return ChapterData(chapterList, nextUrlList)

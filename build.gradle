@@ -4,24 +4,22 @@ buildscript {
     ext.kotlin_version = '1.5.10'
     repositories {
         google()
-        maven { url 'https://maven.aliyun.com/repository/public/'}
-        maven { url "https://s3.amazonaws.com/fabric-artifacts/public" }
-        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
-        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "de.timfreiheit.resourceplaceholders:placeholders:0.3"
+        classpath 'de.timfreiheit.resourceplaceholders:placeholders:0.3'
     }
 }
 
 allprojects {
     repositories {
         google()
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com/" }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://jitpack.io' }
     }
 }
 
