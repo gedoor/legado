@@ -18,12 +18,12 @@ object HtmlFormatter {
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
     }
 
-    fun formatKeepImg(html: String?) = format(html,notImgHtmlRegex)
+    fun formatKeepImg(html: String?) = format(html, notImgHtmlRegex)
 
     fun formatKeepImg(html: String?, redirectUrl: URL?): String {
         html ?: return ""
         val sb = StringBuffer()
-        val matcher = AppPattern.imgPattern.matcher(html)
+        val matcher = AppPattern.imgPattern.matcher(formatKeepImg(html))
         var appendPos = 0
         while (matcher.find()) {
             val urlArray = matcher.group(1)!!.split(AnalyzeUrl.splitUrlRegex)
@@ -38,7 +38,7 @@ object HtmlFormatter {
         if (appendPos < html.length) {
             sb.append(html.substring(appendPos, html.length))
         }
-        return formatKeepImg(sb.toString())
+        return sb.toString()
     }
 
 }
