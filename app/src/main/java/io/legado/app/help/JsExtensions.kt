@@ -311,9 +311,9 @@ interface JsExtensions {
      * @param font2 正确的字体
      */
     fun replaceFont(
-        text: String,
-        font1: QueryTTF?,
-        font2: QueryTTF?
+            text: String,
+            font1: QueryTTF?,
+            font2: QueryTTF?
     ): String {
         if (font1 == null || font2 == null) return text
         val contentArray = text.toCharArray()
@@ -346,7 +346,7 @@ interface JsExtensions {
         str: String,
         key: String,
         transformation: String,
-        iv: String = ""
+        iv: String
     ): ByteArray? {
 
         return EncoderUtils.decryptAES(
@@ -369,7 +369,7 @@ interface JsExtensions {
         str: String,
         key: String,
         transformation: String,
-        iv: String = ""
+        iv: String
     ): String? {
         return aesDecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
     }
@@ -386,7 +386,7 @@ interface JsExtensions {
         str: String,
         key: String,
         transformation: String,
-        iv: String = ""
+        iv: String
     ): ByteArray? {
         return EncoderUtils.decryptBase64AES(
             data = str.encodeToByteArray(),
@@ -408,7 +408,7 @@ interface JsExtensions {
         str: String,
         key: String,
         transformation: String,
-        iv: String = ""
+        iv: String
     ): String? {
         return aesBase64DecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
     }
@@ -422,7 +422,7 @@ interface JsExtensions {
      */
     fun aesEncodeToByteArray(
         data: String, key: String, transformation: String,
-        iv: String = ""
+        iv: String
     ): ByteArray? {
         return EncoderUtils.encryptAES(
             data.encodeToByteArray(),
@@ -441,7 +441,7 @@ interface JsExtensions {
      */
     fun aesEncodeToString(
         data: String, key: String, transformation: String,
-        iv: String = ""
+        iv: String
     ): String? {
         return aesEncodeToByteArray(data, key, transformation, iv)?.let { String(it) }
     }
@@ -455,7 +455,7 @@ interface JsExtensions {
      */
     fun aesEncodeToBase64ByteArray(
         data: String, key: String, transformation: String,
-        iv: String = ""
+        iv: String
     ): ByteArray? {
         return EncoderUtils.encryptAES2Base64(
             data.encodeToByteArray(),
@@ -474,7 +474,7 @@ interface JsExtensions {
      */
     fun aesEncodeToBase64String(
         data: String, key: String, transformation: String,
-        iv: String = ""
+        iv: String
     ): String? {
         return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
     }

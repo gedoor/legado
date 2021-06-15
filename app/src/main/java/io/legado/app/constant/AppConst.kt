@@ -38,9 +38,9 @@ object AppConst {
 
     val keyboardToolChars: List<String> by lazy {
         arrayListOf(
-            "❓", "@css:", "<js></js>", "{{}}", "&&", "%%", "||", "//", "$.", "@",
-            "\\", ":", "class", "id", "href", "textNodes", "ownText", "all", "html",
-            "[", "]", "<", ">", "##", "!", ".", "+", "-", "*", "=",",{\"webView\":true}"
+            "❓", "@css:", "<js></js>", "{{}}", "##", "&&", "%%", "||", "//", "$.",
+            "@", ":", "class", "text", "href", "textNodes", "ownText", "all", "html",
+            "[", "]", "<", ">", "#", "!", ".", "+", "-", "*", "=", "{'webView': true}"
         )
     }
 
@@ -57,10 +57,12 @@ object AppConst {
     val urlOption: String by lazy {
         """
         ,{
-        "charset": "",
-        "method": "POST",
-        "body": "",
-        "headers": {"User-Agent": ""}
+        'charset': '',
+        'method': 'POST',
+        'body': '',
+        'headers': {
+            'User-Agent': ''
+            }
         }
         """.trimIndent()
     }

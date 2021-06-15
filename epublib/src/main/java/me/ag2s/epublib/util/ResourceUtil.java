@@ -30,60 +30,31 @@ public class ResourceUtil {
     /**
      * 快速创建HTML类型的Resource
      *
-     * @param title  章节的标题
-     * @param string 章节的正文
+     * @param title 章节的标题
+     * @param txt   章节的正文
+     * @param model html模板
      * @return 返回Resource
      */
-    public static Resource createHTMLResource(String title, String string) {
-        String html = createHtml(title, string);
-        MediaType mediaTypeProperty = MediaTypes.XHTML;
-        byte[] data = html.getBytes();
-        return new Resource(data, mediaTypeProperty);
-    }
-
-    /**
-     * 快速创建HTML类型的Resource
-     *
-     * @param title  章节的标题
-     * @param string 章节的正文
-     * @param href   Resource的href
-     * @return 返回Resource
-     */
-
-    @SuppressWarnings("unused")
-    public static Resource createHTMLResource(String title, String string, String href) {
-        String html = createHtml(title, string);
-        MediaType mediaTypeProperty = MediaTypes.XHTML;
-        byte[] data = html.getBytes();
-        return new Resource(null, data, href, mediaTypeProperty);
-    }
-
-    @SuppressWarnings("unused")
-    private static String createHtml(String title, String txt) {
-        StringBuilder body = new StringBuilder();
-        for (String s : txt.split("\\r?\\n")) {
-            //移除多余的开头结尾的空白字符，节省epub的体积
-            s = StringUtil.FixTrim(s);
-            if (s.length() != 0) {
-                if (s.contains("<img")) {
-                    //加上div的话多看能点看大图，但掌阅的图会因为排版变得非常小。
-                    body.append("<div class=\"duokan-image-single img-note\">").append(s).append("</div>");
-                } else {
-                    body.append("<p>").append(s).append("</p>");
-                }
-
-            }
-
+    public static Resource createChapterResource(String title, String txt, String model, String href) {
+        if (title.contains("\n")) {
+            title = "<span class=\"chapter-sequence-number\">" + title.replaceFirst("\\s*\\n\\s*", "</span><br />");
+        } else {
+            title = title.replaceFirst("\\s+", "</span><br />");
+            if (title.contains("</span>"))
+                title = "<span class=\"chapter-sequence-number\">" + title;
         }
+        String html = model.replaceAll("\\{title\\}", title)
+                .replaceAll("\\{content\\}", StringUtil.formatHtml(txt));
+        return new Resource(html.getBytes(), href);
+    }
 
-        return "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">" +
-                "<head><title>" + title + "</title>" +
-                "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\"/>" +
-                "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>" +
-                "<body><h2>" + title + "</h2>" +
-                body +
-                "</body></html>";
+    public static Resource createPublicResource(String name, String author, String intro, String kind, String wordCount, String model, String href) {
+        String html = model.replaceAll("\\{name\\}", name)
+                .replaceAll("\\{author\\}", author)
+                .replaceAll("\\{kind\\}", kind)
+                .replaceAll("\\{wordCount\\}", wordCount)
+                .replaceAll("\\{intro\\}", StringUtil.formatHtml(intro));
+        return new Resource(html.getBytes(), href);
     }
 
     /**

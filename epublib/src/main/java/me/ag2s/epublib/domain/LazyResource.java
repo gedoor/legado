@@ -28,6 +28,9 @@ public class LazyResource extends Resource {
   public LazyResource(LazyResourceProvider resourceProvider, String href) {
     this(resourceProvider, -1, href);
   }
+  public LazyResource(LazyResourceProvider resourceProvider, String href, String originalHref) {
+    this(resourceProvider, -1, href, originalHref);
+  }
 
   /**
    * Creates a Lazy resource, by not actually loading the data for this entry.
@@ -39,8 +42,14 @@ public class LazyResource extends Resource {
    * @param href The resource's href within the epub.
    */
   public LazyResource(
-      LazyResourceProvider resourceProvider, long size, String href) {
+          LazyResourceProvider resourceProvider, long size, String href) {
     super(null, null, href, MediaTypes.determineMediaType(href));
+    this.resourceProvider = resourceProvider;
+    this.cachedSize = size;
+  }
+  public LazyResource(
+      LazyResourceProvider resourceProvider, long size, String href, String originalHref) {
+    super(null, null, href, originalHref, MediaTypes.determineMediaType(href));
     this.resourceProvider = resourceProvider;
     this.cachedSize = size;
   }

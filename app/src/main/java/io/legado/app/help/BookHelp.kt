@@ -38,7 +38,7 @@ object BookHelp {
     }
 
     /**
-     * 清楚已删除书的缓存
+     * 清除已删除书的缓存
      */
     fun clearRemovedCache() {
         Coroutine.async {
