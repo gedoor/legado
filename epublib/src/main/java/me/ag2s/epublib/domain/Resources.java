@@ -193,9 +193,9 @@ public class Resources implements Serializable {
 
     private String createHref(MediaType mediaType, int counter) {
         if (MediaTypes.isBitmapImage(mediaType)) {
-            return "image_" + counter + mediaType.getDefaultExtension();
+            return IMAGE_PREFIX + counter + mediaType.getDefaultExtension();
         } else {
-            return "item_" + counter + mediaType.getDefaultExtension();
+            return ITEM_PREFIX + counter + mediaType.getDefaultExtension();
         }
     }
 

@@ -273,25 +273,19 @@ public class StringUtil {
         }
         return text.substring(cPos + 1);
     }
-    // 移除字符串首尾空字符的高效方法(利用ASCII值判断,包括全角空格)
-    public static String FixTrim(String s) {
-        if (s == null || s.isEmpty()) {
-            return "";
-        }
-        int start = 0;
-        int len = s.length();
-        int end = len - 1;
-        while (start < end && (s.charAt(start) <= 0x20 || s.charAt(start) == '　')) {
-            ++start;
-        }
-        while (start < end && (s.charAt(end) <= 0x20 || s.charAt(end) == '　')) {
-            --end;
-        }
-        if (end < len) {
-            ++end;
-        }
-        return (start > 0 || end < len) ? s.substring(start, end) : s;
 
+    public static String formatHtml(String text) {
+        StringBuilder body = new StringBuilder();
+        for (String s : text.split("\\r?\\n")) {
+            s = s.replaceAll("^\\s+|\\s+$", "");
+            if (s.length() > 0) {
+                if (s.toLowerCase().contains("<img")) {
+                    body.append(s.replaceAll("(?i)<img\\s([^>]+)/?>", "<div class=\"duokan-image-single\"><img class=\"picture-80\" $1/></div>"));
+                } else {
+                    body.append("<p>").append(s).append("</p>");
+                }
+            }
+        }
+        return body.toString();
     }
-
 }

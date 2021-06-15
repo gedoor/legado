@@ -120,6 +120,15 @@ public class PackageDocumentMetadataWriter extends PackageDocumentBase {
             Constants.EPUB_GENERATOR_NAME);
     serializer.endTag(NAMESPACE_OPF, OPFTags.meta);
 
+    // write duokan
+    serializer.startTag(NAMESPACE_OPF, OPFTags.meta);
+    serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.name,
+            OPFValues.duokan);
+    serializer
+            .attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.content,
+                    Constants.EPUB_DUOKAN_NAME);
+    serializer.endTag(NAMESPACE_OPF, OPFTags.meta);
+
     serializer.endTag(NAMESPACE_OPF, OPFTags.metadata);
   }
 
