@@ -844,5 +844,6 @@
     <string name="style">Style</string>
     <string name="group_style">Group style</string>
     <string name="export_file_name">Export file name</string>
+    <string name="reset">Reset</string>
 
 </resources>

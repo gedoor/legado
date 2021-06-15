@@ -10,6 +10,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.putPrefString
+import splitties.views.onClick
 
 
 class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDialog) {
@@ -18,13 +19,19 @@ class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDi
 
     init {
         setContentView(binding.root)
-        binding.contentView.setBackgroundColor(context.backgroundColor)
-        binding.etPrev.setText(context.getPrefString(PreferKey.prevKeys))
-        binding.etNext.setText(context.getPrefString(PreferKey.nextKeys))
-        binding.tvOk.setOnClickListener {
-            context.putPrefString(PreferKey.prevKeys, binding.etPrev.text?.toString())
-            context.putPrefString(PreferKey.nextKeys, binding.etNext.text?.toString())
-            dismiss()
+        binding.run {
+            contentView.setBackgroundColor(context.backgroundColor)
+            etPrev.setText(context.getPrefString(PreferKey.prevKeys))
+            etNext.setText(context.getPrefString(PreferKey.nextKeys))
+            tvReset.onClick {
+                etPrev.setText("")
+                etNext.setText("")
+            }
+            tvOk.setOnClickListener {
+                context.putPrefString(PreferKey.prevKeys, etPrev.text?.toString())
+                context.putPrefString(PreferKey.nextKeys, etNext.text?.toString())
+                dismiss()
+            }
         }
     }
 

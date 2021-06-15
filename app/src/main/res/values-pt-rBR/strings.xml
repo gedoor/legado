@@ -844,4 +844,5 @@
     <string name="style">Formato</string>
     <string name="group_style">Formato de grupo</string>
     <string name="export_file_name">Exportar o nome do arquivo</string>
+    <string name="reset">重置</string>
 </resources>

@@ -121,11 +121,9 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         bookGroupLiveData?.removeObservers(this)
         bookGroupLiveData = appDb.bookGroupDao.liveDataShow().apply {
             observe(viewLifecycleOwner) {
-                if (it.size != bookGroups.size) {
+                if (it != bookGroups) {
                     bookGroups = it
                     booksAdapter.notifyDataSetChanged()
-                } else {
-
                 }
             }
         }
@@ -183,7 +181,8 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     override fun onItemClick(position: Int) {
         if (position < bookGroups.size) {
             val bookGroup = bookGroups[position]
-
+            groupId = bookGroup.groupId
+            initBooksData()
         } else {
             val book = books[position - bookGroups.size]
             when (book.type) {
@@ -200,6 +199,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     override fun onItemLongClick(position: Int) {
         if (position < bookGroups.size) {
+            val bookGroup = bookGroups[position]
 
         } else {
             val book = books[position - bookGroups.size]
