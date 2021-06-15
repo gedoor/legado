@@ -85,13 +85,13 @@ object LocalBook {
             } else if (!AppConfig.bookImportFileName.isNullOrBlank()) {
 
                 //在脚本中定义如何分解文件名成书名、作者名
-                val bindings = SimpleBindings()
-                bindings["src"] = fileName
                 val jsonStr = AppConst.SCRIPT_ENGINE.eval(
 
-                    //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获，未定义则赋值为空字符串
+                    //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
-                    bindings
+                    
+                    //将文件名注入到脚步的src变量中
+                    SimpleBindings().also{ it["src"] = fileName }
                 ).toString()
                 val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr) ?: HashMap()
                 name = bookMess["name"] ?: fileName
