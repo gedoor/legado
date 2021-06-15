@@ -2,19 +2,19 @@ package io.legado.app.model.localBook
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
-import java.util.regex.Pattern
-import io.legado.app.constant.AppConst
-import io.legado.app.constant.AppPattern
-import io.legado.app.help.AppConfig
-import javax.script.SimpleBindings
 import java.util.regex.Matcher
+import java.util.regex.Pattern
+import javax.script.SimpleBindings
 
 object LocalBook {
     private const val folderName = "bookTxt"
@@ -74,38 +74,38 @@ object LocalBook {
             .compile("(^)(.+) by (.+)$")
             .matcher(fileName)
 
-        (m1.takeIf { m1.find() }
-            ?: m2.takeIf { m2.find() }
-                ). run{
+        (m1.takeIf { m1.find() } ?: m2.takeIf { m2.find() }).run {
 
-                if(this is Matcher) {
+            if (this is Matcher) {
 
-                    //按默认格式将文件名分解成书名、作者名
-                    name = group(2)!!
-                    author = BookHelp.formatBookAuthor((group(1) ?: "") + (group(3) ?: ""))
+                //按默认格式将文件名分解成书名、作者名
+                name = group(2)!!
+                author = BookHelp.formatBookAuthor((group(1) ?: "") + (group(3) ?: ""))
 
-                } else if(!AppConfig.bookImportFileName.isNullOrBlank()) {
+            } else if (!AppConfig.bookImportFileName.isNullOrBlank()) {
 
-                    //在脚本中定义如何分解文件名成书名、作者名
-                    val bindings = SimpleBindings()
-                    bindings["src"] = fileName
-                    val jsonStr = AppConst.SCRIPT_ENGINE.eval(
+                //在脚本中定义如何分解文件名成书名、作者名
+                val bindings = SimpleBindings()
+                bindings["src"] = fileName
+                val jsonStr = AppConst.SCRIPT_ENGINE.eval(
 
-                        //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获，未定义则赋值为空字符串
-                        AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})"
-                        , bindings).toString()
-                    val bookMess =GSON.fromJsonObject<HashMap<String, String>>(jsonStr) ?: HashMap()
-                    name = bookMess["name"]?: fileName
-                    author = bookMess["author"]?.takeIf { it.length != fileName.length } ?: ""
+                    //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获，未定义则赋值为空字符串
+                    AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
+                    bindings
+                ).toString()
+                val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr) ?: HashMap()
+                name = bookMess["name"] ?: fileName
+                author = bookMess["author"]?.takeIf { it.length != fileName.length } ?: ""
 
-                } else {
+            } else {
 
-                    name = fileName.replace(AppPattern.nameRegex,"")
-                    author = fileName.replace(AppPattern.authorRegex,"").takeIf { it.length != fileName.length } ?: ""
-
-                }
+                name = fileName.replace(AppPattern.nameRegex, "")
+                author = fileName.replace(AppPattern.authorRegex, "")
+                    .takeIf { it.length != fileName.length } ?: ""
 
             }
+
+        }
 
         val book = Book(
             bookUrl = path,
@@ -129,10 +129,10 @@ object LocalBook {
                 val bookFile = FileUtils.getFile(cacheFolder, book.originName)
                 bookFile.delete()
             }
-            if(book.isEpub()){
-                val bookFile=BookHelp.getEpubFile(book).parentFile
-                if (bookFile!=null&&bookFile.exists()){
-                    FileUtils.delete(bookFile,true)
+            if (book.isEpub()) {
+                val bookFile = BookHelp.getEpubFile(book).parentFile
+                if (bookFile != null && bookFile.exists()) {
+                    FileUtils.delete(bookFile, true)
                 }
 
             }
