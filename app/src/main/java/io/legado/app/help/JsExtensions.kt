@@ -311,9 +311,9 @@ interface JsExtensions {
      * @param font2 正确的字体
      */
     fun replaceFont(
-            text: String,
-            font1: QueryTTF?,
-            font2: QueryTTF?
+        text: String,
+        font1: QueryTTF?,
+        font2: QueryTTF?
     ): String {
         if (font1 == null || font2 == null) return text
         val contentArray = text.toCharArray()
