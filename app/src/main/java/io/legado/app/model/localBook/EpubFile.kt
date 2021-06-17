@@ -137,7 +137,7 @@ class EpubFile(var book: Book) {
 
             /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
             var tag = Book.hTag
-            if (book.getUseReplaceRule()) {
+            if (book.getDelTag(tag)) {
                 body.getElementsByTag("h1")?.remove()
                 body.getElementsByTag("h2")?.remove()
                 body.getElementsByTag("h3")?.remove()
