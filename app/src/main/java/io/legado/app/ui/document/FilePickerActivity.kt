@@ -23,7 +23,10 @@ class FilePickerActivity :
 
     private val selectDocTree =
         registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
-            it ?: return@registerForActivityResult
+            it ?: let {
+                finish()
+                return@registerForActivityResult
+            }
             if (it.isContentScheme()) {
                 contentResolver.takePersistableUriPermission(
                     it,
