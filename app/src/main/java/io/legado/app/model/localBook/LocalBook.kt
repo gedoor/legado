@@ -43,6 +43,7 @@ object LocalBook {
 
     fun importFile(uri: Uri): Book {
         val path: String
+        //这个变量不要修改,否则会导致读取不到缓存
         val fileName = (if (uri.isContentScheme()) {
             path = uri.toString()
             val doc = DocumentFile.fromSingleUri(appCtx, uri)
@@ -59,7 +60,8 @@ object LocalBook {
         } else {
             path = uri.path!!
             File(path).name
-        }).replace(Regex("\\.txt$"), "")
+        })
+        val tempFileName=fileName.replace(Regex("\\.txt$"), "")
 
         val name: String
         val author: String
@@ -67,12 +69,12 @@ object LocalBook {
         //匹配(知轩藏书常用格式) 《书名》其它信息作者：作者名.txt
         val m1 = Pattern
             .compile("(.*?)《([^《》]+)》(.*)")
-            .matcher(fileName)
+            .matcher(tempFileName)
 
         //匹配 书名 by 作者名.txt
         val m2 = Pattern
             .compile("(^)(.+) by (.+)$")
-            .matcher(fileName)
+            .matcher(tempFileName)
 
         (m1.takeIf { m1.find() } ?: m2.takeIf { m2.find() }).run {
 
@@ -91,17 +93,17 @@ object LocalBook {
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
                     
                     //将文件名注入到脚步的src变量中
-                    SimpleBindings().also{ it["src"] = fileName }
+                    SimpleBindings().also{ it["src"] = tempFileName }
                 ).toString()
                 val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr) ?: HashMap()
-                name = bookMess["name"] ?: fileName
-                author = bookMess["author"]?.takeIf { it.length != fileName.length } ?: ""
+                name = bookMess["name"] ?: tempFileName
+                author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
 
             } else {
 
-                name = fileName.replace(AppPattern.nameRegex, "")
-                author = fileName.replace(AppPattern.authorRegex, "")
-                    .takeIf { it.length != fileName.length } ?: ""
+                name = tempFileName.replace(AppPattern.nameRegex, "")
+                author = tempFileName.replace(AppPattern.authorRegex, "")
+                    .takeIf { it.length != tempFileName.length } ?: ""
 
             }
 
