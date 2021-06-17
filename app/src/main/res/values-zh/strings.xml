@@ -470,7 +470,7 @@
     <string name="sure_del_file">确定删除文件吗?</string>
     <string name="files_tree">手机目录</string>
     <string name="intelligent_import">智能导入</string>
-    <string name="find">发现</string>
+    <string name="discovery">发现</string>
     <string name="switch_display_style">切换显示样式</string>
     <string name="import_per">导入本地书籍需存储权限</string>
     <string name="night_theme">夜间模式</string>
@@ -781,6 +781,7 @@
     <string name="style_name">样式名称:</string>
     <string name="empty_msg_import_book">点击右上角文件夹图标,选择文件夹</string>
     <string name="scan_folder">智能扫描</string>
+    <string name="import_file_name">导入文件名</string>
     <string name="copy_book_url">拷贝书籍URL</string>
     <string name="copy_toc_url">拷贝目录URL</string>
     <string name="no_book">没有书籍</string>
@@ -805,7 +806,7 @@
     <string name="import_bookshelf">导入书单</string>
     <string name="pre_download">预下载</string>
     <string name="pre_download_s">预先下载%s章正文</string>
-    <string name="sort_enable">启用排序</string>
+    <string name="is_enabled">是否启用</string>
     <string name="background_image">背景图片</string>
     <string name="export_folder">导出文件夹</string>
     <string name="export_charset">导出编码</string>
@@ -829,5 +830,19 @@
     <string name="export_all">导出所有</string>
     <string name="complete">完成</string>
     <string name="show_unread">显示未读标志</string>
+    <string name="use_default_cover">总是使用默认封面</string>
+    <string name="use_default_cover_s">总是显示默认封面,不显示网络封面</string>
+    <string name="title_font_size">字号</string>
+    <string name="title_margin_top">上边距</string>
+    <string name="title_margin_bottom">下边距</string>
+    <string name="show">显示</string>
+    <string name="hide">隐藏</string>
+    <string name="hide_when_status_bar_show">状态栏显示时隐藏</string>
+    <string name="reverse_toc">反转目录</string>
+    <string name="show_discovery">显示发现</string>
+    <string name="style">样式</string>
+    <string name="group_style">分组样式</string>
+    <string name="export_file_name">导出文件名</string>
+    <string name="reset">重置</string>
 
 </resources>

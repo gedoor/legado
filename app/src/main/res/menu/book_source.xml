@@ -54,7 +54,7 @@
                         <item
                             android:id="@+id/menu_sort_enable"
                             android:checkable="true"
-                            android:title="@string/sort_enable" />
+                            android:title="@string/is_enabled" />
 
                     </group>
 

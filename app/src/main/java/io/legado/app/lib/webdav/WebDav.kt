@@ -7,6 +7,7 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.intellij.lang.annotations.Language
 import org.jsoup.Jsoup
 import java.io.File
 import java.io.InputStream
@@ -19,6 +20,7 @@ import java.util.*
 class WebDav(urlStr: String) {
     companion object {
         // 指定返回哪些属性
+        @Language("xml")
         private const val DIR =
             """<?xml version="1.0"?>
             <a:propfind xmlns:a="DAV:">

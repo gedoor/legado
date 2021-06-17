@@ -5,6 +5,11 @@
 		<item>Audio</item>
 	</string-array>
 
+	<string-array name="group_style">
+		<item>Tab</item>
+		<item>Folder</item>
+	</string-array>
+
 	<string-array name="indent">
 		<item>@string/indent_0</item>
 		<item>@string/indent_1</item>

@@ -2,6 +2,7 @@ package io.legado.app.constant
 
 import android.annotation.SuppressLint
 import android.provider.Settings
+import io.legado.app.BuildConfig
 import io.legado.app.R
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
@@ -37,9 +38,9 @@ object AppConst {
 
     val keyboardToolChars: List<String> by lazy {
         arrayListOf(
-            "❓", "@css:", "<js></js>", "{{}}", "&&", "%%", "||", "//", "$.", "@",
-            "\\", ":", "class", "id", "href", "textNodes", "ownText", "all", "html",
-            "[", "]", "<", ">", "#", "!", ".", "+", "-", "*", "="
+            "❓", "@css:", "<js></js>", "{{}}", "##", "&&", "%%", "||", "//", "$.",
+            "@", ":", "class", "text", "href", "textNodes", "ownText", "all", "html",
+            "[", "]", "<", ">", "#", "!", ".", "+", "-", "*", "=", "{'webView': true}"
         )
     }
 
@@ -56,10 +57,12 @@ object AppConst {
     val urlOption: String by lazy {
         """
         ,{
-        "charset": "",
-        "method": "POST",
-        "body": "",
-        "headers": {"User-Agent": ""}
+        'charset': '',
+        'method': 'POST',
+        'body': '',
+        'headers': {
+            'User-Agent': ''
+            }
         }
         """.trimIndent()
     }
@@ -103,4 +106,7 @@ object AppConst {
         var versionCode: Long = 0L,
         var versionName: String = ""
     )
+
+    const val authority = BuildConfig.APPLICATION_ID + ".fileProvider"
+
 }

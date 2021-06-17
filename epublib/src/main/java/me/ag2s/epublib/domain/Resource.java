@@ -120,6 +120,9 @@ public class Resource implements Serializable {
   public Resource(String id, byte[] data, String href, MediaType mediaType) {
     this(id, data, href, mediaType, Constants.CHARACTER_ENCODING);
   }
+  public Resource(String id, byte[] data, String href, String originalHref, MediaType mediaType) {
+    this(id, data, href, originalHref, mediaType, Constants.CHARACTER_ENCODING);
+  }
 
 
   /**
@@ -137,6 +140,15 @@ public class Resource implements Serializable {
     this.id = id;
     this.href = href;
     this.originalHref = href;
+    this.mediaType = mediaType;
+    this.inputEncoding = inputEncoding;
+    this.data = data;
+  }
+  public Resource(String id, byte[] data, String href, String originalHref, MediaType mediaType,
+      String inputEncoding) {
+    this.id = id;
+    this.href = href;
+    this.originalHref = originalHref;
     this.mediaType = mediaType;
     this.inputEncoding = inputEncoding;
     this.data = data;

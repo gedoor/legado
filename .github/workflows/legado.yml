@@ -76,5 +76,5 @@ jobs:
           done
 
           python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path/$file" "$LANZOU_FOLDER_ID"
-          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzous.com/b0f810h4b"
+          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f810h4b"
  

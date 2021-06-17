@@ -67,7 +67,12 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)
-        binding.titleBar.subtitle = intent.getStringExtra("groupName") ?: getString(R.string.all)
+        launch {
+            binding.titleBar.subtitle = withContext(IO) {
+                appDb.bookGroupDao.getByID(groupId)?.groupName
+                    ?: getString(R.string.no_group)
+            }
+        }
         initRecyclerView()
         initGroupData()
         initBookData()
@@ -122,6 +127,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 exportPosition = -1
                 selectExportFolder()
             }
+            R.id.menu_export_file_name -> alertExportFileName()
             R.id.menu_export_type -> showExportTypeConfig()
             R.id.menu_export_charset -> showCharsetConfig()
             R.id.menu_log ->
@@ -287,6 +293,19 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
             }
         }
+    }
+
+    private fun alertExportFileName() {
+        alert(R.string.export_file_name) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setText(AppConfig.bookExportFileName)
+            }
+            customView { alertBinding.root }
+            okButton {
+                AppConfig.bookExportFileName = alertBinding.editView.text?.toString()
+            }
+            cancelButton()
+        }.show()
     }
 
     private fun showExportTypeConfig() {

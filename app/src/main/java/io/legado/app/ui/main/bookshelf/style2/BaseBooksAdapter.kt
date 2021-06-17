@@ -1,16 +1,17 @@
-package io.legado.app.ui.main.bookshelf.books
+package io.legado.app.ui.main.bookshelf.style2
 
 import android.content.Context
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.DiffUtil
-import androidx.viewbinding.ViewBinding
-import io.legado.app.base.adapter.DiffRecyclerAdapter
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.data.entities.Book
 
-abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
-    DiffRecyclerAdapter<Book, VB>(context) {
+abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
+    val context: Context,
+    val callBack: CallBack
+) : RecyclerView.Adapter<VH>() {
 
-    override val diffItemCallback: DiffUtil.ItemCallback<Book>
+    val diffItemCallback: DiffUtil.ItemCallback<Book>
         get() = object : DiffUtil.ItemCallback<Book>() {
 
             override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
@@ -64,8 +65,8 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
 
     fun notification(bookUrl: String) {
         for (i in 0 until itemCount) {
-            getItem(i)?.let {
-                if (it.bookUrl == bookUrl) {
+            callBack.getItem(i).let {
+                if (it is Book && it.bookUrl == bookUrl) {
                     notifyItemChanged(i, bundleOf(Pair("refresh", null)))
                     return
                 }
@@ -73,9 +74,12 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
         }
     }
 
+
     interface CallBack {
-        fun open(book: Book)
-        fun openBookInfo(book: Book)
+        fun onItemClick(position: Int)
+        fun onItemLongClick(position: Int)
         fun isUpdate(bookUrl: String): Boolean
+        fun getItemCount(): Int
+        fun getItem(position: Int): Any
     }
 }

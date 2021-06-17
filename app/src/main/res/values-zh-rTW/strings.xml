@@ -5,7 +5,7 @@
     <string name="tip_perm_request_storage">閱讀需要存取記憶卡權限，請前往「設定」—「應用程式權限」—打開所需權限</string>
 
     <!--Other-->
-    <string name="menu_backup">Home</string>
+    <string name="menu_backup">備份</string>
     <string name="menu_restore">復原</string>
     <string name="menu_import_old">匯入閱讀資料</string>
     <string name="mkdirs">建立子資料夾</string>
@@ -17,7 +17,7 @@
     <string name="menu_import_old_version">匯入舊版資料</string>
     <string name="menu_import_github">匯入Github資料</string>
     <string name="menu_replace_rule">淨化取代</string>
-    <string name="menu_send">Send</string>
+    <string name="menu_send">傳送</string>
 
     <string name="dialog_title">提示</string>
     <string name="dialog_cancel">取消</string>
@@ -470,7 +470,7 @@
     <string name="sure_del_file">確定刪除文件嗎?</string>
     <string name="files_tree">手機目錄</string>
     <string name="intelligent_import">智慧匯入</string>
-    <string name="find">發現</string>
+    <string name="discovery">發現</string>
     <string name="switch_display_style">切換顯示樣式</string>
     <string name="import_per">匯入本機書籍需儲存權限</string>
     <string name="night_theme">夜間模式</string>
@@ -581,7 +581,7 @@
     <string name="export">匯出</string>
     <string name="load_toc">載入目錄</string>
     <string name="load_info">載入詳情頁</string>
-    <string name="tts">TTS</string>
+    <string name="tts">文字轉語音</string>
     <string name="web_dav_pw">WebDav 密碼</string>
     <string name="web_dav_pw_s">輸入你的WebDav授權密碼</string>
     <string name="web_dav_url_s">輸入你的伺服器地址</string>
@@ -694,7 +694,7 @@
     <string name="switchLayout">切換布局</string>
     <string name="text_font_weight_converter">文章字重轉換</string>
     <string name="full_screen_gestures_support">全面屏手勢最佳化</string>
-  
+
     <!--color-->
     <string name="primary">主色調</string>
     <string name="accent">強調色</string>
@@ -754,7 +754,7 @@
     <string name="language">語言</string>
     <string name="import_rss_source">匯入訂閱源</string>
     <string name="donate_summary">您的支援是我更新的動力</string>
-    <string name="about_summary">公眾號[开源阅读軟體]</string>
+    <string name="about_summary">公眾號[开源阅读软件]</string>
     <string name="read_record">閱讀記錄</string>
     <string name="read_record_summary">閱讀時間記錄</string>
     <string name="local_tts">本機TTS</string>
@@ -781,6 +781,7 @@
     <string name="style_name">樣式名稱:</string>
     <string name="empty_msg_import_book">點擊右上角資料夾圖示,選擇資料夾</string>
     <string name="scan_folder">智慧掃描</string>
+    <string name="import_file_name">匯入檔案名</string>
     <string name="copy_book_url">複製書籍URL</string>
     <string name="copy_toc_url">複製目錄URL</string>
     <string name="no_book">沒有書籍</string>
@@ -805,7 +806,7 @@
     <string name="import_bookshelf">匯入書單</string>
     <string name="pre_download">預下載</string>
     <string name="pre_download_s">預先下載%s章正文</string>
-    <string name="sort_enable">啟用排序</string>
+    <string name="is_enabled">是否啟用</string>
     <string name="background_image">背景圖片</string>
     <string name="export_folder">匯出資料夾</string>
     <string name="export_charset">匯出編碼</string>
@@ -826,8 +827,22 @@
     <string name="url_already">此url已訂閱</string>
     <string name="high_brush_title">高刷</string>
     <string name="high_brush_summary">使用螢幕最高刷新率</string>
-    <string name="export_all">导出所有</string>
+    <string name="export_all">匯出所有</string>
     <string name="complete">完成</string>
-    <string name="show_unread">显示未读标志</string>
+    <string name="show_unread">顯示未讀標誌</string>
+    <string name="use_default_cover">總是使用預設封面</string>
+    <string name="use_default_cover_s">總是顯示預設封面,不顯示網路封面</string>
+    <string name="title_font_size">字號</string>
+    <string name="title_margin_top">上邊距</string>
+    <string name="title_margin_bottom">下邊距</string>
+    <string name="show">顯示</string>
+    <string name="hide">隱藏</string>
+    <string name="hide_when_status_bar_show">狀態欄顯示時隱藏</string>
+    <string name="reverse_toc">反轉目錄</string>
+    <string name="show_discovery">顯示發現</string>
+    <string name="style">樣式</string>
+    <string name="group_style">分組樣式</string>
+    <string name="export_file_name">匯出檔案名</string>
+    <string name="reset">重設</string>
 
 </resources>

@@ -1,14 +1,17 @@
+@file:Suppress("DEPRECATION")
+
 package io.legado.app.ui.book.toc
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityChapterListBinding
@@ -19,8 +22,8 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
 
-class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterListViewModel>() {
-    override val viewModel: ChapterListViewModel
+class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
+    override val viewModel: TocViewModel
             by viewModels()
 
     private lateinit var tabLayout: TabLayout
@@ -35,19 +38,14 @@ class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterLi
         tabLayout.isTabIndicatorFullWidth = false
         tabLayout.setSelectedTabIndicatorColor(accentColor)
         binding.viewPager.adapter = TabFragmentPageAdapter()
-        TabLayoutMediator(tabLayout, binding.viewPager) { tab, position ->
-            when (position) {
-                0 -> tab.setText(R.string.chapter_list)
-                else -> tab.setText(R.string.bookmark)
-            }
-        }.attach()
+        tabLayout.setupWithViewPager(binding.viewPager)
         intent.getStringExtra("bookUrl")?.let {
             viewModel.initBook(it)
         }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.search_view, menu)
+        menuInflater.inflate(R.menu.book_toc, menu)
         val search = menu.findItem(R.id.menu_search)
         searchView = search.actionView as SearchView
         ATH.setTint(searchView!!, primaryTextColor)
@@ -75,19 +73,16 @@ class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterLi
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    private inner class TabFragmentPageAdapter : FragmentStateAdapter(this) {
-
-        override fun getItemCount(): Int {
-            return 2
-        }
-
-        override fun createFragment(position: Int): Fragment {
-            return when (position) {
-                0 -> ChapterListFragment()
-                else -> BookmarkFragment()
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_reverse_toc -> viewModel.reverseToc {
+                setResult(RESULT_OK, Intent().apply {
+                    putExtra("index", it.durChapterIndex)
+                    putExtra("chapterPos", it.durChapterPos)
+                })
             }
         }
-
+        return super.onCompatOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
@@ -98,4 +93,29 @@ class ChapterListActivity : VMBaseActivity<ActivityChapterListBinding, ChapterLi
             super.onBackPressed()
         }
     }
+
+    @Suppress("DEPRECATION")
+    private inner class TabFragmentPageAdapter :
+        FragmentPagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+        override fun getItem(position: Int): Fragment {
+            return when (position) {
+                1 -> BookmarkFragment()
+                else -> ChapterListFragment()
+            }
+        }
+
+        override fun getCount(): Int {
+            return 2
+        }
+
+        override fun getPageTitle(position: Int): CharSequence {
+            return when (position) {
+                1 -> getString(R.string.bookmark)
+                else -> getString(R.string.chapter_list)
+            }
+        }
+
+    }
+
 }

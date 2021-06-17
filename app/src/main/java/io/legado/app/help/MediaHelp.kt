@@ -51,9 +51,9 @@ object MediaHelp {
         audioManager: AudioManager,
         focusRequest: AudioFocusRequestCompat?
     ): Boolean {
-        val request: Int =
-            focusRequest?.let { AudioManagerCompat.requestAudioFocus(audioManager, focusRequest) }
-                ?: AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        val request = focusRequest?.let {
+            AudioManagerCompat.requestAudioFocus(audioManager, focusRequest)
+        } ?: AudioManager.AUDIOFOCUS_REQUEST_GRANTED
         return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
     }
 

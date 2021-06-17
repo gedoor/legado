@@ -83,23 +83,25 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
     @Synchronized
     private fun mergeItems(scope: CoroutineScope, newDataS: List<SearchBook>, precision: Boolean) {
         if (newDataS.isNotEmpty()) {
-            val prevData = ArrayList(searchBooks)
-            val precisionData = arrayListOf<SearchBook>()
-            prevData.forEach {
+            val copyData = ArrayList(searchBooks)
+            val equalData = arrayListOf<SearchBook>()
+            val containsData = arrayListOf<SearchBook>()
+            val otherData = arrayListOf<SearchBook>()
+            copyData.forEach {
                 if (!scope.isActive) return
                 if (it.name == searchKey || it.author == searchKey) {
-                    precisionData.add(it)
+                    equalData.add(it)
+                } else if (it.name.contains(searchKey) || it.author.contains(searchKey)) {
+                    containsData.add(it)
+                } else {
+                    otherData.add(it)
                 }
-            }
-            repeat(precisionData.size) {
-                if (!scope.isActive) return
-                prevData.removeAt(0)
             }
             newDataS.forEach { nBook ->
                 if (!scope.isActive) return
                 if (nBook.name == searchKey || nBook.author == searchKey) {
                     var hasSame = false
-                    precisionData.forEach { pBook ->
+                    equalData.forEach { pBook ->
                         if (!scope.isActive) return
                         if (pBook.name == nBook.name && pBook.author == nBook.author) {
                             pBook.addOrigin(nBook.origin)
@@ -107,11 +109,23 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
                         }
                     }
                     if (!hasSame) {
-                        precisionData.add(nBook)
+                        equalData.add(nBook)
+                    }
+                } else if (nBook.name.contains(searchKey) || nBook.author.contains(searchKey)) {
+                    var hasSame = false
+                    containsData.forEach { pBook ->
+                        if (!scope.isActive) return
+                        if (pBook.name == nBook.name && pBook.author == nBook.author) {
+                            pBook.addOrigin(nBook.origin)
+                            hasSame = true
+                        }
+                    }
+                    if (!hasSame) {
+                        containsData.add(nBook)
                     }
                 } else if (!precision) {
                     var hasSame = false
-                    prevData.forEach { pBook ->
+                    otherData.forEach { pBook ->
                         if (!scope.isActive) return
                         if (pBook.name == nBook.name && pBook.author == nBook.author) {
                             pBook.addOrigin(nBook.origin)
@@ -119,17 +133,17 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
                         }
                     }
                     if (!hasSame) {
-                        prevData.add(nBook)
+                        otherData.add(nBook)
                     }
                 }
             }
             if (!scope.isActive) return
-            precisionData.sortByDescending { it.origins.size }
-            if (!scope.isActive) return
+            equalData.sortByDescending { it.origins.size }
+            equalData.addAll(containsData.sortedByDescending { it.origins.size })
             if (!precision) {
-                precisionData.addAll(prevData)
+                equalData.addAll(otherData)
             }
-            searchBooks = precisionData
+            searchBooks = equalData
             upAdapter()
         }
     }

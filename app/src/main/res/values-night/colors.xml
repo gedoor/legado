@@ -4,6 +4,8 @@
     <color name="primaryDark">@color/md_blue_grey_700</color>
     <color name="accent">@color/md_deep_orange_800</color>
 
+    <color name="disabled">@color/md_dark_disabled</color>
+
     <color name="background">@color/md_grey_900</color>
     <color name="background_card">@color/md_grey_850</color>
     <color name="background_menu">@color/md_grey_800</color>

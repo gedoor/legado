@@ -118,12 +118,10 @@ object ChapterProvider {
                             val matcher = AppPattern.imgPattern.matcher(text)
                             if (matcher.find()) {
                                 matcher.group(1)?.let { src ->
-                                    //if (!book.isEpub()) {
-                                        durY = setTypeImage(
-                                            book, bookChapter, src,
-                                            durY, textPages, book.getImageStyle()
-                                        )
-                                    //}
+                                    durY = setTypeImage(
+                                        book, bookChapter, src,
+                                        durY, textPages, book.getImageStyle()
+                                    )
                                 }
                             } else {
                                 val isTitle = index == 0
@@ -474,7 +472,7 @@ object ChapterProvider {
             ReadBookConfig.textFont = ""
             ReadBookConfig.save()
             Typeface.SANS_SERIF
-        }
+        } ?: Typeface.DEFAULT
     }
 
     private fun getPaint(typeface: Typeface): Pair<TextPaint, TextPaint> {

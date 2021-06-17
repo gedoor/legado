@@ -23,7 +23,6 @@ import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
-import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.help.storage.Backup
@@ -47,7 +46,7 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
-import io.legado.app.ui.login.SourceLogin
+import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -73,9 +72,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private val tocActivity =
         registerForActivityResult(TocActivityResult()) {
             it?.let {
-                if (it.first != ReadBook.durChapterIndex) {
-                    viewModel.openChapter(it.first, it.second)
-                }
+                viewModel.openChapter(it.first, it.second)
             }
         }
     private val sourceEditActivity =
@@ -243,14 +240,12 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 val book = ReadBook.book
                 val page = ReadBook.curTextChapter?.page(ReadBook.durPageIndex())
                 if (book != null && page != null) {
-                    val bookmark = Bookmark(
-                        bookUrl = book.bookUrl,
-                        bookName = book.name,
-                        chapterIndex = ReadBook.durChapterIndex,
-                        chapterPos = ReadBook.durChapterPos,
-                        chapterName = page.title,
+                    val bookmark = book.createBookMark().apply {
+                        chapterIndex = ReadBook.durChapterIndex
+                        chapterPos = ReadBook.durChapterPos
+                        chapterName = page.title
                         bookText = page.text.trim()
-                    )
+                    }
                     showBookMark(bookmark)
                 }
             }
@@ -773,7 +768,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun showLogin() {
         ReadBook.webBook?.bookSource?.let {
-            startActivity<SourceLogin> {
+            startActivity<SourceLoginActivity> {
                 putExtra("sourceUrl", it.bookSourceUrl)
                 putExtra("loginUrl", it.loginUrl)
                 putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])

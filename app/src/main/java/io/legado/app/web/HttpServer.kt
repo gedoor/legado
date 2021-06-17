@@ -3,7 +3,7 @@ package io.legado.app.web
 import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
 import io.legado.app.api.ReturnData
-import io.legado.app.api.controller.BookshelfController
+import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.SourceController
 import io.legado.app.web.utils.AssetsWeb
 import java.util.*
@@ -32,25 +32,26 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     session.parseBody(files)
                     val postData = files["postData"]
 
-                    when (uri) {
-                        "/saveSource" -> returnData = SourceController.saveSource(postData)
-                        "/saveSources" -> returnData = SourceController.saveSources(postData)
-                        "/saveBook" -> returnData = BookshelfController.saveBook(postData)
-                        "/deleteSources" -> returnData = SourceController.deleteSources(postData)
+                    returnData = when (uri) {
+                        "/saveSource" -> SourceController.saveSource(postData)
+                        "/saveSources" -> SourceController.saveSources(postData)
+                        "/saveBook" -> BookController.saveBook(postData)
+                        "/deleteSources" -> SourceController.deleteSources(postData)
+                        else -> null
                     }
                 }
 
                 "GET" -> {
                     val parameters = session.parameters
 
-                    when (uri) {
-                        "/getSource" -> returnData = SourceController.getSource(parameters)
-                        "/getSources" -> returnData = SourceController.sources
-                        "/getBookshelf" -> returnData = BookshelfController.bookshelf
-                        "/getChapterList" ->
-                            returnData = BookshelfController.getChapterList(parameters)
-                        "/getBookContent" ->
-                            returnData = BookshelfController.getBookContent(parameters)
+                    returnData = when (uri) {
+                        "/getSource" -> SourceController.getSource(parameters)
+                        "/getSources" -> SourceController.sources
+                        "/getBookshelf" -> BookController.bookshelf
+                        "/getChapterList" -> BookController.getChapterList(parameters)
+                        "/refreshToc" -> BookController.refreshToc(parameters)
+                        "/getBookContent" -> BookController.getBookContent(parameters)
+                        else -> null
                     }
                 }
             }

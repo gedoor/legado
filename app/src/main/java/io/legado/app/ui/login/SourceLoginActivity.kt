@@ -15,7 +15,7 @@ import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.snackbar
 
 
-class SourceLogin : BaseActivity<ActivitySourceLoginBinding>() {
+class SourceLoginActivity : BaseActivity<ActivitySourceLoginBinding>() {
 
     var sourceUrl: String? = null
     var loginUrl: String? = null

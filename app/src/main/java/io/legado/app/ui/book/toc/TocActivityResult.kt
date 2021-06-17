@@ -8,7 +8,7 @@ import androidx.activity.result.contract.ActivityResultContract
 class TocActivityResult : ActivityResultContract<String, Pair<Int, Int>?>() {
 
     override fun createIntent(context: Context, input: String?): Intent {
-        return Intent(context, ChapterListActivity::class.java)
+        return Intent(context, TocActivity::class.java)
             .putExtra("bookUrl", input)
     }
 

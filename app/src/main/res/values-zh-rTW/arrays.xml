@@ -5,6 +5,11 @@
         <item>音訊</item>
     </string-array>
 
+    <string-array name="group_style">
+        <item>标签</item>
+        <item>文件夹</item>
+    </string-array>
+
     <string-array name="text_suffix">
         <item>.txt</item>
         <item>.json</item>

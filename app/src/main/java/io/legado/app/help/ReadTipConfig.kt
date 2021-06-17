@@ -1,17 +1,12 @@
 package io.legado.app.help
 
+import android.content.Context
 import io.legado.app.R
 import splitties.init.appCtx
 
 object ReadTipConfig {
     val tips by lazy {
         appCtx.resources.getStringArray(R.array.read_tip).toList()
-    }
-    val headerModes by lazy {
-        linkedMapOf(0 to "状态栏显示时隐藏", 1 to "显示", 2 to "隐藏")
-    }
-    val footerModes by lazy {
-        linkedMapOf(0 to "显示", 1 to "隐藏")
     }
     const val none = 0
     const val chapterTitle = 1
@@ -83,4 +78,19 @@ object ReadTipConfig {
         set(value) {
             ReadBookConfig.config.tipColor = value
         }
+
+    fun getHeaderModes(context: Context): LinkedHashMap<Int, String> {
+        return linkedMapOf(
+            Pair(0, context.getString(R.string.hide_when_status_bar_show)),
+            Pair(1, context.getString(R.string.show)),
+            Pair(2, context.getString(R.string.hide))
+        )
+    }
+
+    fun getFooterModes(context: Context): LinkedHashMap<Int, String> {
+        return linkedMapOf(
+            Pair(0, context.getString(R.string.show)),
+            Pair(1, context.getString(R.string.hide))
+        )
+    }
 }

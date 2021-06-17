@@ -175,12 +175,14 @@ abstract class BaseActivity<VB : ViewBinding>(
             }
         }
         if (imageBg) {
-            ThemeConfig.getBgImage(this)?.let {
-                try {
+            try {
+                ThemeConfig.getBgImage(this)?.let {
                     window.decorView.background = it
-                } catch (e: OutOfMemoryError) {
-                    toastOnUi("Image Bg Out Of Memory")
                 }
+            } catch (e: OutOfMemoryError) {
+                toastOnUi(e.localizedMessage)
+            } catch (e: Exception) {
+                toastOnUi(e.localizedMessage)
             }
         }
     }

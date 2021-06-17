@@ -107,10 +107,12 @@ object BookChapterList {
         }
         val lh = LinkedHashSet(chapterList)
         val list = ArrayList(lh)
-        list.reverse()
+        if (!book.getReverseToc()) {
+            list.reverse()
+        }
         Debug.log(book.origin, "◇目录总数:${list.size}")
-        for ((index, item) in list.withIndex()) {
-            item.index = index
+        list.forEachIndexed { index, bookChapter ->
+            bookChapter.index = index
         }
         book.latestChapterTitle = list.last().title
         book.durChapterTitle =
@@ -188,12 +190,12 @@ object BookChapterList {
                     chapterList.add(bookChapter)
                 }
             }
-            Debug.log(bookSource.bookSourceUrl, "└解析目录列表完成", log)
-            Debug.log(bookSource.bookSourceUrl, "┌首章名称", log)
+            Debug.log(bookSource.bookSourceUrl, "└目录列表解析完成", log)
+            Debug.log(bookSource.bookSourceUrl, "┌获取首章名称", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].title}", log)
-            Debug.log(bookSource.bookSourceUrl, "┌首章链接", log)
+            Debug.log(bookSource.bookSourceUrl, "┌获取首章链接", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].url}", log)
-            Debug.log(bookSource.bookSourceUrl, "┌首章信息", log)
+            Debug.log(bookSource.bookSourceUrl, "┌获取首章信息", log)
             Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].tag}", log)
         }
         return ChapterData(chapterList, nextUrlList)

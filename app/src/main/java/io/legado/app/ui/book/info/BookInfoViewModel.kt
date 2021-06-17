@@ -8,6 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
@@ -19,6 +20,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val chapterListData = MutableLiveData<List<BookChapter>>()
     var durChapterIndex = 0
     var inBookshelf = false
+    var bookSource: BookSource? = null
 
     fun initData(intent: Intent) {
         execute {
@@ -33,9 +35,20 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun refreshData(intent: Intent) {
+        execute {
+            val name = intent.getStringExtra("name") ?: ""
+            val author = intent.getStringExtra("author") ?: ""
+            appDb.bookDao.getBook(name, author)?.let { book ->
+                setBook(book)
+            }
+        }
+    }
+
     private fun setBook(book: Book) {
         durChapterIndex = book.durChapterIndex
         bookData.postValue(book)
+        initBookSource(book)
         if (book.tocUrl.isEmpty()) {
             loadBookInfo(book)
         } else {
@@ -48,6 +61,14 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    private fun initBookSource(book: Book) {
+        bookSource = if (book.isLocalBook()) {
+            null
+        } else {
+            appDb.bookSourceDao.getBookSource(book.origin)
+        }
+    }
+
     fun loadBookInfo(
         book: Book, canReName: Boolean = true,
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
@@ -56,7 +77,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             if (book.isLocalBook()) {
                 loadChapter(book, changeDruChapterIndex)
             } else {
-                appDb.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
+                bookSource?.let { bookSource ->
                     WebBook(bookSource).getBookInfo(this, book, canReName = canReName)
                         .onSuccess(IO) {
                             bookData.postValue(book)
@@ -87,7 +108,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     chapterListData.postValue(it)
                 }
             } else {
-                appDb.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
+                bookSource?.let { bookSource ->
                     WebBook(bookSource).getChapterList(this, book)
                         .onSuccess(IO) {
                             if (it.isNotEmpty()) {
@@ -135,6 +156,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
             bookData.postValue(newBook)
+            initBookSource(newBook)
             if (newBook.tocUrl.isEmpty()) {
                 loadBookInfo(newBook, false) {
                     upChangeDurChapterIndex(newBook, oldTocSize, it)
@@ -223,7 +245,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun delBook(deleteOriginal: Boolean = false, success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let {
-                it.delete()
+                Book.delete(it)
                 inBookshelf = false
                 if (it.isLocalBook()) {
                     LocalBook.deleteBook(it, deleteOriginal)
