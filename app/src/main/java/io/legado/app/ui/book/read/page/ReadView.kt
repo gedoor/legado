@@ -159,15 +159,16 @@ class ReadView(context: Context, attrs: AttributeSet) :
     override fun onTouchEvent(event: MotionEvent): Boolean {
         callBack.screenOffTimerStart()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val insets = this.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.mandatorySystemGestures())
+            val insets =
+                this.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.mandatorySystemGestures())
             val height = activity?.windowManager?.currentWindowMetrics?.bounds?.height()
             if (height != null) {
                 if (event.y > height.minus(insets.bottom)) {
-                    return true;
+                    return true
                 }
             }
         }
-        
+
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (isTextSelected) {
