@@ -30,6 +30,8 @@ class EpubFile(var book: Book) {
         @Synchronized
         private fun getEFile(book: Book): EpubFile {
             BookHelp.getEpubFile(book)
+            //对于Epub文件默认不启用替换
+            book.setUseReplaceRule(false)
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = EpubFile(book)
                 return eFile!!
