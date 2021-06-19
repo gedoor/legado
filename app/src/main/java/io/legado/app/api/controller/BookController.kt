@@ -139,7 +139,7 @@ object BookController {
         val book = GSON.fromJsonObject<Book>(postData)
         val returnData = ReturnData()
         if (book != null) {
-            appDb.bookDao.insert(book)
+            book.save()
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book
                 ReadBook.durChapterIndex = book.durChapterIndex

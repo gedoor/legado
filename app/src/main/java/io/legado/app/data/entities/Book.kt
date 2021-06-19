@@ -240,6 +240,14 @@ data class Book(
         )
     }
 
+    fun save() {
+        if (appDb.bookDao.has(bookUrl) == true) {
+            appDb.bookDao.update(this)
+        } else {
+            appDb.bookDao.insert(this)
+        }
+    }
+
     companion object {
         const val hTag = 2L
         const val rubyTag = 4L

@@ -201,7 +201,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     book.durChapterPos = it.durChapterPos
                     book.durChapterTitle = it.durChapterTitle
                 }
-                appDb.bookDao.insert(book)
+                book.save()
                 if (ReadBook.book?.name == book.name && ReadBook.book?.author == book.author) {
                     ReadBook.book = book
                 }
@@ -231,7 +231,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     book.durChapterPos = it.durChapterPos
                     book.durChapterTitle = it.durChapterTitle
                 }
-                appDb.bookDao.insert(book)
+                book.save()
             }
             chapterListData.value?.let {
                 appDb.bookChapterDao.insert(*it.toTypedArray())

@@ -65,6 +65,9 @@ interface BookDao {
     @get:Query("select max(`order`) from books")
     val maxOrder: Int
 
+    @Query("select 1 from books where bookUrl = :bookUrl")
+    fun has(bookUrl: String): Boolean?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg book: Book)
 

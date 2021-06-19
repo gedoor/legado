@@ -49,7 +49,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                     WebBook(bookSource).getBookInfo(this, book)
                         .onSuccess(IO) {
                             it.order = appDb.bookDao.maxOrder + 1
-                            appDb.bookDao.insert(it)
+                            it.save()
                             successCount++
                         }.onError {
                             throw Exception(it.localizedMessage)
@@ -120,7 +120,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                         if (groupId > 0) {
                             book.group = groupId
                         }
-                        appDb.bookDao.insert(book)
+                        book.save()
                     }
                 }
             }
