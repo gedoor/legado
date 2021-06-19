@@ -77,7 +77,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     @SuppressLint("SetTextI18n")
     private fun initBook(book: Book) {
         launch {
-            initDoc()
+            initToc()
             durChapterIndex = book.durChapterIndex
             binding.tvCurrentChapterInfo.text =
                 "${book.durChapterTitle}(${book.durChapterIndex + 1}/${book.totalChapterNum})"
@@ -85,7 +85,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         }
     }
 
-    private fun initDoc() {
+    private fun initToc() {
         tocLiveData?.removeObservers(this@ChapterListFragment)
         tocLiveData = appDb.bookChapterDao.observeByBook(viewModel.bookUrl)
         tocLiveData?.observe(viewLifecycleOwner, {
@@ -119,7 +119,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
 
     override fun startChapterListSearch(newText: String?) {
         if (newText.isNullOrBlank()) {
-            initDoc()
+            initToc()
         } else {
             tocLiveData?.removeObservers(this)
             tocLiveData = appDb.bookChapterDao.liveDataSearch(viewModel.bookUrl, newText)

@@ -46,7 +46,6 @@ import kotlinx.coroutines.withContext
 class BookInfoActivity :
     VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
     GroupSelectDialog.CallBack,
-    ChapterListAdapter.CallBack,
     ChangeSourceDialog.CallBack,
     ChangeCoverDialog.CallBack {
 
@@ -391,20 +390,6 @@ class BookInfoActivity :
             viewModel.saveBook()
             showCover(it)
         }
-    }
-
-    override fun openChapter(chapter: BookChapter) {
-        if (chapter.index != viewModel.durChapterIndex) {
-            viewModel.bookData.value?.let {
-                it.durChapterIndex = chapter.index
-                it.durChapterPos = 0
-                readBook(it)
-            }
-        }
-    }
-
-    override fun durChapterIndex(): Int {
-        return viewModel.durChapterIndex
     }
 
     override fun upGroup(requestCode: Int, groupId: Long) {
