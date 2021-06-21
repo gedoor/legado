@@ -12,6 +12,7 @@ import android.widget.PopupWindow
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -112,7 +113,8 @@ class BookSourceEditActivity :
             R.id.menu_share_str -> share(GSON.toJson(getSource()))
             R.id.menu_share_qr -> shareWithQr(
                 GSON.toJson(getSource()),
-                getString(R.string.share_book_source)
+                getString(R.string.share_book_source),
+                ErrorCorrectionLevel.L
             )
             R.id.menu_help -> showRuleHelp()
             R.id.menu_login -> getSource().let {

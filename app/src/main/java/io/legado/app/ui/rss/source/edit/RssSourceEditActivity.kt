@@ -10,6 +10,7 @@ import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
 import androidx.activity.viewModels
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -117,7 +118,8 @@ class RssSourceEditActivity :
             R.id.menu_share_str -> share(GSON.toJson(getRssSource()))
             R.id.menu_share_qr -> shareWithQr(
                 GSON.toJson(getRssSource()),
-                getString(R.string.share_rss_source)
+                getString(R.string.share_rss_source),
+                ErrorCorrectionLevel.L
             )
             R.id.menu_help -> showRuleHelp()
         }
