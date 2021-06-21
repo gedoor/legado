@@ -10,15 +10,14 @@ import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ImportReplaceRuleActivity :
     VMBaseActivity<ActivityTranslucenceBinding, ImportReplaceRuleViewModel>(
         theme = Theme.Transparent
     ) {
 
-    override fun getViewBinding(): ActivityTranslucenceBinding {
-        return ActivityTranslucenceBinding.inflate(layoutInflater)
-    }
+    override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
 
     override val viewModel: ImportReplaceRuleViewModel
             by viewModels()

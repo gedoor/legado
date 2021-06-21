@@ -38,6 +38,7 @@ import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -89,12 +90,8 @@ class BookInfoActivity :
         }
     }
 
-
+    override val binding by viewBinding(ActivityBookInfoBinding::inflate)
     override val viewModel: BookInfoViewModel by viewModels()
-
-    override fun getViewBinding(): ActivityBookInfoBinding {
-        return ActivityBookInfoBinding.inflate(layoutInflater)
-    }
 
     @SuppressLint("PrivateResource")
     override fun onActivityCreated(savedInstanceState: Bundle?) {

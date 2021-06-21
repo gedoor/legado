@@ -14,12 +14,15 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
 class FilePickerActivity :
     BaseActivity<ActivityTranslucenceBinding>(
         theme = Theme.Transparent
     ), FilePickerDialog.CallBack {
+
+    override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
 
     private val selectDocTree =
         registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
@@ -39,10 +42,6 @@ class FilePickerActivity :
     private val selectDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
         it ?: return@registerForActivityResult
         onResult(Intent().setData(it))
-    }
-
-    override fun getViewBinding(): ActivityTranslucenceBinding {
-        return ActivityTranslucenceBinding.inflate(layoutInflater)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

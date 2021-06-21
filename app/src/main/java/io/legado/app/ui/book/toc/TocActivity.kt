@@ -19,19 +19,17 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.gone
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
 
 class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
-    override val viewModel: TocViewModel
-            by viewModels()
+
+    override val binding by viewBinding(ActivityChapterListBinding::inflate)
+    override val viewModel: TocViewModel by viewModels()
 
     private lateinit var tabLayout: TabLayout
     private var searchView: SearchView? = null
-
-    override fun getViewBinding(): ActivityChapterListBinding {
-        return ActivityChapterListBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         tabLayout = binding.titleBar.findViewById(R.id.tab_layout)

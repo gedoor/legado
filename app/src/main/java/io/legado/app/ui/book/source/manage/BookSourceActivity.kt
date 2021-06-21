@@ -39,6 +39,7 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
@@ -46,8 +47,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     BookSourceAdapter.CallBack,
     SelectActionBar.CallBack,
     SearchView.OnQueryTextListener {
-    override val viewModel: BookSourceViewModel
-            by viewModels()
+    override val binding by viewBinding(ActivityBookSourceBinding::inflate)
+    override val viewModel: BookSourceViewModel by viewModels()
     private val importRecordKey = "bookSourceRecordKey"
     private lateinit var adapter: BookSourceAdapter
     private lateinit var searchView: SearchView
@@ -87,10 +88,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 viewModel.exportSelection(adapter.getSelection(), File(it))
             }
         }
-    }
-
-    override fun getViewBinding(): ActivityBookSourceBinding {
-        return ActivityBookSourceBinding.inflate(layoutInflater)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

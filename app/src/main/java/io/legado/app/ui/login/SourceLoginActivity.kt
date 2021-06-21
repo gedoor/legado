@@ -13,18 +13,16 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.databinding.ActivitySourceLoginBinding
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.snackbar
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
 class SourceLoginActivity : BaseActivity<ActivitySourceLoginBinding>() {
 
+    override val binding by viewBinding(ActivitySourceLoginBinding::inflate)
     var sourceUrl: String? = null
     var loginUrl: String? = null
     var userAgent: String? = null
     var checking = false
-
-    override fun getViewBinding(): ActivitySourceLoginBinding {
-        return ActivitySourceLoginBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         sourceUrl = intent.getStringExtra("sourceUrl")

@@ -14,19 +14,16 @@ import io.legado.app.ui.widget.dialog.TextDialog
 
 import io.legado.app.utils.gone
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
 
 
 class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSourceDebugModel>() {
 
-    override val viewModel: RssSourceDebugModel
-            by viewModels()
+    override val binding by viewBinding(ActivitySourceDebugBinding::inflate)
+    override val viewModel: RssSourceDebugModel by viewModels()
 
     private lateinit var adapter: RssSourceDebugAdapter
-
-    override fun getViewBinding(): ActivitySourceDebugBinding {
-        return ActivitySourceDebugBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()

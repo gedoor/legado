@@ -17,13 +17,14 @@ import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
-import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -57,12 +58,9 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         }
     }
 
+    override val binding by viewBinding(ActivityImportBookBinding::inflate)
     override val viewModel: ImportBookViewModel
             by viewModels()
-
-    override fun getViewBinding(): ActivityImportBookBinding {
-        return ActivityImportBookBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()

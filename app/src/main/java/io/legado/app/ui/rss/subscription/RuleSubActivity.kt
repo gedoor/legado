@@ -19,6 +19,7 @@ import io.legado.app.ui.association.ImportRssSourceActivity
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,12 +30,9 @@ import kotlinx.coroutines.withContext
 class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     RuleSubAdapter.Callback {
 
+    override val binding by viewBinding(ActivityRuleSubBinding::inflate)
     private lateinit var adapter: RuleSubAdapter
     private var liveData: LiveData<List<RuleSub>>? = null
-
-    override fun getViewBinding(): ActivityRuleSubBinding {
-        return ActivityRuleSubBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()

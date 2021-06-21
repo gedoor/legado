@@ -8,14 +8,12 @@ import io.legado.app.constant.EventBus
 import io.legado.app.databinding.ActivityConfigBinding
 
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() {
-    override val viewModel: ConfigViewModel
-            by viewModels()
 
-    override fun getViewBinding(): ActivityConfigBinding {
-        return ActivityConfigBinding.inflate(layoutInflater)
-    }
+    override val binding by viewBinding(ActivityConfigBinding::inflate)
+    override val viewModel: ConfigViewModel by viewModels()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         intent.getIntExtra("configType", -1).let {

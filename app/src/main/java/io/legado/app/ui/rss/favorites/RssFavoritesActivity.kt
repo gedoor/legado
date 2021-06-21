@@ -10,17 +10,15 @@ import io.legado.app.databinding.ActivityRssFavoritesBinding
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
 class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
     RssFavoritesAdapter.CallBack {
 
+    override val binding by viewBinding(ActivityRssFavoritesBinding::inflate)
     private var liveData: LiveData<List<RssStar>>? = null
     private lateinit var adapter: RssFavoritesAdapter
-
-    override fun getViewBinding(): ActivityRssFavoritesBinding {
-        return ActivityRssFavoritesBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()

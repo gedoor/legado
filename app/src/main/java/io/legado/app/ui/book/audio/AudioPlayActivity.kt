@@ -28,6 +28,7 @@ import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onLongClick
 import java.util.*
 
@@ -38,6 +39,7 @@ class AudioPlayActivity :
     VMBaseActivity<ActivityAudioPlayBinding, AudioPlayViewModel>(toolBarTheme = Theme.Dark),
     ChangeSourceDialog.CallBack {
 
+    override val binding by viewBinding(ActivityAudioPlayBinding::inflate)
     override val viewModel: AudioPlayViewModel
             by viewModels()
 
@@ -55,10 +57,6 @@ class AudioPlayActivity :
                 AudioPlay.skipTo(this, it.first)
             }
         }
-    }
-
-    override fun getViewBinding(): ActivityAudioPlayBinding {
-        return ActivityAudioPlayBinding.inflate(layoutInflater)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

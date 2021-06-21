@@ -15,13 +15,12 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.util.concurrent.TimeUnit
 
 open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
-    override fun getViewBinding(): ActivityWelcomeBinding {
-        return ActivityWelcomeBinding.inflate(layoutInflater)
-    }
+    override val binding by viewBinding(ActivityWelcomeBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.ivBook.setColorFilter(accentColor)

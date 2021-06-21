@@ -38,7 +38,7 @@ abstract class BaseActivity<VB : ViewBinding>(
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
-    protected val binding: VB by lazy { getViewBinding() }
+    protected abstract val binding: VB
 
     val isInMultiWindow: Boolean
         get() {
@@ -52,8 +52,6 @@ abstract class BaseActivity<VB : ViewBinding>(
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LanguageUtils.setConfiguration(newBase))
     }
-
-    protected abstract fun getViewBinding(): VB
 
     override fun onCreateView(
         parent: View?,

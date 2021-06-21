@@ -13,19 +13,16 @@ import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreShowViewModel>(),
     ExploreShowAdapter.CallBack {
-    override val viewModel: ExploreShowViewModel
-            by viewModels()
+    override val binding by viewBinding(ActivityExploreShowBinding::inflate)
+    override val viewModel: ExploreShowViewModel by viewModels()
 
     private lateinit var adapter: ExploreShowAdapter
     private lateinit var loadMoreView: LoadMoreView
     private var isLoading = true
-
-    override fun getViewBinding(): ActivityExploreShowBinding {
-        return ActivityExploreShowBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.title = intent.getStringExtra("exploreName")

@@ -28,6 +28,7 @@ import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.widget.dialog.TextListDialog
 import io.legado.app.utils.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -58,12 +59,8 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private var exportPosition = -1
     private val groupList: ArrayList<BookGroup> = arrayListOf()
     private var groupId: Long = -1
-
+    override val binding by viewBinding(ActivityCacheBookBinding::inflate)
     override val viewModel: CacheViewModel by viewModels()
-
-    override fun getViewBinding(): ActivityCacheBookBinding {
-        return ActivityCacheBookBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)

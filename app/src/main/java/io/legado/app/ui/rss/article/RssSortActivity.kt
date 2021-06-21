@@ -15,10 +15,12 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssArtivlesBinding
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.gone
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
 class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>() {
 
+    override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
     override val viewModel: RssSortViewModel
             by viewModels()
     private lateinit var adapter: TabFragmentPageAdapter
@@ -31,10 +33,6 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 upFragments()
             }
         }
-    }
-
-    override fun getViewBinding(): ActivityRssArtivlesBinding {
-        return ActivityRssArtivlesBinding.inflate(layoutInflater)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

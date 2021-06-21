@@ -13,13 +13,12 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.share
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
 class AboutActivity : BaseActivity<ActivityAboutBinding>() {
 
-    override fun getViewBinding(): ActivityAboutBinding {
-        return ActivityAboutBinding.inflate(layoutInflater)
-    }
+    override val binding by viewBinding(ActivityAboutBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.llAbout.background = ATH.getDialogBackground()

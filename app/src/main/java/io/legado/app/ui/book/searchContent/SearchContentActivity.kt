@@ -23,6 +23,7 @@ import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,6 +33,7 @@ class SearchContentActivity :
     VMBaseActivity<ActivitySearchContentBinding, SearchContentViewModel>(),
     SearchContentAdapter.Callback {
 
+    override val binding by viewBinding(ActivitySearchContentBinding::inflate)
     override val viewModel: SearchContentViewModel
             by viewModels()
     lateinit var adapter: SearchContentAdapter
@@ -40,10 +42,6 @@ class SearchContentActivity :
     private var searchResultCounts = 0
     private var durChapterIndex = 0
     private var searchResultList: MutableList<SearchResult> = mutableListOf()
-
-    override fun getViewBinding(): ActivitySearchContentBinding {
-        return ActivitySearchContentBinding.inflate(layoutInflater)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         searchView = binding.titleBar.findViewById(R.id.search_view)

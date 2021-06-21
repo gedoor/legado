@@ -13,18 +13,17 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.databinding.ActivityQrcodeCaptureBinding
 import io.legado.app.utils.QRCodeUtils
 import io.legado.app.utils.readBytes
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), OnScanResultCallback {
+
+    override val binding by viewBinding(ActivityQrcodeCaptureBinding::inflate)
 
     private val selectQrImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
         it.readBytes(this)?.let { bytes ->
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             onScanResultCallback(QRCodeUtils.parseCodeResult(bitmap))
         }
-    }
-
-    override fun getViewBinding(): ActivityQrcodeCaptureBinding {
-        return ActivityQrcodeCaptureBinding.inflate(layoutInflater)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -21,6 +21,7 @@ import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.getSize
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.math.abs
 
 /**
@@ -50,10 +51,7 @@ class ReplaceEditActivity :
 
     }
 
-    override fun getViewBinding(): ActivityReplaceEditBinding {
-        return ActivityReplaceEditBinding.inflate(layoutInflater)
-    }
-
+    override val binding by viewBinding(ActivityReplaceEditBinding::inflate)
     override val viewModel: ReplaceEditViewModel
             by viewModels()
 

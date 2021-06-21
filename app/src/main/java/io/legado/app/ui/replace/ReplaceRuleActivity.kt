@@ -38,6 +38,7 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
 /**
@@ -48,6 +49,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     PopupMenu.OnMenuItemClickListener,
     SelectActionBar.CallBack,
     ReplaceRuleAdapter.CallBack {
+    override val binding by viewBinding(ActivityReplaceRuleBinding::inflate)
     override val viewModel: ReplaceRuleViewModel by viewModels()
     private val importRecordKey = "replaceRuleRecordKey"
     private lateinit var adapter: ReplaceRuleAdapter
@@ -91,10 +93,6 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 viewModel.exportSelection(adapter.getSelection(), File(it))
             }
         }
-    }
-
-    override fun getViewBinding(): ActivityReplaceRuleBinding {
-        return ActivityReplaceRuleBinding.inflate(layoutInflater)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

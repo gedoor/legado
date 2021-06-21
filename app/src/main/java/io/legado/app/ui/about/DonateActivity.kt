@@ -5,6 +5,7 @@ import android.os.Bundle
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.databinding.ActivityDonateBinding
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
  * Created by GKF on 2018/1/13.
@@ -13,9 +14,7 @@ import io.legado.app.databinding.ActivityDonateBinding
 
 class DonateActivity : BaseActivity<ActivityDonateBinding>() {
 
-    override fun getViewBinding(): ActivityDonateBinding {
-        return ActivityDonateBinding.inflate(layoutInflater)
-    }
+    override val binding by viewBinding(ActivityDonateBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val fTag = "donateFragment"
