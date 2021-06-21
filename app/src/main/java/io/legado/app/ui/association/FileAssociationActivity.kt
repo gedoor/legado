@@ -15,7 +15,7 @@ class FileAssociationActivity :
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
 
-    override val viewModel: FileAssociationViewModel by viewModels()
+    override val viewModel by viewModels<FileAssociationViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()
