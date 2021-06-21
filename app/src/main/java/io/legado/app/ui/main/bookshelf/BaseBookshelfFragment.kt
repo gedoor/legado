@@ -85,17 +85,22 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                 DialogBookshelfConfigBinding.inflate(layoutInflater)
                     .apply {
                         spGroupStyle.setSelection(AppConfig.bookGroupStyle)
+                        swShowUnread.isChecked = AppConfig.showUnread
                         rgLayout.checkByIndex(bookshelfLayout)
                         rgSort.checkByIndex(bookshelfSort)
                     }
             customView { alertBinding.root }
             okButton {
                 alertBinding.apply {
-                    var changed = false
                     if (AppConfig.bookGroupStyle != spGroupStyle.selectedItemPosition) {
                         AppConfig.bookGroupStyle = spGroupStyle.selectedItemPosition
                         postEvent(EventBus.NOTIFY_MAIN, false)
                     }
+                    if (AppConfig.showUnread != swShowUnread.isChecked) {
+                        AppConfig.showUnread = swShowUnread.isChecked
+                        postEvent(EventBus.BOOKSHELF_REFRESH, "")
+                    }
+                    var changed = false
                     if (bookshelfLayout != rgLayout.getCheckedIndex()) {
                         putPrefInt(PreferKey.bookshelfLayout, rgLayout.getCheckedIndex())
                         changed = true

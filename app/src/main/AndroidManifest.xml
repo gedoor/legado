@@ -169,7 +169,7 @@
             android:launchMode="singleTask" />
         <!-- 音频播放界面 -->
         <activity
-            android:name=".ui.audio.AudioPlayActivity"
+            android:name="io.legado.app.ui.book.audio.AudioPlayActivity"
             android:launchMode="singleTask" />
         <!-- 授权界面 -->
         <activity

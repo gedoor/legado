@@ -1,4 +1,4 @@
-package io.legado.app.ui.audio
+package io.legado.app.ui.book.audio
 
 import android.app.Activity
 import android.graphics.drawable.Drawable

@@ -22,7 +22,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.audio.AudioPlayActivity
+import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
@@ -230,6 +230,9 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         super.observeLiveBus()
         observeEvent<String>(EventBus.UP_BOOK) {
             booksAdapter.notification(it)
+        }
+        observeEvent<String>(EventBus.BOOKSHELF_REFRESH) {
+            booksAdapter.notifyDataSetChanged()
         }
     }
 }

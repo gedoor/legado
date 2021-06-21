@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".ui.audio.AudioPlayActivity">
+    tools:context=".ui.book.audio.AudioPlayActivity">
 
     <ImageView
         android:id="@+id/iv_bg"

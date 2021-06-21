@@ -20,7 +20,7 @@ import io.legado.app.databinding.FragmentBooksBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.audio.AudioPlayActivity
+import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
@@ -167,6 +167,9 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         super.observeLiveBus()
         observeEvent<String>(EventBus.UP_BOOK) {
             booksAdapter.notification(it)
+        }
+        observeEvent<String>(EventBus.BOOKSHELF_REFRESH) {
+            booksAdapter.notifyDataSetChanged()
         }
     }
 }

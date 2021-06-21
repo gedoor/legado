@@ -1,4 +1,4 @@
-package io.legado.app.ui.audio
+package io.legado.app.ui.book.audio
 
 import android.app.Application
 import android.content.Intent
