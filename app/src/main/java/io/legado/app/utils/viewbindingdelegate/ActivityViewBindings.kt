@@ -7,8 +7,9 @@ import androidx.core.app.ComponentActivity
 import androidx.viewbinding.ViewBinding
 
 /**
- *
+ * Create new [ViewBinding] associated with the [ComponentActivity]
  */
+@JvmName("viewBindingActivity")
 inline fun <T : ViewBinding> ComponentActivity.viewBinding(
     crossinline bindingInflater: (LayoutInflater) -> T,
     setContentView: Boolean = false
