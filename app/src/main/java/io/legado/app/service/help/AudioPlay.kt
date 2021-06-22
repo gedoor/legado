@@ -98,9 +98,7 @@ object AudioPlay {
                 durChapterIndex = index
                 durChapterPos = 0
                 durChapter = null
-                book.durChapterIndex = durChapterIndex
-                book.durChapterPos = 0
-                saveRead()
+                saveRead(book)
                 play(context)
             }
         }
@@ -115,28 +113,22 @@ object AudioPlay {
                 durChapterIndex--
                 durChapterPos = 0
                 durChapter = null
-                book.durChapterIndex = durChapterIndex
-                book.durChapterPos = 0
-                saveRead()
+                saveRead(book)
                 play(context)
             }
         }
     }
 
     fun next(context: Context) {
-        Coroutine.async {
-            book?.let { book ->
-                if (book.durChapterIndex >= book.totalChapterNum) {
-                    return@let
-                }
-                durChapterIndex++
-                durChapterPos = 0
-                durChapter = null
-                book.durChapterIndex = durChapterIndex
-                book.durChapterPos = 0
-                saveRead()
-                play(context)
+        book?.let { book ->
+            if (book.durChapterIndex >= book.totalChapterNum) {
+                return@let
             }
+            durChapterIndex++
+            durChapterPos = 0
+            durChapter = null
+            saveRead(book)
+            play(context)
         }
     }
 
@@ -146,18 +138,16 @@ object AudioPlay {
         context.startService(intent)
     }
 
-    fun saveRead() {
+    fun saveRead(book: Book) {
+        book.lastCheckCount = 0
+        book.durChapterTime = System.currentTimeMillis()
+        book.durChapterIndex = durChapterIndex
+        book.durChapterPos = durChapterPos
         Coroutine.async {
-            book?.let { book ->
-                book.lastCheckCount = 0
-                book.durChapterTime = System.currentTimeMillis()
-                book.durChapterIndex = durChapterIndex
-                book.durChapterPos = durChapterPos
-                appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
-                    book.durChapterTitle = it.title
-                }
-                appDb.bookDao.update(book)
+            appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
+                book.durChapterTitle = it.title
             }
+            book.save()
         }
     }
 

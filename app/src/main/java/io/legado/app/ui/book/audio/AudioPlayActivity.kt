@@ -40,8 +40,7 @@ class AudioPlayActivity :
     ChangeSourceDialog.CallBack {
 
     override val binding by viewBinding(ActivityAudioPlayBinding::inflate)
-    override val viewModel: AudioPlayViewModel
-            by viewModels()
+    override val viewModel by viewModels<AudioPlayViewModel>()
 
     private var adjustProgress = false
     private val progressTimeFormat by lazy {
@@ -61,8 +60,12 @@ class AudioPlayActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.transparent()
-        AudioPlay.titleData.observe(this, { binding.titleBar.title = it })
-        AudioPlay.coverData.observe(this, { upCover(it) })
+        AudioPlay.titleData.observe(this) {
+            binding.titleBar.title = it
+        }
+        AudioPlay.coverData.observe(this) {
+            upCover(it)
+        }
         viewModel.initData(intent)
         initView()
     }

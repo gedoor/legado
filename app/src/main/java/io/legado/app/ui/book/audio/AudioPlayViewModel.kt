@@ -17,14 +17,10 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun initData(intent: Intent) = AudioPlay.apply {
         execute {
             val bookUrl = intent.getStringExtra("bookUrl")
-            if (book?.bookUrl != bookUrl) {
+            if (bookUrl != null && bookUrl != book?.bookUrl) {
                 stop(context)
                 inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-                book = if (!bookUrl.isNullOrEmpty()) {
-                    appDb.bookDao.getBook(bookUrl)
-                } else {
-                    appDb.bookDao.lastReadBook
-                }
+                book = appDb.bookDao.getBook(bookUrl)
                 book?.let { book ->
                     titleData.postValue(book.name)
                     coverData.postValue(book.getDisplayCover())
@@ -42,8 +38,8 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                             loadChapterList(book)
                         }
                     }
+                    saveRead(book)
                 }
-                saveRead()
             }
         }
     }
