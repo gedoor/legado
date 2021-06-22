@@ -19,12 +19,8 @@ import splitties.init.appCtx
 @Suppress("unused")
 class ThemeStore @SuppressLint("CommitPrefEdits")
 private constructor(private val mContext: Context) : ThemeStoreInterface {
-    private val mEditor: SharedPreferences.Editor
 
-    init {
-        mEditor = prefs(mContext).edit()
-    }
-
+    private val mEditor = prefs(mContext).edit()
 
     override fun primaryColor(@ColorInt color: Int): ThemeStore {
         mEditor.putInt(ThemeStorePrefKeys.KEY_PRIMARY_COLOR, color)
@@ -155,16 +151,6 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
         return this
     }
 
-    override fun coloredStatusBar(colored: Boolean): ThemeStore {
-        mEditor.putBoolean(ThemeStorePrefKeys.KEY_APPLY_PRIMARYDARK_STATUSBAR, colored)
-        return this
-    }
-
-    override fun coloredNavigationBar(applyToNavBar: Boolean): ThemeStore {
-        mEditor.putBoolean(ThemeStorePrefKeys.KEY_APPLY_PRIMARY_NAVBAR, applyToNavBar)
-        return this
-    }
-
     override fun autoGeneratePrimaryDark(autoGenerate: Boolean): ThemeStore {
         mEditor.putBoolean(ThemeStorePrefKeys.KEY_AUTO_GENERATE_PRIMARYDARK, autoGenerate)
         return this
@@ -228,9 +214,7 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
         @CheckResult
         @ColorInt
         fun statusBarColor(context: Context, transparent: Boolean): Int {
-            return if (!coloredStatusBar(context)) {
-                Color.BLACK
-            } else if (transparent) {
+            return if (transparent) {
                 prefs(context).getInt(
                     ThemeStorePrefKeys.KEY_STATUS_BAR_COLOR,
                     primaryColor(context)
@@ -246,9 +230,7 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
         @CheckResult
         @ColorInt
         fun navigationBarColor(context: Context): Int {
-            return if (!coloredNavigationBar(context)) {
-                Color.BLACK
-            } else prefs(context).getInt(
+            return prefs(context).getInt(
                 ThemeStorePrefKeys.KEY_NAVIGATION_BAR_COLOR,
                 bottomBackground(context)
             )

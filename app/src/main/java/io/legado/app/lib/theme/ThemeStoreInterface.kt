@@ -84,12 +84,6 @@ internal interface ThemeStoreInterface {
 
     fun bottomBackground(@ColorInt color: Int): ThemeStore
 
-    // Toggle configurations
-
-    fun coloredStatusBar(colored: Boolean): ThemeStore
-
-    fun coloredNavigationBar(applyToNavBar: Boolean): ThemeStore
-
     // Commit/apply
 
     fun apply()

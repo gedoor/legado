@@ -173,7 +173,6 @@ object ThemeConfig {
         when {
             AppConfig.isEInkMode -> {
                 ThemeStore.editTheme(this)
-                    .coloredNavigationBar(true)
                     .primaryColor(Color.WHITE)
                     .accentColor(Color.BLACK)
                     .backgroundColor(Color.WHITE)
@@ -194,7 +193,6 @@ object ThemeConfig {
                 val bBackground =
                     getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
                 ThemeStore.editTheme(this)
-                    .coloredNavigationBar(true)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))
                     .accentColor(ColorUtils.withAlpha(accent, 1f))
                     .backgroundColor(ColorUtils.withAlpha(background, 1f))
@@ -215,7 +213,6 @@ object ThemeConfig {
                 val bBackground =
                     getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
                 ThemeStore.editTheme(this)
-                    .coloredNavigationBar(true)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))
                     .accentColor(ColorUtils.withAlpha(accent, 1f))
                     .backgroundColor(ColorUtils.withAlpha(background, 1f))
