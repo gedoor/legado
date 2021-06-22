@@ -38,8 +38,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     SearchAdapter.CallBack {
 
     override val binding by viewBinding(ActivityBookSearchBinding::inflate)
-    override val viewModel: SearchViewModel
-            by viewModels()
+    override val viewModel by viewModels<SearchViewModel>()
 
     lateinit var adapter: SearchAdapter
     private lateinit var bookAdapter: BookAdapter

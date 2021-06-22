@@ -43,8 +43,7 @@ abstract class ReadBookBaseActivity :
     VMBaseActivity<ActivityBookReadBinding, ReadBookViewModel>(imageBg = false) {
 
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
-    override val viewModel: ReadBookViewModel
-            by viewModels()
+    override val viewModel by viewModels<ReadBookViewModel>()
     var bottomDialog = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {

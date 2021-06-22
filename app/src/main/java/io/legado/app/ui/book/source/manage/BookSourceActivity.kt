@@ -48,7 +48,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     SelectActionBar.CallBack,
     SearchView.OnQueryTextListener {
     override val binding by viewBinding(ActivityBookSourceBinding::inflate)
-    override val viewModel: BookSourceViewModel by viewModels()
+    override val viewModel by viewModels<BookSourceViewModel>()
     private val importRecordKey = "bookSourceRecordKey"
     private lateinit var adapter: BookSourceAdapter
     private lateinit var searchView: SearchView

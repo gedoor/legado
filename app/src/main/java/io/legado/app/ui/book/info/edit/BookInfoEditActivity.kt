@@ -31,8 +31,7 @@ class BookInfoEditActivity :
         }
 
     override val binding by viewBinding(ActivityBookInfoEditBinding::inflate)
-    override val viewModel: BookInfoEditViewModel
-            by viewModels()
+    override val viewModel by viewModels<BookInfoEditViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.bookData.observe(this, { upView(it) })

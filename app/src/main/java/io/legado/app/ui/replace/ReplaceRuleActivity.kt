@@ -50,7 +50,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     SelectActionBar.CallBack,
     ReplaceRuleAdapter.CallBack {
     override val binding by viewBinding(ActivityReplaceRuleBinding::inflate)
-    override val viewModel: ReplaceRuleViewModel by viewModels()
+    override val viewModel by viewModels<ReplaceRuleViewModel>()
     private val importRecordKey = "replaceRuleRecordKey"
     private lateinit var adapter: ReplaceRuleAdapter
     private lateinit var searchView: SearchView

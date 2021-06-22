@@ -40,7 +40,7 @@ class BookSourceEditActivity :
     KeyboardToolPop.CallBack {
 
     override val binding by viewBinding(ActivityBookSourceEditBinding::inflate)
-    override val viewModel: BookSourceEditViewModel by viewModels()
+    override val viewModel by viewModels<BookSourceEditViewModel>()
 
     private val adapter = BookSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()

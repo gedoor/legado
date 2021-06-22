@@ -33,7 +33,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  */
 class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
     ExploreAdapter.CallBack {
-    override val viewModel: ExploreViewModel by viewModels()
+    override val viewModel by viewModels<ExploreViewModel>()
     private val binding by viewBinding(FragmentExploreBinding::bind)
     private lateinit var adapter: ExploreAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager

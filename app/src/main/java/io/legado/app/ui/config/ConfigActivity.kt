@@ -13,7 +13,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() {
 
     override val binding by viewBinding(ActivityConfigBinding::inflate)
-    override val viewModel: ConfigViewModel by viewModels()
+    override val viewModel by viewModels<ConfigViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         intent.getIntExtra("configType", -1).let {

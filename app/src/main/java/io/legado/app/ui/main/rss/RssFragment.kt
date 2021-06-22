@@ -37,10 +37,9 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     RssAdapter.CallBack {
     private val binding by viewBinding(FragmentRssBinding::bind)
+    override val viewModel by viewModels<RssSourceViewModel>()
     private lateinit var adapter: RssAdapter
     private lateinit var searchView: SearchView
-    override val viewModel: RssSourceViewModel
-            by viewModels()
     private var liveRssData: LiveData<List<RssSource>>? = null
     private val groups = linkedSetOf<String>()
     private var liveGroup: LiveData<List<String>>? = null

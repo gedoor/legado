@@ -18,9 +18,7 @@ class ImportRssSourceActivity :
     ) {
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
-
-    override val viewModel: ImportRssSourceViewModel
-            by viewModels()
+    override val viewModel by viewModels<ImportRssSourceViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()

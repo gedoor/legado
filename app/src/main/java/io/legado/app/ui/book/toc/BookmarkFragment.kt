@@ -25,7 +25,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark),
     BookmarkAdapter.Callback,
     TocViewModel.BookmarkCallBack {
-    override val viewModel: TocViewModel by activityViewModels()
+    override val viewModel by activityViewModels<TocViewModel>()
     private val binding by viewBinding(FragmentBookmarkBinding::bind)
     private lateinit var adapter: BookmarkAdapter
     private var bookmarkLiveData: LiveData<List<Bookmark>>? = null

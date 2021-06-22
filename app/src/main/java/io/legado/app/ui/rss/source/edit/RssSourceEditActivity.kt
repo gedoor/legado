@@ -34,6 +34,7 @@ class RssSourceEditActivity :
     KeyboardToolPop.CallBack {
 
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
+    override val viewModel by viewModels<RssSourceEditViewModel>()
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
     private val adapter = RssSourceEditAdapter()
@@ -45,9 +46,6 @@ class RssSourceEditActivity :
             }
         }
     }
-
-    override val viewModel: RssSourceEditViewModel
-            by viewModels()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()

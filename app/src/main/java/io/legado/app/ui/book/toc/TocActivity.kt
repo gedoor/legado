@@ -26,7 +26,7 @@ import io.legado.app.utils.visible
 class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
 
     override val binding by viewBinding(ActivityChapterListBinding::inflate)
-    override val viewModel: TocViewModel by viewModels()
+    override val viewModel by viewModels<TocViewModel>()
 
     private lateinit var tabLayout: TabLayout
     private var searchView: SearchView? = null

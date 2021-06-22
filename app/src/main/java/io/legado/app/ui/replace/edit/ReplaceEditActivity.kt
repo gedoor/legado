@@ -52,8 +52,7 @@ class ReplaceEditActivity :
     }
 
     override val binding by viewBinding(ActivityReplaceEditBinding::inflate)
-    override val viewModel: ReplaceEditViewModel
-            by viewModels()
+    override val viewModel by viewModels<ReplaceEditViewModel>()
 
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false

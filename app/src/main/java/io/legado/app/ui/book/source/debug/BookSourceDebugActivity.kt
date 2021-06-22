@@ -20,8 +20,7 @@ import kotlinx.coroutines.launch
 class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookSourceDebugModel>() {
 
     override val binding by viewBinding(ActivitySourceDebugBinding::inflate)
-    override val viewModel: BookSourceDebugModel
-            by viewModels()
+    override val viewModel by viewModels<BookSourceDebugModel>()
 
     private lateinit var adapter: BookSourceDebugAdapter
     private lateinit var searchView: SearchView

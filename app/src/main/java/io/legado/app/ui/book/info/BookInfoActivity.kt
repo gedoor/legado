@@ -91,7 +91,7 @@ class BookInfoActivity :
     }
 
     override val binding by viewBinding(ActivityBookInfoBinding::inflate)
-    override val viewModel: BookInfoViewModel by viewModels()
+    override val viewModel by viewModels<BookInfoViewModel>()
 
     @SuppressLint("PrivateResource")
     override fun onActivityCreated(savedInstanceState: Bundle?) {

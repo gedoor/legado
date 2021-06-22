@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSourceDebugModel>() {
 
     override val binding by viewBinding(ActivitySourceDebugBinding::inflate)
-    override val viewModel: RssSourceDebugModel by viewModels()
+    override val viewModel by viewModels<RssSourceDebugModel>()
 
     private lateinit var adapter: RssSourceDebugAdapter
 

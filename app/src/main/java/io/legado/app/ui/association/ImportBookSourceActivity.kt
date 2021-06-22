@@ -19,9 +19,7 @@ class ImportBookSourceActivity :
     ) {
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
-
-    override val viewModel: ImportBookSourceViewModel
-            by viewModels()
+    override val viewModel by viewModels<ImportBookSourceViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()

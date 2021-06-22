@@ -39,6 +39,18 @@ import java.util.concurrent.CopyOnWriteArraySet
 class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>(),
     CacheAdapter.CallBack {
 
+    override val binding by viewBinding(ActivityCacheBookBinding::inflate)
+    override val viewModel by viewModels<CacheViewModel>()
+
+    private val exportBookPathKey = "exportBookPath"
+    lateinit var adapter: CacheAdapter
+    private var groupLiveData: LiveData<List<BookGroup>>? = null
+    private var booksLiveData: LiveData<List<Book>>? = null
+    private var menu: Menu? = null
+    private var exportPosition = -1
+    private val groupList: ArrayList<BookGroup> = arrayListOf()
+    private var groupId: Long = -1
+
     private val exportDir = registerForActivityResult(FilePicker()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
@@ -51,16 +63,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
         }
     }
-    private val exportBookPathKey = "exportBookPath"
-    lateinit var adapter: CacheAdapter
-    private var groupLiveData: LiveData<List<BookGroup>>? = null
-    private var booksLiveData: LiveData<List<Book>>? = null
-    private var menu: Menu? = null
-    private var exportPosition = -1
-    private val groupList: ArrayList<BookGroup> = arrayListOf()
-    private var groupId: Long = -1
-    override val binding by viewBinding(ActivityCacheBookBinding::inflate)
-    override val viewModel: CacheViewModel by viewModels()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)

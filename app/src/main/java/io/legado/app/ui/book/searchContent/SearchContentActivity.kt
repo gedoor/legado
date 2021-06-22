@@ -34,8 +34,7 @@ class SearchContentActivity :
     SearchContentAdapter.Callback {
 
     override val binding by viewBinding(ActivitySearchContentBinding::inflate)
-    override val viewModel: SearchContentViewModel
-            by viewModels()
+    override val viewModel by viewModels<SearchContentViewModel>()
     lateinit var adapter: SearchContentAdapter
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private lateinit var searchView: SearchView

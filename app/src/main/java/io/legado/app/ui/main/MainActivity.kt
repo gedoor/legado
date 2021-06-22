@@ -44,7 +44,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     BottomNavigationView.OnNavigationItemReselectedListener {
 
     override val binding by viewBinding(ActivityMainBinding::inflate)
-    override val viewModel: MainViewModel by viewModels()
+    override val viewModel by viewModels<MainViewModel>()
     private var exitTime: Long = 0
     private var bookshelfReselected: Long = 0
     private var exploreReselected: Long = 0

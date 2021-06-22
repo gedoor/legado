@@ -25,8 +25,8 @@ import io.legado.app.utils.*
 
 abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId) {
 
-    val activityViewModel: MainViewModel by activityViewModels()
-    override val viewModel: BookshelfViewModel by viewModels()
+    val activityViewModel by activityViewModels<MainViewModel>()
+    override val viewModel by viewModels<BookshelfViewModel>()
 
     private val importBookshelf = registerForActivityResult(FilePicker()) {
         it?.readText(requireContext())?.let { text ->

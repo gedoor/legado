@@ -39,6 +39,10 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     PopupMenu.OnMenuItemClickListener,
     ImportBookAdapter.CallBack,
     SelectActionBar.CallBack {
+
+    override val binding by viewBinding(ActivityImportBookBinding::inflate)
+    override val viewModel by viewModels<ImportBookViewModel>()
+
     private var rootDoc: DocumentFile? = null
     private val subDocs = arrayListOf<DocumentFile>()
     private lateinit var adapter: ImportBookAdapter
@@ -57,10 +61,6 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             }
         }
     }
-
-    override val binding by viewBinding(ActivityImportBookBinding::inflate)
-    override val viewModel: ImportBookViewModel
-            by viewModels()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()

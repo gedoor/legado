@@ -37,7 +37,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     ReadRssViewModel.CallBack {
 
     override val binding by viewBinding(ActivityRssReadBinding::inflate)
-    override val viewModel: ReadRssViewModel by viewModels()
+    override val viewModel by viewModels<ReadRssViewModel>()
     private val imagePathKey = ""
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null

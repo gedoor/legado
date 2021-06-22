@@ -18,7 +18,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreShowViewModel>(),
     ExploreShowAdapter.CallBack {
     override val binding by viewBinding(ActivityExploreShowBinding::inflate)
-    override val viewModel: ExploreShowViewModel by viewModels()
+    override val viewModel by viewModels<ExploreShowViewModel>()
 
     private lateinit var adapter: ExploreShowAdapter
     private lateinit var loadMoreView: LoadMoreView

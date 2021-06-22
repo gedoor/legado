@@ -21,8 +21,7 @@ import io.legado.app.utils.visible
 class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>() {
 
     override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
-    override val viewModel: RssSortViewModel
-            by viewModels()
+    override val viewModel by viewModels<RssSortViewModel>()
     private lateinit var adapter: TabFragmentPageAdapter
     private val fragments = linkedMapOf<String, Fragment>()
     private val upSourceResult = registerForActivityResult(

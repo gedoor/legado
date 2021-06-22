@@ -46,8 +46,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     RssSourceAdapter.CallBack {
 
     override val binding by viewBinding(ActivityRssSourceBinding::inflate)
-    override val viewModel: RssSourceViewModel
-            by viewModels()
+    override val viewModel by viewModels<RssSourceViewModel>()
     private val importRecordKey = "rssSourceRecordKey"
     private lateinit var adapter: RssSourceAdapter
     private var sourceLiveData: LiveData<List<RssSource>>? = null
