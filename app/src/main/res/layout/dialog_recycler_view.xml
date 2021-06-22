@@ -27,43 +27,46 @@
 
     </FrameLayout>
 
-    <LinearLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        app:flexWrap="wrap"
+        app:justifyContent="space_between">
 
         <io.legado.app.ui.widget.text.AccentTextView
             android:id="@+id/tv_footer_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:padding="12dp"
             android:visibility="gone"
             tools:ignore="RtlHardcoded" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <io.legado.app.ui.widget.text.AccentTextView
-            android:id="@+id/tv_cancel"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:padding="12dp"
-            android:text="@string/cancel"
-            android:visibility="gone"
-            tools:ignore="RtlHardcoded" />
+            android:orientation="horizontal">
 
-        <io.legado.app.ui.widget.text.AccentTextView
-            android:id="@+id/tv_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:padding="12dp"
-            android:text="@string/ok"
-            android:visibility="gone"
-            tools:ignore="RtlHardcoded" />
+            <io.legado.app.ui.widget.text.AccentTextView
+                android:id="@+id/tv_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="@string/cancel"
+                android:visibility="gone"
+                tools:ignore="RtlHardcoded" />
 
-    </LinearLayout>
+            <io.legado.app.ui.widget.text.AccentTextView
+                android:id="@+id/tv_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="@string/ok"
+                android:visibility="gone"
+                tools:ignore="RtlHardcoded" />
+
+        </LinearLayout>
+
+    </com.google.android.flexbox.FlexboxLayout>
 </LinearLayout>
