@@ -89,7 +89,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             R.id.menu_rss_star -> viewModel.favorite()
             R.id.menu_share_it -> viewModel.rssArticle?.let {
                 share(it.link)
-            }
+            } ?: toastOnUi(R.string.null_url)
             R.id.menu_aloud -> readAloud()
         }
         return super.onCompatOptionsItemSelected(item)

@@ -844,5 +844,6 @@
     <string name="group_style">分組樣式</string>
     <string name="export_file_name">匯出檔案名</string>
     <string name="reset">重設</string>
+    <string name="null_url">url为空</string>
 
 </resources>
