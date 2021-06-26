@@ -43,17 +43,17 @@ public class ResourceUtil {
             if (title.contains("</span>"))
                 title = "<span class=\"chapter-sequence-number\">" + title;
         }
-        String html = model.replaceAll("\\{title\\}", title)
-                .replaceAll("\\{content\\}", StringUtil.formatHtml(txt));
+        String html = model.replace("{title}", title)
+                .replace("{content}", StringUtil.formatHtml(txt));
         return new Resource(html.getBytes(), href);
     }
 
     public static Resource createPublicResource(String name, String author, String intro, String kind, String wordCount, String model, String href) {
-        String html = model.replaceAll("\\{name\\}", name)
-                .replaceAll("\\{author\\}", author)
-                .replaceAll("\\{kind\\}", kind)
-                .replaceAll("\\{wordCount\\}", wordCount)
-                .replaceAll("\\{intro\\}", StringUtil.formatHtml(intro));
+        String html = model.replace("{name}", name)
+                .replace("{author}", author)
+                .replace("{kind}", kind)
+                .replace("{wordCount}", wordCount)
+                .replace("{intro}", StringUtil.formatHtml(intro));
         return new Resource(html.getBytes(), href);
     }
 
