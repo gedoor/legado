@@ -12,6 +12,8 @@ import android.view.*
 import android.webkit.*
 import androidx.activity.viewModels
 import androidx.core.view.size
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -95,6 +97,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         return super.onCompatOptionsItemSelected(item)
     }
 
+    @JavascriptInterface
+    fun isNightTheme(): Boolean {
+        return AppConfig.isNightTheme(this)
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
         binding.webView.webChromeClient = RssWebChromeClient()
@@ -105,6 +112,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             allowContentAccess = true
             //javaScriptEnabled = true
         }
+        binding.webView.addJavascriptInterface(this, "app")
         upWebViewTheme()
         binding.webView.setOnLongClickListener {
             val hitTestResult = binding.webView.hitTestResult
@@ -193,8 +201,21 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     private fun upWebViewTheme() {
         if (AppConfig.isNightTheme) {
-            binding.webView
-                .evaluateJavascript(AppConst.darkWebViewJs, null)
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
+                WebSettingsCompat.setForceDarkStrategy(
+                    binding.webView.settings,
+                    WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING
+                )
+            }
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                WebSettingsCompat.setForceDark(
+                    binding.webView.settings,
+                    WebSettingsCompat.FORCE_DARK_ON
+                )
+            } else {
+                binding.webView
+                    .evaluateJavascript(AppConst.darkWebViewJs, null)
+            }
         }
     }
 

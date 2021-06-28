@@ -9,6 +9,8 @@
 * 漫画源看书显示乱码，**阅读与其他软件的源并不通用**，请导入阅读的支持的漫画源！
 
 **2021/06/26**
+* 订阅界面webView支持css prefers-color-scheme: dark 查询,需webView v76或更高版本
+* 如webView低于v76可以用js调用activity.isNightTheme()来获取当前是否暗模式
 * 修复一些书籍导出epub失败 by ag2s20150909
 
 **2021/06/22**
