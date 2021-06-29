@@ -79,13 +79,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
             tvAuthor.text = context.getString(R.string.author_show, searchBook.author)
             bvOriginCount.setBadgeCount(searchBook.origins.size)
             upLasted(binding, searchBook.latestChapterTitle)
-            if (searchBook.intro.isNullOrEmpty()) {
-                tvIntroduce.text =
-                    context.getString(R.string.intro_show_null)
-            } else {
-                tvIntroduce.text =
-                    context.getString(R.string.intro_show, searchBook.intro)
-            }
+            tvIntroduce.text = searchBook.trimIntro(context)
             upKind(binding, searchBook.getKindList())
             ivCover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
 
@@ -98,15 +92,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                 when (it) {
                     "origins" -> bvOriginCount.setBadgeCount(searchBook.origins.size)
                     "last" -> upLasted(binding, searchBook.latestChapterTitle)
-                    "intro" -> {
-                        if (searchBook.intro.isNullOrEmpty()) {
-                            tvIntroduce.text =
-                                context.getString(R.string.intro_show_null)
-                        } else {
-                            tvIntroduce.text =
-                                context.getString(R.string.intro_show, searchBook.intro)
-                        }
-                    }
+                    "intro" -> tvIntroduce.text = searchBook.trimIntro(context)
                     "kind" -> upKind(binding, searchBook.getKindList())
                     "cover" -> ivCover.load(
                         searchBook.coverUrl,

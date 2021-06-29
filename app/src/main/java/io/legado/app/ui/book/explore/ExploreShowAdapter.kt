@@ -34,11 +34,7 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                 tvLasted.text = context.getString(R.string.lasted_show, item.latestChapterTitle)
                 tvLasted.visible()
             }
-            if (item.intro.isNullOrEmpty()) {
-                tvIntroduce.text = context.getString(R.string.intro_show_null)
-            } else {
-                tvIntroduce.text = context.getString(R.string.intro_show, item.intro)
-            }
+            tvIntroduce.text = item.trimIntro(context)
             val kinds = item.getKindList()
             if (kinds.isEmpty()) {
                 llKind.gone()
