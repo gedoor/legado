@@ -28,6 +28,8 @@ object LocalBook {
     fun getChapterList(book: Book): ArrayList<BookChapter> {
         return if (book.isEpub()) {
             EpubFile.getChapterList(book)
+        }else if(book.isUmd()){
+            UmdFile.getChapterList(book)
         } else {
             AnalyzeTxtFile().analyze(book)
         }
@@ -36,6 +38,8 @@ object LocalBook {
     fun getContext(book: Book, chapter: BookChapter): String? {
         return if (book.isEpub()) {
             EpubFile.getContent(book, chapter)
+        }else if (book.isUmd()){
+            UmdFile.getContent(book, chapter)
         } else {
             AnalyzeTxtFile.getContent(book, chapter)
         }
@@ -121,13 +125,14 @@ object LocalBook {
             )
         )
         if (book.isEpub()) EpubFile.upBookInfo(book)
+        if (book.isUmd()) UmdFile.upBookInfo(book)
         appDb.bookDao.insert(book)
         return book
     }
 
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
         kotlin.runCatching {
-            if (book.isLocalTxt()) {
+            if (book.isLocalTxt()||book.isUmd()) {
                 val bookFile = FileUtils.getFile(cacheFolder, book.originName)
                 bookFile.delete()
             }

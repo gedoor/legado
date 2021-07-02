@@ -2,8 +2,7 @@ package me.ag2s.umdlib.umd;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import me.ag2s.umdlib.domain.UmdBook;
 import me.ag2s.umdlib.domain.UmdCover;
@@ -11,25 +10,26 @@ import me.ag2s.umdlib.domain.UmdHeader;
 import me.ag2s.umdlib.tool.StreamReader;
 import me.ag2s.umdlib.tool.UmdUtils;
 
+/**
+ * UMD格式的电子书解析
+ * 格式规范参考：
+ * http://blog.sina.com.cn/s/blog_7c8dc2d501018o5d.html
+ * http://blog.sina.com.cn/s/blog_7c8dc2d501018o5l.html
+ *
+ */
+
 public class UmdReader {
     UmdBook book;
     InputStream inputStream;
-    int[] _ChaptersOff;
     int _AdditionalCheckNumber;
     int _TotalContentLen;
     boolean end = false;
-    List<byte[]> _ZippedContentList = new ArrayList<>();
 
-//    public UmdReader(InputStream inputStream) {
-//        this.inputStream = inputStream;
-//    }
 
-//    public UmdReader(File file) throws IOException {
-//        this.inputStream = new FileInputStream(file);
-//    }
+    public synchronized UmdBook read(InputStream inputStream) throws Exception {
 
-    public UmdBook read(InputStream inputStream) throws Exception {
         book = new UmdBook();
+        this.inputStream=inputStream;
         StreamReader reader = new StreamReader(inputStream);
         UmdHeader umdHeader = new UmdHeader();
         book.setHeader(umdHeader);
@@ -61,7 +61,7 @@ public class UmdReader {
             num1 = segType;
 
         }
-        //System.out.println(book.getHeader().toString());
+        System.out.println(book.getHeader().toString());
         return book;
 
     }
@@ -97,7 +97,6 @@ public class UmdReader {
                     System.out.println(length);
                     book.getChapters().contents.write(UmdUtils.decompress(reader.readBytes(length)));
                     book.getChapters().contents.flush();
-                    //this._ZippedContentList.add(reader.readBytes(length));
                     break;
                 } else {
                     for (int i = 0; i < book.getNum(); i++) {
@@ -212,10 +211,6 @@ public class UmdReader {
 
         }
     }
-
-
-
-
 
 
     @Override

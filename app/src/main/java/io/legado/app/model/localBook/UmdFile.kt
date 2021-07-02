@@ -1,6 +1,7 @@
 package io.legado.app.model.localBook
 
 import android.net.Uri
+import android.util.Log
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 
@@ -21,12 +22,9 @@ class UmdFile(var book: Book) {
 
         @Synchronized
         private fun getEFile(book: Book): UmdFile {
-            //BookHelp.getEpubFile(book)
 
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = UmdFile(book)
-                //对于Epub文件默认不启用替换
-                //book.setUseReplaceRule(false)
                 return eFile!!
             }
             eFile?.book = book
@@ -112,7 +110,7 @@ class UmdFile(var book: Book) {
         }
     }
     private fun getContent(chapter: BookChapter): String? {
-        return umdBook?.chapters?.getContentString(chapter.index)
+       return umdBook?.chapters?.getContentString(chapter.index)
     }
 
     private fun getChapterList(): ArrayList<BookChapter> {
@@ -124,8 +122,11 @@ class UmdFile(var book: Book) {
             chapter.index = index
             chapter.bookUrl = book.bookUrl
             chapter.url = index.toString();
+            Log.d("UMD",chapter.url)
             chapterList.add(chapter)
         }
+        book.latestChapterTitle = chapterList.lastOrNull()?.title
+        book.totalChapterNum = chapterList.size
         return chapterList
     }
 
