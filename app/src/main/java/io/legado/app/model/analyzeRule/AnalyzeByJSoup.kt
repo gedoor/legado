@@ -321,7 +321,7 @@ class AnalyzeByJSoup(doc: Any) {
 
             for (pcInt in indexSet) elements[pcInt] = null
 
-            elements.removeAll( Elements().apply { add(null) } )
+            elements.removeAll(listOf(null)) //测试过，这样就能把全部null元素删除
 
         }else if(filterType == '.'){ //选择
 
