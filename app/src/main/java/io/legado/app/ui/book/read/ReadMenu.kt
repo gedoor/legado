@@ -82,8 +82,9 @@ class ReadMenu @JvmOverloads constructor(
         tvFont.setTextColor(textColor)
         ivSetting.setColorFilter(textColor)
         tvSetting.setTextColor(textColor)
-        vwBg.setOnClickListener { }
-        vwNavigationBar.setOnClickListener { }
+        vwBg.setOnClickListener(null)
+        vwNavigationBar.setOnClickListener(null)
+        llBrightness.setOnClickListener(null)
         seekBrightness.progress = context.getPrefInt("brightness", 100)
     }
 
