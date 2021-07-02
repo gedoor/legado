@@ -18,27 +18,27 @@ import java.util.ArrayList
 
 class UmdFile(var book: Book) {
     companion object {
-        private var eFile: UmdFile? = null
+        private var uFile: UmdFile? = null
 
         @Synchronized
-        private fun getEFile(book: Book): UmdFile {
+        private fun getUFile(book: Book): UmdFile {
 
-            if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
-                eFile = UmdFile(book)
-                return eFile!!
+            if (uFile == null || uFile?.book?.bookUrl != book.bookUrl) {
+                uFile = UmdFile(book)
+                return uFile!!
             }
-            eFile?.book = book
-            return eFile!!
+            uFile?.book = book
+            return uFile!!
         }
 
         @Synchronized
         fun getChapterList(book: Book): ArrayList<BookChapter> {
-            return getEFile(book).getChapterList()
+            return getUFile(book).getChapterList()
         }
 
         @Synchronized
         fun getContent(book: Book, chapter: BookChapter): String? {
-            return getEFile(book).getContent(chapter)
+            return getUFile(book).getContent(chapter)
         }
 
         @Synchronized
@@ -46,13 +46,13 @@ class UmdFile(var book: Book) {
             book: Book,
             href: String
         ): InputStream? {
-            return getEFile(book).getImage(href)
+            return getUFile(book).getImage(href)
         }
 
 
         @Synchronized
         fun upBookInfo(book: Book) {
-            return getEFile(book).upBookInfo()
+            return getUFile(book).upBookInfo()
         }
     }
 
@@ -100,7 +100,7 @@ class UmdFile(var book: Book) {
 
     private fun upBookInfo() {
         if(umdBook==null){
-            eFile = null
+            uFile = null
             book.intro = "书籍导入异常"
         }else{
             val hd= umdBook!!.header
@@ -115,7 +115,7 @@ class UmdFile(var book: Book) {
 
     private fun getChapterList(): ArrayList<BookChapter> {
         val chapterList = ArrayList<BookChapter>()
-        umdBook?.chapters?.titles?.forEachIndexed { index, bytes ->
+        umdBook?.chapters?.titles?.forEachIndexed { index, _ ->
             val title = umdBook!!.chapters.getTitle(index)
             val chapter = BookChapter()
             chapter.title=title;
