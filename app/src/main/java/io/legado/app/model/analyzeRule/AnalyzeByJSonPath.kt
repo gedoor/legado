@@ -1,78 +1,77 @@
 package io.legado.app.model.analyzeRule
 
-import android.text.TextUtils
 import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
-import io.legado.app.utils.splitNotBlank
 import java.util.*
-import java.util.regex.Pattern
 
 @Suppress("RegExpRedundantEscape")
 @Keep
 class AnalyzeByJSonPath(json: Any) {
 
     companion object {
-        private val jsonRulePattern = Pattern.compile("(?<=\\{)\\$\\..+?(?=\\})")
 
         fun parse(json: Any): ReadContext {
             return when (json) {
                 is ReadContext -> json
-                is String -> JsonPath.parse(json)
-                else -> JsonPath.parse(json)
+                is String -> JsonPath.parse(json) //JsonPath.parse<String>(json)
+                else -> JsonPath.parse(json) //JsonPath.parse<Any>(json)
             }
         }
     }
 
     private var ctx: ReadContext = parse(json)
 
+    /**
+     * 改进解析方法
+     * 解决阅读”&&“、”||“与jsonPath支持的”&&“、”||“之间的冲突
+     * 解决{$.rule}形式规则可能匹配错误的问题，旧规则正则解析内容含‘}’的json文本，用规则中的字段去匹配这种内容时，会匹配错误.现改用平衡嵌套方法解决这个问题
+     * */
     fun getString(rule: String): String? {
-        if (TextUtils.isEmpty(rule)) return null
-        var result = ""
-        val rules: Array<String>
-        val elementsType: String
-        if (rule.contains("&&")) {
-            rules = rule.splitNotBlank("&&")
-            elementsType = "&"
-        } else {
-            rules = rule.splitNotBlank("||")
-            elementsType = "|"
-        }
+        if (rule.isEmpty()) return null
+        var result: String
+        val ruleAnalyzes = RuleAnalyzer(rule)
+        val rules = ruleAnalyzes.splitRule("&&","||")
+
         if (rules.size == 1) {
-            if (!rule.contains("{$.")) {
+
+            ruleAnalyzes.reSetPos() //将pos重置为0，复用解析器
+
+            result = ruleAnalyzes.innerRule("{$."){ getString(it) } //替换所有{$.rule...}
+
+            if (result.isEmpty()) { //st为空，表明无成功替换的内嵌规则
+
                 try {
+
                     val ob = ctx.read<Any>(rule)
-                    result =
-                        if (ob is List<*>) {
-                            val builder = StringBuilder()
-                            for (o in ob) {
-                                builder.append(o).append("\n")
-                            }
-                            builder.toString().replace("\\n$".toRegex(), "")
-                        } else {
-                            ob.toString()
+
+                    result =(if (ob is List<*>) {
+
+                        val builder = StringBuilder()
+                        for (o in ob) {
+                            builder.append(o).append("\n")
                         }
+
+                        builder.deleteCharAt(builder.lastIndex) //删除末尾赘余换行
+
+                        builder
+
+                    } else ob).toString()
+
                 } catch (ignored: Exception) {
                 }
-                return result
-            } else {
-                result = rule
-                val matcher = jsonRulePattern.matcher(rule)
-                while (matcher.find()) {
-                    result = result.replace(
-                        String.format("{%s}", matcher.group()),
-                        getString(matcher.group())!!
-                    )
-                }
-                return result
+
             }
+
+            return result
+
         } else {
             val textList = arrayListOf<String>()
             for (rl in rules) {
                 val temp = getString(rl)
                 if (!temp.isNullOrEmpty()) {
                     textList.add(temp)
-                    if (elementsType == "|") {
+                    if (ruleAnalyzes.elementsType == "||") {
                         break
                     }
                 }
@@ -83,59 +82,48 @@ class AnalyzeByJSonPath(json: Any) {
 
     internal fun getStringList(rule: String): List<String> {
         val result = ArrayList<String>()
-        if (TextUtils.isEmpty(rule)) return result
-        val rules: Array<String>
-        val elementsType: String
-        when {
-            rule.contains("&&") -> {
-                rules = rule.splitNotBlank("&&")
-                elementsType = "&"
-            }
-            rule.contains("%%") -> {
-                rules = rule.splitNotBlank("%%")
-                elementsType = "%"
-            }
-            else -> {
-                rules = rule.splitNotBlank("||")
-                elementsType = "|"
-            }
-        }
+        if (rule.isEmpty()) return result
+        val ruleAnalyzes = RuleAnalyzer(rule)
+        val rules = ruleAnalyzes.splitRule("&&","||","%%")
+
         if (rules.size == 1) {
-            if (!rule.contains("{$.")) {
+
+            ruleAnalyzes.reSetPos() //将pos重置为0，复用解析器
+
+            val st = ruleAnalyzes.innerRule("{$."){ getString(it) } //替换所有{$.rule...}
+
+            if (st.isEmpty()) { //st为空，表明无成功替换的内嵌规则
+
                 try {
-                    val obj = ctx.read<Any>(rule) ?: return result
+
+                    val obj = ctx.read<Any>(rule) //kotlin的Any型返回值不包含null ，删除赘余 ?: return result
+
                     if (obj is List<*>) {
-                        for (o in obj)
-                            result.add(o.toString())
-                    } else {
-                        result.add(obj.toString())
-                    }
+
+                        for (o in obj) result.add(o.toString())
+
+                    } else result.add(obj.toString())
+
                 } catch (ignored: Exception) {
                 }
-                return result
-            } else {
-                val matcher = jsonRulePattern.matcher(rule)
-                while (matcher.find()) {
-                    val stringList = getStringList(matcher.group())
-                    for (s in stringList) {
-                        result.add(rule.replace(String.format("{%s}", matcher.group()), s))
-                    }
-                }
-                return result
-            }
+
+            }else result.add(st)
+
+            return result
+
         } else {
             val results = ArrayList<List<String>>()
             for (rl in rules) {
                 val temp = getStringList(rl)
                 if (temp.isNotEmpty()) {
                     results.add(temp)
-                    if (temp.isNotEmpty() && elementsType == "|") {
+                    if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
                         break
                     }
                 }
             }
             if (results.size > 0) {
-                if ("%" == elementsType) {
+                if ("%%" == ruleAnalyzes.elementsType) {
                     for (i in results[0].indices) {
                         for (temp in results) {
                             if (i < temp.size) {
@@ -159,23 +147,9 @@ class AnalyzeByJSonPath(json: Any) {
 
     internal fun getList(rule: String): ArrayList<Any>? {
         val result = ArrayList<Any>()
-        if (TextUtils.isEmpty(rule)) return result
-        val elementsType: String
-        val rules: Array<String>
-        when {
-            rule.contains("&&") -> {
-                rules = rule.splitNotBlank("&&")
-                elementsType = "&"
-            }
-            rule.contains("%%") -> {
-                rules = rule.splitNotBlank("%%")
-                elementsType = "%"
-            }
-            else -> {
-                rules = rule.splitNotBlank("||")
-                elementsType = "|"
-            }
-        }
+        if (rule.isEmpty()) return result
+        val ruleAnalyzes = RuleAnalyzer(rule)
+        val rules = ruleAnalyzes.splitRule("&&","||","%%")
         if (rules.size == 1) {
             ctx.let {
                 try {
@@ -191,13 +165,13 @@ class AnalyzeByJSonPath(json: Any) {
                 val temp = getList(rl)
                 if (temp != null && temp.isNotEmpty()) {
                     results.add(temp)
-                    if (temp.isNotEmpty() && elementsType == "|") {
+                    if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
                         break
                     }
                 }
             }
             if (results.size > 0) {
-                if ("%" == elementsType) {
+                if ("%%" == ruleAnalyzes.elementsType) {
                     for (i in 0 until results[0].size) {
                         for (temp in results) {
                             if (i < temp.size) {
