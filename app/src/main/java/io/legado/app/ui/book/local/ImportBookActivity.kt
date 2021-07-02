@@ -197,6 +197,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                 } else if (!item.isDir
                     && !item.name.endsWith(".txt", true)
                     && !item.name.endsWith(".epub", true)
+                    && !item.name.endsWith(".umd", true)
                 ) {
                     docList.removeAt(i)
                 }
@@ -226,6 +227,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                     )
             } else if (it.name.endsWith(".txt", true)
                 || it.name.endsWith(".epub", true)
+                || it.name.endsWith(".umd", true)
             ) {
                 docList.add(
                     DocItem(
