@@ -236,13 +236,16 @@ class AnalyzeByJSoup(doc: Any) {
 
                         else -> {
 
-                            indexSet.indexs.add( //压入以下值，为保证查找顺序，区间和单个索引都添加到同一集合
+                            //为保证查找顺序，区间和单个索引都添加到同一集合 
+                            if(curList.isEmpty())indexSet.indexs.add(curInt!!)
+                            else{
 
-                                if(curList.isEmpty()) curInt!! //区间为空，表明当前是单个索引，单个索引不能空
+                                //列表最后压入的是区间右端，若列表有两位则最先压入的是间隔
+                                indexSet.indexs.add( Triple(curInt, curList.last(), if(curList.size == 2) curList.first() else 1) )
 
-                                else Triple(curInt, curList.last(), if(curList.size == 2) curList.first() else 1) //否则为区间，列表最后压入的是区间右端，若列表有两位则最先压入了间隔
+                                curList.clear() //重置临时列表，避免影响到下个区间的处理
 
-                            )
+                            }
 
                             if(rl == '!'){
                                 indexSet.split='!'
@@ -254,7 +257,6 @@ class AnalyzeByJSoup(doc: Any) {
                             } //遇到索引边界，返回结果
 
                             if(rl != ',') break //非索引结构，跳出
-                            curList.clear() //重置
 
                         }
                     }
@@ -432,9 +434,9 @@ class AnalyzeByJSoup(doc: Any) {
 
             if(indexs.isEmpty())for (ix in lastIndexs downTo 0 ){ //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
-                    val it = indexDefault[ix]
-                    if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
-                    else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
+                val it = indexDefault[ix]
+                if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
+                else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
 
             }else for (ix in lastIndexs downTo 0 ){ //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
