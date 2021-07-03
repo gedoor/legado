@@ -1,192 +1,33 @@
-package io.legado.app.model.analyzeRule
+0. 新增专门用于切分各种规则的类，分解完所有规则后才切片，其余操作都只改变变量指向规则字符串中的位置。暂时只用于处理三大规则的“&&”、“||”，“%%”、“@”切分，以后将扩展到全部解析规则。
 
-import androidx.annotation.Keep
-import com.jayway.jsonpath.JsonPath
-import com.jayway.jsonpath.ReadContext
-import java.util.*
+ 改进jsonPath,jsoup,xpath中的规则切分方法，允许查询规则的正则或字符串中存在“&&”，“||”，“%%”，“@”而不切错。
 
-@Suppress("RegExpRedundantEscape")
-@Keep
-class AnalyzeByJSonPath(json: Any) {
+/**
+* 改进解析方法
+* 解决阅读”&&“、”||“与jsonPath支持的”&&“、”||“之间的冲突
+* 解决{$.rule}形式规则可能匹配错误的问题，旧规则用正则解析内容含‘}’的json文本时，用规则中的字段去匹配这种内容时，会匹配错误.现改用平衡嵌套方法解决这个问题
+* */
 
-    companion object {
+1. 加强AnalyzeByJSoup中的索引写法
 
-        fun parse(json: Any): ReadContext {
-            return when (json) {
-                is ReadContext -> json
-                is String -> JsonPath.parse(json) //JsonPath.parse<String>(json)
-                else -> JsonPath.parse(json) //JsonPath.parse<Any>(json)
-            }
-        }
-    }
-
-    private var ctx: ReadContext = parse(json)
-
-    /**
-     * 改进解析方法
-     * 解决阅读”&&“、”||“与jsonPath支持的”&&“、”||“之间的冲突
-     * 解决{$.rule}形式规则可能匹配错误的问题，旧规则正则解析内容含‘}’的json文本，用规则中的字段去匹配这种内容时，会匹配错误.现改用平衡嵌套方法解决这个问题
-     * */
-    fun getString(rule: String): String? {
-        if (rule.isEmpty()) return null
-        var result: String
-        val ruleAnalyzes = RuleAnalyzer(rule)
-        val rules = ruleAnalyzes.splitRule("&&","||")
-
-        if (rules.size == 1) {
-
-            ruleAnalyzes.reSetPos() //将pos重置为0，复用解析器
-
-            result = ruleAnalyzes.innerRule("{$."){ getString(it) } //替换所有{$.rule...}
-
-            if (result.isEmpty()) { //st为空，表明无成功替换的内嵌规则
-
-                try {
-
-                    val ob = ctx.read<Any>(rule)
-
-                    result =(if (ob is List<*>) {
-
-                        val builder = StringBuilder()
-                        for (o in ob) {
-                            builder.append(o).append("\n")
-                        }
-
-                        builder.deleteCharAt(builder.lastIndex) //删除末尾赘余换行
-
-                        builder
-
-                    } else ob).toString()
-
-                } catch (ignored: Exception) {
-                }
-
-            }
-
-            return result
-
-        } else {
-            val textList = arrayListOf<String>()
-            for (rl in rules) {
-                val temp = getString(rl)
-                if (!temp.isNullOrEmpty()) {
-                    textList.add(temp)
-                    if (ruleAnalyzes.elementsType == "||") {
-                        break
-                    }
-                }
-            }
-            return textList.joinToString("\n")
-        }
-    }
-
-    internal fun getStringList(rule: String): List<String> {
-        val result = ArrayList<String>()
-        if (rule.isEmpty()) return result
-        val ruleAnalyzes = RuleAnalyzer(rule)
-        val rules = ruleAnalyzes.splitRule("&&","||","%%")
-
-        if (rules.size == 1) {
-
-            ruleAnalyzes.reSetPos() //将pos重置为0，复用解析器
-
-            val st = ruleAnalyzes.innerRule("{$."){ getString(it) } //替换所有{$.rule...}
-
-            if (st.isEmpty()) { //st为空，表明无成功替换的内嵌规则
-
-                try {
-
-                    val obj = ctx.read<Any>(rule) //kotlin的Any型返回值不包含null ，删除赘余 ?: return result
-
-                    if (obj is List<*>) {
-
-                        for (o in obj) result.add(o.toString())
-
-                    } else result.add(obj.toString())
-
-                } catch (ignored: Exception) {
-                }
-
-            }else result.add(st)
-
-            return result
-
-        } else {
-            val results = ArrayList<List<String>>()
-            for (rl in rules) {
-                val temp = getStringList(rl)
-                if (temp.isNotEmpty()) {
-                    results.add(temp)
-                    if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
-                        break
-                    }
-                }
-            }
-            if (results.size > 0) {
-                if ("%%" == ruleAnalyzes.elementsType) {
-                    for (i in results[0].indices) {
-                        for (temp in results) {
-                            if (i < temp.size) {
-                                result.add(temp[i])
-                            }
-                        }
-                    }
-                } else {
-                    for (temp in results) {
-                        result.addAll(temp)
-                    }
-                }
-            }
-            return result
-        }
-    }
-
-    internal fun getObject(rule: String): Any {
-        return ctx.read(rule)
-    }
-
-    internal fun getList(rule: String): ArrayList<Any>? {
-        val result = ArrayList<Any>()
-        if (rule.isEmpty()) return result
-        val ruleAnalyzes = RuleAnalyzer(rule)
-        val rules = ruleAnalyzes.splitRule("&&","||","%%")
-        if (rules.size == 1) {
-            ctx.let {
-                try {
-                    return it.read<ArrayList<Any>>(rules[0])
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-            return null
-        } else {
-            val results = ArrayList<ArrayList<*>>()
-            for (rl in rules) {
-                val temp = getList(rl)
-                if (temp != null && temp.isNotEmpty()) {
-                    results.add(temp)
-                    if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
-                        break
-                    }
-                }
-            }
-            if (results.size > 0) {
-                if ("%%" == ruleAnalyzes.elementsType) {
-                    for (i in 0 until results[0].size) {
-                        for (temp in results) {
-                            if (i < temp.size) {
-                                temp[i]?.let { result.add(it) }
-                            }
-                        }
-                    }
-                } else {
-                    for (temp in results) {
-                        result.addAll(temp)
-                    }
-                }
-            }
-        }
-        return result
-    }
-
-}
+/**
+* 1.支持阅读原有写法，':'分隔索引，!或.表示筛选方式，索引可为负数
+*
+* 例如 tag.div.-1:10:2 或 tag.div!0:3
+*
+* 2. 支持与jsonPath类似的[]索引写法
+*
+* 格式形如 [it,it，。。。] 或 [!it,it，。。。] 其中[!开头表示筛选方式为排除，it为单个索引或区间。
+*
+* 区间格式为 start:end 或 start:end:step，其中start为0可省略，end为-1可省略。
+*
+* 索引，区间两端及间隔都支持负数
+*
+* 例如 tag.div[-1, 3:-2:-10, 2]
+*
+* 特殊用法 tag.div[-1:0] 可在任意地方让列表反向
+*
+* */
+     
+ -------------------
+ 已测试过各种“&&”、“||”，“%%”切分的规则及两者索引写法，没发现大问题，坤飞大大可以再测试看看
