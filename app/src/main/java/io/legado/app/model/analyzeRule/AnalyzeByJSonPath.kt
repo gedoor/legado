@@ -25,7 +25,7 @@ class AnalyzeByJSonPath(json: Any) {
     /**
      * 改进解析方法
      * 解决阅读”&&“、”||“与jsonPath支持的”&&“、”||“之间的冲突
-     * 解决{$.rule}形式规则可能匹配错误的问题，旧规则正则解析内容含‘}’的json文本，用规则中的字段去匹配这种内容时，会匹配错误.现改用平衡嵌套方法解决这个问题
+     * 解决{$.rule}形式规则可能匹配错误的问题，旧规则用正则解析内容含‘}’的json文本时，用规则中的字段去匹配这种内容时，会匹配错误.现改用平衡嵌套方法解决这个问题
      * */
     fun getString(rule: String): String? {
         if (rule.isEmpty()) return null

@@ -184,108 +184,113 @@ class AnalyzeByJSoup(doc: Any) {
     }
 
     /**
-     * '.'开头表示选择元素,或'!'开头排除那些元素。两者都支持以索引列表按顺序指定元素列表
-     * ':'分隔不同索引或区间
-     * 区间格式为 start~end+step，其中start为0可省略，end为-1可省略。
+     * 1.支持阅读原有写法，':'分隔索引，!或.表示筛选方式，索引可为负数
+     *
+     * 例如 tag.div.-1:10:2 或 tag.div!0:3
+     *
+     * 2. 支持与jsonPath类似的[]索引写法
+     *
+     * 格式形如 [it,it，。。。] 或 [!it,it，。。。] 其中[!开头表示筛选方式为排除，it为单个索引或区间。
+     *
+     * 区间格式为 start:end 或 start:end:step，其中start为0可省略，end为-1可省略。
+     *
      * 索引，区间两端及间隔都支持负数
-     * 例如 tag.div.-1:3~-2+-10:2
-     * 特殊用法 tag.div.-1~0 可在任意地方让列表反向
+     *
+     * 例如 tag.div[-1, 3:-2:-10, 2]
+     *
+     * 特殊用法 tag.div[-1:0] 可在任意地方让列表反向
+     *
      * */
+
     fun findIndexSet( rule:String ): IndexSet {
 
         val indexSet = IndexSet()
-
         val rus = rule.trim{ it <= ' '}
 
-        var last = rus.length
-        var step = 0 //区间步长，为0表示没设置区间
-        var curInt: Int //当前数字
-        var end = 0 //暂存区间结束数字
-
-        var range = false //true表示当前在区间开头,false表示当前在区间结尾
+        var len = rus.length
+        var curInt: Int? //当前数字
         var curMinus = false //当前数字是否为负
-        var curEndMinus = false //当前区间右端数字是否为负
-        var curStepMinus = false //当前区间间隔数字是否为负
-
+        val curList = mutableListOf<Int?>() //当前数字区间
         var l = "" //暂存数字字符串
 
-        while (last --> 1 ){ //逆向遍历,至少有两位前置字符,如 p.
+        val head = rus[rus.length-1] == ']' //是否为常规索引写法
 
-            val rl = rus[last]
-            if(rl == ' ' )continue //跳过空格
-            if( rl in '0'..'9') l+= rl //将数值累接入临时字串中，遇到分界符才取出
-            else if(rl == '-') curMinus = true
-            else if( rl in arrayOf('+','~','!','.',':')) { //分界符号 '+','~','!','.',':'
+        if(head){ //常规索引写法[index...]
 
-                when ( rl ) {
+            len-- //跳过尾部']'
 
-                    '+' ->{
-                        curStepMinus = curMinus
-                        step = l.toInt() //区间间隔数
-                    }
+            while (len-- > 0) { //逆向遍历,至少有一位前置字符,如 [
 
-                    '~' -> {
-                        range = true
-                        curEndMinus = curMinus
+                var rl = rus[len]
+                if (rl == ' ') continue //跳过空格
 
-                        if (l.isEmpty()) {
-                            end = -1 //省略区间右端，设置为-1
-                            continue
-                        } else end = l.toInt()
-                    }
+                if (rl in '0'..'9') l += rl //将数值累接入临时字串中，遇到分界符才取出
+                else if (rl == '-') curMinus = true
+                else {
 
-                    else -> {
+                    curInt = if (l.isEmpty()) null else if (curMinus) -l.toInt() else l.toInt() //当前数字
 
-                        curInt =  if(l.isEmpty()) 0 /* 省略区间左端，设置为0 */ else if(curMinus) - l.toInt() else l.toInt() //区间左端数,省略则为最左边
+                    when (rl) {
 
-                        indexSet.indexs.add( //压入以下值，为保证查找顺序，区间和单个索引都添加到同一集合
+                        ':' -> curList.add(curInt) //区间右端或区间间隔
 
-                            if ( range ) {
+                        else -> {
 
-                                range = false //重置
+                            indexSet.indexs.add( //压入以下值，为保证查找顺序，区间和单个索引都添加到同一集合
 
-                                if (curEndMinus) {
-                                    end = -end
-                                    curEndMinus = false //重置
-                                }
+                                if(curList.isEmpty()) curInt!! //区间为空，表明当前是单个索引，单个索引不能空
 
-                                //没设置间隔时，间隔为1。将区间的三项数据压入，在获取到元素数量后再计算负数索引，并展开区间
-                                if( step == 0 ) Triple(curInt, end, 1)
+                                else Triple(curInt, curList.last(), if(curList.size == 2) curList.first() else 1) //否则为区间，列表最后压入的是区间右端，若列表有两位则最先压入了间隔
 
-                                else {
+                            )
 
-                                    if (curStepMinus) {
-                                        step = -step
-                                        curStepMinus = false //重置
-                                    }
+                            if(rl == '!'){
+                                indexSet.split='!'
+                                do{ rl = rus[--len] } while (len > 0 && rl == ' ')//跳过所有空格
+                            }
 
-                                    val stepx = step
-                                    step = 0 //重置
+                            if(rl == '[') return indexSet.apply {
+                                beforeRule = rus.substring(0, len)
+                            } //遇到索引边界，返回结果
 
-                                    //将区间的三项数据压入，在获取到元素数量后再计算负数索引，并展开区间
-                                    Triple(curInt, end, stepx)
+                            if(rl != ',') break //非索引结构，跳出
 
-                                }
-
-                            }else curInt //压入单个索引，在获取到元素数量后再计算负数索引
-
-                        )
-
-                        if( rl == '!' || rl == '.' ) return indexSet.apply{
-                            split = rl
-                            beforeRule = rus.substring(0, last)
                         }
                     }
+
+                    l = "" //清空
+                    curMinus = false //重置
                 }
+            }
+        } else while (len --> 1) { //阅读原本写法，逆向遍历,至少两位前置字符,如 p.
+
+            val rl = rus[len]
+            if (rl == ' ') continue //跳过空格
+
+            if (rl in '0'..'9') l += rl //将数值累接入临时字串中，遇到分界符才取出
+            else if (rl == '-') curMinus = true
+            else {
+
+                if(rl == '!'  || rl == '.' || rl == ':') { //分隔符或起始符
+
+                    indexSet.indexDefault.add(if (curMinus) -l.toInt() else l.toInt()) // 当前数字追加到列表
+
+                    if (rl != ':') return indexSet.apply { //rl == '!'  || rl == '.'
+                        split = rl
+                        beforeRule = rus.substring(0, len)
+                    }
+
+                }else break //非索引结构，跳出循环
+
                 l = "" //清空
                 curMinus = false //重置
             }
 
-            else  break
-
         }
 
-        return indexSet.apply{ beforeRule = rus } //非索引格式
+        return indexSet.apply{
+            split = ' '
+            beforeRule = rus } //非索引格式
     }
 
     /**
@@ -321,7 +326,7 @@ class AnalyzeByJSoup(doc: Any) {
 
             for (pcInt in indexSet) elements[pcInt] = null
 
-            elements.removeAll(listOf(null)) //测试过，这样就能把全部null元素删除
+            elements.removeAll(listOf(null)) //测试过，这样就行
 
         }else if(filterType == '.'){ //选择
 
@@ -412,38 +417,46 @@ class AnalyzeByJSoup(doc: Any) {
         return textS
     }
 
-    data class IndexSet(var split:Char = ' ',
+    data class IndexSet(var split:Char = '.',
                         var beforeRule:String = "",
+                        val indexDefault:MutableList<Int> = mutableListOf(),
                         val indexs:MutableList<Any> = mutableListOf()){
 
         fun getIndexs(len:Int): MutableSet<Int> {
 
             val indexSet = mutableSetOf<Int>()
 
-            val lastIndexs = indexs.size - 1
+            val lastIndexs = (indexDefault.size - 1).takeIf { it !=-1 } ?: indexs.size -1
 
-            for (ix in lastIndexs downTo 0 ){ //逆向遍历，还原顺序
+
+            if(indexs.isEmpty())for (ix in lastIndexs downTo 0 ){ //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
+
+                    val it = indexDefault[ix]
+                    if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
+                    else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
+
+            }else for (ix in lastIndexs downTo 0 ){ //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
                 if(indexs[ix] is Triple<*, *, *>){ //区间
 
-                    var (start, end, step) = indexs[ix] as Triple<Int, Int, Int> //还原储存时的类型
+                    val (startx, endx, stepx) = indexs[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
 
-                    if (start >= 0) {
-                        if (start >= len) start = len - 1 //右端越界，设置为最大索引
-                    } else start = if (-start <= len) len + start /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
+                    val start = if (startx == null)  0 //左端省略表示0
+                    else if (startx >= 0) if (startx < len) startx else len - 1 //右端越界，设置为最大索引
+                    else if (-startx <= len) len + startx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
 
-                    if (end >= 0) {
-                        if (end >= len) end = len - 1 //右端越界，设置为最大索引
-                    } else end = if (-end <= len) len + end /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
+                    val end = if (endx == null)  len - 1 //右端省略表示 len - 1
+                    else if (endx >= 0) if (endx < len) endx else len - 1 //右端越界，设置为最大索引
+                    else if (-endx <= len) len + endx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
 
-                    if (start == end || step >= len) { //两端相同，区间里只有一个数。或间隔过大，区间实际上仅有首位
+                    if (start == end || stepx >= len) { //两端相同，区间里只有一个数。或间隔过大，区间实际上仅有首位
 
-                        indexSet.add(start)
+                        indexSet.add(stepx)
                         continue
 
                     }
 
-                    step = if (step > 0) step else if (-step < len) step + len else 1 //最小正数间隔为1
+                    val step = if (stepx > 0) stepx else if (-stepx < len) stepx + len else 1 //最小正数间隔为1
 
                     //将区间展开到集合中,允许列表反向。
                     indexSet.addAll(if (end > start) start..end step step else start downTo end step step)
