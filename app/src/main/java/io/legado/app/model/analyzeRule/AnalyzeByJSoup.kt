@@ -451,7 +451,7 @@ class AnalyzeByJSoup(doc: Any) {
 
                     if (start == end || stepx >= len) { //两端相同，区间里只有一个数。或间隔过大，区间实际上仅有首位
 
-                        indexSet.add(stepx)
+                        indexSet.add(start)
                         continue
 
                     }
