@@ -244,8 +244,6 @@ class AnalyzeByJSoup(doc: Any) {
 
                             )
 
-                            curList.clear() //重置
-
                             if(rl == '!'){
                                 indexSet.split='!'
                                 do{ rl = rus[--len] } while (len > 0 && rl == ' ')//跳过所有空格
@@ -256,6 +254,7 @@ class AnalyzeByJSoup(doc: Any) {
                             } //遇到索引边界，返回结果
 
                             if(rl != ',') break //非索引结构，跳出
+                            curList.clear() //重置
 
                         }
                     }
