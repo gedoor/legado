@@ -130,17 +130,15 @@ class RuleAnalyzer(data: String) {
      */
     private fun findToAny(vararg seq:Char): Int {
 
-        val start = pos //声明新变量记录临时起始位置，不更改类本身的起始位置
+        var pos = pos //声明新变量记录匹配位置，不更改类本身的位置
 
-        while (!isEmpty) {
+        while (pos != queue.length) {
 
             for (s in seq) if(queue[pos] == s) return pos //匹配则返回位置
 
             pos++ //逐个试探
 
         }
-
-        pos = start //匹配失败，位置回退
 
         return -1
     }
