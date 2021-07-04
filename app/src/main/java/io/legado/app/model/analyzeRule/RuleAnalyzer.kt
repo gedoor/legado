@@ -98,9 +98,9 @@ class RuleAnalyzer(data: String) {
     }
 
     /**
-     * 从剩余字串中拉出一个字符串，直到且包括匹配序列（匹配参数列表中一项即为匹配），或剩余字串用完。
+     * 从剩余字串中拉出一个字符串，直到但不包括匹配序列（匹配参数列表中一项即为匹配），或剩余字串用完。
      * @param seq 匹配字符串序列
-     * @return 成功返回true并推移pos，失败返回fasle而不推移pos
+     * @return 成功返回true并设置间隔，失败则直接返回fasle
      */
     fun consumeToAny(vararg seq:String): Boolean {
 
@@ -126,7 +126,7 @@ class RuleAnalyzer(data: String) {
     /**
      * 从剩余字串中拉出一个字符串，直到但不包括匹配序列（匹配参数列表中一项即为匹配），或剩余字串用完。
      * @param seq 匹配字符序列
-     * @return 匹配到的位置
+     * @return 返回匹配位置
      */
     private fun findToAny(vararg seq:Char): Int {
 
