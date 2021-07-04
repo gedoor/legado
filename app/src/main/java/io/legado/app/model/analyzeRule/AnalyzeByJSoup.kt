@@ -219,7 +219,7 @@ class AnalyzeByJSoup(doc: Any) {
 
             len-- //跳过尾部']'
 
-            while (len-- > 0) { //逆向遍历,至少有一位前置字符,如 [
+            while (len-- >= 0) { //逆向遍历,可以无前置规则
 
                 var rl = rus[len]
                 if (rl == ' ') continue //跳过空格
@@ -265,7 +265,7 @@ class AnalyzeByJSoup(doc: Any) {
                     curMinus = false //重置
                 }
             }
-        } else while (len --> 0) { //阅读原本写法，逆向遍历,至少两位前置字符,如 .
+        } else while (len-- >= 0) { //阅读原本写法，逆向遍历,可以无前置规则
 
             val rl = rus[len]
             if (rl == ' ') continue //跳过空格
