@@ -213,7 +213,7 @@ class AnalyzeByJSoup(doc: Any) {
         val curList = mutableListOf<Int?>() //当前数字区间
         var l = "" //暂存数字字符串
 
-        val head = rus[rus.length-1] == ']' //是否为常规索引写法
+        val head = rus.last() == ']' //是否为常规索引写法
 
         if(head){ //常规索引写法[index...]
 
@@ -236,7 +236,7 @@ class AnalyzeByJSoup(doc: Any) {
 
                         else -> {
 
-                            //为保证查找顺序，区间和单个索引都添加到同一集合 
+                            //为保证查找顺序，区间和单个索引都添加到同一集合
                             if(curList.isEmpty())indexSet.indexs.add(curInt!!)
                             else{
 
@@ -265,7 +265,7 @@ class AnalyzeByJSoup(doc: Any) {
                     curMinus = false //重置
                 }
             }
-        } else while (len --> 1) { //阅读原本写法，逆向遍历,至少两位前置字符,如 p.
+        } else while (len --> 0) { //阅读原本写法，逆向遍历,至少两位前置字符,如 .
 
             val rl = rus[len]
             if (rl == ' ') continue //跳过空格
@@ -314,8 +314,9 @@ class AnalyzeByJSoup(doc: Any) {
         val rules = ruleStr.split(".")
 
         elements.addAll(
-            when (rules[0]) {
-                "children" -> temp.children()
+            if(ruleStr.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
+            else when (rules[0]) {
+                "children" -> temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
                 "class" -> temp.getElementsByClass(rules[1])
                 "tag" -> temp.getElementsByTag(rules[1])
                 "id" -> Collector.collect(Evaluator.Id(rules[1]), temp)
