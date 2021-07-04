@@ -255,7 +255,7 @@ class RuleAnalyzer(data: String) {
 
     /**
      * 不用正则,不到最后不切片也不用中间变量存储,只在序列中标记当前查找字段的开头结尾,到返回时才切片,高效快速准确切割规则
-     * 解决jsonPath自带的"&&"和"||"与阅读的规则冲突,以及规则正则或字符串中包含"&&"或"||"或"%%"而导致的冲突
+     * 解决jsonPath自带的"&&"和"||"与阅读的规则冲突,以及规则正则或字符串中包含"&&"、"||"、"%%"、"@"导致的冲突
      */
     tailrec fun splitRule(vararg split: String): Array<String>{ //首段匹配,elementsType为空
 
@@ -284,7 +284,7 @@ class RuleAnalyzer(data: String) {
             return rule
         }
 
-        val rule = if(st >pos ){ //先匹配到st1pos，表明"&&","||"不在选择器中，将选择器前"&&","||"分隔的字段依次压入数组
+        val rule = if(st >pos ){ //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
 
             var rule = arrayOf(queue.substring(0, pos)) //压入分隔的首段规则到数组
 
@@ -337,7 +337,7 @@ class RuleAnalyzer(data: String) {
             return rule
         }
 
-        val rule = if(st > pos ){//先匹配到st1pos，表明"&&","||"不在选择器中，将选择器前"&&","||"分隔的字段依次压入数组
+        val rule = if(st > pos ){//先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
             var rule = rules + queue.substring(start, pos) //压入本次分隔的首段规则到数组
             pos += step //跳过分隔符
             while (consumeTo(elementsType) && pos < st) { //循环切分规则压入数组
