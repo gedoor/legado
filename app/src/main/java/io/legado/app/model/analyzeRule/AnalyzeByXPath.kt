@@ -2,7 +2,6 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
 import androidx.annotation.Keep
-import io.legado.app.utils.splitNotBlank
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -27,10 +26,10 @@ class AnalyzeByXPath(doc: Any) {
     private fun strToJXDocument(html: String): JXDocument {
         var html1 = html
         if (html1.endsWith("</td>")) {
-            html1 = String.format("<tr>%s</tr>", html1)
+            html1 = "<tr>${html1}</tr>"
         }
         if (html1.endsWith("</tr>") || html1.endsWith("</tbody>")) {
-            html1 = String.format("<table>%s</table>", html1)
+            html1 = "<table>${html1}</table>"
         }
         return JXDocument.create(html1)
     }
@@ -45,26 +44,13 @@ class AnalyzeByXPath(doc: Any) {
     }
 
     internal fun getElements(xPath: String): List<JXNode>? {
-        if (TextUtils.isEmpty(xPath)) {
-            return null
-        }
+
+        if(xPath.isEmpty()) return null
+
         val jxNodes = ArrayList<JXNode>()
-        val elementsType: String
-        val rules: Array<String>
-        when {
-            xPath.contains("&&") -> {
-                rules = xPath.splitNotBlank("&&")
-                elementsType = "&"
-            }
-            xPath.contains("%%") -> {
-                rules = xPath.splitNotBlank("%%")
-                elementsType = "%"
-            }
-            else -> {
-                rules = xPath.splitNotBlank("||")
-                elementsType = "|"
-            }
-        }
+        val ruleAnalyzes = RuleAnalyzer(xPath)
+        val rules = ruleAnalyzes.splitRule("&&","||","%%")
+
         if (rules.size == 1) {
             return getResult(rules[0])
         } else {
@@ -73,13 +59,13 @@ class AnalyzeByXPath(doc: Any) {
                 val temp = getElements(rl)
                 if (temp != null && temp.isNotEmpty()) {
                     results.add(temp)
-                    if (temp.isNotEmpty() && elementsType == "|") {
+                    if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
                         break
                     }
                 }
             }
             if (results.size > 0) {
-                if ("%" == elementsType) {
+                if ("%%" == ruleAnalyzes.elementsType) {
                     for (i in results[0].indices) {
                         for (temp in results) {
                             if (i < temp.size) {
@@ -98,23 +84,11 @@ class AnalyzeByXPath(doc: Any) {
     }
 
     internal fun getStringList(xPath: String): List<String> {
+
         val result = ArrayList<String>()
-        val elementsType: String
-        val rules: Array<String>
-        when {
-            xPath.contains("&&") -> {
-                rules = xPath.splitNotBlank("&&")
-                elementsType = "&"
-            }
-            xPath.contains("%%") -> {
-                rules = xPath.splitNotBlank("%%")
-                elementsType = "%"
-            }
-            else -> {
-                rules = xPath.splitNotBlank("||")
-                elementsType = "|"
-            }
-        }
+        val ruleAnalyzes = RuleAnalyzer(xPath)
+        val rules = ruleAnalyzes.splitRule("&&","||","%%")
+
         if (rules.size == 1) {
             getResult(xPath)?.map {
                 result.add(it.asString())
@@ -126,13 +100,13 @@ class AnalyzeByXPath(doc: Any) {
                 val temp = getStringList(rl)
                 if (temp.isNotEmpty()) {
                     results.add(temp)
-                    if (temp.isNotEmpty() && elementsType == "|") {
+                    if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
                         break
                     }
                 }
             }
             if (results.size > 0) {
-                if ("%" == elementsType) {
+                if ("%%" == ruleAnalyzes.elementsType) {
                     for (i in results[0].indices) {
                         for (temp in results) {
                             if (i < temp.size) {
@@ -151,15 +125,8 @@ class AnalyzeByXPath(doc: Any) {
     }
 
     fun getString(rule: String): String? {
-        val rules: Array<String>
-        val elementsType: String
-        if (rule.contains("&&")) {
-            rules = rule.splitNotBlank("&&")
-            elementsType = "&"
-        } else {
-            rules = rule.splitNotBlank("||")
-            elementsType = "|"
-        }
+        val ruleAnalyzes = RuleAnalyzer(rule)
+        val rules = ruleAnalyzes.splitRule("&&","||")
         if (rules.size == 1) {
             getResult(rule)?.let {
                 return TextUtils.join("\n", it)
@@ -171,7 +138,7 @@ class AnalyzeByXPath(doc: Any) {
                 val temp = getString(rl)
                 if (!temp.isNullOrEmpty()) {
                     textList.add(temp)
-                    if (elementsType == "|") {
+                    if (ruleAnalyzes.elementsType == "||") {
                         break
                     }
                 }
