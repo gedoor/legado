@@ -83,7 +83,7 @@ class RuleAnalyzer(data: String) {
 
     /**
      * 从剩余字串中拉出一个字符串，直到但不包括匹配序列，或剩余字串用完。
-     * @param seq ：分隔字符 **区分大小写**
+     * @param seq 分隔字符 **区分大小写**
      * @return 是否找到相应字段。
      */
     fun consumeTo(seq: String,setStartPos:Boolean = true): Boolean {
@@ -130,13 +130,17 @@ class RuleAnalyzer(data: String) {
      */
     private fun findToAny(vararg seq:Char): Int {
 
-        for (s in seq){
+        val start = pos //声明新变量记录临时起始位置，不更改类本身的起始位置
 
-            val offset = queue.indexOf(s, pos)
+        while (!isEmpty) {
 
-            if (offset != -1) return offset //只要匹配到，就返回相应位置
+            for (s in seq) if(queue[pos] == s) return pos //匹配则返回位置
+
+            pos++ //逐个试探
 
         }
+
+        pos = start //匹配失败，位置回退
 
         return -1
     }
@@ -265,7 +269,7 @@ class RuleAnalyzer(data: String) {
             return splitRule(arrayOf()) //仅一个分隔字串时，直接二段解析更快
         }else if (!consumeToAny(* split)) return arrayOf(queue) //未找到分隔符
 
-        val st = findToAny( '(','[' ) //查找筛选器
+        val st = findToAny( '[','(' ) //查找筛选器
 
         if(st == -1) {
 
@@ -324,7 +328,7 @@ class RuleAnalyzer(data: String) {
 
         if (!consumeTo(elementsType,false)) return rules + queue.substring(start) //此处consumeTo(...)开始位置不是规则的开始位置,start沿用上次设置
 
-        val st = findToAny( '(','[' ) //查找筛选器
+        val st = findToAny( '[','(' ) //查找筛选器
 
         if(st == -1) {
             var rule = rules + queue.substring(start, pos) //压入本次分隔的首段规则到数组
