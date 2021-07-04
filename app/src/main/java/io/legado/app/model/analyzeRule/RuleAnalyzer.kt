@@ -8,7 +8,6 @@ class RuleAnalyzer(data: String) {
     private var pos = 0 //处理到的位置
 
     private var start = 0 //每次处理字段的开始
-    private var end:Int = queue.length //每次处理字段的终点
     private var step:Int = 0 //分割字符的长度
 
     var elementsType = ""
@@ -29,7 +28,7 @@ class RuleAnalyzer(data: String) {
     }
 
     //剩余字串
-    fun remainingString(): String {
+    private fun remainingString(): String {
         start = pos
         pos = queue.length
         return queue.substring(start)
@@ -83,68 +82,72 @@ class RuleAnalyzer(data: String) {
     }
 
     /**
-     * 测试下个字符是否与序列中相应位置的字符相等。
-     * @param seq ：被检查的字符列表
-     * @return 相等就为 true ，不相等则为 false
-     */
-    fun matchesAny(vararg seq: Char): Boolean {
-        if (isEmpty) return false
-        for (c in seq) {
-            if (queue[pos] == c) {
-                return true
-            }
-        }
-        return false
-    }
-
-    /**
-     * 测试下个字符（串）是否与参数列表里的序列存在匹配。 不区分大小写。
-     * @param seq ：被不区分大小写检查的字符串列表
-     * @return 只要匹配就为 true ，没有匹配则为 false
-     */
-    fun matchesAny(vararg seq: String): Boolean {
-        for (s in seq) {
-            if (matches(s)) {
-                step = s.length
-                return true
-            }
-        }
-        return false
-    }
-
-    /**
      * 从剩余字串中拉出一个字符串，直到但不包括匹配序列，或剩余字串用完。
      * @param seq ：分隔字符 **区分大小写**
      * @return 是否找到相应字段。
      */
     fun consumeTo(seq: String,setStartPos:Boolean = true): Boolean {
+
         if(setStartPos)start = pos //将处理到的位置设置为规则起点
         val offset = queue.indexOf(seq, pos)
         return if (offset != -1) {
             pos = offset
             true
         } else false
+
+    }
+
+    /**
+     * 从剩余字串中拉出一个字符串，直到且包括匹配序列（匹配参数列表中一项即为匹配），或剩余字串用完。
+     * @param seq 匹配字符串序列
+     * @return 成功返回true并推移pos，失败返回fasle而不推移pos
+     */
+    fun consumeToAny(vararg seq:String): Boolean {
+
+        start = pos
+
+        while (!isEmpty) {
+
+            for (s in seq) {
+                if (matches(s)) {
+                    step = s.length //间隔数
+                    return true //匹配就返回 true
+                }
+            }
+
+            pos++ //逐个试探
+        }
+
+        pos = start //匹配失败，位置回退
+
+        return false
     }
 
     /**
      * 从剩余字串中拉出一个字符串，直到但不包括匹配序列（匹配参数列表中一项即为匹配），或剩余字串用完。
-     * @param f 消费函数，返回true表示消费，fasle表示不消费
-     * @param setStartPos 设置开始消费位置
-     * @return 消耗的字符串
+     * @param seq 匹配字符序列
+     * @return 匹配到的位置
      */
-    fun consumeToAny(setStartPos:Boolean = true, f:()->Boolean,): Boolean {
-        if(setStartPos)start = pos //将处理到的位置设置为规则起点
-        while (!isEmpty &&  !f()) {
-            pos++
+    private fun findToAny(vararg seq:Char): Int {
+
+        for (s in seq){
+
+            val offset = queue.indexOf(s, pos)
+
+            if (offset != -1) return offset //只要匹配到，就返回相应位置
+
         }
-        return !isEmpty
+
+        return -1
     }
 
     //其中js只要符合语法，就不用避开任何阅读关键字，自由发挥
     fun chompJsBalanced(f: ((Char) -> Boolean?) = {
-        if ( it == '{' )true //开始嵌套一层
-        else if ( it == '}') false //闭合一层嵌套
-        else null
+        when (it) {
+            '{' -> true //开始嵌套一层
+            '}' -> false //闭合一层嵌套
+            else -> null
+        }
     } ): Boolean {
         start = pos
         var depth = 0 //嵌套深度
@@ -178,20 +181,20 @@ class RuleAnalyzer(data: String) {
                 }
                 else if(regex && c == '/') { //正则的终点或[]平衡
 
-                    if(c == '/')regex = false//匹配正则终点
+                    when (c) {
+                        '/' -> regex = false//匹配正则终点
 
-                    //为了保证当open为（ 且 close 为 ）时，正则中[(]或[)]的合法性。故对[]这对在任何规则中都平衡的成对符号做匹配。
-                    // 注：正则里[(]、[)]、[{]、[}]都是合法的，所以只有[]必须平衡。
-
-                    else if ( c == '[' )bracketsDepth++ //开始嵌套一层[]
-                    else if ( c== ']') bracketsDepth-- //闭合一层嵌套[]
+                        //为了保证当open为（ 且 close 为 ）时，正则中[(]或[)]的合法性。故对[]这对在任何规则中都平衡的成对符号做匹配。
+                        // 注：正则里[(]、[)]、[{]、[}]都是合法的，所以只有[]必须平衡。
+                        '[' -> bracketsDepth++ //开始嵌套一层[]
+                        ']' -> bracketsDepth-- //闭合一层嵌套[]
+                    }
 
                 }
 
                 if (commits || commit || regex || inSingleQuote  || inDoubleQuote || inOtherQuote) continue //语法单元未匹配结束，直接进入下个循环
 
-                val fn = f(c)
-                if (fn == null) continue
+                val fn = f(c) ?: continue
                 if (fn) depth++ else depth-- //嵌套或者闭合
 
             }else { //转义字符
@@ -233,8 +236,7 @@ class RuleAnalyzer(data: String) {
                 if ( c == open )depth++ //开始嵌套一层
                 else if ( c== close) depth-- //闭合一层嵌套
                 else if(depth == 0 && f != null) { //处于默认嵌套中的非默认字符不需要平衡，仅depth为0时默认嵌套全部闭合，此字符才进行嵌套
-                    val fn = f(c)
-                    if (fn == null) continue
+                    val fn = f(c) ?: continue
                     if (fn) otherDepth++ else otherDepth--
                 }
 
@@ -257,24 +259,28 @@ class RuleAnalyzer(data: String) {
      */
     tailrec fun splitRule(vararg split: String): Array<String>{ //首段匹配,elementsType为空
 
-        if (!consumeToAny { matchesAny(* split) }) return arrayOf(queue) //未找到分隔符
+        if(split.size == 1) {
+            elementsType = split[0] //设置分割字串
+            step = elementsType.length //设置分隔符长度
+            return splitRule(arrayOf()) //仅一个分隔字串时，直接二段解析更快
+        }else if (!consumeToAny(* split)) return arrayOf(queue) //未找到分隔符
 
-        end = pos
-        val st = if( consumeToAny(false){ matchesAny( '(','[' ) } )pos else -1 //查找筛选器
-        pos = end
+        val st = findToAny( '(','[' ) //查找筛选器
 
         if(st == -1) {
 
             var rule = arrayOf(queue.substring(0, pos)) //压入分隔的首段规则到数组
 
+            elementsType = queue.substring(pos, pos + step) //设置组合类型
             pos += step //跳过分隔符
-            elementsType = queue.substring(pos - step, pos) //设置组合类型
 
-            while (consumeToAny { matchesAny(* split) }) { //循环切分规则压入数组
+            while (consumeToAny(* split)) { //循环切分规则压入数组
                 rule += queue.substring(start, pos)
                 pos += step //跳过分隔符
             }
-            rule+= queue.substring(start) //将剩余字段压入数组末尾
+
+            rule += queue.substring(pos) //将剩余字段压入数组末尾
+
             return rule
         }
 
@@ -282,14 +288,16 @@ class RuleAnalyzer(data: String) {
 
             var rule = arrayOf(queue.substring(0, pos)) //压入分隔的首段规则到数组
 
+            elementsType = queue.substring(pos, pos + step) //设置组合类型
             pos += step //跳过分隔符
-            elementsType = queue.substring(pos - step, pos) //设置组合类型
 
-            while (pos < st && consumeToAny { matchesAny( * split ) }) {
-                rule += queue.substring(start, pos) //循环切分规则压入数组
+            while (consumeToAny( * split ) && pos < st ) { //循环切分规则压入数组
+                rule += queue.substring(start, pos)
                 pos += step //跳过分隔符
             }
+
             rule
+
         }else null
 
         pos = st //位置推移到筛选器处
@@ -316,9 +324,7 @@ class RuleAnalyzer(data: String) {
 
         if (!consumeTo(elementsType,false)) return rules + queue.substring(start) //此处consumeTo(...)开始位置不是规则的开始位置,start沿用上次设置
 
-        end = pos
-        val st = if( consumeToAny(false){ matchesAny( '(','[' ) } )pos else -1 //查找筛选器
-        pos = end
+        val st = findToAny( '(','[' ) //查找筛选器
 
         if(st == -1) {
             var rule = rules + queue.substring(start, pos) //压入本次分隔的首段规则到数组
@@ -327,14 +333,14 @@ class RuleAnalyzer(data: String) {
                 rule += queue.substring(start, pos)
                 pos += step //跳过分隔符
             }
-            rule += queue.substring(start) //将剩余字段压入数组末尾
+            rule += queue.substring(pos) //将剩余字段压入数组末尾
             return rule
         }
 
         val rule = if(st > pos ){//先匹配到st1pos，表明"&&","||"不在选择器中，将选择器前"&&","||"分隔的字段依次压入数组
             var rule = rules + queue.substring(start, pos) //压入本次分隔的首段规则到数组
             pos += step //跳过分隔符
-            while (pos < st && consumeTo(elementsType)) { //循环切分规则压入数组
+            while (consumeTo(elementsType) && pos < st) { //循环切分规则压入数组
                 rule += queue.substring(start, pos)
                 pos += step //跳过分隔符
             }
