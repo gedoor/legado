@@ -16,7 +16,7 @@ class RuleAnalyzer(data: String) {
 
     //当前平衡字段
     fun currBalancedString( stepStart:Int = 1 , stepEnd:Int = 1): String { //stepStart平衡字符的起始分隔字串长度，stepEnd平衡字符的结束分隔字串长度
-        return queue.substring(start+stepStart,pos-stepEnd) //当前平衡字段
+        return queue.substring(startX+stepStart,pos-stepEnd) //当前平衡字段
     }
 
 
@@ -227,6 +227,7 @@ class RuleAnalyzer(data: String) {
         } while (depth > 0 || otherDepth > 0) //拉出一个平衡字串
 
         return if(depth > 0 || otherDepth > 0) false else {
+            startX = this.pos //内嵌规则起始
             this.pos = pos //同步位置
             true
         }
@@ -429,7 +430,6 @@ class RuleAnalyzer(data: String) {
             if (chompCodeBalanced()) {
                 val frv= fr(currBalancedString(startStep,endStep))
                 if(frv != null) {
-
                     st.append(queue.substring(start,posPre)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     continue //获取内容成功，继续选择下个内嵌规则
 
