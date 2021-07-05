@@ -1,12 +1,11 @@
 package io.legado.app.model.analyzeRule
 
 //通用的规则切分处理
-
 class RuleAnalyzer(data: String) {
 
     private var queue: String = data //被处理字符串
     private var pos = 0 //处理到的位置
-    private var rule  = arrayOf<String>()
+    private var rule  = arrayOf<String>() //规则列表
 
     private var start = 0 //每次处理字段的开始
     private var startX = 0 //规则的开始
