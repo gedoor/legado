@@ -111,8 +111,8 @@ class RuleAnalyzer(data: String) {
             for (s in seq) {
                 if (matches(s)) {
                     step = s.length //间隔数
+                    start = this.pos //匹配成功, 设置规则下次起始位置
                     this.pos = pos //匹配成功, 同步处理位置到类
-                    start = pos //匹配成功, 设置规则下次起始位置
                     return true //匹配就返回 true
                 }
             }
@@ -378,7 +378,7 @@ class RuleAnalyzer(data: String) {
         val st = StringBuilder()
 
         while (!isEmpty && consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
-
+            val posPre = pos //记录上次结束位置
             if (chompRuleBalanced {//拉出一个以[]为默认嵌套、以{}为补充嵌套的平衡字段
                         when (it) {
                             '{' -> true
@@ -389,7 +389,7 @@ class RuleAnalyzer(data: String) {
                 val frv= fr(currBalancedString(startStep,endStep))
                 if(frv != null) {
 
-                    st.append(queue.substring(start1,start)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                    st.append(queue.substring(start,posPre)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     continue //获取内容成功，继续选择下个内嵌规则
 
                 }
