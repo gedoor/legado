@@ -256,6 +256,7 @@ class RuleAnalyzer(data: String) {
 
         return if(depth > 0 || otherDepth > 0) {
             pos = start //匹配失败，位置回退
+            false
         } else true
 
     }
