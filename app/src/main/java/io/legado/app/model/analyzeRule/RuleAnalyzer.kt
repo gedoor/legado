@@ -277,7 +277,7 @@ class RuleAnalyzer(data: String) {
 
         if(st == -1) {
 
-            var rule = arrayOf(queue.substring(start, pos)) //压入分隔的首段规则到数组
+            var rule = arrayOf(queue.substring(0, pos)) //压入分隔的首段规则到数组
 
             elementsType = queue.substring(pos, pos + step) //设置组合类型
             pos += step //跳过分隔符
@@ -294,7 +294,7 @@ class RuleAnalyzer(data: String) {
 
         val rule = if(st >pos ){ //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
 
-            var rule = arrayOf(queue.substring(start, pos)) //压入分隔的首段规则到数组
+            var rule = arrayOf(queue.substring(0, pos)) //压入分隔的首段规则到数组
 
             elementsType = queue.substring(pos, pos + step) //设置组合类型
             pos += step //跳过分隔符
