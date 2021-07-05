@@ -19,6 +19,7 @@
 * `head@.1@text` 与 `head@[1]@text` 与 `head@children[1]@text` 等价
 3. 添加Umd格式支持 by ag2s20150909
 4. 修复web页面按键重复监听的bug
+5. 亮度条往中间移了一点,防止误触
 
 **2021/06/29**
 * 修复html格式化bug
