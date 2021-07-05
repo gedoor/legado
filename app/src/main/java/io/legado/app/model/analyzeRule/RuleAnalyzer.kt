@@ -195,7 +195,7 @@ class RuleAnalyzer(data: String) {
     /**
      * 拉出一个代码平衡组，存在转义文本，没有实体字符，通常以{}作为模块
      */
-    fun chompCodeBalanced(open: Char = '[', close: Char = ']'): Boolean {
+    fun chompCodeBalanced(open: Char = '{', close: Char = '}'): Boolean {
 
         var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
 
@@ -214,12 +214,12 @@ class RuleAnalyzer(data: String) {
 
                 if (inSingleQuote  || inDoubleQuote) continue //语法单元未匹配结束，直接进入下个循环
 
-                if ( c == open )depth++ //开始嵌套一层
-                else if ( c== close) depth-- //闭合一层嵌套
+                if ( c == '[' )depth++ //开始嵌套一层
+                else if ( c== ']') depth-- //闭合一层嵌套
                 else if(depth == 0 ) {
                     //处于默认嵌套中的非默认字符不需要平衡，仅depth为0时默认嵌套全部闭合，此字符才进行嵌套
-                    if(c == '{')otherDepth++
-                    else if(c == '}')otherDepth--
+                    if(c == open)otherDepth++
+                    else if(c == close)otherDepth--
                 }
 
             }else pos++
