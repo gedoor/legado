@@ -104,21 +104,21 @@ class RuleAnalyzer(data: String) {
      */
     fun consumeToAny(vararg seq:String): Boolean {
 
-        start = pos
+        var pos = pos //声明新变量记录匹配位置，不更改类本身的位置
 
-        while (!isEmpty) {
+        while (pos != queue.length) {
 
             for (s in seq) {
                 if (matches(s)) {
                     step = s.length //间隔数
+                    start = this.pos //匹配成功, 设置规则下次起始位置
+                    this.pos = pos //匹配成功, 同步处理位置到类
                     return true //匹配就返回 true
                 }
             }
 
             pos++ //逐个试探
         }
-
-        pos = start //匹配失败，位置回退
 
         return false
     }
@@ -151,7 +151,7 @@ class RuleAnalyzer(data: String) {
             else -> null
         }
     } ): Boolean {
-        start = pos
+        var pos = pos //声明变量记录临时处理位置
         var depth = 0 //嵌套深度
         var bracketsDepth = 0 //[]嵌套深度
 
@@ -164,13 +164,13 @@ class RuleAnalyzer(data: String) {
 
         do {
             if (isEmpty) break
-            var c = consume()
+            var c = queue[pos++]
             if (c != '\\') { //非转义字符
                 if (c == '\'' && !commits && !commit && !regex && !inDoubleQuote && !inOtherQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
                 else if (c == '"' && !commits && !commit && !regex && !inSingleQuote && !inOtherQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
                 else if (c == '`' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote) inOtherQuote = !inOtherQuote //匹配具有语法功能的'`'
                 else if (c == '/' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote && !inOtherQuote) { //匹配注释或正则起点
-                    c = consume()
+                    c = queue[pos++]
                     when(c){
                         '/'->commit=true //匹配单行注释起点
                         '*'->commits=true //匹配多行注释起点
@@ -178,7 +178,7 @@ class RuleAnalyzer(data: String) {
                     }
                 }
                 else if(commits && c == '*') { //匹配多行注释终点
-                    c = consume()
+                    c = queue[pos++]
                     if(c == '/')commits = false
                 }
                 else if(regex && c == '/') { //正则的终点或[]平衡
@@ -200,26 +200,29 @@ class RuleAnalyzer(data: String) {
                 if (fn) depth++ else depth-- //嵌套或者闭合
 
             }else { //转义字符
-                var next = consume() //拉出被转义字符
+                var next = queue[pos++] //拉出被转义字符
                 if(commit && next == 'n') commit = false //匹配单行注释终点。当前为\,下个为n，表示换行
                 else if (!commits && !commit && next == '\\') {
-                    consume() //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据if条件"\\"字串不在注释中，则只能在字串或正则中
-                    next = consume() //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
-                    if(next == '\\')consume() //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
+                    queue[pos++] //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据if条件"\\"字串不在注释中，则只能在字串或正则中
+                    next = queue[pos++] //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
+                    if(next == '\\')queue[pos++] //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
                 }
             }
         } while (depth > 0 || bracketsDepth >0) //拉出全部符合js语法的字段
 
-        if(depth > 0 || bracketsDepth >0) start = pos
-
-        return  pos > start
+        return if(depth > 0 || bracketsDepth > 0) false else {
+            this.pos = pos //同步位置
+            true
+        }
     }
 
     /**
      * 在双重转义字串中拉出一个规则平衡组
      */
     fun chompRuleBalanced(open: Char = '[', close: Char = ']',f: ((Char) ->Boolean?)? = null ): Boolean {
-        start = pos
+
+        var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
+
         var depth = 0 //嵌套深度
         var otherDepth = 0 //其他对称符合嵌套深度
 
@@ -228,7 +231,7 @@ class RuleAnalyzer(data: String) {
 
         do {
             if (isEmpty) break
-            val c = consume()
+            val c = queue[pos++]
             if (c != ESC) { //非转义字符
                 if (c == '\'' && !inDoubleQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
                 else if (c == '"' && !inSingleQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
@@ -243,16 +246,19 @@ class RuleAnalyzer(data: String) {
                 }
 
             }else { //转义字符
-                var next = consume() //拉出被转义字符，匹配\/、\"、\'等
+                var next = queue[pos++] //拉出被转义字符，匹配\/、\"、\'等
                 if (next == ESC) {
-                    consume() //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据语法特征当前字段在字串或正则中
-                    next = consume() //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
-                    if(next == ESC)consume() //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
+                    queue[pos++] //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据语法特征当前字段在字串或正则中
+                    next = queue[pos++] //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
+                    if(next == ESC)queue[pos++] //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
                 }
             }
         } while (depth > 0 || otherDepth > 0) //拉出一个平衡字串
 
-        return !(depth > 0 || otherDepth > 0) //平衡返回false，不平衡返回true
+        return if(depth > 0 || otherDepth > 0) false else {
+            this.pos = pos //同步位置
+            true
+        }
     }
 
     /**
@@ -312,9 +318,7 @@ class RuleAnalyzer(data: String) {
 
         }  else {
 
-            val start0 = start //记录当前规则开头位置
             if(!chompRuleBalanced(queue[pos],next)) throw Error(queue.substring(0, start)+"后未平衡") //拉出一个筛选器,不平衡则报错
-            start = start0 //筛选器的开头不是本段规则开头,故恢复开头设置
             splitRule(rule) //首段已匹配,但当前段匹配未完成,调用二段匹配
 
         }
@@ -352,9 +356,7 @@ class RuleAnalyzer(data: String) {
         pos = st //位置推移到筛选器处
         val next = if(queue[pos] == '[' ) ']' else ')' //平衡组末尾字符
 
-        val start0 = start //记录当前规则开头位置
         if(!chompRuleBalanced(queue[pos],next)) throw Error(queue.substring(0, start)+"后未平衡") //拉出一个筛选器,不平衡时返回true,表示未平衡
-        start = start0 //筛选器平衡,但筛选器的开头不是当前规则开头,故恢复开头设置
 
         return splitRule(rule) //递归匹配
 
@@ -376,27 +378,24 @@ class RuleAnalyzer(data: String) {
         val st = StringBuilder()
 
         while (!isEmpty && consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
-
-            val start1 = start //记录拉取前起点
-
+            val posPre = pos //记录上次结束位置
             if (chompRuleBalanced {//拉出一个以[]为默认嵌套、以{}为补充嵌套的平衡字段
-                    when (it) {
-                        '{' -> true
-                        '}' -> false
-                        else -> null
-                    }
-                }) {
+                        when (it) {
+                            '{' -> true
+                            '}' -> false
+                            else -> null
+                        }
+                    }) {
                 val frv= fr(currBalancedString(startStep,endStep))
                 if(frv != null) {
 
-                    st.append(queue.substring(start1,start)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                    st.append(queue.substring(start,posPre)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     continue //获取内容成功，继续选择下个内嵌规则
 
                 }
             }
 
-            start = start1 //拉出字段不平衡，重置起点
-            pos = start + inner.length //拉出字段不平衡，inner只是个普通字串，规则回退到开头，并跳到此inner后继续匹配
+            pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
 
         }
 

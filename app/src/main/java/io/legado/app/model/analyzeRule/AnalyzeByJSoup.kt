@@ -237,7 +237,12 @@ class AnalyzeByJSoup(doc: Any) {
                         else -> {
 
                             //为保证查找顺序，区间和单个索引都添加到同一集合
-                            if(curList.isEmpty())indexSet.indexs.add(curInt!!)
+                            if(curList.isEmpty()) {
+
+                                if(curInt == null) break //是jsoup选择器而非索引列表，跳出
+
+                                indexSet.indexs.add(curInt)
+                            }
                             else{
 
                                 //列表最后压入的是区间右端，若列表有两位则最先压入的是间隔
