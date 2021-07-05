@@ -1,11 +1,12 @@
 package io.legado.app.model.analyzeRule
 
 //通用的规则切分处理
+
 class RuleAnalyzer(data: String) {
 
     private var queue: String = data //被处理字符串
     private var pos = 0 //处理到的位置
-    private var rule  = arrayOf<String>() //规则列表
+    private var rule  = arrayOf<String>()
 
     private var start = 0 //每次处理字段的开始
     private var startX = 0 //规则的开始
@@ -46,14 +47,6 @@ class RuleAnalyzer(data: String) {
      */
     val isEmpty: Boolean
         get() = queue.length - pos  == 0 //是否处理到最后
-
-    /**
-     * 检索并返回首字符,但pos不变
-     * @return 首字符：若为空则为 0 号字符
-     */
-    fun peek(): Char { //检索首字符
-        return if (isEmpty) 0.toChar() else queue[pos]
-    }
 
     /**
      * 消耗剩余字串中一个字符。
@@ -190,15 +183,7 @@ class RuleAnalyzer(data: String) {
                 if (fn) depth++ else depth-- //嵌套或者闭合
 
             }else pos++
-//            { //转义字符
-//                var next = queue[pos++] //拉出被转义字符
-//                if(commit && next == 'n') commit = false //匹配单行注释终点。当前为\,下个为n，表示换行
-//                else if (!commits && !commit && next == '\\') {
-//                    queue[pos++] //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据if条件"\\"字串不在注释中，则只能在字串或正则中
-//                    next = queue[pos++] //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
-//                    if(next == '\\')queue[pos++] //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
-//                }
-//            }
+
         } while (depth > 0 || bracketsDepth >0) //拉出全部符合js语法的字段
 
         return if(depth > 0 || bracketsDepth > 0) false else {
@@ -208,9 +193,9 @@ class RuleAnalyzer(data: String) {
     }
 
     /**
-     * 在双重转义字串中拉出一个规则平衡组
+     * 拉出一个代码平衡组，存在转义文本，没有实体字符，通常以{}作为模块
      */
-    fun chompRuleBalanced(open: Char = '[', close: Char = ']',f: ((Char) ->Boolean?)? = null ): Boolean {
+    fun chompCodeBalanced(open: Char = '[', close: Char = ']'): Boolean {
 
         var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
 
@@ -231,23 +216,47 @@ class RuleAnalyzer(data: String) {
 
                 if ( c == open )depth++ //开始嵌套一层
                 else if ( c== close) depth-- //闭合一层嵌套
-                else if(depth == 0 && f != null) { //处于默认嵌套中的非默认字符不需要平衡，仅depth为0时默认嵌套全部闭合，此字符才进行嵌套
-                    val fn = f(c) ?: continue
-                    if (fn) otherDepth++ else otherDepth--
+                else if(depth == 0 ) {
+                    //处于默认嵌套中的非默认字符不需要平衡，仅depth为0时默认嵌套全部闭合，此字符才进行嵌套
+                    if(c == '{')otherDepth++
+                    else if(c == '}')otherDepth--
                 }
 
             }else pos++
-//            { //转义字符
-//                var next = queue[pos++] //拉出被转义字符，匹配\/、\"、\'等
-//                if (next == ESC) {
-//                    queue[pos++] //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据语法特征当前字段在字串或正则中
-//                    next = queue[pos++] //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
-//                    if(next == ESC)queue[pos++] //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
-//                }
-//            }
+
         } while (depth > 0 || otherDepth > 0) //拉出一个平衡字串
 
         return if(depth > 0 || otherDepth > 0) false else {
+            this.pos = pos //同步位置
+            true
+        }
+    }
+
+    /**
+     * 拉出一个规则平衡组，没有转义文本，有实体字符，通常以[]作为选择器
+     */
+    fun chompRuleBalanced(open: Char = '[', close: Char = ']'): Boolean {
+
+        var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
+        var depth = 0 //嵌套深度
+        var inSingleQuote = false //单引号
+        var inDoubleQuote = false //双引号
+
+        do {
+            if (pos == queue.length) break
+            val c = queue[pos++]
+
+            if (c == '\'' && !inDoubleQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
+            else if (c == '"' && !inSingleQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
+
+            if (inSingleQuote  || inDoubleQuote) continue //语法单元未匹配结束，直接进入下个循环
+
+            if ( c == open )depth++ //开始嵌套一层
+            else if ( c== close) depth-- //闭合一层嵌套
+
+        } while (depth > 0 ) //拉出一个平衡字串
+
+        return if(depth > 0) false else {
             this.pos = pos //同步位置
             true
         }
@@ -417,13 +426,7 @@ class RuleAnalyzer(data: String) {
 
         while (!isEmpty && consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
             val posPre = pos //记录上次结束位置
-            if (chompRuleBalanced {//拉出一个以[]为默认嵌套、以{}为补充嵌套的平衡字段
-                    when (it) {
-                        '{' -> true
-                        '}' -> false
-                        else -> null
-                    }
-                }) {
+            if (chompCodeBalanced()) {
                 val frv= fr(currBalancedString(startStep,endStep))
                 if(frv != null) {
 
