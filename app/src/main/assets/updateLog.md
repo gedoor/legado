@@ -17,6 +17,8 @@
 * 特殊用法 `tag.div[-1:0]` 可在任意地方让列表反向
 2. 允许索引作为@分段后每个部分的首规则，此时相当于前面是`children`
 * `head@.1@text` 与 `head@[1]@text` 与 `head@children[1]@text` 等价
+3. 添加Umd格式支持 by ag2s20150909
+4. 修复web页面按键重复监听的bug
 
 **2021/06/29**
 * 修复html格式化bug
