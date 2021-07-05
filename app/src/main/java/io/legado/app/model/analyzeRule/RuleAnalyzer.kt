@@ -151,7 +151,7 @@ class RuleAnalyzer(data: String) {
             else -> null
         }
     } ): Boolean {
-        val pos = pos //声明变量记录临时处理位置
+        var pos = pos //声明变量记录临时处理位置
         var depth = 0 //嵌套深度
         var bracketsDepth = 0 //[]嵌套深度
 
@@ -221,7 +221,7 @@ class RuleAnalyzer(data: String) {
      */
     fun chompRuleBalanced(open: Char = '[', close: Char = ']',f: ((Char) ->Boolean?)? = null ): Boolean {
 
-        val pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
+        var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
 
         var depth = 0 //嵌套深度
         var otherDepth = 0 //其他对称符合嵌套深度
