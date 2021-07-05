@@ -151,7 +151,7 @@ class RuleAnalyzer(data: String) {
             else -> null
         }
     } ): Boolean {
-        start = pos
+        val pos = pos //声明变量记录临时处理位置
         var depth = 0 //嵌套深度
         var bracketsDepth = 0 //[]嵌套深度
 
@@ -164,13 +164,13 @@ class RuleAnalyzer(data: String) {
 
         do {
             if (isEmpty) break
-            var c = consume()
+            var c = queue[pos++]
             if (c != '\\') { //非转义字符
                 if (c == '\'' && !commits && !commit && !regex && !inDoubleQuote && !inOtherQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
                 else if (c == '"' && !commits && !commit && !regex && !inSingleQuote && !inOtherQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
                 else if (c == '`' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote) inOtherQuote = !inOtherQuote //匹配具有语法功能的'`'
                 else if (c == '/' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote && !inOtherQuote) { //匹配注释或正则起点
-                    c = consume()
+                    c = queue[pos++]
                     when(c){
                         '/'->commit=true //匹配单行注释起点
                         '*'->commits=true //匹配多行注释起点
@@ -178,7 +178,7 @@ class RuleAnalyzer(data: String) {
                     }
                 }
                 else if(commits && c == '*') { //匹配多行注释终点
-                    c = consume()
+                    c = queue[pos++]
                     if(c == '/')commits = false
                 }
                 else if(regex && c == '/') { //正则的终点或[]平衡
@@ -200,19 +200,20 @@ class RuleAnalyzer(data: String) {
                 if (fn) depth++ else depth-- //嵌套或者闭合
 
             }else { //转义字符
-                var next = consume() //拉出被转义字符
+                var next = queue[pos++] //拉出被转义字符
                 if(commit && next == 'n') commit = false //匹配单行注释终点。当前为\,下个为n，表示换行
                 else if (!commits && !commit && next == '\\') {
-                    consume() //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据if条件"\\"字串不在注释中，则只能在字串或正则中
-                    next = consume() //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
-                    if(next == '\\')consume() //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
+                    queue[pos++] //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据if条件"\\"字串不在注释中，则只能在字串或正则中
+                    next = queue[pos++] //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
+                    if(next == '\\')queue[pos++] //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
                 }
             }
         } while (depth > 0 || bracketsDepth >0) //拉出全部符合js语法的字段
 
-        if(depth > 0 || bracketsDepth >0) start = pos
-
-        return  pos > start
+        return if(depth > 0 || bracketsDepth > 0) false else {
+            this.pos = pos //同步位置
+            true
+        }
     }
 
     /**
@@ -220,7 +221,7 @@ class RuleAnalyzer(data: String) {
      */
     fun chompRuleBalanced(open: Char = '[', close: Char = ']',f: ((Char) ->Boolean?)? = null ): Boolean {
 
-        val start = pos //声明临时变量记录本次起始位置，不更改类的start
+        val pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
 
         var depth = 0 //嵌套深度
         var otherDepth = 0 //其他对称符合嵌套深度
@@ -230,7 +231,7 @@ class RuleAnalyzer(data: String) {
 
         do {
             if (isEmpty) break
-            val c = consume()
+            val c = queue[pos++]
             if (c != ESC) { //非转义字符
                 if (c == '\'' && !inDoubleQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
                 else if (c == '"' && !inSingleQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
@@ -245,20 +246,19 @@ class RuleAnalyzer(data: String) {
                 }
 
             }else { //转义字符
-                var next = consume() //拉出被转义字符，匹配\/、\"、\'等
+                var next = queue[pos++] //拉出被转义字符，匹配\/、\"、\'等
                 if (next == ESC) {
-                    consume() //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据语法特征当前字段在字串或正则中
-                    next = consume() //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
-                    if(next == ESC)consume() //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
+                    queue[pos++] //当前为\,下个为\，双重转义中"\\"表示转义字符本身，根据语法特征当前字段在字串或正则中
+                    next = queue[pos++] //拉出下个字符，因为在双重转义的字串或正则中，类似于 \\/ 这样的结构才是转义结构
+                    if(next == ESC)queue[pos++] //若为转义字符则继续拉出，因为双重转义中转义字符成对存在,即 \\\\
                 }
             }
         } while (depth > 0 || otherDepth > 0) //拉出一个平衡字串
 
-        return if(depth > 0 || otherDepth > 0) {
-            pos = start //匹配失败，位置回退
-            false
-        } else true
-
+        return if(depth > 0 || otherDepth > 0) false else {
+            this.pos = pos //同步位置
+            true
+        }
     }
 
     /**
