@@ -104,21 +104,21 @@ class RuleAnalyzer(data: String) {
      */
     fun consumeToAny(vararg seq:String): Boolean {
 
-        start = pos
+        var pos = pos //声明新变量记录匹配位置，不更改类本身的位置
 
-        while (!isEmpty) {
+        while (pos != queue.length) {
 
             for (s in seq) {
                 if (matches(s)) {
                     step = s.length //间隔数
+                    this.pos = pos //匹配成功, 同步处理位置到类
+                    start = pos //匹配成功, 设置规则下次起始位置
                     return true //匹配就返回 true
                 }
             }
 
             pos++ //逐个试探
         }
-
-        pos = start //匹配失败，位置回退
 
         return false
     }
@@ -219,7 +219,9 @@ class RuleAnalyzer(data: String) {
      * 在双重转义字串中拉出一个规则平衡组
      */
     fun chompRuleBalanced(open: Char = '[', close: Char = ']',f: ((Char) ->Boolean?)? = null ): Boolean {
-        start = pos
+
+        val start = pos //声明临时变量记录本次起始位置，不更改类的start
+
         var depth = 0 //嵌套深度
         var otherDepth = 0 //其他对称符合嵌套深度
 
@@ -252,7 +254,10 @@ class RuleAnalyzer(data: String) {
             }
         } while (depth > 0 || otherDepth > 0) //拉出一个平衡字串
 
-        return !(depth > 0 || otherDepth > 0) //平衡返回false，不平衡返回true
+        return if(depth > 0 || otherDepth > 0) {
+            pos = start //匹配失败，位置回退
+        } else true
+
     }
 
     /**
@@ -312,9 +317,7 @@ class RuleAnalyzer(data: String) {
 
         }  else {
 
-            val start0 = start //记录当前规则开头位置
             if(!chompRuleBalanced(queue[pos],next)) throw Error(queue.substring(0, start)+"后未平衡") //拉出一个筛选器,不平衡则报错
-            start = start0 //筛选器的开头不是本段规则开头,故恢复开头设置
             splitRule(rule) //首段已匹配,但当前段匹配未完成,调用二段匹配
 
         }
@@ -352,9 +355,7 @@ class RuleAnalyzer(data: String) {
         pos = st //位置推移到筛选器处
         val next = if(queue[pos] == '[' ) ']' else ')' //平衡组末尾字符
 
-        val start0 = start //记录当前规则开头位置
         if(!chompRuleBalanced(queue[pos],next)) throw Error(queue.substring(0, start)+"后未平衡") //拉出一个筛选器,不平衡时返回true,表示未平衡
-        start = start0 //筛选器平衡,但筛选器的开头不是当前规则开头,故恢复开头设置
 
         return splitRule(rule) //递归匹配
 
@@ -377,15 +378,13 @@ class RuleAnalyzer(data: String) {
 
         while (!isEmpty && consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
 
-            val start1 = start //记录拉取前起点
-
             if (chompRuleBalanced {//拉出一个以[]为默认嵌套、以{}为补充嵌套的平衡字段
-                    when (it) {
-                        '{' -> true
-                        '}' -> false
-                        else -> null
-                    }
-                }) {
+                        when (it) {
+                            '{' -> true
+                            '}' -> false
+                            else -> null
+                        }
+                    }) {
                 val frv= fr(currBalancedString(startStep,endStep))
                 if(frv != null) {
 
@@ -395,8 +394,7 @@ class RuleAnalyzer(data: String) {
                 }
             }
 
-            start = start1 //拉出字段不平衡，重置起点
-            pos = start + inner.length //拉出字段不平衡，inner只是个普通字串，规则回退到开头，并跳到此inner后继续匹配
+            pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
 
         }
 
