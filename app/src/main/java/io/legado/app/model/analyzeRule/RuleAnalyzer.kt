@@ -255,202 +255,202 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
             else if( c=='\\' ){ //不在引号中的转义字符才将下个字符转义
                 pos++
                 continue
+            }
+
+            if ( c == open )depth++ //开始嵌套一层
+            else if ( c== close) depth-- //闭合一层嵌套
+
+        } while (depth > 0 ) //拉出一个平衡字串
+
+        return if(depth > 0) false else {
+            this.pos = pos //同步位置
+            true
+        }
+    }
+
+    /**
+     * 不用正则,不到最后不切片也不用中间变量存储,只在序列中标记当前查找字段的开头结尾,到返回时才切片,高效快速准确切割规则
+     * 解决jsonPath自带的"&&"和"||"与阅读的规则冲突,以及规则正则或字符串中包含"&&"、"||"、"%%"、"@"导致的冲突
+     */
+    tailrec fun splitRule(vararg split: String): Array<String>{ //首段匹配,elementsType为空
+
+        if(split.size == 1) {
+            elementsType = split[0] //设置分割字串
+            return if(!consumeTo(elementsType)) {
+                rule += queue.substring(startX)
+                rule
+            }else {
+                step = elementsType.length //设置分隔符长度
+                splitRule()
+            } //递归匹配
+        }else if (!consumeToAny(* split)) { //未找到分隔符
+            rule += queue.substring(startX)
+            return rule
         }
 
-        if ( c == open )depth++ //开始嵌套一层
-        else if ( c== close) depth-- //闭合一层嵌套
+        val end = pos //记录分隔位置
+        pos = start //重回开始，启动另一种查找
 
-    } while (depth > 0 ) //拉出一个平衡字串
+        do{
+            val st = findToAny('[', '(') //查找筛选器位置
 
-    return if(depth > 0) false else {
-        this.pos = pos //同步位置
-        true
+            if (st == -1) {
+
+                rule = arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+
+                elementsType = queue.substring(end, end + step) //设置组合类型
+                pos = end + step //跳过分隔符
+
+                while (consumeTo(elementsType)) { //循环切分规则压入数组
+                    rule += queue.substring(start, pos)
+                    pos += step //跳过分隔符
+                }
+
+                rule += queue.substring(pos) //将剩余字段压入数组末尾
+
+                return rule
+            }
+
+            if (st > end) { //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
+
+                rule = arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+
+                elementsType = queue.substring(end, end + step) //设置组合类型
+                pos = end + step //跳过分隔符
+
+                while (consumeTo(elementsType) && pos < st) { //循环切分规则压入数组
+                    rule += queue.substring(start, pos)
+                    pos += step //跳过分隔符
+                }
+
+                return if(pos > st) {
+                    startX = start
+                    splitRule() //首段已匹配,但当前段匹配未完成,调用二段匹配
+                }
+                else { //执行到此，证明后面再无分隔字符
+                    rule += queue.substring(pos) //将剩余字段压入数组末尾
+                    rule
+                }
+            }
+
+            pos = st //位置推移到筛选器处
+            val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
+
+            if (!chompBalanced(queue[pos], next)) throw Error(
+                queue.substring(
+                    0,
+                    start
+                ) + "后未平衡"
+            ) //拉出一个筛选器,不平衡则报错
+
+        }while( end > pos )
+
+        start = pos //设置开始查找筛选器位置的起始位置
+
+        return splitRule(* split) //递归调用首段匹配
     }
-}
 
-/**
- * 不用正则,不到最后不切片也不用中间变量存储,只在序列中标记当前查找字段的开头结尾,到返回时才切片,高效快速准确切割规则
- * 解决jsonPath自带的"&&"和"||"与阅读的规则冲突,以及规则正则或字符串中包含"&&"、"||"、"%%"、"@"导致的冲突
- */
-tailrec fun splitRule(vararg split: String): Array<String>{ //首段匹配,elementsType为空
+    @JvmName("splitRuleNext")
+    private tailrec fun splitRule(): Array<String>{ //二段匹配被调用,elementsType非空(已在首段赋值),直接按elementsType查找,比首段采用的方式更快
 
-    if(split.size == 1) {
-        elementsType = split[0] //设置分割字串
+        val end = pos //记录分隔位置
+        pos = start //重回开始，启动另一种查找
+
+        do{
+            val st = findToAny('[', '(') //查找筛选器位置
+
+            if (st == -1) {
+
+                rule += arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+                pos = end + step //跳过分隔符
+
+                while (consumeTo(elementsType)) { //循环切分规则压入数组
+                    rule += queue.substring(start, pos)
+                    pos += step //跳过分隔符
+                }
+
+                rule += queue.substring(pos) //将剩余字段压入数组末尾
+
+                return rule
+            }
+
+            if (st > end) { //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
+
+                rule += arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+                pos = end + step //跳过分隔符
+
+                while (consumeTo(elementsType) && pos < st) { //循环切分规则压入数组
+                    rule += queue.substring(start, pos)
+                    pos += step //跳过分隔符
+                }
+
+                return if(pos > st) {
+                    startX = start
+                    splitRule() //首段已匹配,但当前段匹配未完成,调用二段匹配
+                }
+                else { //执行到此，证明后面再无分隔字符
+                    rule += queue.substring(pos) //将剩余字段压入数组末尾
+                    rule
+                }
+            }
+
+            pos = st //位置推移到筛选器处
+            val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
+
+            if (!chompBalanced(queue[pos], next)) throw Error(
+                queue.substring(
+                    0,
+                    start
+                ) + "后未平衡"
+            ) //拉出一个筛选器,不平衡则报错
+
+        }while( end > pos )
+
+        start = pos //设置开始查找筛选器位置的起始位置
+
         return if(!consumeTo(elementsType)) {
             rule += queue.substring(startX)
             rule
-        }else {
-            step = elementsType.length //设置分隔符长度
-            splitRule()
-        } //递归匹配
-    }else if (!consumeToAny(* split)) { //未找到分隔符
-        rule += queue.substring(startX)
-        return rule
-    }
-
-    val end = pos //记录分隔位置
-    pos = start //重回开始，启动另一种查找
-
-    do{
-        val st = findToAny('[', '(') //查找筛选器位置
-
-        if (st == -1) {
-
-            rule = arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
-
-            elementsType = queue.substring(end, end + step) //设置组合类型
-            pos = end + step //跳过分隔符
-
-            while (consumeTo(elementsType)) { //循环切分规则压入数组
-                rule += queue.substring(start, pos)
-                pos += step //跳过分隔符
-            }
-
-            rule += queue.substring(pos) //将剩余字段压入数组末尾
-
-            return rule
-        }
-
-        if (st > end) { //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
-
-            rule = arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
-
-            elementsType = queue.substring(end, end + step) //设置组合类型
-            pos = end + step //跳过分隔符
-
-            while (consumeTo(elementsType) && pos < st) { //循环切分规则压入数组
-                rule += queue.substring(start, pos)
-                pos += step //跳过分隔符
-            }
-
-            return if(pos > st) {
-                startX = start
-                splitRule() //首段已匹配,但当前段匹配未完成,调用二段匹配
-            }
-            else { //执行到此，证明后面再无分隔字符
-                rule += queue.substring(pos) //将剩余字段压入数组末尾
-                rule
-            }
-        }
-
-        pos = st //位置推移到筛选器处
-        val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
-
-        if (!chompBalanced(queue[pos], next)) throw Error(
-            queue.substring(
-                0,
-                start
-            ) + "后未平衡"
-        ) //拉出一个筛选器,不平衡则报错
-
-    }while( end > pos )
-
-    start = pos //设置开始查找筛选器位置的起始位置
-
-    return splitRule(* split) //递归调用首段匹配
-}
-
-@JvmName("splitRuleNext")
-private tailrec fun splitRule(): Array<String>{ //二段匹配被调用,elementsType非空(已在首段赋值),直接按elementsType查找,比首段采用的方式更快
-
-    val end = pos //记录分隔位置
-    pos = start //重回开始，启动另一种查找
-
-    do{
-        val st = findToAny('[', '(') //查找筛选器位置
-
-        if (st == -1) {
-
-            rule += arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
-            pos = end + step //跳过分隔符
-
-            while (consumeTo(elementsType)) { //循环切分规则压入数组
-                rule += queue.substring(start, pos)
-                pos += step //跳过分隔符
-            }
-
-            rule += queue.substring(pos) //将剩余字段压入数组末尾
-
-            return rule
-        }
-
-        if (st > end) { //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
-
-            rule += arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
-            pos = end + step //跳过分隔符
-
-            while (consumeTo(elementsType) && pos < st) { //循环切分规则压入数组
-                rule += queue.substring(start, pos)
-                pos += step //跳过分隔符
-            }
-
-            return if(pos > st) {
-                startX = start
-                splitRule() //首段已匹配,但当前段匹配未完成,调用二段匹配
-            }
-            else { //执行到此，证明后面再无分隔字符
-                rule += queue.substring(pos) //将剩余字段压入数组末尾
-                rule
-            }
-        }
-
-        pos = st //位置推移到筛选器处
-        val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
-
-        if (!chompBalanced(queue[pos], next)) throw Error(
-            queue.substring(
-                0,
-                start
-            ) + "后未平衡"
-        ) //拉出一个筛选器,不平衡则报错
-
-    }while( end > pos )
-
-    start = pos //设置开始查找筛选器位置的起始位置
-
-    return if(!consumeTo(elementsType)) {
-        rule += queue.substring(startX)
-        rule
-    }else splitRule() //递归匹配
-
-}
-
-
-/**
- * 替换内嵌规则
- * @param inner 起始标志,如{$. 或 {{
- * @param startStep 不属于规则部分的前置字符长度，如{$.中{不属于规则的组成部分，故startStep为1
- * @param endStep 不属于规则部分的后置字符长度，如}}长度为2
- * @param fr 查找到内嵌规则时，用于解析的函数
- *
- * */
-fun innerRule( inner:String,startStep:Int = 1,endStep:Int = 1,fr:(String)->String?): String {
-
-    val start0 = pos //规则匹配前起点
-
-    val st = StringBuilder()
-
-    while (!isEmpty && consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
-        val posPre = pos //记录上次结束位置
-        if (chompBalanced('{', '}')) {
-            val frv= fr(currBalancedString(startStep,endStep))
-            if(frv != null) {
-                st.append(queue.substring(start,posPre)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
-                continue //获取内容成功，继续选择下个内嵌规则
-
-            }
-        }
-
-        pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
+        }else splitRule() //递归匹配
 
     }
 
-    //匹配前起点与当前规则起点相同，证明无替换成功的内嵌规则,返回空字符串。否则返回替换后的字符串
-    return if(start0 == start) "" else {
-        st.append(remainingString()) //压入剩余字符串
-        st.toString()
+
+    /**
+     * 替换内嵌规则
+     * @param inner 起始标志,如{$. 或 {{
+     * @param startStep 不属于规则部分的前置字符长度，如{$.中{不属于规则的组成部分，故startStep为1
+     * @param endStep 不属于规则部分的后置字符长度，如}}长度为2
+     * @param fr 查找到内嵌规则时，用于解析的函数
+     *
+     * */
+    fun innerRule( inner:String,startStep:Int = 1,endStep:Int = 1,fr:(String)->String?): String {
+
+        val start0 = pos //规则匹配前起点
+
+        val st = StringBuilder()
+
+        while (!isEmpty && consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
+            val posPre = pos //记录上次结束位置
+            if (chompBalanced('{', '}')) {
+                val frv= fr(currBalancedString(startStep,endStep))
+                if(frv != null) {
+                    st.append(queue.substring(start,posPre)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                    continue //获取内容成功，继续选择下个内嵌规则
+
+                }
+            }
+
+            pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
+
+        }
+
+        //匹配前起点与当前规则起点相同，证明无替换成功的内嵌规则,返回空字符串。否则返回替换后的字符串
+        return if(start0 == start) "" else {
+            st.append(remainingString()) //压入剩余字符串
+            st.toString()
+        }
     }
-}
 
 //    /**
 //     * 匹配并返回标签中的属性键字串（字母、数字、-、_、:）
@@ -485,83 +485,84 @@ fun innerRule( inner:String,startStep:Int = 1,endStep:Int = 1,fr:(String)->Strin
 //        return  query
 //    }
 
-companion object {
-    /**
-     * 转义字符
-     */
-    private const val ESC = '\\'
+    companion object {
+        /**
+         * 转义字符
+         */
+        private const val ESC = '\\'
 
-    /**
-     * 阅读共有分隔字串起始部分
-     * "##","@@","{{","{[","<js>", "@js:"
-     */
-    val splitList =arrayOf("##","@@","{{","{[","<js>", "@js:")
+        /**
+         * 阅读共有分隔字串起始部分
+         * "##","@@","{{","{[","<js>", "@js:"
+         */
+        val splitList =arrayOf("##","@@","{{","{[","<js>", "@js:")
 
-    /**
-     * 发现‘名称-链接’分隔字串
-     * "::"
-     */
-    const val splitListFaXian = "::"
+        /**
+         * 发现‘名称-链接’分隔字串
+         * "::"
+         */
+        const val splitListFaXian = "::"
 
-    /**
-     * 目录专有起始字符
-     * "-"
-     */
-    const val splitListMulu = "-"
+        /**
+         * 目录专有起始字符
+         * "-"
+         */
+        const val splitListMulu = "-"
 
-    /**
-     * 结果为元素列表的 all in one 模式起始字符
-     * "+"
-     */
-    const val splitListTongYi = "+"
+        /**
+         * 结果为元素列表的 all in one 模式起始字符
+         * "+"
+         */
+        const val splitListTongYi = "+"
 
-    /**
-     * 结果为元素列表的项的同规则组合结构
-     * "||","&&","%%"
-     */
-    val splitListReSplit = arrayOf("||","&&","%%")
+        /**
+         * 结果为元素列表的项的同规则组合结构
+         * "||","&&","%%"
+         */
+        val splitListReSplit = arrayOf("||","&&","%%")
 
-    /**
-     * js脚本结束字串
-     * "</js>"
-     */
-    const val splitListEndJS = "</js>"
+        /**
+         * js脚本结束字串
+         * "</js>"
+         */
+        const val splitListEndJS = "</js>"
 
-    /**
-     *内嵌js结束字串
-     * "}}"
-     */
-    const val splitListEndInnerJS = "}}"
+        /**
+         *内嵌js结束字串
+         * "}}"
+         */
+        const val splitListEndInnerJS = "}}"
 
-    /**
-     * 内嵌规则结束字串
-     * "]}"
-     */
-    const val splitListEndInnerRule = "]}"
+        /**
+         * 内嵌规则结束字串
+         * "]}"
+         */
+        const val splitListEndInnerRule = "]}"
 
-    /**
-     * '[', ']', '(', ')','{','}'
-     */
-    val splitListPublic = charArrayOf('[', ']', '(', ')','{','}')
+        /**
+         * '[', ']', '(', ')','{','}'
+         */
+        val splitListPublic = charArrayOf('[', ']', '(', ')','{','}')
 
-    /**
-     * '*',"/","//",":","::","@","|","@xpath:"
-     */
-    val splitListXpath = arrayOf("*","/","//",":","::","@","|","@xpath:")
+        /**
+         * '*',"/","//",":","::","@","|","@xpath:"
+         */
+        val splitListXpath = arrayOf("*","/","//",":","::","@","|","@xpath:")
 
-    /**
-     * '*','$',".","..", "@json:"
-     */
-    val splitListJson = arrayOf('*','$',".","..", "@json:")
+        /**
+         * '*','$',".","..", "@json:"
+         */
+        val splitListJson = arrayOf('*','$',".","..", "@json:")
 
-    /**
-     * '*',"+","~",".",",","|","@","@css:",":"
-     */
-    val splitListCss = arrayOf('*',"+","~",".",",","|","@","@css:",":")
+        /**
+         * '*',"+","~",".",",","|","@","@css:",":"
+         */
+        val splitListCss = arrayOf('*',"+","~",".",",","|","@","@css:",":")
 
-    /**
-     * "-",".","!","@","@@"
-     */
-    val splitListDefault = arrayOf("-",".","!","@","@@")
+        /**
+         * "-",".","!","@","@@"
+         */
+        val splitListDefault = arrayOf("-",".","!","@","@@")
 
-}}
+    }
+}
