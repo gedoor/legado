@@ -2,7 +2,7 @@ package io.legado.app.model.analyzeRule
 
 //通用的规则切分处理
 
-class RuleAnalyzer(data: String) {
+class RuleAnalyzer(data: String, code:Boolean = false) {
 
     private var queue: String = data //被处理字符串
     private var pos = 0 //处理到的位置
@@ -11,6 +11,8 @@ class RuleAnalyzer(data: String) {
     private var start = 0 //每次处理字段的开始
     private var startX = 0 //规则的开始
     private var step:Int = 0 //分割字符的长度
+
+    val chompBalanced = if(code) ::chompCodeBalanced else ::chompRuleBalanced //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
 
     var elementsType = ""
 
@@ -195,7 +197,7 @@ class RuleAnalyzer(data: String) {
     /**
      * 拉出一个代码平衡组，存在转义文本，没有实体字符，通常以{}作为模块
      */
-    fun chompCodeBalanced(open: Char = '{', close: Char = '}'): Boolean {
+    fun chompCodeBalanced(open: Char, close: Char): Boolean {
 
         var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
 
@@ -234,9 +236,9 @@ class RuleAnalyzer(data: String) {
     }
 
     /**
-     * 拉出一个规则平衡组，没有转义文本，有实体字符，通常以[]作为选择器
+     * 拉出一个规则平衡组，经过仔细测试xpath和jsoup中，引号内转义字符无效。
      */
-    fun chompRuleBalanced(open: Char = '[', close: Char = ']'): Boolean {
+    fun chompRuleBalanced(open: Char, close: Char): Boolean {
 
         var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
         var depth = 0 //嵌套深度
@@ -246,11 +248,14 @@ class RuleAnalyzer(data: String) {
         do {
             if (pos == queue.length) break
             val c = queue[pos++]
-
             if (c == '\'' && !inDoubleQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
             else if (c == '"' && !inSingleQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
 
             if (inSingleQuote  || inDoubleQuote) continue //语法单元未匹配结束，直接进入下个循环
+            else if( c=='\\' ){ //不在引号中的转义字符才将下个字符转义
+                pos++
+                continue
+            }
 
             if ( c == open )depth++ //开始嵌套一层
             else if ( c== close) depth-- //闭合一层嵌套
@@ -331,7 +336,7 @@ class RuleAnalyzer(data: String) {
             pos = st //位置推移到筛选器处
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
-            if (!chompRuleBalanced(queue[pos], next)) throw Error(
+            if (!chompBalanced(queue[pos], next)) throw Error(
                 queue.substring(
                     0,
                     start
@@ -392,7 +397,7 @@ class RuleAnalyzer(data: String) {
             pos = st //位置推移到筛选器处
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
-            if (!chompRuleBalanced(queue[pos], next)) throw Error(
+            if (!chompBalanced(queue[pos], next)) throw Error(
                 queue.substring(
                     0,
                     start
@@ -427,7 +432,7 @@ class RuleAnalyzer(data: String) {
 
         while (!isEmpty && consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
             val posPre = pos //记录上次结束位置
-            if (chompCodeBalanced()) {
+            if (chompBalanced('{', '}')) {
                 val frv= fr(currBalancedString(startStep,endStep))
                 if(frv != null) {
                     st.append(queue.substring(start,posPre)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串

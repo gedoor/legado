@@ -1,6 +1,5 @@
 package io.legado.app.model.analyzeRule
 
-import android.text.TextUtils.join
 import androidx.annotation.Keep
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -230,7 +229,7 @@ class AnalyzeByJSoup(doc: Any) {
                             tn.add(temp)
                         }
                     }
-                    textS.add(join("\n", tn))
+                    textS.add(tn.joinToString("\n"))
                 }
                 "ownText" -> for (element in elements) {
                     textS.add(element.ownText())
@@ -258,35 +257,104 @@ class AnalyzeByJSoup(doc: Any) {
         return textS
     }
 
+    /**
+     * 1.支持阅读原有写法，':'分隔索引，!或.表示筛选方式，索引可为负数
+     *
+     * 例如 tag.div.-1:10:2 或 tag.div!0:3
+     *
+     * 2. 支持与jsonPath类似的[]索引写法
+     *
+     * 格式形如 [it,it，。。。] 或 [!it,it，。。。] 其中[!开头表示筛选方式为排除，it为单个索引或区间。
+     *
+     * 区间格式为 start:end 或 start:end:step，其中start为0可省略，end为-1可省略。
+     *
+     * 索引，区间两端及间隔都支持负数
+     *
+     * 例如 tag.div[-1, 3:-2:-10, 2]
+     *
+     * 特殊用法 tag.div[-1:0] 可在任意地方让列表反向
+     *
+     * */
     data class ElementsSingle(var split:Char = '.',
                               var beforeRule:String = "",
                               val indexDefault:MutableList<Int> = mutableListOf(),
                               val indexs:MutableList<Any> = mutableListOf()){
-
         /**
          * 获取Elements按照一个规则
          */
         fun getElementsSingle(temp: Element, rule: String): Elements {
 
-            var elements = Elements()
-
             findIndexSet(rule) //执行索引列表处理器
 
-            val rules = beforeRule.split(".")
-
-            elements.addAll(
-                if(beforeRule.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
-                else when (rules[0]) {
+            /**
+             * 获取所有元素
+             * */
+            var elements = if (beforeRule.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
+            else {
+                val rules = beforeRule.split(".")
+                when (rules[0]) {
                     "children" -> temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
                     "class" -> temp.getElementsByClass(rules[1])
                     "tag" -> temp.getElementsByTag(rules[1])
                     "id" -> Collector.collect(Evaluator.Id(rules[1]), temp)
                     "text" -> temp.getElementsContainingOwnText(rules[1])
                     else -> temp.select(beforeRule)
-                } )
+                }
+            }
 
-            val indexSet = getIndexs(elements.size) //传入元素数量，处理负数索引及索引越界问题，生成可用索引集合。
+            val len = elements.size
+            val lastIndexs = (indexDefault.size - 1).takeIf { it !=-1 } ?: indexs.size -1
+            val indexSet = mutableSetOf<Int>()
 
+            /**
+             * 获取无重且不越界的索引集合
+             * */
+            if(indexs.isEmpty())for (ix in lastIndexs downTo 0 ){ //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
+
+                val it = indexDefault[ix]
+                if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
+                else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
+
+            }else for (ix in lastIndexs downTo 0 ){ //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
+
+                if(indexs[ix] is Triple<*, *, *>){ //区间
+
+                    val (startx, endx, stepx) = indexs[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
+
+                    val start = if (startx == null)  0 //左端省略表示0
+                    else if (startx >= 0) if (startx < len) startx else len - 1 //右端越界，设置为最大索引
+                    else if (-startx <= len) len + startx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
+
+                    val end = if (endx == null)  len - 1 //右端省略表示 len - 1
+                    else if (endx >= 0) if (endx < len) endx else len - 1 //右端越界，设置为最大索引
+                    else if (-endx <= len) len + endx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
+
+                    if (start == end || stepx >= len) { //两端相同，区间里只有一个数。或间隔过大，区间实际上仅有首位
+
+                        indexSet.add(start)
+                        continue
+
+                    }
+
+                    val step = if (stepx > 0) stepx else if (-stepx < len) stepx + len else 1 //最小正数间隔为1
+
+                    //将区间展开到集合中,允许列表反向。
+                    indexSet.addAll(if (end > start) start..end step step else start downTo end step step)
+
+                }else{//单个索引
+
+                    val it = indexs[ix] as Int //还原储存时的类型
+
+                    if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
+                    else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
+
+                }
+
+            }
+
+            /**
+             * 根据索引集合筛选元素
+             * */
             if(split == '!'){ //排除
 
                 for (pcInt in indexSet) elements[pcInt] = null
@@ -303,29 +371,11 @@ class AnalyzeByJSoup(doc: Any) {
 
             }
 
-            return elements
+            return elements //返回筛选结果
 
         }
 
-        /**
-         * 1.支持阅读原有写法，':'分隔索引，!或.表示筛选方式，索引可为负数
-         *
-         * 例如 tag.div.-1:10:2 或 tag.div!0:3
-         *
-         * 2. 支持与jsonPath类似的[]索引写法
-         *
-         * 格式形如 [it,it，。。。] 或 [!it,it，。。。] 其中[!开头表示筛选方式为排除，it为单个索引或区间。
-         *
-         * 区间格式为 start:end 或 start:end:step，其中start为0可省略，end为-1可省略。
-         *
-         * 索引，区间两端及间隔都支持负数
-         *
-         * 例如 tag.div[-1, 3:-2:-10, 2]
-         *
-         * 特殊用法 tag.div[-1:0] 可在任意地方让列表反向
-         *
-         * */
-        fun findIndexSet( rule:String ): ElementsSingle {
+        private fun findIndexSet( rule:String ){
 
             val rus = rule.trim{ it <= ' '}
 
@@ -381,7 +431,7 @@ class AnalyzeByJSoup(doc: Any) {
 
                                 if(rl == '[') {
                                     beforeRule = rus.substring(0, len) //遇到索引边界，返回结果
-                                    return this
+                                    return
                                 }
 
                                 if(rl != ',') break //非索引结构，跳出
@@ -409,7 +459,7 @@ class AnalyzeByJSoup(doc: Any) {
                         if (rl != ':'){ //rl == '!'  || rl == '.'
                             split = rl
                             beforeRule = rus.substring(0, len)
-                            return this
+                            return
                         }
 
                     }else break //非索引结构，跳出循环
@@ -422,63 +472,7 @@ class AnalyzeByJSoup(doc: Any) {
 
             split = ' '
             beforeRule = rus
-            return this //非索引格式
         }
-
-        private fun getIndexs(len:Int): MutableSet<Int> {
-
-            val indexSet = mutableSetOf<Int>()
-
-            val lastIndexs = (indexDefault.size - 1).takeIf { it !=-1 } ?: indexs.size -1
-
-
-            if(indexs.isEmpty())for (ix in lastIndexs downTo 0 ){ //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
-
-                val it = indexDefault[ix]
-                if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
-                else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
-
-            }else for (ix in lastIndexs downTo 0 ){ //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
-
-                if(indexs[ix] is Triple<*, *, *>){ //区间
-
-                    val (startx, endx, stepx) = indexs[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
-
-                    val start = if (startx == null)  0 //左端省略表示0
-                    else if (startx >= 0) if (startx < len) startx else len - 1 //右端越界，设置为最大索引
-                    else if (-startx <= len) len + startx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
-
-                    val end = if (endx == null)  len - 1 //右端省略表示 len - 1
-                    else if (endx >= 0) if (endx < len) endx else len - 1 //右端越界，设置为最大索引
-                    else if (-endx <= len) len + endx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
-
-                    if (start == end || stepx >= len) { //两端相同，区间里只有一个数。或间隔过大，区间实际上仅有首位
-
-                        indexSet.add(start)
-                        continue
-
-                    }
-
-                    val step = if (stepx > 0) stepx else if (-stepx < len) stepx + len else 1 //最小正数间隔为1
-
-                    //将区间展开到集合中,允许列表反向。
-                    indexSet.addAll(if (end > start) start..end step step else start downTo end step step)
-
-                }else{//单个索引
-
-                    val it = indexs[ix] as Int //还原储存时的类型
-
-                    if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
-                    else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
-
-                }
-
-            }
-
-            return indexSet
-
-        }
-
     }
 
 
