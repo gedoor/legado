@@ -30,7 +30,7 @@ class AnalyzeByJSonPath(json: Any) {
     fun getString(rule: String): String? {
         if (rule.isEmpty()) return null
         var result: String
-        val ruleAnalyzes = RuleAnalyzer(rule)
+        val ruleAnalyzes = RuleAnalyzer(rule,true) //设置平衡组为代码平衡
         val rules = ruleAnalyzes.splitRule("&&","||")
 
         if (rules.size == 1) {
@@ -83,7 +83,7 @@ class AnalyzeByJSonPath(json: Any) {
     internal fun getStringList(rule: String): List<String> {
         val result = ArrayList<String>()
         if (rule.isEmpty()) return result
-        val ruleAnalyzes = RuleAnalyzer(rule)
+        val ruleAnalyzes = RuleAnalyzer(rule,true) //设置平衡组为代码平衡
         val rules = ruleAnalyzes.splitRule("&&","||","%%")
 
         if (rules.size == 1) {
@@ -148,7 +148,7 @@ class AnalyzeByJSonPath(json: Any) {
     internal fun getList(rule: String): ArrayList<Any>? {
         val result = ArrayList<Any>()
         if (rule.isEmpty()) return result
-        val ruleAnalyzes = RuleAnalyzer(rule)
+        val ruleAnalyzes = RuleAnalyzer(rule,true) //设置平衡组为代码平衡
         val rules = ruleAnalyzes.splitRule("&&","||","%%")
         if (rules.size == 1) {
             ctx.let {
