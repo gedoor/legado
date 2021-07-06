@@ -289,7 +289,7 @@ class AnalyzeByJSoup(doc: Any) {
             /**
              * 获取所有元素
              * */
-            var elements:Elements = if (beforeRule.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
+            var elements = if (beforeRule.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
             else {
                 val rules = beforeRule.split(".")
                 when (rules[0]) {
