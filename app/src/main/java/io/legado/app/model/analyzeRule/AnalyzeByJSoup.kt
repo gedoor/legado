@@ -1,6 +1,5 @@
 package io.legado.app.model.analyzeRule
 
-import android.text.TextUtils.join
 import androidx.annotation.Keep
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -230,7 +229,7 @@ class AnalyzeByJSoup(doc: Any) {
                             tn.add(temp)
                         }
                     }
-                    textS.add(join("\n", tn))
+                    textS.add(tn.joinToString("\n"))
                 }
                 "ownText" -> for (element in elements) {
                     textS.add(element.ownText())
@@ -290,7 +289,7 @@ class AnalyzeByJSoup(doc: Any) {
             /**
              * 获取所有元素
              * */
-            var elements = if (beforeRule.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
+            var elements:Elements = if (beforeRule.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
             else {
                 val rules = beforeRule.split(".")
                 when (rules[0]) {
