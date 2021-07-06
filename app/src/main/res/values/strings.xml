@@ -846,5 +846,6 @@
     <string name="export_file_name">Export file name</string>
     <string name="reset">Reset</string>
     <string name="null_url">Null url</string>
+    <string name="dict">字典</string>
 
 </resources>

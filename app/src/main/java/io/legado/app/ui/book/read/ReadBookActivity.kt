@@ -46,6 +46,7 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
+import io.legado.app.ui.dict.DictDialog
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
@@ -529,6 +530,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
             R.id.menu_search_content -> {
                 viewModel.searchContentQuery = selectedText
                 openSearchActivity(selectedText)
+                return true
+            }
+            R.id.menu_dict -> {
+                DictDialog.dict(supportFragmentManager, selectedText)
                 return true
             }
         }
