@@ -42,8 +42,8 @@ class AnalyzeByJSoup(doc: Any) {
      * 合并内容列表,得到内容
      */
     internal fun getString(ruleStr: String) =
-            if(ruleStr.isEmpty()) null
-            else getStringList(ruleStr).takeIf { it.isNotEmpty() }?.joinToString("\n")
+        if(ruleStr.isEmpty()) null
+        else getStringList(ruleStr).takeIf { it.isNotEmpty() }?.joinToString("\n")
 
     /**
      * 获取一个字符串
@@ -75,15 +75,15 @@ class AnalyzeByJSoup(doc: Any) {
             for (ruleStrX in ruleStrS) {
 
                 val temp: List<String>? =
-                        if (sourceRule.isCss) {
-                            val lastIndex = ruleStrX.lastIndexOf('@')
-                            getResultLast(
-                                    element.select(ruleStrX.substring(0, lastIndex)),
-                                    ruleStrX.substring(lastIndex + 1)
-                            )
-                        } else {
-                            getResultList(ruleStrX)
-                        }
+                    if (sourceRule.isCss) {
+                        val lastIndex = ruleStrX.lastIndexOf('@')
+                        getResultLast(
+                            element.select(ruleStrX.substring(0, lastIndex)),
+                            ruleStrX.substring(lastIndex + 1)
+                        )
+                    } else {
+                        getResultList(ruleStrX)
+                    }
 
                 if (!temp.isNullOrEmpty()) {
 
