@@ -131,11 +131,18 @@ class CheckSourceService : BaseService() {
         }.timeout(180000L)
             .onError {
                 source.addGroup("失效")
-                source.bookSourceComment =
-                    "error:${it.localizedMessage}\n${source.bookSourceComment}"
+                source.bookSourceComment = """
+                    "error:${it.localizedMessage}
+                    ${source.bookSourceComment}"
+                """.trimIndent()
                 appDb.bookSourceDao.update(source)
             }.onSuccess {
                 source.removeGroup("失效")
+                source.bookSourceComment = source.bookSourceComment
+                    ?.split("\n")
+                    ?.filterNot {
+                        it.startsWith("error:")
+                    }?.joinToString("\n")
                 appDb.bookSourceDao.update(source)
             }.onFinally {
                 onNext(source.bookSourceUrl, source.bookSourceName)
