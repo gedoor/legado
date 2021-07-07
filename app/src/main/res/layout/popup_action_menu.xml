@@ -7,7 +7,4 @@
     android:background="@drawable/shape_card_view"
     android:padding="5dp"
     android:orientation="horizontal"
-    app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager">
-
-</androidx.recyclerview.widget.RecyclerView>
-
+    app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager" />

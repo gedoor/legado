@@ -105,7 +105,12 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
     private var menu: Menu? = null
     private val textActionMenu: TextActionMenu by lazy {
-        TextActionMenu(this, this)
+        TextActionMenu(this, this).apply {
+            contentView.measure(
+                View.MeasureSpec.UNSPECIFIED,
+                View.MeasureSpec.UNSPECIFIED
+            )
+        }
     }
 
     override val scope: CoroutineScope get() = this
@@ -469,10 +474,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 显示文本操作菜单
      */
     override fun showTextActionMenu() = binding.run {
-        textActionMenu.contentView.measure(
-            View.MeasureSpec.UNSPECIFIED,
-            View.MeasureSpec.UNSPECIFIED
-        )
         val popupHeight = textActionMenu.contentView.measuredHeight
         val x = textMenuPosition.x.toInt()
         var y = textMenuPosition.y.toInt() - popupHeight
