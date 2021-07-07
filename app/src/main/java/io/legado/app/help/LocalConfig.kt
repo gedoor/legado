@@ -35,7 +35,7 @@ object LocalConfig {
         get() = !isLastVersion(1, "txtTocRuleVersion")
 
     val hasUpRssSources: Boolean
-        get() = !isLastVersion(3, "rssSourceVersion")
+        get() = !isLastVersion(4, "rssSourceVersion")
 
     var versionCode
         get() = localConfig.getLong(versionCodeKey, 0)
