@@ -74,7 +74,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     }
 
     private fun bind(binding: ItemSearchBinding, searchBook: SearchBook) {
-        with(binding) {
+        binding.run {
             tvName.text = searchBook.name
             tvAuthor.text = context.getString(R.string.author_show, searchBook.author)
             bvOriginCount.setBadgeCount(searchBook.origins.size)
@@ -87,7 +87,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     }
 
     private fun bindChange(binding: ItemSearchBinding, searchBook: SearchBook, bundle: Bundle) {
-        with(binding) {
+        binding.run {
             bundle.keySet().map {
                 when (it) {
                     "origins" -> bvOriginCount.setBadgeCount(searchBook.origins.size)
@@ -105,7 +105,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     }
 
     private fun upLasted(binding: ItemSearchBinding, latestChapterTitle: String?) {
-        with(binding) {
+        binding.run {
             if (latestChapterTitle.isNullOrEmpty()) {
                 tvLasted.gone()
             } else {
@@ -116,7 +116,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun upKind(binding: ItemSearchBinding, kinds: List<String>) = with(binding) {
+    private fun upKind(binding: ItemSearchBinding, kinds: List<String>) = binding.run {
         if (kinds.isEmpty()) {
             llKind.gone()
         } else {

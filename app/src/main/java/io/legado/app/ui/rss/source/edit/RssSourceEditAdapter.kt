@@ -33,7 +33,7 @@ class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHol
 
     class MyViewHolder(val binding: ItemSourceEditBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(editEntity: EditEntity) = with(binding) {
+        fun bind(editEntity: EditEntity) = binding.run {
             if (editText.getTag(R.id.tag1) == null) {
                 val listener = object : View.OnAttachStateChangeListener {
                     override fun onViewAttachedToWindow(v: View) {

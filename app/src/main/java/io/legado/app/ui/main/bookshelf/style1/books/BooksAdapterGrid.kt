@@ -23,7 +23,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
         binding: ItemBookshelfGridBinding,
         item: Book,
         payloads: MutableList<Any>
-    ) = with(binding) {
+    ) = binding.run {
         val bundle = payloads.getOrNull(0) as? Bundle
         if (bundle == null) {
             tvName.text = item.name

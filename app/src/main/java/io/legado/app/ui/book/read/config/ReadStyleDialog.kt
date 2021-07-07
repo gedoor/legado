@@ -66,7 +66,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         (activity as ReadBookActivity).bottomDialog--
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
@@ -105,7 +105,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         styleAdapter.setItems(ReadBookConfig.configList)
     }
 
-    private fun initViewEvent() = with(binding) {
+    private fun initViewEvent() = binding.run {
         chineseConverter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
@@ -178,7 +178,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         return true
     }
 
-    private fun upView() = with(binding) {
+    private fun upView() = binding.run {
         ReadBook.pageAnim().let {
             if (it >= 0 && it < rgPageAnim.childCount) {
                 rgPageAnim.check(rgPageAnim[it].id)

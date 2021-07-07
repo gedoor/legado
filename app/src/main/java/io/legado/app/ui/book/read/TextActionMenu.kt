@@ -53,7 +53,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         initRecyclerView()
     }
 
-    private fun initRecyclerView() = with(binding) {
+    private fun initRecyclerView() = binding.run {
         recyclerView.adapter = adapter
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -75,7 +75,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             item: MenuItemImpl,
             payloads: MutableList<Any>
         ) {
-            with(binding) {
+            binding.run {
                 textView.text = item.title
             }
         }

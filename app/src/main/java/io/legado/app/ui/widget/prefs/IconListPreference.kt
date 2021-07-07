@@ -168,7 +168,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                 item: CharSequence,
                 payloads: MutableList<Any>
             ) {
-                with(binding) {
+                binding.run {
                     val index = findIndexOfValue(item.toString())
                     dialogEntries?.let {
                         label.text = it[index]

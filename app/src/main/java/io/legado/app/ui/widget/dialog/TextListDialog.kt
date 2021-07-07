@@ -47,7 +47,7 @@ class TextListDialog : BaseDialogFragment() {
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = binding.run {
         arguments?.let {
             toolBar.title = it.getString("title")
             values = it.getStringArrayList("values")

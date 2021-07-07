@@ -66,7 +66,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
         item: RssSource,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             val bundle = payloads.getOrNull(0) as? Bundle
             if (bundle == null) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))

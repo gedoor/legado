@@ -172,7 +172,7 @@ class BookInfoActivity :
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun showBook(book: Book) = with(binding) {
+    private fun showBook(book: Book) = binding.run {
         showCover(book)
         tvName.text = book.name
         tvAuthor.text = getString(R.string.author_show, book.getRealAuthor())
@@ -243,7 +243,7 @@ class BookInfoActivity :
         }
     }
 
-    private fun initOnClick() = with(binding) {
+    private fun initOnClick() = binding.run {
         ivCover.setOnClickListener {
             viewModel.bookData.value?.let {
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)

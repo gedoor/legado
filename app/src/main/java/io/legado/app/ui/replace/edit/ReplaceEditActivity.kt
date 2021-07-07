@@ -90,7 +90,7 @@ class ReplaceEditActivity :
         return true
     }
 
-    private fun upReplaceView(replaceRule: ReplaceRule) = with(binding) {
+    private fun upReplaceView(replaceRule: ReplaceRule) = binding.run {
         etName.setText(replaceRule.name)
         etGroup.setText(replaceRule.group)
         etReplaceRule.setText(replaceRule.pattern)
@@ -99,7 +99,7 @@ class ReplaceEditActivity :
         etScope.setText(replaceRule.scope)
     }
 
-    private fun getReplaceRule(): ReplaceRule = with(binding) {
+    private fun getReplaceRule(): ReplaceRule = binding.run {
         val replaceRule: ReplaceRule = viewModel.replaceRule ?: ReplaceRule()
         replaceRule.name = etName.text.toString()
         replaceRule.group = etGroup.text.toString()

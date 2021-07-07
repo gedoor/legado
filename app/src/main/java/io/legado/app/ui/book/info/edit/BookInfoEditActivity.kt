@@ -55,7 +55,7 @@ class BookInfoEditActivity :
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun initEvent() = with(binding) {
+    private fun initEvent() = binding.run {
         tvChangeCover.setOnClickListener {
             viewModel.bookData.value?.let {
                 ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
@@ -70,7 +70,7 @@ class BookInfoEditActivity :
         }
     }
 
-    private fun upView(book: Book) = with(binding) {
+    private fun upView(book: Book) = binding.run {
         tieBookName.setText(book.name)
         tieBookAuthor.setText(book.author)
         tieCoverUrl.setText(book.getDisplayCover())
@@ -84,7 +84,7 @@ class BookInfoEditActivity :
         }
     }
 
-    private fun saveData() = with(binding) {
+    private fun saveData() = binding.run {
         viewModel.book?.let { book ->
             book.name = tieBookName.text?.toString() ?: ""
             book.author = tieBookAuthor.text?.toString() ?: ""

@@ -28,7 +28,7 @@ class SearchContentAdapter(context: Context, val callback: Callback) :
         item: SearchResult,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             val isDur = callback.durChapterIndex() == item.chapterIndex
             if (payloads.isEmpty()) {
                 tvSearchResult.text = item.getHtmlCompat(textColor, accentColor)

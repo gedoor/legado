@@ -69,7 +69,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         initData()
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         adapter = TocRegexAdapter(requireContext())
         recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         recyclerView.adapter = adapter

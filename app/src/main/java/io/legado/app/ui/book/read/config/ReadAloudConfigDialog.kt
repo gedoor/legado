@@ -39,7 +39,7 @@ class ReadAloudConfigDialog : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = LinearLayout(requireContext())
         view.setBackgroundColor(requireContext().backgroundColor)
         view.id = R.id.tag1

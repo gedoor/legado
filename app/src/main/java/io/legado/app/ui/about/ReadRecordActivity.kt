@@ -56,7 +56,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         readRecord.tvBookName.setText(R.string.all_read_time)
         adapter = RecordAdapter(this@ReadRecordActivity)
         recyclerView.adapter = adapter

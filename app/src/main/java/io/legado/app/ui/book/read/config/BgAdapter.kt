@@ -25,7 +25,7 @@ class BgAdapter(context: Context, val textColor: Int) :
         item: String,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             ImageLoader.load(
                 context,
                 context.assets.open("bg${File.separator}$item").readBytes()

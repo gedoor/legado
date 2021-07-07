@@ -60,7 +60,7 @@ class ReadAloudDialog : BaseDialogFragment() {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
-        with(binding) {
+        binding.run {
             rootView.setBackgroundColor(bg)
             tvPre.setTextColor(textColor)
             tvNext.setTextColor(textColor)
@@ -85,7 +85,7 @@ class ReadAloudDialog : BaseDialogFragment() {
         initEvent()
     }
 
-    private fun initData() = with(binding) {
+    private fun initData() = binding.run {
         upPlayState()
         upTimerText(BaseReadAloudService.timeMinute)
         seekTimer.progress = BaseReadAloudService.timeMinute
@@ -94,7 +94,7 @@ class ReadAloudDialog : BaseDialogFragment() {
         seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate
     }
 
-    private fun initEvent() = with(binding) {
+    private fun initEvent() = binding.run {
         llMainMenu.setOnClickListener {
             callBack?.showMenuBar()
             dismissAllowingStateLoss()

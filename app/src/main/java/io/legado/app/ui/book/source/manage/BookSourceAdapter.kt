@@ -84,7 +84,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         item: BookSource,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             val payload = payloads.getOrNull(0) as? Bundle
             if (payload == null) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))

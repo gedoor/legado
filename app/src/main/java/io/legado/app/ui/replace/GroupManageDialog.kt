@@ -53,7 +53,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         initData()
     }
 
-    private fun initData() = with(binding) {
+    private fun initData() = binding.run {
         toolBar.title = getString(R.string.group_manage)
         toolBar.inflateMenu(R.menu.group_manage)
         toolBar.menu.applyTint(requireContext())
@@ -126,7 +126,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             item: String,
             payloads: MutableList<Any>
         ) {
-            with(binding) {
+            binding.run {
                 root.setBackgroundColor(context.backgroundColor)
                 tvGroup.text = item
             }

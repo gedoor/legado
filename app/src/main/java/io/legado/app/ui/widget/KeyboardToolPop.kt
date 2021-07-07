@@ -52,7 +52,7 @@ class KeyboardToolPop(
             item: String,
             payloads: MutableList<Any>
         ) {
-            with(binding) {
+            binding.run {
                 textView.text = item
             }
         }

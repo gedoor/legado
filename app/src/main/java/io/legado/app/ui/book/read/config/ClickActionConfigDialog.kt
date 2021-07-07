@@ -56,15 +56,15 @@ class ClickActionConfigDialog : BaseDialogFragment() {
         initViewEvent()
     }
 
-    private fun initData() = with(AppConfig) {
-        binding.tvTopLeft.text = actions[clickActionTL]
-        binding.tvTopCenter.text = actions[clickActionTC]
-        binding.tvTopRight.text = actions[clickActionTR]
-        binding.tvMiddleLeft.text = actions[clickActionML]
-        binding.tvMiddleRight.text = actions[clickActionMR]
-        binding.tvBottomLeft.text = actions[clickActionBL]
-        binding.tvBottomCenter.text = actions[clickActionBC]
-        binding.tvBottomRight.text = actions[clickActionBR]
+    private fun initData() = binding.run {
+        tvTopLeft.text = actions[AppConfig.clickActionTL]
+        tvTopCenter.text = actions[AppConfig.clickActionTC]
+        tvTopRight.text = actions[AppConfig.clickActionTR]
+        tvMiddleLeft.text = actions[AppConfig.clickActionML]
+        tvMiddleRight.text = actions[AppConfig.clickActionMR]
+        tvBottomLeft.text = actions[AppConfig.clickActionBL]
+        tvBottomCenter.text = actions[AppConfig.clickActionBC]
+        tvBottomRight.text = actions[AppConfig.clickActionBR]
     }
 
     private fun initViewEvent() {

@@ -46,12 +46,12 @@ class SelectActionBar @JvmOverloads constructor(
         binding.ivMenuMore.setOnClickListener { selMenu?.show() }
     }
 
-    fun setMainActionText(text: String) = with(binding) {
+    fun setMainActionText(text: String) = binding.run {
         btnSelectActionMain.text = text
         btnSelectActionMain.visible()
     }
 
-    fun setMainActionText(@StringRes id: Int) = with(binding) {
+    fun setMainActionText(@StringRes id: Int) = binding.run {
         btnSelectActionMain.setText(id)
         btnSelectActionMain.visible()
     }
@@ -71,7 +71,7 @@ class SelectActionBar @JvmOverloads constructor(
         selMenu?.setOnMenuItemClickListener(listener)
     }
 
-    fun upCountView(selectCount: Int, allCount: Int) = with(binding) {
+    fun upCountView(selectCount: Int, allCount: Int) = binding.run {
         if (selectCount == 0) {
             cbSelectedAll.isChecked = false
         } else {
@@ -95,7 +95,7 @@ class SelectActionBar @JvmOverloads constructor(
         setMenuClickable(selectCount > 0)
     }
 
-    private fun setMenuClickable(isClickable: Boolean) = with(binding) {
+    private fun setMenuClickable(isClickable: Boolean) = binding.run {
         btnRevertSelection.isEnabled = isClickable
         btnRevertSelection.isClickable = isClickable
         btnSelectActionMain.isEnabled = isClickable

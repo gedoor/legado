@@ -46,14 +46,14 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         initData()
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         adapter = Adapter()
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         recyclerView.adapter = adapter
     }
 
-    private fun initMenu() = with(binding) {
+    private fun initMenu() = binding.run {
         toolBar.setOnMenuItemClickListener(this@ThemeListDialog)
         toolBar.inflateMenu(R.menu.theme_list)
         toolBar.menu.applyTint(requireContext())

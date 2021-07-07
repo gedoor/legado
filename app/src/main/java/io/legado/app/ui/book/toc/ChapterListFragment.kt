@@ -39,7 +39,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     private var tocLiveData: LiveData<List<BookChapter>>? = null
     private var scrollToDurChapter = false
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = binding.run {
         viewModel.chapterCallBack = this@ChapterListFragment
         val bbg = bottomBackground
         val btc = requireContext().getPrimaryTextColor(ColorUtils.isColorLight(bbg))
@@ -62,7 +62,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         binding.recyclerView.adapter = adapter
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         ivChapterTop.setOnClickListener { mLayoutManager.scrollToPositionWithOffset(0, 0) }
         ivChapterBottom.setOnClickListener {
             if (adapter.itemCount > 0) {
