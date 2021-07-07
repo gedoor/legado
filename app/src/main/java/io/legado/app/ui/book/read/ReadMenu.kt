@@ -52,7 +52,7 @@ class ReadMenu @JvmOverloads constructor(
         bindEvent()
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         if (AppConfig.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
         } else {
@@ -134,7 +134,7 @@ class ReadMenu @JvmOverloads constructor(
         return context.getPrefBoolean("brightnessAuto", true) || !showBrightnessView
     }
 
-    private fun bindEvent() = with(binding) {
+    private fun bindEvent() = binding.run {
         tvChapterName.setOnClickListener {
             callBack.openSourceEditActivity()
         }
@@ -304,7 +304,7 @@ class ReadMenu @JvmOverloads constructor(
         binding.seekReadPage.progress = seek
     }
 
-    fun setAutoPage(autoPage: Boolean) = with(binding) {
+    fun setAutoPage(autoPage: Boolean) = binding.run {
         if (autoPage) {
             fabAutoPage.setImageResource(R.drawable.ic_auto_page_stop)
             fabAutoPage.contentDescription = context.getString(R.string.auto_next_page_stop)
