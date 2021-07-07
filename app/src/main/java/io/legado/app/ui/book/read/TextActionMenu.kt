@@ -17,20 +17,23 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
-import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.utils.*
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.share
+import io.legado.app.utils.toastOnUi
 import java.util.*
 
 @SuppressLint("RestrictedApi")
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
     PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
     TextToSpeech.OnInitListener {
+
     private val binding = PopupActionMenuBinding.inflate(LayoutInflater.from(context))
     private val adapter = Adapter(context)
     private val menu = MenuBuilder(context)
@@ -48,38 +51,15 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         isFocusable = false
 
         initRecyclerView()
-        setOnDismissListener {
-            binding.ivMenuMore.setImageResource(R.drawable.ic_more_vert)
-            binding.recyclerViewMore.gone()
-            adapter.setItems(menu.visibleItems)
-            binding.recyclerView.visible()
-        }
     }
 
     private fun initRecyclerView() = with(binding) {
         recyclerView.adapter = adapter
-        recyclerViewMore.adapter = adapter
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)
-        adapter.setItems(menu.visibleItems)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             onInitializeMenu(moreMenu)
         }
-        if (moreMenu.size() > 0) {
-            ivMenuMore.visible()
-        }
-        ivMenuMore.setOnClickListener {
-            if (recyclerView.isVisible) {
-                ivMenuMore.setImageResource(R.drawable.ic_arrow_back)
-                adapter.setItems(moreMenu.visibleItems)
-                recyclerView.gone()
-                recyclerViewMore.visible()
-            } else {
-                ivMenuMore.setImageResource(R.drawable.ic_more_vert)
-                recyclerViewMore.gone()
-                adapter.setItems(menu.visibleItems)
-                recyclerView.visible()
-            }
-        }
+        adapter.setItems(menu.visibleItems + moreMenu.visibleItems)
     }
 
     inner class Adapter(context: Context) :
