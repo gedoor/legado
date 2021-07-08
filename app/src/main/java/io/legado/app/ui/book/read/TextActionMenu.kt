@@ -18,8 +18,6 @@ import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import io.legado.app.R
-import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
@@ -27,6 +25,7 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.share
 import io.legado.app.utils.toastOnUi
+import splitties.views.onClick
 import java.util.*
 
 @SuppressLint("RestrictedApi")
@@ -35,7 +34,6 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     TextToSpeech.OnInitListener {
 
     private val binding = PopupActionMenuBinding.inflate(LayoutInflater.from(context))
-    private val adapter = Adapter(context)
     private val menu = MenuBuilder(context)
     private val moreMenu = MenuBuilder(context)
     private val ttsListener by lazy {
@@ -50,45 +48,23 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         isOutsideTouchable = false
         isFocusable = false
 
-        initRecyclerView()
-    }
-
-    private fun initRecyclerView() = binding.run {
-        recyclerView.adapter = adapter
         SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             onInitializeMenu(moreMenu)
         }
-        adapter.setItems(menu.visibleItems + moreMenu.visibleItems)
-    }
-
-    inner class Adapter(context: Context) :
-        RecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
-
-        override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
-            return ItemTextBinding.inflate(inflater, parent, false)
-        }
-
-        override fun convert(
-            holder: ItemViewHolder,
-            binding: ItemTextBinding,
-            item: MenuItemImpl,
-            payloads: MutableList<Any>
-        ) {
-            binding.run {
-                textView.text = item.title
-            }
-        }
-
-        override fun registerListener(holder: ItemViewHolder, binding: ItemTextBinding) {
-            holder.itemView.setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
+        val menuItems = menu.visibleItems + moreMenu.visibleItems
+        menuItems.forEach {
+            val textView = ItemTextBinding.inflate(LayoutInflater.from(context)).root.apply {
+                tag = it
+                text = it.title
+                onClick {
                     if (!callBack.onMenuItemSelected(it.itemId)) {
                         onMenuItemSelected(it)
                     }
+                    callBack.onMenuActionFinally()
                 }
-                callBack.onMenuActionFinally()
             }
+            binding.root.addView(textView)
         }
     }
 
