@@ -2,28 +2,32 @@ package io.legado.app.model.analyzeRule
 
 //通用的规则切分处理
 
-class RuleAnalyzer(data: String, code:Boolean = false) {
+class RuleAnalyzer(data: String, code: Boolean = false) {
 
     private var queue: String = data //被处理字符串
     private var pos = 0 //处理到的位置
-    private var rule  = arrayOf<String>()
+    private var rule = arrayOf<String>()
 
     private var start = 0 //每次处理字段的开始
     private var startX = 0 //规则的开始
     private var innerStr: Boolean = false //true表示以平衡组的起点为规则起始，false表示不这样
-    private var step:Int = 0 //分割字符的长度
+    private var step: Int = 0 //分割字符的长度
 
-    val chompBalanced = if(code) ::chompCodeBalanced else ::chompRuleBalanced //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
+    //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
+    val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
 
     var elementsType = ""
 
     //当前平衡字段
-    fun currBalancedString( stepStart:Int = 1 , stepEnd:Int = 1): String { //stepStart平衡字符的起始分隔字串长度，stepEnd平衡字符的结束分隔字串长度
-        return queue.substring(startX+stepStart,pos-stepEnd) //当前平衡字段
+    fun currBalancedString(
+        stepStart: Int = 1,
+        stepEnd: Int = 1
+    ): String { //stepStart平衡字符的起始分隔字串长度，stepEnd平衡字符的结束分隔字串长度
+        return queue.substring(startX + stepStart, pos - stepEnd) //当前平衡字段
     }
 
 
-    fun trim(){ // 修剪当前规则之前的"@"或者空白符
+    fun trim() { // 修剪当前规则之前的"@"或者空白符
         while (queue[pos] == '@' || queue[pos] < '!') pos++
     }
 
@@ -34,7 +38,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
 
     //当前拉取字段
     fun currString(): String {
-        return queue.substring(start,pos) //当前拉取到的字段
+        return queue.substring(start, pos) //当前拉取到的字段
     }
 
     //剩余字串
@@ -49,7 +53,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
      * @return 若剩余字串中已无字符则返回true
      */
     val isEmpty: Boolean
-        get() = queue.length - pos  == 0 //是否处理到最后
+        get() = queue.length - pos == 0 //是否处理到最后
 
     /**
      * 消耗剩余字串中一个字符。
@@ -73,9 +77,9 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
      * @param seq 分隔字符 **区分大小写**
      * @return 是否找到相应字段。
      */
-    fun consumeTo(seq: String,setStartPos:Boolean = true): Boolean {
+    fun consumeTo(seq: String, setStartPos: Boolean = true): Boolean {
 
-        if(setStartPos)start = pos //将处理到的位置设置为规则起点
+        if (setStartPos) start = pos //将处理到的位置设置为规则起点
         val offset = queue.indexOf(seq, pos)
         return if (offset != -1) {
             pos = offset
@@ -89,7 +93,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
      * @param seq 匹配字符串序列
      * @return 成功返回true并设置间隔，失败则直接返回fasle
      */
-    fun consumeToAny(vararg seq:String): Boolean {
+    fun consumeToAny(vararg seq: String): Boolean {
 
         var pos = pos //声明新变量记录匹配位置，不更改类本身的位置
 
@@ -114,13 +118,13 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
      * @param seq 匹配字符序列
      * @return 返回匹配位置
      */
-    private fun findToAny(vararg seq:Char): Int {
+    private fun findToAny(vararg seq: Char): Int {
 
         var pos = pos //声明新变量记录匹配位置，不更改类本身的位置
 
         while (pos != queue.length) {
 
-            for (s in seq) if(queue[pos] == s) return pos //匹配则返回位置
+            for (s in seq) if (queue[pos] == s) return pos //匹配则返回位置
 
             pos++ //逐个试探
 
@@ -130,13 +134,15 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
     }
 
     //其中js只要符合语法，就不用避开任何阅读关键字，自由发挥
-    fun chompJsBalanced(f: ((Char) -> Boolean?) = {
-        when (it) {
-            '{' -> true //开始嵌套一层
-            '}' -> false //闭合一层嵌套
-            else -> null
+    fun chompJsBalanced(
+        f: ((Char) -> Boolean?) = {
+            when (it) {
+                '{' -> true //开始嵌套一层
+                '}' -> false //闭合一层嵌套
+                else -> null
+            }
         }
-    } ): Boolean {
+    ): Boolean {
         var pos = pos //声明变量记录临时处理位置
         var depth = 0 //嵌套深度
         var bracketsDepth = 0 //[]嵌套深度
@@ -152,22 +158,23 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
             if (pos == queue.length) break
             var c = queue[pos++]
             if (c != '\\') { //非转义字符
-                if (c == '\'' && !commits && !commit && !regex && !inDoubleQuote && !inOtherQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
-                else if (c == '"' && !commits && !commit && !regex && !inSingleQuote && !inOtherQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
-                else if (c == '`' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote) inOtherQuote = !inOtherQuote //匹配具有语法功能的'`'
+                if (c == '\'' && !commits && !commit && !regex && !inDoubleQuote && !inOtherQuote) inSingleQuote =
+                    !inSingleQuote //匹配具有语法功能的单引号
+                else if (c == '"' && !commits && !commit && !regex && !inSingleQuote && !inOtherQuote) inDoubleQuote =
+                    !inDoubleQuote //匹配具有语法功能的双引号
+                else if (c == '`' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote) inOtherQuote =
+                    !inOtherQuote //匹配具有语法功能的'`'
                 else if (c == '/' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote && !inOtherQuote) { //匹配注释或正则起点
                     c = queue[pos++]
-                    when(c){
-                        '/'->commit=true //匹配单行注释起点
-                        '*'->commits=true //匹配多行注释起点
-                        else ->regex=true //匹配正则起点
+                    when (c) {
+                        '/' -> commit = true //匹配单行注释起点
+                        '*' -> commits = true //匹配多行注释起点
+                        else -> regex = true //匹配正则起点
                     }
-                }
-                else if(commits && c == '*') { //匹配多行注释终点
+                } else if (commits && c == '*') { //匹配多行注释终点
                     c = queue[pos++]
-                    if(c == '/')commits = false
-                }
-                else if(regex && c == '/') { //正则的终点或[]平衡
+                    if (c == '/') commits = false
+                } else if (regex && c == '/') { //正则的终点或[]平衡
 
                     when (c) {
                         '/' -> regex = false//匹配正则终点
@@ -178,18 +185,18 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
                         ']' -> bracketsDepth-- //闭合一层嵌套[]
                     }
 
-                }else if(c == '\n') commit = false
+                } else if (c == '\n') commit = false
 
-                if (commits || commit || regex || inSingleQuote  || inDoubleQuote || inOtherQuote) continue //语法单元未匹配结束，直接进入下个循环
+                if (commits || commit || regex || inSingleQuote || inDoubleQuote || inOtherQuote) continue //语法单元未匹配结束，直接进入下个循环
 
                 val fn = f(c) ?: continue
                 if (fn) depth++ else depth-- //嵌套或者闭合
 
-            }else pos++
+            } else pos++
 
-        } while (depth > 0 || bracketsDepth >0) //拉出全部符合js语法的字段
+        } while (depth > 0 || bracketsDepth > 0) //拉出全部符合js语法的字段
 
-        return if(depth > 0 || bracketsDepth > 0) false else {
+        return if (depth > 0 || bracketsDepth > 0) false else {
             this.pos = pos //同步位置
             true
         }
@@ -215,22 +222,22 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
                 if (c == '\'' && !inDoubleQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
                 else if (c == '"' && !inSingleQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
 
-                if (inSingleQuote  || inDoubleQuote) continue //语法单元未匹配结束，直接进入下个循环
+                if (inSingleQuote || inDoubleQuote) continue //语法单元未匹配结束，直接进入下个循环
 
-                if ( c == '[' )depth++ //开始嵌套一层
-                else if ( c== ']') depth-- //闭合一层嵌套
-                else if(depth == 0 ) {
+                if (c == '[') depth++ //开始嵌套一层
+                else if (c == ']') depth-- //闭合一层嵌套
+                else if (depth == 0) {
                     //处于默认嵌套中的非默认字符不需要平衡，仅depth为0时默认嵌套全部闭合，此字符才进行嵌套
-                    if(c == open)otherDepth++
-                    else if(c == close)otherDepth--
+                    if (c == open) otherDepth++
+                    else if (c == close) otherDepth--
                 }
 
-            }else pos++
+            } else pos++
 
         } while (depth > 0 || otherDepth > 0) //拉出一个平衡字串
 
-        return if(depth > 0 || otherDepth > 0) false else {
-            if(innerStr)startX = this.pos //内嵌规则起始
+        return if (depth > 0 || otherDepth > 0) false else {
+            if (innerStr) startX = this.pos //内嵌规则起始
             this.pos = pos //同步位置
             true
         }
@@ -252,18 +259,18 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
             if (c == '\'' && !inDoubleQuote) inSingleQuote = !inSingleQuote //匹配具有语法功能的单引号
             else if (c == '"' && !inSingleQuote) inDoubleQuote = !inDoubleQuote //匹配具有语法功能的双引号
 
-            if (inSingleQuote  || inDoubleQuote) continue //语法单元未匹配结束，直接进入下个循环
-            else if( c=='\\' ){ //不在引号中的转义字符才将下个字符转义
+            if (inSingleQuote || inDoubleQuote) continue //语法单元未匹配结束，直接进入下个循环
+            else if (c == '\\') { //不在引号中的转义字符才将下个字符转义
                 pos++
                 continue
             }
 
-            if ( c == open )depth++ //开始嵌套一层
-            else if ( c== close) depth-- //闭合一层嵌套
+            if (c == open) depth++ //开始嵌套一层
+            else if (c == close) depth-- //闭合一层嵌套
 
-        } while (depth > 0 ) //拉出一个平衡字串
+        } while (depth > 0) //拉出一个平衡字串
 
-        return if(depth > 0) false else {
+        return if (depth > 0) false else {
             this.pos = pos //同步位置
             true
         }
@@ -273,18 +280,18 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
      * 不用正则,不到最后不切片也不用中间变量存储,只在序列中标记当前查找字段的开头结尾,到返回时才切片,高效快速准确切割规则
      * 解决jsonPath自带的"&&"和"||"与阅读的规则冲突,以及规则正则或字符串中包含"&&"、"||"、"%%"、"@"导致的冲突
      */
-    tailrec fun splitRule(vararg split: String): Array<String>{ //首段匹配,elementsType为空
+    tailrec fun splitRule(vararg split: String): Array<String> { //首段匹配,elementsType为空
 
-        if(split.size == 1) {
+        if (split.size == 1) {
             elementsType = split[0] //设置分割字串
-            return if(!consumeTo(elementsType)) {
+            return if (!consumeTo(elementsType)) {
                 rule += queue.substring(startX)
                 rule
-            }else {
+            } else {
                 step = elementsType.length //设置分隔符长度
                 splitRule()
             } //递归匹配
-        }else if (!consumeToAny(* split)) { //未找到分隔符
+        } else if (!consumeToAny(* split)) { //未找到分隔符
             rule += queue.substring(startX)
             return rule
         }
@@ -292,7 +299,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
         val end = pos //记录分隔位置
         pos = start //重回开始，启动另一种查找
 
-        do{
+        do {
             val st = findToAny('[', '(') //查找筛选器位置
 
             if (st == -1) {
@@ -324,11 +331,10 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
                     pos += step //跳过分隔符
                 }
 
-                return if(pos > st) {
+                return if (pos > st) {
                     startX = start
                     splitRule() //首段已匹配,但当前段匹配未完成,调用二段匹配
-                }
-                else { //执行到此，证明后面再无分隔字符
+                } else { //执行到此，证明后面再无分隔字符
                     rule += queue.substring(pos) //将剩余字段压入数组末尾
                     rule
                 }
@@ -344,7 +350,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
                 ) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
-        }while( end > pos )
+        } while (end > pos)
 
         start = pos //设置开始查找筛选器位置的起始位置
 
@@ -352,12 +358,12 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
     }
 
     @JvmName("splitRuleNext")
-    private tailrec fun splitRule(): Array<String>{ //二段匹配被调用,elementsType非空(已在首段赋值),直接按elementsType查找,比首段采用的方式更快
+    private tailrec fun splitRule(): Array<String> { //二段匹配被调用,elementsType非空(已在首段赋值),直接按elementsType查找,比首段采用的方式更快
 
         val end = pos //记录分隔位置
         pos = start //重回开始，启动另一种查找
 
-        do{
+        do {
             val st = findToAny('[', '(') //查找筛选器位置
 
             if (st == -1) {
@@ -385,11 +391,10 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
                     pos += step //跳过分隔符
                 }
 
-                return if(pos > st) {
+                return if (pos > st) {
                     startX = start
                     splitRule() //首段已匹配,但当前段匹配未完成,调用二段匹配
-                }
-                else { //执行到此，证明后面再无分隔字符
+                } else { //执行到此，证明后面再无分隔字符
                     rule += queue.substring(pos) //将剩余字段压入数组末尾
                     rule
                 }
@@ -405,14 +410,14 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
                 ) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
-        }while( end > pos )
+        } while (end > pos)
 
         start = pos //设置开始查找筛选器位置的起始位置
 
-        return if(!consumeTo(elementsType)) {
+        return if (!consumeTo(elementsType)) {
             rule += queue.substring(startX)
             rule
-        }else splitRule() //递归匹配
+        } else splitRule() //递归匹配
 
     }
 
@@ -425,7 +430,12 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
      * @param fr 查找到内嵌规则时，用于解析的函数
      *
      * */
-    fun innerRule( inner:String,startStep:Int = 1,endStep:Int = 1,fr:(String)->String?): String {
+    fun innerRule(
+        inner: String,
+        startStep: Int = 1,
+        endStep: Int = 1,
+        fr: (String) -> String?
+    ): String {
 
         val start0 = pos //规则匹配前起点
 
@@ -436,9 +446,9 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
         while (!isEmpty && consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
             val posPre = pos //记录上次结束位置
             if (chompBalanced('{', '}')) {
-                val frv= fr(currBalancedString(startStep,endStep))
-                if(frv != null) {
-                    st.append(queue.substring(start,posPre)+frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                val frv = fr(currBalancedString(startStep, endStep))
+                if (frv != null) {
+                    st.append(queue.substring(start, posPre) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     continue //获取内容成功，继续选择下个内嵌规则
 
                 }
@@ -449,44 +459,11 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
         }
 
         //匹配前起点与当前规则起点相同，证明无替换成功的内嵌规则,返回空字符串。否则返回替换后的字符串
-        return if(start0 == start) "" else {
+        return if (start0 == start) "" else {
             st.append(remainingString()) //压入剩余字符串
             st.toString()
         }
     }
-
-//    /**
-//     * 匹配并返回标签中的属性键字串（字母、数字、-、_、:）
-//     * @return 属性键字串
-//     */
-//    fun consumeAttributeKey(start:Int = pos): String {
-//        while (!isEmpty && (Character.isLetterOrDigit(queue[pos]) || matchesAny('-', '_', ':'))) pos++
-//        return queue.substring(start, pos)
-//    }
-
-//    fun splitRule(query:String,item:String = "other",listItem:String = "allInOne"):String{
-//
-//        val cuurItem = item //当前项类型，list->列表项 mulu->章节列表项 url->链接项 search->搜索链接项 find发现链接列表项 other->其他项
-//        val cuurList = listItem//当前界面总列表项类型，allInOne，json，xml，kotin，java
-//        var Reverse = false //是否反转列表
-//
-//        consumeWhitespace() //消耗开头空白
-//        var fisrt = consume() //拉出并消费首字符
-//
-//        when(item){
-//            "search" ->
-//            "find" ->
-//            "mulu" -> if(fisrt == '-'){
-//                Reverse=true //开启反转
-//                consumeWhitespace() //拉出所有空白符
-//                fisrt = consume() //首字符后移
-//            }
-//            else ->
-//
-//        }
-//
-//        return  query
-//    }
 
     companion object {
         /**
@@ -498,7 +475,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
          * 阅读共有分隔字串起始部分
          * "##","@@","{{","{[","<js>", "@js:"
          */
-        val splitList =arrayOf("##","@@","{{","{[","<js>", "@js:")
+        val splitList = arrayOf("##", "@@", "{{", "{[", "<js>", "@js:")
 
         /**
          * 发现‘名称-链接’分隔字串
@@ -522,7 +499,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
          * 结果为元素列表的项的同规则组合结构
          * "||","&&","%%"
          */
-        val splitListReSplit = arrayOf("||","&&","%%")
+        val splitListReSplit = arrayOf("||", "&&", "%%")
 
         /**
          * js脚本结束字串
@@ -545,27 +522,27 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
         /**
          * '[', ']', '(', ')','{','}'
          */
-        val splitListPublic = charArrayOf('[', ']', '(', ')','{','}')
+        val splitListPublic = charArrayOf('[', ']', '(', ')', '{', '}')
 
         /**
          * '*',"/","//",":","::","@","|","@xpath:"
          */
-        val splitListXpath = arrayOf("*","/","//",":","::","@","|","@xpath:")
+        val splitListXpath = arrayOf("*", "/", "//", ":", "::", "@", "|", "@xpath:")
 
         /**
          * '*','$',".","..", "@json:"
          */
-        val splitListJson = arrayOf('*','$',".","..", "@json:")
+        val splitListJson = arrayOf('*', '$', ".", "..", "@json:")
 
         /**
          * '*',"+","~",".",",","|","@","@css:",":"
          */
-        val splitListCss = arrayOf('*',"+","~",".",",","|","@","@css:",":")
+        val splitListCss = arrayOf('*', "+", "~", ".", ",", "|", "@", "@css:", ":")
 
         /**
          * "-",".","!","@","@@"
          */
-        val splitListDefault = arrayOf("-",".","!","@","@@")
+        val splitListDefault = arrayOf("-", ".", "!", "@", "@@")
 
     }
 }
