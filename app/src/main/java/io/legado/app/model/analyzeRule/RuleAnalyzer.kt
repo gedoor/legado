@@ -10,6 +10,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
 
     private var start = 0 //每次处理字段的开始
     private var startX = 0 //规则的开始
+    private var innerStr: Boolean = false //true表示以平衡组的起点为规则起始，false表示不这样
     private var step:Int = 0 //分割字符的长度
 
     val chompBalanced = if(code) ::chompCodeBalanced else ::chompRuleBalanced //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
@@ -229,7 +230,7 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
         } while (depth > 0 || otherDepth > 0) //拉出一个平衡字串
 
         return if(depth > 0 || otherDepth > 0) false else {
-            startX = this.pos //内嵌规则起始
+            if(innerStr)startX = this.pos //内嵌规则起始
             this.pos = pos //同步位置
             true
         }
@@ -427,6 +428,8 @@ class RuleAnalyzer(data: String, code:Boolean = false) {
     fun innerRule( inner:String,startStep:Int = 1,endStep:Int = 1,fr:(String)->String?): String {
 
         val start0 = pos //规则匹配前起点
+
+        innerStr = true //设置平衡组以平衡组起点为规则起始点
 
         val st = StringBuilder()
 
