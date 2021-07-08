@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import com.google.android.flexbox.FlexboxLayout
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
@@ -56,24 +57,28 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     item.getExploreKinds()
                 }.onSuccess { kindList ->
                     if (!kindList.isNullOrEmpty()) {
-                        glChild.visible()
-                        glChild.removeAllViews()
+                        flexbox.visible()
+                        flexbox.removeAllViews()
                         kindList.map { kind ->
                             val tv = ItemFilletTextBinding.inflate(
                                 LayoutInflater.from(context),
-                                glChild,
+                                flexbox,
                                 false
-                            )
-                            glChild.addView(tv.root)
-                            tv.textView.text = kind.title
+                            ).root
+                            flexbox.addView(tv)
+                            tv.text = kind.title
                             if (!kind.url.isNullOrEmpty()) {
-                                tv.textView.setOnClickListener {
+                                tv.setOnClickListener {
                                     callBack.openExplore(
                                         item.bookSourceUrl,
                                         kind.title,
                                         kind.url.toString()
                                     )
                                 }
+                            }
+                            val lp = tv.layoutParams as FlexboxLayout.LayoutParams
+                            lp.let {
+
                             }
                         }
                     }
@@ -87,7 +92,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
             } else {
                 binding.ivStatus.setImageResource(R.drawable.ic_arrow_right)
                 binding.rotateLoading.hide()
-                binding.glChild.gone()
+                binding.flexbox.gone()
             }
         }
     }

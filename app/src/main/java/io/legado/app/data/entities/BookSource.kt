@@ -101,12 +101,12 @@ data class BookSource(
     }
 
     fun getExploreKinds() = arrayListOf<ExploreKind>().apply {
-        exploreUrl?.let { urlRule ->
-            var a = urlRule
+        exploreUrl?.let { exploreUrl ->
+            var a = exploreUrl
             if (a.isNotBlank()) {
                 kotlin.runCatching {
-                    if (urlRule.startsWith("<js>", false)
-                        || urlRule.startsWith("@js", false)
+                    if (exploreUrl.startsWith("<js>", false)
+                        || exploreUrl.startsWith("@js", false)
                     ) {
                         val aCache = ACache.get(appCtx, "explore")
                         a = aCache.getAsString(bookSourceUrl) ?: ""
@@ -116,10 +116,10 @@ data class BookSource(
                             bindings["java"] = this
                             bindings["cookie"] = CookieStore
                             bindings["cache"] = CacheManager
-                            val jsStr = if (urlRule.startsWith("@")) {
-                                urlRule.substring(3)
+                            val jsStr = if (exploreUrl.startsWith("@")) {
+                                exploreUrl.substring(3)
                             } else {
-                                urlRule.substring(4, urlRule.lastIndexOf("<"))
+                                exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
                             }
                             a = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
                             aCache.put(bookSourceUrl, a)
@@ -173,7 +173,7 @@ data class BookSource(
 
     data class ExploreKind(
         var title: String,
-        var url: String? = null
+        var url: String? = null,
     )
 
     class Converters {

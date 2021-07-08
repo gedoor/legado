@@ -155,6 +155,9 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
+        if (exploreUrl.isBlank()) {
+            return
+        }
         startActivity<ExploreShowActivity> {
             putExtra("exploreName", title)
             putExtra("sourceUrl", sourceUrl)
