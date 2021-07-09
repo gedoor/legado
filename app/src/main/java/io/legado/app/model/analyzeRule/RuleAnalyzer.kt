@@ -415,9 +415,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             fr: (String) -> String?
     ): String {
 
-        val startXS = pos //设置最初起点
         startX = pos //设置规则起点
-
         val st = StringBuilder()
 
         while (consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
