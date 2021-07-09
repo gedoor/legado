@@ -13,15 +13,15 @@ inline fun <reified EVENT> eventObservable(tag: String): Observable<EVENT> {
 }
 
 inline fun <reified EVENT> postEvent(tag: String, event: EVENT) {
-    LiveEventBus.get<Any>(tag).post(event)
+    LiveEventBus.get<EVENT>(tag).post(event)
 }
 
 inline fun <reified EVENT> postEventDelay(tag: String, event: EVENT, delay: Long) {
-    LiveEventBus.get<Any>(tag).postDelay(event, delay)
+    LiveEventBus.get<EVENT>(tag).postDelay(event, delay)
 }
 
 inline fun <reified EVENT> postEventOrderly(tag: String, event: EVENT) {
-    LiveEventBus.get<Any>(tag).postOrderly(event)
+    LiveEventBus.get<EVENT>(tag).postOrderly(event)
 }
 
 inline fun <reified EVENT> AppCompatActivity.observeEvent(
