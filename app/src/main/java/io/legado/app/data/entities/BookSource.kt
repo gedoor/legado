@@ -10,10 +10,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
-import io.legado.app.utils.ACache
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 import javax.script.SimpleBindings
@@ -100,42 +97,48 @@ data class BookSource(
         }
     }
 
-    fun getExploreKinds() = arrayListOf<ExploreKind>().apply {
-        exploreUrl?.let { exploreUrl ->
-            var a = exploreUrl
-            if (a.isNotBlank()) {
-                kotlin.runCatching {
-                    if (exploreUrl.startsWith("<js>", false)
-                        || exploreUrl.startsWith("@js", false)
-                    ) {
-                        val aCache = ACache.get(appCtx, "explore")
-                        a = aCache.getAsString(bookSourceUrl) ?: ""
-                        if (a.isBlank()) {
-                            val bindings = SimpleBindings()
-                            bindings["baseUrl"] = bookSourceUrl
-                            bindings["java"] = this
-                            bindings["cookie"] = CookieStore
-                            bindings["cache"] = CacheManager
-                            val jsStr = if (exploreUrl.startsWith("@")) {
-                                exploreUrl.substring(3)
-                            } else {
-                                exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
-                            }
-                            a = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
-                            aCache.put(bookSourceUrl, a)
+    fun getExploreKinds(): List<ExploreKind> {
+        val exploreUrl = exploreUrl ?: return emptyList()
+        val kinds = arrayListOf<ExploreKind>()
+        var ruleStr = exploreUrl
+        if (ruleStr.isNotBlank()) {
+            kotlin.runCatching {
+                if (exploreUrl.startsWith("<js>", false)
+                    || exploreUrl.startsWith("@js", false)
+                ) {
+                    val aCache = ACache.get(appCtx, "explore")
+                    ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
+                    if (ruleStr.isBlank()) {
+                        val bindings = SimpleBindings()
+                        bindings["baseUrl"] = bookSourceUrl
+                        bindings["java"] = this
+                        bindings["cookie"] = CookieStore
+                        bindings["cache"] = CacheManager
+                        val jsStr = if (exploreUrl.startsWith("@")) {
+                            exploreUrl.substring(3)
+                        } else {
+                            exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
                         }
+                        ruleStr = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString().trim()
+                        aCache.put(bookSourceUrl, ruleStr)
                     }
-                    val b = a.split("(&&|\n)+".toRegex())
-                    b.forEach { c ->
+                }
+                if (ruleStr.isJsonArray()) {
+                    GSON.fromJsonArray<ExploreKind>(ruleStr)?.let {
+                        kinds.addAll(it)
+                    }
+                } else {
+                    ruleStr.split("(&&|\n)+".toRegex()).forEach { c ->
                         val d = c.split("::")
                         if (d.size > 1)
-                            add(ExploreKind(d[0], d[1]))
+                            kinds.add(ExploreKind(d[0], d[1]))
                     }
-                }.onFailure {
-                    add(ExploreKind(it.localizedMessage ?: ""))
                 }
+            }.onFailure {
+                kinds.add(ExploreKind(it.localizedMessage ?: ""))
             }
         }
+        return kinds
     }
 
     /**

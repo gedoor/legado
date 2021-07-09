@@ -8,6 +8,26 @@
 * 正文出现缺字漏字、内容缺失、排版错乱等情况，有可能是净化规则出现问题。先关闭替换净化并刷新，再观察是否正常。如果正常说明净化规则存在误杀，如果关闭后仍然出现相关问题，请点击源链接查看原文与正文是否相同，如果不同，再进行反馈。
 * 漫画源看书显示乱码，**阅读与其他软件的源并不通用**，请导入阅读的支持的漫画源！
 
+**2021/07/09**
+1. 发现url添加json格式, 支持设置标签样式
+* 样式属性可以搜索 [FleboxLayout子元素支持的属性介绍](https://www.jianshu.com/p/3c471953e36d)
+* 样式属性可省略,有默认值
+```json
+[
+  {
+    "title": "xxx",
+    "url": "",
+    "style": {
+      "layout_flexGrow": 0,
+      "layout_flexShrink": 1,
+      "layout_alignSelf": "auto",
+      "layout_flexBasisPercent": -1,
+      "layout_wrapBefore": false
+    }
+  }
+]
+```
+
 **2021/07/07**
 1. 默认规则新增类似`jsonPath`的索引写法 by bushixuanqi
 * 格式形如 `[index,index, ...]` 或 `[!index,index, ...]` 其中`[!`开头表示筛选方式为排除，`index`可以是单个索引，也可以是区间。
