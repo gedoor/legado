@@ -168,7 +168,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             item: BookGroup,
             payloads: MutableList<Any>
         ) {
-            with(binding) {
+            binding.run {
                 root.setBackgroundColor(context.backgroundColor)
                 cbGroup.text = item.groupName
                 cbGroup.isChecked = (groupId and item.groupId) > 0
@@ -176,7 +176,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemGroupSelectBinding) {
-            with(binding) {
+            binding.run {
                 cbGroup.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         getItem(holder.layoutPosition)?.let {

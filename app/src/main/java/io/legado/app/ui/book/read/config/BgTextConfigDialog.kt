@@ -98,7 +98,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         (activity as ReadBookActivity).bottomDialog--
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         primaryTextColor = requireContext().getPrimaryTextColor(isLight)

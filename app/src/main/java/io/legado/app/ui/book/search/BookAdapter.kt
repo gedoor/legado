@@ -21,7 +21,7 @@ class BookAdapter(context: Context, val callBack: CallBack) :
         item: Book,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             textView.text = item.name
         }
     }

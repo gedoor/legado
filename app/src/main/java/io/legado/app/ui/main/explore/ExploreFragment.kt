@@ -154,7 +154,8 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         (binding.rvFind.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, 0)
     }
 
-    override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
+    override fun openExplore(sourceUrl: String, title: String, exploreUrl: String?) {
+        if (exploreUrl.isNullOrBlank()) return
         startActivity<ExploreShowActivity> {
             putExtra("exploreName", title)
             putExtra("sourceUrl", sourceUrl)

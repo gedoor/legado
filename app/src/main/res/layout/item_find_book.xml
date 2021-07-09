@@ -56,7 +56,7 @@
         android:layout_gravity="center">
 
         <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/gl_child"
+            android:id="@+id/flexbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"

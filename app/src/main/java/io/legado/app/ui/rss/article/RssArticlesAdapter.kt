@@ -30,7 +30,7 @@ class RssArticlesAdapter(context: Context, callBack: CallBack) :
         item: RssArticle,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             tvTitle.text = item.title
             tvPubDate.text = item.pubDate
             if (item.image.isNullOrBlank() && !callBack.isGridLayout) {

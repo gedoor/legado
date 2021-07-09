@@ -49,84 +49,84 @@ class PaddingConfigDialog : BaseDialogFragment() {
         ReadBookConfig.save()
     }
 
-    private fun initData() = ReadBookConfig.apply {
+    private fun initData() = binding.run {
         //正文
-        binding.dsbPaddingTop.progress = paddingTop
-        binding.dsbPaddingBottom.progress = paddingBottom
-        binding.dsbPaddingLeft.progress = paddingLeft
-        binding.dsbPaddingRight.progress = paddingRight
+        dsbPaddingTop.progress = ReadBookConfig.paddingTop
+        dsbPaddingBottom.progress = ReadBookConfig.paddingBottom
+        dsbPaddingLeft.progress = ReadBookConfig.paddingLeft
+        dsbPaddingRight.progress = ReadBookConfig.paddingRight
         //页眉
-        binding.dsbHeaderPaddingTop.progress = headerPaddingTop
-        binding.dsbHeaderPaddingBottom.progress = headerPaddingBottom
-        binding.dsbHeaderPaddingLeft.progress = headerPaddingLeft
-        binding.dsbHeaderPaddingRight.progress = headerPaddingRight
+        dsbHeaderPaddingTop.progress = ReadBookConfig.headerPaddingTop
+        dsbHeaderPaddingBottom.progress = ReadBookConfig.headerPaddingBottom
+        dsbHeaderPaddingLeft.progress = ReadBookConfig.headerPaddingLeft
+        dsbHeaderPaddingRight.progress = ReadBookConfig.headerPaddingRight
         //页脚
-        binding.dsbFooterPaddingTop.progress = footerPaddingTop
-        binding.dsbFooterPaddingBottom.progress = footerPaddingBottom
-        binding.dsbFooterPaddingLeft.progress = footerPaddingLeft
-        binding.dsbFooterPaddingRight.progress = footerPaddingRight
-        binding.cbShowTopLine.isChecked = showHeaderLine
-        binding.cbShowBottomLine.isChecked = showFooterLine
+        dsbFooterPaddingTop.progress = ReadBookConfig.footerPaddingTop
+        dsbFooterPaddingBottom.progress = ReadBookConfig.footerPaddingBottom
+        dsbFooterPaddingLeft.progress = ReadBookConfig.footerPaddingLeft
+        dsbFooterPaddingRight.progress = ReadBookConfig.footerPaddingRight
+        cbShowTopLine.isChecked = ReadBookConfig.showHeaderLine
+        cbShowBottomLine.isChecked = ReadBookConfig.showFooterLine
     }
 
-    private fun initView() = with(ReadBookConfig) {
+    private fun initView() = binding.run {
         //正文
-        binding.dsbPaddingTop.onChanged = {
-            paddingTop = it
+        dsbPaddingTop.onChanged = {
+            ReadBookConfig.paddingTop = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbPaddingBottom.onChanged = {
-            paddingBottom = it
+        dsbPaddingBottom.onChanged = {
+            ReadBookConfig.paddingBottom = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbPaddingLeft.onChanged = {
-            paddingLeft = it
+        dsbPaddingLeft.onChanged = {
+            ReadBookConfig.paddingLeft = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbPaddingRight.onChanged = {
-            paddingRight = it
+        dsbPaddingRight.onChanged = {
+            ReadBookConfig.paddingRight = it
             postEvent(EventBus.UP_CONFIG, true)
         }
         //页眉
-        binding.dsbHeaderPaddingTop.onChanged = {
-            headerPaddingTop = it
+        dsbHeaderPaddingTop.onChanged = {
+            ReadBookConfig.headerPaddingTop = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbHeaderPaddingBottom.onChanged = {
-            headerPaddingBottom = it
+        dsbHeaderPaddingBottom.onChanged = {
+            ReadBookConfig.headerPaddingBottom = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbHeaderPaddingLeft.onChanged = {
-            headerPaddingLeft = it
+        dsbHeaderPaddingLeft.onChanged = {
+            ReadBookConfig.headerPaddingLeft = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbHeaderPaddingRight.onChanged = {
-            headerPaddingRight = it
+        dsbHeaderPaddingRight.onChanged = {
+            ReadBookConfig.headerPaddingRight = it
             postEvent(EventBus.UP_CONFIG, true)
         }
         //页脚
-        binding.dsbFooterPaddingTop.onChanged = {
-            footerPaddingTop = it
+        dsbFooterPaddingTop.onChanged = {
+            ReadBookConfig.footerPaddingTop = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbFooterPaddingBottom.onChanged = {
-            footerPaddingBottom = it
+        dsbFooterPaddingBottom.onChanged = {
+            ReadBookConfig.footerPaddingBottom = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbFooterPaddingLeft.onChanged = {
-            footerPaddingLeft = it
+        dsbFooterPaddingLeft.onChanged = {
+            ReadBookConfig.footerPaddingLeft = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.dsbFooterPaddingRight.onChanged = {
-            footerPaddingRight = it
+        dsbFooterPaddingRight.onChanged = {
+            ReadBookConfig.footerPaddingRight = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.cbShowTopLine.onCheckedChangeListener = { _, isChecked ->
-            showHeaderLine = isChecked
+        cbShowTopLine.onCheckedChangeListener = { _, isChecked ->
+            ReadBookConfig.showHeaderLine = isChecked
             postEvent(EventBus.UP_CONFIG, true)
         }
-        binding.cbShowBottomLine.onCheckedChangeListener = { _, isChecked ->
-            showFooterLine = isChecked
+        cbShowBottomLine.onCheckedChangeListener = { _, isChecked ->
+            ReadBookConfig.showFooterLine = isChecked
             postEvent(EventBus.UP_CONFIG, true)
         }
     }

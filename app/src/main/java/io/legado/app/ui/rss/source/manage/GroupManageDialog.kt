@@ -47,7 +47,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = binding.run {
         toolBar.setBackgroundColor(primaryColor)
         toolBar.title = getString(R.string.group_manage)
         toolBar.inflateMenu(R.menu.group_manage)
@@ -128,7 +128,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             item: String,
             payloads: MutableList<Any>
         ) {
-            with(binding) {
+            binding.run {
                 root.setBackgroundColor(context.backgroundColor)
                 tvGroup.text = item
             }

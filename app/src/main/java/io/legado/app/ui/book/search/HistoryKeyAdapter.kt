@@ -27,7 +27,7 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
         item: SearchKeyword,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             textView.text = item.word
         }
     }

@@ -160,7 +160,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             item: BookGroup,
             payloads: MutableList<Any>
         ) {
-            with(binding) {
+            binding.run {
                 root.setBackgroundColor(context.backgroundColor)
                 tvGroup.text = item.getManageName(context)
                 swShow.isChecked = item.show
@@ -168,7 +168,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemBookGroupManageBinding) {
-            with(binding) {
+            binding.run {
                 tvEdit.setOnClickListener { getItem(holder.layoutPosition)?.let { editGroup(it) } }
                 swShow.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {

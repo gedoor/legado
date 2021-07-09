@@ -27,7 +27,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         item: BookChapter,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             val isDur = callback.durChapterIndex() == item.index
             val cached = callback.isLocalBook || cacheFileNames.contains(item.getFileName())
             if (payloads.isEmpty()) {

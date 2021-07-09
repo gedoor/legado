@@ -10,7 +10,16 @@ interface BookSourceDao {
     @Query("select * from book_sources order by customOrder asc")
     fun liveDataAll(): LiveData<List<BookSource>>
 
-    @Query("select * from book_sources where bookSourceName like :searchKey or bookSourceGroup like :searchKey or bookSourceUrl like :searchKey  or bookSourceComment like :searchKey order by customOrder asc")
+    @Query(
+        """
+        select * from book_sources 
+        where bookSourceName like :searchKey 
+        or bookSourceGroup like :searchKey 
+        or bookSourceUrl like :searchKey  
+        or bookSourceComment like :searchKey 
+        order by customOrder asc
+        """
+    )
     fun liveDataSearch(searchKey: String): LiveData<List<BookSource>>
 
     @Query("select * from book_sources where bookSourceGroup like :searchKey order by customOrder asc")
@@ -25,10 +34,26 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc")
     fun liveExplore(): LiveData<List<BookSource>>
 
-    @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' and (bookSourceGroup like :key or bookSourceName like :key) order by customOrder asc")
+    @Query(
+        """
+        select * from book_sources 
+        where enabledExplore = 1 
+        and trim(exploreUrl) <> '' 
+        and (bookSourceGroup like :key or bookSourceName like :key) 
+        order by customOrder asc
+        """
+    )
     fun liveExplore(key: String): LiveData<List<BookSource>>
 
-    @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' and (bookSourceGroup like :key) order by customOrder asc")
+    @Query(
+        """
+        select * from book_sources 
+        where enabledExplore = 1 
+        and trim(exploreUrl) <> '' 
+        and (bookSourceGroup like :key) 
+        order by customOrder asc
+        """
+    )
     fun liveGroupExplore(key: String): LiveData<List<BookSource>>
 
     @Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
@@ -37,7 +62,14 @@ interface BookSourceDao {
     @Query("select distinct bookSourceGroup from book_sources where enabled = 1 and trim(bookSourceGroup) <> ''")
     fun liveGroupEnabled(): LiveData<List<String>>
 
-    @Query("select distinct bookSourceGroup from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' and trim(bookSourceGroup) <> ''")
+    @Query(
+        """
+        select distinct bookSourceGroup from book_sources 
+        where enabledExplore = 1 
+        and trim(exploreUrl) <> '' 
+        and trim(bookSourceGroup) <> ''
+        """
+    )
     fun liveExploreGroup(): LiveData<List<String>>
 
     @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%'")

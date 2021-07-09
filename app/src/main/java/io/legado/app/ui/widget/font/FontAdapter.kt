@@ -24,7 +24,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
         item: DocItem,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             kotlin.runCatching {
                 val typeface: Typeface? = if (item.isContentPath) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

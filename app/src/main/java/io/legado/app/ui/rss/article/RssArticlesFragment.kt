@@ -53,7 +53,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         initData()
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         refreshLayout.setColorSchemeColors(accentColor)
         ATH.applyEdgeEffectColor(recyclerView)
         recyclerView.layoutManager = if (activityViewModel.isGridLayout) {

@@ -31,7 +31,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
         item: Book,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             if (payloads.isEmpty()) {
                 tvName.text = item.name
                 tvAuthor.text = context.getString(R.string.author_show, item.getRealAuthor())
@@ -53,7 +53,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemDownloadBinding) {
-        with(binding) {
+        binding.run {
             ivDownload.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     if (downloadMap?.containsKey(it.bookUrl) == true) {

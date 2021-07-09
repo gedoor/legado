@@ -23,7 +23,7 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
         binding: ItemBookshelfListBinding,
         item: Book,
         payloads: MutableList<Any>
-    ) = with(binding) {
+    ) = binding.run {
         val bundle = payloads.getOrNull(0) as? Bundle
         if (bundle == null) {
             tvName.text = item.name

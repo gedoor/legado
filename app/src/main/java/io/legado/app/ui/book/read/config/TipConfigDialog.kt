@@ -46,7 +46,7 @@ class TipConfigDialog : BaseDialogFragment() {
         }
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         rgTitleMode.checkByIndex(ReadBookConfig.titleMode)
         dsbTitleSize.progress = ReadBookConfig.titleSize
         dsbTitleTop.progress = ReadBookConfig.titleTopSpacing
@@ -74,7 +74,7 @@ class TipConfigDialog : BaseDialogFragment() {
             }
     }
 
-    private fun initEvent() = with(binding) {
+    private fun initEvent() = binding.run {
         rgTitleMode.setOnCheckedChangeListener { _, checkedId ->
             ReadBookConfig.titleMode = rgTitleMode.getIndexById(checkedId)
             postEvent(EventBus.UP_CONFIG, true)

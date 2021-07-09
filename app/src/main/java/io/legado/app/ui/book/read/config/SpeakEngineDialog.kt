@@ -72,7 +72,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         initData()
     }
 
-    private fun initView() = with(binding) {
+    private fun initView() = binding.run {
         toolBar.setBackgroundColor(primaryColor)
         toolBar.setTitle(R.string.speak_engine)
         ATH.applyEdgeEffectColor(recyclerView)
@@ -96,7 +96,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
     }
 
-    private fun initMenu() = with(binding) {
+    private fun initMenu() = binding.run {
         toolBar.inflateMenu(R.menu.speak_engine)
         toolBar.menu.applyTint(requireContext())
         toolBar.setOnMenuItemClickListener(this@SpeakEngineDialog)

@@ -31,7 +31,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         item: DocItem,
         payloads: MutableList<Any>
     ) {
-        with(binding) {
+        binding.run {
             if (payloads.isEmpty()) {
                 if (item.isDir) {
                     ivIcon.setImageResource(R.drawable.ic_folder)

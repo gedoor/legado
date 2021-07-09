@@ -125,7 +125,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
             item: String,
             payloads: MutableList<Any>
         ) {
-            with(binding) {
+            binding.run {
                 root.setBackgroundColor(context.backgroundColor)
                 tvGroup.text = item
             }
