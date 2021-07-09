@@ -17,41 +17,18 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
 
     fun trim() { // 修剪当前规则之前的"@"或者空白符
-        while (queue[pos] == '@' || queue[pos] < '!') pos++
+        if(queue[pos] == '@' || queue[pos] < '!') { //在while里重复设置start和startX会拖慢执行速度，所以先来个判断是否存在需要修剪的字段，最后再一次性设置start和startX
+            pos++
+            while (queue[pos] == '@' || queue[pos] < '!') pos++
+            start = pos //开始点推移
+            startX = pos //规则起始点推移
+        }
     }
 
     //将pos重置为0，方便复用
     fun reSetPos() {
         pos = 0
-    }
-
-    //当前拉取字段
-    fun currString(): String {
-        return queue.substring(start, pos) //当前拉取到的字段
-    }
-
-    /**
-     * 是否已无剩余字符?
-     * @return 若剩余字串中已无字符则返回true
-     */
-    val isEmpty: Boolean
-        get() = queue.length - pos == 0 //是否处理到最后
-
-    /**
-     * 消耗剩余字串中一个字符。
-     * @return 返回剩余字串中的下个字符。
-     */
-    fun consume(): Char {
-        return queue[pos++]
-    }
-
-    /**
-     * 字串与剩余字串是否匹配，不区分大小写
-     * @param seq 字符串被检查
-     * @return 若下字符串匹配返回 true
-     */
-    fun matches(seq: String): Boolean {
-        return queue.regionMatches(pos, seq, 0, seq.length, ignoreCase = true)
+        startX = 0
     }
 
     /**
@@ -115,13 +92,13 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
     //其中js只要符合语法，就不用避开任何阅读关键字，自由发挥
     fun chompJsBalanced(
-        f: ((Char) -> Boolean?) = {
-            when (it) {
-                '{' -> true //开始嵌套一层
-                '}' -> false //闭合一层嵌套
-                else -> null
+            f: ((Char) -> Boolean?) = {
+                when (it) {
+                    '{' -> true //开始嵌套一层
+                    '}' -> false //闭合一层嵌套
+                    else -> null
+                }
             }
-        }
     ): Boolean {
         var pos = pos //声明变量记录临时处理位置
         var depth = 0 //嵌套深度
@@ -139,11 +116,11 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             var c = queue[pos++]
             if (c != '\\') { //非转义字符
                 if (c == '\'' && !commits && !commit && !regex && !inDoubleQuote && !inOtherQuote) inSingleQuote =
-                    !inSingleQuote //匹配具有语法功能的单引号
+                        !inSingleQuote //匹配具有语法功能的单引号
                 else if (c == '"' && !commits && !commit && !regex && !inSingleQuote && !inOtherQuote) inDoubleQuote =
-                    !inDoubleQuote //匹配具有语法功能的双引号
+                        !inDoubleQuote //匹配具有语法功能的双引号
                 else if (c == '`' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote) inOtherQuote =
-                    !inOtherQuote //匹配具有语法功能的'`'
+                        !inOtherQuote //匹配具有语法功能的'`'
                 else if (c == '/' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote && !inOtherQuote) { //匹配注释或正则起点
                     c = queue[pos++]
                     when (c) {
@@ -323,7 +300,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                queue.substring(0, start) + "后未平衡"
+                    queue.substring(0,start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -380,7 +357,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                queue.substring(0, start) + "后未平衡"
+                    queue.substring(0,start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -403,20 +380,20 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      *
      * */
     fun innerRule(
-        inner: String,
-        startStep: Int = 1,
-        endStep: Int = 1,
-        fr: (String) -> String?
+            inner: String,
+            startStep: Int = 1,
+            endStep: Int = 1,
+            fr: (String) -> String?
     ): String {
 
-        startX = pos //设置规则起点
         val st = StringBuilder()
 
         while (consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
+            val posPre = pos //记录consumeTo匹配位置
             if (chompCodeBalanced('{', '}')) {
-                val frv = fr(queue.substring(start + startStep, pos - endStep))
+                val frv = fr(queue.substring(posPre + startStep, pos - endStep))
                 if (frv != null) {
-                    st.append(queue.substring(startX, start) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                    st.append(queue.substring(startX, posPre) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     startX = pos //记录下次规则起点
                     continue //获取内容成功，继续选择下个内嵌规则
                 }
@@ -424,8 +401,9 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
         }
 
-        st.append(queue.substring(startX)) //压入剩余字符串
-        return st.toString()
+        return if(startX == 0) "" else st.apply {
+            append(queue.substring(startX))
+        }.toString()
     }
 
     companion object {
