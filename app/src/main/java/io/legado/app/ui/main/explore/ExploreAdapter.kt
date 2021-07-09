@@ -1,10 +1,11 @@
 package io.legado.app.ui.main.explore
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.TextView
+import androidx.core.view.children
 import com.google.android.flexbox.FlexboxLayout
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -25,6 +26,8 @@ import splitties.views.onLongClick
 
 class ExploreAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
     RecyclerAdapter<BookSource, ItemFindBookBinding>(context) {
+
+    private val recycler = arrayListOf<View>()
     private var exIndex = -1
     private var scrollTo = -1
 
@@ -66,27 +69,24 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     }
                 }
             } else {
-                binding.ivStatus.setImageResource(R.drawable.ic_arrow_right)
-                binding.rotateLoading.hide()
-                binding.flexbox.gone()
+                ivStatus.setImageResource(R.drawable.ic_arrow_right)
+                rotateLoading.hide()
+                recyclerFlexbox(flexbox)
+                flexbox.gone()
             }
         }
     }
 
     private fun upKindList(flexbox: FlexboxLayout, sourceUrl: String, kinds: List<ExploreKind>) {
         if (!kinds.isNullOrEmpty()) {
+            recyclerFlexbox(flexbox)
             flexbox.visible()
-            flexbox.removeAllViews()
-            kinds.map { kind ->
-                val tv = ItemFilletTextBinding.inflate(
-                    LayoutInflater.from(context),
-                    flexbox,
-                    false
-                ).root
+            kinds.forEach { kind ->
+                val tv = getFlexboxChild(flexbox)
                 flexbox.addView(tv)
                 tv.text = kind.title
                 val lp = tv.layoutParams as FlexboxLayout.LayoutParams
-                kind.style.let { style ->
+                kind.style().let { style ->
                     lp.flexGrow = style.layout_flexGrow
                     lp.flexShrink = style.layout_flexShrink
                     lp.alignSelf = style.alignSelf()
@@ -98,6 +98,23 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 }
             }
         }
+    }
+
+    @Synchronized
+    private fun getFlexboxChild(flexbox: FlexboxLayout): TextView {
+        return if (recycler.isEmpty()) {
+            ItemFilletTextBinding.inflate(inflater, flexbox, false).root
+        } else {
+            recycler.last().also {
+                recycler.removeLast()
+            } as TextView
+        }
+    }
+
+    @Synchronized
+    private fun recyclerFlexbox(flexbox: FlexboxLayout) {
+        recycler.addAll(flexbox.children)
+        flexbox.removeAllViews()
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemFindBookBinding) {

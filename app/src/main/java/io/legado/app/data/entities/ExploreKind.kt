@@ -3,8 +3,16 @@ package io.legado.app.data.entities
 data class ExploreKind(
     val title: String,
     val url: String? = null,
-    val style: Style = Style()
+    val style: Style? = null
 ) {
+
+    companion object {
+        val defaultStyle = Style()
+    }
+
+    fun style(): Style {
+        return style ?: defaultStyle
+    }
 
     data class Style(
         val layout_flexGrow: Float = 0F,
