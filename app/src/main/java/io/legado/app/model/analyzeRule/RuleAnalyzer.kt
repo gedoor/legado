@@ -92,13 +92,13 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
     //其中js只要符合语法，就不用避开任何阅读关键字，自由发挥
     fun chompJsBalanced(
-        f: ((Char) -> Boolean?) = {
-            when (it) {
-                '{' -> true //开始嵌套一层
-                '}' -> false //闭合一层嵌套
-                else -> null
+            f: ((Char) -> Boolean?) = {
+                when (it) {
+                    '{' -> true //开始嵌套一层
+                    '}' -> false //闭合一层嵌套
+                    else -> null
+                }
             }
-        }
     ): Boolean {
         var pos = pos //声明变量记录临时处理位置
         var depth = 0 //嵌套深度
@@ -116,11 +116,11 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             var c = queue[pos++]
             if (c != '\\') { //非转义字符
                 if (c == '\'' && !commits && !commit && !regex && !inDoubleQuote && !inOtherQuote) inSingleQuote =
-                    !inSingleQuote //匹配具有语法功能的单引号
+                        !inSingleQuote //匹配具有语法功能的单引号
                 else if (c == '"' && !commits && !commit && !regex && !inSingleQuote && !inOtherQuote) inDoubleQuote =
-                    !inDoubleQuote //匹配具有语法功能的双引号
+                        !inDoubleQuote //匹配具有语法功能的双引号
                 else if (c == '`' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote) inOtherQuote =
-                    !inOtherQuote //匹配具有语法功能的'`'
+                        !inOtherQuote //匹配具有语法功能的'`'
                 else if (c == '/' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote && !inOtherQuote) { //匹配注释或正则起点
                     c = queue[pos++]
                     when (c) {
@@ -300,7 +300,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                queue.substring(0, start) + "后未平衡"
+                    queue.substring(0,start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -357,7 +357,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                queue.substring(0, start) + "后未平衡"
+                    queue.substring(0,start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -380,10 +380,10 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      *
      * */
     fun innerRule(
-        inner: String,
-        startStep: Int = 1,
-        endStep: Int = 1,
-        fr: (String) -> String?
+            inner: String,
+            startStep: Int = 1,
+            endStep: Int = 1,
+            fr: (String) -> String?
     ): String {
 
         val st = StringBuilder()
