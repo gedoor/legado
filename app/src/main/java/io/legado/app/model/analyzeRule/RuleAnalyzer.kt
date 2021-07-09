@@ -422,7 +422,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
         while (consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
             if (chompCodeBalanced('{', '}')) {
-                val frv = fr(queue.substring(start + stepStart, pos - stepEnd))
+                val frv = fr(queue.substring(start + startStep, pos - endStep))
                 if (frv != null) {
                     st.append(queue.substring(startX, start) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     startX = pos //记录下次规则起点
