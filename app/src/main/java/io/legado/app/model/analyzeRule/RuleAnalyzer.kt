@@ -432,11 +432,8 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
         }
 
-        //最初起点与当前规则起点相同，证明无替换成功的内嵌规则,返回空字符串。否则返回替换后的字符串
-        return if (startX == startXS) "" else {
-            st.append(queue.substring(pos)) //压入剩余字符串
-            st.toString()
-        }
+        st.append(queue.substring(startX)) //压入剩余字符串
+        return st.toString()
     }
 
     companion object {
