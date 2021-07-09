@@ -17,7 +17,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
 
     fun trim() { // 修剪当前规则之前的"@"或者空白符
-        if(queue[pos] == '@' || queue[pos] < '!') { //为了减少不必要的去设置start或startX，先来个判断
+        if(queue[pos] == '@' || queue[pos] < '!') { //在while里重复设置start和startX会拖慢执行速度，所以先来个判断是否存在需要修剪的字段，最后再一次性设置start和startX
             pos++
             while (queue[pos] == '@' || queue[pos] < '!') pos++
             start = pos //开始点推移
