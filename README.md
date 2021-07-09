@@ -12,9 +12,10 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/gedoor/legado)](https://github.com/gedoor/legado/graphs/contributors)
 
 ## 阅读3.0
-* [书源规则](https://alanskycn.gitee.io/teachme/)
+* [书源规则](https://alanskycn.gitee.io/teachme)
 * [更新日志](/app/src/main/assets/updateLog.md)
 * [帮助文档](/app/src/main/assets/help/appHelp.md)
+* [web端](https://github.com/celetor/web-yuedu3)
 
 ## 下载
 <a href="https://play.google.com/store/apps/details?id=io.legado.play.release"><img width="200px" alt="Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/></a> or <a href="https://www.coolapk.com/apk/io.legado.app.release"><img width="100px" height="100px" alt="CoolApk" src="https://github.com/Celeter/build/raw/master/.github/scripts/coolapk.png"/></a> or [Releases](https://github.com/gedoor/legado/releases/latest)
