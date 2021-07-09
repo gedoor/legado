@@ -17,41 +17,18 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
 
     fun trim() { // 修剪当前规则之前的"@"或者空白符
-        while (queue[pos] == '@' || queue[pos] < '!') pos++
+        if(queue[pos] == '@' || queue[pos] < '!') { //为了减少不必要的去设置start或startX，先来个判断
+            pos++
+            while (queue[pos] == '@' || queue[pos] < '!') pos++
+            start = pos //开始点推移
+            startX = pos //规则起始点推移
+        }
     }
 
     //将pos重置为0，方便复用
     fun reSetPos() {
         pos = 0
-    }
-
-    //当前拉取字段
-    fun currString(): String {
-        return queue.substring(start, pos) //当前拉取到的字段
-    }
-
-    /**
-     * 是否已无剩余字符?
-     * @return 若剩余字串中已无字符则返回true
-     */
-    val isEmpty: Boolean
-        get() = queue.length - pos == 0 //是否处理到最后
-
-    /**
-     * 消耗剩余字串中一个字符。
-     * @return 返回剩余字串中的下个字符。
-     */
-    fun consume(): Char {
-        return queue[pos++]
-    }
-
-    /**
-     * 字串与剩余字串是否匹配，不区分大小写
-     * @param seq 字符串被检查
-     * @return 若下字符串匹配返回 true
-     */
-    fun matches(seq: String): Boolean {
-        return queue.regionMatches(pos, seq, 0, seq.length, ignoreCase = true)
+        startX = 0
     }
 
     /**
@@ -415,14 +392,14 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             fr: (String) -> String?
     ): String {
 
-        startX = pos //设置规则起点
         val st = StringBuilder()
 
         while (consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
+            val posPre = pos //记录consumeTo匹配位置
             if (chompCodeBalanced('{', '}')) {
-                val frv = fr(queue.substring(start + startStep, pos - endStep))
+                val frv = fr(queue.substring(posPre + startStep, pos - endStep))
                 if (frv != null) {
-                    st.append(queue.substring(startX, start) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                    st.append(queue.substring(startX, posPre) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     startX = pos //记录下次规则起点
                     continue //获取内容成功，继续选择下个内嵌规则
                 }
@@ -430,8 +407,9 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
         }
 
-        st.append(queue.substring(startX)) //压入剩余字符串
-        return st.toString()
+        return if(startX == 0) "" else st.apply {
+            append(queue.substring(startX))
+        }.toString()
     }
 
     companion object {
