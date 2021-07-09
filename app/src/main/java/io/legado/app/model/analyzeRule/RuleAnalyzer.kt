@@ -16,15 +16,6 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
     val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
 
-    //当前平衡字段
-    fun currBalancedString(
-            stepStart: Int = 1,
-            stepEnd: Int = 1
-    ): String { //stepStart平衡字符的起始分隔字串长度，stepEnd平衡字符的结束分隔字串长度
-        return queue.substring(start + stepStart, pos - stepEnd) //当前平衡字段
-    }
-
-
     fun trim() { // 修剪当前规则之前的"@"或者空白符
         while (queue[pos] == '@' || queue[pos] < '!') pos++
     }
@@ -38,7 +29,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     fun currString(): String {
         return queue.substring(start, pos) //当前拉取到的字段
     }
-    
+
     /**
      * 是否已无剩余字符?
      * @return 若剩余字串中已无字符则返回true
@@ -431,7 +422,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
         while (consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
             if (chompCodeBalanced('{', '}')) {
-                val frv = fr(currBalancedString(startStep, endStep))
+                val frv = fr(queue.substring(start + stepStart, pos - stepEnd))
                 if (frv != null) {
                     st.append(queue.substring(startX, start) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     startX = pos //记录下次规则起点
