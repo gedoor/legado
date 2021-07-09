@@ -20,6 +20,10 @@ inline fun <reified EVENT> postEventDelay(tag: String, event: EVENT, delay: Long
     LiveEventBus.get<Any>(tag).postDelay(event, delay)
 }
 
+inline fun <reified EVENT> postEventOrderly(tag: String, event: EVENT) {
+    LiveEventBus.get<Any>(tag).postOrderly(event)
+}
+
 inline fun <reified EVENT> AppCompatActivity.observeEvent(
     vararg tags: String,
     noinline observer: (EVENT) -> Unit
@@ -31,7 +35,6 @@ inline fun <reified EVENT> AppCompatActivity.observeEvent(
         eventObservable<EVENT>(it).observe(this, o)
     }
 }
-
 
 inline fun <reified EVENT> AppCompatActivity.observeEventSticky(
     vararg tags: String,
@@ -68,4 +71,3 @@ inline fun <reified EVENT> Fragment.observeEventSticky(
         eventObservable<EVENT>(it).observeSticky(this, o)
     }
 }
-
