@@ -11,6 +11,23 @@
 : regex规则,不可省略,只可以用在书籍列表和目录列表
 ```
 
+* 发现url格式
+```json
+[
+  {
+    "title": "xxx",
+    "url": "",
+    "style": {
+      "layout_flexGrow": 0,
+      "layout_flexShrink": 1,
+      "layout_alignSelf": "auto",
+      "layout_flexBasisPercent": -1,
+      "layout_wrapBefore": false
+    }
+  }
+]
+```
+
 * 获取登录后的cookie
 ```
 java.getCookie("http://baidu.com", null) => userid=1234;pwd=adbcd
