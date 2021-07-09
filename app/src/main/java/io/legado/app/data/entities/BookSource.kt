@@ -171,11 +171,6 @@ data class BookSource(
 
     private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
 
-    data class ExploreKind(
-        var title: String,
-        var url: String? = null,
-    )
-
     class Converters {
         @TypeConverter
         fun exploreRuleToString(exploreRule: ExploreRule?): String = GSON.toJson(exploreRule)

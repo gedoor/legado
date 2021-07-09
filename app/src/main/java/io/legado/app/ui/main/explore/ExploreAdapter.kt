@@ -11,6 +11,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.ExploreKind
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemFindBookBinding
 import io.legado.app.help.coroutine.Coroutine
@@ -56,32 +57,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 Coroutine.async(scope) {
                     item.getExploreKinds()
                 }.onSuccess { kindList ->
-                    if (!kindList.isNullOrEmpty()) {
-                        flexbox.visible()
-                        flexbox.removeAllViews()
-                        kindList.map { kind ->
-                            val tv = ItemFilletTextBinding.inflate(
-                                LayoutInflater.from(context),
-                                flexbox,
-                                false
-                            ).root
-                            flexbox.addView(tv)
-                            tv.text = kind.title
-                            if (!kind.url.isNullOrEmpty()) {
-                                tv.setOnClickListener {
-                                    callBack.openExplore(
-                                        item.bookSourceUrl,
-                                        kind.title,
-                                        kind.url.toString()
-                                    )
-                                }
-                            }
-                            val lp = tv.layoutParams as FlexboxLayout.LayoutParams
-                            lp.let {
-
-                            }
-                        }
-                    }
+                    upKindList(flexbox, item.bookSourceUrl, kindList)
                 }.onFinally {
                     rotateLoading.hide()
                     if (scrollTo >= 0) {
@@ -93,6 +69,33 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 binding.ivStatus.setImageResource(R.drawable.ic_arrow_right)
                 binding.rotateLoading.hide()
                 binding.flexbox.gone()
+            }
+        }
+    }
+
+    private fun upKindList(flexbox: FlexboxLayout, sourceUrl: String, kinds: List<ExploreKind>) {
+        if (!kinds.isNullOrEmpty()) {
+            flexbox.visible()
+            flexbox.removeAllViews()
+            kinds.map { kind ->
+                val tv = ItemFilletTextBinding.inflate(
+                    LayoutInflater.from(context),
+                    flexbox,
+                    false
+                ).root
+                flexbox.addView(tv)
+                tv.text = kind.title
+                val lp = tv.layoutParams as FlexboxLayout.LayoutParams
+                kind.style.let { style ->
+                    lp.flexGrow = style.layout_flexGrow
+                    lp.flexShrink = style.layout_flexShrink
+                    lp.alignSelf = style.alignSelf()
+                    lp.flexBasisPercent = style.layout_flexBasisPercent
+                    lp.isWrapBefore = style.layout_wrapBefore
+                }
+                tv.setOnClickListener {
+                    callBack.openExplore(sourceUrl, kind.title, kind.url)
+                }
             }
         }
     }
@@ -151,7 +154,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
 
     interface CallBack {
         fun scrollTo(pos: Int)
-        fun openExplore(sourceUrl: String, title: String, exploreUrl: String)
+        fun openExplore(sourceUrl: String, title: String, exploreUrl: String?)
         fun editSource(sourceUrl: String)
         fun toTop(source: BookSource)
     }
