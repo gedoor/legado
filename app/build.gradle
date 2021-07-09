@@ -162,7 +162,7 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
 
     //liveEventBus
-    implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
+    implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
 
     //协程
     def coroutines_version = '1.4.3'

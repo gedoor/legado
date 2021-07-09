@@ -26,7 +26,6 @@ class App : MultiDexApplication() {
         createNotificationChannels()
         applyDayNight(this)
         LiveEventBus.config()
-            .supportBroadcast(this)
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
         registerActivityLifecycleCallbacks(ActivityHelp)
