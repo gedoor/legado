@@ -6,8 +6,8 @@ import android.content.Intent
 import android.view.KeyEvent
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
-import io.legado.app.help.ActivityHelp
 import io.legado.app.help.AppConfig
+import io.legado.app.help.LifecycleHelp
 import io.legado.app.service.AudioPlayService
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.AudioPlay
@@ -69,13 +69,13 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 } else {
                     AudioPlay.pause(context)
                 }
-                ActivityHelp.isExist(ReadBookActivity::class.java) ->
+                LifecycleHelp.isExistActivity(ReadBookActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
-                ActivityHelp.isExist(AudioPlayActivity::class.java) ->
+                LifecycleHelp.isExistActivity(AudioPlayActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
                 else -> if (AppConfig.mediaButtonOnExit || !isMediaKey) {
                     appDb.bookDao.lastReadBook?.let {
-                        if (!ActivityHelp.isExist(MainActivity::class.java)) {
+                        if (!LifecycleHelp.isExistActivity(MainActivity::class.java)) {
                             Intent(context, MainActivity::class.java).let {
                                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 context.startActivity(it)

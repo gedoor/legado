@@ -11,65 +11,24 @@ import java.util.*
  * Activity管理器,管理项目中Activity的状态
  */
 @Suppress("unused")
-object ActivityHelp : Application.ActivityLifecycleCallbacks {
+object LifecycleHelp : Application.ActivityLifecycleCallbacks {
 
     private val activities: MutableList<WeakReference<Activity>> = arrayListOf()
 
-    fun size(): Int {
+    fun activitySize(): Int {
         return activities.size
     }
 
     /**
      * 判断指定Activity是否存在
      */
-    fun isExist(activityClass: Class<*>): Boolean {
+    fun isExistActivity(activityClass: Class<*>): Boolean {
         activities.forEach { item ->
             if (item.get()?.javaClass == activityClass) {
                 return true
             }
         }
         return false
-    }
-
-    /**
-     * 添加Activity
-     */
-    fun add(activity: Activity) {
-        activities.add(WeakReference(activity))
-    }
-
-    /**
-     * 移除Activity
-     */
-    fun remove(activity: Activity) {
-        for (temp in activities) {
-            if (null != temp.get() && temp.get() === activity) {
-                activities.remove(temp)
-                break
-            }
-        }
-    }
-
-    /**
-     * 移除Activity
-     */
-    fun remove(activityClass: Class<*>) {
-        val iterator = activities.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (item.get()?.javaClass == activityClass) {
-                iterator.remove()
-            }
-        }
-    }
-
-    /**
-     * 关闭指定 activity
-     */
-    fun finishActivity(vararg activities: Activity) {
-        activities.forEach { activity ->
-            activity.finish()
-        }
     }
 
     /**
@@ -101,7 +60,12 @@ object ActivityHelp : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        remove(activity)
+        for (temp in activities) {
+            if (temp.get() === activity) {
+                activities.remove(temp)
+                break
+            }
+        }
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
@@ -111,7 +75,7 @@ object ActivityHelp : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        add(activity)
+        activities.add(WeakReference(activity))
         if (!LanguageUtils.isSameWithSetting(activity)){
             LanguageUtils.setConfiguration(activity)
         }

@@ -10,9 +10,9 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
-import io.legado.app.help.ActivityHelp
 import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
+import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.ThemeConfig.applyDayNight
 import io.legado.app.utils.LanguageUtils
 import io.legado.app.utils.defaultSharedPreferences
@@ -28,7 +28,7 @@ class App : MultiDexApplication() {
         LiveEventBus.config()
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
-        registerActivityLifecycleCallbacks(ActivityHelp)
+        registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
     }
 
