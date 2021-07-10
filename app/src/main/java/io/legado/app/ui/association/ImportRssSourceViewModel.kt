@@ -50,14 +50,15 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
             selectStatus.forEachIndexed { index, b ->
                 if (b) {
                     val source = allSources[index]
-                    if (groupName != null) {
-                        source.sourceGroup = groupName
-                    }
                     if (keepName) {
                         checkSources[index]?.let {
                             source.sourceName = it.sourceName
                             source.sourceGroup = it.sourceGroup
+                            source.customOrder = it.customOrder
                         }
+                    }
+                    if (groupName != null) {
+                        source.sourceGroup = groupName
                     }
                     selectSource.add(source)
                 }
