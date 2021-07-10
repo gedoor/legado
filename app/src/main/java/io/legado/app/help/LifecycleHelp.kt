@@ -3,6 +3,7 @@ package io.legado.app.help
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import io.legado.app.base.BaseService
 import io.legado.app.utils.LanguageUtils
 import java.lang.ref.WeakReference
 import java.util.*
@@ -14,6 +15,7 @@ import java.util.*
 object LifecycleHelp : Application.ActivityLifecycleCallbacks {
 
     private val activities: MutableList<WeakReference<Activity>> = arrayListOf()
+    private val services: MutableList<WeakReference<BaseService>> = arrayListOf()
 
     fun activitySize(): Int {
         return activities.size
@@ -61,7 +63,7 @@ object LifecycleHelp : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityDestroyed(activity: Activity) {
         for (temp in activities) {
-            if (temp.get() === activity) {
+            if (temp.get() != null && temp.get() === activity) {
                 activities.remove(temp)
                 break
             }
@@ -76,8 +78,23 @@ object LifecycleHelp : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         activities.add(WeakReference(activity))
-        if (!LanguageUtils.isSameWithSetting(activity)){
+        if (!LanguageUtils.isSameWithSetting(activity)) {
             LanguageUtils.setConfiguration(activity)
+        }
+    }
+
+    @Synchronized
+    fun onServiceCreate(service: BaseService) {
+        services.add(WeakReference(service))
+    }
+
+    @Synchronized
+    fun onServiceDestroy(service: BaseService) {
+        for (temp in services) {
+            if (temp.get() != null && temp.get() === service) {
+                services.remove(temp)
+                break
+            }
         }
     }
 }

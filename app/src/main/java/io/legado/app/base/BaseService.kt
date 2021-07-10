@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.CallSuper
+import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ abstract class BaseService : Service(), CoroutineScope by MainScope() {
     @CallSuper
     override fun onCreate() {
         super.onCreate()
+        LifecycleHelp.onServiceCreate(this)
     }
 
     @CallSuper
@@ -38,5 +40,6 @@ abstract class BaseService : Service(), CoroutineScope by MainScope() {
     override fun onDestroy() {
         super.onDestroy()
         cancel()
+        LifecycleHelp.onServiceDestroy(this)
     }
 }
