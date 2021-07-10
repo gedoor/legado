@@ -3,13 +3,9 @@ package io.legado.app.ui.book.search
 import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.data.appDb
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.ui.widget.anima.explosion_field.ExplosionField
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import splitties.views.onLongClick
 
 class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
@@ -42,9 +38,7 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
             onLongClick {
                 explosionField.explode(this, true)
                 getItem(holder.layoutPosition)?.let {
-                    GlobalScope.launch(IO) {
-                        appDb.searchKeywordDao.delete(it)
-                    }
+                    callBack.deleteHistory(it)
                 }
             }
         }
@@ -52,5 +46,6 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
 
     interface CallBack {
         fun searchHistory(key: String)
+        fun deleteHistory(searchKeyword: SearchKeyword)
     }
 }

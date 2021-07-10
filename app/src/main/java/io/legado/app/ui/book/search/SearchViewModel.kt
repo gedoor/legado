@@ -186,6 +186,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
+    fun deleteHistory(searchKeyword: SearchKeyword) {
+        appDb.searchKeywordDao.delete(searchKeyword)
+    }
+
     override fun onCleared() {
         super.onCleared()
         searchBookModel.close()

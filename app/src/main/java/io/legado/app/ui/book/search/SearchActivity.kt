@@ -366,4 +366,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             }
         }
     }
+
+    override fun deleteHistory(searchKeyword: SearchKeyword) {
+        viewModel.deleteHistory(searchKeyword)
+    }
 }

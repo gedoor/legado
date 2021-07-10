@@ -24,6 +24,10 @@ class Coroutine<T>(
             return Coroutine(scope, context, block)
         }
 
+        fun cancel() {
+            DEFAULT.cancel()
+        }
+
     }
 
     private val job: Job
