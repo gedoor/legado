@@ -1,9 +1,7 @@
 package io.legado.app.service
 
 import android.app.PendingIntent
-import android.content.Intent
 import android.media.MediaPlayer
-
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
@@ -38,11 +36,6 @@ class HttpReadAloudService : BaseReadAloudService(),
         player.setOnErrorListener(this)
         player.setOnPreparedListener(this)
         player.setOnCompletionListener(this)
-    }
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        super.onTaskRemoved(rootIntent)
-        stopSelf()
     }
 
     override fun onDestroy() {

@@ -81,10 +81,6 @@ chapter.html的关键字有{title}、{content}
 其他html文件的关键字有{name}、{author}、{intro}、{kind}、{wordCount}
 ```
 
-**2021/05/26**
-* 书签绑定书名与作者
-* 修复详情页目录问题
-
 **2021/05/24**
 * 反转目录后刷新内容
 * 修复上下滑动会导致左右切换问题
@@ -267,9 +263,6 @@ chapter.html的关键字有{title}、{content}
 * 选择文字时优先选词
 * 优化进度同步,进入书籍时同步,每次同步单本书,减少同步文件大小
 
-**2020/12/06**
-* 添加规则订阅功能,订阅界面第一个图标,可以订阅书源/订阅源/替换规则
-
 **2020/12/04**
 * 阅读进度从页数改为字数,排版变化时定位更准确
 * 修改viewBinding
@@ -290,14 +283,6 @@ chapter.html的关键字有{title}、{content}
 base64DecodeToByteArray(str: String?): ByteArray?
 base64DecodeToByteArray(str: String?, flags: Int): ByteArray?
 ```
-* 导出添加替换净化
-* 修复正文内容TalkBack不对的bug,优化视障使用体验
-
-**2020/11/08**
-* 优化书源,订阅源导入,添加保持原名选项
-* 优化使用体验,初次使用是自动弹出帮助文档
-* 添加阅读界面的点击区域设置
-* 滚动翻页时自动翻页也采用滚动模式
 
 **2020/11/07**
 * 详情页菜单添加拷贝URL
@@ -307,12 +292,6 @@ base64DecodeToByteArray(str: String?, flags: Int): ByteArray?
 * 去除解析目录时拼接相对url,提升解析速度
 * 自动分段优化 by [tumuyan](https://github.com/tumuyan)
 * web支持图片显示 by [六月](https://github.com/Celeter)
-
-**2020/10/27**
-* 点击书籍分组可显示书籍数量
-* 升级到SDK30
-* 修复8.0不显示默认背景图片的bug
-* 添加排版命名
 
 **2020/10/24**
 * 修复选择错误的bug

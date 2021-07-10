@@ -3,6 +3,7 @@ package io.legado.app.base
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import androidx.annotation.CallSuper
 import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,10 +19,22 @@ abstract class BaseService : Service(), CoroutineScope by MainScope() {
         block: suspend CoroutineScope.() -> T
     ) = Coroutine.async(scope, context) { block() }
 
+    @CallSuper
+    override fun onCreate() {
+        super.onCreate()
+    }
+
+    @CallSuper
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopSelf()
+    }
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
+    @CallSuper
     override fun onDestroy() {
         super.onDestroy()
         cancel()
