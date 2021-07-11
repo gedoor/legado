@@ -26,7 +26,6 @@ import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.books.BooksFragment
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.putPrefInt
-import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -88,9 +87,7 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        startActivity<SearchActivity> {
-            putExtra("key", query)
-        }
+        SearchActivity.start(requireContext(), query)
         return false
     }
 

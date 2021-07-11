@@ -120,9 +120,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                             appDb.bookDao.findByName(item.bookName).firstOrNull()
                         }
                         if (book == null) {
-                            startActivity<SearchActivity> {
-                                putExtra("key", item.bookName)
-                            }
+                            SearchActivity.start(this@ReadRecordActivity, item.bookName)
                         } else {
                             startActivity<ReadBookActivity> {
                                 putExtra("bookUrl", book.bookUrl)

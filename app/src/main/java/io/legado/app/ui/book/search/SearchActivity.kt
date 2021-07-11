@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.search
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -209,11 +210,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun receiptIntent(intent: Intent? = null) {
-        intent?.getStringExtra("key")?.let {
-            searchView.setQuery(it, true)
-        } ?: let {
+        val key = intent?.getStringExtra("key")
+        if (key.isNullOrBlank()) {
             searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
                 .requestFocus()
+        } else {
+            searchView.setQuery(key, true)
         }
     }
 
@@ -369,5 +371,15 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     override fun deleteHistory(searchKeyword: SearchKeyword) {
         viewModel.deleteHistory(searchKeyword)
+    }
+
+    companion object {
+
+        fun start(context: Context, key: String?) {
+            context.startActivity<SearchActivity> {
+                putExtra("key", key)
+            }
+        }
+
     }
 }
