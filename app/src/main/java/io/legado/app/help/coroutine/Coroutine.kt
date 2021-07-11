@@ -14,7 +14,7 @@ class Coroutine<T>(
 
     companion object {
 
-        val DEFAULT = MainScope()
+        private val DEFAULT = MainScope()
 
         fun <T> async(
             scope: CoroutineScope = DEFAULT,
@@ -22,10 +22,6 @@ class Coroutine<T>(
             block: suspend CoroutineScope.() -> T
         ): Coroutine<T> {
             return Coroutine(scope, context, block)
-        }
-
-        fun cancel() {
-            DEFAULT.cancel()
         }
 
     }
