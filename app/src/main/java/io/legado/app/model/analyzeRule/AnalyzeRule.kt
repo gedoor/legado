@@ -65,7 +65,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     fun setRedirectUrl(url: String): URL? {
         kotlin.runCatching {
-            redirectUrl = URL(url.split(AnalyzeUrl.splitUrlRegex, 1)[0])
+            val pos = url.indexOf(',')
+            redirectUrl = URL( if(pos == -1) url else url.substring(0,pos).trim{ it < '!'} )
         }
         return redirectUrl
     }

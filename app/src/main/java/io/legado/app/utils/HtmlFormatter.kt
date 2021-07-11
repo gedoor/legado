@@ -1,7 +1,6 @@
 package io.legado.app.utils
 
 import io.legado.app.constant.AppPattern.imgPattern
-import io.legado.app.model.analyzeRule.AnalyzeUrl
 import java.net.URL
 import java.util.regex.Pattern
 
@@ -37,14 +36,14 @@ object HtmlFormatter {
 
             var url = matcher.group(1)!!
             val param:String
+            val pos = url.indexOf(',')
 
-            url = NetworkUtils.getAbsoluteURL(redirectUrl, if(url.indexOf(',') != -1) {
-                val absoluteUrl = url.split(AnalyzeUrl.splitUrlRegex, 1)[0]
-                param = url.substring(absoluteUrl.length)
-                absoluteUrl
-            } else {
+            url = NetworkUtils.getAbsoluteURL(redirectUrl, if(pos == -1){
                 param = ""
-                url
+                url.trim{ it <'!'}
+            } else {
+                param = url.substring(pos+1).trim{ it <'!'}
+                url.substring(0,pos).trim{ it <'!'}
             })
 
             sb.append(keepImgHtml.substring(appendPos, matcher.start()))

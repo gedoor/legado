@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
-import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
@@ -62,10 +61,10 @@ data class BookChapter(
         return false
     }
 
-    fun getAbsoluteURL() = if(url.indexOf(',') != -1) {
-        val absoluteUrl = url.split(AnalyzeUrl.splitUrlRegex, 1)[0]
-        "${absoluteUrl},${url.substring(absoluteUrl.length)}"
-    } else url
+    fun getAbsoluteURL():String{
+        val pos = url.indexOf(',')
+        return  if (pos == -1) url else "${url.substring(0,pos).trim{it < '!'}},${url.substring(pos + 1).trim{it < '!'}}"
+    }
 
     fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))
 

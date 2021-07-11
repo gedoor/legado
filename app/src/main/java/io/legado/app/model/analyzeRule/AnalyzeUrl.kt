@@ -39,7 +39,6 @@ class AnalyzeUrl(
     headerMapF: Map<String, String>? = null
 ) : JsExtensions {
     companion object {
-        val splitUrlRegex = Regex("\\s*,\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
     }
 
@@ -56,7 +55,8 @@ class AnalyzeUrl(
     private var retry: Int = 0
 
     init {
-        baseUrl = baseUrl.split(splitUrlRegex, 1)[0]
+        val pos = baseUrl.indexOf(',')
+        if(pos != -1)baseUrl = baseUrl.substring(0,pos).trim { it < '!' }
         headerMapF?.let {
             headerMap.putAll(it)
             if (it.containsKey("proxy")) {
@@ -158,9 +158,9 @@ class AnalyzeUrl(
      */
     private fun initUrl() {
 
-        val hasQuery = ruleUrl.indexOf(',') != -1
+        var pos = ruleUrl.indexOf(',')
 
-        urlHasQuery = if(hasQuery) ruleUrl.split(splitUrlRegex, 1)[0] else ruleUrl
+        urlHasQuery = if(pos == -1) ruleUrl else ruleUrl.substring(0,pos).trim{ it < '!'}
 
         url = NetworkUtils.getAbsoluteURL(baseUrl,urlHasQuery )
 
@@ -168,8 +168,8 @@ class AnalyzeUrl(
             baseUrl = it
         }
 
-        if(hasQuery) {
-            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlHasQuery.length))?.let { option ->
+        if(pos != -1 ) {
+            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(pos + 1).trim{ it < '!'})?.let { option ->
 
                 option.method?.let {
                     if (it.equals("POST", true)) method = RequestMethod.POST
@@ -207,7 +207,7 @@ class AnalyzeUrl(
         when (method) {
             RequestMethod.GET -> {
                 if (!useWebView) {
-                    val pos = url.indexOf('?')
+                    pos = url.indexOf('?')
                     if(pos != -1) {
                         analyzeFields(url.substring(pos + 1))
                         url = url.substring(0,pos)
