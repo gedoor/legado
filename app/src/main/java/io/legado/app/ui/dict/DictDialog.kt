@@ -1,5 +1,6 @@
 package io.legado.app.ui.dict
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
@@ -59,7 +60,11 @@ class DictDialog : BaseDialogFragment() {
         }
         viewModel.dictHtmlData.observe(viewLifecycleOwner) {
             binding.rotateLoading.invisible()
-            binding.tvDict.text = Html.fromHtml(it)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                binding.tvDict.text = Html.fromHtml(it, Html.FROM_HTML_MODE_LEGACY)
+            } else {
+                binding.tvDict.text = Html.fromHtml(it)
+            }
         }
         viewModel.dict(word)
 

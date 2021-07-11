@@ -44,11 +44,6 @@ class DownloadService : BaseService() {
         registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        super.onTaskRemoved(rootIntent)
-        stopSelf()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(downloadReceiver)

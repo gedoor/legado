@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_replace"
@@ -23,13 +24,16 @@
 
     <item
         android:id="@+id/menu_search_content"
-        android:title="@string/search_content" />
+        android:title="@string/search_content"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_browser"
-        android:title="@string/browser" />
+        android:title="@string/browser"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_share_str"
-        android:title="@string/share" />
+        android:title="@string/share"
+        app:showAsAction="never" />
 </menu>
