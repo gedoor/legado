@@ -1,13 +1,11 @@
 package io.legado.app.model.analyzeRule
 
 import android.annotation.SuppressLint
-import android.text.TextUtils
 import androidx.annotation.Keep
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
-import io.legado.app.constant.AppPattern.EXP_PATTERN
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
@@ -41,7 +39,7 @@ class AnalyzeUrl(
     headerMapF: Map<String, String>? = null
 ) : JsExtensions {
     companion object {
-        val splitUrlRegex = Regex(",\\s*(?=\\{)")
+        val splitUrlRegex = Regex("\\s*,\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
     }
 
@@ -82,7 +80,7 @@ class AnalyzeUrl(
             if (jsMatcher.start() > start) {
                 tmp =
                     ruleUrl.substring(start, jsMatcher.start()).replace("\n", "").trim { it <= ' ' }
-                if (!TextUtils.isEmpty(tmp)) {
+                if (tmp.isNotEmpty()) {
                     ruleList.add(tmp)
                 }
             }
@@ -91,7 +89,7 @@ class AnalyzeUrl(
         }
         if (ruleUrl.length > start) {
             tmp = ruleUrl.substring(start).replace("\n", "").trim { it <= ' ' }
-            if (!TextUtils.isEmpty(tmp)) {
+            if (tmp.isNotEmpty()) {
                 ruleList.add(tmp)
             }
         }
@@ -114,23 +112,12 @@ class AnalyzeUrl(
     /**
      * 替换关键字,页数,JS
      */
-    private fun replaceKeyPageJs() {
-        //page
-        page?.let {
-            val matcher = pagePattern.matcher(ruleUrl)
-            while (matcher.find()) {
-                val pages = matcher.group(1)!!.split(",")
-                ruleUrl = if (page <= pages.size) {
-                    ruleUrl.replace(matcher.group(), pages[page - 1].trim { it <= ' ' })
-                } else {
-                    ruleUrl.replace(matcher.group(), pages.last().trim { it <= ' ' })
-                }
-            }
-        }
+    private fun replaceKeyPageJs() { //先替换内嵌规则再替换页数规则，避免内嵌规则中存在大于小于号时，规则被切错
         //js
         if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
-            var jsEval: Any
-            val sb = StringBuffer()
+
+            val analyze = RuleAnalyzer(ruleUrl) //创建解析
+
             val bindings = SimpleBindings()
             bindings["java"] = this
             bindings["cookie"] = CookieStore
@@ -141,21 +128,28 @@ class AnalyzeUrl(
             bindings["speakText"] = speakText
             bindings["speakSpeed"] = speakSpeed
             bindings["book"] = book
-            val expMatcher = EXP_PATTERN.matcher(ruleUrl)
-            while (expMatcher.find()) {
-                jsEval = expMatcher.group(1)?.let {
-                    SCRIPT_ENGINE.eval(it, bindings)
-                } ?: ""
-                if (jsEval is String) {
-                    expMatcher.appendReplacement(sb, jsEval)
-                } else if (jsEval is Double && jsEval % 1.0 == 0.0) {
-                    expMatcher.appendReplacement(sb, String.format("%.0f", jsEval))
-                } else {
-                    expMatcher.appendReplacement(sb, jsEval.toString())
+
+            //替换所有内嵌{{js}}
+            val url = analyze.innerRule("{{",2,2){
+                when(val jsEval = SCRIPT_ENGINE.eval(it, bindings)){
+                    is String -> jsEval
+                    jsEval is Double && jsEval % 1.0 == 0.0 -> String.format("%.0f", jsEval)
+                    else -> jsEval.toString()
                 }
             }
-            expMatcher.appendTail(sb)
-            ruleUrl = sb.toString()
+            if(url.isNotEmpty())ruleUrl = url
+        }
+        //page
+        page?.let {
+            val matcher = pagePattern.matcher(ruleUrl)
+            while (matcher.find()) {
+                val pages = matcher.group(1)!!.split(",")
+                ruleUrl = if (page < pages.size) { //pages[pages.size - 1]等同于pages.last()
+                    ruleUrl.replace(matcher.group(), pages[page - 1].trim { it <= ' ' })
+                } else {
+                    ruleUrl.replace(matcher.group(), pages.last().trim { it <= ' ' })
+                }
+            }
         }
     }
 
@@ -163,15 +157,20 @@ class AnalyzeUrl(
      * 处理URL
      */
     private fun initUrl() {
-        var urlArray = ruleUrl.split(splitUrlRegex, 2)
-        url = NetworkUtils.getAbsoluteURL(baseUrl, urlArray[0])
-        urlHasQuery = urlArray[0]
+
+        val hasQuery = ruleUrl.indexOf(',') != -1
+
+        urlHasQuery = if(hasQuery) ruleUrl.split(splitUrlRegex, 1)[0] else ruleUrl
+
+        url = NetworkUtils.getAbsoluteURL(baseUrl,urlHasQuery )
+
         NetworkUtils.getBaseUrl(url)?.let {
             baseUrl = it
         }
-        if (urlArray.size > 1) {
-            val option = GSON.fromJsonObject<UrlOption>(urlArray[1])
-            option?.let { _ ->
+
+        if(hasQuery) {
+            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlHasQuery.length))?.let { option ->
+
                 option.method?.let {
                     if (it.equals("POST", true)) method = RequestMethod.POST
                 }
@@ -201,16 +200,17 @@ class AnalyzeUrl(
                 retry = option.retry
             }
         }
+
         headerMap[UA_NAME] ?: let {
             headerMap[UA_NAME] = AppConfig.userAgent
         }
         when (method) {
             RequestMethod.GET -> {
                 if (!useWebView) {
-                    urlArray = url.split("?")
-                    url = urlArray[0]
-                    if (urlArray.size > 1) {
-                        analyzeFields(urlArray[1])
+                    val pos = url.indexOf('?')
+                    if(pos != -1) {
+                        analyzeFields(url.substring(pos + 1))
+                        url = url.substring(0,pos)
                     }
                 }
             }
@@ -233,7 +233,7 @@ class AnalyzeUrl(
         for (query in queryS) {
             val queryM = query.splitNotBlank("=")
             val value = if (queryM.size > 1) queryM[1] else ""
-            if (TextUtils.isEmpty(charset)) {
+            if (charset.isNullOrEmpty()) {
                 if (NetworkUtils.hasUrlEncoded(value)) {
                     fieldMap[queryM[0]] = value
                 } else {

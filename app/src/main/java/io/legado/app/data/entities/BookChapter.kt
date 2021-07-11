@@ -8,7 +8,6 @@ import androidx.room.Index
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -63,14 +62,10 @@ data class BookChapter(
         return false
     }
 
-    fun getAbsoluteURL(): String {
-        val urlArray = url.split(AnalyzeUrl.splitUrlRegex)
-        var absoluteUrl = NetworkUtils.getAbsoluteURL(baseUrl, urlArray[0])
-        if (urlArray.size > 1) {
-            absoluteUrl = "$absoluteUrl,${urlArray[1]}"
-        }
-        return absoluteUrl
-    }
+    fun getAbsoluteURL() = if(url.indexOf(',') != -1) {
+        val absoluteUrl = url.split(AnalyzeUrl.splitUrlRegex, 1)[0]
+        "${absoluteUrl},${url.substring(absoluteUrl.length)}"
+    } else url
 
     fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))
 

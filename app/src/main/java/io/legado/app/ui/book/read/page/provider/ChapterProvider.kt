@@ -12,7 +12,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
@@ -150,7 +149,7 @@ object ChapterProvider {
 
         return TextChapter(
             bookChapter.index, bookChapter.title,
-            bookChapter.getAbsoluteURL().split(AnalyzeUrl.splitUrlRegex)[0],
+            bookChapter.getAbsoluteURL().split(',',limit = 1)[0], //bookChapter.getAbsoluteURL已经处理过,直接按','就行
             textPages, chapterSize
         )
     }

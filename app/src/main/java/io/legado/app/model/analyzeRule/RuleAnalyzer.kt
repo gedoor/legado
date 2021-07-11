@@ -12,6 +12,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     private var rule = arrayOf<String>()  //分割出的规则列表
     private var step: Int = 0 //分割字符的长度
     var elementsType = "" //当前分割字符串
+    var innerType = true //是否为内嵌{{}}
 
     //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
     val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
@@ -31,9 +32,14 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         startX = 0
     }
 
+    //返回剩余字段
+    fun Remained(): String {
+        return queue.substring(pos)
+    }
+
     /**
-     * 从剩余字串中拉出一个字符串，直到但不包括匹配序列，或剩余字串用完。
-     * @param seq 分隔字符 **区分大小写**
+     * 从剩余字串中拉出一个字符串，直到但不包括匹配序列
+     * @param seq 查找的字符串 **区分大小写**
      * @return 是否找到相应字段。
      */
     fun consumeTo(seq: String): Boolean {
@@ -43,6 +49,20 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             pos = offset
             true
         } else false
+    }
+
+    /**
+     * 从剩余字串中拉出一个字符串，直到但不包括匹配序列
+     * @param seq 查找的字符串 **区分大小写**
+     * @return 返回查找的字符串之前的匹配字段
+     */
+    fun consumeToString(seq: String): String {
+        start = pos //将处理到的位置设置为规则起点
+        val offset = queue.indexOf(seq, pos)
+        return if (offset != -1) {
+            pos = offset
+            queue.substring(start, offset)
+        } else ""
     }
 
     /**
@@ -91,50 +111,61 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     }
 
     //其中js只要符合语法，就不用避开任何阅读关键字，自由发挥
-    fun chompJsBalanced(
-            f: ((Char) -> Boolean?) = {
-                when (it) {
-                    '{' -> true //开始嵌套一层
-                    '}' -> false //闭合一层嵌套
-                    else -> null
-                }
-            }
-    ): Boolean {
-        var pos = pos //声明变量记录临时处理位置
-        var depth = 0 //嵌套深度
+    fun chompJsBalanced(innerType:Boolean = true,startPos:Int = pos): String {
+
+        var pos = startPos //声明变量记录临时处理位置
         var bracketsDepth = 0 //[]嵌套深度
 
         var inSingleQuote = false //单引号
         var inDoubleQuote = false //双引号
         var inOtherQuote = false //js原始字串分隔字符
-        var regex = false //正则
-        var commit = false //单行注释
-        var commits = false //多行注释
+        var inRegex = false //正则
+        var inCommit = false //单行注释
+        var inCommits = false //多行注释
+
+        val start:String
+        val end:String
+        val endChar:Char
+
+        if(innerType){
+            start = "{{"
+            end = "}}"
+            endChar = '}'
+        }else{
+            start = "<js>"
+            end = "</js>"
+            endChar = '<'
+        }
+
+        pos += start.length //跳过起始字符串
 
         do {
             if (pos == queue.length) break
             var c = queue[pos++]
             if (c != '\\') { //非转义字符
-                if (c == '\'' && !commits && !commit && !regex && !inDoubleQuote && !inOtherQuote) inSingleQuote =
-                        !inSingleQuote //匹配具有语法功能的单引号
-                else if (c == '"' && !commits && !commit && !regex && !inSingleQuote && !inOtherQuote) inDoubleQuote =
-                        !inDoubleQuote //匹配具有语法功能的双引号
-                else if (c == '`' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote) inOtherQuote =
-                        !inOtherQuote //匹配具有语法功能的'`'
-                else if (c == '/' && !commits && !commit && !regex && !inSingleQuote && !inDoubleQuote && !inOtherQuote) { //匹配注释或正则起点
+                if (c == '\'' && !inCommits && !inCommit && !inRegex && !inDoubleQuote && !inOtherQuote) inSingleQuote =
+                    !inSingleQuote //匹配具有语法功能的单引号
+                else if (c == '"' && !inCommits && !inCommit && !inRegex && !inSingleQuote && !inOtherQuote) inDoubleQuote =
+                    !inDoubleQuote //匹配具有语法功能的双引号
+                else if (c == '`' && !inCommits && !inCommit && !inRegex && !inSingleQuote && !inDoubleQuote) inOtherQuote =
+                    !inOtherQuote //匹配具有语法功能的'`'
+                else if (c == '/' && !inCommits && !inCommit && !inRegex && !inSingleQuote && !inDoubleQuote && !inOtherQuote) { //匹配注释或正则起点
                     c = queue[pos++]
                     when (c) {
-                        '/' -> commit = true //匹配单行注释起点
-                        '*' -> commits = true //匹配多行注释起点
-                        else -> regex = true //匹配正则起点
+                        '/' -> inCommit = true //匹配单行注释起点
+                        '*' -> inCommits = true //匹配多行注释起点
+                        else -> inRegex = true //匹配正则起点
                     }
-                } else if (commits && c == '*') { //匹配多行注释终点
-                    c = queue[pos++]
-                    if (c == '/') commits = false
-                } else if (regex && c == '/') { //正则的终点或[]平衡
+                } else if (inCommits) { //匹配多行注释终点
+
+                    pos = queue.indexOf("*/", pos) //跳过多行注释
+                    if(pos == -1)break //没有终点，语法出错，跳出
+                    continue
+
+                } else if (inRegex) { //正则的终点或[]平衡
 
                     when (c) {
-                        '/' -> regex = false//匹配正则终点
+                        '/' -> inRegex = false//匹配正则终点
 
                         //为了保证当open为（ 且 close 为 ）时，正则中[(]或[)]的合法性。故对[]这对在任何规则中都平衡的成对符号做匹配。
                         // 注：正则里[(]、[)]、[{]、[}]都是合法的，所以只有[]必须平衡。
@@ -142,21 +173,20 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
                         ']' -> bracketsDepth-- //闭合一层嵌套[]
                     }
 
-                } else if (c == '\n') commit = false
+                } else if (c == '\n') inCommit = false //单行注释终点
 
-                if (commits || commit || regex || inSingleQuote || inDoubleQuote || inOtherQuote) continue //语法单元未匹配结束，直接进入下个循环
+                if (inCommits || inCommit || inRegex || inSingleQuote || inDoubleQuote || inOtherQuote) continue //语法单元未匹配结束，直接进入下个循环
 
-                val fn = f(c) ?: continue
-                if (fn) depth++ else depth-- //嵌套或者闭合
-
+                if( c == endChar && queue.regionMatches(pos, end, 0, end.length)) {
+                    this.pos = pos
+                    return queue.substring(startPos + start.length, pos - end.length) //匹配到终点,返回结果
+                }
             } else pos++
 
-        } while (depth > 0 || bracketsDepth > 0) //拉出全部符合js语法的字段
+        } while (bracketsDepth > 0) //拉出全部符合js语法的字段
 
-        return if (depth > 0 || bracketsDepth > 0) false else {
-            this.pos = pos //同步位置
-            true
-        }
+        return ""
+
     }
 
     /**
@@ -392,7 +422,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val posPre = pos //记录consumeTo匹配位置
             if (chompCodeBalanced('{', '}')) {
                 val frv = fr(queue.substring(posPre + startStep, pos - endStep))
-                if (frv != null) {
+                if (!frv.isNullOrEmpty()) {
                     st.append(queue.substring(startX, posPre) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
                     startX = pos //记录下次规则起点
                     continue //获取内容成功，继续选择下个内嵌规则
@@ -413,10 +443,15 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         private const val ESC = '\\'
 
         /**
+         * "<js>"
+         */
+        private const val JSSTART = "<js>"
+
+        /**
          * 阅读共有分隔字串起始部分
          * "##","@@","{{","{[","<js>", "@js:"
          */
-        val splitList = arrayOf("##", "@@", "{{", "{[", "<js>", "@js:")
+        val splitList2 = arrayOf("##", "@@", "{{", "{[")
 
         /**
          * 发现‘名称-链接’分隔字串

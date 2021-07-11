@@ -25,7 +25,9 @@ import kotlin.collections.HashMap
 @Keep
 @Suppress("unused", "RegExpRedundantEscape")
 class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
-    var book: BaseBook? = null
+
+    var book: BaseBook? = if (ruleData is BaseBook) ruleData else null
+
     var chapter: BookChapter? = null
     var nextChapterUrl: String? = null
     var content: Any? = null
@@ -42,15 +44,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     private var objectChangedJS = false
     private var objectChangedJP = false
 
-    init {
-        if (ruleData is BaseBook) {
-            book = ruleData
-        }
-    }
-
     @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
-        if (content == null) throw AssertionError("Content cannot be null")
+        if (content == null) throw AssertionError("内容不可空（Content cannot be null）")
         this.content = content
         setBaseUrl(baseUrl)
         isJSON = content.toString().isJson()
