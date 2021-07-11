@@ -419,6 +419,7 @@ object ChapterProvider {
      * 超出边界处理
      */
     private fun exceed(textLine: TextLine, words: Array<String>) {
+        if (textLine.textChars.isEmpty()) return
         val endX = textLine.textChars.last().end
         if (endX > visibleRight) {
             val cc = (endX - visibleRight) / words.size
