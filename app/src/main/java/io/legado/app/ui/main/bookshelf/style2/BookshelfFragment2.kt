@@ -76,7 +76,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
+                SearchActivity.start(requireContext(), newText)
                 return false
             }
         })
@@ -160,9 +160,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        startActivity<SearchActivity> {
-            putExtra("key", query)
-        }
+        SearchActivity.start(requireContext(), query)
         return false
     }
 

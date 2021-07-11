@@ -16,6 +16,7 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.msg
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import splitties.init.appCtx
 import kotlin.math.max
@@ -270,7 +271,7 @@ object ReadBook {
                                 success?.invoke()
                             }
                             removeLoading(chapter.index)
-                        } ?: download(chapter, resetPageOffset = resetPageOffset)
+                        } ?: download(this, chapter, resetPageOffset = resetPageOffset)
                     } ?: removeLoading(index)
                 }.onError {
                     removeLoading(index)
@@ -288,7 +289,7 @@ object ReadBook {
                         if (BookHelp.hasContent(book, chapter)) {
                             removeLoading(chapter.index)
                         } else {
-                            download(chapter, false)
+                            download(this, chapter, false)
                         }
                     } ?: removeLoading(index)
                 }.onError {
@@ -299,6 +300,7 @@ object ReadBook {
     }
 
     private fun download(
+        scope: CoroutineScope,
         chapter: BookChapter,
         resetPageOffset: Boolean,
         success: (() -> Unit)? = null
@@ -306,7 +308,7 @@ object ReadBook {
         val book = book
         val webBook = webBook
         if (book != null && webBook != null) {
-            CacheBook.download(Coroutine.DEFAULT, webBook, book, chapter)
+            CacheBook.download(scope, webBook, book, chapter)
         } else if (book != null) {
             contentLoadFinish(
                 book, chapter, "没有书源", resetPageOffset = resetPageOffset

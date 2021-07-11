@@ -75,7 +75,7 @@ class WebBook(val bookSource: BookSource) {
     }
 
     suspend fun exploreBookAwait(
-        scope: CoroutineScope = Coroutine.DEFAULT,
+        scope: CoroutineScope,
         url: String,
         page: Int? = 1,
     ): ArrayList<SearchBook> {
@@ -114,7 +114,7 @@ class WebBook(val bookSource: BookSource) {
     }
 
     suspend fun getBookInfoAwait(
-        scope: CoroutineScope = Coroutine.DEFAULT,
+        scope: CoroutineScope,
         book: Book,
         canReName: Boolean = true,
     ): Book {
@@ -164,7 +164,7 @@ class WebBook(val bookSource: BookSource) {
     }
 
     suspend fun getChapterListAwait(
-        scope: CoroutineScope = Coroutine.DEFAULT,
+        scope: CoroutineScope,
         book: Book,
     ): List<BookChapter> {
         book.type = bookSource.bookSourceType
