@@ -61,11 +61,9 @@ data class BookChapter(
     }
 
     fun getAbsoluteURL():String{
-        val pos = url.indexOf(',')
-        return  if (pos == -1) NetworkUtils.getAbsoluteURL(baseUrl,url)
-        else NetworkUtils.getAbsoluteURL(baseUrl,url.substring(0,pos))+","+url.substring(pos + 1)
+        return url.replace("^\\s*([^,\\s]+)".toRex(),NetworkUtils.getAbsoluteURL(baseUrl,"$1"))
     }
-    
+
     fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))
 
     fun getFontName(): String = String.format("%05d-%s.ttf", index, MD5Utils.md5Encode16(title))
