@@ -32,15 +32,48 @@ object HtmlFormatter {
 
         val matcher = imgPattern.matcher(keepImgHtml)
         var appendPos = 0
-        while (matcher.find()) {
+
+        if(matcher.find()){
+            var url = matcher.group(1)!!
+            var pos = url.indexOf(',')
             sb.append(keepImgHtml.substring(appendPos, matcher.start()))
-            sb.append("<img src=\"${
-                matcher.group(1)!!.replace("^\\s*([^,\\s]+)\\s*".toRegex()){
-                    NetworkUtils.getAbsoluteURL(redirectUrl,it.groupValues[1])
-                }
-            }\">")
+            sb.append(
+                "<img src=\"${
+                    if (pos == -1) url else NetworkUtils.getAbsoluteURL(
+                        redirectUrl,
+                        url.substring(0, pos)
+                    ) + url.substring(pos)
+                }\">"
+            )
             appendPos = matcher.end()
+            if(pos == -1) {
+                while (matcher.find()) {
+                    sb.append(keepImgHtml.substring(appendPos, matcher.start()))
+                    sb.append( "<img src=\"${
+                        NetworkUtils.getAbsoluteURL(redirectUrl,matcher.group(1)!!)
+                    }\">" )
+                    appendPos = matcher.end()
+                }
+            }else{
+                while (matcher.find()) {
+                    url = matcher.group(1)!!
+                    pos = url.indexOf(',')
+                    sb.append(keepImgHtml.substring(appendPos, matcher.start()))
+                    sb.append(
+                        "<img src=\"${
+                            NetworkUtils.getAbsoluteURL(
+                                redirectUrl,
+                                url.substring(0, pos)
+                            )
+                        }${
+                            url.substring(pos)
+                        }\">"
+                    )
+                    appendPos = matcher.end()
+                }
+            }
         }
+
         if (appendPos < keepImgHtml.length) {
             sb.append(keepImgHtml.substring(appendPos, keepImgHtml.length))
         }
