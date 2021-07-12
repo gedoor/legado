@@ -56,7 +56,7 @@ class AnalyzeUrl(
 
     init {
         val pos = baseUrl.indexOf(',')
-        if(pos != -1)baseUrl = baseUrl.substring(0,pos).trim { it < '!' }
+        if(pos != -1)baseUrl = baseUrl.substring(0,pos)
         headerMapF?.let {
             headerMap.putAll(it)
             if (it.containsKey("proxy")) {
@@ -160,7 +160,7 @@ class AnalyzeUrl(
 
         var pos = ruleUrl.indexOf(',')
 
-        urlHasQuery = if(pos == -1) ruleUrl else ruleUrl.substring(0,pos).trim{ it < '!'}
+        urlHasQuery = if(pos == -1) ruleUrl else ruleUrl.substring(0,pos)
 
         url = NetworkUtils.getAbsoluteURL(baseUrl,urlHasQuery )
 
