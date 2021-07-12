@@ -25,12 +25,12 @@ object HtmlFormatter {
         val sb = StringBuffer()
 
         //图片有data-开头的数据属性时优先用数据属性作为src，没有数据属性时匹配src
-        val imgPatternX = Pattern.compile(
+        val imgPattern = Pattern.compile(
             if(keepImgHtml.matches("<img[^>]*data-".toRegex())) "<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>"
             else "<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>", Pattern.CASE_INSENSITIVE
         )
 
-        val matcher = imgPatternX.matcher(keepImgHtml)
+        val matcher = imgPattern.matcher(keepImgHtml)
         var appendPos = 0
         while (matcher.find()) {
             sb.append(keepImgHtml.substring(appendPos, matcher.start()))
