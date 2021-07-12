@@ -110,19 +110,11 @@ object ChapterProvider {
                         isTitle, textPaint, srcList
                     )
                 }
-            } else if (book.getImageStyle() != Book.imgStyleText) {
-                content.replace(AppPattern.imgPattern.toRegex(), "\n\$0\n")
+            } else {
+                content.replace(AppPattern.imgPattern.toRegex(), "\n\b\$0\n")
                     .split("\n").forEach { text ->
                         if (text.isNotBlank()) {
-                            val matcher = AppPattern.imgPattern.matcher(text)
-                            if (matcher.find()) {
-                                matcher.group(1)?.let { src ->
-                                    durY = setTypeImage(
-                                        book, bookChapter, src,
-                                        durY, textPages, book.getImageStyle()
-                                    )
-                                }
-                            } else {
+                            if(text[0] != '\b'){ //非图片
                                 val isTitle = index == 0
                                 val textPaint = if (isTitle) titlePaint else contentPaint
                                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
@@ -131,6 +123,11 @@ object ChapterProvider {
                                         stringBuilder, isTitle, textPaint
                                     )
                                 }
+                            } else { //图片
+                                durY = setTypeImage(
+                                    book, bookChapter, text.substring(1),
+                                    durY, textPages, book.getImageStyle()
+                                )
                             }
                         }
                     }
@@ -149,7 +146,10 @@ object ChapterProvider {
 
         return TextChapter(
             bookChapter.index, bookChapter.title,
-            bookChapter.getAbsoluteURL().split(',',limit = 1)[0], //bookChapter.getAbsoluteURL已经处理过,直接按','就行
+            bookChapter.getAbsoluteURL().run{
+                val pos = indexOf(',')
+                if(pos == -1) this else substring(0,pos)
+            },
             textPages, chapterSize
         )
     }

@@ -25,31 +25,22 @@ object HtmlFormatter {
         val keepImgHtml = formatKeepImg(html)
         val sb = StringBuffer()
 
-        //图片有data-开头的数据属性时优先用数据属性作为src，没有数据属性时才匹配src
-        val hasData = keepImgHtml.matches("<img[^>]*data-".toRegex())
-
-        val imgPatternX = if(hasData) Pattern.compile("<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>", Pattern.CASE_INSENSITIVE) else imgPattern
+        //图片有data-开头的数据属性时优先用数据属性作为src，没有数据属性时匹配src
+        val imgPatternX = Pattern.compile(
+            if(keepImgHtml.matches("<img[^>]*data-".toRegex())) "<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>"
+            else "<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>", Pattern.CASE_INSENSITIVE
+        )
 
         val matcher = imgPatternX.matcher(keepImgHtml)
         var appendPos = 0
         while (matcher.find()) {
-
-            var url = matcher.group(1)!!
-            val param:String
-            val pos = url.indexOf(',')
-
-            url = NetworkUtils.getAbsoluteURL(redirectUrl, if(pos == -1){
-                param = ""
-                url.trim{ it <'!'}
-            } else {
-                param = url.substring(pos+1).trim{ it <'!'}
-                url.substring(0,pos).trim{ it <'!'}
-            })
-
             sb.append(keepImgHtml.substring(appendPos, matcher.start()))
-            sb.append("<img src=\"${url+param}\" >")
+            sb.append("<img src=\"${
+                matcher.group(1)!!.replace("^\\s*([^,\\s]+)\\s*".toRegex()){
+                    NetworkUtils.getAbsoluteURL(redirectUrl,it.groupValues[1])
+                }
+            }\">")
             appendPos = matcher.end()
-
         }
         if (appendPos < keepImgHtml.length) {
             sb.append(keepImgHtml.substring(appendPos, keepImgHtml.length))

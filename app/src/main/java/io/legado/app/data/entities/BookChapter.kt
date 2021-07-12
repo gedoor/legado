@@ -7,6 +7,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -60,9 +61,7 @@ data class BookChapter(
         return false
     }
 
-    fun getAbsoluteURL():String{
-        return url.replace("^\\s*([^,\\s]+)".toRex(),NetworkUtils.getAbsoluteURL(baseUrl,"$1"))
-    }
+    fun getAbsoluteURL() = url.replace("^\\s*([^,\\s]+)\\s*".toRegex()){ NetworkUtils.getAbsoluteURL(baseUrl,it.groupValues[1]) }
 
     fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))
 
