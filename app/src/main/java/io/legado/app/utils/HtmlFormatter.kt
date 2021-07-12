@@ -13,7 +13,7 @@ object HtmlFormatter {
         return html.replace(wrapHtmlRegex, "\n")
             .replace(otherRegex, "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
-            .replace("^[\\n\\s]+".toRegex(), "　　")
+            .replace("^[\\n\\s]*".toRegex(), "　　")
             .replace("[\\n\\s]+$".toRegex(), "")
     }
 
@@ -26,8 +26,8 @@ object HtmlFormatter {
 
         //图片有data-开头的数据属性时优先用数据属性作为src，没有数据属性时匹配src
         val imgPattern = Pattern.compile(
-            if(keepImgHtml.matches("<img[^>]*data-".toRegex())) "<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>"
-            else "<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>", Pattern.CASE_INSENSITIVE
+            if(keepImgHtml.matches("　　<img[^>]*data-".toRegex())) "<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>"
+            else "　　<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>", Pattern.CASE_INSENSITIVE
         )
 
         val matcher = imgPattern.matcher(keepImgHtml)
