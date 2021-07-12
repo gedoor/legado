@@ -58,7 +58,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     callBack.scrollTo(scrollTo)
                 }
                 Coroutine.async(scope) {
-                    item.getExploreKinds()
+                    item.exploreKinds
                 }.onSuccess { kindList ->
                     upKindList(flexbox, item.bookSourceUrl, kindList)
                 }.onFinally {
@@ -155,9 +155,10 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
             when (it.itemId) {
                 R.id.menu_edit -> callBack.editSource(source.bookSourceUrl)
                 R.id.menu_top -> callBack.toTop(source)
-                R.id.menu_refresh -> {
+                R.id.menu_refresh -> Coroutine.async(scope) {
                     ACache.get(context, "explore").remove(source.bookSourceUrl)
-                    notifyItemChanged(position)
+                }.onSuccess {
+                    callBack.refreshData()
                 }
                 R.id.menu_del -> Coroutine.async(scope) {
                     appDb.bookSourceDao.delete(source)
@@ -170,6 +171,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
     }
 
     interface CallBack {
+        fun refreshData()
         fun scrollTo(pos: Int)
         fun openExplore(sourceUrl: String, title: String, exploreUrl: String?)
         fun editSource(sourceUrl: String)

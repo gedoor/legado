@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="book_type">
+		<item>Texto</item>
+		<item>Audio</item>
+	</string-array>
+
+	<string-array name="group_style">
+		<item>Pestaña</item>
+		<item>Carpeta</item>
+	</string-array>
+
+	<string-array name="indent">
+		<item>@string/indent_0</item>
+		<item>@string/indent_1</item>
+		<item>@string/indent_2</item>
+		<item>@string/indent_3</item>
+		<item>@string/indent_4</item>
+	</string-array>
+
+	<string-array name="text_suffix">
+		<item>.txt</item>
+		<item>.json</item>
+		<item>.xml</item>
+	</string-array>
+
+	<string-array name="convert_s">
+		<item>@string/jf_convert_o</item>
+		<item>@string/jf_convert_j</item>
+		<item>@string/jf_convert_f</item>
+	</string-array>
+
+	<string-array name="theme_mode">
+		<item>Adaptar do sistema</item>
+		<item>Tema Claro</item>
+		<item>Tema Oscuro</item>
+		<item>Tema E-Ink</item>
+	</string-array>
+
+	<string-array name="NavBarColors">
+		<item>Autom.</item>
+		<item>Oscuro</item>
+		<item>Claro</item>
+		<item>Adaptado</item>
+	</string-array>
+
+	<string-array name="screen_time_out">
+		<item>Predeterminado</item>
+		<item>1 min</item>
+		<item>2 min</item>
+		<item>3 min</item>
+		<item>Siempre</item>
+	</string-array>
+
+	<string-array name="screen_direction_title">
+		<item>@string/screen_unspecified</item>
+		<item>@string/screen_portrait</item>
+		<item>@string/screen_landscape</item>
+		<item>@string/screen_sensor</item>
+	</string-array>
+
+	<string-array name="icon_names">
+		<item>íconePrincipal</item>
+		<item>ícone1</item>
+		<item>ícone2</item>
+		<item>ícone3</item>
+		<item>ícone4</item>
+		<item>ícone5</item>
+		<item>ícone6</item>
+	</string-array>
+
+	<string-array name="chinese_mode">
+		<item>Desativado</item>
+		<item>Tradicional a Simplificado</item>
+		<item>Simplificado a Tradicional</item>
+	</string-array>
+
+	<string-array name="system_typefaces">
+		<item>Fuente predeterminado</item>
+		<item>Fuente Serif</item>
+		<item>Fuente Monoespaciado</item>
+	</string-array>
+
+	<string-array name="read_tip">
+		<item>En blanco</item>
+		<item>Título</item>
+		<item>Tiempo</item>
+		<item>Batería</item>
+		<item>Páginas</item>
+		<item>Avance</item>
+		<item>Páginas y avance</item>
+		<item>Nombre del libro</item>
+		<item>Tiempo y Batería</item>
+	</string-array>
+
+	<string-array name="text_font_weight">
+		<item>Normal</item>
+		<item>Oscuro</item>
+		<item>Claro</item>
+	</string-array>
+
+	<string-array name="language">
+		<item>Autom.</item>
+		<item>Chino simplificado</item>
+		<item>Chino tradicional</item>
+		<item>Inglés</item>
+	</string-array>
+
+	<string-array name="rule_type">
+		<item>FuenteLibro</item>
+		<item>FuenteRSS</item>
+		<item>SustituirRegla</item>
+	</string-array>
+
+</resources>
