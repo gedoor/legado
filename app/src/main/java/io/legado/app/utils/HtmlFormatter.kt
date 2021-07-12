@@ -1,6 +1,5 @@
 package io.legado.app.utils
 
-import io.legado.app.constant.AppPattern.imgPattern
 import java.net.URL
 import java.util.regex.Pattern
 
