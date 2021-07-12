@@ -58,7 +58,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     callBack.scrollTo(scrollTo)
                 }
                 Coroutine.async(scope) {
-                    item.getExploreKinds()
+                    item.exploreKinds
                 }.onSuccess { kindList ->
                     upKindList(flexbox, item.bookSourceUrl, kindList)
                 }.onFinally {

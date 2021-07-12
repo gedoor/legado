@@ -11,6 +11,7 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.*
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 import javax.script.SimpleBindings
@@ -97,8 +98,11 @@ data class BookSource(
         }
     }
 
-    fun getExploreKinds(): List<ExploreKind> {
-        val exploreUrl = exploreUrl ?: return emptyList()
+    @delegate:Transient
+    @delegate:Ignore
+    @IgnoredOnParcel
+    val exploreKinds by lazy {
+        val exploreUrl = exploreUrl ?: return@lazy emptyList()
         val kinds = arrayListOf<ExploreKind>()
         var ruleStr = exploreUrl
         if (ruleStr.isNotBlank()) {
@@ -138,7 +142,7 @@ data class BookSource(
                 kinds.add(ExploreKind(it.localizedMessage ?: ""))
             }
         }
-        return kinds
+        return@lazy kinds
     }
 
     /**

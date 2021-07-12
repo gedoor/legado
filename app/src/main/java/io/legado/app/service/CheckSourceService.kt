@@ -109,7 +109,7 @@ class CheckSourceService : BaseService() {
             val webBook = WebBook(source)
             var books = webBook.searchBookAwait(this, CheckSource.keyword)
             if (books.isEmpty()) {
-                val exs = source.getExploreKinds()
+                val exs = source.exploreKinds
                 if (exs.isEmpty()) {
                     throw Exception("搜索内容为空并且没有发现")
                 }
