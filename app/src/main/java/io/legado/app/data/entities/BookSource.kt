@@ -11,6 +11,7 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.*
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 import javax.script.SimpleBindings
@@ -44,6 +45,52 @@ data class BookSource(
     var ruleToc: TocRule? = null,                   // 目录页规则
     var ruleContent: ContentRule? = null            // 正文页规则
 ) : Parcelable, JsExtensions {
+
+    @delegate:Transient
+    @delegate:Ignore
+    @IgnoredOnParcel
+    val exploreKinds by lazy {
+        val exploreUrl = exploreUrl?.trim() ?: return@lazy emptyList()
+        val kinds = arrayListOf<ExploreKind>()
+        var ruleStr = exploreUrl
+        if (ruleStr.isNotBlank()) {
+            kotlin.runCatching {
+                if (exploreUrl.startsWith("<js>", false)
+                    || exploreUrl.startsWith("@js", false)
+                ) {
+                    val aCache = ACache.get(appCtx, "explore")
+                    ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
+                    if (ruleStr.isBlank()) {
+                        val bindings = SimpleBindings()
+                        bindings["baseUrl"] = bookSourceUrl
+                        bindings["java"] = this
+                        bindings["cookie"] = CookieStore
+                        bindings["cache"] = CacheManager
+                        val jsStr = if (exploreUrl.startsWith("@")) {
+                            exploreUrl.substring(3)
+                        } else {
+                            exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
+                        }
+                        ruleStr = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString().trim()
+                        aCache.put(bookSourceUrl, ruleStr)
+                    }
+                }
+                if (ruleStr.isJsonArray()) {
+                    GSON.fromJsonArray<ExploreKind>(ruleStr)?.let {
+                        kinds.addAll(it)
+                    }
+                } else {
+                    ruleStr.split("(&&|\n)+".toRegex()).forEach { kindStr ->
+                        val kindCfg = kindStr.split("::")
+                        kinds.add(ExploreKind(kindCfg.first(), kindCfg.getOrNull(1)))
+                    }
+                }
+            }.onFailure {
+                kinds.add(ExploreKind(it.localizedMessage ?: ""))
+            }
+        }
+        return@lazy kinds
+    }
 
     override fun hashCode(): Int {
         return bookSourceUrl.hashCode()
@@ -95,50 +142,6 @@ data class BookSource(
             it.remove(group)
             bookSourceGroup = TextUtils.join(",", it)
         }
-    }
-
-    fun getExploreKinds(): List<ExploreKind> {
-        val exploreUrl = exploreUrl ?: return emptyList()
-        val kinds = arrayListOf<ExploreKind>()
-        var ruleStr = exploreUrl
-        if (ruleStr.isNotBlank()) {
-            kotlin.runCatching {
-                if (exploreUrl.startsWith("<js>", false)
-                    || exploreUrl.startsWith("@js", false)
-                ) {
-                    val aCache = ACache.get(appCtx, "explore")
-                    ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
-                    if (ruleStr.isBlank()) {
-                        val bindings = SimpleBindings()
-                        bindings["baseUrl"] = bookSourceUrl
-                        bindings["java"] = this
-                        bindings["cookie"] = CookieStore
-                        bindings["cache"] = CacheManager
-                        val jsStr = if (exploreUrl.startsWith("@")) {
-                            exploreUrl.substring(3)
-                        } else {
-                            exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
-                        }
-                        ruleStr = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString().trim()
-                        aCache.put(bookSourceUrl, ruleStr)
-                    }
-                }
-                if (ruleStr.isJsonArray()) {
-                    GSON.fromJsonArray<ExploreKind>(ruleStr)?.let {
-                        kinds.addAll(it)
-                    }
-                } else {
-                    ruleStr.split("(&&|\n)+".toRegex()).forEach { c ->
-                        val d = c.split("::")
-                        if (d.size > 1)
-                            kinds.add(ExploreKind(d[0], d[1]))
-                    }
-                }
-            }.onFailure {
-                kinds.add(ExploreKind(it.localizedMessage ?: ""))
-            }
-        }
-        return kinds
     }
 
     /**

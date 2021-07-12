@@ -16,7 +16,7 @@ object LifecycleHelp : Application.ActivityLifecycleCallbacks {
 
     private val activities: MutableList<WeakReference<Activity>> = arrayListOf()
     private val services: MutableList<WeakReference<BaseService>> = arrayListOf()
-    private var finishedListener: (() -> Unit)? = null
+    private var appFinishedListener: (() -> Unit)? = null
 
     fun activitySize(): Int {
         return activities.size
@@ -52,8 +52,8 @@ object LifecycleHelp : Application.ActivityLifecycleCallbacks {
         }
     }
 
-    fun setOnFinishedListener(finishedListener: (() -> Unit)) {
-        this.finishedListener = finishedListener
+    fun setOnAppFinishedListener(appFinishedListener: (() -> Unit)) {
+        this.appFinishedListener = appFinishedListener
     }
 
     override fun onActivityPaused(activity: Activity) {
@@ -71,7 +71,7 @@ object LifecycleHelp : Application.ActivityLifecycleCallbacks {
             if (temp.get() != null && temp.get() === activity) {
                 activities.remove(temp)
                 if (services.size == 0 && activities.size == 0) {
-                    onFinished()
+                    onAppFinished()
                 }
                 break
             }
@@ -102,14 +102,14 @@ object LifecycleHelp : Application.ActivityLifecycleCallbacks {
             if (temp.get() != null && temp.get() === service) {
                 services.remove(temp)
                 if (services.size == 0 && activities.size == 0) {
-                    onFinished()
+                    onAppFinished()
                 }
                 break
             }
         }
     }
 
-    private fun onFinished() {
-        finishedListener?.invoke()
+    private fun onAppFinished() {
+        appFinishedListener?.invoke()
     }
 }
