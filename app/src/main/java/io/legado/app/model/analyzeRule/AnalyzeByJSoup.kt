@@ -245,9 +245,9 @@ class AnalyzeByJSoup(doc: Any) {
 
                     val url = element.attr(lastRule)
 
-                    if(url.isEmpty() || textS.contains(url)) break
-
-                    textS.add(url)
+                    if (url.isNotBlank() && !textS.contains(url)) {
+                        textS.add(url)
+                    }
                 }
             }
         } catch (e: Exception) {
