@@ -32,11 +32,6 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         startX = 0
     }
 
-    //返回剩余字段
-    fun Remained(): String {
-        return queue.substring(pos)
-    }
-
     /**
      * 从剩余字串中拉出一个字符串，直到但不包括匹配序列
      * @param seq 查找的字符串 **区分大小写**
@@ -49,20 +44,6 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             pos = offset
             true
         } else false
-    }
-
-    /**
-     * 从剩余字串中拉出一个字符串，直到但不包括匹配序列
-     * @param seq 查找的字符串 **区分大小写**
-     * @return 返回查找的字符串之前的匹配字段
-     */
-    fun consumeToString(seq: String): String {
-        start = pos //将处理到的位置设置为规则起点
-        val offset = queue.indexOf(seq, pos)
-        return if (offset != -1) {
-            pos = offset
-            queue.substring(start, offset)
-        } else ""
     }
 
     /**
@@ -111,7 +92,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     }
 
     //其中js只要符合语法，就不用避开任何阅读关键字，自由发挥
-    fun chompJsBalanced(innerType:Boolean = true,startPos:Int = pos): String {
+    fun chompJsBalanced(innerType:Boolean = true,startPos:Int = pos): Boolean {
 
         var pos = startPos //声明变量记录临时处理位置
         var bracketsDepth = 0 //[]嵌套深度
@@ -179,13 +160,13 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
                 if( c == endChar && queue.regionMatches(pos, end, 0, end.length)) {
                     this.pos = pos
-                    return queue.substring(startPos + start.length, pos - end.length) //匹配到终点,返回结果
+                    return true
                 }
             } else pos++
 
         } while (bracketsDepth > 0) //拉出全部符合js语法的字段
 
-        return ""
+        return false
 
     }
 
@@ -330,7 +311,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                    queue.substring(0,start) + "后未平衡"
+                queue.substring(0,start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -387,7 +368,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                    queue.substring(0,start) + "后未平衡"
+                queue.substring(0,start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -403,19 +384,18 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
     /**
      * 替换内嵌规则
-     * @param inner 起始标志,如{$. 或 {{
+     * @param inner 起始标志,如{$.
      * @param startStep 不属于规则部分的前置字符长度，如{$.中{不属于规则的组成部分，故startStep为1
-     * @param endStep 不属于规则部分的后置字符长度，如}}长度为2
+     * @param endStep 不属于规则部分的后置字符长度
      * @param fr 查找到内嵌规则时，用于解析的函数
      *
      * */
     fun innerRule(
-            inner: String,
-            startStep: Int = 1,
-            endStep: Int = 1,
-            fr: (String) -> String?
+        inner: String,
+        startStep: Int = 1,
+        endStep: Int = 1,
+        fr: (String) -> String?
     ): String {
-
         val st = StringBuilder()
 
         while (consumeTo(inner)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
@@ -429,6 +409,34 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
                 }
             }
             pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
+        }
+
+        return if(startX == 0) "" else st.apply {
+            append(queue.substring(startX))
+        }.toString()
+    }
+
+    /**
+     * 替换内嵌规则
+     * @param fr 查找到内嵌规则时，用于解析的函数
+     *
+     * */
+    fun innerJsRule(
+        fr: (String) -> String?
+    ): String {
+        val st = StringBuilder()
+
+        while (consumeTo("{{")) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
+            val posPre = pos //记录consumeTo匹配位置
+            if (chompJsBalanced()) {
+                val frv = fr(queue.substring(posPre + 2, pos - 2))
+                if (!frv.isNullOrEmpty()) {
+                    st.append(queue.substring(startX, posPre) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                    startX = pos //记录下次规则起点
+                    continue //获取内容成功，继续选择下个内嵌规则
+                }
+            }
+            pos += 2 //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
         }
 
         return if(startX == 0) "" else st.apply {

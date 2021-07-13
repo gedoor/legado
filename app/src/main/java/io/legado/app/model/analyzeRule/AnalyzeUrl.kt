@@ -130,7 +130,7 @@ class AnalyzeUrl(
             bindings["book"] = book
 
             //替换所有内嵌{{js}}
-            val url = analyze.innerRule("{{",2,2){
+            val url = analyze.innerJsRule{
                 when(val jsEval = SCRIPT_ENGINE.eval(it, bindings)){
                     is String -> jsEval
                     jsEval is Double && jsEval % 1.0 == 0.0 -> String.format("%.0f", jsEval)

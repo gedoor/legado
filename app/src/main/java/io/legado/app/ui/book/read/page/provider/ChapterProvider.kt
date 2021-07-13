@@ -12,6 +12,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
@@ -110,11 +111,11 @@ object ChapterProvider {
                         isTitle, textPaint, srcList
                     )
                 }
-            } else {
+            } else if (book.getImageStyle() != Book.imgStyleText) {
                 content.replace(AppPattern.imgPattern.toRegex(), "\n\$0\n")
                     .split("\n").forEach { text ->
                         if (text.isNotBlank()) {
-                            if(!text.startsWith("<img src=\"")){ //非图片
+                            if (!text.startsWith("<img src=\"")) { //非图片
                                 val isTitle = index == 0
                                 val textPaint = if (isTitle) titlePaint else contentPaint
                                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
@@ -125,7 +126,7 @@ object ChapterProvider {
                                 }
                             } else { //图片
                                 durY = setTypeImage(
-                                    book, bookChapter, text,
+                                    book, bookChapter, text.substring(10, text.length-2),
                                     durY, textPages, book.getImageStyle()
                                 )
                             }

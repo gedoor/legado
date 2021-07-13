@@ -21,61 +21,64 @@ object HtmlFormatter {
 
     fun formatKeepImg(html: String?, redirectUrl: URL?): String {
         html ?: return ""
-        val keepImgHtml = formatKeepImg(html)
-        val sb = StringBuffer()
+        val keepImgHtml = html.replace(wrapHtmlRegex, "\n")
+            .replace(notImgHtmlRegex, "")
+            .replace("[\\n\\s]+\$|^[\\n\\s]*".toRegex(), "")
+            .replace("\\s*\\n+\\s*".toRegex(), "\n")
+
+        val sb = StringBuffer("　　") //前置缩减
+        val hasDataType:Boolean //是否有数据属性
 
         //图片有data-开头的数据属性时优先用数据属性作为src，没有数据属性时匹配src
         val imgPattern = Pattern.compile(
-            if(keepImgHtml.matches("　　<img[^>]*data-".toRegex())) "<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>"
-            else "　　<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>", Pattern.CASE_INSENSITIVE
+            if(keepImgHtml.matches("<img[^>]*data-".toRegex())) {
+                hasDataType = true
+                "<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>"
+            }
+            else {
+                hasDataType = false
+                "<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>"
+            }, Pattern.CASE_INSENSITIVE
         )
 
         val matcher = imgPattern.matcher(keepImgHtml)
         var appendPos = 0
 
         if(matcher.find()){
-            var url = matcher.group(1)!!
-            var pos = url.indexOf(',')
-            sb.append(keepImgHtml.substring(appendPos, matcher.start()))
-            sb.append(
-                "<img src=\"${
-                    if (pos == -1) url else NetworkUtils.getAbsoluteURL(
-                        redirectUrl,
-                        url.substring(0, pos)
-                    ) + url.substring(pos)
-                }\">"
-            )
-            appendPos = matcher.end()
-            if(pos == -1) {
-                while (matcher.find()) {
-                    sb.append(keepImgHtml.substring(appendPos, matcher.start()))
+            if(hasDataType || matcher.group(1)!!.indexOf(',') == -1) { //图片无参
+
+                do{
+                    sb.append(keepImgHtml.substring(appendPos, matcher.start()).replace("\n","\n　　")) //非图片部分换行缩减
                     sb.append( "<img src=\"${
                         NetworkUtils.getAbsoluteURL(redirectUrl,matcher.group(1)!!)
                     }\">" )
                     appendPos = matcher.end()
-                }
-            }else{
-                while (matcher.find()) {
-                    url = matcher.group(1)!!
-                    pos = url.indexOf(',')
-                    sb.append(keepImgHtml.substring(appendPos, matcher.start()))
+                }while (matcher.find())
+
+            }else{ //图片有参
+
+                do{
+                    val url = matcher.group(1)!!
+                    val pos = url.indexOf(',')
+                    sb.append(keepImgHtml.substring(appendPos, matcher.start()).replace("\n","\n　　")) //非图片部分换行缩减
                     sb.append(
                         "<img src=\"${
                             NetworkUtils.getAbsoluteURL(
                                 redirectUrl,
                                 url.substring(0, pos)
                             )
-                        }${
+                        },${
                             url.substring(pos)
                         }\">"
                     )
                     appendPos = matcher.end()
-                }
+                }while(matcher.find())
+
             }
         }
 
         if (appendPos < keepImgHtml.length) {
-            sb.append(keepImgHtml.substring(appendPos, keepImgHtml.length))
+            sb.append(keepImgHtml.substring(appendPos, keepImgHtml.length).replace("\n","\n　　")) //非图片部分换行缩减
         }
         return sb.toString()
     }
