@@ -13,7 +13,6 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.launch
 import java.util.*
 
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
@@ -56,9 +55,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 play()
             }
         } else {
-            launch {
-                toastOnUi(R.string.tts_init_failed)
-            }
+            toastOnUi(R.string.tts_init_failed)
         }
     }
 
