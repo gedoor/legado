@@ -95,14 +95,16 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     fun chompJsBalanced(innerType:Boolean = true,startPos:Int = pos): Boolean {
 
         var pos = startPos //声明变量记录临时处理位置
-        var bracketsDepth = 0 //[]嵌套深度
+        var depth = 0 //{}嵌套深度
+        var depthX = 0 //[]嵌套深度
+        var balanced = false //平衡状态
 
         var inSingleQuote = false //单引号
         var inDoubleQuote = false //双引号
         var inOtherQuote = false //js原始字串分隔字符
-        var inRegex = false //正则
         var inCommit = false //单行注释
         var inCommits = false //多行注释
+        var commit= false //是否为注释，不分单行注释还是多行注释
 
         val start:String
         val end:String
@@ -110,64 +112,62 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
         if(innerType){
             start = "{{"
-            end = "}}"
             endChar = '}'
+            end = "}"
         }else{
             start = "<js>"
-            end = "</js>"
             endChar = '<'
+            end = "/js>"
         }
 
         pos += start.length //跳过起始字符串
 
-        do {
+        while(true){
             if (pos == queue.length) break
             var c = queue[pos++]
-            if (c != '\\') { //非转义字符
-                if (c == '\'' && !inCommits && !inCommit && !inRegex && !inDoubleQuote && !inOtherQuote) inSingleQuote =
+            
+            if(c == ESC) {//跳过转义字符序列
+                pos++
+                continue
+            }
+            
+            if(commit)when (c) {
+                '/' -> inCommit = true //匹配单行注释起点
+                '*' -> inCommits = true //匹配多行注释起点
+                else -> commit = false
+            }
+
+            if (c == '\'' && !commit && !inDoubleQuote && !inOtherQuote) inSingleQuote =
                     !inSingleQuote //匹配具有语法功能的单引号
-                else if (c == '"' && !inCommits && !inCommit && !inRegex && !inSingleQuote && !inOtherQuote) inDoubleQuote =
+            else if (c == '"' && !commit && !inSingleQuote && !inOtherQuote) inDoubleQuote =
                     !inDoubleQuote //匹配具有语法功能的双引号
-                else if (c == '`' && !inCommits && !inCommit && !inRegex && !inSingleQuote && !inDoubleQuote) inOtherQuote =
+            else if (c == '`' && !commit && !inSingleQuote && !inDoubleQuote) inOtherQuote =
                     !inOtherQuote //匹配具有语法功能的'`'
-                else if (c == '/' && !inCommits && !inCommit && !inRegex && !inSingleQuote && !inDoubleQuote && !inOtherQuote) { //匹配注释或正则起点
-                    c = queue[pos++]
-                    when (c) {
-                        '/' -> inCommit = true //匹配单行注释起点
-                        '*' -> inCommits = true //匹配多行注释起点
-                        else -> inRegex = true //匹配正则起点
-                    }
-                } else if (inCommits) { //匹配多行注释终点
+            else if (c == '/' && !commit && !inSingleQuote && !inDoubleQuote && !inOtherQuote) commit = true //可能是注释
+            else if (inCommits) { //匹配多行注释终点
+                pos = queue.indexOf("*/", pos) //跳过多行注释
+                if(pos == -1)break //没有终点，语法出错，跳出
+                continue
 
-                    pos = queue.indexOf("*/", pos) //跳过多行注释
-                    if(pos == -1)break //没有终点，语法出错，跳出
-                    continue
+            }else if (c == '\n') inCommit = false //单行注释终点
 
-                } else if (inRegex) { //正则的终点或[]平衡
+            if (commit || inSingleQuote || inDoubleQuote || inOtherQuote) continue //语法单元未匹配结束，直接进入下个循环
 
-                    when (c) {
-                        '/' -> inRegex = false//匹配正则终点
+            if(c == '[')depthX++
+            else if(c == ']')depthX--
+            else if(depth == 0){ //正则的[]中的{}不需要平衡，非正则的[]中的{}也无需考虑平衡
+                if(c == '{')depth++
+                else if(c == '}')depth--
+            }
 
-                        //为了保证当open为（ 且 close 为 ）时，正则中[(]或[)]的合法性。故对[]这对在任何规则中都平衡的成对符号做匹配。
-                        // 注：正则里[(]、[)]、[{]、[}]都是合法的，所以只有[]必须平衡。
-                        '[' -> bracketsDepth++ //开始嵌套一层[]
-                        ']' -> bracketsDepth-- //闭合一层嵌套[]
-                    }
-
-                } else if (c == '\n') inCommit = false //单行注释终点
-
-                if (inCommits || inCommit || inRegex || inSingleQuote || inDoubleQuote || inOtherQuote) continue //语法单元未匹配结束，直接进入下个循环
-
-                if( c == endChar && queue.regionMatches(pos, end, 0, end.length)) {
-                    this.pos = pos
-                    return true
-                }
-            } else pos++
-
-        } while (bracketsDepth > 0) //拉出全部符合js语法的字段
-
+            balanced = depthX <1 && depth<1
+            if(!balanced)continue
+            if(c == endChar && queue.regionMatches(pos, end, 0, end.length)) {
+                this.pos = pos
+                return true
+            }
+        }
         return false
-
     }
 
     /**
@@ -311,7 +311,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                queue.substring(0,start) + "后未平衡"
+                    queue.substring(0,start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -368,7 +368,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                queue.substring(0,start) + "后未平衡"
+                    queue.substring(0,start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -391,10 +391,10 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      *
      * */
     fun innerRule(
-        inner: String,
-        startStep: Int = 1,
-        endStep: Int = 1,
-        fr: (String) -> String?
+            inner: String,
+            startStep: Int = 1,
+            endStep: Int = 1,
+            fr: (String) -> String?
     ): String {
         val st = StringBuilder()
 
@@ -422,7 +422,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      *
      * */
     fun innerJsRule(
-        fr: (String) -> String?
+            fr: (String) -> String?
     ): String {
         val st = StringBuilder()
 
