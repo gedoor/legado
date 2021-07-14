@@ -8,6 +8,26 @@
 * 正文出现缺字漏字、内容缺失、排版错乱等情况，有可能是净化规则出现问题。先关闭替换净化并刷新，再观察是否正常。如果正常说明净化规则存在误杀，如果关闭后仍然出现相关问题，请点击源链接查看原文与正文是否相同，如果不同，再进行反馈。
 * 漫画源看书显示乱码，**阅读与其他软件的源并不通用**，请导入阅读的支持的漫画源！
 
+**2021/07/15**
+1. 添加js函数来修复开启js沙箱后某些书源失效。by ag2s20150909
+```kotlin
+/**
+* 获取网络zip文件里面的数据
+* @param url zip文件的链接
+* @param path 所需获取文件在zip内的路径
+* @return zip指定文件的数据
+*/
+fun getZipStringContent(url: String, path: String): String
+/**
+* 获取网络zip文件里面的数据
+* @param url zip文件的链接
+* @param path 所需获取文件在zip内的路径
+* @return zip指定文件的数据
+*/
+fun getZipByteArrayContent(url: String, path: String): ByteArray?
+```
+* web服务添加一个导航页
+
 **2021/07/11**
 1. 开启JS沙箱限制
 * 禁止在js里exec运行命令
