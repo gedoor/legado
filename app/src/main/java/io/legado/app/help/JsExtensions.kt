@@ -15,9 +15,13 @@ import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import splitties.init.appCtx
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URLEncoder
 import java.util.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
 @Keep
 @Suppress("unused")
@@ -272,6 +276,59 @@ interface JsExtensions {
         base64DecodeToByteArray(base64)?.let {
             return QueryTTF(it)
         }
+        return null
+    }
+
+    /**
+     * 获取网络zip文件里面的数据
+     * @param url zip文件的链接
+     * @param path 所需获取文件在zip内的路径
+     * @return zip指定文件的数据
+     */
+    fun getZipStringContent(url: String, path: String): String {
+        val bytes = runBlocking {
+            return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+        }
+        val bos = ByteArrayOutputStream()
+        val zis = ZipInputStream(ByteArrayInputStream(bytes))
+
+        var entry: ZipEntry? = zis.nextEntry
+
+        while (entry != null) {
+            if (entry.name.equals(path)) {
+                zis.use { it.copyTo(bos) }
+                return bos.toString()
+            }
+            entry = zis.nextEntry
+        }
+        Debug.log("getZipContent 未发现内容")
+
+        return ""
+    }
+
+    /**
+     * 获取网络zip文件里面的数据
+     * @param url zip文件的链接
+     * @param path 所需获取文件在zip内的路径
+     * @return zip指定文件的数据
+     */
+    fun getZipByteArrayContent(url: String, path: String): ByteArray? {
+        val bytes = runBlocking {
+            return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+        }
+        val bos = ByteArrayOutputStream()
+        val zis = ZipInputStream(ByteArrayInputStream(bytes))
+
+        var entry: ZipEntry? = zis.nextEntry
+        while (entry != null) {
+            if (entry.name.equals(path)) {
+                zis.use { it.copyTo(bos) }
+                return bos.toByteArray()
+            }
+            entry = zis.nextEntry
+        }
+        Debug.log("getZipContent 未发现内容")
+
         return null
     }
 
