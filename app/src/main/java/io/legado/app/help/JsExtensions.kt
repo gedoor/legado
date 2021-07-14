@@ -303,7 +303,7 @@ interface JsExtensions {
         }
         Debug.log("getZipContent 未发现内容")
 
-        return "";
+        return ""
     }
 
     /**
@@ -325,11 +325,11 @@ interface JsExtensions {
                 zis.use { it.copyTo(bos) }
                 return bos.toByteArray()
             }
-            entry = zis.nextEntry;
+            entry = zis.nextEntry
         }
         Debug.log("getZipContent 未发现内容")
 
-        return null;
+        return null
     }
 
     /**
