@@ -167,17 +167,22 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         }
         if (!ttsInitFinish) return
         if (text == "") return
-        if (textToSpeech?.isSpeaking == true)
+        if (textToSpeech?.isSpeaking == true) {
             textToSpeech?.stop()
+        }
         textToSpeech?.speak(text, TextToSpeech.QUEUE_ADD, null, "select_text")
         lastText = ""
     }
 
     @Synchronized
     override fun onInit(status: Int) {
-        textToSpeech?.language = Locale.CHINA
-        ttsInitFinish = true
-        readAloud(lastText)
+        if (status == TextToSpeech.SUCCESS) {
+            textToSpeech?.language = Locale.CHINA
+            ttsInitFinish = true
+            readAloud(lastText)
+        } else {
+            context.toastOnUi(R.string.tts_init_failed)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
