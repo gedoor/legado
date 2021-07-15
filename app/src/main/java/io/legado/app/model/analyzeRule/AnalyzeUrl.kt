@@ -73,7 +73,6 @@ class AnalyzeUrl(
     }
 
     private fun analyzeJs() {
-        val ruleList = arrayListOf<String>()
         var start = 0
         var tmp: String
         val jsMatcher = JS_PATTERN.matcher(ruleUrl)
@@ -82,10 +81,10 @@ class AnalyzeUrl(
                 tmp =
                     ruleUrl.substring(start, jsMatcher.start()).trim { it <= ' ' }
                 if (tmp.isNotEmpty()) {
-                    ruleList.add(tmp)
+                    ruleUrl = tmp.replace("@result", ruleUrl)
                 }
             }
-            ruleList.add(jsMatcher.group())
+            ruleUrl = evalJS(jsMatcher.group(1)!!, ruleUrl) as String
             start = jsMatcher.end()
         }
         if (ruleUrl.length > start) {
@@ -95,30 +94,15 @@ class AnalyzeUrl(
                     tmp =
                         ruleUrl.substring(start, jsMatcherEnd.start()).trim { it <= ' ' }
                     if (tmp.isNotEmpty()) {
-                        ruleList.add(tmp)
+                        ruleUrl = tmp.replace("@result", ruleUrl)
                     }
                 }
-                ruleList.add(jsMatcherEnd.group())
+                ruleUrl = evalJS(jsMatcherEnd.group(1)!!, ruleUrl) as String
             }else{
                 tmp = ruleUrl.substring(start).trim { it <= ' ' }
                 if (tmp.isNotEmpty()) {
-                    ruleList.add(tmp)
+                    ruleUrl = tmp.replace("@result", ruleUrl)
                 }
-            }
-        }
-
-        for (rule in ruleList) {
-            var ruleStr = rule
-            when {
-                ruleStr.startsWith("<js>") -> {
-                    ruleStr = ruleStr.substring(4, ruleStr.lastIndexOf("<"))
-                    ruleUrl = evalJS(ruleStr, ruleUrl) as String
-                }
-                ruleStr.startsWith("@js", true) -> {
-                    ruleStr = ruleStr.substring(4)
-                    ruleUrl = evalJS(ruleStr, ruleUrl) as String
-                }
-                else -> ruleUrl = ruleStr.replace("@result", ruleUrl)
             }
         }
     }

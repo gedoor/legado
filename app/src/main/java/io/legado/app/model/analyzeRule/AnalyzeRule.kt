@@ -406,25 +406,25 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     ruleList.add(SourceRule(mode(tmp), mMode))
                 }
             }
-            ruleList.add(SourceRule(jsMatcher.group().run{ substring(4, lastIndexOf("<")) }, Mode.Js))
+            ruleList.add(SourceRule(jsMatcher.group(1)!!, Mode.Js))
             start = jsMatcher.end()
         }
 
         if (ruleStr.length > start){
             val jsMatcherEnd = AppPattern.JS_PATTERN_END.matcher(ruleStr.substring(start))
             if(jsMatcherEnd.find()){
-                tmp = ruleStr.substring(start, jsMatcher.start()).trim { it <= ' ' }
+                tmp = ruleStr.substring(start, jsMatcherEnd.start()).trim { it <= ' ' }
                 if (tmp.isNotEmpty()) {
                     ruleList.add(SourceRule(mode(tmp), mMode))
                 }
-            }
-            ruleList.add(SourceRule(jsMatcher.group().substring(4), Mode.Js))
+                ruleList.add(SourceRule(jsMatcherEnd.group(1)!!, Mode.Js))
             }else{
                 tmp = ruleStr.substring(start).trim { it <= ' ' }
                 if (tmp.isNotEmpty()) {
                     ruleList.add(SourceRule(mode(tmp), mMode))
                 }
             }
+        }
 
         return ruleList
     }
