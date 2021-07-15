@@ -3,7 +3,6 @@ package io.legado.app.model.analyzeRule
 import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
-import io.legado.app.constant.AppPattern
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
@@ -406,23 +405,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     ruleList.add(SourceRule(mode(tmp), mMode))
                 }
             }
-            ruleList.add(SourceRule(jsMatcher.group(1)!!, Mode.Js))
+            ruleList.add(SourceRule(jsMatcher.group(2)?:jsMatcher.group(1), Mode.Js))
             start = jsMatcher.end()
         }
 
         if (ruleStr.length > start){
-            val jsMatcherEnd = AppPattern.JS_PATTERN_END.matcher(ruleStr.substring(start))
-            if(jsMatcherEnd.find()){
-                tmp = ruleStr.substring(start, jsMatcherEnd.start()).trim { it <= ' ' }
-                if (tmp.isNotEmpty()) {
-                    ruleList.add(SourceRule(mode(tmp), mMode))
-                }
-                ruleList.add(SourceRule(jsMatcherEnd.group(1)!!, Mode.Js))
-            }else{
-                tmp = ruleStr.substring(start).trim { it <= ' ' }
-                if (tmp.isNotEmpty()) {
-                    ruleList.add(SourceRule(mode(tmp), mMode))
-                }
+            tmp = ruleStr.substring(start).trim { it <= ' ' }
+            if (tmp.isNotEmpty()) {
+                ruleList.add(SourceRule(mode(tmp), mMode))
             }
         }
 
@@ -672,7 +662,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     companion object {
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
-        private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
         private val evalPattern =
             Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")

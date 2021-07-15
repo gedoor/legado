@@ -7,7 +7,6 @@ import com.bumptech.glide.load.model.LazyHeaders
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern.JS_PATTERN
-import io.legado.app.constant.AppPattern.JS_PATTERN_END
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
@@ -84,25 +83,13 @@ class AnalyzeUrl(
                     ruleUrl = tmp.replace("@result", ruleUrl)
                 }
             }
-            ruleUrl = evalJS(jsMatcher.group(1)!!, ruleUrl) as String
+            ruleUrl = evalJS(jsMatcher.group(2)?:jsMatcher.group(1), ruleUrl) as String
             start = jsMatcher.end()
         }
         if (ruleUrl.length > start) {
-            val jsMatcherEnd = JS_PATTERN_END.matcher(ruleUrl.substring(start))
-            if(jsMatcherEnd.find()){
-                if (jsMatcherEnd.start() > start) {
-                    tmp =
-                        ruleUrl.substring(start, jsMatcherEnd.start()).trim { it <= ' ' }
-                    if (tmp.isNotEmpty()) {
-                        ruleUrl = tmp.replace("@result", ruleUrl)
-                    }
-                }
-                ruleUrl = evalJS(jsMatcherEnd.group(1)!!, ruleUrl) as String
-            }else{
-                tmp = ruleUrl.substring(start).trim { it <= ' ' }
-                if (tmp.isNotEmpty()) {
-                    ruleUrl = tmp.replace("@result", ruleUrl)
-                }
+            tmp = ruleUrl.substring(start).trim { it <= ' ' }
+            if (tmp.isNotEmpty()) {
+                ruleUrl = tmp.replace("@result", ruleUrl)
             }
         }
     }
