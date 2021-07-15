@@ -23,6 +23,11 @@ import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
+/**
+ * js扩展类, 在js中通过java变量调用
+ * 所有对于文件的读写删操作都是相对路径,只能操作阅读缓存内的文件
+ * /android/data/{package}/cache/...
+ */
 @Keep
 @Suppress("unused")
 interface JsExtensions {
@@ -253,20 +258,51 @@ interface JsExtensions {
     }
 
     /**
-     * 读取本地文件
+     * 获取本地文件
+     * @param path 相对路径
+     * @return File
      */
-    fun readFile(path: String): ByteArray {
-        return File(path).readBytes()
+    fun getFile(path: String): File {
+        val cachePath = appCtx.eCacheDir.path
+        val aPath = if (path.startsWith(File.separator)) {
+            cachePath + path
+        } else {
+            cachePath + File.separator + path
+        }
+        return File(aPath)
+    }
+
+    fun readFile(path: String): ByteArray? {
+        val file = getFile(path)
+        if (file.exists()) {
+            return file.readBytes()
+        }
+        return null
     }
 
     fun readTxtFile(path: String): String {
-        val f = File(path)
-        val charsetName = EncodingDetect.getEncode(f)
-        return String(f.readBytes(), charset(charsetName))
+        val file = getFile(path)
+        if (file.exists()) {
+            val charsetName = EncodingDetect.getEncode(file)
+            return String(file.readBytes(), charset(charsetName))
+        }
+        return ""
     }
 
     fun readTxtFile(path: String, charsetName: String): String {
-        return String(File(path).readBytes(), charset(charsetName))
+        val file = getFile(path)
+        if (file.exists()) {
+            return String(file.readBytes(), charset(charsetName))
+        }
+        return ""
+    }
+
+    /**
+     * 删除本地文件
+     */
+    fun deleteFile(path: String) {
+        val file = getFile(path)
+        FileUtils.delete(file)
     }
 
     /**
@@ -405,7 +441,6 @@ interface JsExtensions {
         transformation: String,
         iv: String
     ): ByteArray? {
-
         return EncoderUtils.decryptAES(
             data = str.encodeToByteArray(),
             key = key.encodeToByteArray(),
