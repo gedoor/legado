@@ -292,7 +292,7 @@ interface JsExtensions {
         val bos = ByteArrayOutputStream()
         val zis = ZipInputStream(ByteArrayInputStream(bytes))
 
-        var entry: ZipEntry = zis.nextEntry
+        var entry: ZipEntry? = zis.nextEntry
 
         while (entry != null) {
             if (entry.name.equals(path)) {
@@ -303,7 +303,7 @@ interface JsExtensions {
         }
         Debug.log("getZipContent 未发现内容")
 
-        return "";
+        return ""
     }
 
     /**
@@ -319,17 +319,17 @@ interface JsExtensions {
         val bos = ByteArrayOutputStream()
         val zis = ZipInputStream(ByteArrayInputStream(bytes))
 
-        var entry: ZipEntry = zis.nextEntry
+        var entry: ZipEntry? = zis.nextEntry
         while (entry != null) {
             if (entry.name.equals(path)) {
                 zis.use { it.copyTo(bos) }
                 return bos.toByteArray()
             }
-            entry = zis.nextEntry;
+            entry = zis.nextEntry
         }
         Debug.log("getZipContent 未发现内容")
 
-        return null;
+        return null
     }
 
     /**
