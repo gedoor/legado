@@ -5,7 +5,9 @@ import java.util.regex.Pattern
 @Suppress("RegExpRedundantEscape")
 object AppPattern {
     val JS_PATTERN: Pattern =
-        Pattern.compile("(<js>[\\w\\W]*?</js>|@js:[\\w\\W]*$)", Pattern.CASE_INSENSITIVE)
+        Pattern.compile("(<js>[\\w\\W]+?</js>)", Pattern.CASE_INSENSITIVE)
+    val JS_PATTERN_END: Pattern =
+        Pattern.compile("(@js:[\\w\\W]+)", Pattern.CASE_INSENSITIVE)
     val EXP_PATTERN: Pattern = Pattern.compile("\\{\\{([\\w\\W]*?)\\}\\}")
 
     //匹配格式化后的图片格式

@@ -7,6 +7,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern.JS_PATTERN
+import io.legado.app.constant.AppPattern.JS_PATTERN_END
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
@@ -79,7 +80,7 @@ class AnalyzeUrl(
         while (jsMatcher.find()) {
             if (jsMatcher.start() > start) {
                 tmp =
-                    ruleUrl.substring(start, jsMatcher.start()).replace("\n", "").trim { it <= ' ' }
+                    ruleUrl.substring(start, jsMatcher.start()).trim { it <= ' ' }
                 if (tmp.isNotEmpty()) {
                     ruleList.add(tmp)
                 }
@@ -88,11 +89,24 @@ class AnalyzeUrl(
             start = jsMatcher.end()
         }
         if (ruleUrl.length > start) {
-            tmp = ruleUrl.substring(start).replace("\n", "").trim { it <= ' ' }
-            if (tmp.isNotEmpty()) {
-                ruleList.add(tmp)
+            val jsMatcherEnd = JS_PATTERN_END.matcher(ruleUrl.substring(start))
+            if(jsMatcherEnd.find()){
+                if (jsMatcherEnd.start() > start) {
+                    tmp =
+                        ruleUrl.substring(start, jsMatcherEnd.start()).trim { it <= ' ' }
+                    if (tmp.isNotEmpty()) {
+                        ruleList.add(tmp)
+                    }
+                }
+                ruleList.add(jsMatcherEnd.group())
+            }else{
+                tmp = ruleUrl.substring(start).trim { it <= ' ' }
+                if (tmp.isNotEmpty()) {
+                    ruleList.add(tmp)
+                }
             }
         }
+
         for (rule in ruleList) {
             var ruleStr = rule
             when {
@@ -130,7 +144,7 @@ class AnalyzeUrl(
             bindings["book"] = book
 
             //替换所有内嵌{{js}}
-            val url = analyze.innerJsRule{
+            val url = analyze.innerRule("{{","}}"){
                 when(val jsEval = SCRIPT_ENGINE.eval(it, bindings)){
                     is String -> jsEval
                     jsEval is Double && jsEval % 1.0 == 0.0 -> String.format("%.0f", jsEval)

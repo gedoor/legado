@@ -1,5 +1,9 @@
 package io.legado.app.model.analyzeRule
 
+import io.legado.app.utils.isJson
+import java.util.ArrayList
+import java.util.regex.Pattern
+
 //通用的规则切分处理
 
 class RuleAnalyzer(data: String, code: Boolean = false) {
@@ -9,13 +13,10 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     private var start = 0 //当前处理字段的开始
     private var startX = 0 //当前规则的开始
 
-    private var rule = arrayOf<String>()  //分割出的规则列表
+    private var rule = ArrayList<String>()  //分割出的规则列表
     private var step: Int = 0 //分割字符的长度
     var elementsType = "" //当前分割字符串
     var innerType = true //是否为内嵌{{}}
-
-    //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
-    val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
 
     fun trim() { // 修剪当前规则之前的"@"或者空白符
         if(queue[pos] == '@' || queue[pos] < '!') { //在while里重复设置start和startX会拖慢执行速度，所以先来个判断是否存在需要修剪的字段，最后再一次性设置start和startX
@@ -67,6 +68,31 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
             pos++ //逐个试探
         }
+        return false
+    }
+    /**
+     * 从剩余字串中拉出一个字符串，直到但不包括匹配序列（匹配参数列表中一项即为匹配），或剩余字串用完。
+     * @param seq 匹配字符串序列
+     * @return 成功返回true并设置间隔，失败则直接返回fasle
+     */
+    fun chompToAny(vararg seq: String): Boolean {
+        var pos = pos //声明新变量记录匹配位置，不更改类本身的位置
+
+        while (pos != queue.length) {
+
+            for (s in seq) {
+                if (queue.regionMatches(pos, s, 0, s.length)) {
+                    rule += queue.substring(this.pos, pos)
+                    pos += s.length //跳过分隔符
+                    ruleTypeList += s //追加类型到列表
+                    start = this.pos
+                    this.pos = pos //匹配成功, 同步处理位置到类
+                    return true //匹配就返回 true
+                }
+            }
+
+            pos++ //逐个试探
+        }
 
         return false
     }
@@ -89,85 +115,6 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         }
 
         return -1
-    }
-
-    //其中js只要符合语法，就不用避开任何阅读关键字，自由发挥
-    fun chompJsBalanced(innerType:Boolean = true,startPos:Int = pos): Boolean {
-
-        var pos = startPos //声明变量记录临时处理位置
-        var depth = 0 //{}嵌套深度
-        var depthX = 0 //[]嵌套深度
-        var balanced = false //平衡状态
-
-        var inSingleQuote = false //单引号
-        var inDoubleQuote = false //双引号
-        var inOtherQuote = false //js原始字串分隔字符
-        var inCommit = false //单行注释
-        var inCommits = false //多行注释
-        var commit= false //是否为注释，不分单行注释还是多行注释
-
-        val start:String
-        val end:String
-        val endChar:Char
-
-        if(innerType){
-            start = "{{"
-            endChar = '}'
-            end = "}"
-        }else{
-            start = "<js>"
-            endChar = '<'
-            end = "/js>"
-        }
-
-        pos += start.length //跳过起始字符串
-
-        while(true){
-            if (pos == queue.length) break
-            var c = queue[pos++]
-            
-            if(c == ESC) {//跳过转义字符序列
-                pos++
-                continue
-            }
-            
-            if(commit)when (c) {
-                '/' -> inCommit = true //匹配单行注释起点
-                '*' -> inCommits = true //匹配多行注释起点
-                else -> commit = false
-            }
-
-            if (c == '\'' && !commit && !inDoubleQuote && !inOtherQuote) inSingleQuote =
-                    !inSingleQuote //匹配具有语法功能的单引号
-            else if (c == '"' && !commit && !inSingleQuote && !inOtherQuote) inDoubleQuote =
-                    !inDoubleQuote //匹配具有语法功能的双引号
-            else if (c == '`' && !commit && !inSingleQuote && !inDoubleQuote) inOtherQuote =
-                    !inOtherQuote //匹配具有语法功能的'`'
-            else if (c == '/' && !commit && !inSingleQuote && !inDoubleQuote && !inOtherQuote) commit = true //可能是注释
-            else if (inCommits) { //匹配多行注释终点
-                pos = queue.indexOf("*/", pos) //跳过多行注释
-                if(pos == -1)break //没有终点，语法出错，跳出
-                continue
-
-            }else if (c == '\n') inCommit = false //单行注释终点
-
-            if (commit || inSingleQuote || inDoubleQuote || inOtherQuote) continue //语法单元未匹配结束，直接进入下个循环
-
-            if(c == '[')depthX++
-            else if(c == ']')depthX--
-            else if(depth == 0){ //正则的[]中的{}不需要平衡，非正则的[]中的{}也无需考虑平衡
-                if(c == '{')depth++
-                else if(c == '}')depth--
-            }
-
-            balanced = depthX <1 && depth<1
-            if(!balanced)continue
-            if(c == endChar && queue.regionMatches(pos, end, 0, end.length)) {
-                this.pos = pos
-                return true
-            }
-        }
-        return false
     }
 
     /**
@@ -247,7 +194,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      * 不用正则,不到最后不切片也不用中间变量存储,只在序列中标记当前查找字段的开头结尾,到返回时才切片,高效快速准确切割规则
      * 解决jsonPath自带的"&&"和"||"与阅读的规则冲突,以及规则正则或字符串中包含"&&"、"||"、"%%"、"@"导致的冲突
      */
-    tailrec fun splitRule(vararg split: String): Array<String> { //首段匹配,elementsType为空
+    tailrec fun splitRule(vararg split: String): ArrayList<String> { //首段匹配,elementsType为空
 
         if (split.size == 1) {
             elementsType = split[0] //设置分割字串
@@ -271,7 +218,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
             if (st == -1) {
 
-                rule = arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+                rule = arrayListOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
 
                 elementsType = queue.substring(end, end + step) //设置组合类型
                 pos = end + step //跳过分隔符
@@ -288,7 +235,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
             if (st > end) { //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
 
-                rule = arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+                rule = arrayListOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
 
                 elementsType = queue.substring(end, end + step) //设置组合类型
                 pos = end + step //跳过分隔符
@@ -322,7 +269,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     }
 
     @JvmName("splitRuleNext")
-    private tailrec fun splitRule(): Array<String> { //二段匹配被调用,elementsType非空(已在首段赋值),直接按elementsType查找,比首段采用的方式更快
+    private tailrec fun splitRule(): ArrayList<String> { //二段匹配被调用,elementsType非空(已在首段赋值),直接按elementsType查找,比首段采用的方式更快
 
         val end = pos //记录分隔位置
         pos = start //重回开始，启动另一种查找
@@ -347,7 +294,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
             if (st > end) { //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
 
-                rule += arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+                rule += arrayListOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
                 pos = end + step //跳过分隔符
 
                 while (consumeTo(elementsType) && pos < st) { //循环切分规则压入数组
@@ -421,92 +368,201 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      * @param fr 查找到内嵌规则时，用于解析的函数
      *
      * */
-    fun innerJsRule(
-            fr: (String) -> String?
+    fun innerRule(
+        startStr:String,
+        endStr:String,
+        fr: (String) -> String?
     ): String {
-        val st = StringBuilder()
 
-        while (consumeTo("{{")) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
+        val st = StringBuilder()
+        while (consumeTo(startStr)) { //拉取成功返回true，ruleAnalyzes里的字符序列索引变量pos后移相应位置，否则返回false,且isEmpty为true
+            pos += startStr.length //跳过开始字符串
             val posPre = pos //记录consumeTo匹配位置
-            if (chompJsBalanced()) {
-                val frv = fr(queue.substring(posPre + 2, pos - 2))
-                if (!frv.isNullOrEmpty()) {
-                    st.append(queue.substring(startX, posPre) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+            if (consumeTo(endStr)) {
+                val frv = fr(queue.substring(posPre, pos))
+                    st.append(queue.substring(startX, posPre - startStr.length) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                    pos += endStr.length //跳过结束字符串
                     startX = pos //记录下次规则起点
-                    continue //获取内容成功，继续选择下个内嵌规则
-                }
             }
-            pos += 2 //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
         }
 
-        return if(startX == 0) "" else st.apply {
+        return if(startX == 0) queue else st.apply {
             append(queue.substring(startX))
         }.toString()
     }
 
+    val ruleTypeList = ArrayList<String>()
+    //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
+    val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
+    enum class Mode {
+        XPath, Json, Default, Js, Regex
+    }
+    /**
+     * 不用正则,不到最后不切片也不用中间变量存储,只在序列中标记当前查找字段的开头结尾,到返回时才切片,高效快速准确切割规则
+     * 解决jsonPath自带的"&&"和"||"与阅读的规则冲突,以及规则正则或字符串中包含"&&"、"||"、"%%"、"@"导致的冲突
+     */
+    tailrec fun splitAnyRule(): ArrayList<String> { //首段匹配,elementsType为空
+
+        if (!consumeToAny(* STARTSTR)) { //未找到分隔符
+            rule += queue.substring(startX)
+            return rule
+        }
+
+        val end = pos //记录分隔位置
+        pos = start //重回开始，启动另一种查找
+
+        do {
+            val st = findToAny('[', '(') //查找筛选器位置
+
+            if (st == -1) {
+
+                rule += arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+
+                ruleTypeList += queue.substring(end, end + step) //追加类型到类型列表
+                pos = end + step //跳过分隔符
+
+                while (!chompToAny(elementsType)) { //循环切分规则压入数组
+                    rule += queue.substring(pos) //将剩余字段压入数组末尾
+                    return rule
+                }
+            }
+
+            if (st > end) { //先匹配到st1pos，表明分隔字串不在选择器中，将选择器前分隔字串分隔的字段依次压入数组
+
+                rule += arrayOf(queue.substring(startX, end)) //压入分隔的首段规则到数组
+
+                ruleTypeList += queue.substring(end, end + step) //设置组合类型
+                pos = end + step //跳过分隔符
+
+                while (!chompToAny(elementsType) && pos >= st) { //循环切分规则压入数组
+                    if (pos > st) {
+                        startX = start
+                    } else { //执行到此，证明后面再无分隔字符
+                        rule += queue.substring(pos) //将剩余字段压入数组末尾
+                        return rule
+                    }
+                }
+            }
+
+            pos = st //位置回到筛选器处
+            val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
+
+            if (!chompBalanced(queue[pos], next)){
+                ruleTypeList.clear()
+                rule.clear()
+                consumeToAny("<js>","@js:")
+                rule += queue.substring(0,pos)
+                ruleTypeList += queue.substring(pos, pos + 4) //设置组合类型
+            }
+
+        } while (end > pos)
+
+        start = pos //设置开始查找筛选器位置的起始位置
+
+        return splitAnyRule() //递归调用首段匹配
+    }
+
+    var isJSON = false
+
+    var isUrl = false
+    var isUrlList = false
+
+    var isMulu = false
+    var isreverse = false
+    var isAllInOne= false
+
+    var isFind = false
+    private val findName = ArrayList<String>()
+
+    var replaceRegex = ""
+    var replacement = ""
+    var replaceFirst = false
+    val putMap = HashMap<String, String>()
+    private val ruleParam = ArrayList<String>()
+    private val ruleType = ArrayList<Int>()
+    private val getRuleType = -2
+    private val jsRuleType = -1
+    private val defaultRuleType = 0
+
+    @JvmOverloads
+    fun setContent(cont: String,type:String = ""): RuleAnalyzer {
+        queue = cont
+        when(type){
+            "mulu" -> {
+                if(queue[0] =='-'){ //目录反转
+                    isreverse = true
+                    startX++
+                    pos++
+                }else if(queue[0] =='?'){ //AllInOne
+                    isAllInOne = true
+                    startX++
+                    pos++
+                }
+                isMulu = true
+            }
+            "find" -> {
+                pos = queue.indexOf("::")
+                findName.add(queue.substring(startX,pos))
+                pos+=2
+                isFind = true
+            }
+            "url" -> {
+
+                isUrl = true
+            }
+            "urlList" -> {
+
+                isUrlList = true
+            }
+            else -> {
+                isJSON = queue.toString().isJson()
+            }
+        }
+
+        return this
+    }
+
     companion object {
+
         /**
          * 转义字符
          */
         private const val ESC = '\\'
 
-        /**
-         * "<js>"
-         */
-        private const val JSSTART = "<js>"
+
+        val validKeys = arrayOf("class", "id", "tag", "text", "children")
 
         /**
-         * 阅读共有分隔字串起始部分
-         * "##","@@","{{","{[","<js>", "@js:"
+         * 参数字符串
          */
-        val splitList2 = arrayOf("##", "@@", "{{", "{[")
+        private val STARTSTRURL = arrayOf(",{",)
+
+        private val regexPattern = Pattern.compile("\\$\\d{1,2}")
+        private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
+        private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
+        private val evalPattern = Pattern.compile("\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
+
+        val ENDSTR= mapOf(
+            "<js>" to "</js>",
+            "{{" to "}}",
+        )
 
         /**
-         * 发现‘名称-链接’分隔字串
-         * "::"
+         * 规则起始字符串
          */
-        const val splitListFaXian = "::"
-
-        /**
-         * 目录专有起始字符
-         * "-"
-         */
-        const val splitListMulu = "-"
-
-        /**
-         * 结果为元素列表的 all in one 模式起始字符
-         * "+"
-         */
-        const val splitListTongYi = "+"
-
-        /**
-         * 结果为元素列表的项的同规则组合结构
-         * "||","&&","%%"
-         */
-        val splitListReSplit = arrayOf("||", "&&", "%%")
-
-        /**
-         * js脚本结束字串
-         * "</js>"
-         */
-        const val splitListEndJS = "</js>"
-
-        /**
-         *内嵌js结束字串
-         * "}}"
-         */
-        const val splitListEndInnerJS = "}}"
-
-        /**
-         * 内嵌规则结束字串
-         * "]}"
-         */
-        const val splitListEndInnerRule = "]}"
-
-        /**
-         * '[', ']', '(', ')','{','}'
-         */
-        val splitListPublic = charArrayOf('[', ']', '(', ')', '{', '}')
+        private val STARTSTR = arrayOf("@js:","<js>","</js>","##","@@","@"
+            ,"{{@", "{{","}}"
+            ,"}"
+            , "{@", "{/", "{$", "{?"
+            , "{class"
+            , "{id"
+            , "{tag"
+            , "{text"
+            , "{children"
+            ,"/","$","@xpath:","@json:","@css:"
+            ,"||", "&&", "%%"
+        ,"@get:{","@put:{"
+        )
 
         /**
          * '*',"/","//",":","::","@","|","@xpath:"
