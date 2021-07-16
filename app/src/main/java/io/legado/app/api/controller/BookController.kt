@@ -6,9 +6,11 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
+import io.legado.app.help.ImageLoader
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.GSON
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.fromJsonObject
@@ -40,13 +42,23 @@ object BookController {
             }
         }
 
+    fun getCover(parameters: Map<String, List<String>>): ReturnData {
+        val returnData = ReturnData()
+        val coverPath = parameters["path"]?.firstOrNull()
+        val ftBitmap = ImageLoader.loadBitmap(appCtx, coverPath)
+            .placeholder(CoverImageView.defaultDrawable)
+            .error(CoverImageView.defaultDrawable)
+            .submit()
+        return returnData.setData(ftBitmap.get())
+    }
+
     /**
      * 更新目录
      */
     fun refreshToc(parameters: Map<String, List<String>>): ReturnData {
         val returnData = ReturnData()
         try {
-            val bookUrl = parameters["url"]?.getOrNull(0)
+            val bookUrl = parameters["url"]?.firstOrNull()
             if (bookUrl.isNullOrEmpty()) {
                 return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
             }
@@ -90,7 +102,7 @@ object BookController {
      * 获取目录
      */
     fun getChapterList(parameters: Map<String, List<String>>): ReturnData {
-        val bookUrl = parameters["url"]?.getOrNull(0)
+        val bookUrl = parameters["url"]?.firstOrNull()
         val returnData = ReturnData()
         if (bookUrl.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
@@ -103,8 +115,8 @@ object BookController {
      * 获取正文
      */
     fun getBookContent(parameters: Map<String, List<String>>): ReturnData {
-        val bookUrl = parameters["url"]?.getOrNull(0)
-        val index = parameters["index"]?.getOrNull(0)?.toInt()
+        val bookUrl = parameters["url"]?.firstOrNull()
+        val index = parameters["index"]?.firstOrNull()?.toInt()
         val returnData = ReturnData()
         if (bookUrl.isNullOrEmpty()) {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")

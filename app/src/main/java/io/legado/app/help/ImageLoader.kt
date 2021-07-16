@@ -30,6 +30,19 @@ object ImageLoader {
         }
     }
 
+    fun loadBitmap(context: Context, path: String?): RequestBuilder<Bitmap> {
+        return when {
+            path.isNullOrEmpty() -> Glide.with(context).asBitmap().load(path)
+            path.isAbsUrl() -> Glide.with(context).asBitmap().load(AnalyzeUrl(path).getGlideUrl())
+            path.isContentScheme() -> Glide.with(context).asBitmap().load(Uri.parse(path))
+            else -> kotlin.runCatching {
+                Glide.with(context).asBitmap().load(File(path))
+            }.getOrElse {
+                Glide.with(context).asBitmap().load(path)
+            }
+        }
+    }
+
     fun load(context: Context, @DrawableRes resId: Int?): RequestBuilder<Drawable> {
         return Glide.with(context).load(resId)
     }

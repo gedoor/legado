@@ -285,7 +285,7 @@ interface JsExtensions {
         val zipFile = getFile(zipPath)
         val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
         ZipUtils.unzipFile(zipFile, unzipFolder)
-        FileUtils.deleteFile(zipPath)
+        FileUtils.deleteFile(zipFile.absolutePath)
         return unzipPath.substring(FileUtils.getCachePath().length)
     }
 
@@ -306,7 +306,7 @@ interface JsExtensions {
                 contents.deleteCharAt(contents.length - 1)
             }
         }
-        FileUtils.deleteFile(unzipPath)
+        FileUtils.deleteFile(unzipFolder.absolutePath)
         return contents.toString()
     }
 
@@ -443,10 +443,7 @@ interface JsExtensions {
      * @param iv ECB模式的偏移向量
      */
     fun aesDecodeToByteArray(
-        str: String,
-        key: String,
-        transformation: String,
-        iv: String
+        str: String, key: String, transformation: String, iv: String
     ): ByteArray? {
         return EncoderUtils.decryptAES(
             data = str.encodeToByteArray(),
@@ -465,10 +462,7 @@ interface JsExtensions {
      */
 
     fun aesDecodeToString(
-        str: String,
-        key: String,
-        transformation: String,
-        iv: String
+        str: String, key: String, transformation: String, iv: String
     ): String? {
         return aesDecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
     }
@@ -482,10 +476,7 @@ interface JsExtensions {
      */
 
     fun aesBase64DecodeToByteArray(
-        str: String,
-        key: String,
-        transformation: String,
-        iv: String
+        str: String, key: String, transformation: String, iv: String
     ): ByteArray? {
         return EncoderUtils.decryptBase64AES(
             data = str.encodeToByteArray(),
@@ -504,10 +495,7 @@ interface JsExtensions {
      */
 
     fun aesBase64DecodeToString(
-        str: String,
-        key: String,
-        transformation: String,
-        iv: String
+        str: String, key: String, transformation: String, iv: String
     ): String? {
         return aesBase64DecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
     }
@@ -520,8 +508,7 @@ interface JsExtensions {
      * @param iv ECB模式的偏移向量
      */
     fun aesEncodeToByteArray(
-        data: String, key: String, transformation: String,
-        iv: String
+        data: String, key: String, transformation: String, iv: String
     ): ByteArray? {
         return EncoderUtils.encryptAES(
             data.encodeToByteArray(),
@@ -539,8 +526,7 @@ interface JsExtensions {
      * @param iv ECB模式的偏移向量
      */
     fun aesEncodeToString(
-        data: String, key: String, transformation: String,
-        iv: String
+        data: String, key: String, transformation: String, iv: String
     ): String? {
         return aesEncodeToByteArray(data, key, transformation, iv)?.let { String(it) }
     }
@@ -553,8 +539,7 @@ interface JsExtensions {
      * @param iv ECB模式的偏移向量
      */
     fun aesEncodeToBase64ByteArray(
-        data: String, key: String, transformation: String,
-        iv: String
+        data: String, key: String, transformation: String, iv: String
     ): ByteArray? {
         return EncoderUtils.encryptAES2Base64(
             data.encodeToByteArray(),
@@ -572,8 +557,7 @@ interface JsExtensions {
      * @param iv ECB模式的偏移向量
      */
     fun aesEncodeToBase64String(
-        data: String, key: String, transformation: String,
-        iv: String
+        data: String, key: String, transformation: String, iv: String
     ): String? {
         return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
     }
