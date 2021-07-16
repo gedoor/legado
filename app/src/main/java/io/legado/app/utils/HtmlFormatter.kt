@@ -59,16 +59,16 @@ object HtmlFormatter {
 
                 do{
                     val url = matcher.group(1)!!
-                    val urlBefore = url.substringBefore(',')
+                    val pos = url.indexOf(',')
                     sb.append(keepImgHtml.substring(appendPos, matcher.start()).replace("\n","\n　　")) //非图片部分换行缩减
                     sb.append(
                         "<img src=\"${
                             NetworkUtils.getAbsoluteURL(
                                 redirectUrl,
-                                urlBefore
+                                url.substring( 0, pos)
                             )
-                        }${
-                            url.substring(urlBefore.length)
+                        },${
+                            url.substring( pos + 1 ).trim{ it <'!' }
                         }\">"
                     )
                     appendPos = matcher.end()
