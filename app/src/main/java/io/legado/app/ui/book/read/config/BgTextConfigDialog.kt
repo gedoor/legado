@@ -224,7 +224,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         }
         execute {
             val exportFiles = arrayListOf<File>()
-            val configDirPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig")
+            val configDirPath = FileUtils.getPath(requireContext().externalCache, "readConfig")
             FileUtils.deleteFile(configDirPath)
             val configDir = FileUtils.createFolderIfNotExist(configDirPath)
             val configExportPath = FileUtils.getPath(configDir, "readConfig.json")
@@ -269,7 +269,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
                     exportFiles.add(bgExportFile)
                 }
             }
-            val configZipPath = FileUtils.getPath(requireContext().eCacheDir, configFileName)
+            val configZipPath = FileUtils.getPath(requireContext().externalCache, configFileName)
             if (ZipUtils.zipFiles(exportFiles, File(configZipPath))) {
                 if (uri.isContentScheme()) {
                     DocumentFile.fromTreeUri(requireContext(), uri)?.let { treeDoc ->
@@ -331,11 +331,11 @@ class BgTextConfigDialog : BaseDialogFragment() {
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun importConfig(byteArray: ByteArray) {
         execute {
-            val configZipPath = FileUtils.getPath(requireContext().eCacheDir, configFileName)
+            val configZipPath = FileUtils.getPath(requireContext().externalCache, configFileName)
             FileUtils.deleteFile(configZipPath)
             val zipFile = FileUtils.createFileIfNotExist(configZipPath)
             zipFile.writeBytes(byteArray)
-            val configDirPath = FileUtils.getPath(requireContext().eCacheDir, "readConfig")
+            val configDirPath = FileUtils.getPath(requireContext().externalCache, "readConfig")
             FileUtils.deleteFile(configDirPath)
             ZipUtils.unzipFile(zipFile, FileUtils.createFolderIfNotExist(configDirPath))
             val configDir = FileUtils.createFolderIfNotExist(configDirPath)
@@ -344,7 +344,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
             if (config.textFont.isNotEmpty()) {
                 val fontName = FileUtils.getName(config.textFont)
                 val fontPath =
-                    FileUtils.getPath(requireContext().externalFilesDir, "font", fontName)
+                    FileUtils.getPath(requireContext().externalFiles, "font", fontName)
                 if (!FileUtils.exist(fontPath)) {
                     FileUtils.getFile(configDir, fontName).copyTo(File(fontPath))
                 }
@@ -352,7 +352,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
             }
             if (config.bgType == 2) {
                 val bgName = FileUtils.getName(config.bgStr)
-                val bgPath = FileUtils.getPath(requireContext().externalFilesDir, "bg", bgName)
+                val bgPath = FileUtils.getPath(requireContext().externalFiles, "bg", bgName)
                 if (!FileUtils.exist(bgPath)) {
                     val bgFile = FileUtils.getFile(configDir, bgName)
                     if (bgFile.exists()) {
@@ -362,7 +362,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
             }
             if (config.bgTypeNight == 2) {
                 val bgName = FileUtils.getName(config.bgStrNight)
-                val bgPath = FileUtils.getPath(requireContext().externalFilesDir, "bg", bgName)
+                val bgPath = FileUtils.getPath(requireContext().externalFiles, "bg", bgName)
                 if (!FileUtils.exist(bgPath)) {
                     val bgFile = FileUtils.getFile(configDir, bgName)
                     if (bgFile.exists()) {
@@ -372,7 +372,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
             }
             if (config.bgTypeEInk == 2) {
                 val bgName = FileUtils.getName(config.bgStrEInk)
-                val bgPath = FileUtils.getPath(requireContext().externalFilesDir, "bg", bgName)
+                val bgPath = FileUtils.getPath(requireContext().externalFiles, "bg", bgName)
                 if (!FileUtils.exist(bgPath)) {
                     val bgFile = FileUtils.getFile(configDir, bgName)
                     if (bgFile.exists()) {
@@ -395,7 +395,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
             doc?.name?.let {
                 val file =
-                    FileUtils.createFileIfNotExist(requireContext().externalFilesDir, "bg", it)
+                    FileUtils.createFileIfNotExist(requireContext().externalFiles, "bg", it)
                 kotlin.runCatching {
                     DocumentUtils.readBytes(requireContext(), doc.uri)
                 }.getOrNull()?.let { byteArray ->
