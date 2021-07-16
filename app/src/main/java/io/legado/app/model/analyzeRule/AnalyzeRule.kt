@@ -447,14 +447,35 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             if(evalMatcher.find()){
 
                 var modeX = mode == Mode.Js || mode == Mode.Regex
-                if(evalMatcher.start() != 0){
-                    tmp = rule.substring(start, evalMatcher.start())
+                if (evalMatcher.start() > 0 ) {
+                    tmp = rule.substring(0, evalMatcher.start())
                     modeX = modeX || tmp.contains("##")
                     splitRegex(tmp)
                 }
                 if(!modeX)mode = Mode.Regex
+                tmp = evalMatcher.group()
 
-                do{
+                when {
+                    tmp.startsWith("@get:", true) -> {
+                        ruleType.add(getRuleType)
+                        ruleParam.add(tmp.substring(6, tmp.lastIndex))
+                    }
+                    tmp.startsWith("{{") -> {
+                        ruleType.add(jsRuleType)
+                        ruleParam.add(tmp.substring(2, tmp.length - 2))
+                    }
+                    else -> {
+                        splitRegex(tmp)
+                    }
+                }
+
+                start = evalMatcher.end()
+
+                while (evalMatcher.find()){
+                    if (evalMatcher.start() > start) {
+                        tmp = rule.substring(start, evalMatcher.start())
+                        splitRegex(tmp)
+                    }
                     tmp = evalMatcher.group()
                     when {
                         tmp.startsWith("@get:", true) -> {
@@ -470,7 +491,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                         }
                     }
                     start = evalMatcher.end()
-                }while (evalMatcher.find())
+                }
             }
 
             if (rule.length > start) {
