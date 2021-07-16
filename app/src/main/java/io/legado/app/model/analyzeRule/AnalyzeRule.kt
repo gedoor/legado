@@ -379,7 +379,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 mMode = Mode.Json
                 ruleStr0.substring(6)
             }
-            ruleStr0.startsWith("?") -> {
+            ruleStr0.startsWith(":") -> { //:与伪类选择器冲突，改成?更合理
                 mMode = Mode.Regex
                 isRegex = true
                 ruleStr0.substring(1)
