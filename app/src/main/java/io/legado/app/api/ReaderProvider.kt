@@ -20,7 +20,7 @@ import java.util.*
 class ReaderProvider : ContentProvider() {
     private enum class RequestCode {
         SaveSource, SaveSources, SaveBook, DeleteSources, GetSource, GetSources,
-        GetBookshelf, RefreshToc, GetChapterList, GetBookContent
+        GetBookshelf, RefreshToc, GetChapterList, GetBookContent, GetBookCover
     }
 
     private val postBodyKey = "json"
@@ -37,6 +37,7 @@ class ReaderProvider : ContentProvider() {
                 addURI(authority, "book/refreshToc/query", RequestCode.RefreshToc.ordinal)
                 addURI(authority, "book/chapter/query", RequestCode.GetChapterList.ordinal)
                 addURI(authority, "book/content/query", RequestCode.GetBookContent.ordinal)
+                addURI(authority, "book/cover/query", RequestCode.GetBookCover.ordinal)
             }
         }
     }
@@ -90,6 +91,9 @@ class ReaderProvider : ContentProvider() {
         uri.getQueryParameter("index")?.let {
             map["index"] = arrayListOf(it)
         }
+        uri.getQueryParameter("path")?.let {
+            map["path"] = arrayListOf(it)
+        }
         return if (sMatcher.match(uri) < 0) null else when (RequestCode.values()[sMatcher.match(uri)]) {
             RequestCode.GetSource -> SimpleCursor(SourceController.getSource(map))
             RequestCode.GetSources -> SimpleCursor(SourceController.sources)
@@ -97,6 +101,7 @@ class ReaderProvider : ContentProvider() {
             RequestCode.GetBookContent -> SimpleCursor(BookController.getBookContent(map))
             RequestCode.RefreshToc -> SimpleCursor(BookController.refreshToc(map))
             RequestCode.GetChapterList -> SimpleCursor(BookController.getChapterList(map))
+            RequestCode.GetBookCover -> SimpleCursor(BookController.getCover(map))
             else -> throw IllegalStateException(
                 "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
             )
