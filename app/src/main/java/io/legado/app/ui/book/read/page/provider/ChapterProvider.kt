@@ -115,7 +115,15 @@ object ChapterProvider {
                 content.replace(AppPattern.imgPattern.toRegex(), "\n\$0\n")
                     .split("\n").forEach { text ->
                         if (text.isNotBlank()) {
-                            if (!text.startsWith("<img src=\"")) { //非图片
+                            val matcher = AppPattern.imgPattern.matcher(text)
+                            if (matcher.find()) {
+                                matcher.group(1)?.let { src ->
+                                    durY = setTypeImage(
+                                        book, bookChapter, src,
+                                        durY, textPages, book.getImageStyle()
+                                    )
+                                }
+                            } else {
                                 val isTitle = index == 0
                                 val textPaint = if (isTitle) titlePaint else contentPaint
                                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
@@ -124,11 +132,6 @@ object ChapterProvider {
                                         stringBuilder, isTitle, textPaint
                                     )
                                 }
-                            } else { //图片
-                                durY = setTypeImage(
-                                    book, bookChapter, text.substring(10, text.length-2),
-                                    durY, textPages, book.getImageStyle()
-                                )
                             }
                         }
                     }
@@ -147,10 +150,7 @@ object ChapterProvider {
 
         return TextChapter(
             bookChapter.index, bookChapter.title,
-            bookChapter.getAbsoluteURL().run{
-                val pos = indexOf(',')
-                if(pos == -1) this else substring(0,pos)
-            },
+            bookChapter.getAbsoluteURL().split(AnalyzeUrl.splitUrlRegex)[0],
             textPages, chapterSize
         )
     }
