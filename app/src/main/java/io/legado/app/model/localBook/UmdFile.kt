@@ -102,10 +102,10 @@ class UmdFile(var book: Book) {
             uFile = null
             book.intro = "书籍导入异常"
         }else{
-            val hd= umdBook!!.header
-            book.name=hd.title;
-            book.author=hd.author;
-            book.kind=hd.bookType;
+            val hd = umdBook!!.header
+            book.name = hd.title
+            book.author = hd.author
+            book.kind = hd.bookType
         }
     }
     private fun getContent(chapter: BookChapter): String? {
@@ -117,10 +117,10 @@ class UmdFile(var book: Book) {
         umdBook?.chapters?.titles?.forEachIndexed { index, _ ->
             val title = umdBook!!.chapters.getTitle(index)
             val chapter = BookChapter()
-            chapter.title=title;
+            chapter.title = title
             chapter.index = index
             chapter.bookUrl = book.bookUrl
-            chapter.url = index.toString();
+            chapter.url = index.toString()
             Log.d("UMD",chapter.url)
             chapterList.add(chapter)
         }
