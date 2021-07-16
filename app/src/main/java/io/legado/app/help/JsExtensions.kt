@@ -220,6 +220,8 @@ interface JsExtensions {
         return HtmlFormatter.formatKeepImg(str)
     }
 
+    //****************文件操作******************//
+
     /**
      * 获取本地文件
      * @param path 相对路径
@@ -360,6 +362,8 @@ interface JsExtensions {
 
         return null
     }
+
+    //******************文件操作************************//
 
     /**
      * 解析字体,返回字体解析类
