@@ -2,6 +2,7 @@
 
 * [书源帮助文档](https://alanskycn.gitee.io/teachme/Rule/source.html)
 * [订阅源帮助文档](https://alanskycn.gitee.io/teachme/Rule/rss.html)
+* [js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt)
 * 辅助键盘❓中可插入URL参数模板,打开帮助,选择文件
 * 规则标志, {{......}}内使用规则必须有明显的规则标志,没有规则标志当作js执行
 ```
