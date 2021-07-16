@@ -26,22 +26,30 @@ object LocalBook {
     }
 
     fun getChapterList(book: Book): ArrayList<BookChapter> {
-        return if (book.isEpub()) {
-            EpubFile.getChapterList(book)
-        }else if(book.isUmd()){
-            UmdFile.getChapterList(book)
-        } else {
-            AnalyzeTxtFile().analyze(book)
+        return when {
+            book.isEpub() -> {
+                EpubFile.getChapterList(book)
+            }
+            book.isUmd() -> {
+                UmdFile.getChapterList(book)
+            }
+            else -> {
+                AnalyzeTxtFile().analyze(book)
+            }
         }
     }
 
     fun getContext(book: Book, chapter: BookChapter): String? {
-        return if (book.isEpub()) {
-            EpubFile.getContent(book, chapter)
-        }else if (book.isUmd()){
-            UmdFile.getContent(book, chapter)
-        } else {
-            AnalyzeTxtFile.getContent(book, chapter)
+        return when {
+            book.isEpub() -> {
+                EpubFile.getContent(book, chapter)
+            }
+            book.isUmd() -> {
+                UmdFile.getContent(book, chapter)
+            }
+            else -> {
+                AnalyzeTxtFile.getContent(book, chapter)
+            }
         }
     }
 
