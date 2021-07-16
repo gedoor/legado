@@ -49,7 +49,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         if (content == null) throw AssertionError("内容不可空（Content cannot be null）")
         this.content = content
         setBaseUrl(baseUrl)
-        isJSON = content.toString().isJson()
         objectChangedXP = true
         objectChangedJS = true
         objectChangedJP = true
@@ -384,7 +383,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 isRegex = true
                 ruleStr0.substring(1)
             }
-            ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' -> {
+            ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' || content.toString().isJson() -> {
                 mMode = Mode.Json
                 ruleStr0
             }
