@@ -23,7 +23,7 @@ import java.util.*
 object BookWebDav {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
     private val bookProgressUrl = "${rootWebDavUrl}bookProgress/"
-    private val zipFilePath = "${FileUtils.getCachePath()}${File.separator}backup.zip"
+    private val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"
 
     private val rootWebDavUrl: String
         get() {

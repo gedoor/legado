@@ -139,7 +139,7 @@ class FontSelectDialog : BaseDialogFragment(),
     private fun getLocalFonts(): ArrayList<DocItem> {
         val fontItems = arrayListOf<DocItem>()
         val fontDir =
-            FileUtils.createFolderIfNotExist(requireContext().externalFilesDir, "font")
+            FileUtils.createFolderIfNotExist(requireContext().externalFiles, "font")
         fontDir.listFiles { pathName ->
             pathName.name.lowercase(Locale.getDefault()).matches(fontRegex)
         }?.forEach {

@@ -224,10 +224,10 @@ val Context.sysBattery: Int
         return batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
     }
 
-val Context.externalFilesDir: File
+val Context.externalFiles: File
     get() = this.getExternalFilesDir(null) ?: this.filesDir
 
-val Context.eCacheDir: File
+val Context.externalCache: File
     get() = this.externalCacheDir ?: this.cacheDir
 
 fun Context.openUrl(url: String) {
