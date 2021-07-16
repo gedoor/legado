@@ -59,16 +59,17 @@ object HtmlFormatter {
 
                 do{
                     val url = matcher.group(1)!!
-                    val pos = url.indexOf(',')
-                    sb.append(keepImgHtml.substring(appendPos, matcher.start()).replace("\n","\n　　")) //非图片部分换行缩减
+                    val urlBefore = url.substringBefore(',')
+                    val beforeStr = keepImgHtml.substring(appendPos, matcher.start())
+                    sb.append( if(beforeStr == "\n") '\n' else beforeStr.replace("\n","\n　　") ) //缩进换行下个非图片段落
                     sb.append(
                         "<img src=\"${
                             NetworkUtils.getAbsoluteURL(
                                 redirectUrl,
-                                url.substring(0, pos)
+                                urlBefore
                             )
-                        },${
-                            url.substring(pos + 1 )
+                        }${
+                            url.substring(urlBefore.length)
                         }\">"
                     )
                     appendPos = matcher.end()
@@ -78,7 +79,8 @@ object HtmlFormatter {
         }
 
         if (appendPos < keepImgHtml.length) {
-            sb.append(keepImgHtml.substring(appendPos, keepImgHtml.length).replace("\n","\n　　")) //非图片部分换行缩减
+            val beforeStr = keepImgHtml.substring(appendPos, keepImgHtml.length)
+            sb.append( if(beforeStr == "\n") '\n' else beforeStr.replace("\n","\n　　") ) //缩进换行下个非图片段落
         }
         return sb.toString()
     }
