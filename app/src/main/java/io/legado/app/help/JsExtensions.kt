@@ -267,7 +267,7 @@ interface JsExtensions {
      */
     fun deleteFile(path: String) {
         val file = getFile(path)
-        FileUtils.delete(file)
+        FileUtils.delete(file, true)
     }
 
     /**
