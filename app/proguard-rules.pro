@@ -222,3 +222,10 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+
+
+# Keep all of Cronet API as it's used by the Cronet module.
+-keep public class org.chromium.net.* {
+    !private *;
+    *;
+}
