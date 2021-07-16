@@ -48,6 +48,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
         if (content == null) throw AssertionError("内容不可空（Content cannot be null）")
         this.content = content
+        isJSON = content.toString().isJson()
         setBaseUrl(baseUrl)
         objectChangedXP = true
         objectChangedJS = true
@@ -64,8 +65,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     fun setRedirectUrl(url: String): URL? {
         kotlin.runCatching {
-            val pos = url.indexOf(',')
-            redirectUrl = URL( if(pos == -1) url else url.substring(0,pos))
+            redirectUrl = URL(url.substringBefore(",{"))
         }
         return redirectUrl
     }
@@ -378,12 +378,12 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 mMode = Mode.Json
                 ruleStr0.substring(6)
             }
-            ruleStr0.startsWith(":") -> { //:与伪类选择器冲突，改成?更合理
+            ruleStr0.startsWith(":") -> { //:与伪类选择器冲突，建议改成?更合理
                 mMode = Mode.Regex
                 isRegex = true
                 ruleStr0.substring(1)
             }
-            ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' || content.toString().isJson() -> {
+            ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' || isJSON -> {
                 mMode = Mode.Json
                 ruleStr0
             }
@@ -596,15 +596,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         }
 
         private fun isRule(ruleStr: String): Boolean {
-            return when {
-                ruleStr.startsWith("$.") -> true
-                ruleStr.startsWith("@Json:", true) -> true
-                ruleStr.startsWith("//") -> true
-                ruleStr.startsWith("@XPath:", true) -> true
-                ruleStr.startsWith("@CSS:", true) -> true
-                ruleStr.startsWith("@@") -> true
-                else -> false
-            }
+            return ruleStr.startsWith('@') //js首个字符不可能是@，除非是装饰器，所以@开头规定为规则
+                    || ruleStr.startsWith('$') //js首个字符不可能是$，因为并未注入$变量，且$1之类的东西已被替换，不会影响此处判断
+                    || ruleStr.startsWith("//")
+                    || ruleStr.startsWith("class")//js首个字符串不可能是class，因为并未注入相关字符串开头的变量
+                    || ruleStr.startsWith("id")//js首个字符串不可能是id，因为并未注入相关字符串开头的变量
+                    || ruleStr.startsWith("tag")//js首个字符串不可能是tag，因为并未注入相关字符串开头的变量
+                    || ruleStr.startsWith("text")//js首个字符串不可能是text，因为并未注入相关字符串开头的变量
+                    || ruleStr.startsWith("children")//js首个字符串不可能是children，因为并未注入相关字符串开头的变量
         }
     }
 

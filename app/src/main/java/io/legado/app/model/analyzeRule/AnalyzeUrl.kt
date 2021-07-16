@@ -55,8 +55,7 @@ class AnalyzeUrl(
     private var retry: Int = 0
 
     init {
-        val pos = baseUrl.indexOf(',')
-        if(pos != -1)baseUrl = baseUrl.substring(0,pos)
+        baseUrl = baseUrl.substringBefore(",{")
         headerMapF?.let {
             headerMap.putAll(it)
             if (it.containsKey("proxy")) {
@@ -141,11 +140,11 @@ class AnalyzeUrl(
     /**
      * 处理URL
      */
-    private fun initUrl() {
+    private fun initUrl() { //前面已经替换掉所有额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串
 
         var pos = ruleUrl.indexOf(',')
 
-        urlHasQuery = if(pos == -1) ruleUrl else ruleUrl.substring(0,pos)
+        urlHasQuery = ruleUrl.substringBefore(',')
 
         url = NetworkUtils.getAbsoluteURL(baseUrl,urlHasQuery )
 

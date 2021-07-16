@@ -62,12 +62,9 @@ data class BookChapter(
     }
 
     fun getAbsoluteURL():String{
-        val pos = url.indexOf(',')
-        return if(pos == -1) NetworkUtils.getAbsoluteURL(baseUrl,url)
-        else NetworkUtils.getAbsoluteURL(
-                baseUrl,
-                url.substring(0, pos)
-            ) + url.substring(pos)
+        val urlBefore = url.substringBefore(",{")
+        val urlAbsoluteBefore = NetworkUtils.getAbsoluteURL(baseUrl,urlBefore)
+        return if(urlBefore.length == url.length) urlAbsoluteBefore else urlAbsoluteBefore + url.substring(urlBefore.length)
     }
 
     fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))

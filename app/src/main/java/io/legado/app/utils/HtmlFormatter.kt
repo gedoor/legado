@@ -13,7 +13,7 @@ object HtmlFormatter {
         return html.replace(wrapHtmlRegex, "\n")
             .replace(otherRegex, "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
-            .replace("^[\\n\\s]*".toRegex(), "　　")
+            .replace("^[\\n\\s]+".toRegex(), "　　")
             .replace("[\\n\\s]+$".toRegex(), "")
     }
 
@@ -26,7 +26,7 @@ object HtmlFormatter {
             .replace("[\\n\\s]+\$|^[\\n\\s]*".toRegex(), "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n")
 
-        val sb = StringBuffer("　　") //前置缩减
+        val sb = StringBuffer()
         val hasDataType:Boolean //是否有数据属性
 
         //图片有data-开头的数据属性时优先用数据属性作为src，没有数据属性时匹配src
@@ -48,7 +48,7 @@ object HtmlFormatter {
             if(hasDataType || matcher.group(1)!!.indexOf(',') == -1) { //图片无参
 
                 do{
-                    sb.append(keepImgHtml.substring(appendPos, matcher.start()).replace("\n","\n　　")) //非图片部分换行缩减
+                    sb.append(keepImgHtml.substring(appendPos, matcher.start()).replace("\n","\n　　")) //非图片部分换行缩进
                     sb.append( "<img src=\"${
                         NetworkUtils.getAbsoluteURL(redirectUrl,matcher.group(1)!!)
                     }\">" )

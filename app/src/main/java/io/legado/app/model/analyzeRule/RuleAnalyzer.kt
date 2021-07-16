@@ -391,12 +391,15 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         }.toString()
     }
 
+    //-----------此处向下的函数和变量都未被使用，但以后要用--------
+
     val ruleTypeList = ArrayList<String>()
     //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
     val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
     enum class Mode {
         XPath, Json, Default, Js, Regex
     }
+
     /**
      * 不用正则,不到最后不切片也不用中间变量存储,只在序列中标记当前查找字段的开头结尾,到返回时才切片,高效快速准确切割规则
      * 解决jsonPath自带的"&&"和"||"与阅读的规则冲突,以及规则正则或字符串中包含"&&"、"||"、"%%"、"@"导致的冲突
@@ -515,7 +518,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
                 isUrlList = true
             }
             else -> {
-                isJSON = queue.toString().isJson()
+                isJSON = queue.isJson()
             }
         }
 
@@ -553,7 +556,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         private val STARTSTR = arrayOf("@js:","<js>","</js>","##","@@","@"
             ,"{{@", "{{","}}"
             ,"}"
-            , "{@", "{/", "{$", "{?"
+            , "{@", "{/", "{$"
             , "{class"
             , "{id"
             , "{tag"
