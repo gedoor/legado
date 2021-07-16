@@ -285,7 +285,7 @@ interface JsExtensions {
         val zipFile = getFile(zipPath)
         val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
         ZipUtils.unzipFile(zipFile, unzipFolder)
-        FileUtils.deleteFile(zipPath)
+        FileUtils.deleteFile(zipFile.absolutePath)
         return unzipPath.substring(FileUtils.getCachePath().length)
     }
 
