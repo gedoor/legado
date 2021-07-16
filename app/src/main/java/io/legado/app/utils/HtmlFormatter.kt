@@ -65,10 +65,10 @@ object HtmlFormatter {
                         "<img src=\"${
                             NetworkUtils.getAbsoluteURL(
                                 redirectUrl,
-                                url.substring( 0, pos)
+                                url.substring(0, pos)
                             )
                         },${
-                            url.substring( pos + 1 ).trim{ it <'!' }
+                            url.substring(pos + 1 )
                         }\">"
                     )
                     appendPos = matcher.end()
