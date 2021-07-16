@@ -140,7 +140,7 @@ class AnalyzeUrl(
     /**
      * 处理URL
      */
-    private fun initUrl() { //前面已经替换掉所有额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串
+    private fun initUrl() { //replaceKeyPageJs已经替换掉额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串。
 
         var pos = ruleUrl.indexOf(',')
 
