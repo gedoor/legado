@@ -105,8 +105,7 @@ object FileUtils {
     }
 
     fun getCachePath(): String {
-        return appCtx.externalCacheDir?.absolutePath
-            ?: appCtx.cacheDir.absolutePath
+        return appCtx.externalCache.absolutePath
     }
 
     fun getSdCardPath(): String {

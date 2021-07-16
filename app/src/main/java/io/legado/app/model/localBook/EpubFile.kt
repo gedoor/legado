@@ -9,7 +9,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFilesDir
+import io.legado.app.utils.externalFiles
 import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.epub.EpubReader
 import org.jsoup.Jsoup
@@ -80,7 +80,7 @@ class EpubFile(var book: Book) {
             epubBook?.let {
                 if (book.coverUrl.isNullOrEmpty()) {
                     book.coverUrl = FileUtils.getPath(
-                        appCtx.externalFilesDir,
+                        appCtx.externalFiles,
                         "covers",
                         "${MD5Utils.md5Encode16(book.bookUrl)}.jpg"
                     )

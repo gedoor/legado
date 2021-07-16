@@ -108,7 +108,7 @@ class BookInfoEditActivity :
         if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(this, uri)
             doc?.name?.let {
-                var file = this.externalFilesDir
+                var file = this.externalFiles
                 file = FileUtils.createFileIfNotExist(file, "covers", it)
                 kotlin.runCatching {
                     DocumentUtils.readBytes(this, doc.uri)
@@ -128,7 +128,7 @@ class BookInfoEditActivity :
                     RealPathUtil.getPath(this, uri)?.let { path ->
                         val imgFile = File(path)
                         if (imgFile.exists()) {
-                            var file = this.externalFilesDir
+                            var file = this.externalFiles
                             file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
                             file.writeBytes(imgFile.readBytes())
                             coverChangeTo(file.absolutePath)
