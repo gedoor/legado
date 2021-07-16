@@ -384,7 +384,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 isRegex = true
                 ruleStr0.substring(1)
             }
-            ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' {
+            ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' -> {
                 mMode = Mode.Json
                 ruleStr0
             }
