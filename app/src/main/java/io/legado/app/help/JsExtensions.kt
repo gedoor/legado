@@ -306,7 +306,7 @@ interface JsExtensions {
                 contents.deleteCharAt(contents.length - 1)
             }
         }
-        FileUtils.deleteFile(unzipPath)
+        FileUtils.deleteFile(unzipFolder.absolutePath)
         return contents.toString()
     }
 
