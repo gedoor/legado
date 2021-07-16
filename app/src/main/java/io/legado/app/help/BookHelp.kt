@@ -23,7 +23,7 @@ import kotlin.math.min
 object BookHelp {
     private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
-    private val downloadDir: File = appCtx.externalFilesDir
+    private val downloadDir: File = appCtx.externalFiles
     private val downloadImages = CopyOnWriteArraySet<String>()
 
     fun clearCache() {

@@ -226,7 +226,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
         if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
             doc?.name?.let {
-                var file = requireContext().externalFilesDir
+                var file = requireContext().externalFiles
                 file = FileUtils.createFileIfNotExist(file, "covers", it)
                 kotlin.runCatching {
                     DocumentUtils.readBytes(requireContext(), doc.uri)
@@ -247,7 +247,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
                     RealPathUtil.getPath(requireContext(), uri)?.let { path ->
                         val imgFile = File(path)
                         if (imgFile.exists()) {
-                            var file = requireContext().externalFilesDir
+                            var file = requireContext().externalFiles
                             file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
                             file.writeBytes(imgFile.readBytes())
                             putPrefString(PreferKey.defaultCover, file.absolutePath)

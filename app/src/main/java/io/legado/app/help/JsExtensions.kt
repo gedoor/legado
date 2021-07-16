@@ -23,6 +23,11 @@ import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
+/**
+ * js扩展类, 在js中通过java变量调用
+ * 所有对于文件的读写删操作都是相对路径,只能操作阅读缓存内的文件
+ * /android/data/{package}/cache/...
+ */
 @Keep
 @Suppress("unused")
 interface JsExtensions {
@@ -80,6 +85,7 @@ interface JsExtensions {
 
     /**
      * 实现16进制字符串转文件
+     * @return 相对路径
      */
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url).type ?: return ""
@@ -94,45 +100,7 @@ interface JsExtensions {
                 zipFile.writeBytes(it)
             }
         }
-        return zipPath
-    }
-
-    /**
-     * js实现压缩文件解压
-     */
-    fun unzipFile(zipPath: String): String {
-        if (zipPath.isEmpty()) return ""
-        val unzipPath = FileUtils.getPath(
-            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-            FileUtils.getNameExcludeExtension(zipPath)
-        )
-        FileUtils.deleteFile(unzipPath)
-        val zipFile = FileUtils.createFileIfNotExist(zipPath)
-        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
-        ZipUtils.unzipFile(zipFile, unzipFolder)
-        FileUtils.deleteFile(zipPath)
-        return unzipPath
-    }
-
-    /**
-     * js实现文件夹内所有文件读取
-     */
-    fun getTxtInFolder(unzipPath: String): String {
-        if (unzipPath.isEmpty()) return ""
-        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
-        val contents = StringBuilder()
-        unzipFolder.listFiles().let {
-            if (it != null) {
-                for (f in it) {
-                    val charsetName = EncodingDetect.getEncode(f)
-                    contents.append(String(f.readBytes(), charset(charsetName)))
-                        .append("\n")
-                }
-                contents.deleteCharAt(contents.length - 1)
-            }
-        }
-        FileUtils.deleteFile(unzipPath)
-        return contents.toString()
+        return zipPath.substring(FileUtils.getCachePath().length)
     }
 
     /**
@@ -252,31 +220,94 @@ interface JsExtensions {
         return HtmlFormatter.formatKeepImg(str)
     }
 
+    //****************文件操作******************//
+
     /**
-     * 读取本地文件
+     * 获取本地文件
+     * @param path 相对路径
+     * @return File
      */
-    fun readFile(path: String): ByteArray {
-        return File(path).readBytes()
+    fun getFile(path: String): File {
+        val cachePath = appCtx.externalCache.absolutePath
+        val aPath = if (path.startsWith(File.separator)) {
+            cachePath + path
+        } else {
+            cachePath + File.separator + path
+        }
+        return File(aPath)
+    }
+
+    fun readFile(path: String): ByteArray? {
+        val file = getFile(path)
+        if (file.exists()) {
+            return file.readBytes()
+        }
+        return null
     }
 
     fun readTxtFile(path: String): String {
-        val f = File(path)
-        val charsetName = EncodingDetect.getEncode(f)
-        return String(f.readBytes(), charset(charsetName))
+        val file = getFile(path)
+        if (file.exists()) {
+            val charsetName = EncodingDetect.getEncode(file)
+            return String(file.readBytes(), charset(charsetName))
+        }
+        return ""
     }
 
     fun readTxtFile(path: String, charsetName: String): String {
-        return String(File(path).readBytes(), charset(charsetName))
+        val file = getFile(path)
+        if (file.exists()) {
+            return String(file.readBytes(), charset(charsetName))
+        }
+        return ""
     }
 
     /**
-     * 解析字体,返回字体解析类
+     * 删除本地文件
      */
-    fun queryBase64TTF(base64: String?): QueryTTF? {
-        base64DecodeToByteArray(base64)?.let {
-            return QueryTTF(it)
+    fun deleteFile(path: String) {
+        val file = getFile(path)
+        FileUtils.delete(file, true)
+    }
+
+    /**
+     * js实现压缩文件解压
+     * @param zipPath 相对路径
+     * @return 相对路径
+     */
+    fun unzipFile(zipPath: String): String {
+        if (zipPath.isEmpty()) return ""
+        val unzipPath = FileUtils.getPath(
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            FileUtils.getNameExcludeExtension(zipPath)
+        )
+        FileUtils.deleteFile(unzipPath)
+        val zipFile = getFile(zipPath)
+        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
+        ZipUtils.unzipFile(zipFile, unzipFolder)
+        FileUtils.deleteFile(zipPath)
+        return unzipPath.substring(FileUtils.getCachePath().length)
+    }
+
+    /**
+     * js实现文件夹内所有文件读取
+     */
+    fun getTxtInFolder(unzipPath: String): String {
+        if (unzipPath.isEmpty()) return ""
+        val unzipFolder = getFile(unzipPath)
+        val contents = StringBuilder()
+        unzipFolder.listFiles().let {
+            if (it != null) {
+                for (f in it) {
+                    val charsetName = EncodingDetect.getEncode(f)
+                    contents.append(String(f.readBytes(), charset(charsetName)))
+                        .append("\n")
+                }
+                contents.deleteCharAt(contents.length - 1)
+            }
         }
-        return null
+        FileUtils.deleteFile(unzipPath)
+        return contents.toString()
     }
 
     /**
@@ -329,6 +360,18 @@ interface JsExtensions {
         }
         Debug.log("getZipContent 未发现内容")
 
+        return null
+    }
+
+    //******************文件操作************************//
+
+    /**
+     * 解析字体,返回字体解析类
+     */
+    fun queryBase64TTF(base64: String?): QueryTTF? {
+        base64DecodeToByteArray(base64)?.let {
+            return QueryTTF(it)
+        }
         return null
     }
 
@@ -405,7 +448,6 @@ interface JsExtensions {
         transformation: String,
         iv: String
     ): ByteArray? {
-
         return EncoderUtils.decryptAES(
             data = str.encodeToByteArray(),
             key = key.encodeToByteArray(),
