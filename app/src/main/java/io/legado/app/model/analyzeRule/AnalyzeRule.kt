@@ -193,9 +193,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     @JvmOverloads
     fun getString(
-        ruleList: List<SourceRule>,
-        isUrl: Boolean = false,
-        value: String? = null
+            ruleList: List<SourceRule>,
+            isUrl: Boolean = false,
+            value: String? = null
     ): String {
         var result: Any? = value
         val content = this.content
@@ -259,8 +259,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 result?.let {
                     result = when (sourceRule.mode) {
                         Mode.Regex -> AnalyzeByRegex.getElement(
-                            result.toString(),
-                            sourceRule.rule.splitNotBlank("&&")
+                                result.toString(),
+                                sourceRule.rule.splitNotBlank("&&")
                         )
                         Mode.Js -> evalJS(sourceRule.rule, it)
                         Mode.Json -> getAnalyzeByJSonPath(it).getObject(sourceRule.rule)
@@ -290,8 +290,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 result?.let {
                     result = when (sourceRule.mode) {
                         Mode.Regex -> AnalyzeByRegex.getElements(
-                            result.toString(),
-                            sourceRule.rule.splitNotBlank("&&")
+                                result.toString(),
+                                sourceRule.rule.splitNotBlank("&&")
                         )
                         Mode.Js -> evalJS(sourceRule.rule, result)
                         Mode.Json -> getAnalyzeByJSonPath(it).getList(sourceRule.rule)
@@ -379,14 +379,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 mMode = Mode.Json
                 ruleStr0.substring(6)
             }
-            ruleStr0.startsWith("$.") || ruleStr0.startsWith("$[") -> {
-                mMode = Mode.Json
-                ruleStr0
-            }
             ruleStr0.startsWith("?") -> {
                 mMode = Mode.Regex
                 isRegex = true
                 ruleStr0.substring(1)
+            }
+            ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' {
+                mMode = Mode.Json
+                ruleStr0
             }
             else -> {
                 mMode = Mode.Default
@@ -546,8 +546,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                                     jsEval == null -> Unit
                                     jsEval is String -> infoVal.insert(0, jsEval)
                                     jsEval is Double && jsEval % 1.0 == 0.0 -> infoVal.insert(
-                                        0,
-                                        String.format("%.0f", jsEval)
+                                            0,
+                                            String.format("%.0f", jsEval)
                                     )
                                     else -> infoVal.insert(0, jsEval.toString())
                                 }
@@ -594,8 +594,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     fun put(key: String, value: String): String {
         chapter?.putVariable(key, value)
-            ?: book?.putVariable(key, value)
-            ?: ruleData.putVariable(key, value)
+                ?: book?.putVariable(key, value)
+                ?: ruleData.putVariable(key, value)
         return value
     }
 
@@ -609,9 +609,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             }
         }
         return chapter?.variableMap?.get(key)
-            ?: book?.variableMap?.get(key)
-            ?: ruleData.variableMap[key]
-            ?: ""
+                ?: book?.variableMap?.get(key)
+                ?: ruleData.variableMap[key]
+                ?: ""
     }
 
     /**
@@ -663,7 +663,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     companion object {
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
         private val evalPattern =
-            Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
+                Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
         private val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
     }
