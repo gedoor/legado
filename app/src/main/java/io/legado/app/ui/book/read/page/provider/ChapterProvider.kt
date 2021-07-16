@@ -111,26 +111,27 @@ object ChapterProvider {
                     )
                 }
             } else if (book.getImageStyle() != Book.imgStyleText) {
-                content.replace(AppPattern.imgPattern.toRegex(), "\n\$0\n")
-                    .split("\n").forEach { text ->
-                        if (text.isNotBlank()) {
-                            if (!text.startsWith("<img src=\"")) { //非图片
-                                val isTitle = index == 0
-                                val textPaint = if (isTitle) titlePaint else contentPaint
-                                if (!(isTitle && ReadBookConfig.titleMode == 2)) {
-                                    durY = setTypeText(
-                                        text, durY, textPages,
-                                        stringBuilder, isTitle, textPaint
-                                    )
-                                }
-                            } else { //图片
-                                durY = setTypeImage(
-                                    book, bookChapter, text.substring(10, text.length-2),
-                                    durY, textPages, book.getImageStyle()
-                                )
-                            }
+                var contentX = content.replace(AppPattern.imgPattern.toRegex(), "\n\$0\n").split("\n")
+                val start = contentX.first() == "\n"
+                val end = contentX.last() == "\n"
+                if(start || end )contentX = contentX.subList(if(start) 1 else 0,if(end) contentX.size-1 else contentX.size )
+                contentX.forEach { text ->
+                    if (!text.startsWith("<img src=\"")) { //非图片
+                        val isTitle = index == 0
+                        val textPaint = if (isTitle) titlePaint else contentPaint
+                        if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                            durY = setTypeText(
+                                text, durY, textPages,
+                                stringBuilder, isTitle, textPaint
+                            )
                         }
+                    } else { //图片
+                        durY = setTypeImage(
+                            book, bookChapter, text.substring(10, text.length-2),
+                            durY, textPages, book.getImageStyle()
+                        )
                     }
+                }
             }
         }
         textPages.last().height = durY + 20.dp
