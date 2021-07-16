@@ -17,6 +17,7 @@ import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -129,14 +130,14 @@ class CheckSourceService : BaseService() {
                 throw Exception("正文内容为空")
             }
         }.timeout(180000L)
-            .onError {
+            .onError(IO) {
                 source.addGroup("失效")
                 source.bookSourceComment = """
                     "error:${it.localizedMessage}
                     ${source.bookSourceComment}"
                 """.trimIndent()
                 appDb.bookSourceDao.update(source)
-            }.onSuccess {
+            }.onSuccess(IO) {
                 source.removeGroup("失效")
                 source.bookSourceComment = source.bookSourceComment
                     ?.split("\n")
