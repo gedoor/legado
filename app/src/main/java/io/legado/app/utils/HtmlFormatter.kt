@@ -68,7 +68,7 @@ object HtmlFormatter {
                                 url.substring(0, pos)
                             )
                         },${
-                            url.substring(pos)
+                            url.substring(pos + 1 )
                         }\">"
                     )
                     appendPos = matcher.end()
