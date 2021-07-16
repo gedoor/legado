@@ -60,7 +60,8 @@ object HtmlFormatter {
                 do{
                     val url = matcher.group(1)!!
                     val pos = url.indexOf(',')
-                    sb.append(keepImgHtml.substring(appendPos, matcher.start()).replace("\n","\n　　")) //非图片部分换行缩减
+                    val beforeStr = keepImgHtml.substring(appendPos, matcher.start())
+                    sb.append( if(beforeStr == "\n") '\n' else beforeStr.replace("\n","\n　　") ) //缩进换行下个非图片段落
                     sb.append(
                         "<img src=\"${
                             NetworkUtils.getAbsoluteURL(
