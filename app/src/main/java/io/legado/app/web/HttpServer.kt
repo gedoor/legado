@@ -1,12 +1,16 @@
 package io.legado.app.web
 
+import android.graphics.Bitmap
 import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
 import io.legado.app.api.ReturnData
 import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.SourceController
 import io.legado.app.web.utils.AssetsWeb
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.util.*
+
 
 class HttpServer(port: Int) : NanoHTTPD(port) {
     private val assetsWeb = AssetsWeb("web")
@@ -63,7 +67,20 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 return assetsWeb.getResponse(uri)
             }
 
-            val response = newFixedLengthResponse(Gson().toJson(returnData))
+            val response = if (returnData.data is Bitmap) {
+                val outputStream = ByteArrayOutputStream()
+                (returnData.data as Bitmap).compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                val byteArray = outputStream.toByteArray()
+                val inputStream = ByteArrayInputStream(byteArray)
+                newFixedLengthResponse(
+                    Response.Status.OK,
+                    "image/png",
+                    inputStream,
+                    byteArray.size.toLong()
+                )
+            } else {
+                newFixedLengthResponse(Gson().toJson(returnData))
+            }
             response.addHeader("Access-Control-Allow-Methods", "GET, POST")
             response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
             return response
