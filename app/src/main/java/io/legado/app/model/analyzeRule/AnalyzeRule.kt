@@ -597,13 +597,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
         private fun isRule(ruleStr: String): Boolean {
             return ruleStr.startsWith('@') //js首个字符不可能是@，除非是装饰器，所以@开头规定为规则
-                    || ruleStr.startsWith('$') //js首个字符不可能是$，因为并未注入$变量，且$1之类的东西已被替换，不会影响此处判断
+                    || ruleStr.startsWith("$.")
+                    || ruleStr.startsWith("$[")
                     || ruleStr.startsWith("//")
-                    || ruleStr.startsWith("class")//js首个字符串不可能是class，因为并未注入相关字符串开头的变量
-                    || ruleStr.startsWith("id")//js首个字符串不可能是id，因为并未注入相关字符串开头的变量
-                    || ruleStr.startsWith("tag")//js首个字符串不可能是tag，因为并未注入相关字符串开头的变量
-                    || ruleStr.startsWith("text")//js首个字符串不可能是text，因为并未注入相关字符串开头的变量
-                    || ruleStr.startsWith("children")//js首个字符串不可能是children，因为并未注入相关字符串开头的变量
         }
     }
 
