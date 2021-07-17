@@ -62,7 +62,7 @@ data class BookChapter(
     }
 
     fun getAbsoluteURL():String{
-        val urlBefore = url.substringBefore(",{")
+        val urlBefore = url.substringBefore(',')
         val urlAbsoluteBefore = NetworkUtils.getAbsoluteURL(baseUrl,urlBefore)
         return if(urlBefore.length == url.length) urlAbsoluteBefore else urlAbsoluteBefore + url.substring(urlBefore.length)
     }

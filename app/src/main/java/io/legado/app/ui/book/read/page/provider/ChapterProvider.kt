@@ -147,7 +147,7 @@ object ChapterProvider {
 
         return TextChapter(
             bookChapter.index, bookChapter.title,
-            bookChapter.getAbsoluteURL().substringBefore(",{"),
+            bookChapter.getAbsoluteURL().substringBefore(','),
             textPages, chapterSize
         )
     }

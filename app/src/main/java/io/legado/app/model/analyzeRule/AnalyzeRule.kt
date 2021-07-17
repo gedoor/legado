@@ -26,7 +26,7 @@ import kotlin.collections.HashMap
 @Suppress("unused", "RegExpRedundantEscape")
 class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
-    var book: BaseBook? = if (ruleData is BaseBook) ruleData else null
+    var book = if (ruleData is BaseBook) ruleData else null
 
     var chapter: BookChapter? = null
     var nextChapterUrl: String? = null
@@ -65,7 +65,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     fun setRedirectUrl(url: String): URL? {
         kotlin.runCatching {
-            redirectUrl = URL(url.substringBefore(",{"))
+            redirectUrl = URL(url.substringBefore(','))
         }
         return redirectUrl
     }
@@ -192,9 +192,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     @JvmOverloads
     fun getString(
-            ruleList: List<SourceRule>,
-            isUrl: Boolean = false,
-            value: String? = null
+        ruleList: List<SourceRule>,
+        isUrl: Boolean = false,
+        value: String? = null
     ): String {
         var result: Any? = value
         val content = this.content
@@ -258,8 +258,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 result?.let {
                     result = when (sourceRule.mode) {
                         Mode.Regex -> AnalyzeByRegex.getElement(
-                                result.toString(),
-                                sourceRule.rule.splitNotBlank("&&")
+                            result.toString(),
+                            sourceRule.rule.splitNotBlank("&&")
                         )
                         Mode.Js -> evalJS(sourceRule.rule, it)
                         Mode.Json -> getAnalyzeByJSonPath(it).getObject(sourceRule.rule)
@@ -289,8 +289,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 result?.let {
                     result = when (sourceRule.mode) {
                         Mode.Regex -> AnalyzeByRegex.getElements(
-                                result.toString(),
-                                sourceRule.rule.splitNotBlank("&&")
+                            result.toString(),
+                            sourceRule.rule.splitNotBlank("&&")
                         )
                         Mode.Js -> evalJS(sourceRule.rule, result)
                         Mode.Json -> getAnalyzeByJSonPath(it).getList(sourceRule.rule)
@@ -378,11 +378,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 mMode = Mode.Json
                 ruleStr0.substring(6)
             }
-            ruleStr0.startsWith(":") -> { //:与伪类选择器冲突，建议改成?更合理
-                mMode = Mode.Regex
-                isRegex = true
-                ruleStr0.substring(1)
-            }
             ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' || isJSON -> {
                 mMode = Mode.Json
                 ruleStr0
@@ -393,8 +388,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             }
         }
         //拆分为规则列表
-        var start = 0
+        var start = if(ruleStr.startsWith(":")){ //仅首字符为:时为AllInOne，其实:与伪类选择器冲突，建议改成?更合理
+            mMode = Mode.Regex
+            isRegex = true
+            1
+        }else 0
         var tmp: String
+
+
         val jsMatcher = JS_PATTERN.matcher(ruleStr)
 
         while (jsMatcher.find()){
@@ -566,8 +567,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                                     jsEval == null -> Unit
                                     jsEval is String -> infoVal.insert(0, jsEval)
                                     jsEval is Double && jsEval % 1.0 == 0.0 -> infoVal.insert(
-                                            0,
-                                            String.format("%.0f", jsEval)
+                                        0,
+                                        String.format("%.0f", jsEval)
                                     )
                                     else -> infoVal.insert(0, jsEval.toString())
                                 }
@@ -609,8 +610,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     fun put(key: String, value: String): String {
         chapter?.putVariable(key, value)
-                ?: book?.putVariable(key, value)
-                ?: ruleData.putVariable(key, value)
+            ?: book?.putVariable(key, value)
+            ?: ruleData.putVariable(key, value)
         return value
     }
 
@@ -624,9 +625,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             }
         }
         return chapter?.variableMap?.get(key)
-                ?: book?.variableMap?.get(key)
-                ?: ruleData.variableMap[key]
-                ?: ""
+            ?: book?.variableMap?.get(key)
+            ?: ruleData.variableMap[key]
+            ?: ""
     }
 
     /**
@@ -678,7 +679,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     companion object {
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
         private val evalPattern =
-                Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
+            Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
         private val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
     }

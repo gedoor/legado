@@ -55,7 +55,7 @@ class AnalyzeUrl(
     private var retry: Int = 0
 
     init {
-        baseUrl = baseUrl.substringBefore(",{")
+        baseUrl = baseUrl.substringBefore(',')
         headerMapF?.let {
             headerMap.putAll(it)
             if (it.containsKey("proxy")) {
