@@ -86,8 +86,8 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
                         } else {
                             searchIndex++
                         }
-                        if (searchIndex >= bookSourceList.lastIndex + min(bookSourceList.size,
-                                threadCount)
+                        if (searchIndex >= bookSourceList.lastIndex
+                            + min(bookSourceList.size, threadCount)
                         ) {
                             callBack.onSearchFinish()
                         }

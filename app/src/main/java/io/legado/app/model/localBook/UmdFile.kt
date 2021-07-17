@@ -56,7 +56,6 @@ class UmdFile(var book: Book) {
     }
 
 
-
     private var umdBook: UmdBook? = null
         get() {
             if (field != null) {
@@ -65,7 +64,6 @@ class UmdFile(var book: Book) {
             field = readUmd()
             return field
         }
-
 
 
     init {
@@ -79,7 +77,7 @@ class UmdFile(var book: Book) {
                     )
                 }
                 if (!File(book.coverUrl!!).exists()) {
-                    FileUtils.writeBytes(book.coverUrl!!,it.cover.coverData)
+                    FileUtils.writeBytes(book.coverUrl!!, it.cover.coverData)
 
                 }
             }
@@ -87,8 +85,9 @@ class UmdFile(var book: Book) {
             e.printStackTrace()
         }
     }
+
     private fun readUmd(): UmdBook? {
-        val input= if (book.bookUrl.isContentScheme()) {
+        val input = if (book.bookUrl.isContentScheme()) {
             val uri = Uri.parse(book.bookUrl)
             appCtx.contentResolver.openInputStream(uri)
         } else {
@@ -98,18 +97,19 @@ class UmdFile(var book: Book) {
     }
 
     private fun upBookInfo() {
-        if(umdBook==null){
+        if (umdBook == null) {
             uFile = null
             book.intro = "书籍导入异常"
-        }else{
+        } else {
             val hd = umdBook!!.header
             book.name = hd.title
             book.author = hd.author
             book.kind = hd.bookType
         }
     }
+
     private fun getContent(chapter: BookChapter): String? {
-       return umdBook?.chapters?.getContentString(chapter.index)
+        return umdBook?.chapters?.getContentString(chapter.index)
     }
 
     private fun getChapterList(): ArrayList<BookChapter> {
@@ -121,7 +121,7 @@ class UmdFile(var book: Book) {
             chapter.index = index
             chapter.bookUrl = book.bookUrl
             chapter.url = index.toString()
-            Log.d("UMD",chapter.url)
+            Log.d("UMD", chapter.url)
             chapterList.add(chapter)
         }
         book.latestChapterTitle = chapterList.lastOrNull()?.title

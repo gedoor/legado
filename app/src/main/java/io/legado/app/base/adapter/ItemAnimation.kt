@@ -53,28 +53,33 @@ class ItemAnimation private constructor() {
 
     companion object {
         const val NONE: Int = 0x00000000
+
         /**
          * Use with [.openLoadAnimation]
          */
         const val FADE_IN: Int = 0x00000001
+
         /**
          * Use with [.openLoadAnimation]
          */
         const val SCALE_IN: Int = 0x00000002
+
         /**
          * Use with [.openLoadAnimation]
          */
         const val BOTTOM_SLIDE_IN: Int = 0x00000003
+
         /**
          * Use with [.openLoadAnimation]
          */
         const val LEFT_SLIDE_IN: Int = 0x00000004
+
         /**
          * Use with [.openLoadAnimation]
          */
         const val RIGHT_SLIDE_IN: Int = 0x00000005
 
         fun create() = ItemAnimation()
-        
+
     }
 }

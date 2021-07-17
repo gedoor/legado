@@ -31,7 +31,7 @@ object BitmapUtils {
         val ips = FileInputStream(path)
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
-        BitmapFactory.decodeFileDescriptor(ips.fd,null,op)
+        BitmapFactory.decodeFileDescriptor(ips.fd, null, op)
         //获取比例大小
         val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
         val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
@@ -44,7 +44,7 @@ object BitmapUtils {
             }
         }
         op.inJustDecodeBounds = false
-        return BitmapFactory.decodeFileDescriptor(ips.fd,null,op)
+        return BitmapFactory.decodeFileDescriptor(ips.fd, null, op)
 
     }
 
@@ -57,10 +57,10 @@ object BitmapUtils {
         val opts = BitmapFactory.Options()
         val ips = FileInputStream(path)
         opts.inJustDecodeBounds = true
-        BitmapFactory.decodeFileDescriptor(ips.fd,null,opts)
+        BitmapFactory.decodeFileDescriptor(ips.fd, null, opts)
         opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
         opts.inJustDecodeBounds = false
-        return BitmapFactory.decodeFileDescriptor(ips.fd,null,opts)
+        return BitmapFactory.decodeFileDescriptor(ips.fd, null, opts)
     }
 
     /**

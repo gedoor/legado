@@ -43,9 +43,9 @@ val okHttpClient: OkHttpClient by lazy {
                 .build()
             chain.proceed(request)
         })
-   if (AppConfig.isCronet){
-       builder.addInterceptor(CronetInterceptor())
-   }
+    if (AppConfig.isCronet) {
+        builder.addInterceptor(CronetInterceptor())
+    }
 
 
     builder.build()

@@ -110,7 +110,9 @@ class BadgeView @JvmOverloads constructor(
         val radius = dip2Px(dipRadius).toFloat()
         val radiusArray =
             floatArrayOf(radius, radius, radius, radius, radius, radius, radius, radius)
-        if (flatangle) { radiusArray.fill(0f, 0, 3) }
+        if (flatangle) {
+            radiusArray.fill(0f, 0, 3)
+        }
 
         val roundRect = RoundRectShape(radiusArray, null, null)
         val bgDrawable = ShapeDrawable(roundRect)

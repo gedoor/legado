@@ -55,7 +55,7 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
         requestBuilder.setUploadDataProvider(
             UploadDataProviders.create(buffer.readByteArray()),
             executor
-        );
+        )
 
     }
 

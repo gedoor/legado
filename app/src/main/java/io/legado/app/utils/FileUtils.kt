@@ -55,7 +55,7 @@ object FileUtils {
         return file
     }
 
-    fun createFileWithReplace(filePath: String) : File{
+    fun createFileWithReplace(filePath: String): File {
         val file = File(filePath)
         if (!file.exists()) {
             //创建父类文件夹
@@ -64,8 +64,7 @@ object FileUtils {
             }
             //创建文件
             file.createNewFile()
-        }
-        else{
+        } else {
             file.delete()
             file.createNewFile()
         }
@@ -516,12 +515,13 @@ object FileUtils {
             closeSilently(fos)
         }
     }
+
     /**
      * 保存文件内容
      */
     fun writeInputStream(filepath: String, data: InputStream): Boolean {
         val file = File(filepath)
-        return writeInputStream(file,data)
+        return writeInputStream(file, data)
     }
 
     /**
@@ -534,7 +534,7 @@ object FileUtils {
                 file.parentFile?.mkdirs()
                 file.createNewFile()
             }
-            val buffer=ByteArray(1024*4)
+            val buffer = ByteArray(1024 * 4)
             fos = FileOutputStream(file)
             while (true) {
                 val len = data.read(buffer, 0, buffer.size)

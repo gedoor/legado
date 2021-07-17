@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Rect
 import android.text.Layout
-import android.text.StaticLayout
 import android.text.TextPaint
 import io.legado.app.utils.toStringArray
 import kotlin.math.max

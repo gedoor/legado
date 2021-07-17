@@ -124,7 +124,7 @@ object Debug {
                 log(webBook.sourceUrl, "⇒开始访问发现页:$url")
                 exploreDebug(scope, webBook, url)
             }
-            key.startsWith("++")-> {
+            key.startsWith("++") -> {
                 val url = key.substring(2)
                 val book = Book()
                 book.origin = webBook.sourceUrl
@@ -132,7 +132,7 @@ object Debug {
                 log(webBook.sourceUrl, "⇒开始访目录页:$url")
                 tocDebug(scope, webBook, book)
             }
-            key.startsWith("--")-> {
+            key.startsWith("--") -> {
                 val url = key.substring(2)
                 val book = Book()
                 book.origin = webBook.sourceUrl

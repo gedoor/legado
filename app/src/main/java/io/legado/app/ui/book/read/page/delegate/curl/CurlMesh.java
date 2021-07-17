@@ -43,22 +43,22 @@ public class CurlMesh {
     // Let's avoid using 'new' as much as possible. Meaning we introduce arrays
     // once here and reuse them on runtime. Doesn't really have very much effect
     // but avoids some garbage collections from happening.
-    private Array<ShadowVertex> mArrDropShadowVertices;
-    private Array<Vertex> mArrIntersections;
-    private Array<Vertex> mArrOutputVertices;
-    private Array<Vertex> mArrRotatedVertices;
-    private Array<Double> mArrScanLines;
-    private Array<ShadowVertex> mArrSelfShadowVertices;
-    private Array<ShadowVertex> mArrTempShadowVertices;
-    private Array<Vertex> mArrTempVertices;
+    private final Array<ShadowVertex> mArrDropShadowVertices;
+    private final Array<Vertex> mArrIntersections;
+    private final Array<Vertex> mArrOutputVertices;
+    private final Array<Vertex> mArrRotatedVertices;
+    private final Array<Double> mArrScanLines;
+    private final Array<ShadowVertex> mArrSelfShadowVertices;
+    private final Array<ShadowVertex> mArrTempShadowVertices;
+    private final Array<Vertex> mArrTempVertices;
 
     // Buffers for feeding rasterizer.
-    private FloatBuffer mBufColors;
+    private final FloatBuffer mBufColors;
     private FloatBuffer mBufCurlPositionLines;
-    private FloatBuffer mBufShadowColors;
-    private FloatBuffer mBufShadowVertices;
-    private FloatBuffer mBufTexCoords;
-    private FloatBuffer mBufVertices;
+    private final FloatBuffer mBufShadowColors;
+    private final FloatBuffer mBufShadowVertices;
+    private final FloatBuffer mBufTexCoords;
+    private final FloatBuffer mBufVertices;
 
     private int mCurlPositionLinesCount;
     private int mDropShadowCount;
@@ -66,7 +66,7 @@ public class CurlMesh {
     // Boolean for 'flipping' texture sideways.
     private boolean mFlipTexture = false;
     // Maximum number of split lines used for creating a curl.
-    private int mMaxCurlSplits;
+    private final int mMaxCurlSplits;
 
     // Bounding rectangle for this mesh. mRectagle[0] = top-left corner,
     // mRectangle[1] = bottom-left, mRectangle[2] = top-right and mRectangle[3]
@@ -268,7 +268,7 @@ public class CurlMesh {
         // Also vertices/lines are given in an order first one has x -coordinate
         // at least the latter one. This property is used in getIntersections to
         // see if there is an intersection.
-        int lines[][] = {{0, 1}, {0, 2}, {1, 3}, {2, 3}};
+        int[][] lines = {{0, 1}, {0, 2}, {1, 3}, {2, 3}};
         {
             // TODO: There really has to be more 'easier' way of doing this -
             // not including extensive use of sqrt.
@@ -826,8 +826,8 @@ public class CurlMesh {
      * Simple fixed size array implementation.
      */
     private class Array<T> {
-        private Object[] mArray;
-        private int mCapacity;
+        private final Object[] mArray;
+        private final int mCapacity;
         private int mSize;
 
         public Array(int capacity) {

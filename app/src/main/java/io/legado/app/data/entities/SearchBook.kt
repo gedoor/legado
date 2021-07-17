@@ -38,41 +38,41 @@ data class SearchBook(
     var time: Long = System.currentTimeMillis(),
     var variable: String? = null,
     var originOrder: Int = 0
-): Parcelable, BaseBook, Comparable<SearchBook> {
-    
+) : Parcelable, BaseBook, Comparable<SearchBook> {
+
     @Ignore
     @IgnoredOnParcel
     override var infoHtml: String? = null
-    
+
     @Ignore
     @IgnoredOnParcel
     override var tocHtml: String? = null
-    
+
     override fun equals(other: Any?) = other is SearchBook && other.bookUrl == bookUrl
-    
+
     override fun hashCode() = bookUrl.hashCode()
-    
+
     override fun compareTo(other: SearchBook): Int {
         return other.originOrder - this.originOrder
     }
-    
+
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     override val variableMap by lazy {
         GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
     }
-    
+
     override fun putVariable(key: String, value: String) {
         variableMap[key] = value
         variable = GSON.toJson(variableMap)
     }
-    
+
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     val origins: LinkedHashSet<String> by lazy { linkedSetOf(origin) }
-    
+
     fun addOrigin(origin: String) {
         origins.add(origin)
     }

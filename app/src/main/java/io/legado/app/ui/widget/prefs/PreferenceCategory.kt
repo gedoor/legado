@@ -14,7 +14,8 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.ColorUtils
 
 
-class PreferenceCategory(context: Context, attrs: AttributeSet) : PreferenceCategory(context, attrs) {
+class PreferenceCategory(context: Context, attrs: AttributeSet) :
+    PreferenceCategory(context, attrs) {
 
     init {
         isPersistent = true
