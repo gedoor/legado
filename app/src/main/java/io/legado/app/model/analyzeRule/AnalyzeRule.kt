@@ -121,7 +121,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     @JvmOverloads
     fun getStringList(rule: String?, isUrl: Boolean = false): List<String>? {
         if (rule.isNullOrEmpty()) return null
-        val ruleList = splitSourceRule(rule)
+        val ruleList = splitSourceRule(rule,true)
         return getStringList(ruleList, isUrl)
     }
 
@@ -281,7 +281,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     @Suppress("UNCHECKED_CAST")
     fun getElements(ruleStr: String): List<Any> {
         var result: Any? = null
-        val ruleList = splitSourceRule(ruleStr)
+        val ruleList = splitSourceRule(ruleStr,true)
         content?.let { o ->
             if (ruleList.isNotEmpty()) result = o
             for (sourceRule in ruleList) {
@@ -356,7 +356,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     /**
      * 分解规则生成规则列表
      */
-    fun splitSourceRule(ruleStr: String?): List<SourceRule> {
+    fun splitSourceRule(ruleStr: String?,isList:Boolean = false): List<SourceRule> {
         if (ruleStr.isNullOrEmpty()) return ArrayList<SourceRule>()
         val ruleList = ArrayList<SourceRule>()
         //检测Mode
@@ -387,8 +387,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 ruleStr0
             }
         }
+
         //拆分为规则列表
-        var start = if(ruleStr.startsWith(":")){ //仅首字符为:时为AllInOne，其实:与伪类选择器冲突，建议改成?更合理
+        var start = if(isList && ruleStr.startsWith(":")){ //仅首字符为:时为AllInOne，其实:与伪类选择器冲突，建议改成?更合理
             mMode = Mode.Regex
             isRegex = true
             1
