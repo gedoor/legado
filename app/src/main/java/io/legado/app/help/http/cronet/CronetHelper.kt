@@ -40,7 +40,7 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
         requestBuilder.addHeader("Cookie", cookie)
     }
     val headers: Headers = request.headers
-    headers.forEachIndexed { index, pair ->
+    headers.forEachIndexed { index, _ ->
         requestBuilder.addHeader(headers.name(index), headers.value(index))
     }
 
