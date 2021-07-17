@@ -142,18 +142,14 @@ class AnalyzeUrl(
      */
     private fun initUrl() { //replaceKeyPageJs已经替换掉额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串。
 
-        var pos = ruleUrl.indexOf(',')
-
         urlHasQuery = ruleUrl.substringBefore(',')
-
         url = NetworkUtils.getAbsoluteURL(baseUrl,urlHasQuery )
-
         NetworkUtils.getBaseUrl(url)?.let {
             baseUrl = it
         }
 
-        if(pos != -1 ) {
-            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(pos + 1).trim{ it < '!'})?.let { option ->
+        if(urlHasQuery.length != ruleUrl.length ) {
+            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlHasQuery.length + 1).trim{ it < '!'})?.let { option ->
 
                 option.method?.let {
                     if (it.equals("POST", true)) method = RequestMethod.POST
@@ -191,7 +187,7 @@ class AnalyzeUrl(
         when (method) {
             RequestMethod.GET -> {
                 if (!useWebView) {
-                    pos = url.indexOf('?')
+                    val pos = url.indexOf('?')
                     if(pos != -1) {
                         analyzeFields(url.substring(pos + 1))
                         url = url.substring(0,pos)

@@ -394,10 +394,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             1
         }else 0
         var tmp: String
-
-
         val jsMatcher = JS_PATTERN.matcher(ruleStr)
-
         while (jsMatcher.find()){
             if (jsMatcher.start() > start) {
                 tmp = ruleStr.substring(start, jsMatcher.start()).trim { it <= ' ' }
