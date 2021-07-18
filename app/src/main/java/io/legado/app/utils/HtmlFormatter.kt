@@ -50,10 +50,10 @@ object HtmlFormatter {
                         var appendPos0 = 0
                         val matcher0 = Pattern.compile("<img[^>]*src *= *\"([^\"]+)\"[^>]*>", Pattern.CASE_INSENSITIVE).matcher(strBefore) //格式化普通图片标签
                         while (matcher0.find()) {
-                            val strBefore0 = strBefore.substring(appendPos0, matcher.start())
+                            val strBefore0 = strBefore.substring(appendPos0, matcher0.start())
                             sb.append( if (strBefore0.isBlank()) strBefore0 else strBefore0.replace("\n","\n　　"))
-                            sb.append("<img src=\"${NetworkUtils.getAbsoluteURL(redirectUrl,matcher.group(1)!!)}\">")
-                            appendPos0 = matcher.end()
+                            sb.append("<img src=\"${NetworkUtils.getAbsoluteURL(redirectUrl,matcher0.group(1)!!)}\">")
+                            appendPos0 = matcher0.end()
                         }
                         strBefore = if (appendPos0 < strBefore.length) strBefore.substring(appendPos0, strBefore.length) else ""
                     }
