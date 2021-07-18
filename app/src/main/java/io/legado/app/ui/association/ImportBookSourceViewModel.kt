@@ -8,6 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ContentProcessor
 import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
@@ -67,6 +68,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                 }
             }
             SourceHelp.insertBookSource(*selectSource.toTypedArray())
+            ContentProcessor.upReplaceRules()
         }.onFinally {
             finally.invoke()
         }

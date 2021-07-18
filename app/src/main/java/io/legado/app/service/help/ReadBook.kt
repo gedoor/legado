@@ -46,7 +46,7 @@ object ReadBook {
 
     fun resetData(book: Book) {
         this.book = book
-        contentProcessor = ContentProcessor(book.name, book.origin)
+        contentProcessor = ContentProcessor.get(book.name, book.origin)
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         durChapterIndex = book.durChapterIndex

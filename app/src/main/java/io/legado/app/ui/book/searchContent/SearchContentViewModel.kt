@@ -18,7 +18,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
         execute {
             book = appDb.bookDao.getBook(bookUrl)
             book?.let {
-                contentProcessor = ContentProcessor(it.name, it.origin)
+                contentProcessor = ContentProcessor.get(it.name, it.origin)
             }
         }.onSuccess {
             success.invoke()
