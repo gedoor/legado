@@ -52,7 +52,7 @@ object HtmlFormatter {
         }
 
         if (endPos < keepImgHtml.length) {
-            sb.append( keepImgHtml.substring( endPos, keepImgHtml.length ).replace("\n","\n　　") ) //缩进图片之间的非空白段落
+            sb.append( keepImgHtml.substring( endPos, keepImgHtml.length ).replace("\n","\n　　") ) //缩进图片之后的非空白段落
         }
         return sb.toString()
     }
