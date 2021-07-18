@@ -11,10 +11,10 @@ object HtmlFormatter {
     fun format(html: String?, otherRegex: Regex = otherHtmlRegex): String {
         html ?: return ""
         return html.replace(wrapHtmlRegex, "\n")
-                .replace(otherRegex, "")
-                .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
-                .replace("^[\\n\\s]+".toRegex(), "　　")
-                .replace("[\\n\\s]+$".toRegex(), "")
+            .replace(otherRegex, "")
+            .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
+            .replace("^[\\n\\s]+".toRegex(), "　　")
+            .replace("[\\n\\s]+$".toRegex(), "")
     }
 
     fun formatKeepImg(html: String?) = format(html, notImgHtmlRegex)
@@ -22,9 +22,9 @@ object HtmlFormatter {
     fun formatKeepImg(html: String?, redirectUrl: URL?): String {
         html ?: return ""
         val keepImgHtml = html.replace(wrapHtmlRegex, "\n")
-                .replace(notImgHtmlRegex, "")
-                .replace("[\\n\\s]+\$|^[\\n\\s]*".toRegex(), "")
-                .replace("\\s*\\n+\\s*".toRegex(), "\n")
+            .replace(notImgHtmlRegex, "")
+            .replace("[\\n\\s]+\$|^[\\n\\s]*".toRegex(), "")
+            .replace("\\s*\\n+\\s*".toRegex(), "\n")
 
         val sb = StringBuffer()
         var endPos = 0
@@ -36,7 +36,7 @@ object HtmlFormatter {
                 val urlBefore = url.substringBefore(',')
                 val strBefore = keepImgHtml.substring(appendPos, matcher.start())
                 sb.append(
-                    if(strBefore.isBlank()) strBefore else strBefore.replace("\n", "\n　　") //缩进图片之间的非空白段落
+                    if(strBefore.isBlank()) '\n' else strBefore.replace("\n", "\n　　") //缩进图片之间的非空白段落
                 )
                 sb.append(
                     "<img src=\"${
