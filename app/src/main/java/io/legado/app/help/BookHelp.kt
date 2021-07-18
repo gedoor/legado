@@ -190,7 +190,7 @@ object BookHelp {
     }
 
     fun getContent(book: Book, bookChapter: BookChapter): String? {
-        if (book.isLocalTxt()||book.isUmd()) {
+        if (book.isLocalTxt() || book.isUmd()) {
             return LocalBook.getContext(book, bookChapter)
         } else if (book.isEpub() && !hasContent(book, bookChapter)) {
             val string = LocalBook.getContext(book, bookChapter)
@@ -203,7 +203,7 @@ object BookHelp {
                 ).writeText(it)
             }
             return string
-        }else {
+        } else {
             val file = FileUtils.getFile(
                 downloadDir,
                 cacheFolderName,
@@ -329,15 +329,15 @@ object BookHelp {
     private val chapterNamePattern1 by lazy {
         Pattern.compile(".*?第([\\d零〇一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+)[章节篇回集话]")
     }
-    
+
     private val chapterNamePattern2 by lazy {
         Pattern.compile("^(?:[\\d零〇一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+[,:、])*([\\d零〇一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+)(?:[,:、]|\\.[^\\d])")
     }
-    
+
     private val regexA by lazy {
         return@lazy "\\s".toRegex()
     }
-    
+
     private fun getChapterNum(chapterName: String?): Int {
         chapterName ?: return -1
         val chapterName1 = StringUtils.fullToHalf(chapterName).replace(regexA, "")
@@ -346,7 +346,7 @@ object BookHelp {
                     chapterNamePattern1.matcher(chapterName1).takeIf { it.find() }
                         ?: chapterNamePattern2.matcher(chapterName1).takeIf { it.find() }
                     )?.group(1)
-            ?:"-1"
+                ?: "-1"
         )
     }
 
@@ -366,7 +366,7 @@ object BookHelp {
         //前后附加内容，整个章节名都在括号中时只剔除首尾括号，避免将章节名替换为空字串
         return@lazy "(?!^)(?:[〖【《〔\\[{(][^〖【《〔\\[{()〕》】〗\\]}]+)?[)〕》】〗\\]}]$|^[〖【《〔\\[{(](?:[^〖【《〔\\[{()〕》】〗\\]}]+[〕》】〗\\]})])?(?!$)".toRegex()
     }
-        
+
     private fun getPureChapterName(chapterName: String?): String {
         return if (chapterName == null) "" else StringUtils.fullToHalf(chapterName)
             .replace(regexA, "")

@@ -53,7 +53,8 @@ fun Context.alert(
 }
 
 
-inline fun Fragment.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) = requireContext().alert(init)
+inline fun Fragment.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) =
+    requireContext().alert(init)
 
 fun Context.alert(init: AlertBuilder<AlertDialog>.() -> Unit): AlertBuilder<AlertDialog> =
     AndroidAlertBuilder(this).apply { init() }

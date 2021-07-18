@@ -12,7 +12,8 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.widget.text.StrokeTextView
 
 
-class TextFontWeightConverter(context: Context, attrs: AttributeSet?) : StrokeTextView(context, attrs) {
+class TextFontWeightConverter(context: Context, attrs: AttributeSet?) :
+    StrokeTextView(context, attrs) {
 
     private val spannableString = SpannableString("中/粗/细")
     private var enabledSpan: ForegroundColorSpan = ForegroundColorSpan(context.accentColor)

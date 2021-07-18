@@ -42,11 +42,15 @@ class ItemTouchCallback(private val callback: Callback) : ItemTouchHelper.Callba
     /**
      * 当用户拖拽或者滑动Item的时候需要我们告诉系统滑动或者拖拽的方向
      */
-    override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
         val layoutManager = recyclerView.layoutManager
         if (layoutManager is GridLayoutManager) {// GridLayoutManager
             // flag如果值是0，相当于这个功能被关闭
-            val dragFlag = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.UP or ItemTouchHelper.DOWN
+            val dragFlag =
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.UP or ItemTouchHelper.DOWN
             val swipeFlag = 0
             // create make
             return makeMovementFlags(dragFlag, swipeFlag)

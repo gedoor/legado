@@ -23,20 +23,26 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
 
     // 贝塞尔曲线起始点
     private val mBezierStart1 = PointF()
+
     // 贝塞尔曲线控制点
     private val mBezierControl1 = PointF()
+
     // 贝塞尔曲线顶点
     private val mBezierVertex1 = PointF()
+
     // 贝塞尔曲线结束点
     private var mBezierEnd1 = PointF()
 
     // 另一条贝塞尔曲线
     // 贝塞尔曲线起始点
     private val mBezierStart2 = PointF()
+
     // 贝塞尔曲线控制点
     private val mBezierControl2 = PointF()
+
     // 贝塞尔曲线顶点
     private val mBezierVertex2 = PointF()
+
     // 贝塞尔曲线结束点
     private var mBezierEnd2 = PointF()
 
@@ -60,10 +66,13 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
     // 是否属于右上左下
     private var mIsRtOrLb = false
     private var mMaxLength = hypot(viewWidth.toDouble(), viewHeight.toDouble()).toFloat()
+
     // 背面颜色组
     private var mBackShadowColors: IntArray
+
     // 前面颜色组
     private var mFrontShadowColors: IntArray
+
     // 有阴影的GradientDrawable
     private var mBackShadowDrawableLR: GradientDrawable
     private var mBackShadowDrawableRL: GradientDrawable

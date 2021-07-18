@@ -26,22 +26,30 @@ object LocalBook {
     }
 
     fun getChapterList(book: Book): ArrayList<BookChapter> {
-        return if (book.isEpub()) {
-            EpubFile.getChapterList(book)
-        }else if(book.isUmd()){
-            UmdFile.getChapterList(book)
-        } else {
-            AnalyzeTxtFile().analyze(book)
+        return when {
+            book.isEpub() -> {
+                EpubFile.getChapterList(book)
+            }
+            book.isUmd() -> {
+                UmdFile.getChapterList(book)
+            }
+            else -> {
+                AnalyzeTxtFile().analyze(book)
+            }
         }
     }
 
     fun getContext(book: Book, chapter: BookChapter): String? {
-        return if (book.isEpub()) {
-            EpubFile.getContent(book, chapter)
-        }else if (book.isUmd()){
-            UmdFile.getContent(book, chapter)
-        } else {
-            AnalyzeTxtFile.getContent(book, chapter)
+        return when {
+            book.isEpub() -> {
+                EpubFile.getContent(book, chapter)
+            }
+            book.isUmd() -> {
+                UmdFile.getContent(book, chapter)
+            }
+            else -> {
+                AnalyzeTxtFile.getContent(book, chapter)
+            }
         }
     }
 
@@ -65,7 +73,7 @@ object LocalBook {
             path = uri.path!!
             File(path).name
         })
-        val tempFileName=fileName.replace(Regex("\\.txt$"), "")
+        val tempFileName = fileName.replace(Regex("\\.txt$"), "")
 
         val name: String
         val author: String
@@ -95,9 +103,9 @@ object LocalBook {
 
                     //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
-                    
+
                     //将文件名注入到脚步的src变量中
-                    SimpleBindings().also{ it["src"] = tempFileName }
+                    SimpleBindings().also { it["src"] = tempFileName }
                 ).toString()
                 val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr) ?: HashMap()
                 name = bookMess["name"] ?: tempFileName
@@ -132,7 +140,7 @@ object LocalBook {
 
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
         kotlin.runCatching {
-            if (book.isLocalTxt()||book.isUmd()) {
+            if (book.isLocalTxt() || book.isUmd()) {
                 val bookFile = FileUtils.getFile(cacheFolder, book.originName)
                 bookFile.delete()
             }

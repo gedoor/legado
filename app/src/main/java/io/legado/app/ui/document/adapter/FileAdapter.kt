@@ -138,10 +138,12 @@ class FileAdapter(context: Context, val callBack: CallBack) :
          * 是否显示返回主目录
          */
         var isShowHomeDir: Boolean
+
         /**
          * 是否显示返回上一级
          */
         var isShowUpDir: Boolean
+
         /**
          * 是否显示隐藏的目录（以“.”开头）
          */

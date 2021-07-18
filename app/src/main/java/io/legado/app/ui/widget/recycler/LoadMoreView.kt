@@ -29,7 +29,7 @@ class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
     fun stopLoad() {
         binding.rotateLoading.hide()
     }
-    
+
     fun hasMore() {
         hasMore = true
         binding.tvText.invisible()

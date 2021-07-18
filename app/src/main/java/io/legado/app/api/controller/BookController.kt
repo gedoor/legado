@@ -108,6 +108,9 @@ object BookController {
             return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
         }
         val chapterList = appDb.bookChapterDao.getChapterList(bookUrl)
+        if (chapterList.isEmpty()) {
+            return refreshToc(parameters)
+        }
         return returnData.setData(chapterList)
     }
 

@@ -50,7 +50,7 @@ data class BookSource(
     @delegate:Ignore
     @IgnoredOnParcel
     val exploreKinds by lazy {
-        val exploreUrl = exploreUrl?.trim() ?: return@lazy emptyList()
+        val exploreUrl = exploreUrl ?: return@lazy emptyList()
         val kinds = arrayListOf<ExploreKind>()
         var ruleStr = exploreUrl
         if (ruleStr.isNotBlank()) {

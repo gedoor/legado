@@ -5,7 +5,7 @@ import android.text.TextUtils
 @Suppress("unused")
 class EventMessage {
 
-    var what: Int?=null
+    var what: Int? = null
     var tag: String? = null
     var obj: Any? = null
 

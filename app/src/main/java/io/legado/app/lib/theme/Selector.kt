@@ -63,7 +63,12 @@ object Selector {
         private var hasSetFocusedStrokeColor = false
         private var hasSetCheckedStrokeColor = false
 
-        @IntDef(GradientDrawable.RECTANGLE, GradientDrawable.OVAL, GradientDrawable.LINE, GradientDrawable.RING)
+        @IntDef(
+            GradientDrawable.RECTANGLE,
+            GradientDrawable.OVAL,
+            GradientDrawable.LINE,
+            GradientDrawable.RING
+        )
         private annotation class Shape
 
         init {

@@ -12,7 +12,6 @@ import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.PopupKeyboardToolBinding
 
 
-
 class KeyboardToolPop(
     context: Context,
     private val chars: List<String>,

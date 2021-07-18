@@ -25,7 +25,6 @@ import io.legado.app.utils.getSize
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-
 class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
     private var iconNames: Array<CharSequence>
     private val mEntryDrawables = arrayListOf<Drawable?>()
@@ -55,7 +54,17 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
-        val v = Preference.bindView<ImageView>(context, holder, icon, title, summary, widgetLayoutResource, R.id.preview, 50, 50)
+        val v = Preference.bindView<ImageView>(
+            context,
+            holder,
+            icon,
+            title,
+            summary,
+            widgetLayoutResource,
+            R.id.preview,
+            50,
+            50
+        )
         if (v is ImageView) {
             val selectedIndex = findIndexOfValue(value)
             if (selectedIndex >= 0) {

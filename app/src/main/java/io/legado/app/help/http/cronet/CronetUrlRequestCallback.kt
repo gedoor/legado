@@ -22,6 +22,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
     eventListener: EventListener? = null,
     responseCallback: Callback? = null
 ) : UrlRequest.Callback() {
+
     private val eventListener: EventListener?
     private val responseCallback: Callback?
     private var followCount = 0
@@ -37,7 +38,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
         if (mException != null) {
             throw mException as IOException
         }
-        return mResponse
+        return this.mResponse
     }
 
     override fun onRedirectReceived(
@@ -62,7 +63,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
     }
 
     override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
-        mResponse = responseFromResponse(mResponse, info)
+        this.mResponse = responseFromResponse(this.mResponse, info)
 //        val sb: StringBuilder = StringBuilder(info.url).append("\r\n")
 //        sb.append("[Cached:").append(info.wasCached()).append("][StatusCode:")
 //            .append(info.httpStatusCode).append("][StatusText:").append(info.httpStatusText)
@@ -74,7 +75,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
 //        }
 //        Log.e("Cronet", sb.toString())
         if (eventListener != null) {
-            eventListener.responseHeadersEnd(mCall, mResponse)
+            eventListener.responseHeadersEnd(mCall, this.mResponse)
             eventListener.responseBodyStart(mCall)
         }
         request.read(ByteBuffer.allocateDirect(32 * 1024))
@@ -99,34 +100,43 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
 
     override fun onSucceeded(request: UrlRequest, info: UrlResponseInfo) {
         eventListener?.responseBodyEnd(mCall, info.receivedByteCount)
-        val contentType: MediaType? = (mResponse.header("content-type")
+        val contentType: MediaType? = (this.mResponse.header("content-type")
             ?: "text/plain; charset=\"utf-8\"").toMediaTypeOrNull()
         val responseBody: ResponseBody =
             mBytesReceived.toByteArray().toResponseBody(contentType)
         val newRequest = originalRequest.newBuilder().url(info.url).build()
-        mResponse = mResponse.newBuilder().body(responseBody).request(newRequest).build()
+        this.mResponse = this.mResponse.newBuilder().body(responseBody).request(newRequest).build()
         mResponseCondition.open()
         eventListener?.callEnd(mCall)
         if (responseCallback != null) {
             try {
-                responseCallback.onResponse(mCall, mResponse)
+                responseCallback.onResponse(mCall, this.mResponse)
             } catch (e: IOException) {
                 // Pass?
             }
         }
     }
 
-    override fun onFailed(request: UrlRequest, info: UrlResponseInfo, error: CronetException) {
-        val e = IOException("Cronet Exception Occurred", error)
+    //UrlResponseInfo可能为null
+    override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
+        Log.e(TAG, error.message.toString())
+        val msg = error.localizedMessage
+        val e = IOException(msg?.substring(msg.indexOf("net::")), error)
         mException = e
         mResponseCondition.open()
-        eventListener?.callFailed(mCall, e)
+
+        this.eventListener?.callFailed(mCall, e)
+
+
         responseCallback?.onFailure(mCall, e)
     }
 
     override fun onCanceled(request: UrlRequest, info: UrlResponseInfo) {
         mResponseCondition.open()
-        eventListener?.callEnd(mCall)
+
+        this.eventListener?.callEnd(mCall)
+
+
     }
 
     companion object {
@@ -194,7 +204,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
     }
 
     init {
-        mResponse = Response.Builder()
+        this.mResponse = Response.Builder()
             .sentRequestAtMillis(System.currentTimeMillis())
             .request(originalRequest)
             .protocol(Protocol.HTTP_1_0)
