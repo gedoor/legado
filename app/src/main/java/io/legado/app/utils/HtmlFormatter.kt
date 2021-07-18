@@ -34,9 +34,9 @@ object HtmlFormatter {
             while (matcher.find()) {
                 val url = matcher.group(1)!!
                 val urlBefore = url.substringBefore(',')
-                val StrBefore = keepImgHtml.substring(appendPos, matcher.start())
+                val strBefore = keepImgHtml.substring(appendPos, matcher.start())
                 sb.append(
-                    if(StrBefore.isBlank()) StrBefore else StrBefore.replace("\n", "\n　　") //缩进图片之间的非空白段落
+                    if(strBefore.isBlank()) strBefore else strBefore.replace("\n", "\n　　") //缩进图片之间的非空白段落
                 )
                 sb.append(
                     "<img src=\"${
