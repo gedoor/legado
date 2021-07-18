@@ -27,7 +27,7 @@ object HtmlFormatter {
             .replace("[\\n\\s]+\$|^[\\n\\s]+".toRegex(), "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n")
 
-        var str = ""
+        var str = StringBuffer()
         var endPos = 0
         var hasMatch = true //普通图片标签是否还未处理过
         var hasMatchX = false //是否存在带参数或带数据属性的图片标签
@@ -81,12 +81,41 @@ object HtmlFormatter {
             if (appendPos != 0) {
                 hasMatchX = true //存在带参数或带数据属性的图片标签
                 endPos = appendPos //存在匹配，更新位置
-                str = sb.toString() //存在匹配，更新字符串
+                str = sb //存在匹配，更新字符串
             }
         }
 
-        return if (endPos < keepImgHtml.length) {
-            str + keepImgHtml.substring( endPos, keepImgHtml.length ).replace("\n","\n　　") //缩进图片之后的非空白段落
-        }else str
+        if (endPos < keepImgHtml.length) {
+            str.append( (
+                    if(hasMatchX){ //处理末尾的普通图片标签
+                        var appendPos0 = 0
+                        val strBefore = keepImgHtml.substring(endPos, keepImgHtml.length)
+                        val matcher0 =
+                            Pattern.compile("<img[^>]*src *= *\"([^\"]+)\"[^>]*>", Pattern.CASE_INSENSITIVE)
+                                .matcher(strBefore) //格式化普通图片标签
+                        while (matcher0.find()) {
+                            val strBefore0 = strBefore.substring(appendPos0, matcher0.start())
+                            str.append(
+                                if (strBefore0.isBlank()) strBefore0 else strBefore0.replace(
+                                    "\n",
+                                    "\n　　"
+                                )
+                            )
+                            str.append(
+                                "<img src=\"${
+                                    NetworkUtils.getAbsoluteURL(
+                                        redirectUrl,
+                                        matcher0.group(1)!!
+                                    )
+                                }\">"
+                            )
+                            appendPos0 = matcher0.end()
+                        }
+                        if (appendPos0 < strBefore.length) strBefore.substring( appendPos0, strBefore.length ) else ""
+                    }else keepImgHtml.substring( endPos, keepImgHtml.length )
+                    ).replace("\n","\n　　") )  //缩进图片之后的非空白段落
+        }
+
+        return str.toString()
     }
 }
