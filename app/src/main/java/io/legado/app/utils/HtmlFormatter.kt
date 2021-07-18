@@ -22,10 +22,7 @@ object HtmlFormatter {
 
     fun formatKeepImg(html: String?, redirectUrl: URL?): String {
         html ?: return ""
-        val keepImgHtml = html.replace(wrapHtmlRegex, "\n")
-            .replace(notImgHtmlRegex, "")
-            .replace("[\\n\\s]+\$|^[\\n\\s]+".toRegex(), "")
-            .replace("\\s*\\n+\\s*".toRegex(), "\n")
+        val keepImgHtml = format(html, notImgHtmlRegex)
 
         var str = StringBuffer()
         var endPos = 0
