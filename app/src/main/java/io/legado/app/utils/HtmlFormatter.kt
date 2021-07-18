@@ -60,7 +60,8 @@ object HtmlFormatter {
                         if (pos == 0) {
                             val url = matcher.group(1)!!
                             val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
-                            NetworkUtils.getAbsoluteURL(redirectUrl,url.substring(0,urlMatcher.start())) + ',' + url.substring(urlMatcher.end())
+                            if(urlMatcher.find()) NetworkUtils.getAbsoluteURL(redirectUrl,url.substring(0,urlMatcher.start())) + ',' + url.substring(urlMatcher.end())
+                            else NetworkUtils.getAbsoluteURL(redirectUrl,url)
                         }else NetworkUtils.getAbsoluteURL(redirectUrl,matcher.group(1)!!)
                     }\">")
 
