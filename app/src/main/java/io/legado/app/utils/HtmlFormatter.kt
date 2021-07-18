@@ -22,7 +22,10 @@ object HtmlFormatter {
 
     fun formatKeepImg(html: String?, redirectUrl: URL?): String {
         html ?: return ""
-        val keepImgHtml = format(html, notImgHtmlRegex)
+        val keepImgHtml = html.replace(wrapHtmlRegex, "\n")
+            .replace(notImgHtmlRegex, "")
+            .replace("\\n\\s*$|^\\s*\\n".toRegex(), "")
+            .replace("\\n\\s*\\n".toRegex(), "\n")
 
         var str = StringBuffer()
         var endPos = 0
@@ -47,28 +50,20 @@ object HtmlFormatter {
                         var appendPos0 = 0
                         val matcher0 = Pattern.compile("<img[^>]*src *= *\"([^\"]+)\"[^>]*>", Pattern.CASE_INSENSITIVE).matcher(strBefore) //格式化普通图片标签
                         while (matcher0.find()) {
-                            val strBefore0 = strBefore.substring(appendPos0, matcher0.start())
-                            sb.append( if (strBefore0.isBlank()) strBefore0 else strBefore0.replace("\n","\n　　"))
-                            sb.append("<img src=\"${NetworkUtils.getAbsoluteURL(redirectUrl,matcher0.group(1)!!)}\">")
+                            sb.append(strBefore.substring(appendPos0, matcher0.start()),"<img src=\"${NetworkUtils.getAbsoluteURL(redirectUrl,matcher0.group(1)!!)}\">")
                             appendPos0 = matcher0.end()
                         }
-                        strBefore = if (appendPos0 < strBefore.length) strBefore.substring(appendPos0, strBefore.length) else ""
+                        strBefore = strBefore.substring(appendPos0, strBefore.length)
                     }
 
-                    sb.append(
-                        if (strBefore.isBlank()) strBefore else strBefore.replace("\n","\n　　") //缩进图片之间的非空白段落
-                    )
-
-                    if (pos == 0) {
-                        val url = matcher.group(1)!!
-                        val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
-                        val find = urlMatcher.find()
-                        sb.append("<img src=\"${
-                            if(find) NetworkUtils.getAbsoluteURL(redirectUrl,url.substring(0,urlMatcher.start())) + ',' + url.substring(urlMatcher.end())
+                    sb.append( strBefore,"<img src=\"${
+                        if (pos == 0) {
+                            val url = matcher.group(1)!!
+                            val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
+                            if(urlMatcher.find()) NetworkUtils.getAbsoluteURL(redirectUrl,url.substring(0,urlMatcher.start())) + ',' + url.substring(urlMatcher.end())
                             else url
-                        }\">")
-
-                    } else sb.append("<img src=\"${NetworkUtils.getAbsoluteURL(redirectUrl,matcher.group(1)!!)}\">")
+                        }else NetworkUtils.getAbsoluteURL(redirectUrl,matcher.group(1)!!)
+                    }\">")
 
                     appendPos = matcher.end()
                 } while (matcher.find())
@@ -83,7 +78,7 @@ object HtmlFormatter {
         }
 
         if (endPos < keepImgHtml.length) {
-            str.append( (
+            str.append(
                     if(hasMatchX){ //处理末尾的普通图片标签
                         var appendPos0 = 0
                         val strBefore = keepImgHtml.substring(endPos, keepImgHtml.length)
@@ -91,28 +86,13 @@ object HtmlFormatter {
                             Pattern.compile("<img[^>]*src *= *\"([^\"]+)\"[^>]*>", Pattern.CASE_INSENSITIVE)
                                 .matcher(strBefore) //格式化普通图片标签
                         while (matcher0.find()) {
-                            val strBefore0 = strBefore.substring(appendPos0, matcher0.start())
-                            str.append(
-                                if (strBefore0.isBlank()) strBefore0 else strBefore0.replace(
-                                    "\n",
-                                    "\n　　"
-                                )
-                            )
-                            str.append(
-                                "<img src=\"${
-                                    NetworkUtils.getAbsoluteURL(
-                                        redirectUrl,
-                                        matcher0.group(1)!!
-                                    )
-                                }\">"
-                            )
+                            str.append(strBefore.substring(appendPos0, matcher0.start()),"<img src=\"${ NetworkUtils.getAbsoluteURL( redirectUrl, matcher0.group(1)!! )  }\">")
                             appendPos0 = matcher0.end()
                         }
-                        if (appendPos0 < strBefore.length) strBefore.substring( appendPos0, strBefore.length ) else ""
+                        strBefore.substring( appendPos0, strBefore.length )
                     }else keepImgHtml.substring( endPos, keepImgHtml.length )
-                    ).replace("\n","\n　　") )  //缩进图片之后的非空白段落
+                    )  //缩进图片之后的非空白段落
         }
-
         return str.toString()
     }
 }
