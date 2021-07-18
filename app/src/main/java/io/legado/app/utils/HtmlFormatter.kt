@@ -28,7 +28,7 @@ object HtmlFormatter {
 
         val sb = StringBuffer()
         var endPos = 0
-        for(pattern in listOf("<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>","<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>")){
+        for(pattern in listOf("<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>"，"<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>")){
             var appendPos = 0
             val matcher = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(keepImgHtml)
             while (matcher.find()) {
