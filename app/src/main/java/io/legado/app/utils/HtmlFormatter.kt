@@ -67,7 +67,7 @@ object HtmlFormatter {
                         val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
                         val find = urlMatcher.find()
                         sb.append("<img src=\"${
-                            if(find) NetworkUtils.getAbsoluteURL(redirectUrl,url.substring(0,urlMatcher.start()))+','+ url.substring(urlMatcher.end())
+                            if(find) NetworkUtils.getAbsoluteURL(redirectUrl,url.substring(0,urlMatcher.start())) + ',' + url.substring(urlMatcher.end())
                             else url
                         }\">")
 
