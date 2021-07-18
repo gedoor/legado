@@ -28,7 +28,10 @@ object HtmlFormatter {
 
         val sb = StringBuffer()
         var endPos = 0
-        for(pattern in listOf("<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>","<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>")){
+        for (pattern in listOf(
+            "<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>",
+            "<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>"
+        )) {
             var appendPos = 0
             val matcher = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(keepImgHtml)
             while (matcher.find()) {
@@ -36,7 +39,10 @@ object HtmlFormatter {
                 val urlBefore = url.substringBefore(',')
                 val strBefore = keepImgHtml.substring(appendPos, matcher.start())
                 sb.append(
-                    if(strBefore.isBlank()) strBefore else strBefore.replace("\n", "\n　　") //缩进图片之间的非空白段落
+                    if (strBefore.isBlank()) strBefore else strBefore.replace(
+                        "\n",
+                        "\n　　"
+                    ) //缩进图片之间的非空白段落
                 )
                 sb.append(
                     "<img src=\"${
@@ -48,11 +54,13 @@ object HtmlFormatter {
                 )
                 appendPos = matcher.end()
             }
-            if(appendPos != 0)endPos = appendPos
+            if (appendPos != 0) endPos = appendPos
         }
 
         if (endPos < keepImgHtml.length) {
-            sb.append( keepImgHtml.substring( endPos, keepImgHtml.length ).replace("\n","\n　　") ) //缩进图片之后的非空白段落
+            sb.append(
+                keepImgHtml.substring(endPos, keepImgHtml.length).replace("\n", "\n　　")
+            ) //缩进图片之后的非空白段落
         }
         return sb.toString()
     }

@@ -82,7 +82,7 @@ class AnalyzeUrl(
                     ruleUrl = tmp.replace("@result", ruleUrl)
                 }
             }
-            ruleUrl = evalJS(jsMatcher.group(2)?:jsMatcher.group(1), ruleUrl) as String
+            ruleUrl = evalJS(jsMatcher.group(2) ?: jsMatcher.group(1), ruleUrl) as String
             start = jsMatcher.end()
         }
         if (ruleUrl.length > start) {
@@ -114,14 +114,14 @@ class AnalyzeUrl(
             bindings["book"] = book
 
             //替换所有内嵌{{js}}
-            val url = analyze.innerRule("{{","}}"){
-                when(val jsEval = SCRIPT_ENGINE.eval(it, bindings)){
+            val url = analyze.innerRule("{{", "}}") {
+                when (val jsEval = SCRIPT_ENGINE.eval(it, bindings)) {
                     is String -> jsEval
                     jsEval is Double && jsEval % 1.0 == 0.0 -> String.format("%.0f", jsEval)
                     else -> jsEval.toString()
                 }
             }
-            if(url.isNotEmpty())ruleUrl = url
+            if (url.isNotEmpty()) ruleUrl = url
         }
         //page
         page?.let {
@@ -143,13 +143,14 @@ class AnalyzeUrl(
     private fun initUrl() { //replaceKeyPageJs已经替换掉额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串。
 
         urlHasQuery = ruleUrl.substringBefore(',')
-        url = NetworkUtils.getAbsoluteURL(baseUrl,urlHasQuery )
+        url = NetworkUtils.getAbsoluteURL(baseUrl, urlHasQuery)
         NetworkUtils.getBaseUrl(url)?.let {
             baseUrl = it
         }
 
-        if(urlHasQuery.length != ruleUrl.length ) {
-            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlHasQuery.length + 1).trim{ it < '!'})?.let { option ->
+        if (urlHasQuery.length != ruleUrl.length) {
+            GSON.fromJsonObject<UrlOption>(
+                ruleUrl.substring(urlHasQuery.length + 1).trim { it < '!' })?.let { option ->
 
                 option.method?.let {
                     if (it.equals("POST", true)) method = RequestMethod.POST
@@ -188,9 +189,9 @@ class AnalyzeUrl(
             RequestMethod.GET -> {
                 if (!useWebView) {
                     val pos = url.indexOf('?')
-                    if(pos != -1) {
+                    if (pos != -1) {
                         analyzeFields(url.substring(pos + 1))
-                        url = url.substring(0,pos)
+                        url = url.substring(0, pos)
                     }
                 }
             }
