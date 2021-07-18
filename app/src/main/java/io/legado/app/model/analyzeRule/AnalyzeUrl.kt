@@ -39,6 +39,7 @@ class AnalyzeUrl(
     headerMapF: Map<String, String>? = null
 ) : JsExtensions {
     companion object {
+        val paramPattern = Pattern.compile("\\s*,\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
     }
 
@@ -55,7 +56,8 @@ class AnalyzeUrl(
     private var retry: Int = 0
 
     init {
-        baseUrl = baseUrl.substringBefore(',')
+        val urlMatcher = paramPattern.matcher(baseUrl)
+        if(urlMatcher.find())baseUrl = baseUrl.substring(0,urlMatcher.start())
         headerMapF?.let {
             headerMap.putAll(it)
             if (it.containsKey("proxy")) {
@@ -142,14 +144,14 @@ class AnalyzeUrl(
      */
     private fun initUrl() { //replaceKeyPageJs已经替换掉额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串。
 
-        urlHasQuery = ruleUrl.substringBefore(',')
+        val urlMatcher = paramPattern.matcher(ruleUrl)
+        urlHasQuery = if(urlMatcher.find())ruleUrl.substring(0,urlMatcher.start()) else ruleUrl
         url = NetworkUtils.getAbsoluteURL(baseUrl,urlHasQuery )
         NetworkUtils.getBaseUrl(url)?.let {
             baseUrl = it
         }
-
         if(urlHasQuery.length != ruleUrl.length ) {
-            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlHasQuery.length + 1).trim{ it < '!'})?.let { option ->
+            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlMatcher.end()))?.let { option ->
 
                 option.method?.let {
                     if (it.equals("POST", true)) method = RequestMethod.POST
