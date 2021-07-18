@@ -34,9 +34,10 @@ object HtmlFormatter {
             while (matcher.find()) {
                 val url = matcher.group(1)!!
                 val urlBefore = url.substringBefore(',')
+                val StrBefore = keepImgHtml.substring(appendPos, matcher.start())
                 sb.append(
-                    keepImgHtml.substring(appendPos, matcher.start()).replace("\n", "\n　　")
-                ) //缩进换行下个非图片段落
+                    if(StrBefore.isBlank()) StrBefore else StrBefore.replace("\n", "\n　　") //缩进图片之间的非空白段落
+                )
                 sb.append(
                     "<img src=\"${
                         NetworkUtils.getAbsoluteURL(
@@ -51,7 +52,7 @@ object HtmlFormatter {
         }
 
         if (endPos < keepImgHtml.length) {
-            sb.append( keepImgHtml.substring( endPos, keepImgHtml.length ).replace("\n","\n　　") ) //缩进换行下个非图片段落
+            sb.append( keepImgHtml.substring( endPos, keepImgHtml.length ).replace("\n","\n　　") ) //缩进图片之间的非空白段落
         }
         return sb.toString()
     }
