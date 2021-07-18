@@ -55,9 +55,7 @@ object HtmlFormatter {
                             sb.append("<img src=\"${NetworkUtils.getAbsoluteURL(redirectUrl,matcher.group(1)!!)}\">")
                             appendPos0 = matcher.end()
                         }
-                        strBefore = if (appendPos0 < strBefore.length) {
-                            strBefore.substring(appendPos0, strBefore.length).replace("\n", "\n　　") //缩进图片之后的非空白段落
-                        } else ""
+                        strBefore = if (appendPos0 < strBefore.length) strBefore.substring(appendPos0, strBefore.length) else ""
                     }
 
                     sb.append(
