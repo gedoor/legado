@@ -52,7 +52,7 @@ object BookContent {
         var contentData = analyzeContent(
             book, baseUrl, redirectUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
         )
-        content.append(contentData.content).append("\n")
+        content.append(contentData.content)
         if (contentData.nextUrl.size == 1) {
             var nextUrl = contentData.nextUrl[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
@@ -74,7 +74,7 @@ object BookContent {
                     )
                     nextUrl =
                         if (contentData.nextUrl.isNotEmpty()) contentData.nextUrl[0] else ""
-                    content.append(contentData.content).append("\n")
+                    content.append("\n").append(contentData.content)
                 }
             }
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
@@ -98,11 +98,10 @@ object BookContent {
                 }
                 asyncArray.forEach { coroutine ->
                     scope.ensureActive()
-                    content.append(coroutine.await()).append("\n")
+                    content.append("\n").append(coroutine.await())
                 }
             }
         }
-        content.deleteCharAt(content.length - 1)
         var contentStr = content.toString()
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
