@@ -21,12 +21,12 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.help.ContentProcessor
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
@@ -294,7 +294,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     override fun onDestroy() {
         super.onDestroy()
-        Coroutine.async { ReadBook.contentProcessor?.upReplaceRules() }
+        Coroutine.async { ContentProcessor.upReplaceRules() }
     }
 
     override fun upCountView() {

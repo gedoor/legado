@@ -122,7 +122,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     private fun getAllContents(book: Book, append: (text: String) -> Unit) {
         val useReplace = AppConfig.exportUseReplace
-        val contentProcessor = ContentProcessor(book.name, book.origin)
+        val contentProcessor = ContentProcessor.get(book.name, book.origin)
         append(
             "${book.name}\n${
                 context.getString(
@@ -386,7 +386,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     private fun setEpubContent(contentModel: String, book: Book, epubBook: EpubBook) {
         //正文
         val useReplace = AppConfig.exportUseReplace
-        val contentProcessor = ContentProcessor(book.name, book.origin)
+        val contentProcessor = ContentProcessor.get(book.name, book.origin)
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
             BookHelp.getContent(book, chapter).let { content ->
                 var content1 = fixPic(epubBook, book, content ?: "null", chapter)

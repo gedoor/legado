@@ -6,8 +6,33 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
+import java.lang.ref.WeakReference
 
-class ContentProcessor(private val bookName: String, private val bookOrigin: String) {
+class ContentProcessor private constructor(
+    private val bookName: String,
+    private val bookOrigin: String
+) {
+
+    companion object {
+        private val processors = hashMapOf<String, WeakReference<ContentProcessor>>()
+
+        fun get(bookName: String, bookOrigin: String): ContentProcessor {
+            val processorWr = processors[bookName + bookOrigin]
+            var processor: ContentProcessor? = processorWr?.get()
+            if (processor == null) {
+                processor = ContentProcessor(bookName, bookOrigin)
+                processors[bookName + bookOrigin] = WeakReference(processor)
+            }
+            return processor
+        }
+
+        fun upReplaceRules() {
+            processors.forEach {
+                it.value.get()?.upReplaceRules()
+            }
+        }
+
+    }
 
     private var replaceRules = arrayListOf<ReplaceRule>()
 
