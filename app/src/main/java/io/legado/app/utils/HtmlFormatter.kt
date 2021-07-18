@@ -23,7 +23,7 @@ object HtmlFormatter {
         html ?: return ""
         val keepImgHtml = html.replace(wrapHtmlRegex, "\n")
             .replace(notImgHtmlRegex, "")
-            .replace("[\\n\\s]+\$|^[\\n\\s]*".toRegex(), "")
+            .replace("[\\n\\s]+\$|^[\\n\\s]+".toRegex(), "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n")
 
         val sb = StringBuffer()
@@ -36,7 +36,7 @@ object HtmlFormatter {
                 val urlBefore = url.substringBefore(',')
                 val strBefore = keepImgHtml.substring(appendPos, matcher.start())
                 sb.append(
-                    if(strBefore.isBlank()) '\n' else strBefore.replace("\n", "\n　　") //缩进图片之间的非空白段落
+                    if(strBefore.isBlank()) strBefore else strBefore.replace("\n", "\n　　") //缩进图片之间的非空白段落
                 )
                 sb.append(
                     "<img src=\"${
