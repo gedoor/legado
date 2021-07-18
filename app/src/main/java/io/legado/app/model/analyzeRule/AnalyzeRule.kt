@@ -445,35 +445,38 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             var tmp: String
             val evalMatcher = evalPattern.matcher(rule)
 
-            while (evalMatcher.find()) {
-                if (evalMatcher.start() > start) {
-                    tmp = rule.substring(start, evalMatcher.start())
-                    if (mode != Mode.Js && mode != Mode.Regex
-                        && start == 0 && !tmp.contains("##")
-                    ) {
-                        mode = Mode.Regex
-                    }
-                    splitRegex(tmp)
-                } else if (mode != Mode.Js && mode != Mode.Regex
+            if (evalMatcher.find()) {
+                if (mode != Mode.Js && mode != Mode.Regex
                     && evalMatcher.start() == 0
                 ) {
                     mode = Mode.Regex
                 }
-                tmp = evalMatcher.group()
-                when {
-                    tmp.startsWith("@get:", true) -> {
-                        ruleType.add(getRuleType)
-                        ruleParam.add(tmp.substring(6, tmp.lastIndex))
-                    }
-                    tmp.startsWith("{{") -> {
-                        ruleType.add(jsRuleType)
-                        ruleParam.add(tmp.substring(2, tmp.length - 2))
-                    }
-                    else -> {
+                do {
+                    if (evalMatcher.start() > start) {
+                        tmp = rule.substring(start, evalMatcher.start())
+                        if (mode != Mode.Js && mode != Mode.Regex
+                            && start == 0 && !tmp.contains("##")
+                        ) {
+                            mode = Mode.Regex
+                        }
                         splitRegex(tmp)
                     }
-                }
-                start = evalMatcher.end()
+                    tmp = evalMatcher.group()
+                    when {
+                        tmp.startsWith("@get:", true) -> {
+                            ruleType.add(getRuleType)
+                            ruleParam.add(tmp.substring(6, tmp.lastIndex))
+                        }
+                        tmp.startsWith("{{") -> {
+                            ruleType.add(jsRuleType)
+                            ruleParam.add(tmp.substring(2, tmp.length - 2))
+                        }
+                        else -> {
+                            splitRegex(tmp)
+                        }
+                    }
+                    start = evalMatcher.end()
+                } while (evalMatcher.find())
             }
             if (rule.length > start) {
                 tmp = rule.substring(start)
