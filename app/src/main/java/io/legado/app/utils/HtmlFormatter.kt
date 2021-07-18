@@ -27,42 +27,31 @@ object HtmlFormatter {
                 .replace("\\s*\\n+\\s*".toRegex(), "\n")
 
         val sb = StringBuffer()
-        val hasDataType:Boolean //是否有数据属性
-
-        //图片有data-开头的数据属性时优先用数据属性作为src，没有数据属性时匹配src
-        val imgPattern = Pattern.compile(
-                if(keepImgHtml.matches("<img[^>]*data-".toRegex())) {
-                    hasDataType = true
-                    "<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>"
-                }
-                else {
-                    hasDataType = false
-                    "<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>"
-                }, Pattern.CASE_INSENSITIVE
-        )
-
-        val matcher = imgPattern.matcher(keepImgHtml)
-        var appendPos = 0
-
-        while(matcher.find()){
-            val url = matcher.group(1)!!
-            val urlBefore = url.substringBefore(',')
-            sb.append( keepImgHtml.substring(appendPos, matcher.start()).replace("\n","\n　　") ) //缩进换行下个非图片段落
-            sb.append(
+        var endPos = 0
+        for(pattern in listOf("<img[^>]*data-[^=]*= *\"([^\"])\"[^>]*>","<img[^>]*src *= *\"([^\"{]+(?:\\{(?:[^{}]|\\{[^{}]*\\})*\\})?)\"[^>]*>")){
+            var appendPos = 0
+            val matcher = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(keepImgHtml)
+            while (matcher.find()) {
+                val url = matcher.group(1)!!
+                val urlBefore = url.substringBefore(',')
+                sb.append(
+                    keepImgHtml.substring(appendPos, matcher.start()).replace("\n", "\n　　")
+                ) //缩进换行下个非图片段落
+                sb.append(
                     "<img src=\"${
                         NetworkUtils.getAbsoluteURL(
-                                redirectUrl,
-                                urlBefore
-                        )
-                    }${
-                        url.substring(urlBefore.length)
+                            redirectUrl,
+                            urlBefore
+                        ) + url.substring(urlBefore.length)
                     }\">"
-            )
-            appendPos = matcher.end()
+                )
+                appendPos = matcher.end()
+            }
+            if(appendPos != 0)endPos = appendPos
         }
 
-        if (appendPos < keepImgHtml.length) {
-            sb.append( keepImgHtml.substring( appendPos, keepImgHtml.length ).replace("\n","\n　　") ) //缩进换行下个非图片段落
+        if (endPos < keepImgHtml.length) {
+            sb.append( keepImgHtml.substring( endPos, keepImgHtml.length ).replace("\n","\n　　") ) //缩进换行下个非图片段落
         }
         return sb.toString()
     }
