@@ -24,6 +24,7 @@ object HtmlFormatter {
         html ?: return ""
         val keepImgHtml = html.replace(wrapHtmlRegex, "\n")
             .replace(notImgHtmlRegex, "")
+            .replace("\\n\\s*$|^\\s*\\n".toRegex(), "")
             .replace("\\n\\s*\\n|\\n\\s*$|^\\s*\\n".toRegex(), "\n")
 
         var str = StringBuffer()
