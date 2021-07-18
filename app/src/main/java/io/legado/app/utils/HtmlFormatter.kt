@@ -26,9 +26,9 @@ object HtmlFormatter {
             .replace(notImgHtmlRegex, "")
             .replace("\\n\\s*$|^\\s*\\n".toRegex(), "")
             .replace("\\n\\s*\\n".toRegex(), "\n")
-        var appendPos = 0
-        //正则中，若“|”处于顶端，而不处于（）中时，具有类似||的熔断效果，故以此机制简化原来的代码
+        //正则的“|”处于顶端而不处于（）中时，具有类似||的熔断效果，故以此机制简化原来的代码
         val matcher = Pattern.compile("<img[^>]*src *= *\"([^\"{]*\\{(?:[^{}]|\\{[^}]+\\})+\\})\"[^>]*>|<img[^>]*data-[^=]*= *\"([^\"]*)\"[^>]*>|<img[^>]*src *= *\"([^\"]*)\"[^>]*>", Pattern.CASE_INSENSITIVE).matcher(keepImgHtml)
+        var appendPos = 0
         val sb = StringBuffer()
         while (matcher.find()){
             var param = ""
