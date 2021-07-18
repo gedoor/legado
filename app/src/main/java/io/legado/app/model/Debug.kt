@@ -120,7 +120,7 @@ object Debug {
                 infoDebug(scope, webBook, book)
             }
             key.contains("::") -> {
-                val url = key.substring(key.indexOf("::") + 2)
+                val url = key.substringAfter("::")
                 log(webBook.sourceUrl, "⇒开始访问发现页:$url")
                 exploreDebug(scope, webBook, url)
             }
