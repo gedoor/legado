@@ -11,17 +11,31 @@ import com.google.android.material.navigation.NavigationView
 @Suppress("unused")
 object NavigationViewUtils {
 
-    fun setItemIconColors(navigationView: NavigationView, @ColorInt normalColor: Int, @ColorInt selectedColor: Int) {
+    fun setItemIconColors(
+        navigationView: NavigationView,
+        @ColorInt normalColor: Int,
+        @ColorInt selectedColor: Int
+    ) {
         val iconSl = ColorStateList(
-            arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked)),
+            arrayOf(
+                intArrayOf(-android.R.attr.state_checked),
+                intArrayOf(android.R.attr.state_checked)
+            ),
             intArrayOf(normalColor, selectedColor)
         )
         navigationView.itemIconTintList = iconSl
     }
 
-    fun setItemTextColors(navigationView: NavigationView, @ColorInt normalColor: Int, @ColorInt selectedColor: Int) {
+    fun setItemTextColors(
+        navigationView: NavigationView,
+        @ColorInt normalColor: Int,
+        @ColorInt selectedColor: Int
+    ) {
         val textSl = ColorStateList(
-            arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked)),
+            arrayOf(
+                intArrayOf(-android.R.attr.state_checked),
+                intArrayOf(android.R.attr.state_checked)
+            ),
             intArrayOf(normalColor, selectedColor)
         )
         navigationView.itemTextColor = textSl

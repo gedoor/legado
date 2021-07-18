@@ -233,7 +233,11 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun setAssets(doc: DocumentFile, book: Book, epubBook: EpubBook): String {
-        if(!(AppConfig.isGooglePlay|| appCtx.packageName.contains("debug",true))) return setAssets(book, epubBook)
+        if (!(AppConfig.isGooglePlay || appCtx.packageName.contains(
+                "debug",
+                true
+            ))
+        ) return setAssets(book, epubBook)
 
         var contentModel = ""
         DocumentUtils.getDirDocument(doc, "Asset").let { customPath ->

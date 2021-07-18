@@ -45,11 +45,11 @@ class AnalyzeByXPath(doc: Any) {
 
     internal fun getElements(xPath: String): List<JXNode>? {
 
-        if(xPath.isEmpty()) return null
+        if (xPath.isEmpty()) return null
 
         val jxNodes = ArrayList<JXNode>()
         val ruleAnalyzes = RuleAnalyzer(xPath)
-        val rules = ruleAnalyzes.splitRule("&&","||","%%")
+        val rules = ruleAnalyzes.splitRule("&&", "||", "%%")
 
         if (rules.size == 1) {
             return getResult(rules[0])
@@ -87,7 +87,7 @@ class AnalyzeByXPath(doc: Any) {
 
         val result = ArrayList<String>()
         val ruleAnalyzes = RuleAnalyzer(xPath)
-        val rules = ruleAnalyzes.splitRule("&&","||","%%")
+        val rules = ruleAnalyzes.splitRule("&&", "||", "%%")
 
         if (rules.size == 1) {
             getResult(xPath)?.map {
@@ -126,7 +126,7 @@ class AnalyzeByXPath(doc: Any) {
 
     fun getString(rule: String): String? {
         val ruleAnalyzes = RuleAnalyzer(rule)
-        val rules = ruleAnalyzes.splitRule("&&","||")
+        val rules = ruleAnalyzes.splitRule("&&", "||")
         if (rules.size == 1) {
             getResult(rule)?.let {
                 return TextUtils.join("\n", it)

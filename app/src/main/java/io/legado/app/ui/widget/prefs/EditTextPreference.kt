@@ -6,7 +6,8 @@ import android.widget.TextView
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
 
-class EditTextPreference(context: Context, attrs: AttributeSet) : androidx.preference.EditTextPreference(context, attrs) {
+class EditTextPreference(context: Context, attrs: AttributeSet) :
+    androidx.preference.EditTextPreference(context, attrs) {
 
     init {
         // isPersistent = true

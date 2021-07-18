@@ -26,7 +26,7 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun observe(callback: (Int, String)-> Unit){
+    fun observe(callback: (Int, String) -> Unit) {
         this.callback = callback
     }
 

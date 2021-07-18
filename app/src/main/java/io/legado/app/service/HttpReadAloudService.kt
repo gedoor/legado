@@ -21,9 +21,9 @@ import java.net.SocketTimeoutException
 import java.util.*
 
 class HttpReadAloudService : BaseReadAloudService(),
-        MediaPlayer.OnPreparedListener,
-        MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener {
+    MediaPlayer.OnPreparedListener,
+    MediaPlayer.OnErrorListener,
+    MediaPlayer.OnCompletionListener {
 
     private val player by lazy { MediaPlayer() }
     private lateinit var ttsFolder: String
@@ -53,7 +53,8 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun play() {
         if (contentList.isEmpty()) return
         ReadAloud.httpTTS?.let {
-            val fileName = md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), contentList[nowSpeak])
+            val fileName =
+                md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), contentList[nowSpeak])
             if (nowSpeak == 0) {
                 downloadAudio()
             } else {
@@ -91,9 +92,9 @@ class HttpReadAloudService : BaseReadAloudService(),
                             try {
                                 createSpeakCacheFile(fileName)
                                 AnalyzeUrl(
-                                        it.url,
-                                        speakText = item,
-                                        speakSpeed = AppConfig.ttsSpeechRate
+                                    it.url,
+                                    speakText = item,
+                                    speakSpeed = AppConfig.ttsSpeechRate
                                 ).getByteArray().let { bytes ->
                                     ensureActive()
 
@@ -153,23 +154,23 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun hasSpeakFile(name: String) =
-            FileUtils.exist("${speakFilePath()}$name.mp3")
+        FileUtils.exist("${speakFilePath()}$name.mp3")
 
     private fun hasSpeakCacheFile(name: String) =
-            FileUtils.exist("${speakFilePath()}$name.mp3.cache")
+        FileUtils.exist("${speakFilePath()}$name.mp3.cache")
 
     private fun createSpeakCacheFile(name: String): File =
-            FileUtils.createFileWithReplace("${speakFilePath()}$name.mp3.cache")
+        FileUtils.createFileWithReplace("${speakFilePath()}$name.mp3.cache")
 
     private fun removeSpeakCacheFile(name: String) {
         FileUtils.delete("${speakFilePath()}$name.mp3.cache")
     }
 
     private fun getSpeakFileAsMd5(name: String): File =
-            FileUtils.getFile(File(speakFilePath()), "$name.mp3")
+        FileUtils.getFile(File(speakFilePath()), "$name.mp3")
 
     private fun getSpeakFileAsMd5IfNotExist(name: String): File =
-            FileUtils.createFileIfNotExist("${speakFilePath()}$name.mp3")
+        FileUtils.createFileIfNotExist("${speakFilePath()}$name.mp3")
 
     private fun removeCacheFile() {
         FileUtils.listDirsAndFiles(speakFilePath())?.forEach {
@@ -178,7 +179,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             }
             if (Regex(""".+\.mp3$""").matches(it.name)) { //mp3缓存文件
                 val reg =
-                        """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
+                    """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
                 if (!reg.matches(it.name)) {
                     FileUtils.deleteFile(it.absolutePath)
                 }

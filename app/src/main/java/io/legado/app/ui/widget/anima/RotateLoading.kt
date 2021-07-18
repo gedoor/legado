@@ -72,8 +72,12 @@ class RotateLoading @JvmOverloads constructor(
                 R.styleable.RotateLoading_loading_width,
                 DEFAULT_WIDTH.dp
             )
-            shadowPosition = typedArray.getInt(R.styleable.RotateLoading_shadow_position, DEFAULT_SHADOW_POSITION)
-            speedOfDegree = typedArray.getInt(R.styleable.RotateLoading_loading_speed, DEFAULT_SPEED_OF_DEGREE)
+            shadowPosition = typedArray.getInt(
+                R.styleable.RotateLoading_shadow_position,
+                DEFAULT_SHADOW_POSITION
+            )
+            speedOfDegree =
+                typedArray.getInt(R.styleable.RotateLoading_loading_speed, DEFAULT_SPEED_OF_DEGREE)
             hideMode = when (typedArray.getInt(R.styleable.RotateLoading_hide_mode, 2)) {
                 1 -> INVISIBLE
                 else -> GONE

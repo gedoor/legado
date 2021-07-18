@@ -13,7 +13,7 @@ data class SearchResult(
     var chapterIndex: Int = 0,
     var pageIndex: Int = 0,
     var newPosition: Int = 0,
-    var contentPosition: Int =0
+    var contentPosition: Int = 0
 ) {
 
     fun getHtmlCompat(textColor: String, accentColor: String): Spanned {

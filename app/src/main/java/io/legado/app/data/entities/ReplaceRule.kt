@@ -41,12 +41,12 @@ data class ReplaceRule(
         return id.hashCode()
     }
 
-    fun isValid(): Boolean{
-        if (TextUtils.isEmpty(pattern)){
+    fun isValid(): Boolean {
+        if (TextUtils.isEmpty(pattern)) {
             return false
         }
         //判断正则表达式是否正确
-        if (isRegex){
+        if (isRegex) {
             try {
                 Pattern.compile(pattern)
             } catch (ex: PatternSyntaxException) {

@@ -67,6 +67,7 @@ data class Book(
     fun isEpub(): Boolean {
         return originName.endsWith(".epub", true)
     }
+
     fun isUmd(): Boolean {
         return originName.endsWith(".umd", true)
     }

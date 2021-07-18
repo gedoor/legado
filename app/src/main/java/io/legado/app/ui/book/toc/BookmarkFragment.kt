@@ -83,8 +83,8 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
                 editView.setText(bookmark.content)
                 editBookText.textSize = 15f
                 editView.textSize = 15f
-                editBookText.maxLines= 6
-                editView.maxLines= 6
+                editBookText.maxLines = 6
+                editView.maxLines = 6
             }
             customView { alertBinding.root }
             yesButton {

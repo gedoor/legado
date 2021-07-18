@@ -93,8 +93,12 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     lp.flexBasisPercent = style.layout_flexBasisPercent
                     lp.isWrapBefore = style.layout_wrapBefore
                 }
-                tv.setOnClickListener {
-                    callBack.openExplore(sourceUrl, kind.title, kind.url)
+                if (kind.url.isNullOrBlank()) {
+                    tv.setOnClickListener(null)
+                } else {
+                    tv.setOnClickListener {
+                        callBack.openExplore(sourceUrl, kind.title, kind.url)
+                    }
                 }
             }
         }

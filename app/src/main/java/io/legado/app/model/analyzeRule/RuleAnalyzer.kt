@@ -19,7 +19,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     var innerType = true //是否为内嵌{{}}
 
     fun trim() { // 修剪当前规则之前的"@"或者空白符
-        if(queue[pos] == '@' || queue[pos] < '!') { //在while里重复设置start和startX会拖慢执行速度，所以先来个判断是否存在需要修剪的字段，最后再一次性设置start和startX
+        if (queue[pos] == '@' || queue[pos] < '!') { //在while里重复设置start和startX会拖慢执行速度，所以先来个判断是否存在需要修剪的字段，最后再一次性设置start和startX
             pos++
             while (queue[pos] == '@' || queue[pos] < '!') pos++
             start = pos //开始点推移
@@ -258,7 +258,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                    queue.substring(0,start) + "后未平衡"
+                queue.substring(0, start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -315,7 +315,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
             if (!chompBalanced(queue[pos], next)) throw Error(
-                    queue.substring(0,start) + "后未平衡"
+                queue.substring(0, start) + "后未平衡"
             ) //拉出一个筛选器,不平衡则报错
 
         } while (end > pos)
@@ -338,10 +338,10 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      *
      * */
     fun innerRule(
-            inner: String,
-            startStep: Int = 1,
-            endStep: Int = 1,
-            fr: (String) -> String?
+        inner: String,
+        startStep: Int = 1,
+        endStep: Int = 1,
+        fr: (String) -> String?
     ): String {
         val st = StringBuilder()
 
@@ -358,7 +358,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             pos += inner.length //拉出字段不平衡，inner只是个普通字串，跳到此inner后继续匹配
         }
 
-        return if(startX == 0) "" else st.apply {
+        return if (startX == 0) "" else st.apply {
             append(queue.substring(startX))
         }.toString()
     }

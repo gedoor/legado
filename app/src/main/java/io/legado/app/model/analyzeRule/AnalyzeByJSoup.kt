@@ -42,13 +42,14 @@ class AnalyzeByJSoup(doc: Any) {
      * 合并内容列表,得到内容
      */
     internal fun getString(ruleStr: String) =
-        if(ruleStr.isEmpty()) null
+        if (ruleStr.isEmpty()) null
         else getStringList(ruleStr).takeIf { it.isNotEmpty() }?.joinToString("\n")
 
     /**
      * 获取一个字符串
      */
-    internal fun getString0(ruleStr: String) = getStringList(ruleStr).let{ if ( it.isEmpty() ) "" else it[0] }
+    internal fun getString0(ruleStr: String) =
+        getStringList(ruleStr).let { if (it.isEmpty()) "" else it[0] }
 
     /**
      * 获取所有内容列表
@@ -69,7 +70,7 @@ class AnalyzeByJSoup(doc: Any) {
         } else {
 
             val ruleAnalyzes = RuleAnalyzer(sourceRule.elementsRule)
-            val ruleStrS = ruleAnalyzes.splitRule("&&","||" ,"%%")
+            val ruleStrS = ruleAnalyzes.splitRule("&&", "||", "%%")
 
             val results = ArrayList<List<String>>()
             for (ruleStrX in ruleStrS) {
@@ -123,7 +124,7 @@ class AnalyzeByJSoup(doc: Any) {
 
         val sourceRule = SourceRule(rule)
         val ruleAnalyzes = RuleAnalyzer(sourceRule.elementsRule)
-        val ruleStrS = ruleAnalyzes.splitRule("&&","||","%%")
+        val ruleStrS = ruleAnalyzes.splitRule("&&", "||", "%%")
 
         val elementsList = ArrayList<Elements>()
         if (sourceRule.isCss) {
@@ -155,7 +156,7 @@ class AnalyzeByJSoup(doc: Any) {
                         el.addAll(es)
                     }
                     el
-                }else ElementsSingle().getElementsSingle(temp,ruleStr)
+                } else ElementsSingle().getElementsSingle(temp, ruleStr)
 
                 elementsList.add(el)
                 if (el.size > 0 && ruleAnalyzes.elementsType == "||") {
@@ -275,10 +276,12 @@ class AnalyzeByJSoup(doc: Any) {
      * 特殊用法 tag.div[-1:0] 可在任意地方让列表反向
      *
      * */
-    data class ElementsSingle(var split:Char = '.',
-                              var beforeRule:String = "",
-                              val indexDefault:MutableList<Int> = mutableListOf(),
-                              val indexs:MutableList<Any> = mutableListOf()){
+    data class ElementsSingle(
+        var split: Char = '.',
+        var beforeRule: String = "",
+        val indexDefault: MutableList<Int> = mutableListOf(),
+        val indexs: MutableList<Any> = mutableListOf()
+    ) {
         /**
          * 获取Elements按照一个规则
          */
@@ -289,43 +292,44 @@ class AnalyzeByJSoup(doc: Any) {
             /**
              * 获取所有元素
              * */
-            var elements = if (beforeRule.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
-            else {
-                val rules = beforeRule.split(".")
-                when (rules[0]) {
-                    "children" -> temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
-                    "class" -> temp.getElementsByClass(rules[1])
-                    "tag" -> temp.getElementsByTag(rules[1])
-                    "id" -> Collector.collect(Evaluator.Id(rules[1]), temp)
-                    "text" -> temp.getElementsContainingOwnText(rules[1])
-                    else -> temp.select(beforeRule)
+            var elements =
+                if (beforeRule.isEmpty()) temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
+                else {
+                    val rules = beforeRule.split(".")
+                    when (rules[0]) {
+                        "children" -> temp.children() //允许索引直接作为根元素，此时前置规则为空，效果与children相同
+                        "class" -> temp.getElementsByClass(rules[1])
+                        "tag" -> temp.getElementsByTag(rules[1])
+                        "id" -> Collector.collect(Evaluator.Id(rules[1]), temp)
+                        "text" -> temp.getElementsContainingOwnText(rules[1])
+                        else -> temp.select(beforeRule)
+                    }
                 }
-            }
 
             val len = elements.size
-            val lastIndexs = (indexDefault.size - 1).takeIf { it !=-1 } ?: indexs.size -1
+            val lastIndexs = (indexDefault.size - 1).takeIf { it != -1 } ?: indexs.size - 1
             val indexSet = mutableSetOf<Int>()
 
             /**
              * 获取无重且不越界的索引集合
              * */
-            if(indexs.isEmpty())for (ix in lastIndexs downTo 0 ){ //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
+            if (indexs.isEmpty()) for (ix in lastIndexs downTo 0) { //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
                 val it = indexDefault[ix]
-                if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
-                else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
+                if (it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
+                else if (it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
 
-            }else for (ix in lastIndexs downTo 0 ){ //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
+            } else for (ix in lastIndexs downTo 0) { //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
-                if(indexs[ix] is Triple<*, *, *>){ //区间
+                if (indexs[ix] is Triple<*, *, *>) { //区间
 
                     val (startx, endx, stepx) = indexs[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
 
-                    val start = if (startx == null)  0 //左端省略表示0
+                    val start = if (startx == null) 0 //左端省略表示0
                     else if (startx >= 0) if (startx < len) startx else len - 1 //右端越界，设置为最大索引
                     else if (-startx <= len) len + startx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
 
-                    val end = if (endx == null)  len - 1 //右端省略表示 len - 1
+                    val end = if (endx == null) len - 1 //右端省略表示 len - 1
                     else if (endx >= 0) if (endx < len) endx else len - 1 //右端越界，设置为最大索引
                     else if (-endx <= len) len + endx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
 
@@ -336,17 +340,18 @@ class AnalyzeByJSoup(doc: Any) {
 
                     }
 
-                    val step = if (stepx > 0) stepx else if (-stepx < len) stepx + len else 1 //最小正数间隔为1
+                    val step =
+                        if (stepx > 0) stepx else if (-stepx < len) stepx + len else 1 //最小正数间隔为1
 
                     //将区间展开到集合中,允许列表反向。
                     indexSet.addAll(if (end > start) start..end step step else start downTo end step step)
 
-                }else{//单个索引
+                } else {//单个索引
 
                     val it = indexs[ix] as Int //还原储存时的类型
 
-                    if(it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
-                    else if(it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
+                    if (it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
+                    else if (it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
 
                 }
 
@@ -355,13 +360,13 @@ class AnalyzeByJSoup(doc: Any) {
             /**
              * 根据索引集合筛选元素
              * */
-            if(split == '!'){ //排除
+            if (split == '!') { //排除
 
                 for (pcInt in indexSet) elements[pcInt] = null
 
                 elements.removeAll(listOf(null)) //测试过，这样就行
 
-            }else if(split == '.'){ //选择
+            } else if (split == '.') { //选择
 
                 val es = Elements()
 
@@ -375,9 +380,9 @@ class AnalyzeByJSoup(doc: Any) {
 
         }
 
-        private fun findIndexSet( rule:String ){
+        private fun findIndexSet(rule: String) {
 
-            val rus = rule.trim{ it <= ' '}
+            val rus = rule.trim { it <= ' ' }
 
             var len = rus.length
             var curInt: Int? //当前数字
@@ -387,7 +392,7 @@ class AnalyzeByJSoup(doc: Any) {
 
             val head = rus.last() == ']' //是否为常规索引写法
 
-            if(head){ //常规索引写法[index...]
+            if (head) { //常规索引写法[index...]
 
                 len-- //跳过尾部']'
 
@@ -400,7 +405,8 @@ class AnalyzeByJSoup(doc: Any) {
                     else if (rl == '-') curMinus = true
                     else {
 
-                        curInt = if (l.isEmpty()) null else if (curMinus) -l.toInt() else l.toInt() //当前数字
+                        curInt =
+                            if (l.isEmpty()) null else if (curMinus) -l.toInt() else l.toInt() //当前数字
 
                         when (rl) {
 
@@ -409,32 +415,39 @@ class AnalyzeByJSoup(doc: Any) {
                             else -> {
 
                                 //为保证查找顺序，区间和单个索引都添加到同一集合
-                                if(curList.isEmpty()) {
+                                if (curList.isEmpty()) {
 
-                                    if(curInt == null) break //是jsoup选择器而非索引列表，跳出
+                                    if (curInt == null) break //是jsoup选择器而非索引列表，跳出
 
                                     indexs.add(curInt)
-                                }
-                                else{
+                                } else {
 
                                     //列表最后压入的是区间右端，若列表有两位则最先压入的是间隔
-                                    indexs.add( Triple(curInt, curList.last(), if(curList.size == 2) curList.first() else 1) )
+                                    indexs.add(
+                                        Triple(
+                                            curInt,
+                                            curList.last(),
+                                            if (curList.size == 2) curList.first() else 1
+                                        )
+                                    )
 
                                     curList.clear() //重置临时列表，避免影响到下个区间的处理
 
                                 }
 
-                                if(rl == '!'){
-                                    split='!'
-                                    do{ rl = rus[--len] } while (len > 0 && rl == ' ')//跳过所有空格
+                                if (rl == '!') {
+                                    split = '!'
+                                    do {
+                                        rl = rus[--len]
+                                    } while (len > 0 && rl == ' ')//跳过所有空格
                                 }
 
-                                if(rl == '[') {
+                                if (rl == '[') {
                                     beforeRule = rus.substring(0, len) //遇到索引边界，返回结果
                                     return
                                 }
 
-                                if(rl != ',') break //非索引结构，跳出
+                                if (rl != ',') break //非索引结构，跳出
 
                             }
                         }
@@ -452,17 +465,17 @@ class AnalyzeByJSoup(doc: Any) {
                 else if (rl == '-') curMinus = true
                 else {
 
-                    if(rl == '!'  || rl == '.' || rl == ':') { //分隔符或起始符
+                    if (rl == '!' || rl == '.' || rl == ':') { //分隔符或起始符
 
                         indexDefault.add(if (curMinus) -l.toInt() else l.toInt()) // 当前数字追加到列表
 
-                        if (rl != ':'){ //rl == '!'  || rl == '.'
+                        if (rl != ':') { //rl == '!'  || rl == '.'
                             split = rl
                             beforeRule = rus.substring(0, len)
                             return
                         }
 
-                    }else break //非索引结构，跳出循环
+                    } else break //非索引结构，跳出循环
 
                     l = "" //清空
                     curMinus = false //重置
