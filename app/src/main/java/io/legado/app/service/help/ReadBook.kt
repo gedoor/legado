@@ -415,10 +415,11 @@ object ReadBook {
                     else -> chapter.title
                 }
                 val contents = contentProcessor!!.getContent(book, chapter.title, content)
-                val textChapter = ChapterProvider.getTextChapter(book, chapter,contents,chapterSize)
+                val textChapter =
+                    ChapterProvider.getTextChapter(book, chapter, contents, chapterSize)
 
                 val offset = chapter.index - durChapterIndex
-                if (upContent) callBack?.upContent(offset ,resetPageOffset)
+                if (upContent) callBack?.upContent(offset, resetPageOffset)
                 when (offset) {
                     0 -> {
                         curTextChapter = textChapter
@@ -426,7 +427,7 @@ object ReadBook {
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
-                    - 1 -> {
+                    -1 -> {
                         prevTextChapter = textChapter
                     }
                     1 -> {

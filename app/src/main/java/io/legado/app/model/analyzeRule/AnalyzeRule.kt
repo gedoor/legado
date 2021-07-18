@@ -122,7 +122,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     @JvmOverloads
     fun getStringList(rule: String?, isUrl: Boolean = false): List<String>? {
         if (rule.isNullOrEmpty()) return null
-        val ruleList = splitSourceRule(rule,true)
+        val ruleList = splitSourceRule(rule, true)
         return getStringList(ruleList, isUrl)
     }
 
@@ -282,7 +282,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     @Suppress("UNCHECKED_CAST")
     fun getElements(ruleStr: String): List<Any> {
         var result: Any? = null
-        val ruleList = splitSourceRule(ruleStr,true)
+        val ruleList = splitSourceRule(ruleStr, true)
         content?.let { o ->
             if (ruleList.isNotEmpty()) result = o
             for (sourceRule in ruleList) {
@@ -357,61 +357,34 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     /**
      * 分解规则生成规则列表
      */
-    fun splitSourceRule(ruleStr: String?,isList:Boolean = false): List<SourceRule> {
+    fun splitSourceRule(ruleStr: String?, isList: Boolean = false): List<SourceRule> {
         if (ruleStr.isNullOrEmpty()) return ArrayList<SourceRule>()
         val ruleList = ArrayList<SourceRule>()
-        //检测Mode
         var mMode: Mode = Mode.Default
-        fun mode(ruleStr0:String)=when {
-            ruleStr0.startsWith("@@") -> {
-                mMode = Mode.Default
-                ruleStr0.substring(2)
-            }
-            ruleStr0.startsWith("@XPath:", true) -> {
-                mMode = Mode.XPath
-                ruleStr0.substring(7)
-            }
-            ruleStr0.startsWith("/") -> {//XPath特征很明显,无需配置单独的识别标头
-                mMode = Mode.XPath
-                ruleStr0
-            }
-            ruleStr0.startsWith("@Json:", true) -> {
-                mMode = Mode.Json
-                ruleStr0.substring(6)
-            }
-            ( ruleStr0[1] == '.' || ruleStr0[1] == '[') && ruleStr0[0] == '$' || isJSON -> {
-                mMode = Mode.Json
-                ruleStr0
-            }
-            else -> {
-                mMode = Mode.Default
-                ruleStr0
-            }
-        }
-
-        //拆分为规则列表
-        var start = if(isList && ruleStr.startsWith(":")){ //仅首字符为:时为AllInOne，其实:与伪类选择器冲突，建议改成?更合理
+        var start = 0
+        //仅首字符为:时为AllInOne，其实:与伪类选择器冲突，建议改成?更合理
+        if (isList && ruleStr.startsWith(":")) {
             mMode = Mode.Regex
             isRegex = true
-            1
-        }else 0
+            start = 1
+        }
         var tmp: String
         val jsMatcher = JS_PATTERN.matcher(ruleStr)
-        while (jsMatcher.find()){
+        while (jsMatcher.find()) {
             if (jsMatcher.start() > start) {
                 tmp = ruleStr.substring(start, jsMatcher.start()).trim { it <= ' ' }
                 if (tmp.isNotEmpty()) {
-                    ruleList.add(SourceRule(mode(tmp), mMode))
+                    ruleList.add(SourceRule(tmp, mMode))
                 }
             }
-            ruleList.add(SourceRule(jsMatcher.group(2)?:jsMatcher.group(1), Mode.Js))
+            ruleList.add(SourceRule(jsMatcher.group(2) ?: jsMatcher.group(1), Mode.Js))
             start = jsMatcher.end()
         }
 
-        if (ruleStr.length > start){
+        if (ruleStr.length > start) {
             tmp = ruleStr.substring(start).trim { it <= ' ' }
             if (tmp.isNotEmpty()) {
-                ruleList.add(SourceRule(mode(tmp), mMode))
+                ruleList.add(SourceRule(tmp, mMode))
             }
         }
 
@@ -437,43 +410,56 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
         init {
             this.mode = mainMode
+            rule = when {
+                ruleStr.startsWith("@CSS:", true) -> {
+                    mode = Mode.Default
+                    ruleStr
+                }
+                ruleStr.startsWith("@@") -> {
+                    mode = Mode.Default
+                    ruleStr.substring(2)
+                }
+                ruleStr.startsWith("@XPath:", true) -> {
+                    mode = Mode.XPath
+                    ruleStr.substring(7)
+                }
+                ruleStr.startsWith("/") -> {//XPath特征很明显,无需配置单独的识别标头
+                    mode = Mode.XPath
+                    ruleStr
+                }
+                ruleStr.startsWith("@Json:", true) -> {
+                    mode = Mode.Json
+                    ruleStr.substring(6)
+                }
+                (ruleStr[1] == '.' || ruleStr[1] == '[') && ruleStr.startsWith("$.") || isJSON -> {
+                    mode = Mode.Json
+                    ruleStr
+                }
+                else -> {
+                    ruleStr
+                }
+            }
             //分离put
-            rule = splitPutRule(ruleStr, putMap)
+            rule = splitPutRule(rule, putMap)
             //@get,{{ }}, 拆分
             var start = 0
             var tmp: String
             val evalMatcher = evalPattern.matcher(rule)
 
-            if(evalMatcher.find()){
-
-                var modeX = mode == Mode.Js || mode == Mode.Regex
-                if (evalMatcher.start() > 0 ) {
-                    tmp = rule.substring(0, evalMatcher.start())
-                    modeX = modeX || tmp.contains("##")
-                    splitRegex(tmp)
+            if (evalMatcher.find()) {
+                if (mode != Mode.Js && mode != Mode.Regex
+                    && evalMatcher.start() == 0
+                ) {
+                    mode = Mode.Regex
                 }
-                if(!modeX)mode = Mode.Regex
-                tmp = evalMatcher.group()
-
-                when {
-                    tmp.startsWith("@get:", true) -> {
-                        ruleType.add(getRuleType)
-                        ruleParam.add(tmp.substring(6, tmp.lastIndex))
-                    }
-                    tmp.startsWith("{{") -> {
-                        ruleType.add(jsRuleType)
-                        ruleParam.add(tmp.substring(2, tmp.length - 2))
-                    }
-                    else -> {
-                        splitRegex(tmp)
-                    }
-                }
-
-                start = evalMatcher.end()
-
-                while (evalMatcher.find()){
+                do {
                     if (evalMatcher.start() > start) {
                         tmp = rule.substring(start, evalMatcher.start())
+                        if (mode != Mode.Js && mode != Mode.Regex
+                            && start == 0 && !tmp.contains("##")
+                        ) {
+                            mode = Mode.Regex
+                        }
                         splitRegex(tmp)
                     }
                     tmp = evalMatcher.group()
@@ -491,9 +477,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                         }
                     }
                     start = evalMatcher.end()
-                }
+                } while (evalMatcher.find())
             }
-
             if (rule.length > start) {
                 tmp = rule.substring(start)
                 splitRegex(tmp)
@@ -509,11 +494,11 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             val ruleStrArray = ruleStr.split("##")
             val regexMatcher = regexPattern.matcher(ruleStrArray[0])
 
-            if(regexMatcher.find()) {
+            if (regexMatcher.find()) {
                 if (mode != Mode.Js && mode != Mode.Regex) {
                     mode = Mode.Regex
                 }
-                do{
+                do {
                     if (regexMatcher.start() > start) {
                         tmp = ruleStr.substring(start, regexMatcher.start())
                         ruleType.add(defaultRuleType)
@@ -523,7 +508,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     ruleType.add(tmp.substring(1).toInt())
                     ruleParam.add(tmp)
                     start = regexMatcher.end()
-                }while (regexMatcher.find())
+                } while (regexMatcher.find())
             }
             if (ruleStr.length > start) {
                 tmp = ruleStr.substring(start)
