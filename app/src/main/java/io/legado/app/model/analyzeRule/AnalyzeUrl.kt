@@ -84,7 +84,7 @@ class AnalyzeUrl(
                     ruleUrl = tmp.replace("@result", ruleUrl)
                 }
             }
-            ruleUrl = evalJS(jsMatcher.group(2)?:jsMatcher.group(1), ruleUrl) as String
+            ruleUrl = evalJS(jsMatcher.group(2) ?: jsMatcher.group(1), ruleUrl) as String
             start = jsMatcher.end()
         }
         if (ruleUrl.length > start) {
@@ -116,14 +116,14 @@ class AnalyzeUrl(
             bindings["book"] = book
 
             //替换所有内嵌{{js}}
-            val url = analyze.innerRule("{{","}}"){
-                when(val jsEval = SCRIPT_ENGINE.eval(it, bindings)){
+            val url = analyze.innerRule("{{", "}}") {
+                when (val jsEval = SCRIPT_ENGINE.eval(it, bindings)) {
                     is String -> jsEval
                     jsEval is Double && jsEval % 1.0 == 0.0 -> String.format("%.0f", jsEval)
                     else -> jsEval.toString()
                 }
             }
-            if(url.isNotEmpty())ruleUrl = url
+            if (url.isNotEmpty()) ruleUrl = url
         }
         //page
         page?.let {
@@ -143,7 +143,6 @@ class AnalyzeUrl(
      * 处理URL
      */
     private fun initUrl() { //replaceKeyPageJs已经替换掉额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串。
-
         val urlMatcher = paramPattern.matcher(ruleUrl)
         urlHasQuery = if(urlMatcher.find())ruleUrl.substring(0,urlMatcher.start()) else ruleUrl
         url = NetworkUtils.getAbsoluteURL(baseUrl,urlHasQuery )
@@ -152,7 +151,6 @@ class AnalyzeUrl(
         }
         if(urlHasQuery.length != ruleUrl.length ) {
             GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlMatcher.end()))?.let { option ->
-
                 option.method?.let {
                     if (it.equals("POST", true)) method = RequestMethod.POST
                 }
@@ -190,9 +188,9 @@ class AnalyzeUrl(
             RequestMethod.GET -> {
                 if (!useWebView) {
                     val pos = url.indexOf('?')
-                    if(pos != -1) {
+                    if (pos != -1) {
                         analyzeFields(url.substring(pos + 1))
-                        url = url.substring(0,pos)
+                        url = url.substring(0, pos)
                     }
                 }
             }

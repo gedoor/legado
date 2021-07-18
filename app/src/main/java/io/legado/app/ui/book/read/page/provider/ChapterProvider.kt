@@ -113,7 +113,7 @@ object ChapterProvider {
             } else if (book.getImageStyle() != Book.imgStyleText) {
                 content.replace(AppPattern.imgPattern.toRegex(), "\n\$0\n").split("\n")
                     .forEach { text ->
-                        if(text.isNotBlank()){
+                        if (text.isNotBlank()) {
                             if (!text.startsWith("<img src=\"")) { //非图片
                                 val isTitle = index == 0
                                 val textPaint = if (isTitle) titlePaint else contentPaint

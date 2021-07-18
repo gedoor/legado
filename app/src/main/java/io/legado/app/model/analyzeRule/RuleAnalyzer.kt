@@ -1,8 +1,9 @@
 package io.legado.app.model.analyzeRule
 
 import io.legado.app.utils.isJson
-import java.util.ArrayList
+import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.HashMap
 
 //通用的规则切分处理
 
@@ -70,6 +71,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         }
         return false
     }
+
     /**
      * 从剩余字串中拉出一个字符串，直到但不包括匹配序列（匹配参数列表中一项即为匹配），或剩余字串用完。
      * @param seq 匹配字符串序列
@@ -369,8 +371,8 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      *
      * */
     fun innerRule(
-        startStr:String,
-        endStr:String,
+        startStr: String,
+        endStr: String,
         fr: (String) -> String?
     ): String {
 
@@ -380,13 +382,18 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             val posPre = pos //记录consumeTo匹配位置
             if (consumeTo(endStr)) {
                 val frv = fr(queue.substring(posPre, pos))
-                    st.append(queue.substring(startX, posPre - startStr.length) + frv) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
-                    pos += endStr.length //跳过结束字符串
-                    startX = pos //记录下次规则起点
+                st.append(
+                    queue.substring(
+                        startX,
+                        posPre - startStr.length
+                    ) + frv
+                ) //压入内嵌规则前的内容，及内嵌规则解析得到的字符串
+                pos += endStr.length //跳过结束字符串
+                startX = pos //记录下次规则起点
             }
         }
 
-        return if(startX == 0) queue else st.apply {
+        return if (startX == 0) queue else st.apply {
             append(queue.substring(startX))
         }.toString()
     }
@@ -394,8 +401,10 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     //-----------此处向下的函数和变量都未被使用，但以后要用--------
 
     val ruleTypeList = ArrayList<String>()
+
     //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
     val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced
+
     enum class Mode {
         XPath, Json, Default, Js, Regex
     }
@@ -450,11 +459,11 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             pos = st //位置回到筛选器处
             val next = if (queue[pos] == '[') ']' else ')' //平衡组末尾字符
 
-            if (!chompBalanced(queue[pos], next)){
+            if (!chompBalanced(queue[pos], next)) {
                 ruleTypeList.clear()
                 rule.clear()
-                consumeToAny("<js>","@js:")
-                rule += queue.substring(0,pos)
+                consumeToAny("<js>", "@js:")
+                rule += queue.substring(0, pos)
                 ruleTypeList += queue.substring(pos, pos + 4) //设置组合类型
             }
 
@@ -472,7 +481,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
 
     var isMulu = false
     var isreverse = false
-    var isAllInOne= false
+    var isAllInOne = false
 
     var isFind = false
     private val findName = ArrayList<String>()
@@ -488,15 +497,15 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     private val defaultRuleType = 0
 
     @JvmOverloads
-    fun setContent(cont: String,type:String = ""): RuleAnalyzer {
+    fun setContent(cont: String, type: String = ""): RuleAnalyzer {
         queue = cont
-        when(type){
+        when (type) {
             "mulu" -> {
-                if(queue[0] =='-'){ //目录反转
+                if (queue[0] == '-') { //目录反转
                     isreverse = true
                     startX++
                     pos++
-                }else if(queue[0] =='?'){ //AllInOne
+                } else if (queue[0] == '?') { //AllInOne
                     isAllInOne = true
                     startX++
                     pos++
@@ -505,8 +514,8 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             }
             "find" -> {
                 pos = queue.indexOf("::")
-                findName.add(queue.substring(startX,pos))
-                pos+=2
+                findName.add(queue.substring(startX, pos))
+                pos += 2
                 isFind = true
             }
             "url" -> {
@@ -538,14 +547,15 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         /**
          * 参数字符串
          */
-        private val STARTSTRURL = arrayOf(",{",)
+        private val STARTSTRURL = arrayOf(",{")
 
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
         private val getPattern = Pattern.compile("@get:\\{([^}]+?)\\}", Pattern.CASE_INSENSITIVE)
-        private val evalPattern = Pattern.compile("\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
+        private val evalPattern =
+            Pattern.compile("\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
 
-        val ENDSTR= mapOf(
+        val ENDSTR = mapOf(
             "<js>" to "</js>",
             "{{" to "}}",
         )
@@ -553,18 +563,35 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
         /**
          * 规则起始字符串
          */
-        private val STARTSTR = arrayOf("@js:","<js>","</js>","##","@@","@"
-            ,"{{@", "{{","}}"
-            ,"}"
-            , "{@", "{/", "{$"
-            , "{class"
-            , "{id"
-            , "{tag"
-            , "{text"
-            , "{children"
-            ,"/","$","@xpath:","@json:","@css:"
-            ,"||", "&&", "%%"
-        ,"@get:{","@put:{"
+        private val STARTSTR = arrayOf(
+            "@js:",
+            "<js>",
+            "</js>",
+            "##",
+            "@@",
+            "@",
+            "{{@",
+            "{{",
+            "}}",
+            "}",
+            "{@",
+            "{/",
+            "{$",
+            "{class",
+            "{id",
+            "{tag",
+            "{text",
+            "{children",
+            "/",
+            "$",
+            "@xpath:",
+            "@json:",
+            "@css:",
+            "||",
+            "&&",
+            "%%",
+            "@get:{",
+            "@put:{"
         )
 
         /**
