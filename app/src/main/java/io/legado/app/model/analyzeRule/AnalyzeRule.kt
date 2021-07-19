@@ -412,7 +412,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
         init {
             rule = when {
-                mode == Mode.Js -> ruleStr
+                mode == Mode.Js || mode == Mode.Regex -> ruleStr
                 ruleStr.startsWith("@CSS:", true) -> {
                     mode = Mode.Default
                     ruleStr
