@@ -39,7 +39,7 @@ class AnalyzeUrl(
     headerMapF: Map<String, String>? = null
 ) : JsExtensions {
     companion object {
-        val paramPattern = Pattern.compile("\\s*,\\s*(?=\\{)")
+        val paramPattern: Pattern = Pattern.compile("\\s*,\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
     }
 
