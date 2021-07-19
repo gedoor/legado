@@ -85,6 +85,8 @@ interface JsExtensions {
 
     /**
      * 实现16进制字符串转文件
+     * @param content 需要转成文件的16进制字符串
+     * @param url 通过url里的参数来判断文件类型
      * @return 相对路径
      */
     fun downloadFile(content: String, url: String): String {
