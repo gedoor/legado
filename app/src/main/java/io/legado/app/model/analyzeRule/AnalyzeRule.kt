@@ -66,7 +66,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     fun setRedirectUrl(url: String): URL? {
         kotlin.runCatching {
             val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
-            redirectUrl = URL(if (urlMatcher.find()) url.substring(0, urlMatcher.start()) else url)
+            redirectUrl = URL( if(urlMatcher.find())url.substring(0,urlMatcher.start()) else url)
         }
         return redirectUrl
     }
@@ -367,8 +367,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             mMode = Mode.Regex
             isRegex = true
             start = 1
-        } else if (isRegex) {
-            mMode = Mode.Regex
         }
         var tmp: String
         val jsMatcher = JS_PATTERN.matcher(ruleStr)
@@ -397,10 +395,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      * 规则类
      */
 
-    inner class SourceRule internal constructor(
-        ruleStr: String,
-        internal var mode: Mode = Mode.Default
-    ) {
+    inner class SourceRule internal constructor(ruleStr: String, mainMode: Mode = Mode.Default) {
+        internal var mode = mainMode
         internal var rule: String
         internal var replaceRegex = ""
         internal var replacement = ""
@@ -414,7 +410,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
         init {
             rule = when {
-                mode == Mode.Js || mode == Mode.Regex -> ruleStr
+                mode == Mode.Js || mode == Mode.Regex -> { //splitSourceRule预先确定了Mode.Js和Mode.Regex两种mode，避免被后面的值覆盖先进行判断
+                    ruleStr
+                }
                 ruleStr.startsWith("@CSS:", true) -> {
                     mode = Mode.Default
                     ruleStr
@@ -435,11 +433,13 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     mode = Mode.Json
                     ruleStr.substring(6)
                 }
-                isJSON || ruleStr.startsWith("$.") || ruleStr.startsWith("$[") -> {
+                ruleStr.startsWith("$.") || ruleStr.startsWith("$[") || isJSON -> {
                     mode = Mode.Json
                     ruleStr
                 }
-                else -> ruleStr
+                else -> {
+                    ruleStr
+                }
             }
             //分离put
             rule = splitPutRule(rule, putMap)
