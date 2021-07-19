@@ -431,7 +431,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     mode = Mode.Json
                     ruleStr.substring(6)
                 }
-                (ruleStr[1] == '.' || ruleStr[1] == '[') && ruleStr.startsWith("$.") || isJSON -> {
+                ruleStr.startsWith("$.") || isJSON -> {
                     mode = Mode.Json
                     ruleStr
                 }
