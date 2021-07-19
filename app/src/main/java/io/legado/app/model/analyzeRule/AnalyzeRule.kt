@@ -396,7 +396,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      */
 
     inner class SourceRule internal constructor(ruleStr: String, mainMode: Mode = Mode.Default) {
-        internal var mode: Mode
+        internal var mode = mainMode
         internal var rule: String
         internal var replaceRegex = ""
         internal var replacement = ""
@@ -409,8 +409,10 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         private val defaultRuleType = 0
 
         init {
-            this.mode = mainMode
             rule = when {
+                mode == Mode.Js || mode == Mode.Regex -> { //splitSourceRule预先确定了Mode.Js和Mode.Regex两种mode，避免被后面的值覆盖先进行判断
+                    ruleStr
+                }
                 ruleStr.startsWith("@CSS:", true) -> {
                     mode = Mode.Default
                     ruleStr
@@ -431,7 +433,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     mode = Mode.Json
                     ruleStr.substring(6)
                 }
-                (ruleStr[1] == '.' || ruleStr[1] == '[') && ruleStr.startsWith("$.") || isJSON -> {
+                ruleStr.startsWith("$.") || ruleStr.startsWith("$[") || isJSON -> {
                     mode = Mode.Json
                     ruleStr
                 }
