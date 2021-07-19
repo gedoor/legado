@@ -410,7 +410,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
         init {
             this.mode = mainMode
-            rule = when {
+            rule = if(mode == Mode.Js)ruleStr //避免被后面的值覆盖，加个判断
+            else when {
                 ruleStr.startsWith("@CSS:", true) -> {
                     mode = Mode.Default
                     ruleStr
@@ -431,7 +432,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     mode = Mode.Json
                     ruleStr.substring(6)
                 }
-                (ruleStr[1] == '.' || ruleStr[1] == '[') && ruleStr.startsWith("$.") || isJSON -> {
+                ruleStr.startsWith("$.") || ruleStr.startsWith("$[") || isJSON -> {
                     mode = Mode.Json
                     ruleStr
                 }
