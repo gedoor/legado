@@ -367,6 +367,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             mMode = Mode.Regex
             isRegex = true
             start = 1
+        } else if (isRegex) {
+            mMode = Mode.Regex
         }
         var tmp: String
         val jsMatcher = JS_PATTERN.matcher(ruleStr)
@@ -435,10 +437,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 }
                 isJSON || ruleStr.startsWith("$.") || ruleStr.startsWith("$[") -> {
                     mode = Mode.Json
-                    ruleStr
-                }
-                isRegex -> {
-                    mode = Mode.Regex
                     ruleStr
                 }
                 else -> ruleStr
