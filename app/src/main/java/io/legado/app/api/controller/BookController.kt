@@ -6,15 +6,13 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
+import io.legado.app.help.ContentProcessor
 import io.legado.app.help.ImageLoader
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.image.CoverImageView
-import io.legado.app.utils.GSON
-import io.legado.app.utils.cnCompare
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 
@@ -130,22 +128,31 @@ object BookController {
         val book = appDb.bookDao.getBook(bookUrl)
         val chapter = appDb.bookChapterDao.getChapter(bookUrl, index)
         if (book == null || chapter == null) {
-            returnData.setErrorMsg("未找到")
-        } else {
-            val content: String? = BookHelp.getContent(book, chapter)
-            if (content != null) {
-                saveBookReadIndex(book, index)
-                returnData.setData(content)
-            } else {
-                appDb.bookSourceDao.getBookSource(book.origin)?.let { source ->
-                    runBlocking {
-                        WebBook(source).getContentAwait(this, book, chapter)
-                    }.let {
-                        saveBookReadIndex(book, index)
-                        returnData.setData(it)
-                    }
-                } ?: returnData.setErrorMsg("未找到书源")
+            return returnData.setErrorMsg("未找到")
+        }
+        var content: String? = BookHelp.getContent(book, chapter)
+        if (content != null) {
+            val contentProcessor = ContentProcessor.get(book.name, book.origin)
+            saveBookReadIndex(book, index)
+            return returnData.setData(
+                contentProcessor.getContent(book, chapter.title, content)
+                    .joinToString("\n")
+            )
+        }
+        val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
+            ?: return returnData.setErrorMsg("未找到书源")
+        try {
+            content = runBlocking {
+                WebBook(bookSource).getContentAwait(this, book, chapter)
             }
+            val contentProcessor = ContentProcessor.get(book.name, book.origin)
+            saveBookReadIndex(book, index)
+            returnData.setData(
+                contentProcessor.getContent(book, chapter.title, content)
+                    .joinToString("\n")
+            )
+        } catch (e: Exception) {
+            returnData.setErrorMsg(e.msg)
         }
         return returnData
     }
