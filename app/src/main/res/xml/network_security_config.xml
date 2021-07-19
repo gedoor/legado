@@ -3,4 +3,11 @@
     <base-config
         cleartextTrafficPermitted="true"
         tools:ignore="InsecureBaseConfiguration" />
+
+    <debug-overrides cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="user" />
+            <certificates src="system"/>
+        </trust-anchors>
+    </debug-overrides>
 </network-security-config>
