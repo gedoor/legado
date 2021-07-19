@@ -73,36 +73,56 @@ object BookInfo {
         }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取分类")
-        analyzeRule.getStringList(infoRule.kind)
-            ?.joinToString(",")
-            ?.let {
-                if (it.isNotEmpty()) book.kind = it
-            }
-        Debug.log(bookSource.bookSourceUrl, "└${book.kind}")
+        try {
+            analyzeRule.getStringList(infoRule.kind)
+                ?.joinToString(",")
+                ?.let {
+                    if (it.isNotEmpty()) book.kind = it
+                }
+            Debug.log(bookSource.bookSourceUrl, "└${book.kind}")
+        } catch (e: Exception) {
+            Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
+        }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取字数")
-        wordCountFormat(analyzeRule.getString(infoRule.wordCount)).let {
-            if (it.isNotEmpty()) book.wordCount = it
+        try {
+            wordCountFormat(analyzeRule.getString(infoRule.wordCount)).let {
+                if (it.isNotEmpty()) book.wordCount = it
+            }
+            Debug.log(bookSource.bookSourceUrl, "└${book.wordCount}")
+        } catch (e: Exception) {
+            Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.wordCount}")
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取最新章节")
-        analyzeRule.getString(infoRule.lastChapter).let {
-            if (it.isNotEmpty()) book.latestChapterTitle = it
+        try {
+            analyzeRule.getString(infoRule.lastChapter).let {
+                if (it.isNotEmpty()) book.latestChapterTitle = it
+            }
+            Debug.log(bookSource.bookSourceUrl, "└${book.latestChapterTitle}")
+        } catch (e: Exception) {
+            Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.latestChapterTitle}")
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取简介")
-        analyzeRule.getString(infoRule.intro).let {
-            if (it.isNotEmpty()) book.intro = HtmlFormatter.format(it)
+        try {
+            analyzeRule.getString(infoRule.intro).let {
+                if (it.isNotEmpty()) book.intro = HtmlFormatter.format(it)
+            }
+            Debug.log(bookSource.bookSourceUrl, "└${book.intro}")
+        } catch (e: Exception) {
+            Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.intro}")
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
-        analyzeRule.getString(infoRule.coverUrl).let {
-            if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(redirectUrl, it)
+        try {
+            analyzeRule.getString(infoRule.coverUrl).let {
+                if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(redirectUrl, it)
+            }
+            Debug.log(bookSource.bookSourceUrl, "└${book.coverUrl}")
+        } catch (e: Exception) {
+            Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.coverUrl}")
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
         book.tocUrl = analyzeRule.getString(infoRule.tocUrl, true)
