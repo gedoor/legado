@@ -410,7 +410,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
         init {
             rule = when {
-                mode == Mode.Js || mode == Mode.Regex->{//splitSourceRule处预先处理了，Mode.Js和Mode.Regex，避免被后面的值覆盖先进行判断
+                mode == Mode.Js || mode == Mode.Regex->{//splitSourceRule可能预先确定了Mode.Js和Mode.Regex两种mode，避免被后面的值覆盖先进行判断
                     ruleStr
                 }
                 ruleStr.startsWith("@CSS:", true) -> {
