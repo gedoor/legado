@@ -38,7 +38,7 @@ object HtmlFormatter {
             var param = ""
             sb.append(
                 keepImgHtml.substring(appendPos, matcher.start()), "<img src=\"${
-                    (NetworkUtils.getAbsoluteURL(redirectUrl,
+                    NetworkUtils.getAbsoluteURL(redirectUrl,
                         matcher.group(1)?.let {
                             val urlMatcher = AnalyzeUrl.paramPattern.matcher(it)
                             if (urlMatcher.find()) {
@@ -46,7 +46,7 @@ object HtmlFormatter {
                                 it.substring(0, urlMatcher.start())
                             } else it
                         } ?: matcher.group(2) ?: matcher.group(3)!!
-                    )) + param
+                    ) + param
                 }\">"
             )
             appendPos = matcher.end()
