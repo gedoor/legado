@@ -26,10 +26,8 @@ object HtmlFormatter {
 
     fun formatKeepImg(html: String?, redirectUrl: URL?): String {
         html ?: return ""
-        val keepImgHtml = html.replace(wrapHtmlRegex, "\n")
-            .replace(notImgHtmlRegex, "")
-            .replace("\\n\\s*$|^\\s*\\n".toRegex(), "")
-            .replace("\\n\\s*\\n".toRegex(), "\n")
+        val keepImgHtml = formatKeepImg(html)
+
         //正则的“|”处于顶端而不处于（）中时，具有类似||的熔断效果，故以此机制简化原来的代码
         val matcher = formatImagePattern.matcher(keepImgHtml)
         var appendPos = 0
@@ -38,7 +36,8 @@ object HtmlFormatter {
             var param = ""
             sb.append(
                 keepImgHtml.substring(appendPos, matcher.start()), "<img src=\"${
-                    NetworkUtils.getAbsoluteURL(redirectUrl,
+                    NetworkUtils.getAbsoluteURL(
+                        redirectUrl,
                         matcher.group(1)?.let {
                             val urlMatcher = AnalyzeUrl.paramPattern.matcher(it)
                             if (urlMatcher.find()) {
