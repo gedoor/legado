@@ -409,8 +409,10 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         private val defaultRuleType = 0
 
         init {
-            rule = if(mode == Mode.Js)ruleStr //避免被后面的值覆盖，加个判断
-            else when {
+            rule = when {
+                mode == Mode.Js->{//避免被后面的值覆盖，先判断js
+                    ruleStr
+                }
                 ruleStr.startsWith("@CSS:", true) -> {
                     mode = Mode.Default
                     ruleStr
