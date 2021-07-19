@@ -396,7 +396,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      */
 
     inner class SourceRule internal constructor(ruleStr: String, mainMode: Mode = Mode.Default) {
-        internal var mode = mainMode
+        internal var mode: Mode
         internal var rule: String
         internal var replaceRegex = ""
         internal var replacement = ""
@@ -409,10 +409,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         private val defaultRuleType = 0
 
         init {
-            rule = when {
-                mode == Mode.Js || mode == Mode.Regex -> { //splitSourceRule预先确定了Mode.Js和Mode.Regex两种mode，避免被后面的值覆盖先进行判断
-                    ruleStr
-                }
+            this.mode = mainMode
+            rule = if(mode == Mode.Js)ruleStr //避免被后面的值覆盖，加个判断
+            else when {
                 ruleStr.startsWith("@CSS:", true) -> {
                     mode = Mode.Default
                     ruleStr
