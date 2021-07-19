@@ -413,6 +413,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         init {
             rule = when {
                 mode == Mode.Js || mode == Mode.Regex -> ruleStr
+                isRegex -> {
+                    mode = Mode.Regex
+                    ruleStr
+                }
+                isJSON || ruleStr.startsWith("$.") || ruleStr.startsWith("$[") -> {
+                    mode = Mode.Json
+                    ruleStr
+                }
                 ruleStr.startsWith("@CSS:", true) -> {
                     mode = Mode.Default
                     ruleStr
@@ -432,10 +440,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 ruleStr.startsWith("@Json:", true) -> {
                     mode = Mode.Json
                     ruleStr.substring(6)
-                }
-                isJSON || ruleStr.startsWith("$.") || ruleStr.startsWith("$[") -> {
-                    mode = Mode.Json
-                    ruleStr
                 }
                 else -> ruleStr
             }
