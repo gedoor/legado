@@ -123,6 +123,7 @@ kapt {
 
 dependencies {
     implementation project(path: ':epublib')
+    implementation project(path: ':JsoupXpath')
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     testImplementation 'junit:junit:4.13.2'
@@ -177,9 +178,6 @@ dependencies {
     implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
 
     //规则相关
-    implementation 'org.jsoup:jsoup:1.14.1'
-    //noinspection GradleDependency
-    implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
     implementation 'com.jayway.jsonpath:json-path:2.6.0'
 
     //JS rhino
