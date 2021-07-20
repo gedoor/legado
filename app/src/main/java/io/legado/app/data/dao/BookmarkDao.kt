@@ -1,8 +1,8 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.Bookmark
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -15,7 +15,7 @@ interface BookmarkDao {
     fun observeByBook(
         bookName: String,
         bookAuthor: String
-    ): LiveData<List<Bookmark>>
+    ): Flow<List<Bookmark>>
 
     @Query(
         """
@@ -27,7 +27,7 @@ interface BookmarkDao {
         bookName: String,
         bookAuthor: String,
         key: String
-    ): LiveData<List<Bookmark>>
+    ): Flow<List<Bookmark>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookmark: Bookmark)
