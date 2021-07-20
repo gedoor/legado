@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -35,6 +34,9 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.io.File
 
 /**
@@ -49,7 +51,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     override val viewModel by viewModels<RssSourceViewModel>()
     private val importRecordKey = "rssSourceRecordKey"
     private lateinit var adapter: RssSourceAdapter
-    private var sourceLiveData: LiveData<List<RssSource>>? = null
+    private var sourceFlowJob: Job? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
@@ -86,8 +88,8 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
         initSearchView()
-        initLiveDataGroup()
-        initLiveDataSource()
+        initGroupFlow()
+        upSourceFlow()
         initViewEvent()
     }
 
@@ -168,21 +170,23 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    initLiveDataSource(newText)
+                    upSourceFlow(newText)
                     return false
                 }
             })
         }
     }
 
-    private fun initLiveDataGroup() {
-        appDb.rssSourceDao.liveGroup().observe(this, {
-            groups.clear()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+    private fun initGroupFlow() {
+        launch {
+            appDb.rssSourceDao.liveGroup().collect {
+                groups.clear()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                upGroupMenu()
             }
-            upGroupMenu()
-        })
+        }
     }
 
     override fun selectAll(selectAll: Boolean) {
@@ -224,23 +228,23 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
         }
     }
 
-    private fun initLiveDataSource(searchKey: String? = null) {
-        sourceLiveData?.removeObservers(this)
-        sourceLiveData = when {
-            searchKey.isNullOrBlank() -> {
-                appDb.rssSourceDao.liveAll()
-            }
-            searchKey.startsWith("group:") -> {
-                val key = searchKey.substringAfter("group:")
-                appDb.rssSourceDao.liveGroupSearch("%$key%")
-            }
-            else -> {
-                appDb.rssSourceDao.liveSearch("%$searchKey%")
-            }
-        }.apply {
-            observe(this@RssSourceActivity, {
+    private fun upSourceFlow(searchKey: String? = null) {
+        sourceFlowJob?.cancel()
+        sourceFlowJob = launch {
+            when {
+                searchKey.isNullOrBlank() -> {
+                    appDb.rssSourceDao.liveAll()
+                }
+                searchKey.startsWith("group:") -> {
+                    val key = searchKey.substringAfter("group:")
+                    appDb.rssSourceDao.liveGroupSearch("%$key%")
+                }
+                else -> {
+                    appDb.rssSourceDao.liveSearch("%$searchKey%")
+                }
+            }.collect {
                 adapter.setItems(it, adapter.diffItemCallback)
-            })
+            }
         }
     }
 

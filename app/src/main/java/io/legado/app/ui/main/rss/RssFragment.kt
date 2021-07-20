@@ -7,7 +7,6 @@ import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppPattern
@@ -29,6 +28,9 @@ import io.legado.app.utils.openUrl
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 /**
@@ -40,9 +42,8 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     override val viewModel by viewModels<RssSourceViewModel>()
     private lateinit var adapter: RssAdapter
     private lateinit var searchView: SearchView
-    private var liveRssData: LiveData<List<RssSource>>? = null
+    private var rssFlowJob: Job? = null
     private val groups = linkedSetOf<String>()
-    private var liveGroup: LiveData<List<String>>? = null
     private var groupsMenu: SubMenu? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,7 +52,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         initSearchView()
         initRecyclerView()
         initGroupData()
-        initData()
+        upRssFlowJob()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -97,7 +98,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                initData(newText)
+                upRssFlowJob(newText)
                 return false
             }
         })
@@ -118,32 +119,32 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         }
     }
 
-    private fun initData(searchKey: String? = null) {
-        liveRssData?.removeObservers(this)
-        liveRssData = when {
-            searchKey.isNullOrEmpty() -> appDb.rssSourceDao.liveEnabled()
-            searchKey.startsWith("group:") -> {
-                val key = searchKey.substringAfter("group:")
-                appDb.rssSourceDao.liveEnabledByGroup("%$key%")
+    private fun initGroupData() {
+        launch {
+            appDb.rssSourceDao.liveGroup().collect {
+                groups.clear()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                upGroupsMenu()
             }
-            else -> appDb.rssSourceDao.liveEnabled("%$searchKey%")
-        }.apply {
-            observe(viewLifecycleOwner, {
-                adapter.setItems(it)
-            })
         }
     }
 
-    private fun initGroupData() {
-        liveGroup?.removeObservers(viewLifecycleOwner)
-        liveGroup = appDb.rssSourceDao.liveGroup()
-        liveGroup?.observe(viewLifecycleOwner, {
-            groups.clear()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+    private fun upRssFlowJob(searchKey: String? = null) {
+        rssFlowJob?.cancel()
+        rssFlowJob = launch {
+            when {
+                searchKey.isNullOrEmpty() -> appDb.rssSourceDao.liveEnabled()
+                searchKey.startsWith("group:") -> {
+                    val key = searchKey.substringAfter("group:")
+                    appDb.rssSourceDao.liveEnabledByGroup("%$key%")
+                }
+                else -> appDb.rssSourceDao.liveEnabled("%$searchKey%")
+            }.collect {
+                adapter.setItems(it)
             }
-            upGroupsMenu()
-        })
+        }
     }
 
     override fun openRss(rssSource: RssSource) {
