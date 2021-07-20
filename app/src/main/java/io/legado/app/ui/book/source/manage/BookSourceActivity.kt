@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
@@ -40,6 +39,9 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.io.File
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
@@ -52,7 +54,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private val importRecordKey = "bookSourceRecordKey"
     private lateinit var adapter: BookSourceAdapter
     private lateinit var searchView: SearchView
-    private var bookSourceLiveDate: LiveData<List<BookSource>>? = null
+    private var sourceFlowJob: Job? = null
     private val groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var sort = Sort.Default
@@ -94,7 +96,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         searchView = binding.titleBar.findViewById(R.id.search_view)
         initRecyclerView()
         initSearchView()
-        initLiveDataBookSource()
+        upBookSource()
         initLiveDataGroup()
         initSelectActionBar()
         if (!LocalConfig.bookSourcesHelpVersionIsLast) {
@@ -134,32 +136,32 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_sort_manual -> {
                 item.isChecked = true
                 sortCheck(Sort.Default)
-                initLiveDataBookSource(searchView.query?.toString())
+                upBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_auto -> {
                 item.isChecked = true
                 sortCheck(Sort.Weight)
-                initLiveDataBookSource(searchView.query?.toString())
+                upBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_name -> {
                 item.isChecked = true
                 sortCheck(Sort.Name)
-                initLiveDataBookSource(searchView.query?.toString())
+                upBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_url -> {
                 item.isChecked = true
                 sortCheck(Sort.Url)
-                initLiveDataBookSource(searchView.query?.toString())
+                upBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_time -> {
                 item.isChecked = true
                 sortCheck(Sort.Update)
-                initLiveDataBookSource(searchView.query?.toString())
+                upBookSource(searchView.query?.toString())
             }
             R.id.menu_sort_enable -> {
                 item.isChecked = true
                 sortCheck(Sort.Enable)
-                initLiveDataBookSource(searchView.query?.toString())
+                upBookSource(searchView.query?.toString())
             }
             R.id.menu_enabled_group -> {
                 searchView.setQuery(getString(R.string.enabled), true)
@@ -199,27 +201,27 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         searchView.setOnQueryTextListener(this)
     }
 
-    private fun initLiveDataBookSource(searchKey: String? = null) {
-        bookSourceLiveDate?.removeObservers(this)
-        bookSourceLiveDate = when {
-            searchKey.isNullOrEmpty() -> {
-                appDb.bookSourceDao.liveDataAll()
-            }
-            searchKey == getString(R.string.enabled) -> {
-                appDb.bookSourceDao.liveDataEnabled()
-            }
-            searchKey == getString(R.string.disabled) -> {
-                appDb.bookSourceDao.liveDataDisabled()
-            }
-            searchKey.startsWith("group:") -> {
-                val key = searchKey.substringAfter("group:")
-                appDb.bookSourceDao.liveDataGroupSearch("%$key%")
-            }
-            else -> {
-                appDb.bookSourceDao.liveDataSearch("%$searchKey%")
-            }
-        }.apply {
-            observe(this@BookSourceActivity, { data ->
+    private fun upBookSource(searchKey: String? = null) {
+        sourceFlowJob?.cancel()
+        sourceFlowJob = launch {
+            when {
+                searchKey.isNullOrEmpty() -> {
+                    appDb.bookSourceDao.liveDataAll()
+                }
+                searchKey == getString(R.string.enabled) -> {
+                    appDb.bookSourceDao.liveDataEnabled()
+                }
+                searchKey == getString(R.string.disabled) -> {
+                    appDb.bookSourceDao.liveDataDisabled()
+                }
+                searchKey.startsWith("group:") -> {
+                    val key = searchKey.substringAfter("group:")
+                    appDb.bookSourceDao.liveDataGroupSearch("%$key%")
+                }
+                else -> {
+                    appDb.bookSourceDao.liveDataSearch("%$searchKey%")
+                }
+            }.collect { data ->
                 val sourceList =
                     if (sortAscending) when (sort) {
                         Sort.Weight -> data.sortedBy { it.weight }
@@ -254,7 +256,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         else -> data.reversed()
                     }
                 adapter.setItems(sourceList, adapter.diffItemCallback)
-            })
+            }
         }
     }
 
@@ -273,13 +275,16 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun initLiveDataGroup() {
-        appDb.bookSourceDao.liveGroup().observe(this, {
-            groups.clear()
-            it.forEach { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-            }
-            upGroupMenu()
-        })
+        launch {
+            appDb.bookSourceDao.liveGroup()
+                .collect {
+                    groups.clear()
+                    it.forEach { group ->
+                        groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                    }
+                    upGroupMenu()
+                }
+        }
     }
 
     override fun selectAll(selectAll: Boolean) {
@@ -453,7 +458,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun onQueryTextChange(newText: String?): Boolean {
         newText?.let {
-            initLiveDataBookSource(it)
+            upBookSource(it)
         }
         return false
     }

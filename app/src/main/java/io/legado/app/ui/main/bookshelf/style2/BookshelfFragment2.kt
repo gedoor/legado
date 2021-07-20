@@ -32,6 +32,9 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /**
@@ -46,7 +49,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     private lateinit var booksAdapter: BaseBooksAdapter<*>
     override var groupId = AppConst.bookGroupNoneId
     private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
-    private var bookshelfLiveData: LiveData<List<Book>>? = null
+    private var booksFlowJob: Job? = null
     private var bookGroups: List<BookGroup> = emptyList()
     override var books: List<Book> = emptyList()
 
@@ -130,15 +133,15 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     private fun initBooksData() {
-        bookshelfLiveData?.removeObservers(this)
-        bookshelfLiveData = when (groupId) {
-            AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
-            AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
-            AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
-            AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
-            else -> appDb.bookDao.observeByGroup(groupId)
-        }.apply {
-            observe(viewLifecycleOwner) { list ->
+        booksFlowJob?.cancel()
+        booksFlowJob = launch {
+            when (groupId) {
+                AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
+                AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
+                AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
+                AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
+                else -> appDb.bookDao.observeByGroup(groupId)
+            }.collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 books = when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> list.sortedByDescending {

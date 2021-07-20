@@ -22,6 +22,8 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class ChangeSourceDialog : BaseDialogFragment(),
@@ -148,13 +150,15 @@ class ChangeSourceDialog : BaseDialogFragment(),
         viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
             adapter.setItems(it)
         })
-        appDb.bookSourceDao.liveGroupEnabled().observe(this, {
-            groups.clear()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+        launch {
+            appDb.bookSourceDao.liveGroupEnabled().collect {
+                groups.clear()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                upGroupMenu()
             }
-            upGroupMenu()
-        })
+        }
     }
 
     private val stopMenuItem: MenuItem?

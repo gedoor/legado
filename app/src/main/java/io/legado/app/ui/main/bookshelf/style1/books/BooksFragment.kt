@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +28,9 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /**
@@ -52,7 +54,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     private val activityViewModel: MainViewModel
             by activityViewModels()
     private lateinit var booksAdapter: BaseBooksAdapter<*>
-    private var bookshelfLiveData: LiveData<List<Book>>? = null
+    private var booksFlowJob: Job? = null
     private var position = 0
     private var groupId = -1L
 
@@ -101,15 +103,15 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     private fun upRecyclerData() {
-        bookshelfLiveData?.removeObservers(this)
-        bookshelfLiveData = when (groupId) {
-            AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
-            AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
-            AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
-            AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
-            else -> appDb.bookDao.observeByGroup(groupId)
-        }.apply {
-            observe(viewLifecycleOwner) { list ->
+        booksFlowJob?.cancel()
+        booksFlowJob = launch {
+            when (groupId) {
+                AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
+                AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
+                AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
+                AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
+                else -> appDb.bookDao.observeByGroup(groupId)
+            }.collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> list.sortedByDescending { it.latestChapterTime }

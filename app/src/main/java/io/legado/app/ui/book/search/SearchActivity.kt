@@ -30,6 +30,8 @@ import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -47,7 +49,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private lateinit var loadMoreView: LoadMoreView
     private lateinit var searchView: SearchView
     private var historyData: LiveData<List<SearchKeyword>>? = null
-    private var bookData: LiveData<List<Book>>? = null
+    private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = linkedSetOf<String>()
@@ -58,7 +60,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         initRecyclerView()
         initSearchView()
         initOtherView()
-        initLiveData()
+        initData()
         receiptIntent(intent)
     }
 
@@ -189,14 +191,16 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         binding.tvClearHistory.setOnClickListener { viewModel.clearHistory() }
     }
 
-    private fun initLiveData() {
-        appDb.bookSourceDao.liveGroupEnabled().observe(this, {
-            groups.clear()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+    private fun initData() {
+        launch {
+            appDb.bookSourceDao.liveGroupEnabled().collect {
+                groups.clear()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                upGroupMenu()
             }
-            upGroupMenu()
-        })
+        }
         viewModel.searchBookLiveData.observe(this, {
             upSearchItems(it)
         })
@@ -268,23 +272,26 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 更新搜索历史
      */
     private fun upHistory(key: String? = null) {
-        bookData?.removeObservers(this)
-        if (key.isNullOrBlank()) {
-            binding.tvBookShow.gone()
-            binding.rvBookshelfSearch.gone()
-        } else {
-            bookData = appDb.bookDao.liveDataSearch(key)
-            bookData?.observe(this, {
-                if (it.isEmpty()) {
-                    binding.tvBookShow.gone()
-                    binding.rvBookshelfSearch.gone()
-                } else {
-                    binding.tvBookShow.visible()
-                    binding.rvBookshelfSearch.visible()
+        booksFlowJob?.cancel()
+        booksFlowJob = launch {
+            if (key.isNullOrBlank()) {
+                binding.tvBookShow.gone()
+                binding.rvBookshelfSearch.gone()
+            } else {
+                val bookFlow = appDb.bookDao.liveDataSearch(key)
+                bookFlow.collect {
+                    if (it.isEmpty()) {
+                        binding.tvBookShow.gone()
+                        binding.rvBookshelfSearch.gone()
+                    } else {
+                        binding.tvBookShow.visible()
+                        binding.rvBookshelfSearch.visible()
+                    }
+                    bookAdapter.setItems(it)
                 }
-                bookAdapter.setItems(it)
-            })
+            }
         }
+
         historyData?.removeObservers(this)
         historyData =
             if (key.isNullOrBlank()) {

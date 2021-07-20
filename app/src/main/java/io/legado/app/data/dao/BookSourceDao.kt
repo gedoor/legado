@@ -1,14 +1,14 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.BookSource
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookSourceDao {
 
     @Query("select * from book_sources order by customOrder asc")
-    fun liveDataAll(): LiveData<List<BookSource>>
+    fun liveDataAll(): Flow<List<BookSource>>
 
     @Query(
         """
@@ -20,19 +20,19 @@ interface BookSourceDao {
         order by customOrder asc
         """
     )
-    fun liveDataSearch(searchKey: String): LiveData<List<BookSource>>
+    fun liveDataSearch(searchKey: String): Flow<List<BookSource>>
 
     @Query("select * from book_sources where bookSourceGroup like :searchKey order by customOrder asc")
-    fun liveDataGroupSearch(searchKey: String): LiveData<List<BookSource>>
+    fun liveDataGroupSearch(searchKey: String): Flow<List<BookSource>>
 
     @Query("select * from book_sources where enabled = 1 order by customOrder asc")
-    fun liveDataEnabled(): LiveData<List<BookSource>>
+    fun liveDataEnabled(): Flow<List<BookSource>>
 
     @Query("select * from book_sources where enabled = 0 order by customOrder asc")
-    fun liveDataDisabled(): LiveData<List<BookSource>>
+    fun liveDataDisabled(): Flow<List<BookSource>>
 
     @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc")
-    fun liveExplore(): LiveData<List<BookSource>>
+    fun liveExplore(): Flow<List<BookSource>>
 
     @Query(
         """
@@ -43,7 +43,7 @@ interface BookSourceDao {
         order by customOrder asc
         """
     )
-    fun liveExplore(key: String): LiveData<List<BookSource>>
+    fun liveExplore(key: String): Flow<List<BookSource>>
 
     @Query(
         """
@@ -54,13 +54,13 @@ interface BookSourceDao {
         order by customOrder asc
         """
     )
-    fun liveGroupExplore(key: String): LiveData<List<BookSource>>
+    fun liveGroupExplore(key: String): Flow<List<BookSource>>
 
     @Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
-    fun liveGroup(): LiveData<List<String>>
+    fun liveGroup(): Flow<List<String>>
 
     @Query("select distinct bookSourceGroup from book_sources where enabled = 1 and trim(bookSourceGroup) <> ''")
-    fun liveGroupEnabled(): LiveData<List<String>>
+    fun liveGroupEnabled(): Flow<List<String>>
 
     @Query(
         """
@@ -70,7 +70,7 @@ interface BookSourceDao {
         and trim(bookSourceGroup) <> ''
         """
     )
-    fun liveExploreGroup(): LiveData<List<String>>
+    fun liveExploreGroup(): Flow<List<String>>
 
     @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%'")
     fun getByGroup(group: String): List<BookSource>

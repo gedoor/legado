@@ -31,6 +31,8 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
@@ -45,7 +47,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private val exportBookPathKey = "exportBookPath"
     lateinit var adapter: CacheAdapter
     private var groupLiveData: LiveData<List<BookGroup>>? = null
-    private var booksLiveData: LiveData<List<Book>>? = null
+    private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var exportPosition = -1
     private val groupList: ArrayList<BookGroup> = arrayListOf()
@@ -147,29 +149,30 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     private fun initBookData() {
-        booksLiveData?.removeObservers(this)
-        booksLiveData = when (groupId) {
-            AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
-            AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
-            AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
-            AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
-            else -> appDb.bookDao.observeByGroup(groupId)
-        }
-        booksLiveData?.observe(this, { list ->
-            val booksDownload = list.filter {
-                it.isOnLineTxt()
-            }
-            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
-                1 -> booksDownload.sortedByDescending { it.latestChapterTime }
-                2 -> booksDownload.sortedWith { o1, o2 ->
-                    o1.name.cnCompare(o2.name)
+        booksFlowJob?.cancel()
+        booksFlowJob = launch {
+            when (groupId) {
+                AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
+                AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
+                AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
+                AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
+                else -> appDb.bookDao.observeByGroup(groupId)
+            }.collect { list ->
+                val booksDownload = list.filter {
+                    it.isOnLineTxt()
                 }
-                3 -> booksDownload.sortedBy { it.order }
-                else -> booksDownload.sortedByDescending { it.durChapterTime }
+                val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                    1 -> booksDownload.sortedByDescending { it.latestChapterTime }
+                    2 -> booksDownload.sortedWith { o1, o2 ->
+                        o1.name.cnCompare(o2.name)
+                    }
+                    3 -> booksDownload.sortedBy { it.order }
+                    else -> booksDownload.sortedByDescending { it.durChapterTime }
+                }
+                adapter.setItems(books)
+                initCacheSize(books)
             }
-            adapter.setItems(books)
-            initCacheSize(books)
-        })
+        }
     }
 
     private fun initGroupData() {

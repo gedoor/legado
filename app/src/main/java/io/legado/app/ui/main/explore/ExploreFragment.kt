@@ -8,7 +8,6 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +26,9 @@ import io.legado.app.utils.cnCompare
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * 发现界面
@@ -39,8 +41,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var searchView: SearchView
     private val groups = linkedSetOf<String>()
-    private var liveGroup: LiveData<List<String>>? = null
-    private var liveExplore: LiveData<List<BookSource>>? = null
+    private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,7 +50,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         initSearchView()
         initRecyclerView()
         initGroupData()
-        initExploreData()
+        upExploreData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -76,7 +77,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                initExploreData(newText)
+                upExploreData(newText)
                 return false
             }
         })
@@ -100,38 +101,41 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     private fun initGroupData() {
-        liveGroup?.removeObservers(viewLifecycleOwner)
-        liveGroup = appDb.bookSourceDao.liveExploreGroup()
-        liveGroup?.observe(viewLifecycleOwner, {
-            groups.clear()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-            }
-            upGroupsMenu()
-        })
+        launch {
+            appDb.bookSourceDao.liveExploreGroup()
+                .collect {
+                    groups.clear()
+                    it.map { group ->
+                        groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                    }
+                    upGroupsMenu()
+                }
+        }
     }
 
-    private fun initExploreData(searchKey: String? = null) {
-        liveExplore?.removeObservers(viewLifecycleOwner)
-        liveExplore = when {
-            searchKey.isNullOrBlank() -> {
-                appDb.bookSourceDao.liveExplore()
+    private fun upExploreData(searchKey: String? = null) {
+        exploreFlowJob?.cancel()
+        exploreFlowJob = launch {
+            val exploreFlow = when {
+                searchKey.isNullOrBlank() -> {
+                    appDb.bookSourceDao.liveExplore()
+                }
+                searchKey.startsWith("group:") -> {
+                    val key = searchKey.substringAfter("group:")
+                    appDb.bookSourceDao.liveGroupExplore("%$key%")
+                }
+                else -> {
+                    appDb.bookSourceDao.liveExplore("%$searchKey%")
+                }
             }
-            searchKey.startsWith("group:") -> {
-                val key = searchKey.substringAfter("group:")
-                appDb.bookSourceDao.liveGroupExplore("%$key%")
-            }
-            else -> {
-                appDb.bookSourceDao.liveExplore("%$searchKey%")
+            exploreFlow.collect {
+                binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
+                val diffResult = DiffUtil
+                    .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
+                adapter.setItems(it)
+                diffResult.dispatchUpdatesTo(adapter)
             }
         }
-        liveExplore?.observe(viewLifecycleOwner, {
-            binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
-            val diffResult = DiffUtil
-                .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
-            adapter.setItems(it)
-            diffResult.dispatchUpdatesTo(adapter)
-        })
     }
 
     private fun upGroupsMenu() = groupsMenu?.let { subMenu ->
@@ -151,7 +155,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     override fun refreshData() {
-        initExploreData(searchView.query?.toString())
+        upExploreData(searchView.query?.toString())
     }
 
     override fun scrollTo(pos: Int) {

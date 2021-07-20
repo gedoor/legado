@@ -9,7 +9,6 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -27,6 +26,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -46,7 +46,6 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private var rootDoc: DocumentFile? = null
     private val subDocs = arrayListOf<DocumentFile>()
     private lateinit var adapter: ImportBookAdapter
-    private var localUriLiveData: LiveData<List<String>>? = null
     private var sdPath = FileUtils.getSdCardPath()
     private var path = sdPath
     private val selectFolder = registerForActivityResult(FilePicker()) { uri ->
@@ -125,11 +124,11 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     private fun initData() {
-        localUriLiveData?.removeObservers(this)
-        localUriLiveData = appDb.bookDao.observeLocalUri()
-        localUriLiveData?.observe(this, {
-            adapter.upBookHas(it)
-        })
+        launch {
+            appDb.bookDao.observeLocalUri().collect {
+                adapter.upBookHas(it)
+            }
+        }
     }
 
     private fun initRootDoc() {

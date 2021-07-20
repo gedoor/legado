@@ -28,6 +28,8 @@ import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -45,7 +47,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     private val addToGroupRequestCode = 34
     private lateinit var adapter: ArrangeBookAdapter
     private var groupLiveData: LiveData<List<BookGroup>>? = null
-    private var booksLiveData: LiveData<List<Book>>? = null
+    private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var groupId: Long = -1
 
@@ -118,26 +120,26 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     }
 
     private fun initBookData() {
-        booksLiveData?.removeObservers(this)
-        booksLiveData =
+        booksFlowJob?.cancel()
+        booksFlowJob = launch {
             when (groupId) {
                 AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
                 AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
                 AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
                 else -> appDb.bookDao.observeByGroup(groupId)
-            }
-        booksLiveData?.observe(this, { list ->
-            val books = when (getPrefInt(PreferKey.bookshelfSort)) {
-                1 -> list.sortedByDescending { it.latestChapterTime }
-                2 -> list.sortedWith { o1, o2 ->
-                    o1.name.cnCompare(o2.name)
+            }.collect { list ->
+                val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                    1 -> list.sortedByDescending { it.latestChapterTime }
+                    2 -> list.sortedWith { o1, o2 ->
+                        o1.name.cnCompare(o2.name)
+                    }
+                    3 -> list.sortedBy { it.order }
+                    else -> list.sortedByDescending { it.durChapterTime }
                 }
-                3 -> list.sortedBy { it.order }
-                else -> list.sortedByDescending { it.durChapterTime }
+                adapter.setItems(books)
             }
-            adapter.setItems(books)
-        })
+        }
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
