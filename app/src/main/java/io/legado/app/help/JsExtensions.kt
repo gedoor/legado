@@ -312,13 +312,17 @@ interface JsExtensions {
 
     /**
      * 获取网络zip文件里面的数据
-     * @param url zip文件的链接
+     * @param url zip文件的链接或十六进制字符串
      * @param path 所需获取文件在zip内的路径
      * @return zip指定文件的数据
      */
     fun getZipStringContent(url: String, path: String): String {
-        val bytes = runBlocking {
-            return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+        val bytes = if (url.startsWith("http://") || url.startsWith("https://")) {
+            runBlocking {
+                return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+            }
+        } else {
+            StringUtils.hexStringToByte(url)
         }
         val bos = ByteArrayOutputStream()
         val zis = ZipInputStream(ByteArrayInputStream(bytes))
@@ -339,13 +343,17 @@ interface JsExtensions {
 
     /**
      * 获取网络zip文件里面的数据
-     * @param url zip文件的链接
+     * @param url zip文件的链接或十六进制字符串
      * @param path 所需获取文件在zip内的路径
      * @return zip指定文件的数据
      */
     fun getZipByteArrayContent(url: String, path: String): ByteArray? {
-        val bytes = runBlocking {
-            return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+        val bytes = if (url.startsWith("http://") || url.startsWith("https://")) {
+            runBlocking {
+                return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+            }
+        } else {
+            StringUtils.hexStringToByte(url)
         }
         val bos = ByteArrayOutputStream()
         val zis = ZipInputStream(ByteArrayInputStream(bytes))
