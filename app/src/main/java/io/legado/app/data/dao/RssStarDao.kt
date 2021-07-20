@@ -1,8 +1,8 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.RssStar
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RssStarDao {
@@ -14,7 +14,7 @@ interface RssStarDao {
     fun get(origin: String, link: String): RssStar?
 
     @Query("select * from rssStars order by starTime desc")
-    fun liveAll(): LiveData<List<RssStar>>
+    fun liveAll(): Flow<List<RssStar>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rssStar: RssStar)
