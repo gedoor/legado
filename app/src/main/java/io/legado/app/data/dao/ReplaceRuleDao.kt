@@ -1,21 +1,24 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.ReplaceRule
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface ReplaceRuleDao {
 
     @Query("SELECT * FROM replace_rules ORDER BY sortOrder ASC")
-    fun liveDataAll(): LiveData<List<ReplaceRule>>
+    fun liveDataAll(): Flow<List<ReplaceRule>>
 
     @Query("SELECT * FROM replace_rules where `group` like :key or name like :key ORDER BY sortOrder ASC")
-    fun liveDataSearch(key: String): LiveData<List<ReplaceRule>>
+    fun liveDataSearch(key: String): Flow<List<ReplaceRule>>
 
     @Query("SELECT * FROM replace_rules where `group` like :key ORDER BY sortOrder ASC")
-    fun liveDataGroupSearch(key: String): LiveData<List<ReplaceRule>>
+    fun liveDataGroupSearch(key: String): Flow<List<ReplaceRule>>
+
+    @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
+    fun liveGroup(): Flow<List<String>>
 
     @get:Query("SELECT MIN(sortOrder) FROM replace_rules")
     val minOrder: Int
@@ -43,9 +46,6 @@ interface ReplaceRuleDao {
         """
     )
     fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
-
-    @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
-    fun liveGroup(): LiveData<List<String>>
 
     @Query("select * from replace_rules where `group` like '%' || :group || '%'")
     fun getByGroup(group: String): List<ReplaceRule>

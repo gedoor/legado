@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -31,6 +31,8 @@ import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 
 
@@ -39,7 +41,6 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private val ttsUrlKey = "ttsUrlKey"
     lateinit var adapter: Adapter
     private val viewModel: SpeakEngineViewModel by viewModels()
-    private var httpTTSData: LiveData<List<HttpTTS>>? = null
     private var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
     private val importDocResult = registerForActivityResult(FilePicker()) {
         it?.let {
@@ -103,11 +104,11 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     private fun initData() {
-        httpTTSData?.removeObservers(this)
-        httpTTSData = appDb.httpTTSDao.observeAll()
-        httpTTSData?.observe(this, {
-            adapter.setItems(it)
-        })
+        lifecycleScope.launch {
+            appDb.httpTTSDao.observeAll().collect {
+                adapter.setItems(it)
+            }
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

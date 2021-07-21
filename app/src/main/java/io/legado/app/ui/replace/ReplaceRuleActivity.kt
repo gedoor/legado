@@ -11,7 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -39,6 +39,9 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.io.File
 
 /**
@@ -56,7 +59,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private lateinit var searchView: SearchView
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
-    private var replaceRuleLiveData: LiveData<List<ReplaceRule>>? = null
+    private var replaceRuleFlowJob: Job? = null
     private var dataInit = false
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
@@ -173,37 +176,39 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     private fun observeReplaceRuleData(searchKey: String? = null) {
         dataInit = false
-        replaceRuleLiveData?.removeObservers(this)
-        replaceRuleLiveData = when {
-            searchKey.isNullOrEmpty() -> {
-                appDb.replaceRuleDao.liveDataAll()
-            }
-            searchKey.startsWith("group:") -> {
-                val key = searchKey.substringAfter("group:")
-                appDb.replaceRuleDao.liveDataGroupSearch("%$key%")
-            }
-            else -> {
-                appDb.replaceRuleDao.liveDataSearch("%$searchKey%")
-            }
-        }.apply {
-            observe(this@ReplaceRuleActivity, {
+        replaceRuleFlowJob?.cancel()
+        replaceRuleFlowJob = lifecycleScope.launch {
+            when {
+                searchKey.isNullOrEmpty() -> {
+                    appDb.replaceRuleDao.liveDataAll()
+                }
+                searchKey.startsWith("group:") -> {
+                    val key = searchKey.substringAfter("group:")
+                    appDb.replaceRuleDao.liveDataGroupSearch("%$key%")
+                }
+                else -> {
+                    appDb.replaceRuleDao.liveDataSearch("%$searchKey%")
+                }
+            }.collect {
                 if (dataInit) {
                     setResult(Activity.RESULT_OK)
                 }
                 adapter.setItems(it, adapter.diffItemCallBack)
                 dataInit = true
-            })
+            }
         }
     }
 
     private fun observeGroupData() {
-        appDb.replaceRuleDao.liveGroup().observe(this, {
-            groups.clear()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+        lifecycleScope.launch {
+            appDb.replaceRuleDao.liveGroup().collect {
+                groups.clear()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                upGroupMenu()
             }
-            upGroupMenu()
-        })
+        }
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {

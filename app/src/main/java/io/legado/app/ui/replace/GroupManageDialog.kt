@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -25,6 +26,8 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
@@ -50,10 +53,11 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(backgroundColor)
         binding.toolBar.setBackgroundColor(primaryColor)
+        initView()
         initData()
     }
 
-    private fun initData() = binding.run {
+    private fun initView() = binding.run {
         toolBar.title = getString(R.string.group_manage)
         toolBar.inflateMenu(R.menu.group_manage)
         toolBar.menu.applyTint(requireContext())
@@ -62,13 +66,18 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         recyclerView.adapter = adapter
-        appDb.replaceRuleDao.liveGroup().observe(viewLifecycleOwner, {
-            val groups = linkedSetOf<String>()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+    }
+
+    private fun initData() {
+        lifecycleScope.launch {
+            appDb.replaceRuleDao.liveGroup().collect {
+                val groups = linkedSetOf<String>()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                adapter.setItems(groups.toList())
             }
-            adapter.setItems(groups.toList())
-        })
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

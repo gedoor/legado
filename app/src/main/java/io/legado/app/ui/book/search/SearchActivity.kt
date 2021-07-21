@@ -10,7 +10,6 @@ import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,7 +48,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private lateinit var historyKeyAdapter: HistoryKeyAdapter
     private lateinit var loadMoreView: LoadMoreView
     private lateinit var searchView: SearchView
-    private var historyData: LiveData<List<SearchKeyword>>? = null
+    private var historyFlowJob: Job? = null
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
@@ -292,22 +291,20 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 }
             }
         }
-
-        historyData?.removeObservers(this)
-        historyData =
-            if (key.isNullOrBlank()) {
-                appDb.searchKeywordDao.liveDataByUsage()
-            } else {
-                appDb.searchKeywordDao.liveDataSearch(key)
+        historyFlowJob?.cancel()
+        historyFlowJob = lifecycleScope.launch {
+            when {
+                key.isNullOrBlank() -> appDb.searchKeywordDao.liveDataByUsage()
+                else -> appDb.searchKeywordDao.liveDataSearch(key)
+            }.collect {
+                historyKeyAdapter.setItems(it)
+                if (it.isEmpty()) {
+                    binding.tvClearHistory.invisible()
+                } else {
+                    binding.tvClearHistory.visible()
+                }
             }
-        historyData?.observe(this, {
-            historyKeyAdapter.setItems(it)
-            if (it.isEmpty()) {
-                binding.tvClearHistory.invisible()
-            } else {
-                binding.tvClearHistory.visible()
-            }
-        })
+        }
     }
 
     /**
