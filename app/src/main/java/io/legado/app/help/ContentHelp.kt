@@ -36,7 +36,7 @@ object ContentHelp {
         //如果原文存在分段错误，需要把段落重新黏合
         for (i in 1 until p.size) {
             if (match(MARK_SENTENCES_END, buffer[buffer.length - 1])) buffer.append("\n")
-            //            段落开头以外的地方不应该有空格
+            // 段落开头以外的地方不应该有空格
             // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
             buffer.append(p[i].replace("[\u3000\\s]".toRegex(), ""))
         }
@@ -51,7 +51,7 @@ object ContentHelp {
             .replace(
                 "([问说喊唱叫骂道着答])[\\.。]".toRegex(),
                 "$1。\n"
-            ) //                .replaceAll("([\\.。\\!！?？])([^\"”“]+)[:：][\"”“]", "$1\n$2：“")
+            )
             .split("\n".toRegex()).toTypedArray()
         buffer = StringBuffer((content1.length * 1.15).toInt())
         for (s in p) {
@@ -101,9 +101,9 @@ object ContentHelp {
         for (i in 0 until l) {
             string.append('\n')
             string.append(p[i])
-            //            System.out.print(" "+b[i]);
+            //System.out.print(" "+b[i]);
         }
-        //        System.out.println(" " + str);
+        //System.out.println(" " + str);
         return string
     }
 

@@ -84,15 +84,15 @@ class ContentProcessor private constructor(
             }
         }
         val contents = arrayListOf<String>()
-        content1.split("\n").forEach {
-            val str = it.replace("^[\\n\\r]+".toRegex(), "").trim()
+        content1.split("\n").forEach { str ->
+            val paragraph = str.replace("^[\\n\\r]+".toRegex(), "").trim()
             if (contents.isEmpty()) {
                 contents.add(title)
-                if (str != title && str.isNotEmpty()) {
-                    contents.add("${ReadBookConfig.paragraphIndent}$str")
+                if (paragraph != title && paragraph.isNotEmpty()) {
+                    contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
                 }
-            } else if (str.isNotEmpty()) {
-                contents.add("${ReadBookConfig.paragraphIndent}$str")
+            } else if (paragraph.isNotEmpty()) {
+                contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
             }
         }
         return contents
