@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -319,28 +320,14 @@ interface JsExtensions {
      * @return zip指定文件的数据
      */
     fun getZipStringContent(url: String, path: String): String {
-        val bytes = if (url.startsWith("http://") || url.startsWith("https://")) {
-            runBlocking {
-                return@runBlocking okHttpClient.newCall { url(url) }.bytes()
-            }
-        } else {
-            StringUtils.hexStringToByte(url)
-        }
-        val bos = ByteArrayOutputStream()
-        val zis = ZipInputStream(ByteArrayInputStream(bytes))
+        val byteArray = getZipByteArrayContent(url, path) ?: return ""
+        val charsetName = EncodingDetect.getEncode(byteArray)
+        return String(byteArray, Charset.forName(charsetName))
+    }
 
-        var entry: ZipEntry? = zis.nextEntry
-
-        while (entry != null) {
-            if (entry.name.equals(path)) {
-                zis.use { it.copyTo(bos) }
-                return bos.toString()
-            }
-            entry = zis.nextEntry
-        }
-        Debug.log("getZipContent 未发现内容")
-
-        return ""
+    fun getZipStringContent(url: String, path: String, charsetName: String): String {
+        val byteArray = getZipByteArrayContent(url, path) ?: return ""
+        return String(byteArray, Charset.forName(charsetName))
     }
 
     /**
