@@ -11,6 +11,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
+import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.PreciseSearch
@@ -302,8 +303,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      */
     fun replaceRuleChanged() {
         execute {
-            ReadBook.contentProcessor?.upReplaceRules()
-            ReadBook.loadContent(resetPageOffset = false)
+            ReadBook.book?.let {
+                ContentProcessor.get(it.name, it.origin).upReplaceRules()
+                ReadBook.loadContent(resetPageOffset = false)
+            }
         }
     }
 
