@@ -9,25 +9,25 @@ import kotlinx.coroutines.flow.Flow
 interface BookDao {
 
     @Query("SELECT * FROM books order by durChapterTime desc")
-    fun observeAll(): Flow<List<Book>>
+    fun flowAll(): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE type = ${BookType.audio}")
-    fun observeAudio(): Flow<List<Book>>
+    fun flowAudio(): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE origin = '${BookType.local}'")
-    fun observeLocal(): Flow<List<Book>>
+    fun flowLocal(): Flow<List<Book>>
 
     @Query("select * from books where type != ${BookType.audio} and origin != '${BookType.local}' and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0")
-    fun observeNoGroup(): Flow<List<Book>>
+    fun flowNoGroup(): Flow<List<Book>>
 
     @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}'")
-    fun observeLocalUri(): Flow<List<String>>
+    fun flowLocalUri(): Flow<List<String>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
-    fun observeByGroup(group: Long): Flow<List<Book>>
+    fun flowByGroup(group: Long): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
-    fun liveDataSearch(key: String): Flow<List<Book>>
+    fun flowSearch(key: String): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
     fun getBooksByGroup(group: Long): List<Book>

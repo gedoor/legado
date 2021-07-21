@@ -123,7 +123,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     private fun initGroupData() {
         lifecycleScope.launch {
-            appDb.bookGroupDao.liveDataShow().collect {
+            appDb.bookGroupDao.flowShow().collect {
                 if (it != bookGroups) {
                     bookGroups = it
                     booksAdapter.notifyDataSetChanged()
@@ -136,11 +136,11 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         booksFlowJob?.cancel()
         booksFlowJob = lifecycleScope.launch {
             when (groupId) {
-                AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
-                AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
-                AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
-                AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
-                else -> appDb.bookDao.observeByGroup(groupId)
+                AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
+                AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
+                AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
+                AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
+                else -> appDb.bookDao.flowByGroup(groupId)
             }.collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 books = when (getPrefInt(PreferKey.bookshelfSort)) {

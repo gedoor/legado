@@ -207,20 +207,20 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         sourceFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrEmpty() -> {
-                    appDb.bookSourceDao.liveDataAll()
+                    appDb.bookSourceDao.flowAll()
                 }
                 searchKey == getString(R.string.enabled) -> {
-                    appDb.bookSourceDao.liveDataEnabled()
+                    appDb.bookSourceDao.flowEnabled()
                 }
                 searchKey == getString(R.string.disabled) -> {
-                    appDb.bookSourceDao.liveDataDisabled()
+                    appDb.bookSourceDao.flowDisabled()
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.bookSourceDao.liveDataGroupSearch("%$key%")
+                    appDb.bookSourceDao.flowGroupSearch("%$key%")
                 }
                 else -> {
-                    appDb.bookSourceDao.liveDataSearch("%$searchKey%")
+                    appDb.bookSourceDao.flowSearch("%$searchKey%")
                 }
             }.collect { data ->
                 val sourceList =
@@ -277,7 +277,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun initLiveDataGroup() {
         lifecycleScope.launch {
-            appDb.bookSourceDao.liveGroup()
+            appDb.bookSourceDao.flowGroup()
                 .collect {
                     groups.clear()
                     it.forEach { group ->

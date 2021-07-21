@@ -152,7 +152,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
             adapter.setItems(it)
         })
         lifecycleScope.launch {
-            appDb.bookSourceDao.liveGroupEnabled().collect {
+            appDb.bookSourceDao.flowGroupEnabled().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

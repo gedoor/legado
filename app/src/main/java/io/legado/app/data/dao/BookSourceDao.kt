@@ -8,69 +8,62 @@ import kotlinx.coroutines.flow.Flow
 interface BookSourceDao {
 
     @Query("select * from book_sources order by customOrder asc")
-    fun liveDataAll(): Flow<List<BookSource>>
+    fun flowAll(): Flow<List<BookSource>>
 
     @Query(
-        """
-        select * from book_sources 
+        """select * from book_sources 
         where bookSourceName like :searchKey 
         or bookSourceGroup like :searchKey 
         or bookSourceUrl like :searchKey  
         or bookSourceComment like :searchKey 
-        order by customOrder asc
-        """
+        order by customOrder asc"""
     )
-    fun liveDataSearch(searchKey: String): Flow<List<BookSource>>
+    fun flowSearch(searchKey: String): Flow<List<BookSource>>
 
     @Query("select * from book_sources where bookSourceGroup like :searchKey order by customOrder asc")
-    fun liveDataGroupSearch(searchKey: String): Flow<List<BookSource>>
+    fun flowGroupSearch(searchKey: String): Flow<List<BookSource>>
 
     @Query("select * from book_sources where enabled = 1 order by customOrder asc")
-    fun liveDataEnabled(): Flow<List<BookSource>>
+    fun flowEnabled(): Flow<List<BookSource>>
 
     @Query("select * from book_sources where enabled = 0 order by customOrder asc")
-    fun liveDataDisabled(): Flow<List<BookSource>>
+    fun flowDisabled(): Flow<List<BookSource>>
 
     @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc")
-    fun liveExplore(): Flow<List<BookSource>>
+    fun flowExplore(): Flow<List<BookSource>>
 
     @Query(
-        """
-        select * from book_sources 
+        """select * from book_sources 
         where enabledExplore = 1 
         and trim(exploreUrl) <> '' 
         and (bookSourceGroup like :key or bookSourceName like :key) 
-        order by customOrder asc
-        """
+        order by customOrder asc"""
     )
-    fun liveExplore(key: String): Flow<List<BookSource>>
+    fun flowExplore(key: String): Flow<List<BookSource>>
 
     @Query(
-        """
-        select * from book_sources 
+        """select * from book_sources 
         where enabledExplore = 1 
         and trim(exploreUrl) <> '' 
         and (bookSourceGroup like :key) 
-        order by customOrder asc
-        """
+        order by customOrder asc"""
     )
-    fun liveGroupExplore(key: String): Flow<List<BookSource>>
+    fun flowGroupExplore(key: String): Flow<List<BookSource>>
 
     @Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
-    fun liveGroup(): Flow<List<String>>
+    fun flowGroup(): Flow<List<String>>
 
     @Query("select distinct bookSourceGroup from book_sources where enabled = 1 and trim(bookSourceGroup) <> ''")
-    fun liveGroupEnabled(): Flow<List<String>>
+    fun flowGroupEnabled(): Flow<List<String>>
 
     @Query(
-        """
-        select distinct bookSourceGroup from book_sources 
+        """select distinct bookSourceGroup from book_sources 
         where enabledExplore = 1 
         and trim(exploreUrl) <> '' 
         and trim(bookSourceGroup) <> ''
-        """
+        order by customOrder"""
     )
-    fun liveExploreGroup(): Flow<List<String>>
+    fun flowExploreGroup(): Flow<List<String>>
 
     @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%'")
     fun getByGroup(group: String): List<BookSource>

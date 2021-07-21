@@ -53,8 +53,8 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
         bookmarkFlowJob?.cancel()
         bookmarkFlowJob = lifecycleScope.launch {
             when {
-                searchKey.isNullOrBlank() -> appDb.bookmarkDao.observeByBook(book.name, book.author)
-                else -> appDb.bookmarkDao.liveDataSearch(book.name, book.author, searchKey)
+                searchKey.isNullOrBlank() -> appDb.bookmarkDao.flowByBook(book.name, book.author)
+                else -> appDb.bookmarkDao.flowSearch(book.name, book.author, searchKey)
             }.collect {
                 adapter.setItems(it)
             }

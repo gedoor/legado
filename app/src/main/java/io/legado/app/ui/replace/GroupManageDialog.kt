@@ -70,7 +70,7 @@ class GroupManageDialog : DialogFragment(), Toolbar.OnMenuItemClickListener {
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.replaceRuleDao.liveGroup().collect {
+            appDb.replaceRuleDao.flowGroup().collect {
                 val groups = linkedSetOf<String>()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

@@ -81,7 +81,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.bookGroupDao.liveDataAll().collect {
+            appDb.bookGroupDao.flowAll().collect {
                 adapter.setItems(it)
             }
         }

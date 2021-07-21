@@ -12,13 +12,13 @@ interface SearchKeywordDao {
     val all: List<SearchKeyword>
 
     @Query("SELECT * FROM search_keywords ORDER BY usage DESC")
-    fun liveDataByUsage(): Flow<List<SearchKeyword>>
+    fun flowByUsage(): Flow<List<SearchKeyword>>
 
     @Query("SELECT * FROM search_keywords ORDER BY lastUseTime DESC")
-    fun liveDataByTime(): Flow<List<SearchKeyword>>
+    fun flowByTime(): Flow<List<SearchKeyword>>
 
     @Query("SELECT * FROM search_keywords where word like '%'||:key||'%' ORDER BY usage DESC")
-    fun liveDataSearch(key: String): Flow<List<SearchKeyword>>
+    fun flowSearch(key: String): Flow<List<SearchKeyword>>
 
     @Query("select * from search_keywords where word = :key")
     fun get(key: String): SearchKeyword?

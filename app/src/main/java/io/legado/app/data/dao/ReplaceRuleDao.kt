@@ -9,16 +9,16 @@ import kotlinx.coroutines.flow.Flow
 interface ReplaceRuleDao {
 
     @Query("SELECT * FROM replace_rules ORDER BY sortOrder ASC")
-    fun liveDataAll(): Flow<List<ReplaceRule>>
+    fun flowAll(): Flow<List<ReplaceRule>>
 
     @Query("SELECT * FROM replace_rules where `group` like :key or name like :key ORDER BY sortOrder ASC")
-    fun liveDataSearch(key: String): Flow<List<ReplaceRule>>
+    fun flowSearch(key: String): Flow<List<ReplaceRule>>
 
     @Query("SELECT * FROM replace_rules where `group` like :key ORDER BY sortOrder ASC")
-    fun liveDataGroupSearch(key: String): Flow<List<ReplaceRule>>
+    fun flowGroupSearch(key: String): Flow<List<ReplaceRule>>
 
     @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
-    fun liveGroup(): Flow<List<String>>
+    fun flowGroup(): Flow<List<String>>
 
     @get:Query("SELECT MIN(sortOrder) FROM replace_rules")
     val minOrder: Int
@@ -39,11 +39,9 @@ interface ReplaceRuleDao {
     fun findByIds(vararg ids: Long): List<ReplaceRule>
 
     @Query(
-        """
-        SELECT * FROM replace_rules WHERE isEnabled = 1 
+        """SELECT * FROM replace_rules WHERE isEnabled = 1 
         AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
-        order by sortOrder
-        """
+        order by sortOrder"""
     )
     fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
 

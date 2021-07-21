@@ -180,14 +180,14 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         replaceRuleFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrEmpty() -> {
-                    appDb.replaceRuleDao.liveDataAll()
+                    appDb.replaceRuleDao.flowAll()
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.replaceRuleDao.liveDataGroupSearch("%$key%")
+                    appDb.replaceRuleDao.flowGroupSearch("%$key%")
                 }
                 else -> {
-                    appDb.replaceRuleDao.liveDataSearch("%$searchKey%")
+                    appDb.replaceRuleDao.flowSearch("%$searchKey%")
                 }
             }.collect {
                 if (dataInit) {
@@ -201,7 +201,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     private fun observeGroupData() {
         lifecycleScope.launch {
-            appDb.replaceRuleDao.liveGroup().collect {
+            appDb.replaceRuleDao.flowGroup().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

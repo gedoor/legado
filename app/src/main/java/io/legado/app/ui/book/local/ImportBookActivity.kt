@@ -126,7 +126,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.bookDao.observeLocalUri().collect {
+            appDb.bookDao.flowLocalUri().collect {
                 adapter.upBookHas(it)
             }
         }

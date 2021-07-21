@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -33,13 +32,13 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 
 class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val importTocRuleKey = "tocRuleUrl"
     private lateinit var adapter: TocRegexAdapter
-    private var tocRegexLiveData: LiveData<List<TxtTocRule>>? = null
     var selectedName: String? = null
     private var durRegex: String? = null
     private val viewModel: TocRegexViewModel by viewModels()
@@ -93,12 +92,12 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private fun initData() {
-        tocRegexLiveData?.removeObservers(viewLifecycleOwner)
-        tocRegexLiveData = appDb.txtTocRuleDao.observeAll()
-        tocRegexLiveData?.observe(viewLifecycleOwner, { tocRules ->
-            initSelectedName(tocRules)
-            adapter.setItems(tocRules)
-        })
+        lifecycleScope.launch {
+            appDb.txtTocRuleDao.observeAll().collect { tocRules ->
+                initSelectedName(tocRules)
+                adapter.setItems(tocRules)
+            }
+        }
     }
 
     private fun initSelectedName(tocRules: List<TxtTocRule>) {

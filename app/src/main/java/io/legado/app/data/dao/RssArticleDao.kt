@@ -18,7 +18,7 @@ interface RssArticleDao {
         on t1.link = t2.record  where origin = :origin and sort = :sort
         order by `order` desc"""
     )
-    fun liveByOriginSort(origin: String, sort: String): Flow<List<RssArticle>>
+    fun flowByOriginSort(origin: String, sort: String): Flow<List<RssArticle>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rssArticle: RssArticle)

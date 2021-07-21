@@ -105,7 +105,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.httpTTSDao.observeAll().collect {
+            appDb.httpTTSDao.flowAll().collect {
                 adapter.setItems(it)
             }
         }

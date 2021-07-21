@@ -103,7 +103,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     private fun initGroupData() {
         lifecycleScope.launch {
-            appDb.bookSourceDao.liveExploreGroup()
+            appDb.bookSourceDao.flowExploreGroup()
                 .collect {
                     groups.clear()
                     it.map { group ->
@@ -119,14 +119,14 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         exploreFlowJob = lifecycleScope.launch {
             val exploreFlow = when {
                 searchKey.isNullOrBlank() -> {
-                    appDb.bookSourceDao.liveExplore()
+                    appDb.bookSourceDao.flowExplore()
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.bookSourceDao.liveGroupExplore("%$key%")
+                    appDb.bookSourceDao.flowGroupExplore("%$key%")
                 }
                 else -> {
-                    appDb.bookSourceDao.liveExplore("%$searchKey%")
+                    appDb.bookSourceDao.flowExplore("%$searchKey%")
                 }
             }
             exploreFlow.collect {

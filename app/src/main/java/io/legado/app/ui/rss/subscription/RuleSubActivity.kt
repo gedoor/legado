@@ -64,7 +64,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.ruleSubDao.observeAll().collect {
+            appDb.ruleSubDao.flowAll().collect {
                 binding.tvEmptyMsg.isGone = it.isNotEmpty()
                 adapter.setItems(it)
             }

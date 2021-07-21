@@ -11,7 +11,7 @@ interface HttpTTSDao {
     val all: List<HttpTTS>
 
     @Query("select * from httpTTS order by name")
-    fun observeAll(): Flow<List<HttpTTS>>
+    fun flowAll(): Flow<List<HttpTTS>>
 
     @get:Query("select count(*) from httpTTS")
     val count: Int

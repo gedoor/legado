@@ -107,11 +107,11 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         booksFlowJob?.cancel()
         booksFlowJob = lifecycleScope.launch {
             when (groupId) {
-                AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
-                AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
-                AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
-                AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
-                else -> appDb.bookDao.observeByGroup(groupId)
+                AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
+                AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
+                AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
+                AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
+                else -> appDb.bookDao.flowByGroup(groupId)
             }.collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 val books = when (getPrefInt(PreferKey.bookshelfSort)) {

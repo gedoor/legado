@@ -15,7 +15,7 @@ interface BookGroupDao {
     fun getByName(groupName: String): BookGroup?
 
     @Query("SELECT * FROM book_groups ORDER BY `order`")
-    fun liveDataAll(): Flow<List<BookGroup>>
+    fun flowAll(): Flow<List<BookGroup>>
 
     @Query(
         """
@@ -26,10 +26,10 @@ interface BookGroupDao {
         or (groupId = -1 and show > 0)
         ORDER BY `order`"""
     )
-    fun liveDataShow(): Flow<List<BookGroup>>
+    fun flowShow(): Flow<List<BookGroup>>
 
     @Query("SELECT * FROM book_groups where groupId >= 0 ORDER BY `order`")
-    fun liveDataSelect(): Flow<List<BookGroup>>
+    fun flowSelect(): Flow<List<BookGroup>>
 
     @get:Query("SELECT sum(groupId) FROM book_groups where groupId >= 0")
     val idsSum: Long

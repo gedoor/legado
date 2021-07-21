@@ -20,32 +20,30 @@ interface RssSourceDao {
     val size: Int
 
     @Query("SELECT * FROM rssSources order by customOrder")
-    fun liveAll(): Flow<List<RssSource>>
+    fun flowAll(): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where sourceName like :key or sourceUrl like :key or sourceGroup like :key order by customOrder")
-    fun liveSearch(key: String): Flow<List<RssSource>>
+    fun flowSearch(key: String): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where sourceGroup like :key order by customOrder")
-    fun liveGroupSearch(key: String): Flow<List<RssSource>>
+    fun flowGroupSearch(key: String): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where enabled = 1 order by customOrder")
-    fun liveEnabled(): Flow<List<RssSource>>
+    fun flowEnabled(): Flow<List<RssSource>>
 
     @Query(
-        """
-        SELECT * FROM rssSources 
+        """SELECT * FROM rssSources 
         where enabled = 1 
         and (sourceName like :searchKey or sourceGroup like :searchKey or sourceUrl like :searchKey) 
-        order by customOrder
-        """
+        order by customOrder"""
     )
-    fun liveEnabled(searchKey: String): Flow<List<RssSource>>
+    fun flowEnabled(searchKey: String): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where enabled = 1 and sourceGroup like :searchKey order by customOrder")
-    fun liveEnabledByGroup(searchKey: String): Flow<List<RssSource>>
+    fun flowEnabledByGroup(searchKey: String): Flow<List<RssSource>>
 
     @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
-    fun liveGroup(): Flow<List<String>>
+    fun flowGroup(): Flow<List<String>>
 
     @get:Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
     val allGroup: List<String>

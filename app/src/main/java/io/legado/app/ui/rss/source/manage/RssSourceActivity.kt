@@ -180,7 +180,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun initGroupFlow() {
         lifecycleScope.launch {
-            appDb.rssSourceDao.liveGroup().collect {
+            appDb.rssSourceDao.flowGroup().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -234,14 +234,14 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
         sourceFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrBlank() -> {
-                    appDb.rssSourceDao.liveAll()
+                    appDb.rssSourceDao.flowAll()
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.rssSourceDao.liveGroupSearch("%$key%")
+                    appDb.rssSourceDao.flowGroupSearch("%$key%")
                 }
                 else -> {
-                    appDb.rssSourceDao.liveSearch("%$searchKey%")
+                    appDb.rssSourceDao.flowSearch("%$searchKey%")
                 }
             }.collect {
                 adapter.setItems(it, adapter.diffItemCallback)

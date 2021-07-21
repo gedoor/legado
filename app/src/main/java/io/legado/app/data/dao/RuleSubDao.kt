@@ -11,7 +11,7 @@ interface RuleSubDao {
     val all: List<RuleSub>
 
     @Query("select * from ruleSubs order by customOrder")
-    fun observeAll(): Flow<List<RuleSub>>
+    fun flowAll(): Flow<List<RuleSub>>
 
     @get:Query("select customOrder from ruleSubs order by customOrder limit 0,1")
     val maxOrder: Int

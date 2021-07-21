@@ -111,8 +111,8 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         tocFlowJob?.cancel()
         tocFlowJob = lifecycleScope.launch {
             when {
-                searchKey.isNullOrBlank() -> appDb.bookChapterDao.observeByBook(viewModel.bookUrl)
-                else -> appDb.bookChapterDao.liveDataSearch(viewModel.bookUrl, searchKey)
+                searchKey.isNullOrBlank() -> appDb.bookChapterDao.flowByBook(viewModel.bookUrl)
+                else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
             }.collect {
                 adapter.setItems(it)
                 if (searchKey.isNullOrBlank() && !scrollToDurChapter) {

@@ -98,7 +98,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         val rssUrl = activityViewModel.url ?: return
         articlesFlowJob?.cancel()
         articlesFlowJob = lifecycleScope.launch {
-            appDb.rssArticleDao.liveByOriginSort(rssUrl, viewModel.sortName).collect {
+            appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).collect {
                 adapter.setItems(it)
             }
         }

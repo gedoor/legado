@@ -151,11 +151,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         booksFlowJob?.cancel()
         booksFlowJob = lifecycleScope.launch {
             when (groupId) {
-                AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
-                AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
-                AppConst.bookGroupAudioId -> appDb.bookDao.observeAudio()
-                AppConst.bookGroupNoneId -> appDb.bookDao.observeNoGroup()
-                else -> appDb.bookDao.observeByGroup(groupId)
+                AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
+                AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
+                AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
+                AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
+                else -> appDb.bookDao.flowByGroup(groupId)
             }.collect { list ->
                 val booksDownload = list.filter {
                     it.isOnLineTxt()
@@ -176,7 +176,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     private fun initGroupData() {
         lifecycleScope.launch {
-            appDb.bookGroupDao.liveDataAll().collect {
+            appDb.bookGroupDao.flowAll().collect {
                 groupList.clear()
                 groupList.addAll(it)
                 adapter.notifyDataSetChanged()

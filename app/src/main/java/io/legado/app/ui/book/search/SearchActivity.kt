@@ -193,7 +193,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.bookSourceDao.liveGroupEnabled().collect {
+            appDb.bookSourceDao.flowGroupEnabled().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -278,7 +278,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 binding.tvBookShow.gone()
                 binding.rvBookshelfSearch.gone()
             } else {
-                val bookFlow = appDb.bookDao.liveDataSearch(key)
+                val bookFlow = appDb.bookDao.flowSearch(key)
                 bookFlow.collect {
                     if (it.isEmpty()) {
                         binding.tvBookShow.gone()
@@ -294,8 +294,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         historyFlowJob?.cancel()
         historyFlowJob = lifecycleScope.launch {
             when {
-                key.isNullOrBlank() -> appDb.searchKeywordDao.liveDataByUsage()
-                else -> appDb.searchKeywordDao.liveDataSearch(key)
+                key.isNullOrBlank() -> appDb.searchKeywordDao.flowByUsage()
+                else -> appDb.searchKeywordDao.flowSearch(key)
             }.collect {
                 historyKeyAdapter.setItems(it)
                 if (it.isEmpty()) {

@@ -122,7 +122,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     private fun initGroupData() {
         lifecycleScope.launch {
-            appDb.rssSourceDao.liveGroup().collect {
+            appDb.rssSourceDao.flowGroup().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -136,12 +136,12 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         rssFlowJob?.cancel()
         rssFlowJob = lifecycleScope.launch {
             when {
-                searchKey.isNullOrEmpty() -> appDb.rssSourceDao.liveEnabled()
+                searchKey.isNullOrEmpty() -> appDb.rssSourceDao.flowEnabled()
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.rssSourceDao.liveEnabledByGroup("%$key%")
+                    appDb.rssSourceDao.flowEnabledByGroup("%$key%")
                 }
-                else -> appDb.rssSourceDao.liveEnabled("%$searchKey%")
+                else -> appDb.rssSourceDao.flowEnabled("%$searchKey%")
             }.collect {
                 adapter.setItems(it)
             }
