@@ -234,7 +234,7 @@
     <string name="intro_show_null">Descrição: sem introdução</string>
     <string name="open_from_other">Abrir o livro externo</string>
     <string name="origin_show">Origem: %s</string>
-    <string name="import_replace_rule">Importar regras locais</string>
+    <string name="import_replace_rule">Import replace rule</string>
     <string name="import_replace_rule_on_line">Importar regras on-line</string>
     <string name="check_update_interval">Intervalo de atualizações</string>
     <string name="bookshelf_px_0">Lista de recentes</string>

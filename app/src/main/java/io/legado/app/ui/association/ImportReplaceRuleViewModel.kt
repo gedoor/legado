@@ -14,7 +14,9 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<ArrayList<ReplaceRule>>()
 
-    private val allRules = arrayListOf<ReplaceRule>()
+    val allRules = arrayListOf<ReplaceRule>()
+    val checkRules = arrayListOf<ReplaceRule>()
+    val selectStatus = arrayListOf<ReplaceRule>()
 
     fun import(text: String) {
         execute {
@@ -32,7 +34,16 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
         }.onError {
             errorLiveData.postValue(it.localizedMessage ?: "ERROR")
         }.onSuccess {
+            comparisonSource()
             successLiveData.postValue(allRules)
+        }
+    }
+
+    private fun comparisonSource() {
+        execute {
+            allRules.forEach {
+
+            }
         }
     }
 }

@@ -233,7 +233,7 @@
     <string name="intro_show_null">简介: 暂无简介</string>
     <string name="open_from_other">打开外部书籍</string>
     <string name="origin_show">来源: %s</string>
-    <string name="import_replace_rule">本地导入</string>
+    <string name="import_replace_rule">导入替换规则</string>
     <string name="import_replace_rule_on_line">导入在线规则</string>
     <string name="check_update_interval">检查更新间隔</string>
     <string name="bookshelf_px_0">按阅读时间</string>
