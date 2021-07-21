@@ -111,26 +111,39 @@ object ChapterProvider {
                     )
                 }
             } else if (book.getImageStyle() != Book.imgStyleText) {
-                content.replace(AppPattern.imgPattern.toRegex(), "\n\$0\n").split("\n")
-                    .forEach { text ->
-                        if (text.isNotBlank()) {
-                            if (!text.startsWith("<img src=\"")) { //非图片
-                                val isTitle = index == 0
-                                val textPaint = if (isTitle) titlePaint else contentPaint
-                                if (!(isTitle && ReadBookConfig.titleMode == 2)) {
-                                    durY = setTypeText(
-                                        text, durY, textPages,
-                                        stringBuilder, isTitle, textPaint
-                                    )
-                                }
-                            } else { //图片
-                                durY = setTypeImage(
-                                    book, bookChapter, text.substring(10, text.length - 2),
-                                    durY, textPages, book.getImageStyle()
-                                )
-                            }
+                val matcher = AppPattern.imgPattern.matcher(content)
+                var start = 0
+                while (matcher.find()) {
+                    val text = content.substring(start, matcher.start())
+                    if (text.isNotBlank()) {
+                        val isTitle = index == 0
+                        val textPaint = if (isTitle) titlePaint else contentPaint
+                        if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                            durY = setTypeText(
+                                text, durY, textPages,
+                                stringBuilder, isTitle, textPaint
+                            )
                         }
                     }
+                    durY = setTypeImage(
+                        book, bookChapter, matcher.group(1)!!,
+                        durY, textPages, book.getImageStyle()
+                    )
+                    start = matcher.end()
+                }
+                if (start < content.length) {
+                    val text = content.substring(start, content.length)
+                    if (text.isNotBlank()) {
+                        val isTitle = index == 0
+                        val textPaint = if (isTitle) titlePaint else contentPaint
+                        if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                            durY = setTypeText(
+                                text, durY, textPages,
+                                stringBuilder, isTitle, textPaint
+                            )
+                        }
+                    }
+                }
             }
         }
         textPages.last().height = durY + 20.dp
