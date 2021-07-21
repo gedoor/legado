@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -104,7 +105,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
 
     private fun upRecyclerData() {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             when (groupId) {
                 AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()

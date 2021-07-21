@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -121,9 +122,8 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     private fun initGroupData() {
-        bookGroupLiveData?.removeObservers(this)
-        bookGroupLiveData = appDb.bookGroupDao.liveDataShow().apply {
-            observe(viewLifecycleOwner) {
+        lifecycleScope.launch {
+            appDb.bookGroupDao.liveDataShow().collect {
                 if (it != bookGroups) {
                     bookGroups = it
                     booksAdapter.notifyDataSetChanged()
@@ -134,7 +134,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     private fun initBooksData() {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             when (groupId) {
                 AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()

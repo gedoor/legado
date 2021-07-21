@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
@@ -129,7 +130,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         val source = bookSourceList[searchIndex]
         val webBook = WebBook(source)
         val task = webBook
-            .searchBook(this, name, context = searchPool!!)
+            .searchBook(viewModelScope, name, context = searchPool!!)
             .timeout(60000L)
             .onSuccess(IO) {
                 it.forEach { searchBook ->
@@ -168,7 +169,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun loadBookInfo(webBook: WebBook, book: Book) {
-        webBook.getBookInfo(this, book)
+        webBook.getBookInfo(viewModelScope, book)
             .onSuccess {
                 if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
                     loadBookToc(webBook, book)
@@ -184,7 +185,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun loadBookToc(webBook: WebBook, book: Book) {
-        webBook.getChapterList(this, book)
+        webBook.getChapterList(viewModelScope, book)
             .onSuccess(IO) { chapters ->
                 if (chapters.isNotEmpty()) {
                     book.latestChapterTitle = chapters.last().title

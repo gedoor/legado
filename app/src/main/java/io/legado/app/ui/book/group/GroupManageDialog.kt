@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,8 @@ import io.legado.app.utils.getSize
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
@@ -77,9 +80,11 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     private fun initData() {
-        appDb.bookGroupDao.liveDataAll().observe(viewLifecycleOwner, {
-            adapter.setItems(it)
-        })
+        lifecycleScope.launch {
+            appDb.bookGroupDao.liveDataAll().collect {
+                adapter.setItems(it)
+            }
+        }
     }
 
     private fun initMenu() {

@@ -10,7 +10,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
 import io.legado.app.constant.AppConst
@@ -28,6 +28,8 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * 书架界面
@@ -39,7 +41,6 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     private val binding by viewBinding(FragmentBookshelfBinding::bind)
     private lateinit var adapter: FragmentStatePagerAdapter
     private lateinit var tabLayout: TabLayout
-    private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Long, BooksFragment>()
 
@@ -77,9 +78,8 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     }
 
     private fun initBookGroupData() {
-        bookGroupLiveData?.removeObservers(viewLifecycleOwner)
-        bookGroupLiveData = appDb.bookGroupDao.liveDataShow().apply {
-            observe(viewLifecycleOwner) {
+        lifecycleScope.launch {
+            appDb.bookGroupDao.liveDataShow().collect {
                 viewModel.checkGroup(it)
                 upGroup(it)
             }

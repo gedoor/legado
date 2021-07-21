@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
@@ -102,7 +103,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             return
         }
         val task = WebBook(source)
-            .searchBook(this, name, context = searchPool!!)
+            .searchBook(viewModelScope, name, context = searchPool!!)
             .timeout(60000L)
             .onSuccess(Dispatchers.IO) {
                 if (it.isNotEmpty()) {

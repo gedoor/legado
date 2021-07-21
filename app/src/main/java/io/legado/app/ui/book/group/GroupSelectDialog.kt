@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,8 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.getSize
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
@@ -105,9 +108,11 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     private fun initData() {
-        appDb.bookGroupDao.liveDataSelect().observe(viewLifecycleOwner, {
-            adapter.setItems(it)
-        })
+        lifecycleScope.launch {
+            appDb.bookGroupDao.liveDataSelect().collect {
+                adapter.setItems(it)
+            }
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

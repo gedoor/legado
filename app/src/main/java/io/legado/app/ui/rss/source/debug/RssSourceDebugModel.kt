@@ -1,6 +1,7 @@
 package io.legado.app.ui.rss.source.debug
 
 import android.app.Application
+import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
@@ -31,7 +32,7 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
         rssSource?.let {
             start?.invoke()
             Debug.callback = this
-            Debug.startDebug(this, it)
+            Debug.startDebug(viewModelScope, it)
         } ?: error?.invoke()
     }
 

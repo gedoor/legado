@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -178,7 +179,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     }
 
     private fun initGroupFlow() {
-        launch {
+        lifecycleScope.launch {
             appDb.rssSourceDao.liveGroup().collect {
                 groups.clear()
                 it.map { group ->
@@ -230,7 +231,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun upSourceFlow(searchKey: String? = null) {
         sourceFlowJob?.cancel()
-        sourceFlowJob = launch {
+        sourceFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrBlank() -> {
                     appDb.rssSourceDao.liveAll()

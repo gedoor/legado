@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -150,7 +151,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
         viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
             adapter.setItems(it)
         })
-        launch {
+        lifecycleScope.launch {
             appDb.bookSourceDao.liveGroupEnabled().collect {
                 groups.clear()
                 it.map { group ->

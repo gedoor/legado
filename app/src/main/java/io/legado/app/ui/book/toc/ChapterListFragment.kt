@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.EventBus
@@ -77,7 +78,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
 
     @SuppressLint("SetTextI18n")
     private fun initBook(book: Book) {
-        launch {
+        lifecycleScope.launch {
             upChapterList(null)
             durChapterIndex = book.durChapterIndex
             binding.tvCurrentChapterInfo.text =
@@ -87,7 +88,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     }
 
     private fun initCacheFileNames(book: Book) {
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
             withContext(Main) {
                 adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
@@ -108,7 +109,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
 
     override fun upChapterList(searchKey: String?) {
         tocFlowJob?.cancel()
-        tocFlowJob = launch {
+        tocFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrBlank() -> appDb.bookChapterDao.observeByBook(viewModel.bookUrl)
                 else -> appDb.bookChapterDao.liveDataSearch(viewModel.bookUrl, searchKey)

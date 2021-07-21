@@ -8,6 +8,7 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -87,7 +88,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         ATH.applyEdgeEffectColor(binding.rvFind)
         linearLayoutManager = LinearLayoutManager(context)
         binding.rvFind.layoutManager = linearLayoutManager
-        adapter = ExploreAdapter(requireContext(), this, this)
+        adapter = ExploreAdapter(requireContext(), lifecycleScope, this)
         binding.rvFind.adapter = adapter
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
 
@@ -101,7 +102,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     }
 
     private fun initGroupData() {
-        launch {
+        lifecycleScope.launch {
             appDb.bookSourceDao.liveExploreGroup()
                 .collect {
                     groups.clear()
@@ -115,7 +116,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     private fun upExploreData(searchKey: String? = null) {
         exploreFlowJob?.cancel()
-        exploreFlowJob = launch {
+        exploreFlowJob = lifecycleScope.launch {
             val exploreFlow = when {
                 searchKey.isNullOrBlank() -> {
                     appDb.bookSourceDao.liveExplore()

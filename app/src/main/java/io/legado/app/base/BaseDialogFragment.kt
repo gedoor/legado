@@ -4,23 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-
-abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-    private lateinit var job: Job
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        job = Job()
-    }
+abstract class BaseDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,13 +30,8 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
     fun <T> execute(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = lifecycleScope,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
     ) = Coroutine.async(scope, context) { block() }

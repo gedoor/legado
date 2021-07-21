@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.isGone
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -100,7 +101,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
             }
             customView { alertBinding.root }
             okButton {
-                launch {
+                lifecycleScope.launch {
                     ruleSub.type = alertBinding.spType.selectedItemPosition
                     ruleSub.name = alertBinding.etName.text?.toString() ?: ""
                     ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
@@ -121,19 +122,19 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     }
 
     override fun delSubscription(ruleSub: RuleSub) {
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             appDb.ruleSubDao.delete(ruleSub)
         }
     }
 
     override fun updateSourceSub(vararg ruleSub: RuleSub) {
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             appDb.ruleSubDao.update(*ruleSub)
         }
     }
 
     override fun upOrder() {
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             val sourceSubs = appDb.ruleSubDao.all
             for ((index: Int, ruleSub: RuleSub) in sourceSubs.withIndex()) {
                 ruleSub.customOrder = index + 1

@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -222,7 +223,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                     if (buttonView.isPressed) {
                         getItem(holder.layoutPosition)?.let {
                             it.enable = isChecked
-                            launch(IO) {
+                            lifecycleScope.launch(IO) {
                                 appDb.txtTocRuleDao.update(it)
                             }
                         }
@@ -233,7 +234,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 }
                 ivDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { item ->
-                        launch(IO) {
+                        lifecycleScope.launch(IO) {
                             appDb.txtTocRuleDao.delete(item)
                         }
                     }
@@ -255,7 +256,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 for ((index, item) in getItems().withIndex()) {
                     item.serialNumber = index + 1
                 }
-                launch(IO) {
+                lifecycleScope.launch(IO) {
                     appDb.txtTocRuleDao.update(*getItems().toTypedArray())
                 }
             }

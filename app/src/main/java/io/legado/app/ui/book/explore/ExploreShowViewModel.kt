@@ -3,6 +3,7 @@ package io.legado.app.ui.book.explore
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
@@ -34,7 +35,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         val source = bookSource
         val url = exploreUrl
         if (source != null && url != null) {
-            WebBook(source).exploreBook(this, url, page)
+            WebBook(source).exploreBook(viewModelScope, url, page)
                 .timeout(30000L)
                 .onSuccess(IO) { searchBooks ->
                     booksData.postValue(searchBooks)

@@ -24,9 +24,6 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.TitleBar
 import io.legado.app.utils.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 
 
 abstract class BaseActivity<VB : ViewBinding>(
@@ -35,8 +32,7 @@ abstract class BaseActivity<VB : ViewBinding>(
     private val toolBarTheme: Theme = Theme.Auto,
     private val transparent: Boolean = false,
     private val imageBg: Boolean = true
-) : AppCompatActivity(),
-    CoroutineScope by MainScope() {
+) : AppCompatActivity() {
 
     protected abstract val binding: VB
 
@@ -118,11 +114,6 @@ abstract class BaseActivity<VB : ViewBinding>(
         findViewById<TitleBar>(R.id.title_bar)
             ?.onMultiWindowModeChanged(isInMultiWindow, fullScreen)
         setupSystemBar()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cancel()
     }
 
     abstract fun onActivityCreated(savedInstanceState: Bundle?)

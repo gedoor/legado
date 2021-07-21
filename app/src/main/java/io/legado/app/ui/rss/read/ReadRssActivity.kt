@@ -12,6 +12,7 @@ import android.view.*
 import android.webkit.*
 import androidx.activity.viewModels
 import androidx.core.view.size
+import androidx.lifecycle.lifecycleScope
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import io.legado.app.R
@@ -231,7 +232,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     override fun upTtsMenu(isPlaying: Boolean) {
-        launch {
+        lifecycleScope.launch {
             if (isPlaying) {
                 ttsMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
                 ttsMenuItem?.setTitle(R.string.aloud_stop)

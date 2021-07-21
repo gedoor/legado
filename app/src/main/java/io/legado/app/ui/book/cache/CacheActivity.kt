@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
@@ -46,7 +46,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     private val exportBookPathKey = "exportBookPath"
     lateinit var adapter: CacheAdapter
-    private var groupLiveData: LiveData<List<BookGroup>>? = null
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var exportPosition = -1
@@ -68,7 +67,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)
-        launch {
+        lifecycleScope.launch {
             binding.titleBar.subtitle = withContext(IO) {
                 appDb.bookGroupDao.getByID(groupId)?.groupName
                     ?: getString(R.string.no_group)
@@ -150,7 +149,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     private fun initBookData() {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             when (groupId) {
                 AppConst.bookGroupAllId -> appDb.bookDao.observeAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.observeLocal()
@@ -176,18 +175,18 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     private fun initGroupData() {
-        groupLiveData?.removeObservers(this)
-        groupLiveData = appDb.bookGroupDao.liveDataAll()
-        groupLiveData?.observe(this, {
-            groupList.clear()
-            groupList.addAll(it)
-            adapter.notifyDataSetChanged()
-            upMenu()
-        })
+        lifecycleScope.launch {
+            appDb.bookGroupDao.liveDataAll().collect {
+                groupList.clear()
+                groupList.addAll(it)
+                adapter.notifyDataSetChanged()
+                upMenu()
+            }
+        }
     }
 
     private fun initCacheSize(books: List<Book>) {
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             books.forEach { book ->
                 val chapterCaches = hashSetOf<String>()
                 val cacheNames = BookHelp.getChapterFiles(book)

@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -192,7 +193,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun initData() {
-        launch {
+        lifecycleScope.launch {
             appDb.bookSourceDao.liveGroupEnabled().collect {
                 groups.clear()
                 it.map { group ->
@@ -273,7 +274,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      */
     private fun upHistory(key: String? = null) {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             if (key.isNullOrBlank()) {
                 binding.tvBookShow.gone()
                 binding.rvBookshelfSearch.gone()
@@ -361,7 +362,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 点击历史关键字
      */
     override fun searchHistory(key: String) {
-        launch {
+        lifecycleScope.launch {
             when {
                 searchView.query.toString() == key -> {
                     searchView.setQuery(key, true)

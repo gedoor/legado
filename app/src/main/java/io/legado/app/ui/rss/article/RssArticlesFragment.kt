@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -96,7 +97,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     private fun initData() {
         val rssUrl = activityViewModel.url ?: return
         articlesFlowJob?.cancel()
-        articlesFlowJob = launch {
+        articlesFlowJob = lifecycleScope.launch {
             appDb.rssArticleDao.liveByOriginSort(rssUrl, viewModel.sortName).collect {
                 adapter.setItems(it)
             }
