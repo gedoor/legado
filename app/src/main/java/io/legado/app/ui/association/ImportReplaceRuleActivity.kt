@@ -59,7 +59,7 @@ class ImportReplaceRuleActivity :
                     finish()
                 }
             }
-        }
+        } ?: finish()
     }
 
     private fun errorDialog(msg: String) {

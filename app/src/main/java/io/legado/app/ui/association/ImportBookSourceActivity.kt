@@ -60,7 +60,7 @@ class ImportBookSourceActivity :
                     finish()
                 }
             }
-        }
+        } ?: finish()
     }
 
     private fun errorDialog(msg: String) {

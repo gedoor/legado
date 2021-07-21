@@ -59,7 +59,7 @@ class ImportRssSourceActivity :
                     finish()
                 }
             }
-        }
+        } ?: finish()
     }
 
     private fun errorDialog(msg: String) {
