@@ -27,7 +27,6 @@ import kotlin.math.min
 object ReadBook {
     var titleDate = MutableLiveData<String>()
     var book: Book? = null
-    var contentProcessor: ContentProcessor? = null
     var inBookshelf = false
     var chapterSize = 0
     var durChapterIndex = 0
@@ -46,7 +45,6 @@ object ReadBook {
 
     fun resetData(book: Book) {
         this.book = book
-        contentProcessor = ContentProcessor.get(book.name, book.origin)
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         durChapterIndex = book.durChapterIndex
@@ -414,9 +412,10 @@ object ReadBook {
                     2 -> ChineseUtils.s2t(chapter.title)
                     else -> chapter.title
                 }
-                val contents = contentProcessor!!.getContent(book, chapter.title, content)
-                val textChapter =
-                    ChapterProvider.getTextChapter(book, chapter, contents, chapterSize)
+                val contents = ContentProcessor.get(book.name, book.origin)
+                    .getContent(book, chapter.title, content)
+                val textChapter = ChapterProvider
+                    .getTextChapter(book, chapter, contents, chapterSize)
 
                 val offset = chapter.index - durChapterIndex
                 if (upContent) callBack?.upContent(offset, resetPageOffset)
