@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -26,6 +27,8 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
@@ -62,13 +65,19 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tvOk.setOnClickListener {
             dismissAllowingStateLoss()
         }
-        appDb.rssSourceDao.liveGroup().observe(viewLifecycleOwner, {
-            val groups = linkedSetOf<String>()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+        initData()
+    }
+
+    private fun initData() {
+        lifecycleScope.launch {
+            appDb.rssSourceDao.flowGroup().collect {
+                val groups = linkedSetOf<String>()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                adapter.setItems(groups.toList())
             }
-            adapter.setItems(groups.toList())
-        })
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

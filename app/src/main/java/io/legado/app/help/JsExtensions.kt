@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -85,6 +86,8 @@ interface JsExtensions {
 
     /**
      * 实现16进制字符串转文件
+     * @param content 需要转成文件的16进制字符串
+     * @param url 通过url里的参数来判断文件类型
      * @return 相对路径
      */
     fun downloadFile(content: String, url: String): String {
@@ -312,40 +315,34 @@ interface JsExtensions {
 
     /**
      * 获取网络zip文件里面的数据
-     * @param url zip文件的链接
+     * @param url zip文件的链接或十六进制字符串
      * @param path 所需获取文件在zip内的路径
      * @return zip指定文件的数据
      */
     fun getZipStringContent(url: String, path: String): String {
-        val bytes = runBlocking {
-            return@runBlocking okHttpClient.newCall { url(url) }.bytes()
-        }
-        val bos = ByteArrayOutputStream()
-        val zis = ZipInputStream(ByteArrayInputStream(bytes))
+        val byteArray = getZipByteArrayContent(url, path) ?: return ""
+        val charsetName = EncodingDetect.getEncode(byteArray)
+        return String(byteArray, Charset.forName(charsetName))
+    }
 
-        var entry: ZipEntry? = zis.nextEntry
-
-        while (entry != null) {
-            if (entry.name.equals(path)) {
-                zis.use { it.copyTo(bos) }
-                return bos.toString()
-            }
-            entry = zis.nextEntry
-        }
-        Debug.log("getZipContent 未发现内容")
-
-        return ""
+    fun getZipStringContent(url: String, path: String, charsetName: String): String {
+        val byteArray = getZipByteArrayContent(url, path) ?: return ""
+        return String(byteArray, Charset.forName(charsetName))
     }
 
     /**
      * 获取网络zip文件里面的数据
-     * @param url zip文件的链接
+     * @param url zip文件的链接或十六进制字符串
      * @param path 所需获取文件在zip内的路径
      * @return zip指定文件的数据
      */
     fun getZipByteArrayContent(url: String, path: String): ByteArray? {
-        val bytes = runBlocking {
-            return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+        val bytes = if (url.startsWith("http://") || url.startsWith("https://")) {
+            runBlocking {
+                return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+            }
+        } else {
+            StringUtils.hexStringToByte(url)
         }
         val bos = ByteArrayOutputStream()
         val zis = ZipInputStream(ByteArrayInputStream(bytes))

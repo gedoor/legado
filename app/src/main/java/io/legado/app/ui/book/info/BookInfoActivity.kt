@@ -10,6 +10,7 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
@@ -53,7 +54,7 @@ class BookInfoActivity :
     private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
         it?.let {
             viewModel.bookData.value?.let { book ->
-                launch {
+                lifecycleScope.launch {
                     withContext(IO) {
                         viewModel.durChapterIndex = it.first
                         book.durChapterIndex = it.first

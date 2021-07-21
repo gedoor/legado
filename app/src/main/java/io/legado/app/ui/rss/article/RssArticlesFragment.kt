@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +22,9 @@ import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragment_rss_articles),
     BaseRssArticlesAdapter.CallBack {
@@ -42,7 +45,7 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     override val viewModel by viewModels<RssArticlesViewModel>()
     lateinit var adapter: BaseRssArticlesAdapter<*>
     private lateinit var loadMoreView: LoadMoreView
-    private var rssArticlesData: LiveData<List<RssArticle>>? = null
+    private var articlesFlowJob: Job? = null
     override val isGridLayout: Boolean
         get() = activityViewModel.isGridLayout
 
@@ -92,12 +95,12 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     }
 
     private fun initData() {
-        activityViewModel.url?.let {
-            rssArticlesData?.removeObservers(this)
-            rssArticlesData = appDb.rssArticleDao.liveByOriginSort(it, viewModel.sortName)
-            rssArticlesData?.observe(viewLifecycleOwner, { list ->
-                adapter.setItems(list)
-            })
+        val rssUrl = activityViewModel.url ?: return
+        articlesFlowJob?.cancel()
+        articlesFlowJob = lifecycleScope.launch {
+            appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).collect {
+                adapter.setItems(it)
+            }
         }
     }
 

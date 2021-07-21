@@ -1,9 +1,9 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssReadRecord
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RssArticleDao {
@@ -12,12 +12,13 @@ interface RssArticleDao {
     fun get(origin: String, link: String): RssArticle?
 
     @Query(
-        """select t1.link, t1.sort, t1.origin, t1.`order`, t1.title, t1.content, t1.description, t1.image, t1.pubDate, t1.variable, ifNull(t2.read, 0) as read
+        """select t1.link, t1.sort, t1.origin, t1.`order`, t1.title, t1.content, 
+            t1.description, t1.image, t1.pubDate, t1.variable, ifNull(t2.read, 0) as read
         from rssArticles as t1 left join rssReadRecords as t2
         on t1.link = t2.record  where origin = :origin and sort = :sort
         order by `order` desc"""
     )
-    fun liveByOriginSort(origin: String, sort: String): LiveData<List<RssArticle>>
+    fun flowByOriginSort(origin: String, sort: String): Flow<List<RssArticle>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rssArticle: RssArticle)

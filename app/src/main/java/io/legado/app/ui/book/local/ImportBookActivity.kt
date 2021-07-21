@@ -9,7 +9,7 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -27,6 +27,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -46,7 +47,6 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private var rootDoc: DocumentFile? = null
     private val subDocs = arrayListOf<DocumentFile>()
     private lateinit var adapter: ImportBookAdapter
-    private var localUriLiveData: LiveData<List<String>>? = null
     private var sdPath = FileUtils.getSdCardPath()
     private var path = sdPath
     private val selectFolder = registerForActivityResult(FilePicker()) { uri ->
@@ -125,11 +125,11 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     private fun initData() {
-        localUriLiveData?.removeObservers(this)
-        localUriLiveData = appDb.bookDao.observeLocalUri()
-        localUriLiveData?.observe(this, {
-            adapter.upBookHas(it)
-        })
+        lifecycleScope.launch {
+            appDb.bookDao.flowLocalUri().collect {
+                adapter.upBookHas(it)
+            }
+        }
     }
 
     private fun initRootDoc() {
@@ -188,7 +188,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         binding.tvPath.text = path
         adapter.selectedUris.clear()
         adapter.clearItems()
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             val docList = DocumentUtils.listFiles(this@ImportBookActivity, lastDoc.uri)
             for (i in docList.lastIndex downTo 0) {
                 val item = docList[i]
@@ -252,7 +252,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             adapter.clearItems()
             val lastDoc = subDocs.lastOrNull() ?: doc
             binding.refreshProgressBar.isAutoLoading = true
-            launch(IO) {
+            lifecycleScope.launch(IO) {
                 viewModel.scanDoc(lastDoc, true, find) {
                     launch {
                         binding.refreshProgressBar.isAutoLoading = false
@@ -267,7 +267,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                 adapter.clearItems()
                 val file = File(path)
                 binding.refreshProgressBar.isAutoLoading = true
-                launch(IO) {
+                lifecycleScope.launch(IO) {
                     viewModel.scanFile(file, true, find) {
                         launch {
                             binding.refreshProgressBar.isAutoLoading = false
@@ -292,7 +292,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     private val find: (docItem: DocItem) -> Unit = {
-        launch {
+        lifecycleScope.launch {
             adapter.addItem(it)
         }
     }

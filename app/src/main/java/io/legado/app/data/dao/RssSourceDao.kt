@@ -1,8 +1,8 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.RssSource
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RssSourceDao {
@@ -20,25 +20,30 @@ interface RssSourceDao {
     val size: Int
 
     @Query("SELECT * FROM rssSources order by customOrder")
-    fun liveAll(): LiveData<List<RssSource>>
+    fun flowAll(): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where sourceName like :key or sourceUrl like :key or sourceGroup like :key order by customOrder")
-    fun liveSearch(key: String): LiveData<List<RssSource>>
+    fun flowSearch(key: String): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where sourceGroup like :key order by customOrder")
-    fun liveGroupSearch(key: String): LiveData<List<RssSource>>
+    fun flowGroupSearch(key: String): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where enabled = 1 order by customOrder")
-    fun liveEnabled(): LiveData<List<RssSource>>
+    fun flowEnabled(): Flow<List<RssSource>>
 
-    @Query("SELECT * FROM rssSources where enabled = 1 and (sourceName like :searchKey or sourceGroup like :searchKey or sourceUrl like :searchKey) order by customOrder")
-    fun liveEnabled(searchKey: String): LiveData<List<RssSource>>
+    @Query(
+        """SELECT * FROM rssSources 
+        where enabled = 1 
+        and (sourceName like :searchKey or sourceGroup like :searchKey or sourceUrl like :searchKey) 
+        order by customOrder"""
+    )
+    fun flowEnabled(searchKey: String): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where enabled = 1 and sourceGroup like :searchKey order by customOrder")
-    fun liveEnabledByGroup(searchKey: String): LiveData<List<RssSource>>
+    fun flowEnabledByGroup(searchKey: String): Flow<List<RssSource>>
 
     @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
-    fun liveGroup(): LiveData<List<String>>
+    fun flowGroup(): Flow<List<String>>
 
     @get:Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
     val allGroup: List<String>

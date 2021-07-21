@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -22,6 +23,8 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class ChangeSourceDialog : BaseDialogFragment(),
@@ -148,13 +151,15 @@ class ChangeSourceDialog : BaseDialogFragment(),
         viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
             adapter.setItems(it)
         })
-        appDb.bookSourceDao.liveGroupEnabled().observe(this, {
-            groups.clear()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+        lifecycleScope.launch {
+            appDb.bookSourceDao.flowGroupEnabled().collect {
+                groups.clear()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                upGroupMenu()
             }
-            upGroupMenu()
-        })
+        }
     }
 
     private val stopMenuItem: MenuItem?

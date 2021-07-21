@@ -9,6 +9,7 @@ import android.util.Base64
 import android.webkit.URLUtil
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
@@ -25,7 +26,6 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
@@ -95,7 +95,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
         rssSource?.let { source ->
-            Rss.getContent(this, rssArticle, ruleContent, source)
+            Rss.getContent(viewModelScope, rssArticle, ruleContent, source)
                 .onSuccess(IO) { body ->
                     rssArticle.description = body
                     appDb.rssArticleDao.insert(rssArticle)
@@ -189,9 +189,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             ttsInitFinish = true
             play()
         } else {
-            launch {
-                toastOnUi(R.string.tts_init_failed)
-            }
+            toastOnUi(R.string.tts_init_failed)
         }
     }
 

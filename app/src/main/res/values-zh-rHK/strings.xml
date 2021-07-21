@@ -231,7 +231,7 @@
     <string name="intro_show_null">簡介: 暫無簡介</string>
     <string name="open_from_other">打開外部書籍</string>
     <string name="origin_show">來源: %s</string>
-    <string name="import_replace_rule">本地導入</string>
+    <string name="import_replace_rule">導入替換規則</string>
     <string name="import_replace_rule_on_line">導入在線規則</string>
     <string name="check_update_interval">檢查更新間隔</string>
     <string name="bookshelf_px_0">按閲讀時間</string>

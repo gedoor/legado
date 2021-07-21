@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -17,7 +18,7 @@ import kotlinx.coroutines.isActive
 class SearchViewModel(application: Application) : BaseViewModel(application),
     SearchBookModel.CallBack {
     val handler = Handler(Looper.getMainLooper())
-    private val searchBookModel = SearchBookModel(this, this)
+    private val searchBookModel = SearchBookModel(viewModelScope, this)
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     var searchKey: String = ""
@@ -64,7 +65,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
         val precision = context.getPrefBoolean(PreferKey.precisionSearch)
         appDb.searchBookDao.insert(*searchBooks.toTypedArray())
-        mergeItems(this, searchBooks, precision)
+        mergeItems(viewModelScope, searchBooks, precision)
     }
 
     override fun onSearchFinish() {

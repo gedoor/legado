@@ -1,14 +1,14 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.TxtTocRule
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TxtTocRuleDao {
 
     @Query("select * from txtTocRules order by serialNumber")
-    fun observeAll(): LiveData<List<TxtTocRule>>
+    fun observeAll(): Flow<List<TxtTocRule>>
 
     @get:Query("select * from txtTocRules order by serialNumber")
     val all: List<TxtTocRule>

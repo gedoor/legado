@@ -21,13 +21,13 @@ class SharedReceiverActivity : AppCompatActivity() {
 
     private fun initIntent() {
         when {
-            Intent.ACTION_SEND == intent.action && intent.type == receivingType -> {
+            intent.action == Intent.ACTION_SEND && intent.type == receivingType -> {
                 intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
                     dispose(it)
                 }
             }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && Intent.ACTION_PROCESS_TEXT == intent.action
+                    && intent.action == Intent.ACTION_PROCESS_TEXT
                     && intent.type == receivingType -> {
                 intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.let {
                     dispose(it)

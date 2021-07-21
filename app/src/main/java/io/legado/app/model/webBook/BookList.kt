@@ -186,26 +186,47 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└${searchBook.author}", log)
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取分类", log)
-            searchBook.kind = analyzeRule.getStringList(ruleKind)?.joinToString(",")
-            Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}", log)
+            try {
+                searchBook.kind = analyzeRule.getStringList(ruleKind)?.joinToString(",")
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}", log)
+            } catch (e: Exception) {
+                Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
+            }
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取字数", log)
-            searchBook.wordCount = wordCountFormat(analyzeRule.getString(ruleWordCount))
-            Debug.log(bookSource.bookSourceUrl, "└${searchBook.wordCount}", log)
+            try {
+                searchBook.wordCount = wordCountFormat(analyzeRule.getString(ruleWordCount))
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.wordCount}", log)
+            } catch (e: java.lang.Exception) {
+                Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
+            }
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取最新章节", log)
-            searchBook.latestChapterTitle = analyzeRule.getString(ruleLastChapter)
-            Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}", log)
+            try {
+                searchBook.latestChapterTitle = analyzeRule.getString(ruleLastChapter)
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}", log)
+            } catch (e: java.lang.Exception) {
+                Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
+            }
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取简介", log)
-            searchBook.intro = HtmlFormatter.format(analyzeRule.getString(ruleIntro))
-            Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", log)
+            try {
+                searchBook.intro = HtmlFormatter.format(analyzeRule.getString(ruleIntro))
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", log)
+            } catch (e: java.lang.Exception) {
+                Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
+            }
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取封面链接", log)
-            analyzeRule.getString(ruleCoverUrl).let {
-                if (it.isNotEmpty()) searchBook.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
+            try {
+                analyzeRule.getString(ruleCoverUrl).let {
+                    if (it.isNotEmpty()) searchBook.coverUrl =
+                        NetworkUtils.getAbsoluteURL(baseUrl, it)
+                }
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}", log)
+            } catch (e: java.lang.Exception) {
+                Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }
-            Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}", log)
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取详情页链接", log)
             searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, true)

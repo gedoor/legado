@@ -1,33 +1,33 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDao {
 
     @Query("SELECT * FROM books order by durChapterTime desc")
-    fun observeAll(): LiveData<List<Book>>
+    fun flowAll(): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE type = ${BookType.audio}")
-    fun observeAudio(): LiveData<List<Book>>
+    fun flowAudio(): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE origin = '${BookType.local}'")
-    fun observeLocal(): LiveData<List<Book>>
+    fun flowLocal(): Flow<List<Book>>
 
     @Query("select * from books where type != ${BookType.audio} and origin != '${BookType.local}' and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0")
-    fun observeNoGroup(): LiveData<List<Book>>
+    fun flowNoGroup(): Flow<List<Book>>
 
     @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}'")
-    fun observeLocalUri(): LiveData<List<String>>
+    fun flowLocalUri(): Flow<List<String>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
-    fun observeByGroup(group: Long): LiveData<List<Book>>
+    fun flowByGroup(group: Long): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
-    fun liveDataSearch(key: String): LiveData<List<Book>>
+    fun flowSearch(key: String): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
     fun getBooksByGroup(group: Long): List<Book>

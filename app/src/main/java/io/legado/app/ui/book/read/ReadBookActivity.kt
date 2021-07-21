@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
+import androidx.lifecycle.lifecycleScope
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
@@ -108,7 +109,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         TextActionMenu(this, this)
     }
 
-    override val scope: CoroutineScope get() = this
+    override val scope: CoroutineScope get() = lifecycleScope
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = binding.readView.isScroll
     private val mHandler = Handler(Looper.getMainLooper())
@@ -591,7 +592,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         resetPageOffset: Boolean,
         success: (() -> Unit)?
     ) {
-        launch {
+        lifecycleScope.launch {
             autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
@@ -604,13 +605,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 更新视图
      */
     override fun upView() {
-        launch {
+        lifecycleScope.launch {
             binding.readMenu.upBookView()
         }
     }
 
     override fun upPageAnim() {
-        launch {
+        lifecycleScope.launch {
             binding.readView.upPageAnim()
         }
     }
@@ -620,7 +621,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      */
     override fun pageChanged() {
         autoPageProgress = 0
-        launch {
+        lifecycleScope.launch {
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
         }
         mHandler.postDelayed(backupRunnable, 600000)
@@ -846,7 +847,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 viewModel.searchContentQuery
             )
             ReadBook.skipToPage(positions[0]) {
-                launch {
+                lifecycleScope.launch {
                     binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
                     delay(20L)
                     when (positions[3]) {
@@ -936,7 +937,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
         }
         observeEventSticky<Int>(EventBus.TTS_PROGRESS) { chapterStart ->
-            launch(IO) {
+            lifecycleScope.launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->
                         val pageStart = chapterStart - ReadBook.durChapterPos

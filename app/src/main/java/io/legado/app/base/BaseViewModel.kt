@@ -4,20 +4,22 @@ import android.app.Application
 import android.content.Context
 import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("unused")
-open class BaseViewModel(application: Application) : AndroidViewModel(application),
-    CoroutineScope by MainScope() {
+open class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
     val context: Context by lazy { this.getApplication<App>() }
 
     fun <T> execute(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
@@ -25,7 +27,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun <R> submit(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> Deferred<R>
     ): Coroutine<R> {
@@ -35,7 +37,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     @CallSuper
     override fun onCleared() {
         super.onCleared()
-        cancel()
     }
 
     open fun toastOnUi(message: Int) {

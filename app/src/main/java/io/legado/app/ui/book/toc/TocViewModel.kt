@@ -39,18 +39,18 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun startChapterListSearch(newText: String?) {
-        chapterCallBack?.startChapterListSearch(newText)
+        chapterCallBack?.upChapterList(newText)
     }
 
     fun startBookmarkSearch(newText: String?) {
-        bookMarkCallBack?.startBookmarkSearch(newText)
+        bookMarkCallBack?.upBookmark(newText)
     }
 
     interface ChapterListCallBack {
-        fun startChapterListSearch(newText: String?)
+        fun upChapterList(searchKey: String?)
     }
 
     interface BookmarkCallBack {
-        fun startBookmarkSearch(newText: String?)
+        fun upBookmark(searchKey: String?)
     }
 }

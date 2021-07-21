@@ -41,7 +41,11 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
     }
     val headers: Headers = request.headers
     headers.forEachIndexed { index, _ ->
-        requestBuilder.addHeader(headers.name(index), headers.value(index))
+        val name = headers.name(index)
+        if (!name.equals("Keep-Alive", true)) {
+            requestBuilder.addHeader(name, headers.value(index))
+        }
+
     }
 
     val requestBody = request.body
@@ -60,6 +64,5 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
     }
 
     return requestBuilder.build()
-
 }
 

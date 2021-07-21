@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read
 
 import android.app.Application
 import android.content.Intent
+import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
@@ -104,7 +105,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (book.isLocalBook()) {
             loadChapterList(book, changeDruChapterIndex)
         } else {
-            ReadBook.webBook?.getBookInfo(this, book, canReName = false)
+            ReadBook.webBook?.getBookInfo(viewModelScope, book, canReName = false)
                 ?.onSuccess {
                     loadChapterList(book, changeDruChapterIndex)
                 }
@@ -133,7 +134,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
             }
         } else {
-            ReadBook.webBook?.getChapterList(this, book)
+            ReadBook.webBook?.getChapterList(viewModelScope, book)
                 ?.onSuccess(IO) { cList ->
                     if (cList.isNotEmpty()) {
                         if (changeDruChapterIndex == null) {
