@@ -9,6 +9,9 @@ import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
+/**
+ * 网络一键导入
+ */
 class OnLineImportActivity :
     VMBaseActivity<ActivityTranslucenceBinding, OnLineImportViewModel>(theme = Theme.Transparent) {
 
@@ -27,6 +30,8 @@ class OnLineImportActivity :
                 "rssSource" -> importRssSource(url)
                 "replaceRule" -> importReplaceRule(url)
                 "textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
+                "httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
+                "theme" -> viewModel.importTheme(url, this::finallyDialog)
                 else -> {
                 }
             }

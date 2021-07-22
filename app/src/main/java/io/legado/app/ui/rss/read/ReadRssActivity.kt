@@ -2,7 +2,6 @@ package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
 import android.app.DownloadManager
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.net.Uri
@@ -26,6 +25,7 @@ import io.legado.app.service.help.Download
 import io.legado.app.ui.association.ImportBookSourceActivity
 import io.legado.app.ui.association.ImportReplaceRuleActivity
 import io.legado.app.ui.association.ImportRssSourceActivity
+import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.utils.*
@@ -332,41 +332,39 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {
-            if (url.scheme == "http" || url.scheme == "https") {
-                return false
-            } else if (url.scheme == "yuedu") {
-                when (url.host) {
-                    "booksource" -> {
-                        val intent = Intent(
-                            this@ReadRssActivity,
-                            ImportBookSourceActivity::class.java
-                        )
-                        intent.data = url
-                        startActivity(intent)
-                    }
-                    "rsssource" -> {
-                        val intent = Intent(
-                            this@ReadRssActivity,
-                            ImportRssSourceActivity::class.java
-                        )
-                        intent.data = url
-                        startActivity(intent)
-                    }
-                    "replace" -> {
-                        val intent = Intent(
-                            this@ReadRssActivity,
-                            ImportReplaceRuleActivity::class.java
-                        )
-                        intent.data = url
-                        startActivity(intent)
-                    }
+            when (url.scheme) {
+                "http", "https" -> {
+                    return false
                 }
-                return true
+                "legado" -> {
+                    when (url.host) {
+                        "import" -> startActivity<OnLineImportActivity> {
+                            data = url
+                        }
+                    }
+                    return true
+                }
+                "yuedu" -> {
+                    when (url.host) {
+                        "booksource" -> startActivity<ImportBookSourceActivity> {
+                            data = url
+                        }
+                        "rsssource" -> startActivity<ImportRssSourceActivity> {
+                            data = url
+                        }
+                        "replace" -> startActivity<ImportReplaceRuleActivity> {
+                            data = url
+                        }
+                    }
+                    return true
+                }
+                else -> {
+                    binding.root.longSnackbar("跳转其它应用", "确认") {
+                        openUrl(url)
+                    }
+                    return true
+                }
             }
-            binding.root.longSnackbar("跳转其它应用", "确认") {
-                openUrl(url)
-            }
-            return true
         }
 
     }
