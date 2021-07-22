@@ -3,15 +3,22 @@ package io.legado.app.ui.association
 import android.os.Bundle
 import androidx.activity.viewModels
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = Theme.Transparent) {
+/**
+ * 网络一键导入
+ * 格式: legado://import/{path}?src={url}
+ */
+class OnLineImportActivity :
+    VMBaseActivity<ActivityTranslucenceBinding, OnLineImportViewModel>(theme = Theme.Transparent) {
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
+    override val viewModel by viewModels<OnLineImportViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         intent.data?.let {
@@ -21,10 +28,21 @@ class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = T
                 return
             }
             when (it.path) {
-                "bookSource" -> importBookSource(url)
-                "rssSource" -> importRssSource(url)
-                "replaceRule" -> importReplaceRule(url)
-                else -> {
+                "/bookSource" -> importBookSource(url)
+                "/rssSource" -> importRssSource(url)
+                "/replaceRule" -> importReplaceRule(url)
+                "/textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
+                "/httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
+                "/theme" -> viewModel.importTheme(url, this::finallyDialog)
+                "/readConfig" -> viewModel.importReadConfig(url, this::finallyDialog)
+                "/importonline" -> when (it.host) {
+                    "booksource" -> importBookSource(url)
+                    "rsssource" -> importRssSource(url)
+                    "replace" -> importReplaceRule(url)
+                    else -> {
+                        toastOnUi("url error")
+                        finish()
+                    }
                 }
             }
         }
@@ -35,14 +53,14 @@ class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = T
         binding.rotateLoading.show()
         viewModel.errorLiveData.observe(this, {
             binding.rotateLoading.hide()
-            errorDialog(it)
+            finallyDialog(getString(R.string.error), it)
         })
         viewModel.successLiveData.observe(this, {
             binding.rotateLoading.hide()
             if (it > 0) {
                 ImportBookSourceDialog().show(supportFragmentManager, "bookSource")
             } else {
-                errorDialog(getString(R.string.wrong_format))
+                finallyDialog(getString(R.string.error), getString(R.string.wrong_format))
             }
         })
         viewModel.importSource(url)
@@ -53,14 +71,14 @@ class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = T
         binding.rotateLoading.show()
         viewModel.errorLiveData.observe(this, {
             binding.rotateLoading.hide()
-            errorDialog(it)
+            finallyDialog(getString(R.string.error), it)
         })
         viewModel.successLiveData.observe(this, {
             binding.rotateLoading.hide()
             if (it > 0) {
                 ImportRssSourceDialog().show(supportFragmentManager, "rssSource")
             } else {
-                errorDialog(getString(R.string.wrong_format))
+                finallyDialog(getString(R.string.error), getString(R.string.wrong_format))
             }
         })
         viewModel.importSource(url)
@@ -71,22 +89,22 @@ class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = T
         binding.rotateLoading.show()
         viewModel.errorLiveData.observe(this, {
             binding.rotateLoading.hide()
-            errorDialog(it)
+            finallyDialog(getString(R.string.error), it)
         })
         viewModel.successLiveData.observe(this, {
             binding.rotateLoading.hide()
             if (it > 0) {
                 ImportReplaceRuleDialog().show(supportFragmentManager, "replaceRule")
             } else {
-                errorDialog(getString(R.string.wrong_format))
+                finallyDialog(getString(R.string.error), getString(R.string.wrong_format))
             }
         })
         viewModel.import(url)
     }
 
-    private fun errorDialog(msg: String) {
-        alert(getString(R.string.error), msg) {
-            okButton { }
+    private fun finallyDialog(title: String, msg: String) {
+        alert(title, msg) {
+            okButton()
             onDismiss {
                 finish()
             }

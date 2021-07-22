@@ -76,7 +76,7 @@ object ThemeConfig {
         return false
     }
 
-    private fun addConfig(newConfig: Config) {
+    fun addConfig(newConfig: Config) {
         configList.forEachIndexed { index, config ->
             if (newConfig.themeName == config.themeName) {
                 configList[index] = newConfig

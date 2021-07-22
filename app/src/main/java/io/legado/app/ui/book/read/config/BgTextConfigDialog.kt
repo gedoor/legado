@@ -308,6 +308,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
 
     private fun importNetConfig(url: String) {
         execute {
+            @Suppress("BlockingMethodInNonBlockingContext")
             okHttpClient.newCall {
                 url(url)
             }.bytes().let {
@@ -318,9 +319,9 @@ class BgTextConfigDialog : BaseDialogFragment() {
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private fun importConfig(uri: Uri) {
         execute {
+            @Suppress("BlockingMethodInNonBlockingContext")
             importConfig(uri.readBytes(requireContext())!!)
         }.onError {
             it.printStackTrace()
@@ -328,61 +329,13 @@ class BgTextConfigDialog : BaseDialogFragment() {
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
+    @Suppress("BlockingMethodInNonBlockingContext", "BlockingMethodInNonBlockingContext")
     private fun importConfig(byteArray: ByteArray) {
         execute {
-            val configZipPath = FileUtils.getPath(requireContext().externalCache, configFileName)
-            FileUtils.deleteFile(configZipPath)
-            val zipFile = FileUtils.createFileIfNotExist(configZipPath)
-            zipFile.writeBytes(byteArray)
-            val configDirPath = FileUtils.getPath(requireContext().externalCache, "readConfig")
-            FileUtils.deleteFile(configDirPath)
-            ZipUtils.unzipFile(zipFile, FileUtils.createFolderIfNotExist(configDirPath))
-            val configDir = FileUtils.createFolderIfNotExist(configDirPath)
-            val configFile = FileUtils.getFile(configDir, "readConfig.json")
-            val config: ReadBookConfig.Config = GSON.fromJsonObject(configFile.readText())!!
-            if (config.textFont.isNotEmpty()) {
-                val fontName = FileUtils.getName(config.textFont)
-                val fontPath =
-                    FileUtils.getPath(requireContext().externalFiles, "font", fontName)
-                if (!FileUtils.exist(fontPath)) {
-                    FileUtils.getFile(configDir, fontName).copyTo(File(fontPath))
-                }
-                config.textFont = fontPath
-            }
-            if (config.bgType == 2) {
-                val bgName = FileUtils.getName(config.bgStr)
-                val bgPath = FileUtils.getPath(requireContext().externalFiles, "bg", bgName)
-                if (!FileUtils.exist(bgPath)) {
-                    val bgFile = FileUtils.getFile(configDir, bgName)
-                    if (bgFile.exists()) {
-                        bgFile.copyTo(File(bgPath))
-                    }
-                }
-            }
-            if (config.bgTypeNight == 2) {
-                val bgName = FileUtils.getName(config.bgStrNight)
-                val bgPath = FileUtils.getPath(requireContext().externalFiles, "bg", bgName)
-                if (!FileUtils.exist(bgPath)) {
-                    val bgFile = FileUtils.getFile(configDir, bgName)
-                    if (bgFile.exists()) {
-                        bgFile.copyTo(File(bgPath))
-                    }
-                }
-            }
-            if (config.bgTypeEInk == 2) {
-                val bgName = FileUtils.getName(config.bgStrEInk)
-                val bgPath = FileUtils.getPath(requireContext().externalFiles, "bg", bgName)
-                if (!FileUtils.exist(bgPath)) {
-                    val bgFile = FileUtils.getFile(configDir, bgName)
-                    if (bgFile.exists()) {
-                        bgFile.copyTo(File(bgPath))
-                    }
-                }
-            }
-            ReadBookConfig.durConfig = config
-            postEvent(EventBus.UP_CONFIG, true)
+            ReadBookConfig.import(byteArray)
         }.onSuccess {
+            ReadBookConfig.durConfig = it
+            postEvent(EventBus.UP_CONFIG, true)
             toastOnUi("导入成功")
         }.onError {
             it.printStackTrace()

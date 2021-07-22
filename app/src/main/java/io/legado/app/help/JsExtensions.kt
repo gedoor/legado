@@ -346,7 +346,6 @@ interface JsExtensions {
         }
         val bos = ByteArrayOutputStream()
         val zis = ZipInputStream(ByteArrayInputStream(bytes))
-
         var entry: ZipEntry? = zis.nextEntry
         while (entry != null) {
             if (entry.name.equals(path)) {
