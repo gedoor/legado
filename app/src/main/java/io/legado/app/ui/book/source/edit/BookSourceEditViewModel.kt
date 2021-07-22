@@ -9,6 +9,7 @@ import io.legado.app.help.storage.OldRule
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getClipText
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
@@ -46,7 +47,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         }.onSuccess {
             success?.invoke()
         }.onError {
-            toastOnUi(it.localizedMessage)
+            context.toastOnUi(it.localizedMessage)
             it.printStackTrace()
         }
     }
@@ -59,13 +60,13 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             }
             source
         }.onError {
-            toastOnUi(it.localizedMessage)
+            context.toastOnUi(it.localizedMessage)
             it.printStackTrace()
         }.onSuccess {
             if (it != null) {
                 onSuccess(it)
             } else {
-                toastOnUi("格式不对")
+                context.toastOnUi("格式不对")
             }
         }
     }
@@ -77,7 +78,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                 finally.invoke(it)
             }
         }.onError {
-            toastOnUi(it.localizedMessage ?: "Error")
+            context.toastOnUi(it.localizedMessage ?: "Error")
         }
     }
 }

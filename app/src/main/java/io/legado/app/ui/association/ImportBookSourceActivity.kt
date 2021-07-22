@@ -30,7 +30,7 @@ class ImportBookSourceActivity :
         viewModel.successLiveData.observe(this, {
             binding.rotateLoading.hide()
             if (it > 0) {
-                successDialog()
+                ImportBookSourceDialog().show(supportFragmentManager, "SourceDialog")
             } else {
                 errorDialog(getString(R.string.wrong_format))
             }
@@ -70,10 +70,6 @@ class ImportBookSourceActivity :
                 finish()
             }
         }.show()
-    }
-
-    private fun successDialog() {
-        ImportBookSourceDialog().show(supportFragmentManager, "SourceDialog")
     }
 
 }
