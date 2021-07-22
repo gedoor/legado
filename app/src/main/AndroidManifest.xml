@@ -341,9 +341,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="import"
-                    android:scheme="legado" />
+                <data android:scheme="legado" />
+                <data android:scheme="yuedu" />
+
             </intent-filter>
         </activity>
         <!-- 导入书源 -->
@@ -351,48 +351,21 @@
             android:name=".ui.association.ImportBookSourceActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:theme="@style/AppTheme.Transparent">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="booksource"
-                    android:scheme="yuedu" />
-            </intent-filter>
         </activity>
         <!-- 导入订阅源 -->
         <activity
             android:name=".ui.association.ImportRssSourceActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:theme="@style/AppTheme.Transparent">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="rsssource"
-                    android:scheme="yuedu" />
-            </intent-filter>
         </activity>
         <!-- 导入替换规则 -->
         <activity
             android:name=".ui.association.ImportReplaceRuleActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:theme="@style/AppTheme.Transparent">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="replace"
-                    android:scheme="yuedu" />
-            </intent-filter>
         </activity>
         <!-- 打开文件 -->
         <activity

@@ -22,9 +22,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.Download
-import io.legado.app.ui.association.ImportBookSourceActivity
-import io.legado.app.ui.association.ImportReplaceRuleActivity
-import io.legado.app.ui.association.ImportRssSourceActivity
 import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
@@ -336,25 +333,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 "http", "https" -> {
                     return false
                 }
-                "legado" -> {
-                    when (url.host) {
-                        "import" -> startActivity<OnLineImportActivity> {
-                            data = url
-                        }
-                    }
-                    return true
-                }
-                "yuedu" -> {
-                    when (url.host) {
-                        "booksource" -> startActivity<ImportBookSourceActivity> {
-                            data = url
-                        }
-                        "rsssource" -> startActivity<ImportRssSourceActivity> {
-                            data = url
-                        }
-                        "replace" -> startActivity<ImportReplaceRuleActivity> {
-                            data = url
-                        }
+                "legado", "yuedu" -> {
+                    startActivity<OnLineImportActivity> {
+                        data = url
                     }
                     return true
                 }

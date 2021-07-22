@@ -7,6 +7,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
@@ -27,14 +28,21 @@ class OnLineImportActivity :
                 return
             }
             when (it.path) {
-                "bookSource" -> importBookSource(url)
-                "rssSource" -> importRssSource(url)
-                "replaceRule" -> importReplaceRule(url)
-                "textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
-                "httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
-                "theme" -> viewModel.importTheme(url, this::finallyDialog)
-                "readConfig" -> viewModel.importReadConfig(url, this::finallyDialog)
-                else -> {
+                "/bookSource" -> importBookSource(url)
+                "/rssSource" -> importRssSource(url)
+                "/replaceRule" -> importReplaceRule(url)
+                "/textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
+                "/httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
+                "/theme" -> viewModel.importTheme(url, this::finallyDialog)
+                "/readConfig" -> viewModel.importReadConfig(url, this::finallyDialog)
+                "/importonline" -> when (it.host) {
+                    "booksource" -> importBookSource(url)
+                    "rsssource" -> importRssSource(url)
+                    "replace" -> importReplaceRule(url)
+                    else -> {
+                        toastOnUi("url error")
+                        finish()
+                    }
                 }
             }
         }
