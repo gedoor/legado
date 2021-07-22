@@ -2,12 +2,10 @@ package io.legado.app.base
 
 import android.app.Application
 import android.content.Context
-import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -32,19 +30,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         block: suspend CoroutineScope.() -> Deferred<R>
     ): Coroutine<R> {
         return Coroutine.async(scope, context) { block().await() }
-    }
-
-    @CallSuper
-    override fun onCleared() {
-        super.onCleared()
-    }
-
-    open fun toastOnUi(message: Int) {
-        context.toastOnUi(message)
-    }
-
-    open fun toastOnUi(message: CharSequence?) {
-        context.toastOnUi(message ?: toString())
     }
 
 }

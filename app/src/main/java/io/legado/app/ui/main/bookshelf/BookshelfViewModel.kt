@@ -58,12 +58,12 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             }
         }.onSuccess {
             if (successCount > 0) {
-                toastOnUi(R.string.success)
+                context.toastOnUi(R.string.success)
             } else {
-                toastOnUi("ERROR")
+                context.toastOnUi("ERROR")
             }
         }.onError {
-            toastOnUi(it.localizedMessage ?: "ERROR")
+            context.toastOnUi(it.localizedMessage ?: "ERROR")
         }
     }
 
