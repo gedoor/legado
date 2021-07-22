@@ -11,6 +11,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
  * 网络一键导入
+ * 格式: legado://import/{path}?src={url}
  */
 class OnLineImportActivity :
     VMBaseActivity<ActivityTranslucenceBinding, OnLineImportViewModel>(theme = Theme.Transparent) {
