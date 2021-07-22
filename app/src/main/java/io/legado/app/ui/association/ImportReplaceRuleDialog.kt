@@ -1,11 +1,12 @@
 package io.legado.app.ui.association
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -14,12 +15,14 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 class ImportReplaceRuleDialog : BaseDialogFragment() {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
-    private val viewModel by viewModels<ImportReplaceRuleViewModel>()
+    private val viewModel by activityViewModels<ImportReplaceRuleViewModel>()
     lateinit var adapter: SourcesAdapter
 
     override fun onStart() {
@@ -44,6 +47,52 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
         adapter.setItems(viewModel.allRules)
+        binding.tvCancel.visible()
+        binding.tvCancel.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
+        binding.tvOk.visible()
+        binding.tvOk.setOnClickListener {
+            val waitDialog = WaitDialog(requireContext())
+            waitDialog.show()
+            viewModel.importSelect {
+                waitDialog.dismiss()
+                dismissAllowingStateLoss()
+            }
+        }
+        upSelectText()
+        binding.tvFooterLeft.visible()
+        binding.tvFooterLeft.setOnClickListener {
+            val selectAll = viewModel.isSelectAll()
+            viewModel.selectStatus.forEachIndexed { index, b ->
+                if (b != !selectAll) {
+                    viewModel.selectStatus[index] = !selectAll
+                }
+            }
+            adapter.notifyDataSetChanged()
+            upSelectText()
+        }
+    }
+
+    private fun upSelectText() {
+        if (viewModel.isSelectAll()) {
+            binding.tvFooterLeft.text = getString(
+                R.string.select_cancel_count,
+                viewModel.selectCount(),
+                viewModel.allRules.size
+            )
+        } else {
+            binding.tvFooterLeft.text = getString(
+                R.string.select_all_count,
+                viewModel.selectCount(),
+                viewModel.allRules.size
+            )
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        activity?.finish()
     }
 
     inner class SourcesAdapter(context: Context) :
@@ -59,11 +108,21 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
             item: ReplaceRule,
             payloads: MutableList<Any>
         ) {
-            TODO("Not yet implemented")
+            binding.run {
+                cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
+                cbSourceName.text = item.name
+            }
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemSourceImportBinding) {
-            TODO("Not yet implemented")
+            binding.run {
+                cbSourceName.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (buttonView.isPressed) {
+                        viewModel.selectStatus[holder.layoutPosition] = isChecked
+                        upSelectText()
+                    }
+                }
+            }
         }
 
     }

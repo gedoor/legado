@@ -6,6 +6,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.help.http.get
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.utils.toastOnUi
 import org.jsoup.Jsoup
 
 class DictViewModel(application: Application) : BaseViewModel(application) {
@@ -17,12 +18,12 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
             val body = okHttpClient.newCallStrResponse {
                 get("http://apii.dict.cn/mini.php", mapOf(Pair("q", word)))
             }.body
-            val jsoup = Jsoup.parse(body)
+            val jsoup = Jsoup.parse(body!!)
             jsoup.body()
         }.onSuccess {
             dictHtmlData.postValue(it.html())
         }.onError {
-            toastOnUi(it.localizedMessage)
+            context.toastOnUi(it.localizedMessage)
         }
 
     }

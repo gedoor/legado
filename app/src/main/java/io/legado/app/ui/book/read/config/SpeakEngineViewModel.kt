@@ -27,9 +27,9 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
                 import(json)
             }
         }.onSuccess {
-            toastOnUi("导入成功")
+            context.toastOnUi("导入成功")
         }.onError {
-            toastOnUi("导入失败")
+            context.toastOnUi("导入失败")
         }
     }
 
@@ -39,9 +39,9 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
                 import(it)
             }
         }.onSuccess {
-            toastOnUi("导入成功")
+            context.toastOnUi("导入成功")
         }.onError {
-            toastOnUi("导入失败")
+            context.toastOnUi("导入失败")
         }
     }
 

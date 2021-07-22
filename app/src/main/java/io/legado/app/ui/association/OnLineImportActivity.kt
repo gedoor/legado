@@ -7,7 +7,6 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = Theme.Transparent) {
@@ -16,18 +15,15 @@ class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = T
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         intent.data?.let {
+            val url = it.getQueryParameter("src")
+            if (url.isNullOrBlank()) {
+                finish()
+                return
+            }
             when (it.path) {
-                "bookSource" -> it.getQueryParameter("src")?.let { url ->
-                    importBookSource(url)
-                }
-                "rssSource" -> it.getQueryParameter("src")?.let { url ->
-                    importRssSource(url)
-                }
-                "replaceRule" -> it.getQueryParameter("src")?.let { url ->
-                    startActivity<ImportReplaceRuleActivity> {
-                        putExtra("source", url)
-                    }
-                }
+                "bookSource" -> importBookSource(url)
+                "rssSource" -> importRssSource(url)
+                "replaceRule" -> importReplaceRule(url)
                 else -> {
                 }
             }
@@ -44,7 +40,7 @@ class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = T
         viewModel.successLiveData.observe(this, {
             binding.rotateLoading.hide()
             if (it > 0) {
-                ImportBookSourceDialog().show(supportFragmentManager, "SourceDialog")
+                ImportBookSourceDialog().show(supportFragmentManager, "bookSource")
             } else {
                 errorDialog(getString(R.string.wrong_format))
             }
@@ -62,12 +58,30 @@ class OnLineImportActivity : BaseActivity<ActivityTranslucenceBinding>(theme = T
         viewModel.successLiveData.observe(this, {
             binding.rotateLoading.hide()
             if (it > 0) {
-                ImportRssSourceDialog().show(supportFragmentManager, "SourceDialog")
+                ImportRssSourceDialog().show(supportFragmentManager, "rssSource")
             } else {
                 errorDialog(getString(R.string.wrong_format))
             }
         })
         viewModel.importSource(url)
+    }
+
+    private fun importReplaceRule(url: String) {
+        val viewModel by viewModels<ImportReplaceRuleViewModel>()
+        binding.rotateLoading.show()
+        viewModel.errorLiveData.observe(this, {
+            binding.rotateLoading.hide()
+            errorDialog(it)
+        })
+        viewModel.successLiveData.observe(this, {
+            binding.rotateLoading.hide()
+            if (it > 0) {
+                ImportReplaceRuleDialog().show(supportFragmentManager, "replaceRule")
+            } else {
+                errorDialog(getString(R.string.wrong_format))
+            }
+        })
+        viewModel.import(url)
     }
 
     private fun errorDialog(msg: String) {

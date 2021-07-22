@@ -29,7 +29,7 @@ class ImportRssSourceActivity :
         viewModel.successLiveData.observe(this, {
             binding.rotateLoading.hide()
             if (it > 0) {
-                successDialog()
+                ImportRssSourceDialog().show(supportFragmentManager, "SourceDialog")
             } else {
                 errorDialog(getString(R.string.wrong_format))
             }
@@ -69,10 +69,6 @@ class ImportRssSourceActivity :
                 finish()
             }
         }.show()
-    }
-
-    private fun successDialog() {
-        ImportRssSourceDialog().show(supportFragmentManager, "SourceDialog")
     }
 
 }

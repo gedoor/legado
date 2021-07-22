@@ -10,6 +10,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.AudioPlay
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
@@ -71,10 +72,10 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                         }
                         AudioPlay.upDurChapter(book)
                     } else {
-                        toastOnUi(R.string.error_load_toc)
+                        context.toastOnUi(R.string.error_load_toc)
                     }
                 }?.onError {
-                    toastOnUi(R.string.error_load_toc)
+                    context.toastOnUi(R.string.error_load_toc)
                 }
         }
     }
