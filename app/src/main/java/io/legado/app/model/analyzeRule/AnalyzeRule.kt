@@ -423,16 +423,13 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     mode = Mode.Json
                     ruleStr.substring(6)
                 }
-                ruleStr.startsWith("@CSS:", true) -> {
-                    ruleStr
-                }
                 ruleStr.startsWith("/") -> {//XPath特征很明显,无需配置单独的识别标头
                     mode = Mode.XPath
                     ruleStr
                 }
                 ruleStr.length > 1 && ruleStr[0] in listOf('@','.',':','>','#','[') -> {
                     //isJSON为真时，<js></js>之后可能不是jsonPath,故提前判断
-                    //XPath，Json，CSS三大前置已经提前判断了，故@开头即为默认规则，AnalyzeByJSoup会修剪开头的’@‘，故此处不必切片字符串
+                    //XPath，Json已经提前判断了，故@开头即为默认规则，AnalyzeByJSoup会修剪开头的’@‘，故此处不必切片字符串
                     //#开头为根据id查元素,后续规则会切分##正则，故此处不必考虑##情况
                     //:开头为伪类，列表AllInOne已提前判断，此处是伪类无疑
                     mode = Mode.Default
