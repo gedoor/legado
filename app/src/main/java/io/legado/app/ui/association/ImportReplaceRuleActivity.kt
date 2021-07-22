@@ -7,7 +7,6 @@ import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ImportReplaceRuleActivity :
@@ -46,18 +45,7 @@ class ImportReplaceRuleActivity :
             viewModel.import(it)
             return
         }
-        intent.data?.let {
-            when (it.path) {
-                "/importonline" -> it.getQueryParameter("src")?.let { url ->
-                    viewModel.import(url)
-                }
-                else -> {
-                    binding.rotateLoading.hide()
-                    toastOnUi("格式不对")
-                    finish()
-                }
-            }
-        } ?: finish()
+        finish()
     }
 
     private fun errorDialog(msg: String) {

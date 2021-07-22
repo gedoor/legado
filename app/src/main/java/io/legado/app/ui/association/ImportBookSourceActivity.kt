@@ -8,8 +8,6 @@ import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
-
-import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
@@ -49,18 +47,7 @@ class ImportBookSourceActivity :
             viewModel.importSource(it)
             return
         }
-        intent.data?.let {
-            when (it.path) {
-                "/importonline" -> it.getQueryParameter("src")?.let { url ->
-                    viewModel.importSource(url)
-                }
-                else -> {
-                    binding.rotateLoading.hide()
-                    toastOnUi(R.string.wrong_format)
-                    finish()
-                }
-            }
-        } ?: finish()
+        finish()
     }
 
     private fun errorDialog(msg: String) {

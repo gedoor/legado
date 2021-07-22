@@ -350,23 +350,17 @@
         <activity
             android:name=".ui.association.ImportBookSourceActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:theme="@style/AppTheme.Transparent">
-
-        </activity>
+            android:theme="@style/AppTheme.Transparent" />
         <!-- 导入订阅源 -->
         <activity
             android:name=".ui.association.ImportRssSourceActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:theme="@style/AppTheme.Transparent">
-
-        </activity>
+            android:theme="@style/AppTheme.Transparent" />
         <!-- 导入替换规则 -->
         <activity
             android:name=".ui.association.ImportReplaceRuleActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:theme="@style/AppTheme.Transparent">
-
-        </activity>
+            android:theme="@style/AppTheme.Transparent" />
         <!-- 打开文件 -->
         <activity
             android:name=".ui.association.FileAssociationActivity"
