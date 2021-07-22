@@ -135,7 +135,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
         }.onError {
-            toastOnUi("LoadTocError:${it.localizedMessage}")
+            context.toastOnUi("LoadTocError:${it.localizedMessage}")
         }
     }
 

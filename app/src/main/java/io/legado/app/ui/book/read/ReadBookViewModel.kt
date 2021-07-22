@@ -20,6 +20,7 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.msg
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
@@ -221,7 +222,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }.onStart {
             ReadBook.upMsg(context.getString(R.string.source_auto_changing))
         }.onError {
-            toastOnUi(it.msg)
+            context.toastOnUi(it.msg)
         }.onFinally {
             ReadBook.upMsg(null)
         }

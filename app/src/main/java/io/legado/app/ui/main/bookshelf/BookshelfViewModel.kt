@@ -102,7 +102,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 }
             }
         }.onError {
-            toastOnUi(it.localizedMessage ?: "ERROR")
+            context.toastOnUi(it.localizedMessage ?: "ERROR")
         }
     }
 
@@ -125,7 +125,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 }
             }
         }.onFinally {
-            toastOnUi(R.string.success)
+            context.toastOnUi(R.string.success)
         }
     }
 

@@ -5,10 +5,7 @@ import android.content.Intent
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.getClipText
-import io.legado.app.utils.msg
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
@@ -40,7 +37,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }.onSuccess {
             success()
         }.onError {
-            toastOnUi(it.localizedMessage)
+            context.toastOnUi(it.localizedMessage)
             it.printStackTrace()
         }
     }
@@ -53,12 +50,12 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             }
             source
         }.onError {
-            toastOnUi(it.localizedMessage)
+            context.toastOnUi(it.localizedMessage)
         }.onSuccess {
             if (it != null) {
                 onSuccess(it)
             } else {
-                toastOnUi("格式不对")
+                context.toastOnUi("格式不对")
             }
         }
     }
@@ -70,7 +67,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
                 finally.invoke(it)
             }
         }.onError {
-            toastOnUi(it.msg)
+            context.toastOnUi(it.msg)
         }
     }
 
