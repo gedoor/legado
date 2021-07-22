@@ -6,6 +6,7 @@ import java.util.regex.Pattern
 
 object HtmlFormatter {
     private val wrapHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
+    private val commentRegex = "<!--[^>]*-->".toRegex() //注释
     private val notImgHtmlRegex = "</?(?!img)[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
     private val otherHtmlRegex = "</?[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
     private val formatImagePattern = Pattern.compile(
@@ -16,6 +17,7 @@ object HtmlFormatter {
     fun format(html: String?, otherRegex: Regex = otherHtmlRegex): String {
         html ?: return ""
         return html.replace(wrapHtmlRegex, "\n")
+            .replace(commentRegex, "")
             .replace(otherRegex, "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
             .replace("^[\\n\\s]+".toRegex(), "　　")
