@@ -319,16 +319,6 @@
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="import"
-                    android:scheme="legado" />
-            </intent-filter>
         </activity>
         <!-- 一键导入 -->
         <activity
@@ -343,7 +333,6 @@
 
                 <data android:scheme="legado" />
                 <data android:scheme="yuedu" />
-
             </intent-filter>
         </activity>
         <!-- 导入书源 -->
