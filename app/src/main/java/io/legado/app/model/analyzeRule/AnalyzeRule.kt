@@ -415,25 +415,28 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         init {
             rule = when {
                 mode == Mode.Js || mode == Mode.Regex -> ruleStr
-                ruleStr.startsWith("@CSS:", true) -> {
-                    mode = Mode.Default
-                    ruleStr
-                }
-                ruleStr.startsWith("@@") -> {
-                    mode = Mode.Default
-                    ruleStr.substring(2)
-                }
                 ruleStr.startsWith("@XPath:", true) -> {
                     mode = Mode.XPath
                     ruleStr.substring(7)
+                }
+                ruleStr.startsWith("@Json:", true) -> {
+                    mode = Mode.Json
+                    ruleStr.substring(6)
+                }
+                ruleStr.startsWith("@CSS:", true) -> {
+                    ruleStr
                 }
                 ruleStr.startsWith("/") -> {//XPath特征很明显,无需配置单独的识别标头
                     mode = Mode.XPath
                     ruleStr
                 }
-                ruleStr.startsWith("@Json:", true) -> {
-                    mode = Mode.Json
-                    ruleStr.substring(6)
+                ruleStr.length > 1 && ruleStr[0] in listOf('@','.',':','>','#','[') -> {
+                    //isJSON为真时，<js></js>之后可能不是jsonPath,故提前判断
+                    //XPath，Json，CSS三大前置已经提前判断了，故@开头即为默认规则，AnalyzeByJSoup会修剪开头的’@‘，故此处不必切片字符串
+                    //#开头为根据id查元素,后续规则会切分##正则，故此处不必考虑##情况
+                    //:开头为伪类，列表AllInOne已提前判断，此处是伪类无疑
+                    mode = Mode.Default
+                    ruleStr
                 }
                 isJSON || ruleStr.startsWith("$.") || ruleStr.startsWith("$[") -> {
                     mode = Mode.Json
@@ -441,6 +444,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 }
                 else -> ruleStr
             }
+
             //分离put
             rule = splitPutRule(rule, putMap)
             //@get,{{ }}, 拆分
@@ -449,21 +453,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             val evalMatcher = evalPattern.matcher(rule)
 
             if (evalMatcher.find()) {
-                if (mode != Mode.Js && mode != Mode.Regex
-                    && evalMatcher.start() == 0
-                ) {
-                    mode = Mode.Regex
+                val mMode = mode == Mode.Js || mode == Mode.Regex
+                if(!mMode) { //首次匹配，start为0
+                    if(evalMatcher.start() == 0 //仅首次匹配时evalMatcher.start()可能为0
+                        ||!rule.substring(0, evalMatcher.start()).contains("##") //此处start为0
+                    )mode = Mode.Regex
                 }
                 do {
-                    if (evalMatcher.start() > start) {
-                        tmp = rule.substring(start, evalMatcher.start())
-                        if (mode != Mode.Js && mode != Mode.Regex
-                            && start == 0 && !tmp.contains("##")
-                        ) {
-                            mode = Mode.Regex
-                        }
-                        splitRegex(tmp)
-                    }
+                    if (evalMatcher.start() > start) splitRegex( rule.substring(start, evalMatcher.start()) )
                     tmp = evalMatcher.group()
                     when {
                         tmp.startsWith("@get:", true) -> {
@@ -482,8 +479,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 } while (evalMatcher.find())
             }
             if (rule.length > start) {
-                tmp = rule.substring(start)
-                splitRegex(tmp)
+                splitRegex( rule.substring(start) )
             }
         }
 
@@ -522,48 +518,39 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         /**
          * 替换@get,{{ }}
          */
-        fun makeUpRule(result: Any?) {
+        fun makeUpRule(result: Any?) { //追加比插入快
             val infoVal = StringBuilder()
             if (ruleParam.isNotEmpty()) {
-                var index = ruleParam.size
-                while (index-- > 0) {
+                for (index in 0 until ruleParam.size) {
                     val regType = ruleType[index]
                     when {
                         regType > defaultRuleType -> {
                             @Suppress("UNCHECKED_CAST")
-                            val resultList = result as? List<String?>
-                            if (resultList != null) {
-                                if (resultList.size > regType) {
-                                    resultList[regType]?.let {
-                                        infoVal.insert(0, resultList[regType])
+                            (result as? List<String?>)?.run {
+                                if (this.size > regType) {
+                                    this[regType]?.let {
+                                        infoVal.append(it)
                                     }
                                 }
-                            } else {
-                                infoVal.insert(0, ruleParam[index])
-                            }
+                            }?:infoVal.append(ruleParam[index])
                         }
                         regType == jsRuleType -> {
                             if (isRule(ruleParam[index])) {
-                                getString(arrayListOf(SourceRule(ruleParam[index]))).let {
-                                    infoVal.insert(0, it)
-                                }
+                                infoVal.append( getString(arrayListOf(SourceRule(ruleParam[index]))) )
                             } else {
-                                val jsEval: Any? = evalJS(ruleParam[index], result)
-                                when {
-                                    jsEval == null -> Unit
-                                    jsEval is String -> infoVal.insert(0, jsEval)
-                                    jsEval is Double && jsEval % 1.0 == 0.0 -> infoVal.insert(
-                                        0,
-                                        String.format("%.0f", jsEval)
-                                    )
-                                    else -> infoVal.insert(0, jsEval.toString())
+                                evalJS(ruleParam[index], result)?.run{
+                                    infoVal.append(when(this){
+                                        is String -> this
+                                        this is Double && this % 1.0 == 0.0 -> String.format("%.0f", this)
+                                        else ->  toString()
+                                    })
                                 }
                             }
                         }
                         regType == getRuleType -> {
-                            infoVal.insert(0, get(ruleParam[index]))
+                            infoVal.append(get(ruleParam[index]))
                         }
-                        else -> infoVal.insert(0, ruleParam[index])
+                        else -> infoVal.append(ruleParam[index])
                     }
                 }
                 rule = infoVal.toString()
@@ -620,18 +607,18 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any?): Any? {
-        val bindings = SimpleBindings()
-        bindings["java"] = this
-        bindings["cookie"] = CookieStore
-        bindings["cache"] = CacheManager
-        bindings["book"] = book
-        bindings["result"] = result
-        bindings["baseUrl"] = baseUrl
-        bindings["chapter"] = chapter
-        bindings["title"] = chapter?.title
-        bindings["src"] = content
-        bindings["nextChapterUrl"] = nextChapterUrl
-        return SCRIPT_ENGINE.eval(jsStr, bindings)
+        return SCRIPT_ENGINE.eval(jsStr, SimpleBindings().also{
+            it["java"] = this
+            it["cookie"] = CookieStore
+            it["cache"] = CacheManager
+            it["book"] = book
+            it["result"] = result
+            it["baseUrl"] = baseUrl
+            it["chapter"] = chapter
+            it["title"] = chapter?.title
+            it["src"] = content
+            it["nextChapterUrl"] = nextChapterUrl
+        })
     }
 
     /**
@@ -640,8 +627,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     override fun ajax(urlStr: String): String? {
         return runBlocking {
             kotlin.runCatching {
-                val analyzeUrl = AnalyzeUrl(urlStr, book = book)
-                analyzeUrl.getStrResponse(urlStr).body
+                AnalyzeUrl(urlStr, book = book).getStrResponse(urlStr).body
             }.onFailure {
                 it.printStackTrace()
             }.getOrElse {
@@ -657,7 +643,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         s ?: return null
         val matcher = titleNumPattern.matcher(s)
         if (matcher.find()) {
-            return "${matcher.group(1)}${StringUtils.stringToInt(matcher.group(2))}${matcher.group(3)}"
+            return "第${StringUtils.stringToInt(matcher.group(1))}${matcher.group(2)}"
         }
         return s
     }
@@ -667,7 +653,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         private val evalPattern =
             Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
-        private val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
+        private val titleNumPattern = Pattern.compile("第(.+?)([章节回话篇])")
     }
 
 }
