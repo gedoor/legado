@@ -33,6 +33,7 @@ class OnLineImportActivity :
                 "textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
                 "httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
                 "theme" -> viewModel.importTheme(url, this::finallyDialog)
+                "readConfig" -> viewModel.importReadConfig(url, this::finallyDialog)
                 else -> {
                 }
             }

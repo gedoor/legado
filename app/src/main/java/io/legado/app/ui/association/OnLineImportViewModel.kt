@@ -6,6 +6,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ThemeConfig
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
@@ -80,6 +81,28 @@ class OnLineImportViewModel(app: App) : BaseViewModel(app) {
             }
         }.onSuccess {
             finally.invoke(context.getString(R.string.success), "导入主题成功")
+        }.onError {
+            finally.invoke(context.getString(R.string.error), it.localizedMessage ?: "未知错误")
+        }
+    }
+
+    fun importReadConfig(url: String, finally: (title: String, msg: String) -> Unit) {
+        execute {
+            @Suppress("BlockingMethodInNonBlockingContext")
+            val bytes = okHttpClient.newCall {
+                url(url)
+            }.bytes()
+            val config = ReadBookConfig.import(bytes)
+            ReadBookConfig.configList.forEachIndexed { index, c ->
+                if (c.name == config.name) {
+                    ReadBookConfig.configList[index] = config
+                    return@execute config.name
+                }
+                ReadBookConfig.configList.add(config)
+                return@execute config.name
+            }
+        }.onSuccess {
+            finally.invoke(context.getString(R.string.success), "导入排版成功")
         }.onError {
             finally.invoke(context.getString(R.string.error), it.localizedMessage ?: "未知错误")
         }
