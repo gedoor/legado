@@ -119,6 +119,9 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.showBrightnessView -> {
                     postEvent(PreferKey.showBrightnessView, "")
                 }
+                PreferKey.expandTextMenu -> {
+                    (activity as? ReadBookActivity)?.textActionMenu?.upMenu()
+                }
             }
         }
 

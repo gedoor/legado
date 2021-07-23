@@ -82,6 +82,7 @@ object PreferKey {
     const val highBrush = "highBrush"
     const val brightness = "brightness"
     const val nightBrightness = "nightBrightness"
+    const val expandTextMenu = "expandTextMenu"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

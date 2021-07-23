@@ -21,6 +21,7 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
@@ -33,8 +34,9 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     TextToSpeech.OnInitListener {
     private val binding = PopupActionMenuBinding.inflate(LayoutInflater.from(context))
     private val adapter = Adapter(context)
-    private val visibleMenuItems: List<MenuItemImpl>
-    private val moreMenuItems: List<MenuItemImpl>
+    private val menuItems: List<MenuItemImpl>
+    private val visibleMenuItems = arrayListOf<MenuItemImpl>()
+    private val moreMenuItems = arrayListOf<MenuItemImpl>()
     private val ttsListener by lazy {
         TTSUtteranceListener()
     }
@@ -53,35 +55,43 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             onInitializeMenu(otherMenu)
         }
-        visibleMenuItems = myMenu.visibleItems.subList(0, 5)
-        moreMenuItems =
-            myMenu.visibleItems.subList(5, myMenu.visibleItems.lastIndex) + otherMenu.visibleItems
-        initRecyclerView()
+        menuItems = myMenu.visibleItems + otherMenu.visibleItems
+        visibleMenuItems.addAll(menuItems.subList(0, 5))
+        moreMenuItems.addAll(menuItems.subList(5, menuItems.lastIndex))
+        binding.recyclerView.adapter = adapter
+        binding.recyclerViewMore.adapter = adapter
         setOnDismissListener {
-            binding.ivMenuMore.setImageResource(R.drawable.ic_more_vert)
-            binding.recyclerViewMore.gone()
-            adapter.setItems(visibleMenuItems)
-            binding.recyclerView.visible()
+            if (!context.getPrefBoolean(PreferKey.expandTextMenu)) {
+                binding.ivMenuMore.setImageResource(R.drawable.ic_more_vert)
+                binding.recyclerViewMore.gone()
+                adapter.setItems(visibleMenuItems)
+                binding.recyclerView.visible()
+            }
         }
+        binding.ivMenuMore.setOnClickListener {
+            if (binding.recyclerView.isVisible) {
+                binding.ivMenuMore.setImageResource(R.drawable.ic_arrow_back)
+                adapter.setItems(moreMenuItems)
+                binding.recyclerView.gone()
+                binding.recyclerViewMore.visible()
+            } else {
+                binding.ivMenuMore.setImageResource(R.drawable.ic_more_vert)
+                binding.recyclerViewMore.gone()
+                adapter.setItems(visibleMenuItems)
+                binding.recyclerView.visible()
+            }
+        }
+        upMenu()
     }
 
-    private fun initRecyclerView() = with(binding) {
-        recyclerView.adapter = adapter
-        recyclerViewMore.adapter = adapter
-        adapter.setItems(visibleMenuItems)
-        ivMenuMore.visible()
-        ivMenuMore.setOnClickListener {
-            if (recyclerView.isVisible) {
-                ivMenuMore.setImageResource(R.drawable.ic_arrow_back)
-                adapter.setItems(moreMenuItems)
-                recyclerView.gone()
-                recyclerViewMore.visible()
-            } else {
-                ivMenuMore.setImageResource(R.drawable.ic_more_vert)
-                recyclerViewMore.gone()
-                adapter.setItems(visibleMenuItems)
-                recyclerView.visible()
-            }
+    fun upMenu() {
+        val expandTextMenu = context.getPrefBoolean(PreferKey.expandTextMenu)
+        if (expandTextMenu) {
+            adapter.setItems(menuItems)
+            binding.ivMenuMore.gone()
+        } else {
+            adapter.setItems(visibleMenuItems)
+            binding.ivMenuMore.visible()
         }
     }
 

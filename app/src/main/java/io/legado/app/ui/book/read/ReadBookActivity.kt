@@ -104,7 +104,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
         }
     private var menu: Menu? = null
-    private val textActionMenu: TextActionMenu by lazy {
+    val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
     }
 
