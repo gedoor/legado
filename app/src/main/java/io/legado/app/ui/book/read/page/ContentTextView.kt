@@ -227,36 +227,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
         if (!selectAble) return
-        if (!visibleRect.contains(x, y)) return
-        var relativeOffset: Float
-        for (relativePos in 0..2) {
-            relativeOffset = relativeOffset(relativePos)
-            if (relativePos > 0) {
-                //滚动翻页
-                if (!callBack.isScroll) return
-                if (relativeOffset >= ChapterProvider.visibleHeight) return
-            }
-            val page = relativePage(relativePos)
-            for ((lineIndex, textLine) in page.textLines.withIndex()) {
-                if (textLine.isTouch(y, relativeOffset)) {
-                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                        if (textChar.isTouch(x)) {
-                            if (textChar.isImage) {
-                                activity?.supportFragmentManager?.let {
-                                    PhotoDialog.show(it, page.chapterIndex, textChar.charData)
-                                }
-                            } else {
-                                textChar.selected = true
-                                invalidate()
-                                select(relativePos, lineIndex, charIndex)
-                            }
-                            return
-                        }
-                    }
-                    return
+        touch(x, y) { relativePos, textPage, _, lineIndex, _, charIndex, textChar ->
+            if (textChar.isImage) {
+                activity?.supportFragmentManager?.let {
+                    PhotoDialog.show(it, textPage.chapterIndex, textChar.charData)
                 }
+            } else {
+                textChar.selected = true
+                invalidate()
+                select(relativePos, lineIndex, charIndex)
             }
-
         }
     }
 
@@ -264,39 +244,23 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 开始选择符移动
      */
     fun selectStartMove(x: Float, y: Float) {
-        if (!visibleRect.contains(x, y)) return
-        var relativeOffset: Float
-        for (relativePos in 0..2) {
-            relativeOffset = relativeOffset(relativePos)
-            if (relativePos > 0) {
-                //滚动翻页
-                if (!callBack.isScroll) return
-                if (relativeOffset >= ChapterProvider.visibleHeight) return
-            }
-            for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
-                if (textLine.isTouch(y, relativeOffset)) {
-                    for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                        if (textChar.isTouch(x)) {
-                            if (selectStart[0] != relativePos || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
-                                if (selectToInt(relativePos, lineIndex, charIndex)
-                                    > selectToInt(selectEnd)
-                                ) {
-                                    return
-                                }
-                                selectStart[0] = relativePos
-                                selectStart[1] = lineIndex
-                                selectStart[2] = charIndex
-                                upSelectedStart(
-                                    textChar.start,
-                                    textLine.lineBottom + relativeOffset,
-                                    textLine.lineTop + relativeOffset
-                                )
-                                upSelectChars()
-                            }
-                            return
-                        }
-                    }
-                    return
+        touch(x, y) { relativePos, _, relativeOffset, lineIndex, textLine, charIndex, textChar ->
+            if (selectStart[0] != relativePos ||
+                selectStart[1] != lineIndex ||
+                selectStart[2] != charIndex
+            ) {
+                if (selectToInt(relativePos, lineIndex, charIndex)
+                    < selectToInt(selectEnd)
+                ) {
+                    selectStart[0] = relativePos
+                    selectStart[1] = lineIndex
+                    selectStart[2] = charIndex
+                    upSelectedStart(
+                        textChar.start,
+                        textLine.lineBottom + relativeOffset,
+                        textLine.lineTop + relativeOffset
+                    )
+                    upSelectChars()
                 }
             }
         }
@@ -306,6 +270,37 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 结束选择符移动
      */
     fun selectEndMove(x: Float, y: Float) {
+        touch(x, y) { relativePos, _, relativeOffset, lineIndex, textLine, charIndex, textChar ->
+            if (selectEnd[0] != relativePos
+                || selectEnd[1] != lineIndex
+                || selectEnd[2] != charIndex
+            ) {
+                if (selectToInt(relativePos, lineIndex, charIndex)
+                    > selectToInt(selectStart)
+                ) {
+                    selectEnd[0] = relativePos
+                    selectEnd[1] = lineIndex
+                    selectEnd[2] = charIndex
+                    upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
+                    upSelectChars()
+                }
+            }
+        }
+    }
+
+    private fun touch(
+        x: Float,
+        y: Float,
+        touched: (
+            relativePos: Int,
+            textPage: TextPage,
+            relativeOffset: Float,
+            lineIndex: Int,
+            textLine: TextLine,
+            charIndex: Int,
+            textChar: TextChar
+        ) -> Unit
+    ) {
         if (!visibleRect.contains(x, y)) return
         var relativeOffset: Float
         for (relativePos in 0..2) {
@@ -315,25 +310,17 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (!callBack.isScroll) return
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
-            for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
+            val textPage = relativePage(relativePos)
+            for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
                 if (textLine.isTouch(y, relativeOffset)) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (textChar.isTouch(x)) {
-                            if (selectEnd[0] != relativePos
-                                || selectEnd[1] != lineIndex
-                                || selectEnd[2] != charIndex
-                            ) {
-                                if (selectToInt(relativePos, lineIndex, charIndex)
-                                    < selectToInt(selectStart)
-                                ) {
-                                    return
-                                }
-                                selectEnd[0] = relativePos
-                                selectEnd[1] = lineIndex
-                                selectEnd[2] = charIndex
-                                upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
-                                upSelectChars()
-                            }
+                            touched.invoke(
+                                relativePos, textPage,
+                                relativeOffset,
+                                lineIndex, textLine,
+                                charIndex, textChar
+                            )
                             return
                         }
                     }
@@ -378,26 +365,32 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         for (relativePos in 0..last) {
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    textChar.selected =
-                        if (relativePos == selectStart[0]
-                            && relativePos == selectEnd[0]
-                            && lineIndex == selectStart[1]
-                            && lineIndex == selectEnd[1]
-                        ) {
+                    textChar.selected = when {
+                        relativePos == selectStart[0]
+                                && relativePos == selectEnd[0]
+                                && lineIndex == selectStart[1]
+                                && lineIndex == selectEnd[1] -> {
                             charIndex in selectStart[2]..selectEnd[2]
-                        } else if (relativePos == selectStart[0] && lineIndex == selectStart[1]) {
+                        }
+                        relativePos == selectStart[0] && lineIndex == selectStart[1] -> {
                             charIndex >= selectStart[2]
-                        } else if (relativePos == selectEnd[0] && lineIndex == selectEnd[1]) {
+                        }
+                        relativePos == selectEnd[0] && lineIndex == selectEnd[1] -> {
                             charIndex <= selectEnd[2]
-                        } else if (relativePos == selectStart[0] && relativePos == selectEnd[0]) {
+                        }
+                        relativePos == selectStart[0] && relativePos == selectEnd[0] -> {
                             lineIndex in (selectStart[1] + 1) until selectEnd[1]
-                        } else if (relativePos == selectStart[0]) {
+                        }
+                        relativePos == selectStart[0] -> {
                             lineIndex > selectStart[1]
-                        } else if (relativePos == selectEnd[0]) {
+                        }
+                        relativePos == selectEnd[0] -> {
                             lineIndex < selectEnd[1]
-                        } else {
+                        }
+                        else -> {
                             relativePos in selectStart[0] + 1 until selectEnd[0]
                         }
+                    }
                 }
             }
         }
@@ -430,54 +423,68 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             val stringBuilder = StringBuilder()
             for (relativePos in selectStart[0]..selectEnd[0]) {
                 val textPage = relativePage(relativePos)
-                if (relativePos == selectStart[0] && relativePos == selectEnd[0]) {
-                    for (lineIndex in selectStart[1]..selectEnd[1]) {
-                        if (lineIndex == selectStart[1] && lineIndex == selectEnd[1]) {
-                            stringBuilder.append(
-                                textPage.textLines[lineIndex].text.substring(
-                                    selectStart[2],
-                                    selectEnd[2] + 1
-                                )
-                            )
-                        } else if (lineIndex == selectStart[1]) {
-                            stringBuilder.append(
-                                textPage.textLines[lineIndex].text.substring(
-                                    selectStart[2]
-                                )
-                            )
-                        } else if (lineIndex == selectEnd[1]) {
-                            stringBuilder.append(
-                                textPage.textLines[lineIndex].text.substring(0, selectEnd[2] + 1)
-                            )
-                        } else {
-                            stringBuilder.append(textPage.textLines[lineIndex].text)
+                when {
+                    relativePos == selectStart[0] && relativePos == selectEnd[0] -> {
+                        for (lineIndex in selectStart[1]..selectEnd[1]) {
+                            when {
+                                lineIndex == selectStart[1] && lineIndex == selectEnd[1] -> {
+                                    stringBuilder.append(
+                                        textPage.textLines[lineIndex].text
+                                            .substring(selectStart[2], selectEnd[2] + 1)
+                                    )
+                                }
+                                lineIndex == selectStart[1] -> {
+                                    stringBuilder.append(
+                                        textPage.textLines[lineIndex].text
+                                            .substring(selectStart[2])
+                                    )
+                                }
+                                lineIndex == selectEnd[1] -> {
+                                    stringBuilder.append(
+                                        textPage.textLines[lineIndex].text
+                                            .substring(0, selectEnd[2] + 1)
+                                    )
+                                }
+                                else -> {
+                                    stringBuilder.append(textPage.textLines[lineIndex].text)
+                                }
+                            }
                         }
                     }
-                } else if (relativePos == selectStart[0]) {
-                    for (lineIndex in selectStart[1] until relativePage(relativePos).textLines.size) {
-                        if (lineIndex == selectStart[1]) {
-                            stringBuilder.append(
-                                textPage.textLines[lineIndex].text.substring(
-                                    selectStart[2]
-                                )
-                            )
-                        } else {
-                            stringBuilder.append(textPage.textLines[lineIndex].text)
+                    relativePos == selectStart[0] -> {
+                        for (lineIndex in selectStart[1] until textPage.textLines.size) {
+                            when (lineIndex) {
+                                selectStart[1] -> {
+                                    stringBuilder.append(
+                                        textPage.textLines[lineIndex].text
+                                            .substring(selectStart[2])
+                                    )
+                                }
+                                else -> {
+                                    stringBuilder.append(textPage.textLines[lineIndex].text)
+                                }
+                            }
                         }
                     }
-                } else if (relativePos == selectEnd[0]) {
-                    for (lineIndex in 0..selectEnd[1]) {
-                        if (lineIndex == selectEnd[1]) {
-                            stringBuilder.append(
-                                textPage.textLines[lineIndex].text.substring(0, selectEnd[2] + 1)
-                            )
-                        } else {
-                            stringBuilder.append(textPage.textLines[lineIndex].text)
+                    relativePos == selectEnd[0] -> {
+                        for (lineIndex in 0..selectEnd[1]) {
+                            when (lineIndex) {
+                                selectEnd[1] -> {
+                                    stringBuilder.append(
+                                        textPage.textLines[lineIndex].text
+                                            .substring(0, selectEnd[2] + 1)
+                                    )
+                                }
+                                else -> {
+                                    stringBuilder.append(textPage.textLines[lineIndex].text)
+                                }
+                            }
                         }
                     }
-                } else if (relativePos in selectStart[0] + 1 until selectEnd[0]) {
-                    for (lineIndex in selectStart[1]..selectEnd[1]) {
-                        stringBuilder.append(textPage.textLines[lineIndex].text)
+                    relativePos in selectStart[0] + 1 until selectEnd[0] -> {
+                        for (lineIndex in selectStart[1]..selectEnd[1]) {
+                            stringBuilder.append(textPage.textLines[lineIndex].text)
+                        }
                     }
                 }
             }
