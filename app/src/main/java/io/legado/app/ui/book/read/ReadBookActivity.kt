@@ -592,7 +592,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         resetPageOffset: Boolean,
         success: (() -> Unit)?
     ) {
-        lifecycleScope.launch {
+        runOnUI {
             autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
@@ -605,13 +605,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 更新视图
      */
     override fun upView() {
-        lifecycleScope.launch {
+        runOnUI {
             binding.readMenu.upBookView()
         }
     }
 
     override fun upPageAnim() {
-        lifecycleScope.launch {
+        runOnUI {
             binding.readView.upPageAnim()
         }
     }
@@ -620,11 +620,11 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 页面改变
      */
     override fun pageChanged() {
-        autoPageProgress = 0
-        lifecycleScope.launch {
+        runOnUI {
+            autoPageProgress = 0
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
+            mHandler.postDelayed(backupRunnable, 600000)
         }
-        mHandler.postDelayed(backupRunnable, 600000)
     }
 
     /**
