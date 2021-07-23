@@ -18,6 +18,7 @@
 7. 统一网络一键导入路径legado://import/{path}?src={url}
 * path: bookSource,rssSource,replaceRule,textTocRule,httpTTS,theme,readConfig
 * 添加了txt小说规则,在线朗读引擎,主题,排版 的一键导入支持,老url依然可用
+8. 替换规则管理添加置顶所选和置底所选
 
 **2021/07/16**
 1. js扩展函数添加删除本地文件方法
