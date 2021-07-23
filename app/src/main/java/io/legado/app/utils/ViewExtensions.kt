@@ -32,9 +32,7 @@ val View.activity: AppCompatActivity?
 
 fun View.hideSoftInput() = run {
     val imm = appCtx.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-    imm?.let {
-        imm.hideSoftInputFromWindow(this.windowToken, 0)
-    }
+    imm?.hideSoftInputFromWindow(this.windowToken, 0)
 }
 
 fun View.disableAutoFill() = run {
