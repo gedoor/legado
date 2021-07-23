@@ -449,19 +449,15 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             val evalMatcher = evalPattern.matcher(rule)
 
             if (evalMatcher.find()) {
-                if (mode != Mode.Js && mode != Mode.Regex
-                    && evalMatcher.start() == 0
+                tmp = rule.substring(start, evalMatcher.start())
+                if (mode != Mode.Js && mode != Mode.Regex &&
+                    (evalMatcher.start() == 0 || (start == 0 && !tmp.contains("##")))
                 ) {
                     mode = Mode.Regex
                 }
                 do {
                     if (evalMatcher.start() > start) {
                         tmp = rule.substring(start, evalMatcher.start())
-                        if (mode != Mode.Js && mode != Mode.Regex
-                            && start == 0 && !tmp.contains("##")
-                        ) {
-                            mode = Mode.Regex
-                        }
                         splitRegex(tmp)
                     }
                     tmp = evalMatcher.group()
@@ -531,16 +527,13 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     when {
                         regType > defaultRuleType -> {
                             @Suppress("UNCHECKED_CAST")
-                            val resultList = result as? List<String?>
-                            if (resultList != null) {
-                                if (resultList.size > regType) {
-                                    resultList[regType]?.let {
-                                        infoVal.insert(0, resultList[regType])
+                            (result as? List<String?>)?.run {
+                                if (this.size > regType) {
+                                    this[regType]?.let {
+                                        infoVal.insert(0, it)
                                     }
                                 }
-                            } else {
-                                infoVal.insert(0, ruleParam[index])
-                            }
+                            } ?: infoVal.insert(0, ruleParam[index])
                         }
                         regType == jsRuleType -> {
                             if (isRule(ruleParam[index])) {
