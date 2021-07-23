@@ -6,4 +6,10 @@ data class TextChar(
     var end: Float,
     var selected: Boolean = false,
     var isImage: Boolean = false
-)
+) {
+
+    fun isTouch(x: Float): Boolean {
+        return x > start && x < end
+    }
+
+}

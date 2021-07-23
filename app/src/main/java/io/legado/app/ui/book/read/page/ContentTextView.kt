@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -24,7 +23,6 @@ import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.CoroutineScope
 import kotlin.math.min
 
 /**
@@ -168,23 +166,21 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineBottom: Float,
         isImageLine: Boolean
     ) {
-        ReadBook.book?.let { book ->
-            ImageProvider.getImage(book, textPage.chapterIndex, textChar.charData, true)
-                ?.let {
-                    val rectF = if (isImageLine) {
-                        RectF(textChar.start, lineTop, textChar.end, lineBottom)
-                    } else {
-                        /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
-                        val h = (textChar.end - textChar.start) / it.width * it.height
-                        val div = (lineBottom - lineTop - h) / 2
-                        RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
-                    }
-                    kotlin.runCatching {
-                        canvas.drawBitmap(it, null, rectF, null)
-                    }.onFailure { e ->
-                        context.toastOnUi(e.localizedMessage)
-                    }
-                }
+        val book = ReadBook.book ?: return
+        ImageProvider.getImage(book, textPage.chapterIndex, textChar.charData, true)?.let {
+            val rectF = if (isImageLine) {
+                RectF(textChar.start, lineTop, textChar.end, lineBottom)
+            } else {
+                /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
+                val h = (textChar.end - textChar.start) / it.width * it.height
+                val div = (lineBottom - lineTop - h) / 2
+                RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
+            }
+            kotlin.runCatching {
+                canvas.drawBitmap(it, null, rectF, null)
+            }.onFailure { e ->
+                context.toastOnUi(e.localizedMessage)
+            }
         }
     }
 
@@ -242,9 +238,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             }
             val page = relativePage(relativePos)
             for ((lineIndex, textLine) in page.textLines.withIndex()) {
-                if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
+                if (textLine.isTouch(y, relativeOffset)) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                        if (x > textChar.start && x < textChar.end) {
+                        if (textChar.isTouch(x)) {
                             if (textChar.isImage) {
                                 activity?.supportFragmentManager?.let {
                                     PhotoDialog.show(it, page.chapterIndex, textChar.charData)
@@ -278,13 +274,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
-                if (y > textLine.lineTop + relativeOffset && y < textLine.lineBottom + relativeOffset) {
+                if (textLine.isTouch(y, relativeOffset)) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                        if (x > textChar.start && x < textChar.end) {
+                        if (textChar.isTouch(x)) {
                             if (selectStart[0] != relativePos || selectStart[1] != lineIndex || selectStart[2] != charIndex) {
-                                if (selectToInt(relativePos, lineIndex, charIndex) > selectToInt(
-                                        selectEnd
-                                    )
+                                if (selectToInt(relativePos, lineIndex, charIndex)
+                                    > selectToInt(selectEnd)
                                 ) {
                                     return
                                 }
@@ -320,15 +315,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (!callBack.isScroll) return
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
-            Log.e("y", "$y")
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
-                if (y > textLine.lineTop + relativeOffset
-                    && y < textLine.lineBottom + relativeOffset
-                ) {
-                    Log.e("line", "$relativePos  $lineIndex")
+                if (textLine.isTouch(y, relativeOffset)) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                        if (x > textChar.start && x < textChar.end) {
-                            Log.e("char", "$relativePos  $lineIndex $charIndex")
+                        if (textChar.isTouch(x)) {
                             if (selectEnd[0] != relativePos
                                 || selectEnd[1] != lineIndex
                                 || selectEnd[2] != charIndex
@@ -540,7 +530,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         fun onCancelSelect()
         val headerHeight: Int
         val pageFactory: TextPageFactory
-        val scope: CoroutineScope
         val isScroll: Boolean
     }
 }

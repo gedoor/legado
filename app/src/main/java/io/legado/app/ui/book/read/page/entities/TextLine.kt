@@ -37,4 +37,8 @@ data class TextLine(
     fun getTextCharsCount(): Int {
         return textChars.size
     }
+
+    fun isTouch(y: Float, relativeOffset: Float): Boolean {
+        return y > lineTop + relativeOffset && y < lineBottom + relativeOffset
+    }
 }
