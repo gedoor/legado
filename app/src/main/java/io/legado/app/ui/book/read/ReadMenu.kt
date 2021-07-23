@@ -85,7 +85,9 @@ class ReadMenu @JvmOverloads constructor(
         vwBg.setOnClickListener(null)
         vwNavigationBar.setOnClickListener(null)
         llBrightness.setOnClickListener(null)
-        seekBrightness.progress = AppConfig.readBrightness
+        seekBrightness.post {
+            seekBrightness.progress = AppConfig.readBrightness
+        }
     }
 
     fun upBrightnessState() {
@@ -152,7 +154,9 @@ class ReadMenu @JvmOverloads constructor(
         seekBrightness.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                setScreenBrightness(progress)
+                if (fromUser) {
+                    setScreenBrightness(progress)
+                }
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
