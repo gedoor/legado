@@ -77,11 +77,11 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
             DocumentFile.fromTreeUri(this, uri)?.let {
-                viewModel.exportSelection(adapter.getSelection(), it)
+                viewModel.exportSelection(adapter.selection, it)
             }
         } else {
             uri.path?.let {
-                viewModel.exportSelection(adapter.getSelection(), File(it))
+                viewModel.exportSelection(adapter.selection, File(it))
             }
         }
     }
@@ -118,7 +118,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_group_manage -> GroupManageDialog()
                 .show(supportFragmentManager, "rssGroupManage")
-            R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection()) {
+            R.id.menu_share_source -> viewModel.shareSelection(adapter.selection) {
                 startActivity(Intent.createChooser(it, getString(R.string.share_selected_source)))
             }
             R.id.menu_import_default -> viewModel.importDefault()
@@ -133,12 +133,12 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.selection)
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
             R.id.menu_export_selection -> exportDir.launch(null)
-            R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
-            R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
+            R.id.menu_top_sel -> viewModel.topSource(*adapter.selection.toTypedArray())
+            R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
         }
         return true
     }
@@ -215,7 +215,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun delSourceDialog() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.delSelection(adapter.getSelection()) }
+            okButton { viewModel.delSelection(adapter.selection) }
             noButton()
         }.show()
     }
@@ -256,7 +256,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     override fun upCountView() {
         binding.selectActionBar.upCountView(
-            adapter.getSelection().size,
+            adapter.selection.size,
             adapter.itemCount
         )
     }

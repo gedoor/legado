@@ -84,11 +84,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
             DocumentFile.fromTreeUri(this, uri)?.let {
-                viewModel.exportSelection(adapter.getSelection(), it)
+                viewModel.exportSelection(adapter.selection, it)
             }
         } else {
             uri.path?.let {
-                viewModel.exportSelection(adapter.getSelection(), File(it))
+                viewModel.exportSelection(adapter.selection, File(it))
             }
         }
     }
@@ -122,7 +122,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         when (item.itemId) {
             R.id.menu_add_book_source -> startActivity<BookSourceEditActivity>()
             R.id.menu_import_qr -> qrResult.launch(null)
-            R.id.menu_share_source -> viewModel.shareSelection(adapter.getSelection()) {
+            R.id.menu_share_source -> viewModel.shareSelection(adapter.selection) {
                 startActivity(Intent.createChooser(it, getString(R.string.share_selected_source)))
             }
             R.id.menu_group_manage ->
@@ -302,7 +302,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun onClickMainAction() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.delSelection(adapter.getSelection()) }
+            okButton { viewModel.delSelection(adapter.selection) }
             noButton()
         }.show()
     }
@@ -316,13 +316,13 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
-            R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.getSelection())
-            R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.getSelection())
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.selection)
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
+            R.id.menu_enable_explore -> viewModel.enableSelectExplore(adapter.selection)
+            R.id.menu_disable_explore -> viewModel.disableSelectExplore(adapter.selection)
             R.id.menu_check_source -> checkSource()
-            R.id.menu_top_sel -> viewModel.topSource(*adapter.getSelection().toTypedArray())
-            R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.getSelection().toTypedArray())
+            R.id.menu_top_sel -> viewModel.topSource(*adapter.selection.toTypedArray())
+            R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
             R.id.menu_add_group -> selectionAddToGroups()
             R.id.menu_remove_group -> selectionRemoveFromGroups()
             R.id.menu_export_selection -> exportDir.launch(null)
@@ -343,7 +343,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         CheckSource.keyword = it
                     }
                 }
-                CheckSource.start(this@BookSourceActivity, adapter.getSelection())
+                CheckSource.start(this@BookSourceActivity, adapter.selection)
             }
             noButton()
         }.show()
@@ -361,7 +361,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
-                        viewModel.selectionAddToGroups(adapter.getSelection(), it)
+                        viewModel.selectionAddToGroups(adapter.selection, it)
                     }
                 }
             }
@@ -381,7 +381,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             okButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
-                        viewModel.selectionRemoveFromGroups(adapter.getSelection(), it)
+                        viewModel.selectionRemoveFromGroups(adapter.selection, it)
                     }
                 }
             }
@@ -454,7 +454,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun upCountView() {
         binding.selectActionBar
-            .upCountView(adapter.getSelection().size, adapter.itemCount)
+            .upCountView(adapter.selection.size, adapter.itemCount)
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {

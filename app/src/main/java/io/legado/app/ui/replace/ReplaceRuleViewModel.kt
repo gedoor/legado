@@ -30,10 +30,30 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    fun topSelect(rules: LinkedHashSet<ReplaceRule>) {
+        execute {
+            var minOrder = appDb.replaceRuleDao.minOrder - rules.size
+            rules.forEach {
+                it.order = ++minOrder
+            }
+            appDb.replaceRuleDao.update(*rules.toTypedArray())
+        }
+    }
+
     fun toBottom(rule: ReplaceRule) {
         execute {
             rule.order = appDb.replaceRuleDao.maxOrder + 1
             appDb.replaceRuleDao.update(rule)
+        }
+    }
+
+    fun bottomSelect(rules: LinkedHashSet<ReplaceRule>) {
+        execute {
+            var maxOrder = appDb.replaceRuleDao.maxOrder
+            rules.forEach {
+                it.order = maxOrder++
+            }
+            appDb.replaceRuleDao.update(*rules.toTypedArray())
         }
     }
 

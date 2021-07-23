@@ -29,6 +29,17 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     private val selected = linkedSetOf<BookSource>()
 
+    val selection: List<BookSource>
+        get() {
+            val selection = arrayListOf<BookSource>()
+            getItems().map {
+                if (selected.contains(it)) {
+                    selection.add(it)
+                }
+            }
+            return selection.sortedBy { it.customOrder }
+        }
+
     val diffItemCallback: DiffUtil.ItemCallback<BookSource>
         get() = object : DiffUtil.ItemCallback<BookSource>() {
 
@@ -211,16 +222,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
-    }
-
-    fun getSelection(): List<BookSource> {
-        val selection = arrayListOf<BookSource>()
-        getItems().map {
-            if (selected.contains(it)) {
-                selection.add(it)
-            }
-        }
-        return selection.sortedBy { it.customOrder }
     }
 
     override fun swap(srcPosition: Int, targetPosition: Int): Boolean {

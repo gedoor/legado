@@ -89,11 +89,11 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
             DocumentFile.fromTreeUri(this, uri)?.let {
-                viewModel.exportSelection(adapter.getSelection(), it)
+                viewModel.exportSelection(adapter.selection, it)
             }
         } else {
             uri.path?.let {
-                viewModel.exportSelection(adapter.getSelection(), File(it))
+                viewModel.exportSelection(adapter.selection, File(it))
             }
         }
     }
@@ -169,7 +169,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     private fun delSourceDialog() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.delSelection(adapter.getSelection()) }
+            okButton { viewModel.delSelection(adapter.selection) }
             noButton()
         }.show()
     }
@@ -218,7 +218,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
 
-            R.id.menu_del_selection -> viewModel.delSelection(adapter.getSelection())
+            R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_local -> importDoc.launch(
                 FilePickerParam(
@@ -237,8 +237,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.getSelection())
-            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.getSelection())
+            R.id.menu_enable_selection -> viewModel.enableSelection(adapter.selection)
+            R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
+            R.id.menu_top_sel -> viewModel.topSelect(adapter.selection)
+            R.id.menu_bottom_sel -> viewModel.bottomSelect(adapter.selection)
             R.id.menu_export_selection -> exportDir.launch(null)
         }
         return false
@@ -304,7 +306,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     override fun upCountView() {
         binding.selectActionBar.upCountView(
-            adapter.getSelection().size,
+            adapter.selection.size,
             adapter.itemCount
         )
     }

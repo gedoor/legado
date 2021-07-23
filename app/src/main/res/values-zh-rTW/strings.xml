@@ -316,7 +316,9 @@
     <string name="line_size">行距</string>
     <string name="paragraph_size">段距</string>
     <string name="to_top">置頂</string>
+    <string name="selection_to_top">置頂所選</string>
     <string name="to_bottom">置底</string>
+    <string name="selection_to_bottom">置底所選</string>
     <string name="auto_expand_find">自動展開發現</string>
     <string name="default_expand_first">預設展開第一組發現</string>
     <string name="threads_num">目前執行緒數 %s</string>

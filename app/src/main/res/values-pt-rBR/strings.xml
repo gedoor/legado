@@ -317,7 +317,9 @@
     <string name="line_size">Espaço entre linhas</string>
     <string name="paragraph_size">Espaço entre parágrafos</string>
     <string name="to_top">Ao parte superior</string>
+    <string name="selection_to_top">Selection To Top</string>
     <string name="to_bottom">Ao fundo</string>
+    <string name="selection_to_bottom">Selection To Bottom</string>
     <string name="auto_expand_find">Expansão automática de Descoberta</string>
     <string name="default_expand_first">A expansão padrão da primeira Descoberta.</string>
     <string name="threads_num">Linhas atuais %s</string>

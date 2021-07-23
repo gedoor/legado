@@ -27,6 +27,17 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
 
     private val selected = linkedSetOf<ReplaceRule>()
 
+    val selection: LinkedHashSet<ReplaceRule>
+        get() {
+            val selection = linkedSetOf<ReplaceRule>()
+            getItems().map {
+                if (selected.contains(it)) {
+                    selection.add(it)
+                }
+            }
+            return selection
+        }
+
     val diffItemCallBack = object : DiffUtil.ItemCallback<ReplaceRule>() {
 
         override fun areItemsTheSame(oldItem: ReplaceRule, newItem: ReplaceRule): Boolean {
@@ -82,16 +93,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
-    }
-
-    fun getSelection(): LinkedHashSet<ReplaceRule> {
-        val selection = linkedSetOf<ReplaceRule>()
-        getItems().map {
-            if (selected.contains(it)) {
-                selection.add(it)
-            }
-        }
-        return selection
     }
 
     override fun getViewBinding(parent: ViewGroup): ItemReplaceRuleBinding {

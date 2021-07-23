@@ -317,7 +317,9 @@
     <string name="line_size">Espacio entre líneas</string>
     <string name="paragraph_size">Espacio entre párrafos</string>
     <string name="to_top">Encima</string>
+    <string name="selection_to_top">Selection To Top</string>
     <string name="to_bottom">Debajo</string>
+    <string name="selection_to_bottom">Selection To Bottom</string>
     <string name="auto_expand_find">Autoexpandir Descubrir</string>
     <string name="default_expand_first">Expande por defecto la primera parte de Descubrir.</string>
     <string name="threads_num">Líneas actuales %s</string>
