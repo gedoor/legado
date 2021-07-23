@@ -519,7 +519,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             val infoVal = StringBuilder()
             if (ruleParam.isNotEmpty()) {
                 var index = ruleParam.size
-                for (index-- > 0) {
+                while ( index-- > 0 ) {
                     val regType = ruleType[index]
                     when {
                         regType > defaultRuleType -> {
