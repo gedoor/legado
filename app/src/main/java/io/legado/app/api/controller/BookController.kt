@@ -1,5 +1,6 @@
 package io.legado.app.api.controller
 
+import androidx.core.graphics.drawable.toBitmap
 import io.legado.app.R
 import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
@@ -43,11 +44,12 @@ object BookController {
     fun getCover(parameters: Map<String, List<String>>): ReturnData {
         val returnData = ReturnData()
         val coverPath = parameters["path"]?.firstOrNull()
-        val ftBitmap = ImageLoader.loadBitmap(appCtx, coverPath)
-            .placeholder(CoverImageView.defaultDrawable)
-            .error(CoverImageView.defaultDrawable)
-            .submit()
-        return returnData.setData(ftBitmap.get())
+        val ftBitmap = ImageLoader.loadBitmap(appCtx, coverPath).submit()
+        return try {
+            returnData.setData(ftBitmap.get())
+        } catch (e: Exception) {
+            returnData.setData(CoverImageView.defaultDrawable.toBitmap())
+        }
     }
 
     /**
