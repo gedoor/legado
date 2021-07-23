@@ -784,7 +784,7 @@
     <string name="style_name">Formato do nome:</string>
     <string name="empty_msg_import_book">Clique no ícone da pasta no canto superior direito e selecione a pasta</string>
     <string name="scan_folder">Busca inteligente</string>
-    <string name="import_file_name">Imported-file name</string>
+    <string name="import_file_name">Nome do arquivo importado</string>
     <string name="no_book">Sem livros</string>
     <string name="keep_original_name">Manter o nome original</string>
     <string name="click_regional_config">O controle de toque da tela</string>
