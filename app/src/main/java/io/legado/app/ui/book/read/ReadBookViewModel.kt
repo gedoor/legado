@@ -32,12 +32,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun initData(intent: Intent) {
         execute {
             ReadBook.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-            intent.getStringExtra("bookUrl")?.let {
-                appDb.bookDao.getBook(it)?.let { book ->
-                    initBook(book)
-                }
-            } ?: appDb.bookDao.lastReadBook?.let {
-                initBook(it)
+            val bookUrl = intent.getStringExtra("bookUrl")
+            val book = when {
+                bookUrl.isNullOrEmpty() -> appDb.bookDao.lastReadBook
+                else -> appDb.bookDao.getBook(bookUrl)
+            } ?: ReadBook.book
+            when {
+                book != null -> initBook(book)
+                else -> ReadBook.upMsg(context.getString(R.string.no_book))
             }
         }.onFinally {
             ReadBook.saveRead()
