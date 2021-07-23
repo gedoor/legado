@@ -451,7 +451,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             if (evalMatcher.find()) {
                 tmp = rule.substring(start, evalMatcher.start())
                 if (mode != Mode.Js && mode != Mode.Regex &&
-                    (evalMatcher.start() == 0 || (start == 0 && !tmp.contains("##")))
+                    (evalMatcher.start() == 0 || !tmp.contains("##"))
                 ) {
                     mode = Mode.Regex
                 }
