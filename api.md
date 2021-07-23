@@ -74,13 +74,18 @@ Method = GET
 获取指定图书的章节列表。   
 
 #### 获取书籍内容
-
 ```
 URL = http://127.0.0.1:1234/getBookContent?url=xxx&index=1
 Method = GET
 ```
+获取指定图书的第`index`章节的文本内容。
 
-获取指定图书的第`index`章节的文本内容。     
+#### 获取封面
+```
+URL = http://127.0.0.1:1234/cover?path=xxxxx
+Method = GET
+```
+
 
 ### Content Provider
 * 需声明`io.legado.READ_WRITE`权限
@@ -164,6 +169,11 @@ Method = query
 URL = content://providerHost/book/content/query?url=xxx&index=1
 Method = query
 ```
-
 获取指定图书的第`index`章节的文本内容。     
 用`Cursor.getString(0)`取出返回结果。
+
+#### 获取封面
+```
+URL = content://providerHost/book/cover/query?path=xxxx
+Method = query
+```
