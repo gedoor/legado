@@ -85,7 +85,7 @@ class ReadMenu @JvmOverloads constructor(
         vwBg.setOnClickListener(null)
         vwNavigationBar.setOnClickListener(null)
         llBrightness.setOnClickListener(null)
-        seekBrightness.progress = context.getPrefInt("brightness", 100)
+        seekBrightness.progress = AppConfig.readBrightness
     }
 
     fun upBrightnessState() {
@@ -96,7 +96,7 @@ class ReadMenu @JvmOverloads constructor(
             binding.ivBrightnessAuto.setColorFilter(context.buttonDisabledColor)
             binding.seekBrightness.isEnabled = true
         }
-        setScreenBrightness(context.getPrefInt("brightness", 100))
+        setScreenBrightness(AppConfig.readBrightness)
     }
 
     /**
@@ -156,7 +156,7 @@ class ReadMenu @JvmOverloads constructor(
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                context.putPrefInt("brightness", seekBar.progress)
+                AppConfig.readBrightness = seekBar.progress
             }
 
         })
