@@ -427,7 +427,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     mode = Mode.XPath
                     ruleStr
                 }
-                ruleStr.length > 1 && ruleStr[0] in listOf('@','.',':','>','#','[') -> {
+                ruleStr.length > 1 && ruleStr[0] in ruleChar -> {
                     //isJSON为真时，<js></js>之后可能不是jsonPath,故提前判断
                     //XPath，Json已经提前判断了，故@开头即为默认规则，AnalyzeByJSoup会修剪开头的’@‘，故此处不必切片字符串
                     //#开头为根据id查元素,后续规则会切分##正则，故此处不必考虑##情况
@@ -570,7 +570,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             return ruleStr.startsWith("//")
                     || ruleStr.startsWith("$.")
                     || ruleStr.startsWith("$[")
-                    || ruleStr.length > 1 && ruleStr[0] in listOf('@','.',':','>','#','*')
+                    || ruleStr.length > 1 && ruleStr[0] in innerRuleChar
         }
     }
 
@@ -646,6 +646,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     }
 
     companion object {
+        private val ruleChar = listOf('@','.',':','>','#','[')
+        private val innerRuleChar = listOf('@','.',':','>','#','*')
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
         private val evalPattern =
             Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
