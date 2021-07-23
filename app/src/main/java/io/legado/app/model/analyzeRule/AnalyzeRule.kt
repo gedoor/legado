@@ -193,9 +193,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     @JvmOverloads
     fun getString(
-        ruleList: List<SourceRule>,
-        isUrl: Boolean = false,
-        value: String? = null
+            ruleList: List<SourceRule>,
+            isUrl: Boolean = false,
+            value: String? = null
     ): String {
         var result: Any? = value
         val content = this.content
@@ -259,8 +259,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 result?.let {
                     result = when (sourceRule.mode) {
                         Mode.Regex -> AnalyzeByRegex.getElement(
-                            result.toString(),
-                            sourceRule.rule.splitNotBlank("&&")
+                                result.toString(),
+                                sourceRule.rule.splitNotBlank("&&")
                         )
                         Mode.Js -> evalJS(sourceRule.rule, it)
                         Mode.Json -> getAnalyzeByJSonPath(it).getObject(sourceRule.rule)
@@ -290,8 +290,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 result?.let {
                     result = when (sourceRule.mode) {
                         Mode.Regex -> AnalyzeByRegex.getElements(
-                            result.toString(),
-                            sourceRule.rule.splitNotBlank("&&")
+                                result.toString(),
+                                sourceRule.rule.splitNotBlank("&&")
                         )
                         Mode.Js -> evalJS(sourceRule.rule, result)
                         Mode.Json -> getAnalyzeByJSonPath(it).getList(sourceRule.rule)
@@ -398,8 +398,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      */
 
     inner class SourceRule internal constructor(
-        ruleStr: String,
-        internal var mode: Mode = Mode.Default
+            ruleStr: String,
+            internal var mode: Mode = Mode.Default
     ) {
         internal var rule: String
         internal var replaceRegex = ""
@@ -453,7 +453,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 val mMode = mode == Mode.Js || mode == Mode.Regex
                 if(!mMode) { //首次匹配，start为0
                     if(evalMatcher.start() == 0 //仅首次匹配时evalMatcher.start()可能为0
-                        ||!rule.substring(0, evalMatcher.start()).contains("##") //此处start为0
+                            ||!rule.substring(0, evalMatcher.start()).contains("##") //此处start为0
                     )mode = Mode.Regex
                 }
                 do {
@@ -515,10 +515,11 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         /**
          * 替换@get,{{ }}
          */
-        fun makeUpRule(result: Any?) { //追加比插入快
+        fun makeUpRule(result: Any?) {
             val infoVal = StringBuilder()
             if (ruleParam.isNotEmpty()) {
-                for (index in 0 until ruleParam.size) {
+                var index = ruleParam.size
+                for (index-- > 0) {
                     val regType = ruleType[index]
                     when {
                         regType > defaultRuleType -> {
@@ -526,17 +527,17 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                             (result as? List<String?>)?.run {
                                 if (this.size > regType) {
                                     this[regType]?.let {
-                                        infoVal.append(it)
+                                        infoVal.insert(0, it)
                                     }
                                 }
-                            }?:infoVal.append(ruleParam[index])
+                            }?:infoVal.insert(0, ruleParam[index])
                         }
                         regType == jsRuleType -> {
                             if (isRule(ruleParam[index])) {
-                                infoVal.append( getString(arrayListOf(SourceRule(ruleParam[index]))) )
+                                infoVal.insert(0, getString(arrayListOf(SourceRule(ruleParam[index]))))
                             } else {
                                 evalJS(ruleParam[index], result)?.run{
-                                    infoVal.append(when(this){
+                                    infoVal.insert(0, when(this){
                                         is String -> this
                                         this is Double && this % 1.0 == 0.0 -> String.format("%.0f", this)
                                         else ->  toString()
@@ -545,9 +546,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                             }
                         }
                         regType == getRuleType -> {
-                            infoVal.append(get(ruleParam[index]))
+                            infoVal.insert(0, get(ruleParam[index]))
                         }
-                        else -> infoVal.append(ruleParam[index])
+                        else -> infoVal.insert(0, ruleParam[index])
                     }
                 }
                 rule = infoVal.toString()
@@ -580,8 +581,8 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     fun put(key: String, value: String): String {
         chapter?.putVariable(key, value)
-            ?: book?.putVariable(key, value)
-            ?: ruleData.putVariable(key, value)
+                ?: book?.putVariable(key, value)
+                ?: ruleData.putVariable(key, value)
         return value
     }
 
@@ -595,9 +596,9 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
             }
         }
         return chapter?.variableMap?.get(key)
-            ?: book?.variableMap?.get(key)
-            ?: ruleData.variableMap[key]
-            ?: ""
+                ?: book?.variableMap?.get(key)
+                ?: ruleData.variableMap[key]
+                ?: ""
     }
 
     /**
@@ -650,7 +651,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         private val innerRuleChar = listOf('@','.',':','>','#','*')
         private val putPattern = Pattern.compile("@put:(\\{[^}]+?\\})", Pattern.CASE_INSENSITIVE)
         private val evalPattern =
-            Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
+                Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
         private val titleNumPattern = Pattern.compile("第(.+?)([章节回话篇])")
     }
