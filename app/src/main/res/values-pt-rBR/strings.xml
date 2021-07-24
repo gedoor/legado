@@ -3,7 +3,7 @@
     <!--App-->
     <string name="app_name">Legado</string>
     <string name="receiving_shared_label">Legado·pesquisa</string>
-    <string name="tip_perm_request_storage">Legado precisa de acesso ao armazenamento para encontrar e ler livros. por favor, vá às "Configurações do App" para conceder "Permissão de armazenamento".</string>
+    <string name="tip_perm_request_storage">Legado precisa de acesso ao armazenamento para encontrar e ler livros. Por favor, vá às "Configurações do App" para conceder "Permissão de armazenamento".</string>
 
     <!--Other-->
     <string name="menu_backup">Início</string>
@@ -11,20 +11,20 @@
     <string name="menu_import_old">Importar dados ao Legado</string>
     <string name="mkdirs">Criar uma subpasta</string>
     <string name="mkdirs_description">Criar uma pasta de Backup com o nome Legado.</string>
-    <string name="webdav_cache_backup">Backup de cache dos livros para leitura off-line</string>
+    <string name="webdav_cache_backup">Backup do cache dos livros para leitura off-line</string>
     <string name="webdav_cache_backup_s">Exportar localmente e fazer Backup à pasta de exportação</string>
     <string name="backup_path">Backup para</string>
     <string name="select_backup_path">Por favor, selecione uma pasta de Backup.</string>
-    <string name="menu_import_old_version">Importar dados legado</string>
+    <string name="menu_import_old_version">Importar dados de Legado</string>
     <string name="menu_import_github">Importar dados de Github</string>
     <string name="menu_replace_rule">Substituição</string>
     <string name="menu_send">Enviar</string>
 
-    <string name="dialog_title">Lembrete</string>
+    <string name="dialog_title">Aviso</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_confirm">Confirmar</string>
     <string name="dialog_setting">Vá até às Configurações</string>
-    <string name="tip_cannot_jump_setting_page">Não foi possível ir às Configurações.</string>
+    <string name="tip_cannot_jump_setting_page">Não foi possível abrir Configurações.</string>
 
     <string name="dynamic_click_retry">Tentar novamente</string>
     <string name="dynamic_loading">Carregando</string>
@@ -52,10 +52,10 @@
     <string name="action_search">Pesquisar</string>
     <string name="action_download">Download</string>
     <string name="layout_list">Lista</string>
-    <string name="layout_grid3">Grid-3</string>
-    <string name="layout_grid4">Grid-4</string>
-    <string name="layout_grid5">Grid-5</string>
-    <string name="layout_grid6">Grid-6</string>
+    <string name="layout_grid3">Grade-3</string>
+    <string name="layout_grid4">Grade-4</string>
+    <string name="layout_grid5">Grade-5</string>
+    <string name="layout_grid6">Grade-6</string>
     <string name="bookshelf_layout">Layout</string>
     <string name="view">Vista</string>
     <string name="book_library">Biblioteca</string>
@@ -81,7 +81,7 @@
     <string name="book_name">Título</string>
     <string name="lasted_show">Último: %s</string>
     <string name="check_add_bookshelf">Você gostaria de adicionar %s à sua Estante?</string>
-    <string name="import_books_count">%s arquivo(s) de texto no total</string>
+    <string name="import_books_count">%s arquivo(s) de texto em total</string>
     <string name="is_loading">Carregando…</string>
     <string name="retry">Tentar novamente</string>
     <string name="web_service">Serviço Web</string>
@@ -93,30 +93,30 @@
     <string name="offline_cache_s">salvar o(s) capítulo(s) selecionado(s) no Armazenamento em cache</string>
     <string name="change_origin">Alterar a origem</string>
     <string name="about_description">
-        \u3000\u3000 Este é um app de leitura de software livre, desenvolvido em Kotlin, você é bem-vindo a participar em projeto. Siga a conta oficial de WeChat [开源阅读]！
+        \u3000\u3000 Este é um App de leitura de software livre, desenvolvido em Kotlin, você é bem-vindo a participar em projeto. Siga a conta oficial de WeChat [开源阅读]！
     </string>
     <string name="app_share_description">
         Legado (YueDu 3.0) link de download：\n https://play.google.com/store/apps/details?id=io.legado.play.release
     </string>
     <string name="version_name">Versão %s</string>
     <string name="pt_background_verification">Verificação em segundo plano</string>
-    <string name="ps_background_verification">você pode utilizar livremente ao verificar a fonte do livro</string>
+    <string name="ps_background_verification">Poderá usar a vontade ao verificar a fonte do livro</string>
     <string name="pt_auto_refresh">Atualização automática</string>
     <string name="ps_auto_refresh">Atualizar os livros automaticamente ao abrir o App</string>
     <string name="pt_auto_download">Download automático</string>
-    <string name="ps_auto_download">Baixar os últimos capítulos automaticamente ao atualizar os livros</string>
+    <string name="ps_auto_download">Baixar automaticamente os últimos capítulos ao atualizar os livros</string>
     <string name="backup_restore">Backup e restauração</string>
     <string name="web_dav_set">Configurações de WebDav</string>
-    <string name="web_dav_set_import_old">Configurações/importação WebDav de dados legado </string>
-    <string name="backup">Backup</string>
+    <string name="web_dav_set_import_old">Configurações/importação WebDav de dados Legado </string>
+    <string name="backup">Fazer Backup</string>
     <string name="restore">Restaurar</string>
     <string name="backup_permission">O Backup precisa de permissão de armazenamento</string>
     <string name="restore_permission">Para restaurar é necessária a permissão de armazenamento</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
-    <string name="backup_confirmation">Confirmação de Backup</string>
+    <string name="backup_confirmation">Confirmação do Backup</string>
     <string name="backup_message">Os novos arquivos de Backup substituirão os originais.\n Pasta de Backup: YueDu</string>
-    <string name="restore_confirmation">Confirmação de Restauração</string>
+    <string name="restore_confirmation">Confirmação da Restauração</string>
     <string name="restore_message">A restauração dos dados da estante irá substituir a estante atual.</string>
     <string name="backup_success">Backup bem sucedido</string>
     <string name="backup_fail">O Backup falhou</string>
@@ -150,7 +150,7 @@
     <string name="stop">Parar</string>
     <string name="pause">Pausar</string>
     <string name="resume">Retomar</string>
-    <string name="set_timer">Cronômetro</string>
+    <string name="set_timer">Timer</string>
     <string name="read_aloud_pause">Voz pausada</string>
     <string name="read_aloud_timer">Falando(%d min restantes)</string>
     <string name="playing_timer">Reproduzindo(%d min restantes)</string>
@@ -219,14 +219,14 @@
     <string name="dark_theme">Modo escuro</string>
     <string name="welcome">Página de boas-vindas</string>
     <string name="download_start">Iníciar o download</string>
-    <string name="download_cancel">Cancelar o Download</string>
+    <string name="download_cancel">Cancelar o download</string>
     <string name="no_download">Nenhum download</string>
     <string name="download_count">Baixado %1$d/%2$d</string>
     <string name="import_select_book">Importar livro(s) selecionado(s)</string>
     <string name="threads_num_title">Número de tarefas simultâneas</string>
     <string name="change_icon">Alterar o ícone</string>
     <string name="remove_from_bookshelf">Excluir</string>
-    <string name="start_read">Começar leitura</string>
+    <string name="start_read">Começar a leitura</string>
     <string name="data_loading">Carregando…</string>
     <string name="load_error_retry">Falha ao carregar, toque para tentar novamente</string>
     <string name="book_intro">Descrição do livro</string>
@@ -237,9 +237,9 @@
     <string name="import_replace_rule">Import replace rule</string>
     <string name="import_replace_rule_on_line">Importar regras on-line</string>
     <string name="check_update_interval">Intervalo de atualizações</string>
-    <string name="bookshelf_px_0">Lista de recentes</string>
-    <string name="bookshelf_px_1">Data de atualização</string>
-    <string name="bookshelf_px_2">Título do livro</string>
+    <string name="bookshelf_px_0">Por recentes</string>
+    <string name="bookshelf_px_1">Por data de atualização</string>
+    <string name="bookshelf_px_2">Por título do livro</string>
     <string name="bookshelf_px_3">Ordenar manualmente</string>
     <string name="read_type">Estratégia de leitura</string>
     <string name="compose_type">Tipografia</string>
@@ -266,7 +266,7 @@
     <string name="immersion_status_bar">Barra de status imersiva</string>
     <string name="un_download">%d capítulo(s) restante(s)</string>
     <string name="non_select">Nenhum selecionado</string>
-    <string name="long_click_input_color">Toque longo, para introduzir o valor da cor</string>
+    <string name="long_click_input_color">Clique longo, para introduzir o valor da cor</string>
     <string name="loading">Carregando…</string>
     <string name="group_zg">Aguardando</string>
     <string name="group_yf">Quase lá</string>
@@ -290,7 +290,7 @@
     <string name="left">Esquerda</string>
     <string name="bottom">Parte inferior</string>
     <string name="top">Parte superior</string>
-    <string name="padding">Espaço</string>
+    <string name="padding">Com espaço</string>
     <string name="padding_top">Espaço superior</string>
     <string name="padding_bottom">Espaço inferior</string>
     <string name="padding_left">Espaço da esquerda</string>
@@ -316,10 +316,10 @@
     <string name="text_size">Tamanho do texto</string>
     <string name="line_size">Espaço entre linhas</string>
     <string name="paragraph_size">Espaço entre parágrafos</string>
-    <string name="to_top">Ao parte superior</string>
-    <string name="selection_to_top">Selection To Top</string>
-    <string name="to_bottom">Ao fundo</string>
-    <string name="selection_to_bottom">Selection To Bottom</string>
+    <string name="to_top">Na parte superior</string>
+    <string name="selection_to_top">Seleção no topo</string>
+    <string name="to_bottom">Na parte inferior</string>
+    <string name="selection_to_bottom">Seleção no fundo</string>
     <string name="auto_expand_find">Expansão automática de Descoberta</string>
     <string name="default_expand_first">A expansão padrão da primeira Descoberta.</string>
     <string name="threads_num">Linhas atuais %s</string>
@@ -333,7 +333,7 @@
     <string name="pt_default_read">Vá automaticamente à lista de Recentes</string>
     <string name="use_to">Objeto substituto. Nome do livro ou Url de origem estão disponíveis</string>
     <string name="menu_action_group">Grupos</string>
-    <string name="download_path">Pasta de cache</string>
+    <string name="download_path">Pasta de Cache</string>
     <string name="sys_file_picker">Seletor de arquivos do sistema</string>
     <string name="new_version">Nova versão</string>
     <string name="download_update">Baixar atualizações</string>
@@ -348,7 +348,7 @@
     <string name="pt_show_all_find">Mostrar todas as Descobertas</string>
     <string name="ps_show_all_find">Mostrar a fonte da Descoberta selecionada se encerrado</string>
     <string name="update_toc">Atualizar os capítulos</string>
-    <string name="txt_toc_regex">Capítulos Txt Regex</string>
+    <string name="txt_toc_regex">Capítulos de Txt Regex</string>
     <string name="set_charset">Codificação de texto</string>
     <string name="swap_sort">Ordem ascendente/descendente</string>
     <string name="sort">Ordenar</string>
@@ -356,7 +356,7 @@
     <string name="sort_manual">Ordenar manualmente</string>
     <string name="sort_name">Ordenar por nome</string>
     <string name="go_to_top">Vá ao topo</string>
-    <string name="go_to_bottom">Vá ao fundo</string>
+    <string name="go_to_bottom">Vá ao final</string>
     <string name="read_y">Ler: %s</string>
     <string name="pursue_more">Aguardando atualização</string>
     <string name="fattening">Quase lá</string>
@@ -367,7 +367,7 @@
     <string name="finish_book">Livros concluídos</string>
     <string name="local_book">Livros locais</string>
     <string name="status_bar_immersion">A cor da barra de status fica transparente</string>
-    <string name="imm_navigation_bar">barra de navegação por imersão</string>
+    <string name="imm_navigation_bar">barra de navegação de imersão</string>
     <string name="imm_navigation_bar_s">A barra de navegação fica transparente</string>
     <string name="add_to_shelf">Adicionar à Estante</string>
     <string name="continue_read">Continuar lendo</string>
@@ -444,15 +444,15 @@
     <!--error string start-->
     <string name="error_no_source">Nenhum fonte</string>
     <string name="error_get_book_info">Falha ao obter informações sobre os livros</string>
-    <string name="error_get_content">Falha ao obter conteúdo</string>
-    <string name="error_get_chapter_list">Falha ao obter lista de capítulos</string>
+    <string name="error_get_content">Falha ao obter o conteúdo</string>
+    <string name="error_get_chapter_list">Falha ao obter a lista de capítulos</string>
     <string name="error_get_web_content">Falha ao acessar o site:%s</string>
     <string name="error_read_file">Falha na leitura do arquivo</string>
     <string name="error_load_toc">Falha ao carregar a lista de capítulos</string>
     <string name="error_get_data">Falha ao obter dados</string>
     <string name="error_load_msg">Falha ao carregar\n%s</string>
     <string name="net_error_10001">Sem internet</string>
-    <string name="net_error_10002">Tempo limite de conexão à rede</string>
+    <string name="net_error_10002">Tempo limite da conexão à rede</string>
     <string name="net_error_10003">O processamento de dados falhou</string>
     <!--error string end-->
 
@@ -461,7 +461,7 @@
     <string name="import_by_qr_code">Importar de código QR</string>
     <string name="share_selected_source">Compartilhar fontes selecionadas</string>
     <string name="scan_qr_code">Digitalizar código QR</string>
-    <string name="click_on_selected_show_menu">Toque para exibir o menu quando selecionado</string>
+    <string name="click_on_selected_show_menu">Toque para exibir o menu quando for selecionado</string>
     <string name="theme">Tema</string>
     <string name="theme_mode">Tipo de tema</string>
     <string name="theme_mode_desc">Selecionar tema que você preferir</string>
@@ -493,7 +493,7 @@
     <string name="qr_per">Para digitalizar o código QR é necessário ter permissão da câmera</string>
     <string name="aloud_can_not_auto_page">A voz está em execução, não pode virar páginas automaticamente</string>
     <string name="input_charset">Codificação de entrada</string>
-    <string name="text_chapter_list_rule">Capítulos Txt Regex</string>
+    <string name="text_chapter_list_rule">Capítulos de Txt Regex</string>
     <string name="open_local_book_per">Para abrir livros locais é necessária permissão de armazenamento</string>
     <string name="no_book_name">Livro sem nome</string>
     <string name="input_replace_url">URL da regra de substituição de entrada</string>
@@ -507,12 +507,12 @@
     <string name="chapter">Capítulo</string>
     <string name="to">Para</string>
     <string name="use_regex">Usando Regex</string>
-    <string name="text_indent">Indent</string>
+    <string name="text_indent">Indentação</string>
     <string name="indent_0">Nenhum</string>
-    <string name="indent_1">Indent com 1 carac</string>
-    <string name="indent_2">Indent com 2 carac</string>
-    <string name="indent_3">Indent com 3 carac</string>
-    <string name="indent_4">Indent com 4 carac</string>
+    <string name="indent_1">Indentação com 1 caract.</string>
+    <string name="indent_2">Indentação com 2 caract.</string>
+    <string name="indent_3">Indentação com 3 caract.</string>
+    <string name="indent_4">Indentação com 4 caract.</string>
     <string name="select_folder">Selecionar uma pasta</string>
     <string name="select_file">Selecionar um arquivo</string>
     <string name="no_find">Nenhuma Descoberta, você pode adicioná-la em Fontes de Livros</string>
@@ -586,7 +586,7 @@
     <string name="load_info">Carregar os detalhes do livro</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">Senha WebDav</string>
-    <string name="web_dav_pw_s">Digite sua senha autorizada de WebDav</string>
+    <string name="web_dav_pw_s">Digite sua senha de autorização para WebDav</string>
     <string name="web_dav_url_s">Digite o endereço do seu servidor</string>
     <string name="web_dav_url">Endereço do servidor WebDav</string>
     <string name="web_dav_account">Conta WebDav</string>
@@ -599,8 +599,8 @@
     <string name="precision_search">Busca precisa</string>
     <string name="service_starting">Iniciação do serviço</string>
     <string name="empty">Vazio</string>
-    <string name="file_chooser">Selector de arquivos</string>
-    <string name="folder_chooser">Selector de pastas</string>
+    <string name="file_chooser">Seletor de arquivos</string>
+    <string name="folder_chooser">Seletor de pastas</string>
     <string name="bottom_line">Concluído!</string>
     <string name="uri_to_path_fail">Endereço Uri falhou</string>
     <string name="refresh_cover">Atualizar capa</string>
@@ -634,7 +634,7 @@
     <string name="app_folder_picker">Seletor de pastas do App</string>
     <string name="app_file_picker">Seletor de arquivos do App</string>
     <string name="a10_permission_toast">Android 10+ não é capaz de ler e salvar arquivos devido a restrições de permissão</string>
-    <string name="add_to_text_context_menu_s">Toque longo para exibir o Legado·Pesquisa no menu de operação</string>
+    <string name="add_to_text_context_menu_s">Clique longo para exibir o Legado·Pesquisa no menu de operação</string>
     <string name="add_to_text_context_menu_t">Visualização da operação de texto na Pesquisa</string>
     <string name="record_log">Log</string>
     <string name="log">Log</string>
@@ -642,7 +642,7 @@
     <string name="change_icon_error">O ícone é um ícone vetorial, que não era suportado antes de Android 8.0</string>
     <string name="aloud_config">Configurações da voz</string>
     <string name="main_activity">Página inicial</string>
-    <string name="selectText">Toque longo para selecionar o texto</string>
+    <string name="selectText">Clique longo para selecionar o texto</string>
     <string name="header">Cabeçalho</string>
     <string name="main_body">Conteúdo</string>
     <string name="footer">Rodapé</string>
@@ -656,7 +656,7 @@
     <string name="more_menu">Mais menu</string>
     <string name="reduce">Menos</string>
     <string name="plus">Mais</string>
-    <string name="system_typeface">Tipo de sistema</string>
+    <string name="system_typeface">Tamanho e tipo da fonte</string>
     <string name="delete_book_file">Excluir arquivo fonte</string>
     <string name="default1">Padrão-1</string>
     <string name="default2">Padrão-2</string>
@@ -675,7 +675,7 @@
     <string name="btn_default_s">Padrão</string>
     <string name="main_menu">Menu principal</string>
     <string name="request_permission">Toque para conceder permissão</string>
-    <string name="tip_local_perm_request_storage">Legado precisa de permissão de armazenamento, por favor toque no botão "Conceder Permissão" abaixo, ou vá às "Configurações"-"Permissões do Apps"-para abrir a permissão necessária. Se a permissão não funcionar, por favor, toque no "Selecionar Pasta" no canto superior direito para usar o seletor de pastas do sistema.</string>
+    <string name="tip_local_perm_request_storage">Legado precisa de permissão de armazenamento, por favor toque abaixo no botão "Conceder Permissão", ou vá às "Configurações"-"Permissões do Apps"-para abrir a permissão necessária. Se a permissão não funcionar, por favor, toque no "Selecionar Pasta" no canto superior direito para usar o seletor de pastas do sistema.</string>
     <string name="alouding_disable">O texto selecionado não pode ser falado como texto completo</string>
     <string name="read_body_to_lh">Ampliar para recortar</string>
     <string name="toc_updateing">Atualização de capítulos</string>
@@ -688,7 +688,7 @@
     <string name="official_account">开源阅读</string>
     <string name="follow_official_account">Siga a conta oficial de WeChat</string>
     <string name="wechat">WeChat</string>
-    <string name="thanks">O suporte ao meu trabalho é bem-vindo</string>
+    <string name="thanks">Apoio ao meu trabalho é bem-vindo</string>
     <string name="about_official_account">Conta oficial[开源阅读]</string>
     <string name="source_auto_changing">Alteração de fonte</string>
     <string name="click_to_apply">Toque para participar</string>
@@ -720,7 +720,7 @@
     <string name="sort_by_url">Ordenar por URL</string>
     <string name="backup_summary">Faça backup local e de WebDav simultaneamente</string>
     <string name="restore_summary">Primeiro restaurar de WebDAV, ao clicar longo restaurar do local backup</string>
-    <string name="import_old_summary">Selecione uma pasta legado de backup</string>
+    <string name="import_old_summary">Selecione uma pasta Legado de Backup</string>
     <string name="enabled">Ativado</string>
     <string name="disabled">Desativado</string>
     <string name="starting_download">Iniciando o download</string>
@@ -737,14 +737,14 @@
     <string name="contributors_summary">gedoor,Invinciblelee etc. Para mais detalhes vá ao Github</string>
     <string name="clear_cache_summary">Limpar o cache dos livros e fontes baixados</string>
     <string name="default_cover">Capa padrão</string>
-    <string name="restore_ignore">Lista de desvios</string>
+    <string name="restore_ignore">Lista de ignorados</string>
     <string name="restore_ignore_summary">Ignore alguns conteúdos durante restauração</string>
     <string name="read_config">Configuração da interface de leitura</string>
     <string name="group_name">Nome de grupo</string>
     <string name="note_content">Seção de observações</string>
     <string name="replace_enable_default_t">Ativar regra de substituição por padrão</string>
     <string name="replace_enable_default_s">Para livros recém adicionados</string>
-    <string name="select_restore_file">Selecione restaurar arquivo</string>
+    <string name="select_restore_file">Selecione o arquivo de restauração</string>
     <string name="day_background_too_dark">O fundo diurno não pode ser muito escuro!</string>
     <string name="day_bottom_bar_too_dark">A parte inferior diurno não pode ser muito escuro!</string>
     <string name="night_background_too_light">O fundo noturno não pode ser muito brilhante!</string>
@@ -756,7 +756,7 @@
     <string name="show_brightness_view">Mostrar o widget de brilho</string>
     <string name="language">Idioma</string>
     <string name="import_rss_source">Importar fonte de RSS</string>
-    <string name="donate_summary">Sua doação torna este App melhor</string>
+    <string name="donate_summary">Sua doação tornará este App ainda melhor</string>
     <string name="about_summary">Conta oficial de Wechat [开源阅读软件]</string>
     <string name="read_record">Histórico de leitura</string>
     <string name="read_record_summary">Leia o resumo do histórico</string>
@@ -775,7 +775,7 @@
     <string name="sort_by_lastUpdateTime">Ordenar por tempo de atualização</string>
     <string name="search_content">Pesquisar conteúdo</string>
     <string name="rss_source_empty">Siga [开源阅读] no WeChat para mais fontes de RSS!</string>
-    <string name="explore_empty">Atualmente não há nenhuma fonte de descoberta, siga o número público [开源阅读] para adicionar uma fonte de livro via descoberta!</string>
+    <string name="explore_empty">Atualmente não há nenhuma fonte, siga o número público [开源阅读] para adicionar uma fonte de livro via Descoberta</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">Nome de tema</string>
     <string name="auto_clear_expired">Excluir automaticamente dados vencidos da busca</string>
@@ -784,7 +784,7 @@
     <string name="style_name">Formato do nome:</string>
     <string name="empty_msg_import_book">Clique no ícone da pasta no canto superior direito e selecione a pasta</string>
     <string name="scan_folder">Busca inteligente</string>
-    <string name="import_file_name">导入文件名</string>
+    <string name="import_file_name">Nome do arquivo importado</string>
     <string name="no_book">Sem livros</string>
     <string name="keep_original_name">Manter o nome original</string>
     <string name="click_regional_config">O controle de toque da tela</string>
@@ -801,7 +801,7 @@
     <string name="current_progress_exceeds_cloud">O progresso atual excede o progresso da nuvem. Você quer sincronizar?</string>
     <string name="sync_book_progress_t">Progresso de leitura sincronizada</string>
     <string name="sync_book_progress_s">Sincronizar o progresso da leitura ao entrar e sair da tela de leitura</string>
-    <string name="create_bookmark_error">Falha ao marcar como favorito </string>
+    <string name="create_bookmark_error">Falha ao marcar como favorito</string>
     <string name="single_url">URL única</string>
     <string name="export_bookshelf">Exportar a lista de livros</string>
     <string name="import_bookshelf">Importar a lista de livros</string>
@@ -815,14 +815,14 @@
     <string name="export_charset">Codificação de texto exportada</string>
     <string name="export_to_web_dav">Exportar para WebDav</string>
     <string name="reverse_content">Conteúdo reverso</string>
-    <string name="debug">Depurar</string>
-    <string name="crash_log">Log de falhas</string>
-    <string name="use_zh_layout">Utilização de filiais chinesas personalizadas</string>
+    <string name="debug">Depuração</string>
+    <string name="crash_log">Registro de falhas</string>
+    <string name="use_zh_layout">Utilização de layout chinesas personalizadas</string>
     <string name="image_style">Formato de imagem</string>
     <string name="system_tts">Sistema TTS</string>
     <string name="export_type">Formato de exportação</string>
     <string name="checkAuthor">Verificar por autor</string>
-    <string name="url_already">Esta URL foi substituída</string>
+    <string name="url_already">Esta URL já foi assinada</string>
     <string name="high_brush_title">Alta taxa de atualização da tela</string>
     <string name="high_brush_summary">Use a maior taxa de atualização da tela</string>
     <string name="export_all">Exportar tudo</string>
@@ -846,7 +846,7 @@
     <string name="style">Formato</string>
     <string name="group_style">Formato de grupo</string>
     <string name="export_file_name">Exportar o nome do arquivo</string>
-    <string name="reset">重置</string>
-    <string name="null_url">url为空</string>
-    <string name="dict">字典</string>
+    <string name="reset">Resetar</string>
+    <string name="null_url">Nenhuma url</string>
+    <string name="dict">Dicionários</string>
 </resources>
