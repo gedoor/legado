@@ -133,12 +133,10 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
             dismiss()
             return
         }
-        if (source.isAbsUrl()) {
-            viewModel.importSource(source)
-        } else {
-            IntentDataHelp.getData<String>(source)?.let {
+        when {
+            source.isAbsUrl() || source.isJson() -> viewModel.importSource(source)
+            else -> IntentDataHelp.getData<String>(source)?.let {
                 viewModel.importSource(it)
-                return
             }
         }
     }

@@ -849,4 +849,5 @@
     <string name="reset">Resetar</string>
     <string name="null_url">Nenhuma url</string>
     <string name="dict">Dicionários</string>
+    <string name="unknown_error">未知错误</string>
 </resources>

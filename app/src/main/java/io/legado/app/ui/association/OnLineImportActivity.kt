@@ -2,6 +2,7 @@ package io.legado.app.ui.association
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
@@ -20,6 +21,19 @@ class OnLineImportActivity :
     override val viewModel by viewModels<OnLineImportViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        viewModel.successLive.observe(this) {
+            when (it.first) {
+                "bookSource" -> ImportBookSourceDialog
+                    .start(supportFragmentManager, it.second, true)
+                "rssSource" -> ImportRssSourceDialog
+                    .start(supportFragmentManager, it.second, true)
+                "replaceRule" -> ImportReplaceRuleDialog
+                    .start(supportFragmentManager, it.second, true)
+            }
+        }
+        viewModel.errorLive.observe(this) {
+            finallyDialog(getString(R.string.error), it)
+        }
         intent.data?.let {
             val url = it.getQueryParameter("src")
             if (url.isNullOrBlank()) {
@@ -30,10 +44,18 @@ class OnLineImportActivity :
                 "/bookSource" -> ImportBookSourceDialog.start(supportFragmentManager, url, true)
                 "/rssSource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
                 "/replaceRule" -> ImportReplaceRuleDialog.start(supportFragmentManager, url, true)
-                "/textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
-                "/httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
-                "/theme" -> viewModel.importTheme(url, this::finallyDialog)
-                "/readConfig" -> viewModel.importReadConfig(url, this::finallyDialog)
+                "/textTocRule" -> viewModel.getText(url) { json ->
+                    viewModel.importTextTocRule(json, this::finallyDialog)
+                }
+                "/httpTTS" -> viewModel.getText(url) { json ->
+                    viewModel.importHttpTTS(json, this::finallyDialog)
+                }
+                "/theme" -> viewModel.getText(url) { json ->
+                    viewModel.importTheme(json, this::finallyDialog)
+                }
+                "/readConfig" -> viewModel.getBytes(url) { bytes ->
+                    viewModel.importReadConfig(bytes, this::finallyDialog)
+                }
                 "/importonline" -> when (it.host) {
                     "booksource" -> ImportBookSourceDialog.start(supportFragmentManager, url, true)
                     "rsssource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)

@@ -19,6 +19,7 @@ import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJson
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
@@ -121,12 +122,10 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
             dismiss()
             return
         }
-        if (source.isAbsUrl()) {
-            viewModel.import(source)
-        } else {
-            IntentDataHelp.getData<String>(source)?.let {
+        when {
+            source.isAbsUrl() || source.isJson() -> viewModel.import(source)
+            else -> IntentDataHelp.getData<String>(source)?.let {
                 viewModel.import(it)
-                return
             }
         }
     }

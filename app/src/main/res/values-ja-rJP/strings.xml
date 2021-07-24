@@ -849,4 +849,5 @@
     <string name="reset">重置</string>
     <string name="null_url">url为空</string>
     <string name="dict">字典</string>
+    <string name="unknown_error">未知错误</string>
 </resources>
