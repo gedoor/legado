@@ -27,7 +27,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.association.ImportReplaceRuleActivity
+import io.legado.app.ui.association.ImportReplaceRuleDialog
 import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.qrcode.QrCodeResult
@@ -63,9 +63,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private var dataInit = false
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
-        startActivity<ImportReplaceRuleActivity> {
-            putExtra("source", it)
-        }
+        ImportReplaceRuleDialog.start(supportFragmentManager, it)
     }
     private val editActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -76,10 +74,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private val importDoc = registerForActivityResult(FilePicker()) { uri ->
         kotlin.runCatching {
             uri?.readText(this)?.let {
-                val dataKey = IntentDataHelp.putData(it)
-                startActivity<ImportReplaceRuleActivity> {
-                    putExtra("dataKey", dataKey)
-                }
+                ImportReplaceRuleDialog.start(supportFragmentManager, IntentDataHelp.putData(it))
             }
         }.onFailure {
             toastOnUi("readTextError:${it.localizedMessage}")
@@ -276,9 +271,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    startActivity<ImportReplaceRuleActivity> {
-                        putExtra("source", it)
-                    }
+                    ImportReplaceRuleDialog.start(supportFragmentManager, it)
                 }
             }
             cancelButton()

@@ -34,6 +34,15 @@
             android:layout_gravity="center"
             app:loading_width="2dp" />
 
+        <TextView
+            android:id="@+id/tv_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:textColor="@color/secondaryText" />
+
     </FrameLayout>
 
     <com.google.android.flexbox.FlexboxLayout

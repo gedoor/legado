@@ -28,17 +28,17 @@ class OnLineImportActivity :
                 return
             }
             when (it.path) {
-                "/bookSource" -> importBookSource(url)
+                "/bookSource" -> ImportBookSourceDialog.start(supportFragmentManager, url)
                 "/rssSource" -> importRssSource(url)
-                "/replaceRule" -> importReplaceRule(url)
+                "/replaceRule" -> ImportReplaceRuleDialog.start(supportFragmentManager, url)
                 "/textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
                 "/httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
                 "/theme" -> viewModel.importTheme(url, this::finallyDialog)
                 "/readConfig" -> viewModel.importReadConfig(url, this::finallyDialog)
                 "/importonline" -> when (it.host) {
-                    "booksource" -> importBookSource(url)
+                    "booksource" -> ImportBookSourceDialog.start(supportFragmentManager, url)
                     "rsssource" -> importRssSource(url)
-                    "replace" -> importReplaceRule(url)
+                    "replace" -> ImportReplaceRuleDialog.start(supportFragmentManager, url)
                     else -> {
                         toastOnUi("url error")
                         finish()
@@ -46,24 +46,6 @@ class OnLineImportActivity :
                 }
             }
         }
-    }
-
-    private fun importBookSource(url: String) {
-        val viewModel by viewModels<ImportBookSourceViewModel>()
-        binding.rotateLoading.show()
-        viewModel.errorLiveData.observe(this, {
-            binding.rotateLoading.hide()
-            finallyDialog(getString(R.string.error), it)
-        })
-        viewModel.successLiveData.observe(this, {
-            binding.rotateLoading.hide()
-            if (it > 0) {
-                ImportBookSourceDialog().show(supportFragmentManager, "bookSource")
-            } else {
-                finallyDialog(getString(R.string.error), getString(R.string.wrong_format))
-            }
-        })
-        viewModel.importSource(url)
     }
 
     private fun importRssSource(url: String) {

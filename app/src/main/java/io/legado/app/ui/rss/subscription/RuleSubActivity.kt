@@ -14,7 +14,7 @@ import io.legado.app.databinding.ActivityRuleSubBinding
 import io.legado.app.databinding.DialogRuleSubEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.association.ImportBookSourceDialog
-import io.legado.app.ui.association.ImportReplaceRuleActivity
+import io.legado.app.ui.association.ImportReplaceRuleDialog
 import io.legado.app.ui.association.ImportRssSourceActivity
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.startActivity
@@ -82,9 +82,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                 }
             }
             2 -> {
-                startActivity<ImportReplaceRuleActivity> {
-                    putExtra("source", ruleSub.url)
-                }
+                ImportReplaceRuleDialog.start(supportFragmentManager, ruleSub.url)
             }
         }
     }

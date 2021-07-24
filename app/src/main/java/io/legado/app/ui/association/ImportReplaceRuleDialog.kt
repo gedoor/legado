@@ -6,7 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -15,14 +16,26 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.ui.widget.dialog.WaitDialog
+import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
 class ImportReplaceRuleDialog : BaseDialogFragment() {
 
+    companion object {
+        fun start(fragmentManager: FragmentManager, source: String) {
+            ImportReplaceRuleDialog().apply {
+                arguments = Bundle().apply {
+                    putString("source", source)
+                }
+            }.show(fragmentManager, "importReplaceRule")
+        }
+    }
+
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
-    private val viewModel by activityViewModels<ImportReplaceRuleViewModel>()
+    private val viewModel by viewModels<ImportReplaceRuleViewModel>()
     lateinit var adapter: SourcesAdapter
 
     override fun onStart() {
@@ -43,6 +56,7 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setTitle(R.string.import_replace_rule)
+        binding.rotateLoading.show()
         adapter = SourcesAdapter(requireContext())
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
@@ -71,6 +85,37 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
             }
             adapter.notifyDataSetChanged()
             upSelectText()
+        }
+        viewModel.errorLiveData.observe(this, {
+            binding.rotateLoading.hide()
+            binding.tvMsg.apply {
+                text = it
+                visible()
+            }
+        })
+        viewModel.successLiveData.observe(this, {
+            binding.rotateLoading.hide()
+            if (it > 0) {
+                adapter.setItems(viewModel.allRules)
+            } else {
+                binding.tvMsg.apply {
+                    setText(R.string.wrong_format)
+                    visible()
+                }
+            }
+        })
+        val source = arguments?.getString("source")
+        if (source.isNullOrEmpty()) {
+            dismiss()
+            return
+        }
+        if (source.isAbsUrl()) {
+            viewModel.import(source)
+        } else {
+            IntentDataHelp.getData<String>(source)?.let {
+                viewModel.import(it)
+                return
+            }
         }
     }
 

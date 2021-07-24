@@ -101,14 +101,20 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         }
         viewModel.errorLiveData.observe(this, {
             binding.rotateLoading.hide()
-            errorDialog(it)
+            binding.tvMsg.apply {
+                text = it
+                visible()
+            }
         })
         viewModel.successLiveData.observe(this, {
             binding.rotateLoading.hide()
             if (it > 0) {
                 adapter.setItems(viewModel.allSources)
             } else {
-                errorDialog(getString(R.string.wrong_format))
+                binding.tvMsg.apply {
+                    setText(R.string.wrong_format)
+                    visible()
+                }
             }
         })
         val source = arguments?.getString("source")
@@ -180,15 +186,6 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
             }
         }
         return false
-    }
-
-    private fun errorDialog(msg: String) {
-        alert(getString(R.string.error), msg) {
-            okButton { }
-            onDismiss {
-
-            }
-        }.show()
     }
 
     inner class SourcesAdapter(context: Context) :
