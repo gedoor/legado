@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -19,6 +20,12 @@ class FileAssociationActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()
+        viewModel.onLineImportLive.observe(this) {
+            startActivity<OnLineImportActivity> {
+                data = it
+            }
+            finish()
+        }
         viewModel.importBookSourceLive.observe(this) {
             binding.rotateLoading.hide()
             ImportBookSourceDialog.start(supportFragmentManager, it, true)

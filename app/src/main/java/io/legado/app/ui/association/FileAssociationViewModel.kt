@@ -6,15 +6,14 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.utils.isJsonArray
-import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.isJson
 import io.legado.app.utils.readText
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
+    val onLineImportLive = MutableLiveData<Uri>()
     val importBookSourceLive = MutableLiveData<String>()
     val importRssSourceLive = MutableLiveData<String>()
     val importReplaceRuleLive = MutableLiveData<String>()
@@ -31,20 +30,20 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                 } else {
                     DocumentFile.fromSingleUri(context, uri)?.readText(context)
                 }
-                if (content != null) {
-                    if (content.isJsonObject() || content.isJsonArray()) {
+                content?.let {
+                    if (it.isJson()) {
                         //暂时根据文件内容判断属于什么
                         when {
                             content.contains("bookSourceUrl") -> {
-                                importBookSourceLive.postValue(IntentDataHelp.putData(content))
+                                importBookSourceLive.postValue(it)
                                 return@execute
                             }
                             content.contains("sourceUrl") -> {
-                                importRssSourceLive.postValue(IntentDataHelp.putData(content))
+                                importRssSourceLive.postValue(it)
                                 return@execute
                             }
                             content.contains("pattern") -> {
-                                importReplaceRuleLive.postValue(IntentDataHelp.putData(content))
+                                importReplaceRuleLive.postValue(it)
                                 return@execute
                             }
                         }
@@ -57,9 +56,9 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                     val intent = Intent(context, ReadBookActivity::class.java)
                     intent.putExtra("bookUrl", book.bookUrl)
                     successLiveData.postValue(intent)
-                } else {
-                    throw Exception("文件不存在")
-                }
+                } ?: throw Exception("文件不存在")
+            } else {
+                onLineImportLive.postValue(uri)
             }
         }.onError {
             it.printStackTrace()

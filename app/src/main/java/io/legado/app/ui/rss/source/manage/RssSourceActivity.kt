@@ -19,7 +19,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
@@ -62,8 +61,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     private val importDoc = registerForActivityResult(FilePicker()) { uri ->
         kotlin.runCatching {
             uri?.readText(this)?.let {
-                val dataKey = IntentDataHelp.putData(it)
-                ImportRssSourceDialog.start(supportFragmentManager, dataKey)
+                ImportRssSourceDialog.start(supportFragmentManager, it)
             }
         }.onFailure {
             toastOnUi("readTextError:${it.localizedMessage}")

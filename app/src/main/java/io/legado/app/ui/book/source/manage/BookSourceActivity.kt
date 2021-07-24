@@ -21,7 +21,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
@@ -69,8 +68,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         uri ?: return@registerForActivityResult
         try {
             uri.readText(this)?.let {
-                val dataKey = IntentDataHelp.putData(it)
-                ImportBookSourceDialog.start(supportFragmentManager, dataKey)
+                ImportBookSourceDialog.start(supportFragmentManager, it)
             }
         } catch (e: Exception) {
             toastOnUi("readTextError:${e.localizedMessage}")

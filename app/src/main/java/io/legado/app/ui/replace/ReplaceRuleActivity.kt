@@ -22,7 +22,6 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.ContentProcessor
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
@@ -74,7 +73,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private val importDoc = registerForActivityResult(FilePicker()) { uri ->
         kotlin.runCatching {
             uri?.readText(this)?.let {
-                ImportReplaceRuleDialog.start(supportFragmentManager, IntentDataHelp.putData(it))
+                ImportReplaceRuleDialog.start(supportFragmentManager, it)
             }
         }.onFailure {
             toastOnUi("readTextError:${it.localizedMessage}")

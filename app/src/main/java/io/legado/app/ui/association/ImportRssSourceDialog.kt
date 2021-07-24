@@ -24,11 +24,13 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.dp
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 /**
  * 导入rss源弹出窗口
@@ -133,12 +135,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
             dismiss()
             return
         }
-        when {
-            source.isAbsUrl() || source.isJson() -> viewModel.importSource(source)
-            else -> IntentDataHelp.getData<String>(source)?.let {
-                viewModel.importSource(it)
-            }
-        }
+        viewModel.importSource(source)
     }
 
     private fun upSelectText() {
