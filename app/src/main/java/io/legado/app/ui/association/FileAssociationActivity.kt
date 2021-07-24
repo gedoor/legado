@@ -19,6 +19,10 @@ class FileAssociationActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()
+        viewModel.importBookSourceLive.observe(this) {
+            binding.rotateLoading.hide()
+            ImportBookSourceDialog.start(supportFragmentManager, it)
+        }
         viewModel.errorLiveData.observe(this, {
             binding.rotateLoading.hide()
             toastOnUi(it)

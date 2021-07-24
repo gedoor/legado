@@ -25,6 +25,15 @@
             android:layout_height="match_parent"
             android:scrollbars="none" />
 
+        <io.legado.app.ui.widget.anima.RotateLoading
+            android:id="@+id/rotate_loading"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_margin="6dp"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            app:loading_width="2dp" />
+
     </FrameLayout>
 
     <com.google.android.flexbox.FlexboxLayout

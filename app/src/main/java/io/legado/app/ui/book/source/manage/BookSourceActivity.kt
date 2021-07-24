@@ -27,7 +27,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.CheckSource
-import io.legado.app.ui.association.ImportBookSourceActivity
+import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.document.FilePicker
@@ -63,18 +63,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var snackBar: Snackbar? = null
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
-        startActivity<ImportBookSourceActivity> {
-            putExtra("source", it)
-        }
+        ImportBookSourceDialog.start(supportFragmentManager, it)
     }
     private val importDoc = registerForActivityResult(FilePicker()) { uri ->
         uri ?: return@registerForActivityResult
         try {
             uri.readText(this)?.let {
                 val dataKey = IntentDataHelp.putData(it)
-                startActivity<ImportBookSourceActivity> {
-                    putExtra("dataKey", dataKey)
-                }
+                ImportBookSourceDialog.start(supportFragmentManager, dataKey)
             }
         } catch (e: Exception) {
             toastOnUi("readTextError:${e.localizedMessage}")
@@ -421,9 +417,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    startActivity<ImportBookSourceActivity> {
-                        putExtra("source", it)
-                    }
+                    ImportBookSourceDialog.start(supportFragmentManager, it)
                 }
             }
             cancelButton()

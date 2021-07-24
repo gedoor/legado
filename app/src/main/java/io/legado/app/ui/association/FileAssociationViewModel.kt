@@ -15,7 +15,7 @@ import io.legado.app.utils.readText
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
-
+    val importBookSourceLive = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Intent>()
     val errorLiveData = MutableLiveData<String>()
 
@@ -34,15 +34,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                         //暂时根据文件内容判断属于什么
                         when {
                             content.contains("bookSourceUrl") -> {
-                                successLiveData.postValue(
-                                    Intent(
-                                        context,
-                                        ImportBookSourceActivity::class.java
-                                    ).apply {
-                                        val dataKey = IntentDataHelp.putData(content)
-                                        putExtra("dataKey", dataKey)
-                                    }
-                                )
+                                importBookSourceLive.postValue(IntentDataHelp.putData(content))
                                 return@execute
                             }
                             content.contains("sourceUrl") -> {
