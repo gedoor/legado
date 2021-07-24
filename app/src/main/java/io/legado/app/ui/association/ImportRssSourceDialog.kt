@@ -2,7 +2,6 @@ package io.legado.app.ui.association
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -185,11 +184,6 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
             }
         }
         return false
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        activity?.finish()
     }
 
     inner class SourcesAdapter(context: Context) :

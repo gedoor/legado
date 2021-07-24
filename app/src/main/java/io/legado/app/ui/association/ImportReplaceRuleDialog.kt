@@ -1,7 +1,6 @@
 package io.legado.app.ui.association
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -133,11 +132,6 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
                 viewModel.allRules.size
             )
         }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        activity?.finish()
     }
 
     inner class SourcesAdapter(context: Context) :
