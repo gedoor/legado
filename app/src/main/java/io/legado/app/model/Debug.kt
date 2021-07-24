@@ -33,16 +33,18 @@ object Debug {
         showTime: Boolean = true,
         state: Int = 1
     ) {
-        if (debugSource != sourceUrl || callback == null || !print) return
-        var printMsg = msg ?: ""
-        if (isHtml) {
-            printMsg = HtmlFormatter.format(msg)
+        callback?.let {
+            if (debugSource != sourceUrl || !print) return
+            var printMsg = msg ?: ""
+            if (isHtml) {
+                printMsg = HtmlFormatter.format(msg)
+            }
+            if (showTime) {
+                val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))
+                printMsg = "$time $printMsg"
+            }
+            it.printLog(state, printMsg)
         }
-        if (showTime) {
-            printMsg =
-                "${DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))} $printMsg"
-        }
-        callback?.printLog(state, printMsg)
     }
 
     @Synchronized
