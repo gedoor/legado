@@ -27,17 +27,17 @@ class OnLineImportActivity :
                 return
             }
             when (it.path) {
-                "/bookSource" -> ImportBookSourceDialog.start(supportFragmentManager, url)
-                "/rssSource" -> ImportRssSourceDialog.start(supportFragmentManager, url)
-                "/replaceRule" -> ImportReplaceRuleDialog.start(supportFragmentManager, url)
+                "/bookSource" -> ImportBookSourceDialog.start(supportFragmentManager, url, true)
+                "/rssSource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
+                "/replaceRule" -> ImportReplaceRuleDialog.start(supportFragmentManager, url, true)
                 "/textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
                 "/httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
                 "/theme" -> viewModel.importTheme(url, this::finallyDialog)
                 "/readConfig" -> viewModel.importReadConfig(url, this::finallyDialog)
                 "/importonline" -> when (it.host) {
-                    "booksource" -> ImportBookSourceDialog.start(supportFragmentManager, url)
-                    "rsssource" -> ImportRssSourceDialog.start(supportFragmentManager, url)
-                    "replace" -> ImportReplaceRuleDialog.start(supportFragmentManager, url)
+                    "booksource" -> ImportBookSourceDialog.start(supportFragmentManager, url, true)
+                    "rsssource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
+                    "replace" -> ImportReplaceRuleDialog.start(supportFragmentManager, url, true)
                     else -> {
                         toastOnUi("url error")
                         finish()

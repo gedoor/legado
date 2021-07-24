@@ -1,6 +1,7 @@
 package io.legado.app.ui.association
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,10 +25,15 @@ import io.legado.app.utils.visible
 class ImportReplaceRuleDialog : BaseDialogFragment() {
 
     companion object {
-        fun start(fragmentManager: FragmentManager, source: String) {
+        fun start(
+            fragmentManager: FragmentManager,
+            source: String,
+            finishOnDismiss: Boolean = false
+        ) {
             ImportReplaceRuleDialog().apply {
                 arguments = Bundle().apply {
                     putString("source", source)
+                    putBoolean("finishOnDismiss", finishOnDismiss)
                 }
             }.show(fragmentManager, "importReplaceRule")
         }
@@ -43,6 +49,13 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (arguments?.getBoolean("finishOnDismiss") == true) {
+            activity?.finish()
+        }
     }
 
     override fun onCreateView(

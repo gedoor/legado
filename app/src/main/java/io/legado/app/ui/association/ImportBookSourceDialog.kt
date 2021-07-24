@@ -2,6 +2,7 @@ package io.legado.app.ui.association
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -37,10 +38,15 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
 
     companion object {
 
-        fun start(fragmentManager: FragmentManager, source: String) {
+        fun start(
+            fragmentManager: FragmentManager,
+            source: String,
+            finishOnDismiss: Boolean = false
+        ) {
             ImportBookSourceDialog().apply {
                 arguments = Bundle().apply {
                     putString("source", source)
+                    putBoolean("finishOnDismiss", finishOnDismiss)
                 }
             }.show(fragmentManager, "importBookSource")
         }
@@ -65,6 +71,13 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.dialog_recycler_view, container)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (arguments?.getBoolean("finishOnDismiss") == true) {
+            activity?.finish()
+        }
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

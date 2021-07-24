@@ -2,6 +2,7 @@ package io.legado.app.ui.association
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -35,10 +36,15 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     companion object {
-        fun start(fragmentManager: FragmentManager, source: String) {
+        fun start(
+            fragmentManager: FragmentManager,
+            source: String,
+            finishOnDismiss: Boolean = false
+        ) {
             ImportRssSourceDialog().apply {
                 arguments = Bundle().apply {
                     putString("source", source)
+                    putBoolean("finishOnDismiss", finishOnDismiss)
                 }
             }.show(fragmentManager, "importRssSource")
         }
@@ -54,6 +60,13 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (arguments?.getBoolean("finishOnDismiss") == true) {
+            activity?.finish()
+        }
     }
 
     override fun onCreateView(
