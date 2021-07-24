@@ -1,7 +1,7 @@
 package io.legado.app.ui.association
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
@@ -18,7 +18,7 @@ import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.isJsonArray
 import okhttp3.MediaType.Companion.toMediaType
 
-class OnLineImportViewModel(app: App) : BaseViewModel(app) {
+class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
     val successLive = MutableLiveData<Pair<String, String>>()
     val errorLive = MutableLiveData<String>()
 
