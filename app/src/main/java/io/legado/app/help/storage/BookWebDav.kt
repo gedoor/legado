@@ -131,7 +131,7 @@ object BookWebDav {
                 WebDav(exportsWebDavUrl).makeAsDir()
                 // 如果导出的本地文件存在,开始上传
                 val putUrl = exportsWebDavUrl + fileName
-                WebDav(putUrl).upload(byteArray)
+                WebDav(putUrl).upload(byteArray, "text/plain")
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
@@ -153,7 +153,7 @@ object BookWebDav {
             val json = GSON.toJson(bookProgress)
             val url = getProgressUrl(book)
             if (initWebDav()) {
-                WebDav(url).upload(json.toByteArray())
+                WebDav(url).upload(json.toByteArray(), "application/json")
             }
         }
     }

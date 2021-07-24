@@ -53,6 +53,8 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
         val contentType: MediaType? = requestBody.contentType()
         if (contentType != null) {
             requestBuilder.addHeader("Content-Type", contentType.toString())
+        } else {
+            requestBuilder.addHeader("Content-Type", "text/plain")
         }
         val buffer = Buffer()
         requestBody.writeTo(buffer)
