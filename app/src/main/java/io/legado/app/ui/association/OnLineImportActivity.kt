@@ -2,7 +2,6 @@ package io.legado.app.ui.association
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
@@ -29,7 +28,7 @@ class OnLineImportActivity :
             }
             when (it.path) {
                 "/bookSource" -> ImportBookSourceDialog.start(supportFragmentManager, url)
-                "/rssSource" -> importRssSource(url)
+                "/rssSource" -> ImportRssSourceDialog.start(supportFragmentManager, url)
                 "/replaceRule" -> ImportReplaceRuleDialog.start(supportFragmentManager, url)
                 "/textTocRule" -> viewModel.importTextTocRule(url, this::finallyDialog)
                 "/httpTTS" -> viewModel.importHttpTTS(url, this::finallyDialog)
@@ -37,7 +36,7 @@ class OnLineImportActivity :
                 "/readConfig" -> viewModel.importReadConfig(url, this::finallyDialog)
                 "/importonline" -> when (it.host) {
                     "booksource" -> ImportBookSourceDialog.start(supportFragmentManager, url)
-                    "rsssource" -> importRssSource(url)
+                    "rsssource" -> ImportRssSourceDialog.start(supportFragmentManager, url)
                     "replace" -> ImportReplaceRuleDialog.start(supportFragmentManager, url)
                     else -> {
                         toastOnUi("url error")
@@ -46,42 +45,6 @@ class OnLineImportActivity :
                 }
             }
         }
-    }
-
-    private fun importRssSource(url: String) {
-        val viewModel by viewModels<ImportRssSourceViewModel>()
-        binding.rotateLoading.show()
-        viewModel.errorLiveData.observe(this, {
-            binding.rotateLoading.hide()
-            finallyDialog(getString(R.string.error), it)
-        })
-        viewModel.successLiveData.observe(this, {
-            binding.rotateLoading.hide()
-            if (it > 0) {
-                ImportRssSourceDialog().show(supportFragmentManager, "rssSource")
-            } else {
-                finallyDialog(getString(R.string.error), getString(R.string.wrong_format))
-            }
-        })
-        viewModel.importSource(url)
-    }
-
-    private fun importReplaceRule(url: String) {
-        val viewModel by viewModels<ImportReplaceRuleViewModel>()
-        binding.rotateLoading.show()
-        viewModel.errorLiveData.observe(this, {
-            binding.rotateLoading.hide()
-            finallyDialog(getString(R.string.error), it)
-        })
-        viewModel.successLiveData.observe(this, {
-            binding.rotateLoading.hide()
-            if (it > 0) {
-                ImportReplaceRuleDialog().show(supportFragmentManager, "replaceRule")
-            } else {
-                finallyDialog(getString(R.string.error), getString(R.string.wrong_format))
-            }
-        })
-        viewModel.import(url)
     }
 
     private fun finallyDialog(title: String, msg: String) {

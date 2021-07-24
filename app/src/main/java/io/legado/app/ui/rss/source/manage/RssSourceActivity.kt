@@ -23,7 +23,7 @@ import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.association.ImportRssSourceActivity
+import io.legado.app.ui.association.ImportRssSourceDialog
 import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.qrcode.QrCodeResult
@@ -57,17 +57,13 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     private var groupMenu: SubMenu? = null
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
-        startActivity<ImportRssSourceActivity> {
-            putExtra("source", it)
-        }
+        ImportRssSourceDialog.start(supportFragmentManager, it)
     }
     private val importDoc = registerForActivityResult(FilePicker()) { uri ->
         kotlin.runCatching {
             uri?.readText(this)?.let {
                 val dataKey = IntentDataHelp.putData(it)
-                startActivity<ImportRssSourceActivity> {
-                    putExtra("dataKey", dataKey)
-                }
+                ImportRssSourceDialog.start(supportFragmentManager, dataKey)
             }
         }.onFailure {
             toastOnUi("readTextError:${it.localizedMessage}")
@@ -284,9 +280,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    startActivity<ImportRssSourceActivity> {
-                        putExtra("source", it)
-                    }
+                    ImportRssSourceDialog.start(supportFragmentManager, it)
                 }
             }
             cancelButton()

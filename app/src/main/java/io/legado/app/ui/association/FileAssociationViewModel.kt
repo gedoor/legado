@@ -16,6 +16,7 @@ import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
     val importBookSourceLive = MutableLiveData<String>()
+    val importRssSourceLive = MutableLiveData<String>()
     val importReplaceRuleLive = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Intent>()
     val errorLiveData = MutableLiveData<String>()
@@ -39,15 +40,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                                 return@execute
                             }
                             content.contains("sourceUrl") -> {
-                                successLiveData.postValue(
-                                    Intent(
-                                        context,
-                                        ImportRssSourceActivity::class.java
-                                    ).apply {
-                                        val dataKey = IntentDataHelp.putData(content)
-                                        putExtra("dataKey", dataKey)
-                                    }
-                                )
+                                importRssSourceLive.postValue(IntentDataHelp.putData(content))
                                 return@execute
                             }
                             content.contains("pattern") -> {

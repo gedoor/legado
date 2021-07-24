@@ -23,6 +23,10 @@ class FileAssociationActivity :
             binding.rotateLoading.hide()
             ImportBookSourceDialog.start(supportFragmentManager, it)
         }
+        viewModel.importRssSourceLive.observe(this) {
+            binding.rotateLoading.hide()
+            ImportRssSourceDialog.start(supportFragmentManager, it)
+        }
         viewModel.importReplaceRuleLive.observe(this) {
             binding.rotateLoading.hide()
             ImportReplaceRuleDialog.start(supportFragmentManager, it)

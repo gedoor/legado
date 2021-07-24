@@ -9,7 +9,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -23,21 +24,29 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.dp
-import io.legado.app.utils.putPrefBoolean
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.legado.app.utils.visible
 
 /**
  * 导入rss源弹出窗口
  */
 class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
+    companion object {
+        fun start(fragmentManager: FragmentManager, source: String) {
+            ImportRssSourceDialog().apply {
+                arguments = Bundle().apply {
+                    putString("source", source)
+                }
+            }.show(fragmentManager, "importRssSource")
+        }
+    }
+
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
-    private val viewModel by activityViewModels<ImportRssSourceViewModel>()
+    private val viewModel by viewModels<ImportRssSourceViewModel>()
     lateinit var adapter: SourcesAdapter
 
     override fun onStart() {
@@ -58,6 +67,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setTitle(R.string.import_rss_source)
+        binding.rotateLoading.show()
         initMenu()
         adapter = SourcesAdapter(requireContext())
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -87,6 +97,37 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
             }
             adapter.notifyDataSetChanged()
             upSelectText()
+        }
+        viewModel.errorLiveData.observe(this, {
+            binding.rotateLoading.hide()
+            binding.tvMsg.apply {
+                text = it
+                visible()
+            }
+        })
+        viewModel.successLiveData.observe(this, {
+            binding.rotateLoading.hide()
+            if (it > 0) {
+                adapter.setItems(viewModel.allSources)
+            } else {
+                binding.tvMsg.apply {
+                    setText(R.string.wrong_format)
+                    visible()
+                }
+            }
+        })
+        val source = arguments?.getString("source")
+        if (source.isNullOrEmpty()) {
+            dismiss()
+            return
+        }
+        if (source.isAbsUrl()) {
+            viewModel.importSource(source)
+        } else {
+            IntentDataHelp.getData<String>(source)?.let {
+                viewModel.importSource(it)
+                return
+            }
         }
     }
 
