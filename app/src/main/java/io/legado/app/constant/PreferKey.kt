@@ -21,6 +21,7 @@ object PreferKey {
     const val precisionSearch = "precisionSearch"
     const val speakEngine = "speakEngine"
     const val readAloudByPage = "readAloudByPage"
+    const val ttsEngine = "ttsEngine"
     const val ttsSpeechRate = "ttsSpeechRate"
     const val prevKeys = "prevKeyCodes"
     const val nextKeys = "nextKeyCodes"
