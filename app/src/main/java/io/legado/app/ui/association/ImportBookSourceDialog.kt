@@ -102,7 +102,6 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 dismissAllowingStateLoss()
             }
         }
-        upSelectText()
         binding.tvFooterLeft.visible()
         binding.tvFooterLeft.setOnClickListener {
             val selectAll = viewModel.isSelectAll()
@@ -125,6 +124,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
             binding.rotateLoading.hide()
             if (it > 0) {
                 adapter.setItems(viewModel.allSources)
+                upSelectText()
             } else {
                 binding.tvMsg.apply {
                     setText(R.string.wrong_format)

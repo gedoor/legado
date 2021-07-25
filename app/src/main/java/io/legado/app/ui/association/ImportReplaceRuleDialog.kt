@@ -70,7 +70,6 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
         adapter = SourcesAdapter(requireContext())
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
-        adapter.setItems(viewModel.allRules)
         binding.tvCancel.visible()
         binding.tvCancel.setOnClickListener {
             dismissAllowingStateLoss()
@@ -84,7 +83,6 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
                 dismissAllowingStateLoss()
             }
         }
-        upSelectText()
         binding.tvFooterLeft.visible()
         binding.tvFooterLeft.setOnClickListener {
             val selectAll = viewModel.isSelectAll()
@@ -107,6 +105,7 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
             binding.rotateLoading.hide()
             if (it > 0) {
                 adapter.setItems(viewModel.allRules)
+                upSelectText()
             } else {
                 binding.tvMsg.apply {
                     setText(R.string.wrong_format)
