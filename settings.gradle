@@ -1,1 +1,1 @@
-include ':app',':JsoupXpath',':epublib'
+include ':app',':epublib'
