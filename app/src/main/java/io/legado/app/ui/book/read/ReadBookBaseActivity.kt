@@ -12,16 +12,13 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst.charsets
 import io.legado.app.constant.PreferKey
-import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ActivityBookReadBinding
-import io.legado.app.databinding.DialogBookmarkBinding
 import io.legado.app.databinding.DialogDownloadChoiceBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
@@ -32,8 +29,8 @@ import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
+import io.legado.app.ui.book.toc.BookmarkDialog
 import io.legado.app.utils.getPrefString
-import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
@@ -199,24 +196,7 @@ abstract class ReadBookBaseActivity :
 
     @SuppressLint("InflateParams")
     fun showBookMark(bookmark: Bookmark) {
-        alert(title = getString(R.string.bookmark_add)) {
-            setMessage(bookmark.chapterName)
-            val alertBinding = DialogBookmarkBinding.inflate(layoutInflater).apply {
-                editBookText.setText(bookmark.bookText)
-                editView.setText(bookmark.content)
-            }
-            customView { alertBinding.root }
-            yesButton {
-                alertBinding.apply {
-                    Coroutine.async {
-                        bookmark.bookText = editBookText.text.toString()
-                        bookmark.content = editView.text.toString()
-                        appDb.bookmarkDao.insert(bookmark)
-                    }
-                }
-            }
-            noButton()
-        }.show().requestInputMethod()
+        BookmarkDialog.start(supportFragmentManager, bookmark)
     }
 
     fun showCharsetConfig() {

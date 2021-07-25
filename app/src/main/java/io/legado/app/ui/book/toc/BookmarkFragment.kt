@@ -11,13 +11,9 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
-import io.legado.app.databinding.DialogBookmarkBinding
 import io.legado.app.databinding.FragmentBookmarkBinding
-import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -73,30 +69,6 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
     }
 
     override fun onLongClick(bookmark: Bookmark) {
-        requireContext().alert(R.string.bookmark) {
-            setMessage(bookmark.chapterName)
-            val alertBinding = DialogBookmarkBinding.inflate(layoutInflater).apply {
-                editBookText.setText(bookmark.bookText)
-                editView.setText(bookmark.content)
-                editBookText.textSize = 15f
-                editView.textSize = 15f
-                editBookText.maxLines = 6
-                editView.maxLines = 6
-            }
-            customView { alertBinding.root }
-            yesButton {
-                alertBinding.apply {
-                    Coroutine.async {
-                        bookmark.bookText = editBookText.text.toString()
-                        bookmark.content = editView.text.toString()
-                        appDb.bookmarkDao.insert(bookmark)
-                    }
-                }
-            }
-            noButton()
-            neutralButton(R.string.delete) {
-                appDb.bookmarkDao.delete(bookmark)
-            }
-        }.show().requestInputMethod()
+        BookmarkDialog.start(childFragmentManager, bookmark)
     }
 }
