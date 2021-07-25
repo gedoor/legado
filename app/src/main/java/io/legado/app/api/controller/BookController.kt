@@ -1,6 +1,8 @@
 package io.legado.app.api.controller
 
 import androidx.core.graphics.drawable.toBitmap
+import fi.iki.elonen.NanoFileUpload
+import fi.iki.elonen.NanoHTTPD
 import io.legado.app.R
 import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
@@ -9,12 +11,15 @@ import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.ImageLoader
+import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.model.localBook.UmdFile
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
+import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import splitties.init.appCtx
 
 object BookController {
@@ -186,6 +191,33 @@ object BookController {
                 ReadBook.durChapterIndex = index
             }
         }
+    }
+
+    private val bookFileFactory by lazy {
+        DiskFileItemFactory(0, LocalBook.cacheFolder)
+    }
+
+    fun addLocalBook(session: NanoHTTPD.IHTTPSession): ReturnData {
+        val returnData = ReturnData()
+        NanoFileUpload(bookFileFactory).parseRequest(session).forEach {
+            val path = FileUtils.getPath(LocalBook.cacheFolder, it.name)
+            val nameAuthor = LocalBook.analyzeNameAuthor(it.name)
+            val book = Book(
+                bookUrl = path,
+                name = nameAuthor.first,
+                author = nameAuthor.second,
+                originName = it.name,
+                coverUrl = FileUtils.getPath(
+                    appCtx.externalFiles,
+                    "covers",
+                    "${MD5Utils.md5Encode16(path)}.jpg"
+                )
+            )
+            if (book.isEpub()) EpubFile.upBookInfo(book)
+            if (book.isUmd()) UmdFile.upBookInfo(book)
+            appDb.bookDao.insert(book)
+        }
+        return returnData.setData(true)
     }
 
 }

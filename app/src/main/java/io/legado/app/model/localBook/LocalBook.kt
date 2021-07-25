@@ -19,10 +19,7 @@ import javax.script.SimpleBindings
 object LocalBook {
     private const val folderName = "bookTxt"
     val cacheFolder: File by lazy {
-        val rootFile = appCtx.getExternalFilesDir(null)
-            ?: appCtx.externalCacheDir
-            ?: appCtx.cacheDir
-        FileUtils.createFolderIfNotExist(rootFile, folderName)
+        FileUtils.createFolderIfNotExist(appCtx.externalFiles, folderName)
     }
 
     fun getChapterList(book: Book): ArrayList<BookChapter> {
@@ -34,7 +31,7 @@ object LocalBook {
                 UmdFile.getChapterList(book)
             }
             else -> {
-                AnalyzeTxtFile().analyze(book)
+                TextFile().analyze(book)
             }
         }
     }
@@ -48,7 +45,7 @@ object LocalBook {
                 UmdFile.getContent(book, chapter)
             }
             else -> {
-                AnalyzeTxtFile.getContent(book, chapter)
+                TextFile.getContent(book, chapter)
             }
         }
     }
@@ -73,8 +70,28 @@ object LocalBook {
             path = uri.path!!
             File(path).name
         })
-        val tempFileName = fileName.replace(Regex("\\.txt$"), "")
 
+        val nameAuthor = analyzeNameAuthor(fileName)
+
+        val book = Book(
+            bookUrl = path,
+            name = nameAuthor.first,
+            author = nameAuthor.second,
+            originName = fileName,
+            coverUrl = FileUtils.getPath(
+                appCtx.externalFiles,
+                "covers",
+                "${MD5Utils.md5Encode16(path)}.jpg"
+            )
+        )
+        if (book.isEpub()) EpubFile.upBookInfo(book)
+        if (book.isUmd()) UmdFile.upBookInfo(book)
+        appDb.bookDao.insert(book)
+        return book
+    }
+
+    fun analyzeNameAuthor(fileName: String): Pair<String, String> {
+        val tempFileName = fileName.substringBeforeLast(".")
         val name: String
         val author: String
 
@@ -120,22 +137,7 @@ object LocalBook {
             }
 
         }
-
-        val book = Book(
-            bookUrl = path,
-            name = name,
-            author = author,
-            originName = fileName,
-            coverUrl = FileUtils.getPath(
-                appCtx.externalFiles,
-                "covers",
-                "${MD5Utils.md5Encode16(path)}.jpg"
-            )
-        )
-        if (book.isEpub()) EpubFile.upBookInfo(book)
-        if (book.isUmd()) UmdFile.upBookInfo(book)
-        appDb.bookDao.insert(book)
-        return book
+        return Pair(name, author)
     }
 
     fun deleteBook(book: Book, deleteOriginal: Boolean) {

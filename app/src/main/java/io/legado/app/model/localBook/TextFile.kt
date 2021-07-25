@@ -14,7 +14,7 @@ import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class AnalyzeTxtFile {
+class TextFile {
 
     private val tocRules = arrayListOf<TxtTocRule>()
     private lateinit var charset: Charset
