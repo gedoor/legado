@@ -280,8 +280,9 @@ public class StringUtil {
             s = s.replaceAll("^\\s+|\\s+$", "");
             if (s.length() > 0) {
                 if (s.toLowerCase().contains("<img")) {
-                    body.append(s.replaceAll("(?i)<img\\s([^>]+)/?>", "<div class=\"duokan-image-single\"><img class=\"picture-80\" $1/></div>"));
-                } else {
+                    s = s.replaceAll("(?i)<img\\s([^>]+)/?>", "<div class=\"duokan-image-single\"><img class=\"picture-80\" $1/></div>");
+                }
+                if (!(s.startsWith("<div") && s.endsWith("</div>"))) {
                     body.append("<p>").append(s).append("</p>");
                 }
             }
