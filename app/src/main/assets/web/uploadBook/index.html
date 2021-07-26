@@ -1,33 +1,43 @@
-<!DOCTYPE html>
-<html>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>传书</title>
-    <link rel="icon" href="favicon.ico">
-    <style>
-        .main {
-            text-align: center;
-            /*让div内部文字居中*/
-            background-color: #fff;
-            border: 3px solid #000;
-            border-radius: 20px;
-            width: 400px;
-            height: 500px;
-            margin: auto;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
-
-    </style>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="css/stylewf.css" type="text/css" rel="stylesheet"/>
+    <title data-js="t0"></title>
 </head>
-
 <body>
-<div class="main">
-    <h1>传书</h1>
-    <a>拖拽到此处上传书籍</a>
+<div class="wrap">
+    <div class="right">
+        <p class="title" data-js="t1"></p>
+        <dl class="first">
+            <dt data-js="t2"></dt>
+            <dd data-js="t3"></dd>
+            <dd class="wf_bgn" data-js="t4"></dd>
+        </dl>
+
+        <div class="scroll">
+            <ul class="" id="tableStyle"></ul>
+        </div><!--scroll end-->
+    </div><!--right end-->
+    <div class="left">
+        <div class="logo"></div>
+        <div id="drag_area" class="wf_box">
+            <h3 data-js="t6"></h3>
+        </div><!--wf_bg1和wf_bg2两个背景样式还有wf_on样式拖拽时候的状态-->
+        <div class="wf_btn">
+            <div id="spanButtonPlaceHolder"></div>
+        </div>
+        <p class="wf_gs" data-js="t5"></p>
+    </div><!--left end -->
 </div>
 </body>
+</html>
+
+<script src="js/jquery-1.4.2.min.js"></script>
+<script src="js/langSwich.js"></script>
+<script src="js/swfupload.js"></script>
+<script src="js/common.js"></script>
+<script src="js/swf_fun.js"></script>
+<script src="js/html5_fun.js"></script>
