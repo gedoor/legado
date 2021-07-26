@@ -9,7 +9,6 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -125,7 +124,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     private fun initData() {
-        lifecycleScope.launch {
+        launch {
             appDb.bookDao.flowLocalUri().collect {
                 adapter.upBookHas(it)
             }
@@ -188,7 +187,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         binding.tvPath.text = path
         adapter.selectedUris.clear()
         adapter.clearItems()
-        lifecycleScope.launch(IO) {
+        launch(IO) {
             val docList = DocumentUtils.listFiles(this@ImportBookActivity, lastDoc.uri)
             for (i in docList.lastIndex downTo 0) {
                 val item = docList[i]
@@ -252,7 +251,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             adapter.clearItems()
             val lastDoc = subDocs.lastOrNull() ?: doc
             binding.refreshProgressBar.isAutoLoading = true
-            lifecycleScope.launch(IO) {
+            launch(IO) {
                 viewModel.scanDoc(lastDoc, true, find) {
                     launch {
                         binding.refreshProgressBar.isAutoLoading = false
@@ -267,7 +266,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                 adapter.clearItems()
                 val file = File(path)
                 binding.refreshProgressBar.isAutoLoading = true
-                lifecycleScope.launch(IO) {
+                launch(IO) {
                     viewModel.scanFile(file, true, find) {
                         launch {
                             binding.refreshProgressBar.isAutoLoading = false
@@ -292,7 +291,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     private val find: (docItem: DocItem) -> Unit = {
-        lifecycleScope.launch {
+        launch {
             adapter.addItem(it)
         }
     }

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.lifecycleScope
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -116,7 +115,7 @@ class SearchContentActivity :
     }
 
     private fun initCacheFileNames(book: Book) {
-        lifecycleScope.launch(Dispatchers.IO) {
+        launch(Dispatchers.IO) {
             adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
             withContext(Dispatchers.Main) {
                 adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
@@ -145,7 +144,7 @@ class SearchContentActivity :
             searchResultCounts = 0
             viewModel.lastQuery = newText
             var searchResults = listOf<SearchResult>()
-            lifecycleScope.launch(Dispatchers.Main) {
+            launch(Dispatchers.Main) {
                 appDb.bookChapterDao.getChapterList(viewModel.bookUrl).map { chapter ->
                     withContext(Dispatchers.IO) {
                         if (isLocalBook

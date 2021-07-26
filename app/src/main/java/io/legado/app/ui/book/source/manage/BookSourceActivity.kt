@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
@@ -198,7 +197,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun upBookSource(searchKey: String? = null) {
         sourceFlowJob?.cancel()
-        sourceFlowJob = lifecycleScope.launch {
+        sourceFlowJob = launch {
             when {
                 searchKey.isNullOrEmpty() -> {
                     appDb.bookSourceDao.flowAll()
@@ -270,7 +269,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun initLiveDataGroup() {
-        lifecycleScope.launch {
+        launch {
             appDb.bookSourceDao.flowGroup()
                 .collect {
                     groups.clear()

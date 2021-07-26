@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -92,7 +91,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private fun initData() {
-        lifecycleScope.launch {
+        launch {
             appDb.txtTocRuleDao.observeAll().collect { tocRules ->
                 initSelectedName(tocRules)
                 adapter.setItems(tocRules)
@@ -222,7 +221,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                     if (buttonView.isPressed) {
                         getItem(holder.layoutPosition)?.let {
                             it.enable = isChecked
-                            lifecycleScope.launch(IO) {
+                            launch(IO) {
                                 appDb.txtTocRuleDao.update(it)
                             }
                         }
@@ -233,7 +232,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 }
                 ivDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { item ->
-                        lifecycleScope.launch(IO) {
+                        launch(IO) {
                             appDb.txtTocRuleDao.delete(item)
                         }
                     }
@@ -255,7 +254,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 for ((index, item) in getItems().withIndex()) {
                     item.serialNumber = index + 1
                 }
-                lifecycleScope.launch(IO) {
+                launch(IO) {
                     appDb.txtTocRuleDao.update(*getItems().toTypedArray())
                 }
             }

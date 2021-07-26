@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.base.adapter.ItemViewHolder
@@ -73,7 +72,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     }
 
     private fun initData() {
-        lifecycleScope.launch(IO) {
+        launch(IO) {
             val allTime = appDb.readRecordDao.allTime
             withContext(Main) {
                 binding.readRecord.tvReadTime.text = formatDuring(allTime)
@@ -116,7 +115,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
             binding.apply {
                 root.setOnClickListener {
                     val item = getItem(holder.layoutPosition) ?: return@setOnClickListener
-                    lifecycleScope.launch {
+                    launch {
                         val book = withContext(IO) {
                             appDb.bookDao.findByName(item.bookName).firstOrNull()
                         }

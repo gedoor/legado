@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.isGone
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -62,7 +61,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     }
 
     private fun initData() {
-        lifecycleScope.launch {
+        launch {
             appDb.ruleSubDao.flowAll().collect {
                 binding.tvEmptyMsg.isGone = it.isNotEmpty()
                 adapter.setItems(it)
@@ -93,7 +92,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
             }
             customView { alertBinding.root }
             okButton {
-                lifecycleScope.launch {
+                launch {
                     ruleSub.type = alertBinding.spType.selectedItemPosition
                     ruleSub.name = alertBinding.etName.text?.toString() ?: ""
                     ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
@@ -114,19 +113,19 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     }
 
     override fun delSubscription(ruleSub: RuleSub) {
-        lifecycleScope.launch(IO) {
+        launch(IO) {
             appDb.ruleSubDao.delete(ruleSub)
         }
     }
 
     override fun updateSourceSub(vararg ruleSub: RuleSub) {
-        lifecycleScope.launch(IO) {
+        launch(IO) {
             appDb.ruleSubDao.update(*ruleSub)
         }
     }
 
     override fun upOrder() {
-        lifecycleScope.launch(IO) {
+        launch(IO) {
             val sourceSubs = appDb.ruleSubDao.all
             for ((index: Int, ruleSub: RuleSub) in sourceSubs.withIndex()) {
                 ruleSub.customOrder = index + 1

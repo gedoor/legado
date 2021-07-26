@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
-import androidx.lifecycle.lifecycleScope
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
@@ -845,7 +844,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 viewModel.searchContentQuery
             )
             ReadBook.skipToPage(positions[0]) {
-                lifecycleScope.launch {
+                launch {
                     binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
                     delay(20L)
                     when (positions[3]) {
@@ -935,7 +934,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
         }
         observeEventSticky<Int>(EventBus.TTS_PROGRESS) { chapterStart ->
-            lifecycleScope.launch(IO) {
+            launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->
                         val pageStart = chapterStart - ReadBook.durChapterPos

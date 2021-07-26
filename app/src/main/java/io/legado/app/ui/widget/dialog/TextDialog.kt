@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogTextViewBinding
@@ -80,7 +79,7 @@ class TextDialog : BaseDialogFragment() {
         }
         if (time > 0) {
             binding.badgeView.setBadgeCount((time / 1000).toInt())
-            lifecycleScope.launch {
+            launch {
                 while (time > 0) {
                     delay(1000)
                     time -= 1000

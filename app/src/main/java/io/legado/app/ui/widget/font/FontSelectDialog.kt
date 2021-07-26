@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -127,7 +126,7 @@ class FontSelectDialog : BaseDialogFragment(),
     }
 
     private fun openFolder() {
-        lifecycleScope.launch(Main) {
+        launch(Main) {
             val defaultPath = "SD${File.separator}Fonts"
             selectFontDir.launch(
                 FilePickerParam(
