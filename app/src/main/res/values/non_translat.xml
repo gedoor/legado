@@ -3,5 +3,6 @@
 
     <string name="http_ip">http://%1$s:%2$d</string>
     <string name="git_hub">GitHub</string>
+    <string name="diy_edit_source_group_title">【%s】</string>
 
 </resources>

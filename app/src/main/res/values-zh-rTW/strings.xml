@@ -392,7 +392,6 @@
     <string name="source_group">源分組(sourceGroup)</string>
     <string name="diy_source_group">自訂源分組</string>
     <string name="diy_edit_source_group">輸入自訂源分組名稱</string>
-    <string name="diy_edit_source_group_title">【%s】</string>
     <string name="sort_url">分類Url</string>
     <string name="login_url">登入URL(loginUrl)</string>
     <string name="comment">源注釋(sourceComment)</string>

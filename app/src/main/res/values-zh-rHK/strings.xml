@@ -836,7 +836,6 @@
     <string name="hide_when_status_bar_show">狀態欄顯示時隱藏</string>
     <string name="diy_source_group">自訂源分組</string>
     <string name="diy_edit_source_group">輸入自訂源分組名稱</string>
-    <string name="diy_edit_source_group_title">【%s】</string>
     <string name="reverse_toc">反转目录</string>
     <string name="show_discovery">显示发现</string>
     <string name="style">样式</string>
