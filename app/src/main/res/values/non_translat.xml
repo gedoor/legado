@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string name="http_ip">http://%1$s:%2$d</string>
+    <string name="git_hub">GitHub</string>
+
+</resources>

@@ -87,7 +87,6 @@
     <string name="web_service">Web service</string>
     <string name="web_service_desc">Web edit source and read book</string>
     <string name="web_edit_source">Edit book sources on the web</string>
-    <string name="http_ip">http://%1$s:%2$d</string>
     <string name="offline_cache">Offline cache</string>
     <string name="offline_cache_t">Offline cache</string>
     <string name="offline_cache_s">cache the selected chapter(s) to Storage</string>
@@ -157,7 +156,6 @@
     <string name="ps_hide_navigation_bar">Hide virtual buttons when reading</string>
     <string name="pt_hide_navigation_bar">Hide navigation bar</string>
     <string name="re_navigation_bar_color">Navigation bar color</string>
-    <string name="git_hub">GitHub</string>
     <string name="scoring">Rating</string>
     <string name="send_mail">Email</string>
     <string name="can_not_open">Open failed</string>

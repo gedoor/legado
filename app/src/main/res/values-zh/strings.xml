@@ -86,7 +86,6 @@
     <string name="web_service">Web 服务</string>
     <string name="web_service_desc">浏览器写源,看书</string>
     <string name="web_edit_source">web编辑书源</string>
-    <string name="http_ip">http://%1$s:%2$d</string>
     <string name="offline_cache">离线缓存</string>
     <string name="offline_cache_t">离线缓存</string>
     <string name="offline_cache_s">缓存选择的章节到本地</string>
@@ -156,7 +155,6 @@
     <string name="ps_hide_navigation_bar">阅读界面隐藏虚拟按键</string>
     <string name="pt_hide_navigation_bar">隐藏导航栏</string>
     <string name="re_navigation_bar_color">导航栏颜色</string>
-    <string name="git_hub">GitHub</string>
     <string name="scoring">评分</string>
     <string name="send_mail">发送邮件</string>
     <string name="can_not_open">无法打开</string>

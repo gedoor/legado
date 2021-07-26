@@ -73,11 +73,11 @@ class WebService : BaseService() {
         if (webSocketServer?.isAlive == true) {
             webSocketServer?.stop()
         }
-        val port = getPort()
-        httpServer = HttpServer(port)
-        webSocketServer = WebSocketServer(port + 1)
         val address = NetworkUtils.getLocalIPAddress()
         if (address != null) {
+            val port = getPort()
+            httpServer = HttpServer(port)
+            webSocketServer = WebSocketServer(port + 1)
             try {
                 httpServer?.start()
                 webSocketServer?.start(1000 * 30) // 通信超时设置
@@ -88,6 +88,7 @@ class WebService : BaseService() {
                 upNotification()
             } catch (e: IOException) {
                 toastOnUi(e.localizedMessage ?: "")
+                e.printStackTrace()
                 stopSelf()
             }
         } else {

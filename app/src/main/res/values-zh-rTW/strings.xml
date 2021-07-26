@@ -86,7 +86,6 @@
     <string name="web_service">Web 服務</string>
     <string name="web_service_desc">瀏覽器寫源,看書</string>
     <string name="web_edit_source">web編輯書源</string>
-    <string name="http_ip">http://%1$s:%2$d</string>
     <string name="offline_cache">離線快取</string>
     <string name="offline_cache_t">離線快取</string>
     <string name="offline_cache_s">快取選擇的章節到本機</string>
@@ -156,7 +155,6 @@
     <string name="ps_hide_navigation_bar">閱讀介面隱藏虛擬按鍵</string>
     <string name="pt_hide_navigation_bar">隱藏導航欄</string>
     <string name="re_navigation_bar_color">導航欄顏色</string>
-    <string name="git_hub">GitHub</string>
     <string name="scoring">評分</string>
     <string name="send_mail">發送郵件</string>
     <string name="can_not_open">無法打開</string>
