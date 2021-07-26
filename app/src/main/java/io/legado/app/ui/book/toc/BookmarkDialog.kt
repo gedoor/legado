@@ -10,6 +10,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.DialogBookmarkBinding
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -48,6 +49,7 @@ class BookmarkDialog : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        binding.toolBar.setBackgroundColor(primaryColor)
         val bookmark = arguments?.getParcelable<Bookmark>("bookmark")
         bookmark ?: let {
             dismiss()
