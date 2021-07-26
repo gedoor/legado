@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.toastOnUi
@@ -15,7 +14,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  * 格式: legado://import/{path}?src={url}
  */
 class OnLineImportActivity :
-    VMBaseActivity<ActivityTranslucenceBinding, OnLineImportViewModel>(theme = Theme.Transparent) {
+    VMBaseActivity<ActivityTranslucenceBinding, OnLineImportViewModel>() {
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
     override val viewModel by viewModels<OnLineImportViewModel>()

@@ -3,16 +3,13 @@ package io.legado.app.ui.association
 import android.os.Bundle
 import androidx.activity.viewModels
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class FileAssociationActivity :
-    VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>(
-        theme = Theme.Transparent
-    ) {
+    VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>() {
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
 
