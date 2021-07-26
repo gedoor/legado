@@ -21,8 +21,8 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
         var uri = session.uri
 
         try {
-            when (session.method.name) {
-                "OPTIONS" -> {
+            when (session.method) {
+                Method.OPTIONS -> {
                     val response = newFixedLengthResponse("")
                     response.addHeader("Access-Control-Allow-Methods", "POST")
                     response.addHeader("Access-Control-Allow-Headers", "content-type")
@@ -30,7 +30,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     //response.addHeader("Access-Control-Max-Age", "3600");
                     return response
                 }
-                "POST" -> {
+                Method.POST -> {
                     val files = HashMap<String, String>()
                     session.parseBody(files)
                     val postData = files["postData"]
@@ -40,11 +40,11 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "/saveSources" -> SourceController.saveSources(postData)
                         "/saveBook" -> BookController.saveBook(postData)
                         "/deleteSources" -> SourceController.deleteSources(postData)
-                        "/addLocalBook" -> BookController.addLocalBook(session)
+                        "/addLocalBook" -> BookController.addLocalBook(session, postData)
                         else -> null
                     }
                 }
-                "GET" -> {
+                Method.GET -> {
                     val parameters = session.parameters
 
                     returnData = when (uri) {
@@ -58,6 +58,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         else -> null
                     }
                 }
+                else -> Unit
             }
 
             if (returnData == null) {

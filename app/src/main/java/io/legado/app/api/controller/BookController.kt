@@ -197,25 +197,32 @@ object BookController {
         DiskFileItemFactory(0, LocalBook.cacheFolder)
     }
 
-    fun addLocalBook(session: NanoHTTPD.IHTTPSession): ReturnData {
+    fun addLocalBook(session: NanoHTTPD.IHTTPSession, postData: String?): ReturnData {
         val returnData = ReturnData()
-        NanoFileUpload(bookFileFactory).parseRequest(session).forEach {
-            val path = FileUtils.getPath(LocalBook.cacheFolder, it.name)
-            val nameAuthor = LocalBook.analyzeNameAuthor(it.name)
-            val book = Book(
-                bookUrl = path,
-                name = nameAuthor.first,
-                author = nameAuthor.second,
-                originName = it.name,
-                coverUrl = FileUtils.getPath(
-                    appCtx.externalFiles,
-                    "covers",
-                    "${MD5Utils.md5Encode16(path)}.jpg"
+        try {
+            NanoFileUpload(bookFileFactory).parseRequest(session).forEach {
+                val path = FileUtils.getPath(LocalBook.cacheFolder, it.name)
+                val nameAuthor = LocalBook.analyzeNameAuthor(it.name)
+                val book = Book(
+                    bookUrl = path,
+                    name = nameAuthor.first,
+                    author = nameAuthor.second,
+                    originName = it.name,
+                    coverUrl = FileUtils.getPath(
+                        appCtx.externalFiles,
+                        "covers",
+                        "${MD5Utils.md5Encode16(path)}.jpg"
+                    )
                 )
+                if (book.isEpub()) EpubFile.upBookInfo(book)
+                if (book.isUmd()) UmdFile.upBookInfo(book)
+                appDb.bookDao.insert(book)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return returnData.setErrorMsg(
+                e.localizedMessage ?: appCtx.getString(R.string.unknown_error)
             )
-            if (book.isEpub()) EpubFile.upBookInfo(book)
-            if (book.isUmd()) UmdFile.upBookInfo(book)
-            appDb.bookDao.insert(book)
         }
         return returnData.setData(true)
     }
