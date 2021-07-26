@@ -11,7 +11,6 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
-import androidx.core.os.bundleOf
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -152,27 +151,21 @@ class DownloadService : BaseService() {
             .setOngoing(true)
             .setContentTitle(getString(R.string.action_download))
         notificationBuilder.setContentIntent(
-            IntentHelp.servicePendingIntent<DownloadService>(
-                this,
-                IntentAction.play,
-                bundleOf("downloadId" to downloadId)
-            )
+            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.play) {
+                putExtra("downloadId", downloadId)
+            }
         )
         notificationBuilder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<DownloadService>(
-                this,
-                IntentAction.stop,
-                bundleOf("downloadId" to downloadId)
-            )
+            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.stop) {
+                putExtra("downloadId", downloadId)
+            }
         )
         notificationBuilder.setDeleteIntent(
-            IntentHelp.servicePendingIntent<DownloadService>(
-                this,
-                IntentAction.stop,
-                bundleOf("downloadId" to downloadId)
-            )
+            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.stop) {
+                putExtra("downloadId", downloadId)
+            }
         )
         notificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         notificationBuilder.setContentText(content)
