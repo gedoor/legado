@@ -3,7 +3,10 @@ package io.legado.app.base
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -11,32 +14,19 @@ import io.legado.app.R
 import io.legado.app.ui.widget.TitleBar
 import io.legado.app.utils.applyTint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
-    CoroutineScope {
-    lateinit var job: Job
+    CoroutineScope by MainScope() {
+
     var supportToolbar: Toolbar? = null
         private set
 
     val menuInflater: MenuInflater
         @SuppressLint("RestrictedApi")
         get() = SupportMenuInflater(requireContext())
-
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        job = Job()
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,7 +56,7 @@ abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
 
     override fun onDestroy() {
         super.onDestroy()
-        job.cancel()
+        cancel()
     }
 
     fun setSupportToolbar(toolbar: Toolbar) {

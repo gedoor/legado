@@ -8,19 +8,12 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
 
-abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-    private lateinit var job: Job
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        job = Job()
-    }
+abstract class BaseDialogFragment : DialogFragment(), CoroutineScope by MainScope() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,7 +34,7 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
 
     override fun onDestroy() {
         super.onDestroy()
-        job.cancel()
+        cancel()
     }
 
     fun <T> execute(
