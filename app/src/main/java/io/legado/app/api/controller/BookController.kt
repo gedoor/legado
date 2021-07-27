@@ -193,14 +193,15 @@ object BookController {
         }
     }
 
-    private val bookFileFactory by lazy {
-        DiskFileItemFactory(0, LocalBook.cacheFolder)
+    private val uploader by lazy {
+        val dif = DiskFileItemFactory(0, LocalBook.cacheFolder)
+        NanoFileUpload(dif)
     }
 
     fun addLocalBook(session: NanoHTTPD.IHTTPSession, postData: String?): ReturnData {
         val returnData = ReturnData()
         try {
-            NanoFileUpload(bookFileFactory).parseRequest(session).forEach {
+            uploader.parseRequest(session).forEach {
                 val path = FileUtils.getPath(LocalBook.cacheFolder, it.name)
                 val nameAuthor = LocalBook.analyzeNameAuthor(it.name)
                 val book = Book(
