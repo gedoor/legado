@@ -3,8 +3,6 @@ package me.ag2s.epublib.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Various String utility functions.
@@ -281,8 +279,9 @@ public class StringUtil {
             if (s.length() > 0) {
                 //段落为一张图片才认定为图片章节/漫画并启用多看单图优化，否则认定为普通文字夹杂着的图片文字。
                 if (s.matches("(?i)^<img\\s([^>]+)/?>$")) {
-                    body.append(s.replaceAll("(?i)^<img\\s([^>]+)/?>$", "<div class=\"duokan-image-single\"><img class=\"picture-80\" $1/></div>"));                }
-                else{
+                    body.append(s.replaceAll("(?i)^<img\\s([^>]+)/?>$",
+                            "<div class=\"duokan-image-single\"><img class=\"picture-80\" $1/></div>"));
+                } else {
                     body.append("<p>").append(s).append("</p>");
                 }
             }

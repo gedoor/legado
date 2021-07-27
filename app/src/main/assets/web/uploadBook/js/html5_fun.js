@@ -129,6 +129,7 @@ try {
 		fd.append("Upload", "Submit Query");
 		//设置当前的上传对象
 		currUploadfile = file;
+
 		if (XHR.readyState > 0) {
 			XHR = new XMLHttpRequest();
 		}

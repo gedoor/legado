@@ -107,7 +107,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
             allowContentAccess = true
-            //javaScriptEnabled = true
         }
         binding.webView.addJavascriptInterface(this, "app")
         upWebViewTheme()
@@ -162,6 +161,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             viewModel.saveImage(webPic, path)
         }
     }
+
     private fun selectExportFolder() {
         val default = arrayListOf<String>()
         val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
