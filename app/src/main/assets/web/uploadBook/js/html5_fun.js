@@ -141,7 +141,6 @@ try {
 		XHR.upload.addEventListener("loadend", loadend, false);
 		XHR.upload.addEventListener("loadstart", loadstart, false);
 		XHR.open("POST", config.url);
-		XHR.setRequestHeader("Content-Type", "multipart/mixed stream");
 		XHR.send(fd);
 		XHR.onreadystatechange = function () {
 
