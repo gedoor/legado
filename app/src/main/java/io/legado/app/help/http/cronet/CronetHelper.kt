@@ -9,7 +9,9 @@ import org.chromium.net.CronetEngine.Builder.HTTP_CACHE_DISK
 import org.chromium.net.ExperimentalCronetEngine
 import org.chromium.net.UploadDataProviders
 import org.chromium.net.UrlRequest
+import org.chromium.net.urlconnection.CronetURLStreamHandlerFactory
 import splitties.init.appCtx
+import java.net.URL
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -17,16 +19,58 @@ import java.util.concurrent.Executors
 val executor: Executor by lazy { Executors.newSingleThreadExecutor() }
 
 val cronetEngine: ExperimentalCronetEngine by lazy {
+    CronetLoader.getInstance(appCtx).preDownload()
 
     val builder = ExperimentalCronetEngine.Builder(appCtx)
+        //设置自定义so库加载
+        .setLibraryLoader(CronetLoader.getInstance(appCtx))
+        //设置缓存路径
         .setStoragePath(appCtx.externalCacheDir?.absolutePath)
+        //设置缓存模式
         .enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50))
+        //设置支持http/3
         .enableQuic(true)
-        .enablePublicKeyPinningBypassForLocalTrustAnchors(true)
+        //设置支持http/2
         .enableHttp2(true)
+        .enablePublicKeyPinningBypassForLocalTrustAnchors(true)
+    //.enableNetworkQualityEstimator(true)
+
     //Brotli压缩
     builder.enableBrotli(true)
-    return@lazy builder.build()
+    //builder.setExperimentalOptions("{\"quic_version\": \"h3-29\"}")
+    val engine = builder.build()
+    URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
+//    engine.addRequestFinishedListener(object : RequestFinishedInfo.Listener(executor) {
+//        override fun onRequestFinished(requestFinishedInfo: RequestFinishedInfo?) {
+//            val sb = StringBuilder(requestFinishedInfo!!.url).append("\r\n")
+//
+//            try {
+//                if (requestFinishedInfo.responseInfo != null) {
+//                    val responseInfo = requestFinishedInfo.responseInfo
+//                    if (responseInfo != null) {
+//                        sb.append("[Cached:").append(responseInfo.wasCached())
+//                            .append("][StatusCode:")
+//                            .append(
+//                                responseInfo.httpStatusCode
+//                            ).append("][StatusText:").append(responseInfo.httpStatusText)
+//                            .append("][Protocol:").append(responseInfo.negotiatedProtocol)
+//                            .append("][ByteCount:").append(
+//                                responseInfo.receivedByteCount
+//                            ).append("]\r\n")
+//                    }
+//                    val httpHeaders = requestFinishedInfo.responseInfo!!
+//                        .allHeadersAsList
+//                    for ((key, value) in httpHeaders) {
+//                        sb.append("[").append(key).append("]").append(value).append("\r\n")
+//                    }
+//                    Log.e("Cronet", sb.toString())
+//                }
+//            } catch (e: URISyntaxException) {
+//                e.printStackTrace()
+//            }
+//        }
+//    })
+    return@lazy engine
 
 }
 
