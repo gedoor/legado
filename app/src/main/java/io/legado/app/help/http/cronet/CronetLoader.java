@@ -67,9 +67,9 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
     public void preDownload() {
         new Thread(() -> {
             String md5 = getUrlMd5(md5Url);
-            if(soFile.exists()&&Objects.equals(md5, getFileMD5(soFile))){
-                Log.e(TAG,"So 库已存在");
-            }else {
+            if (soFile.exists() && Objects.equals(md5, getFileMD5(soFile))) {
+                Log.e(TAG, "So 库已存在");
+            } else {
                 download(soUrl, md5, downloadFile, soFile);
             }
 
@@ -156,8 +156,8 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
 
 
     private static String getUrlMd5(String url) {
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
+        InputStream inputStream;
+        OutputStream outputStream;
         try {
             outputStream = new ByteArrayOutputStream();
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
