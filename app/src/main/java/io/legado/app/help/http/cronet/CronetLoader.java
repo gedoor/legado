@@ -67,7 +67,13 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
     public void preDownload() {
         new Thread(() -> {
             String md5 = getUrlMd5(md5Url);
-            download(soUrl, md5, downloadFile, soFile);
+            if(soFile.exists()&&Objects.equals(md5, getFileMD5(soFile))){
+                Log.e(TAG,"So 库已存在");
+            }else {
+                soFile.deleteOnExit();
+                download(soUrl, md5, downloadFile, soFile);
+            }
+
             Log.e(TAG, soName);
         }).start();
 
