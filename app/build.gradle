@@ -89,9 +89,9 @@ android {
             dimension "mode"
             applicationId "io.legado.cronet"
             manifestPlaceholders = [APP_CHANNEL_VALUE: "cronet"]
-            ndk {
-                abiFilters 'arm64-v8a'
-            }
+//            ndk {
+//                abiFilters 'arm64-v8a','armeabi-v7a'
+//            }
         }
     }
     compileOptions {
@@ -123,7 +123,6 @@ kapt {
 
 dependencies {
     coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:1.1.5')
-    implementation(fileTree(dir: 'libs', include: ['*.jar', '*.aar']))
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.4.0')
     androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0')
@@ -188,10 +187,14 @@ dependencies {
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.9.1')
     def cronet_version = '92.0.4509.1'
-    compileOnly("org.microg:cronet-api:$cronet_version")
-    cronetImplementation("org.microg:cronet-native:$cronet_version")
-    cronetImplementation("org.microg:cronet-api:$cronet_version")
-    cronetImplementation("org.microg:cronet-common:$cronet_version")
+    //compileOnly("org.microg:cronet-api:$cronet_version")
+    compileOnly(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    cronetImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    //cronetImplementation("org.microg:cronet-native:$cronet_version")
+    //cronetImplementation("org.microg:cronet-api:$cronet_version")
+    //cronetImplementation("org.microg:cronet-common:$cronet_version")
+    //cronetImplementation('com.huawei.hms:hquic-provider:5.0.1.300') {exclude( group :"org.chromium.net")}
+    //cronetImplementation('com.google.android.gms:play-services-cronet:17.0.1')
 
     //Glide
     implementation('com.github.bumptech.glide:glide:4.12.0')
