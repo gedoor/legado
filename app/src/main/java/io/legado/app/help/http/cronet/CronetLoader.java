@@ -70,7 +70,6 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
             if(soFile.exists()&&Objects.equals(md5, getFileMD5(soFile))){
                 Log.e(TAG,"So 库已存在");
             }else {
-                soFile.deleteOnExit();
                 download(soUrl, md5, downloadFile, soFile);
             }
 
