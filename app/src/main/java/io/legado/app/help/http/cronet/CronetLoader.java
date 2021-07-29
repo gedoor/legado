@@ -56,8 +56,6 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
         File dir = mContext.getDir("lib", Context.MODE_PRIVATE);
         soFile = new File(dir + "/" + getCpuAbi(), soName);
         downloadFile = new File(mContext.getCacheDir() + "/so_download", soName);
-
-
     }
 
     public boolean install() {
@@ -150,7 +148,8 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
 
 
     public static String getCpuAbi() {
-        //貌似只有这个过时了的API能获取当前APP使用的ABI
+        //貌似只有这个过时了的API能获取当前APP使用的ABI,添加注解免得编译时报错
+        //noinspection deprecation
         return Build.CPU_ABI;
     }
 
