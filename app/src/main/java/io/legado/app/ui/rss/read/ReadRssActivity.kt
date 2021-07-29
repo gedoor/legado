@@ -85,6 +85,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_rss_refresh -> viewModel.refresh()
             R.id.menu_rss_star -> viewModel.favorite()
             R.id.menu_share_it -> viewModel.rssArticle?.let {
                 share(it.link)
@@ -156,13 +157,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     private fun saveImage() {
         val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
         if (path.isNullOrEmpty()) {
-            selectExportFolder()
+            selectSaveFolder()
         } else {
             viewModel.saveImage(webPic, path)
         }
     }
 
-    private fun selectExportFolder() {
+    private fun selectSaveFolder() {
         val default = arrayListOf<String>()
         val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
         if (!path.isNullOrEmpty()) {
