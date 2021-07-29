@@ -154,13 +154,13 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upVersion() {
         execute {
-            if (LocalConfig.hasUpHttpTTS) {
+            if (LocalConfig.needUpHttpTTS) {
                 DefaultData.importDefaultHttpTTS()
             }
-            if (LocalConfig.hasUpTxtTocRule) {
+            if (LocalConfig.needUpTxtTocRule) {
                 DefaultData.importDefaultTocRules()
             }
-            if (LocalConfig.hasUpRssSources) {
+            if (LocalConfig.needUpRssSources) {
                 DefaultData.importDefaultRssSources()
             }
         }
