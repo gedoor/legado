@@ -2,7 +2,9 @@ package io.legado.app.help.http.cronet;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.chromium.net.CronetEngine;
@@ -15,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,35 +30,46 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
     //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.127/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.127.so
     //https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@92.0.4515.127/cronet/92.0.4515.127/arm64-v8a/libcronet.92.0.4515.127.so.js
     private final String soName = "libcronet." + ImplVersion.getCronetVersion() + ".so";
-    private final String soUrl = "https://storage.googleapis.com/chromium-cronet/android/" + ImplVersion.getCronetVersion() + "/Release/cronet/libs/" + getCpuAbi() + "/" + soName;
-    private final String md5Url = "https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@" + ImplVersion.getCronetVersion() + "/cronet/" + ImplVersion.getCronetVersion() + "/" + getCpuAbi() + "/" + soName + ".js";
+    private final String soUrl;
+    private final String md5Url;
     private final File soFile;
     private final File downloadFile;
+    private String CPU_ABI;
+    private String md5;
     private static final String TAG = "CronetLoader";
 
     private static CronetLoader instance;
 
     public static CronetLoader getInstance(Context context) {
-        if (mContext == null) {
-            mContext = context;
-        }
         if (instance == null) {
             synchronized (CronetLoader.class) {
                 if (instance == null) {
-                    instance = new CronetLoader(mContext);
+                    instance = new CronetLoader(context);
                 }
             }
         }
         return instance;
     }
 
-    private static Context mContext;
 
     CronetLoader(Context context) {
-        mContext = context.getApplicationContext();
+        Context mContext = context.getApplicationContext();
+        soUrl = "https://storage.googleapis.com/chromium-cronet/android/"
+                + ImplVersion.getCronetVersion() + "/Release/cronet/libs/"
+                + getCpuAbi(mContext) + "/" + soName;
+        md5Url = "https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@" +
+                ImplVersion.getCronetVersion() + "/cronet/" + ImplVersion.getCronetVersion() + "/"
+                + getCpuAbi(mContext) + "/" + soName + ".js";
         File dir = mContext.getDir("lib", Context.MODE_PRIVATE);
-        soFile = new File(dir + "/" + getCpuAbi(), soName);
+        soFile = new File(dir + "/" + getCpuAbi(mContext), soName);
+
         downloadFile = new File(mContext.getCacheDir() + "/so_download", soName);
+        Log.e(TAG, "soName+:" + soName);
+        Log.e(TAG, "destSuccessFile:" + soFile);
+        Log.e(TAG, "tempFile:" + downloadFile);
+        Log.e(TAG, "soUrl:" + soUrl);
+
+
     }
 
     public boolean install() {
@@ -64,7 +78,7 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
 
     public void preDownload() {
         new Thread(() -> {
-            String md5 = getUrlMd5(md5Url);
+            md5 = getUrlMd5(md5Url);
             if (soFile.exists() && Objects.equals(md5, getFileMD5(soFile))) {
                 Log.e(TAG, "So 库已存在");
             } else {
@@ -90,7 +104,7 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
             //以下逻辑为cronet加载，优先加载本地，否则从远程加载
             //首先调用系统行为进行加载
             System.loadLibrary(libName);
-            Log.e(TAG, "load from system");
+            Log.i(TAG, "load from system");
 
         } catch (Throwable e) {
             //如果找不到，则从远程下载
@@ -98,13 +112,8 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
 
             //删除历史文件
             deleteHistoryFile(Objects.requireNonNull(soFile.getParentFile()), soFile);
-
-            Log.e(TAG, "soUrl:" + soUrl);
-            String md5 = getUrlMd5(md5Url);
-            Log.e(TAG, "soMD5:" + md5);
-            Log.e(TAG, "soName+:" + soName);
-            Log.e(TAG, "destSuccessFile:" + soFile);
-            Log.e(TAG, "tempFile:" + downloadFile);
+            md5 = getUrlMd5(md5Url);
+            Log.i(TAG, "soMD5:" + md5);
 
 
             if (md5 == null || md5.length() != 32 || soUrl.length() == 0) {
@@ -147,21 +156,40 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
     }
 
 
-    public static String getCpuAbi() {
-        //貌似只有这个过时了的API能获取当前APP使用的ABI,添加注解免得编译时报错
-        //noinspection deprecation
-        return Build.CPU_ABI;
+    @SuppressLint("DiscouragedPrivateApi")
+    private String getCpuAbi(Context context) {
+        if (CPU_ABI != null) {
+            return CPU_ABI;
+        }
+        // 5.0以上Application才有primaryCpuAbi字段
+        try {
+            ApplicationInfo appInfo = context.getApplicationInfo();
+            Field abiField = ApplicationInfo.class.getDeclaredField("primaryCpuAbi");
+            abiField.setAccessible(true);
+            CPU_ABI = (String) abiField.get(appInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (TextUtils.isEmpty(CPU_ABI)) {
+            CPU_ABI = Build.SUPPORTED_ABIS[0];
+        }
+
+        //貌似只有这个过时了的API能获取当前APP使用的ABI
+        return CPU_ABI;
     }
 
 
-    private static String getUrlMd5(String url) {
+    private String getUrlMd5(String url) {
+        if (md5 != null && md5.length() == 32) {
+            return md5;
+        }
         InputStream inputStream;
         OutputStream outputStream;
         try {
             outputStream = new ByteArrayOutputStream();
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             inputStream = connection.getInputStream();
-            byte[] buffer = new byte[32768];
+            byte[] buffer = new byte[1024];
             int read;
             while ((read = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, read);
@@ -336,9 +364,7 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
                 md5.update(buffer, 0, numRead);
             }
             return String.format("%032x", new BigInteger(1, md5.digest())).toLowerCase();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } catch (OutOfMemoryError e) {
+        } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
         } finally {
             if (fileInputStream != null) {
