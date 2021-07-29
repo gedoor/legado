@@ -1,219 +1,182 @@
-package io.legado.app.help.http.cronet;
+package io.legado.app.help.http.cronet
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.os.Build;
-import android.text.TextUtils;
-import android.util.Log;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.os.Build
+import android.text.TextUtils
+import android.util.Log
+import org.chromium.net.CronetEngine
+import org.chromium.net.impl.ImplVersion
+import splitties.init.appCtx
+import java.io.*
+import java.math.BigInteger
+import java.net.HttpURLConnection
+import java.net.URL
+import java.security.MessageDigest
+import java.util.*
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
-import org.chromium.net.CronetEngine;
-import org.chromium.net.impl.ImplVersion;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.util.Objects;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
-public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
+object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.127/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.127.so
     //https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@92.0.4515.127/cronet/92.0.4515.127/arm64-v8a/libcronet.92.0.4515.127.so.js
-    private final String soName = "libcronet." + ImplVersion.getCronetVersion() + ".so";
-    private final String soUrl;
-    private final String md5Url;
-    private final File soFile;
-    private final File downloadFile;
-    private String CPU_ABI;
-    private String md5;
-    private static final String TAG = "CronetLoader";
-
-    private static CronetLoader instance;
-
-    public static CronetLoader getInstance(Context context) {
-        if (instance == null) {
-            synchronized (CronetLoader.class) {
-                if (instance == null) {
-                    instance = new CronetLoader(context);
-                }
-            }
-        }
-        return instance;
-    }
+    private const val TAG = "CronetLoader"
+    private val soName = "libcronet." + ImplVersion.getCronetVersion() + ".so"
+    private val soUrl: String
+    private val md5Url: String
+    private val soFile: File
+    private val downloadFile: File
+    private var cpuAbi: String? = null
+    private var md5: String? = null
+    var download = false
+    private var executor: Executor = Executors.newSingleThreadExecutor()
 
 
-    CronetLoader(Context context) {
-        Context mContext = context.getApplicationContext();
-        soUrl = "https://storage.googleapis.com/chromium-cronet/android/"
+    init {
+        soUrl = ("https://storage.googleapis.com/chromium-cronet/android/"
                 + ImplVersion.getCronetVersion() + "/Release/cronet/libs/"
-                + getCpuAbi(mContext) + "/" + soName;
-        md5Url = "https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@" +
+                + getCpuAbi(appCtx) + "/" + soName)
+        md5Url = ("https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@" +
                 ImplVersion.getCronetVersion() + "/cronet/" + ImplVersion.getCronetVersion() + "/"
-                + getCpuAbi(mContext) + "/" + soName + ".js";
-        File dir = mContext.getDir("lib", Context.MODE_PRIVATE);
-        soFile = new File(dir + "/" + getCpuAbi(mContext), soName);
-
-        downloadFile = new File(mContext.getCacheDir() + "/so_download", soName);
-        Log.e(TAG, "soName+:" + soName);
-        Log.e(TAG, "destSuccessFile:" + soFile);
-        Log.e(TAG, "tempFile:" + downloadFile);
-        Log.e(TAG, "soUrl:" + soUrl);
-
-
+                + getCpuAbi(appCtx) + "/" + soName + ".js")
+        val dir = appCtx.getDir("lib", Context.MODE_PRIVATE)
+        soFile = File(dir.toString() + "/" + getCpuAbi(appCtx), soName)
+        downloadFile = File(appCtx.cacheDir.toString() + "/so_download", soName)
+        Log.e(TAG, "soName+:$soName")
+        Log.e(TAG, "destSuccessFile:$soFile")
+        Log.e(TAG, "tempFile:$downloadFile")
+        Log.e(TAG, "soUrl:$soUrl")
     }
 
-    public boolean install() {
-        return soFile.exists();
+    fun install(): Boolean {
+        return soFile.exists()
     }
 
-    public void preDownload() {
-        new Thread(() -> {
-            md5 = getUrlMd5(md5Url);
-            if (soFile.exists() && Objects.equals(md5, getFileMD5(soFile))) {
-                Log.e(TAG, "So 库已存在");
+    fun preDownload() {
+        Thread {
+            md5 = getUrlMd5(md5Url)
+            if (soFile.exists() && md5 == getFileMD5(soFile)) {
+                Log.e(TAG, "So 库已存在")
             } else {
-                download(soUrl, md5, downloadFile, soFile);
+                download(soUrl, md5, downloadFile, soFile)
             }
-
-            Log.e(TAG, soName);
-        }).start();
-
+            Log.e(TAG, soName)
+        }.start()
     }
 
     @SuppressLint("UnsafeDynamicallyLoadedCode")
-    @Override
-    public void loadLibrary(String libName) {
-        Log.e(TAG, "libName:" + libName);
-        long start = System.currentTimeMillis();
+    override fun loadLibrary(libName: String) {
+        Log.e(TAG, "libName:$libName")
+        val start = System.currentTimeMillis()
+        @Suppress("SameParameterValue")
         try {
             //非cronet的so调用系统方法加载
             if (!libName.contains("cronet")) {
-                System.loadLibrary(libName);
-                return;
+                System.loadLibrary(libName)
+                return
             }
             //以下逻辑为cronet加载，优先加载本地，否则从远程加载
             //首先调用系统行为进行加载
-            System.loadLibrary(libName);
-            Log.i(TAG, "load from system");
-
-        } catch (Throwable e) {
+            System.loadLibrary(libName)
+            Log.i(TAG, "load from system")
+        } catch (e: Throwable) {
             //如果找不到，则从远程下载
-
-
             //删除历史文件
-            deleteHistoryFile(Objects.requireNonNull(soFile.getParentFile()), soFile);
-            md5 = getUrlMd5(md5Url);
-            Log.i(TAG, "soMD5:" + md5);
-
-
-            if (md5 == null || md5.length() != 32 || soUrl.length() == 0) {
+            deleteHistoryFile(Objects.requireNonNull(soFile.parentFile), soFile)
+            md5 = getUrlMd5(md5Url)
+            Log.i(TAG, "soMD5:$md5")
+            if (md5 == null || md5!!.length != 32 || soUrl.isEmpty()) {
                 //如果md5或下载的url为空，则调用系统行为进行加载
-                System.loadLibrary(libName);
-                return;
+                System.loadLibrary(libName)
+                return
             }
-
-
-            if (!soFile.exists() || !soFile.isFile()) {
-                //noinspection ResultOfMethodCallIgnored
-                soFile.delete();
-                download(soUrl, md5, downloadFile, soFile);
+            if (!soFile.exists() || !soFile.isFile) {
+                soFile.delete()
+                download(soUrl, md5, downloadFile, soFile)
                 //如果文件不存在或不是文件，则调用系统行为进行加载
-                System.loadLibrary(libName);
-                return;
+                System.loadLibrary(libName)
+                return
             }
-
             if (soFile.exists()) {
                 //如果文件存在，则校验md5值
-                String fileMD5 = getFileMD5(soFile);
-                if (fileMD5 != null && fileMD5.equalsIgnoreCase(md5)) {
+                val fileMD5 = getFileMD5(soFile)
+                if (fileMD5 != null && fileMD5.equals(md5, ignoreCase = true)) {
                     //md5值一样，则加载
-                    System.load(soFile.getAbsolutePath());
-                    Log.e(TAG, "load from:" + soFile);
-                    return;
+                    System.load(soFile.absolutePath)
+                    Log.e(TAG, "load from:$soFile")
+                    return
                 }
                 //md5不一样则删除
-                //noinspection ResultOfMethodCallIgnored
-                soFile.delete();
-
+                soFile.delete()
             }
             //不存在则下载
-            download(soUrl, md5, downloadFile, soFile);
+            download(soUrl, md5, downloadFile, soFile)
             //使用系统加载方法
-            System.loadLibrary(libName);
+            System.loadLibrary(libName)
         } finally {
-            Log.e(TAG, "time:" + (System.currentTimeMillis() - start));
+            Log.e(TAG, "time:" + (System.currentTimeMillis() - start))
         }
     }
 
-
     @SuppressLint("DiscouragedPrivateApi")
-    private String getCpuAbi(Context context) {
-        if (CPU_ABI != null) {
-            return CPU_ABI;
+    private fun getCpuAbi(context: Context): String? {
+        if (cpuAbi != null) {
+            return cpuAbi
         }
         // 5.0以上Application才有primaryCpuAbi字段
         try {
-            ApplicationInfo appInfo = context.getApplicationInfo();
-            Field abiField = ApplicationInfo.class.getDeclaredField("primaryCpuAbi");
-            abiField.setAccessible(true);
-            CPU_ABI = (String) abiField.get(appInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
+            val appInfo = context.applicationInfo
+            val abiField = ApplicationInfo::class.java.getDeclaredField("primaryCpuAbi")
+            abiField.isAccessible = true
+            cpuAbi = abiField[appInfo] as String
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        if (TextUtils.isEmpty(CPU_ABI)) {
-            CPU_ABI = Build.SUPPORTED_ABIS[0];
+        if (TextUtils.isEmpty(cpuAbi)) {
+            cpuAbi = Build.SUPPORTED_ABIS[0]
         }
 
         //貌似只有这个过时了的API能获取当前APP使用的ABI
-        return CPU_ABI;
+        return cpuAbi
     }
 
-
-    private String getUrlMd5(String url) {
-        if (md5 != null && md5.length() == 32) {
-            return md5;
+    @Suppress("SameParameterValue")
+    private fun getUrlMd5(url: String): String? {
+        if (md5 != null && md5!!.length == 32) {
+            return md5
         }
-        InputStream inputStream;
-        OutputStream outputStream;
-        try {
-            outputStream = new ByteArrayOutputStream();
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            inputStream = connection.getInputStream();
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, read);
-                outputStream.flush();
+        val inputStream: InputStream
+        val outputStream: OutputStream
+        return try {
+            outputStream = ByteArrayOutputStream()
+            val connection = URL(url).openConnection() as HttpURLConnection
+            inputStream = connection.inputStream
+            val buffer = ByteArray(1024)
+            var read: Int
+            while (inputStream.read(buffer).also { read = it } != -1) {
+                outputStream.write(buffer, 0, read)
+                outputStream.flush()
             }
-            return outputStream.toString();
-
-        } catch (IOException e) {
-            return null;
+            outputStream.toString()
+        } catch (e: IOException) {
+            null
         }
     }
 
     /**
      * 删除历史文件
      */
-    private static void deleteHistoryFile(File dir, File currentFile) {
-        File[] files = dir.listFiles();
-        if (files != null && files.length > 0) {
-            for (File f : files) {
-                if (f.exists() && (currentFile == null || !f.getAbsolutePath().equals(currentFile.getAbsolutePath()))) {
-                    boolean delete = f.delete();
-                    Log.e(TAG, "delete file: " + f + " result: " + delete);
+    private fun deleteHistoryFile(dir: File, currentFile: File?) {
+        val files = dir.listFiles()
+        @Suppress("SameParameterValue")
+        if (files != null && files.isNotEmpty()) {
+            for (f in files) {
+                if (f.exists() && (currentFile == null || f.absolutePath != currentFile.absolutePath)) {
+                    val delete = f.delete()
+                    Log.e(TAG, "delete file: $f result: $delete")
                     if (!delete) {
-                        f.deleteOnExit();
+                        f.deleteOnExit()
                     }
                 }
             }
@@ -223,158 +186,163 @@ public class CronetLoader extends CronetEngine.Builder.LibraryLoader {
     /**
      * 下载文件
      */
-    private static boolean downloadFileIfNotExist(String url, File destFile) {
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
+    private fun downloadFileIfNotExist(url: String, destFile: File): Boolean {
+        var inputStream: InputStream? = null
+        var outputStream: OutputStream? = null
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            inputStream = connection.getInputStream();
+            val connection = URL(url).openConnection() as HttpURLConnection
+            inputStream = connection.inputStream
             if (destFile.exists()) {
-                return true;
+                return true
             }
-            destFile.getParentFile().mkdirs();
-            destFile.createNewFile();
-            outputStream = new FileOutputStream(destFile);
-            byte[] buffer = new byte[32768];
-            int read;
-            while ((read = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, read);
-                outputStream.flush();
+            destFile.parentFile!!.mkdirs()
+            destFile.createNewFile()
+            outputStream = FileOutputStream(destFile)
+            val buffer = ByteArray(32768)
+            var read: Int
+            while (inputStream.read(buffer).also { read = it } != -1) {
+                outputStream.write(buffer, 0, read)
+                outputStream.flush()
             }
-            return true;
-        } catch (Throwable e) {
-            e.printStackTrace();
+            return true
+        } catch (e: Throwable) {
+            e.printStackTrace()
             if (destFile.exists() && !destFile.delete()) {
-                destFile.deleteOnExit();
+                destFile.deleteOnExit()
             }
         } finally {
             if (inputStream != null) {
                 try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    inputStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
             }
             if (outputStream != null) {
                 try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    outputStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
             }
         }
-        return false;
+        return false
     }
-
-    static boolean download = false;
-    static Executor executor = Executors.newSingleThreadExecutor();
 
     /**
      * 下载并拷贝文件
      */
-    private static synchronized void download(final String url, final String md5, final File downloadTempFile, final File destSuccessFile) {
+    @Suppress("SameParameterValue")
+    @Synchronized
+    private fun download(
+        url: String,
+        md5: String?,
+        downloadTempFile: File,
+        destSuccessFile: File
+    ) {
         if (download) {
-            return;
+            return
         }
-        download = true;
-        executor.execute(() -> {
-            boolean result = downloadFileIfNotExist(url, downloadTempFile);
-            Log.e(TAG, "download result:" + result);
+        download = true
+        executor.execute {
+            val result = downloadFileIfNotExist(url, downloadTempFile)
+            Log.e(TAG, "download result:$result")
             //文件md5再次校验
-            String fileMD5 = getFileMD5(downloadTempFile);
-            if (md5 != null && !md5.equalsIgnoreCase(fileMD5)) {
-                boolean delete = downloadTempFile.delete();
+            val fileMD5 = getFileMD5(downloadTempFile)
+            if (md5 != null && !md5.equals(fileMD5, ignoreCase = true)) {
+                val delete = downloadTempFile.delete()
                 if (!delete) {
-                    downloadTempFile.deleteOnExit();
+                    downloadTempFile.deleteOnExit()
                 }
-                download = false;
-                return;
+                download = false
+                return@execute
             }
-            Log.e(TAG, "download success, copy to " + destSuccessFile);
+            Log.e(TAG, "download success, copy to $destSuccessFile")
             //下载成功拷贝文件
-            copyFile(downloadTempFile, destSuccessFile);
-            File parentFile = downloadTempFile.getParentFile();
-            deleteHistoryFile(parentFile, null);
-        });
-
+            copyFile(downloadTempFile, destSuccessFile)
+            val parentFile = downloadTempFile.parentFile
+            @Suppress("SameParameterValue")
+            deleteHistoryFile(parentFile!!, null)
+        }
     }
-
 
     /**
      * 拷贝文件
      */
-    private static boolean copyFile(File source, File dest) {
-        if (source == null || !source.exists() || !source.isFile() || dest == null) {
-            return false;
+    private fun copyFile(source: File?, dest: File?): Boolean {
+        if (source == null || !source.exists() || !source.isFile || dest == null) {
+            return false
         }
-        if (source.getAbsolutePath().equals(dest.getAbsolutePath())) {
-            return true;
+        if (source.absolutePath == dest.absolutePath) {
+            return true
         }
-        FileInputStream is = null;
-        FileOutputStream os = null;
-        File parent = dest.getParentFile();
-        if (parent != null && (!parent.exists())) {
-            boolean mkdirs = parent.mkdirs();
+        var fileInputStream: FileInputStream? = null
+        var os: FileOutputStream? = null
+        val parent = dest.parentFile
+        if (parent != null && !parent.exists()) {
+            val mkdirs = parent.mkdirs()
             if (!mkdirs) {
-                mkdirs = parent.mkdirs();
+                parent.mkdirs()
             }
         }
         try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest, false);
-
-            byte[] buffer = new byte[1024 * 512];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
+            fileInputStream = FileInputStream(source)
+            os = FileOutputStream(dest, false)
+            val buffer = ByteArray(1024 * 512)
+            var length: Int
+            while (fileInputStream.read(buffer).also { length = it } > 0) {
+                os.write(buffer, 0, length)
             }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
         } finally {
-            if (is != null) {
+            if (fileInputStream != null) {
                 try {
-                    is.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    fileInputStream.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
             if (os != null) {
                 try {
-                    os.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    os.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }
-        return false;
+        return false
     }
 
     /**
      * 获得文件md5
      */
-    private static String getFileMD5(File file) {
-        FileInputStream fileInputStream = null;
+    private fun getFileMD5(file: File): String? {
+        var fileInputStream: FileInputStream? = null
         try {
-            fileInputStream = new FileInputStream(file);
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            byte[] buffer = new byte[1024];
-            int numRead = 0;
-            while ((numRead = fileInputStream.read(buffer)) > 0) {
-                md5.update(buffer, 0, numRead);
+            fileInputStream = FileInputStream(file)
+            val md5 = MessageDigest.getInstance("MD5")
+            val buffer = ByteArray(1024)
+            var numRead: Int
+            while (fileInputStream.read(buffer).also { numRead = it } > 0) {
+                md5.update(buffer, 0, numRead)
             }
-            return String.format("%032x", new BigInteger(1, md5.digest())).toLowerCase();
-        } catch (Exception | OutOfMemoryError e) {
-            e.printStackTrace();
+            return String.format("%032x", BigInteger(1, md5.digest())).lowercase()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } catch (e: OutOfMemoryError) {
+            e.printStackTrace()
         } finally {
             if (fileInputStream != null) {
                 try {
-                    fileInputStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    fileInputStream.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }
-        return null;
+        return null
     }
+
 }

@@ -8,7 +8,6 @@ import okhttp3.ConnectionSpec
 import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import splitties.init.appCtx
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
@@ -45,7 +44,7 @@ val okHttpClient: OkHttpClient by lazy {
                 .build()
             chain.proceed(request)
         })
-    if (AppConfig.isCronet && CronetLoader.getInstance(appCtx).install()) {
+    if (AppConfig.isCronet && CronetLoader.install()) {
         builder.addInterceptor(CronetInterceptor())
     }
 

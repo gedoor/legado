@@ -19,11 +19,11 @@ import java.util.concurrent.Executors
 val executor: Executor by lazy { Executors.newSingleThreadExecutor() }
 
 val cronetEngine: ExperimentalCronetEngine by lazy {
-    CronetLoader.getInstance(appCtx).preDownload()
+    CronetLoader.preDownload()
 
     val builder = ExperimentalCronetEngine.Builder(appCtx)
         //设置自定义so库加载
-        .setLibraryLoader(CronetLoader.getInstance(appCtx))
+        .setLibraryLoader(CronetLoader)
         //设置缓存路径
         .setStoragePath(appCtx.externalCacheDir?.absolutePath)
         //设置缓存模式

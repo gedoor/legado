@@ -25,9 +25,8 @@ class App : MultiDexApplication() {
         CrashHandler(this)
         if (AppConfig.isCronet) {
             //预下载Cronet so
-            CronetLoader.getInstance(this).preDownload()
+            CronetLoader.preDownload()
         }
-
         LanguageUtils.setConfiguration(this)
         createNotificationChannels()
         applyDayNight(this)
