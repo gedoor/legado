@@ -156,13 +156,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     private fun saveImage() {
         val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
         if (path.isNullOrEmpty()) {
-            selectExportFolder()
+            selectSaveFolder()
         } else {
             viewModel.saveImage(webPic, path)
         }
     }
 
-    private fun selectExportFolder() {
+    private fun selectSaveFolder() {
         val default = arrayListOf<String>()
         val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
         if (!path.isNullOrEmpty()) {
