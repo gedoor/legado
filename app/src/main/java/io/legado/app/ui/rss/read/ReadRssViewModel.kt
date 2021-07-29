@@ -47,8 +47,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                 rssSource = appDb.rssSourceDao.getByKey(origin)
                 if (link != null) {
                     rssStar = appDb.rssStarDao.get(origin, link)
-                    rssArticle = appDb.rssArticleDao.get(origin, link)
-                    //rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
+                    rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
                     rssArticle?.let { rssArticle ->
                         if (!rssArticle.description.isNullOrBlank()) {
                             contentLiveData.postValue(rssArticle.description!!)
@@ -103,6 +102,19 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                     }
                     contentLiveData.postValue(body)
                 }
+        }
+    }
+
+    fun refresh() {
+        rssArticle?.let { rssArticle ->
+            rssSource?.let {
+                val ruleContent = it.ruleContent
+                if (!ruleContent.isNullOrBlank()) {
+                    loadContent(rssArticle, ruleContent)
+                } else {
+                    loadUrl(rssArticle.link, rssArticle.origin)
+                }
+            } ?: loadUrl(rssArticle.link, rssArticle.origin)
         }
     }
 

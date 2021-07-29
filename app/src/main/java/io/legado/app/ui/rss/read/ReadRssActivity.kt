@@ -85,6 +85,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_rss_refresh -> viewModel.refresh()
             R.id.menu_rss_star -> viewModel.favorite()
             R.id.menu_share_it -> viewModel.rssArticle?.let {
                 share(it.link)
