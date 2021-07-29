@@ -340,15 +340,17 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         var vResult = result
         if (rule.replaceRegex.isNotEmpty()) {
             vResult = if (rule.replaceFirst) {
-                val pattern = Pattern.compile(rule.replaceRegex)
-                val matcher = pattern.matcher(vResult)
-                if (matcher.find()) {
-                    matcher.group(0)!!.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
-                } else {
-                    ""
+                kotlin.runCatching {
+                    vResult.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
+                }.getOrElse {
+                    vResult.replaceFirst(rule.replaceRegex, rule.replacement)
                 }
             } else {
-                vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
+                kotlin.runCatching {
+                    vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
+                }.getOrElse {
+                    vResult.replace(rule.replaceRegex, rule.replacement)
+                }
             }
         }
         return vResult
