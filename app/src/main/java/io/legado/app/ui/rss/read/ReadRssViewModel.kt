@@ -47,7 +47,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                 rssSource = appDb.rssSourceDao.getByKey(origin)
                 if (link != null) {
                     rssStar = appDb.rssStarDao.get(origin, link)
-                    rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
+                    rssArticle = appDb.rssArticleDao.get(origin, link)
+                    //rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
                     rssArticle?.let { rssArticle ->
                         if (!rssArticle.description.isNullOrBlank()) {
                             contentLiveData.postValue(rssArticle.description!!)
