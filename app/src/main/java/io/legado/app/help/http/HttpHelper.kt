@@ -2,6 +2,7 @@ package io.legado.app.help.http
 
 import io.legado.app.help.AppConfig
 import io.legado.app.help.http.cronet.CronetInterceptor
+import io.legado.app.help.http.cronet.CronetLoader
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.ConnectionSpec
 import okhttp3.Credentials
@@ -44,7 +45,7 @@ val okHttpClient: OkHttpClient by lazy {
                 .build()
             chain.proceed(request)
         })
-    if (AppConfig.isCronet&&CronetLoader.getInstance(appCtx).install()) {
+    if (AppConfig.isCronet && CronetLoader.getInstance(appCtx).install()) {
         builder.addInterceptor(CronetInterceptor())
     }
 
