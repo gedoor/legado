@@ -14,6 +14,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.ThemeConfig.applyDayNight
+import io.legado.app.help.http.cronet.CronetLoader
 import io.legado.app.utils.LanguageUtils
 import io.legado.app.utils.defaultSharedPreferences
 
