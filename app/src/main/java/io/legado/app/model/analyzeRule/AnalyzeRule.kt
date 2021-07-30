@@ -23,7 +23,7 @@ import kotlin.collections.HashMap
  * 解析规则获取结果
  */
 @Keep
-@Suppress("unused", "RegExpRedundantEscape")
+@Suppress("unused", "RegExpRedundantEscape", "MemberVisibilityCanBePrivate")
 class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     var book = if (ruleData is BaseBook) ruleData else null
@@ -31,8 +31,11 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     var chapter: BookChapter? = null
     var nextChapterUrl: String? = null
     var content: Any? = null
+        private set
     var baseUrl: String? = null
+        private set
     var redirectUrl: URL? = null
+        private set
     private var isJSON: Boolean = false
     private var isRegex: Boolean = false
 
@@ -403,7 +406,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     /**
      * 规则类
      */
-
     inner class SourceRule internal constructor(
         ruleStr: String,
         internal var mode: Mode = Mode.Default
