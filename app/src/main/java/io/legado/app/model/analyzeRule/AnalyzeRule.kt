@@ -337,20 +337,25 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      * 正则替换
      */
     private fun replaceRegex(result: String, rule: SourceRule): String {
+        if (rule.replaceRegex.isEmpty()) return result
         var vResult = result
-        if (rule.replaceRegex.isNotEmpty()) {
-            vResult = if (rule.replaceFirst) {
-                kotlin.runCatching {
-                    vResult.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
-                }.getOrElse {
-                    vResult.replaceFirst(rule.replaceRegex, rule.replacement)
+        vResult = if (rule.replaceFirst) {
+            kotlin.runCatching {
+                val pattern = Pattern.compile(rule.replaceRegex)
+                val matcher = pattern.matcher(vResult)
+                if (matcher.find()) {
+                    matcher.group(0)!!.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
+                } else {
+                    ""
                 }
-            } else {
-                kotlin.runCatching {
-                    vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
-                }.getOrElse {
-                    vResult.replace(rule.replaceRegex, rule.replacement)
-                }
+            }.getOrElse {
+                vResult.replaceFirst(rule.replaceRegex, rule.replacement)
+            }
+        } else {
+            kotlin.runCatching {
+                vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
+            }.getOrElse {
+                vResult.replace(rule.replaceRegex, rule.replacement)
             }
         }
         return vResult
