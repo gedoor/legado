@@ -3,6 +3,7 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.help.DefaultData
@@ -49,6 +50,8 @@ object Backup {
         if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
             Coroutine.async {
                 backup(context, context.getPrefString(PreferKey.backupPath) ?: "", true)
+            }.onError {
+                appCtx.toastOnUi(R.string.autobackup_fail)
             }
         }
     }

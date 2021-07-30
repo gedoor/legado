@@ -52,6 +52,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
                 Backup.backup(appCtx, uri.toString())
             }.onSuccess {
                 appCtx.toastOnUi(R.string.backup_success)
+            }.onError {
+                appCtx.toastOnUi(R.string.backup_fail)
             }
         } else {
             uri.path?.let { path ->
@@ -60,6 +62,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
                     Backup.backup(appCtx, path)
                 }.onSuccess {
                     appCtx.toastOnUi(R.string.backup_success)
+                }.onError {
+                    appCtx.toastOnUi(R.string.backup_fail)
                 }
             }
         }
@@ -231,6 +235,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
                         Backup.backup(requireContext(), backupPath)
                     }.onSuccess {
                         toastOnUi(R.string.backup_success)
+                    }.onError {
+                        toastOnUi(R.string.backup_fail)
                     }
                 } else {
                     backupDir.launch(null)
@@ -251,6 +257,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
                     Backup.backup(requireContext(), path)
                 }.onSuccess {
                     toastOnUi(R.string.backup_success)
+                }.onError {
+                    toastOnUi(R.string.backup_fail)
                 }
             }
             .request()
