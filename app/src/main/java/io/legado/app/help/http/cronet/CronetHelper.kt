@@ -40,36 +40,6 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
     //builder.setExperimentalOptions("{\"quic_version\": \"h3-29\"}")
     val engine = builder.build()
     URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
-//    engine.addRequestFinishedListener(object : RequestFinishedInfo.Listener(executor) {
-//        override fun onRequestFinished(requestFinishedInfo: RequestFinishedInfo?) {
-//            val sb = StringBuilder(requestFinishedInfo!!.url).append("\r\n")
-//
-//            try {
-//                if (requestFinishedInfo.responseInfo != null) {
-//                    val responseInfo = requestFinishedInfo.responseInfo
-//                    if (responseInfo != null) {
-//                        sb.append("[Cached:").append(responseInfo.wasCached())
-//                            .append("][StatusCode:")
-//                            .append(
-//                                responseInfo.httpStatusCode
-//                            ).append("][StatusText:").append(responseInfo.httpStatusText)
-//                            .append("][Protocol:").append(responseInfo.negotiatedProtocol)
-//                            .append("][ByteCount:").append(
-//                                responseInfo.receivedByteCount
-//                            ).append("]\r\n")
-//                    }
-//                    val httpHeaders = requestFinishedInfo.responseInfo!!
-//                        .allHeadersAsList
-//                    for ((key, value) in httpHeaders) {
-//                        sb.append("[").append(key).append("]").append(value).append("\r\n")
-//                    }
-//                    Log.e("Cronet", sb.toString())
-//                }
-//            } catch (e: URISyntaxException) {
-//                e.printStackTrace()
-//            }
-//        }
-//    })
     return@lazy engine
 
 }
