@@ -1,11 +1,11 @@
 package io.legado.app.service.help
 
 import android.content.Context
-import android.content.Intent
 import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.BookSource
 import io.legado.app.service.CheckSourceService
+import io.legado.app.utils.startService
 import io.legado.app.utils.toastOnUi
 
 object CheckSource {
@@ -20,17 +20,15 @@ object CheckSource {
         sources.map {
             selectedIds.add(it.bookSourceUrl)
         }
-        Intent(context, CheckSourceService::class.java).let {
-            it.action = IntentAction.start
-            it.putExtra("selectIds", selectedIds)
-            context.startService(it)
+        context.startService<CheckSourceService> {
+            action = IntentAction.start
+            putExtra("selectIds", selectedIds)
         }
     }
 
     fun stop(context: Context) {
-        Intent(context, CheckSourceService::class.java).let {
-            it.action = IntentAction.stop
-            context.startService(it)
+        context.startService<CheckSourceService> {
+            action = IntentAction.stop
         }
     }
 }

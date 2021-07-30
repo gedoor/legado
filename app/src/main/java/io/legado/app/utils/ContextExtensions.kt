@@ -38,6 +38,10 @@ inline fun <reified T : Service> Context.startService(configIntent: Intent.() ->
     startService(Intent(this, T::class.java).apply(configIntent))
 }
 
+inline fun <reified T : Service> Context.stopService() {
+    stopService(Intent(this, T::class.java))
+}
+
 fun Context.toastOnUi(message: Int) {
     runOnUI {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

@@ -28,9 +28,9 @@ class WebService : BaseService() {
 
         fun stop(context: Context) {
             if (isRun) {
-                val intent = Intent(context, WebService::class.java)
-                intent.action = IntentAction.stop
-                context.startService(intent)
+                context.startService<WebService> {
+                    action = IntentAction.stop
+                }
             }
         }
 
