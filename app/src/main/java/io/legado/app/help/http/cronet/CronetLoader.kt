@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.putPrefString
 import org.chromium.net.CronetEngine
@@ -17,8 +18,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
 import java.util.*
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.127/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.127.so
@@ -33,8 +32,6 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     private var md5: String? = appCtx.getPrefString("soMd5")
     private val version: String? = appCtx.getPrefString("soVersion", ImplVersion.getCronetVersion())
     var download = false
-    private var executor: Executor = Executors.newSingleThreadExecutor()
-
 
     init {
         soUrl = ("https://storage.googleapis.com/chromium-cronet/android/"
@@ -57,7 +54,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     }
 
     fun preDownload() {
-        executor.execute {
+        Coroutine.async {
             md5 = getUrlMd5(md5Url)
             if (soFile.exists() && md5 == getFileMD5(soFile)) {
                 Log.e(TAG, "So 库已存在")
@@ -65,7 +62,6 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
                 download(soUrl, md5, downloadFile, soFile)
             }
             Log.e(TAG, soName)
-
         }
     }
 
