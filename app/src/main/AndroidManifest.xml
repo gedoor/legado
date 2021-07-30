@@ -34,7 +34,9 @@
         android:theme="@style/AppTheme.Light"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <!-- 主入口 -->
-        <activity android:name=".ui.welcome.WelcomeActivity">
+        <activity
+            android:name=".ui.welcome.WelcomeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,6 +52,7 @@
         <activity
             android:name=".ui.welcome.Launcher1"
             android:enabled="false"
+            android:exported="true"
             android:icon="@mipmap/launcher1">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -66,6 +69,7 @@
         <activity
             android:name=".ui.welcome.Launcher2"
             android:enabled="false"
+            android:exported="true"
             android:icon="@mipmap/launcher2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -82,6 +86,7 @@
         <activity
             android:name=".ui.welcome.Launcher3"
             android:enabled="false"
+            android:exported="true"
             android:icon="@mipmap/launcher3">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -98,6 +103,7 @@
         <activity
             android:name=".ui.welcome.Launcher4"
             android:enabled="false"
+            android:exported="true"
             android:icon="@mipmap/launcher4">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -114,6 +120,7 @@
         <activity
             android:name=".ui.welcome.Launcher5"
             android:enabled="false"
+            android:exported="true"
             android:icon="@mipmap/launcher5">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -130,6 +137,7 @@
         <activity
             android:name=".ui.welcome.Launcher6"
             android:enabled="false"
+            android:exported="true"
             android:icon="@mipmap/launcher6">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -151,6 +159,7 @@
         <activity
             android:name=".ui.book.read.ReadBookActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.samsung.android.support.REMOTE_ACTION" />
@@ -304,6 +313,7 @@
         <!-- 文字处理 -->
         <activity
             android:name=".receiver.SharedReceiverActivity"
+            android:exported="true"
             android:label="@string/receiving_shared_label"
             android:theme="@style/AppTheme.Transparent">
             <intent-filter>
@@ -325,6 +335,7 @@
         <activity
             android:name=".ui.association.OnLineImportActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:exported="true"
             android:theme="@style/AppTheme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -339,6 +350,7 @@
         <!-- 打开文件 -->
         <activity
             android:name=".ui.association.FileAssociationActivity"
+            android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Transparent">
             <!-- VIEW (Open with) action -->
@@ -388,12 +400,24 @@
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.CacheBookService" />
         <service android:name=".service.WebService" />
+        <service
+            android:name=".service.WebTileService"
+            android:label="legado Web Service"
+            android:icon="@drawable/ic_web_service_noti"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
         <service android:name=".service.TTSReadAloudService" />
         <service android:name=".service.HttpReadAloudService" />
         <service android:name=".service.AudioPlayService" />
         <service android:name=".service.DownloadService" />
 
-        <receiver android:name=".receiver.MediaButtonReceiver">
+        <receiver
+            android:name=".receiver.MediaButtonReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
