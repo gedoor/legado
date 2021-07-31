@@ -140,6 +140,15 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         }
     }
 
+    fun back(): Boolean {
+        if (groupId != AppConst.bookGroupNoneId) {
+            groupId = AppConst.bookGroupNoneId
+            initBooksData()
+            return true
+        }
+        return false
+    }
+
     override fun onQueryTextSubmit(query: String?): Boolean {
         SearchActivity.start(requireContext(), query)
         return false
