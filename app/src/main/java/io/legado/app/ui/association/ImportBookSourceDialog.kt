@@ -83,6 +83,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.import_book_source)

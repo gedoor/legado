@@ -1,5 +1,6 @@
 package io.legado.app.ui.association
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -65,6 +66,7 @@ class ImportReplaceRuleDialog : BaseDialogFragment() {
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.import_replace_rule)
