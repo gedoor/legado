@@ -167,7 +167,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<String>(EventBus.UP_BOOK) {
+        observeEvent<String>(EventBus.UP_BOOKSHELF) {
             booksAdapter.notification(it)
         }
         observeEvent<String>(EventBus.BOOKSHELF_REFRESH) {

@@ -72,7 +72,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 val book = bookEntry.value
                 synchronized(this) {
                     updateList.add(book.bookUrl)
-                    postEvent(EventBus.UP_BOOK, book.bookUrl)
+                    postEvent(EventBus.UP_BOOKSHELF, book.bookUrl)
                 }
                 appDb.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
                     execute(context = upTocPool) {
@@ -91,14 +91,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         synchronized(this) {
                             bookMap.remove(bookEntry.key)
                             updateList.remove(book.bookUrl)
-                            postEvent(EventBus.UP_BOOK, book.bookUrl)
+                            postEvent(EventBus.UP_BOOKSHELF, book.bookUrl)
                             upNext()
                         }
                     }
                 } ?: synchronized(this) {
                     bookMap.remove(bookEntry.key)
                     updateList.remove(book.bookUrl)
-                    postEvent(EventBus.UP_BOOK, book.bookUrl)
+                    postEvent(EventBus.UP_BOOKSHELF, book.bookUrl)
                     upNext()
                 }
                 return

@@ -228,7 +228,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<String>(EventBus.UP_BOOK) {
+        observeEvent<String>(EventBus.UP_BOOKSHELF) {
             booksAdapter.notification(it)
         }
         observeEvent<String>(EventBus.BOOKSHELF_REFRESH) {
