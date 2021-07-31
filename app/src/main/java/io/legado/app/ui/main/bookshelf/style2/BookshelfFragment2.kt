@@ -45,7 +45,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     BaseBooksAdapter.CallBack {
 
     private val binding by viewBinding(FragmentBookshelf1Binding::bind)
-    private lateinit var searchView: SearchView
     private lateinit var booksAdapter: BaseBooksAdapter<*>
     override var groupId = AppConst.bookGroupNoneId
     private var booksFlowJob: Job? = null
@@ -195,6 +194,14 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
             bookGroups.size + books.size
         } else {
             books.size
+        }
+    }
+
+    override fun getItemType(position: Int): Int {
+        return if (groupId == AppConst.bookGroupNoneId) {
+            if (position < bookGroups.size) 1 else 0
+        } else {
+            0
         }
     }
 

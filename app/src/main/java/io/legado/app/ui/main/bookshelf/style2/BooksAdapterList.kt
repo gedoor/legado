@@ -23,10 +23,19 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
         return callBack.getItemCount()
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return callBack.getItemType(position)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return BookViewHolder(
-            ItemBookshelfListBinding.inflate(LayoutInflater.from(context), parent, false)
-        )
+        return when (viewType) {
+            1 -> GroupViewHolder(
+                ItemBookshelfListGroupBinding.inflate(LayoutInflater.from(context), parent, false)
+            )
+            else -> BookViewHolder(
+                ItemBookshelfListBinding.inflate(LayoutInflater.from(context), parent, false)
+            )
+        }
     }
 
     override fun onBindViewHolder(
