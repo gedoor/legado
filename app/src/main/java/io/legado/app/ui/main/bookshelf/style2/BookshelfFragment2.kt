@@ -1,11 +1,11 @@
 package io.legado.app.ui.main.bookshelf.style2
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +21,6 @@ import io.legado.app.databinding.FragmentBookshelf1Binding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
@@ -48,7 +47,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     private lateinit var searchView: SearchView
     private lateinit var booksAdapter: BaseBooksAdapter<*>
     override var groupId = AppConst.bookGroupNoneId
-    private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private var booksFlowJob: Job? = null
     private var bookGroups: List<BookGroup> = emptyList()
     override var books: List<Book> = emptyList()
@@ -56,7 +54,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         searchView = binding.titleBar.findViewById(R.id.search_view)
         setSupportToolbar(binding.titleBar.toolbar)
-        initSearchView()
         initRecyclerView()
         initGroupData()
         initBooksData()
@@ -64,25 +61,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
         menuInflater.inflate(R.menu.main_bookshelf, menu)
-        menu.findItem(R.id.menu_search).isVisible = false
-    }
-
-    private fun initSearchView() {
-        ATH.setTint(searchView, primaryTextColor)
-        searchView.onActionViewExpanded()
-        searchView.isSubmitButtonEnabled = true
-        searchView.queryHint = getString(R.string.screen_find)
-        searchView.clearFocus()
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                SearchActivity.start(requireContext(), newText)
-                return false
-            }
-        })
     }
 
     private fun initRecyclerView() {
@@ -120,6 +98,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         launch {
             appDb.bookGroupDao.flowShow().collect {
@@ -131,6 +110,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initBooksData() {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
@@ -199,8 +179,8 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     override fun onItemLongClick(position: Int) {
         if (position < bookGroups.size) {
-            val bookGroup = bookGroups[position]
-
+            groupId = bookGroups[position].groupId
+            initBooksData()
         } else {
             val book = books[position - bookGroups.size]
             startActivity<BookInfoActivity> {
@@ -215,17 +195,26 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun getItemCount(): Int {
-        return bookGroups.size + books.size
-    }
-
-    override fun getItem(position: Int): Any {
-        return if (position < bookGroups.size) {
-            bookGroups[position]
+        return if (groupId == AppConst.bookGroupNoneId) {
+            bookGroups.size + books.size
         } else {
-            books[position - bookGroups.size]
+            books.size
         }
     }
 
+    override fun getItem(position: Int): Any {
+        return if (groupId == AppConst.bookGroupNoneId) {
+            if (position < bookGroups.size) {
+                bookGroups[position]
+            } else {
+                books[position - bookGroups.size]
+            }
+        } else {
+            books[position]
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun observeLiveBus() {
         super.observeLiveBus()
         observeEvent<String>(EventBus.UP_BOOKSHELF) {

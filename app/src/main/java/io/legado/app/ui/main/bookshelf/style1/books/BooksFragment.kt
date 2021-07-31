@@ -1,5 +1,6 @@
 package io.legado.app.ui.main.bookshelf.style1.books
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
@@ -165,6 +166,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
         return bookUrl in activityViewModel.updateList
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun observeLiveBus() {
         super.observeLiveBus()
         observeEvent<String>(EventBus.UP_BOOKSHELF) {
