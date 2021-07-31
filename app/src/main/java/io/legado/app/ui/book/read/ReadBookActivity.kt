@@ -140,6 +140,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
             upMenu()
             upView()
         }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         viewModel.initData(intent)
     }
 
@@ -589,7 +593,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         resetPageOffset: Boolean,
         success: (() -> Unit)?
     ) {
-        runOnUI {
+        launch {
             autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
@@ -602,13 +606,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 更新视图
      */
     override fun upView() {
-        runOnUI {
+        launch {
             binding.readMenu.upBookView()
         }
     }
 
     override fun upPageAnim() {
-        runOnUI {
+        launch {
             binding.readView.upPageAnim()
         }
     }
@@ -617,7 +621,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 页面改变
      */
     override fun pageChanged() {
-        runOnUI {
+        launch {
             autoPageProgress = 0
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
             mHandler.postDelayed(backupRunnable, 600000)
