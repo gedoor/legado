@@ -125,6 +125,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private var loadStates: Boolean = false
     override val pageFactory: TextPageFactory get() = binding.readView.pageFactory
     override val headerHeight: Int get() = binding.readView.curPage.headerHeight
+    private val menuLayoutIsVisible get() = bottomDialog > 0 || binding.readMenu.isVisible
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -330,6 +331,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 按键事件
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (menuLayoutIsVisible) {
+            return super.onKeyDown(keyCode, event)
+        }
         when {
             isPrevKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
@@ -699,17 +703,19 @@ class ReadBookActivity : ReadBookBaseActivity(),
             delayMillis = 20
         }
         mHandler.removeCallbacks(autoPageRunnable)
-        if (binding.readView.isScroll) {
-            binding.readView.curPage.scroll(-scrollOffset)
-        } else {
-            autoPageProgress += scrollOffset
-            if (autoPageProgress >= binding.readView.height) {
-                autoPageProgress = 0
-                if (!binding.readView.fillPage(PageDirection.NEXT)) {
-                    autoPageStop()
-                }
+        if (!menuLayoutIsVisible) {
+            if (binding.readView.isScroll) {
+                binding.readView.curPage.scroll(-scrollOffset)
             } else {
-                binding.readView.invalidate()
+                autoPageProgress += scrollOffset
+                if (autoPageProgress >= binding.readView.height) {
+                    autoPageProgress = 0
+                    if (!binding.readView.fillPage(PageDirection.NEXT)) {
+                        autoPageStop()
+                    }
+                } else {
+                    binding.readView.invalidate()
+                }
             }
         }
         mHandler.postDelayed(autoPageRunnable, delayMillis)
