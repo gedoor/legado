@@ -27,11 +27,12 @@ import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
+import kotlin.math.min
 
 class CacheBookService : BaseService() {
     private val threadCount = AppConfig.threadCount
     private var searchPool =
-        Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
+        Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val handler = Handler(Looper.getMainLooper())
     private var runnable: Runnable = Runnable { upDownload() }
