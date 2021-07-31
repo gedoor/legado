@@ -31,8 +31,8 @@ import kotlin.math.min
 
 class CacheBookService : BaseService() {
     private val threadCount = AppConfig.threadCount
-    private var searchPool =
-        Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
+    private var cachePool =
+        Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val handler = Handler(Looper.getMainLooper())
     private var runnable: Runnable = Runnable { upDownload() }
@@ -83,7 +83,7 @@ class CacheBookService : BaseService() {
 
     override fun onDestroy() {
         tasks.clear()
-        searchPool.close()
+        cachePool.close()
         handler.removeCallbacks(runnable)
         downloadMap.clear()
         finalMap.clear()
@@ -134,7 +134,7 @@ class CacheBookService : BaseService() {
             return
         }
         downloadCount[bookUrl] = DownloadCount()
-        execute {
+        execute(context = cachePool) {
             appDb.bookChapterDao.getChapterList(bookUrl, start, end).let {
                 if (it.isNotEmpty()) {
                     val chapters = CopyOnWriteArraySet<BookChapter>()
@@ -159,7 +159,7 @@ class CacheBookService : BaseService() {
 
     private fun download() {
         downloadingCount += 1
-        val task = Coroutine.async(this, context = searchPool) {
+        val task = Coroutine.async(this, context = cachePool) {
             if (!isActive) return@async
             val bookChapter: BookChapter? = synchronized(this@CacheBookService) {
                 downloadMap.forEach {
@@ -186,16 +186,16 @@ class CacheBookService : BaseService() {
                     return@async
                 }
                 if (!BookHelp.hasImageContent(book, bookChapter)) {
-                    webBook.getContent(this, book, bookChapter, context = searchPool)
+                    webBook.getContent(this, book, bookChapter, context = cachePool)
                         .timeout(60000L)
-                        .onError {
+                        .onError(cachePool) {
                             synchronized(this) {
                                 downloadingList.remove(bookChapter.url)
                             }
                             notificationContent = "getContentError${it.localizedMessage}"
                             upNotification()
                         }
-                        .onSuccess {
+                        .onSuccess(cachePool) {
                             synchronized(this@CacheBookService) {
                                 downloadCount[book.bookUrl]?.increaseSuccess()
                                 downloadCount[book.bookUrl]?.increaseFinished()
@@ -218,7 +218,7 @@ class CacheBookService : BaseService() {
                                     downloadCount.remove(book.bookUrl)
                                 }
                             }
-                        }.onFinally {
+                        }.onFinally(cachePool) {
                             postDownloading(true)
                         }
                 } else {
@@ -228,7 +228,7 @@ class CacheBookService : BaseService() {
                     postDownloading(true)
                 }
             }
-        }.onError {
+        }.onError(cachePool) {
             notificationContent = "ERROR:${it.localizedMessage}"
             CacheBook.addLog(notificationContent)
             upNotification()

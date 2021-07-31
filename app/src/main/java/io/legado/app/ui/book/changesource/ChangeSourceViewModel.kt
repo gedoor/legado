@@ -133,7 +133,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         val task = webBook
             .searchBook(viewModelScope, name, context = searchPool!!)
             .timeout(60000L)
-            .onSuccess(IO) {
+            .onSuccess(searchPool) {
                 it.forEach { searchBook ->
                     if (searchBook.name == name) {
                         if ((AppConfig.changeSourceCheckAuthor && searchBook.author.contains(author))
@@ -152,7 +152,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                     }
                 }
             }
-            .onFinally {
+            .onFinally(searchPool) {
                 synchronized(this) {
                     if (searchIndex < bookSourceList.lastIndex) {
                         search()

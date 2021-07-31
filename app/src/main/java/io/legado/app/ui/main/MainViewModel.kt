@@ -48,7 +48,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun upToc(books: List<Book>) {
-        execute {
+        execute(context = upTocPool) {
             books.filter {
                 it.origin != BookType.local && it.canUpdate
             }.forEach {
@@ -85,9 +85,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         appDb.bookChapterDao.delByBook(book.bookUrl)
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
                         cacheBook(webBook, book)
-                    }.onError {
+                    }.onError(upTocPool) {
                         it.printStackTrace()
-                    }.onFinally {
+                    }.onFinally(upTocPool) {
                         synchronized(this) {
                             bookMap.remove(bookEntry.key)
                             updateList.remove(book.bookUrl)
