@@ -22,6 +22,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.audio.AudioPlayActivity
+import io.legado.app.ui.book.group.GroupEdit
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
@@ -52,7 +53,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     override var books: List<Book> = emptyList()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        searchView = binding.titleBar.findViewById(R.id.search_view)
         setSupportToolbar(binding.titleBar.toolbar)
         initRecyclerView()
         initGroupData()
@@ -159,34 +159,30 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun onItemClick(position: Int) {
-        if (position < bookGroups.size) {
-            val bookGroup = bookGroups[position]
-            groupId = bookGroup.groupId
-            initBooksData()
-        } else {
-            val book = books[position - bookGroups.size]
-            when (book.type) {
+        when (val item = getItem(position)) {
+            is Book -> when (item.type) {
                 BookType.audio ->
                     startActivity<AudioPlayActivity> {
-                        putExtra("bookUrl", book.bookUrl)
+                        putExtra("bookUrl", item.bookUrl)
                     }
                 else -> startActivity<ReadBookActivity> {
-                    putExtra("bookUrl", book.bookUrl)
+                    putExtra("bookUrl", item.bookUrl)
                 }
+            }
+            is BookGroup -> {
+                groupId = item.groupId
+                initBooksData()
             }
         }
     }
 
     override fun onItemLongClick(position: Int) {
-        if (position < bookGroups.size) {
-            groupId = bookGroups[position].groupId
-            initBooksData()
-        } else {
-            val book = books[position - bookGroups.size]
-            startActivity<BookInfoActivity> {
-                putExtra("name", book.name)
-                putExtra("author", book.author)
+        when (val item = getItem(position)) {
+            is Book -> startActivity<BookInfoActivity> {
+                putExtra("name", item.name)
+                putExtra("author", item.author)
             }
+            is BookGroup -> GroupEdit.show(requireContext(), layoutInflater, item)
         }
     }
 

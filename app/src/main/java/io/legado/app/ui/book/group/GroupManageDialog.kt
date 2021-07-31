@@ -117,37 +117,6 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }.show().requestInputMethod()
     }
 
-    @SuppressLint("InflateParams")
-    private fun editGroup(bookGroup: BookGroup) {
-        alert(title = getString(R.string.group_edit)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
-                editView.setText(bookGroup.groupName)
-            }
-            if (bookGroup.groupId >= 0) {
-                neutralButton(R.string.delete) {
-                    deleteGroup(bookGroup)
-                }
-            }
-            customView { alertBinding.root }
-            yesButton {
-                alertBinding.editView.text?.toString()?.let {
-                    viewModel.upGroup(bookGroup.copy(groupName = it))
-                }
-            }
-            noButton()
-        }.show().requestInputMethod()
-    }
-
-    private fun deleteGroup(bookGroup: BookGroup) {
-        alert(R.string.delete, R.string.sure_del) {
-            okButton {
-                viewModel.delGroup(bookGroup)
-            }
-            noButton()
-        }.show()
-    }
-
     private inner class GroupAdapter(context: Context) :
         RecyclerAdapter<BookGroup, ItemBookGroupManageBinding>(context),
         ItemTouchCallback.Callback {
@@ -173,7 +142,11 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemBookGroupManageBinding) {
             binding.run {
-                tvEdit.setOnClickListener { getItem(holder.layoutPosition)?.let { editGroup(it) } }
+                tvEdit.setOnClickListener {
+                    getItem(holder.layoutPosition)?.let { bookGroup ->
+                        GroupEdit.show(context, layoutInflater, bookGroup)
+                    }
+                }
                 swShow.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         getItem(holder.layoutPosition)?.let {
