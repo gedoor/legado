@@ -53,30 +53,26 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
 
     private fun onBindGroup(binding: ItemBookshelfListGroupBinding, position: Int, bundle: Bundle) {
         binding.run {
-            val item = callBack.getItem(position)
-            if (item is BookGroup) {
-                tvName.text = item.groupName
-            }
+            val item = callBack.getItem(position) as BookGroup
+            tvName.text = item.groupName
         }
     }
 
     private fun onBindBook(binding: ItemBookshelfListBinding, position: Int, bundle: Bundle) {
         binding.run {
-            val item = callBack.getItem(position)
-            if (item is Book) {
-                tvRead.text = item.durChapterTitle
-                tvLast.text = item.latestChapterTitle
-                bundle.keySet().forEach {
-                    when (it) {
-                        "name" -> tvName.text = item.name
-                        "author" -> tvAuthor.text = item.author
-                        "cover" -> ivCover.load(
-                            item.getDisplayCover(),
-                            item.name,
-                            item.author
-                        )
-                        "refresh" -> upRefresh(this, item)
-                    }
+            val item = callBack.getItem(position) as Book
+            tvRead.text = item.durChapterTitle
+            tvLast.text = item.latestChapterTitle
+            bundle.keySet().forEach {
+                when (it) {
+                    "name" -> tvName.text = item.name
+                    "author" -> tvAuthor.text = item.author
+                    "cover" -> ivCover.load(
+                        item.getDisplayCover(),
+                        item.name,
+                        item.author
+                    )
+                    "refresh" -> upRefresh(this, item)
                 }
             }
         }

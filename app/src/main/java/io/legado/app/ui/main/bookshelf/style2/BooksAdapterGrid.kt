@@ -54,27 +54,23 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
 
     private fun onBindGroup(binding: ItemBookshelfGridGroupBinding, position: Int, bundle: Bundle) {
         binding.run {
-            val item = callBack.getItem(position)
-            if (item is BookGroup) {
-                tvName.text = item.groupName
-            }
+            val item = callBack.getItem(position) as BookGroup
+            tvName.text = item.groupName
         }
     }
 
     private fun onBindBook(binding: ItemBookshelfGridBinding, position: Int, bundle: Bundle) {
         binding.run {
-            val item = callBack.getItem(position)
-            if (item is Book) {
-                bundle.keySet().forEach {
-                    when (it) {
-                        "name" -> tvName.text = item.name
-                        "cover" -> ivCover.load(
-                            item.getDisplayCover(),
-                            item.name,
-                            item.author
-                        )
-                        "refresh" -> upRefresh(this, item)
-                    }
+            val item = callBack.getItem(position) as Book
+            bundle.keySet().forEach {
+                when (it) {
+                    "name" -> tvName.text = item.name
+                    "cover" -> ivCover.load(
+                        item.getDisplayCover(),
+                        item.name,
+                        item.author
+                    )
+                    "refresh" -> upRefresh(this, item)
                 }
             }
         }
