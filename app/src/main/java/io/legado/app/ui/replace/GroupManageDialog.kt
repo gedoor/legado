@@ -49,7 +49,6 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(backgroundColor)
         binding.toolBar.setBackgroundColor(primaryColor)
         initView()
