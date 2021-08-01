@@ -168,6 +168,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun onPause() {
         super.onPause()
+        autoPageStop()
         mHandler.removeCallbacks(backupRunnable)
         ReadBook.saveRead()
         timeBatteryReceiver?.let {
