@@ -27,11 +27,7 @@ class WebService : BaseService() {
         }
 
         fun stop(context: Context) {
-            if (isRun) {
-                context.startService<WebService> {
-                    action = IntentAction.stop
-                }
-            }
+            context.stopService<WebService>()
         }
 
     }
