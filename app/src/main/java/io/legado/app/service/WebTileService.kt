@@ -32,15 +32,19 @@ class WebTileService : TileService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.action) {
-            IntentAction.start -> {
-                qsTile.state = Tile.STATE_ACTIVE
-                qsTile.updateTile()
+        try {
+            when (intent?.action) {
+                IntentAction.start -> {
+                    qsTile.state = Tile.STATE_ACTIVE
+                    qsTile.updateTile()
+                }
+                IntentAction.stop -> {
+                    qsTile.state = Tile.STATE_INACTIVE
+                    qsTile.updateTile()
+                }
             }
-            IntentAction.stop -> {
-                qsTile.state = Tile.STATE_INACTIVE
-                qsTile.updateTile()
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         return super.onStartCommand(intent, flags, startId)
     }
