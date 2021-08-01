@@ -401,7 +401,7 @@ class AnalyzeByJSoup(doc: Any) {
                     var rl = rus[len]
                     if (rl == ' ') continue //跳过空格
 
-                    if (rl in '0'..'9') l += rl //将数值累接入临时字串中，遇到分界符才取出
+                    if (rl in '0'..'9') l = rl + l //将数值累接入临时字串中，遇到分界符才取出
                     else if (rl == '-') curMinus = true
                     else {
 
@@ -461,7 +461,7 @@ class AnalyzeByJSoup(doc: Any) {
                 val rl = rus[len]
                 if (rl == ' ') continue //跳过空格
 
-                if (rl in '0'..'9') l += rl //将数值累接入临时字串中，遇到分界符才取出
+                if (rl in '0'..'9') l = rl + l //将数值累接入临时字串中，遇到分界符才取出
                 else if (rl == '-') curMinus = true
                 else {
 
