@@ -440,10 +440,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     mode = Mode.Json
                     ruleStr.substring(6)
                 }
-                ruleStr.startsWith("//") -> {//XPath特征很明显,无需配置单独的识别标头
-                    mode = Mode.XPath
-                    ruleStr
-                }
                 isJSON || ruleStr.startsWith("$.") || ruleStr.startsWith("$[") -> {
                     mode = Mode.Json
                     ruleStr
