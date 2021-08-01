@@ -16,10 +16,6 @@ import java.util.*
 @Keep
 class AnalyzeByJSoup(doc: Any) {
     companion object {
-        /**
-         * "class", "id", "tag", "text", "children"
-         */
-        val validKeys = arrayOf("class", "id", "tag", "text", "children")
 
         fun parse(doc: Any): Element {
             return when (doc) {
@@ -260,22 +256,16 @@ class AnalyzeByJSoup(doc: Any) {
 
     /**
      * 1.支持阅读原有写法，':'分隔索引，!或.表示筛选方式，索引可为负数
-     *
      * 例如 tag.div.-1:10:2 或 tag.div!0:3
      *
      * 2. 支持与jsonPath类似的[]索引写法
-     *
      * 格式形如 [it,it，。。。] 或 [!it,it，。。。] 其中[!开头表示筛选方式为排除，it为单个索引或区间。
-     *
      * 区间格式为 start:end 或 start:end:step，其中start为0可省略，end为-1可省略。
-     *
      * 索引，区间两端及间隔都支持负数
-     *
      * 例如 tag.div[-1, 3:-2:-10, 2]
-     *
      * 特殊用法 tag.div[-1:0] 可在任意地方让列表反向
-     *
      * */
+    @Suppress("UNCHECKED_CAST")
     data class ElementsSingle(
         var split: Char = '.',
         var beforeRule: String = "",
@@ -322,7 +312,6 @@ class AnalyzeByJSoup(doc: Any) {
             } else for (ix in lastIndexs downTo 0) { //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
                 if (indexs[ix] is Triple<*, *, *>) { //区间
-
                     val (startx, endx, stepx) = indexs[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
 
                     val start = if (startx == null) 0 //左端省略表示0
