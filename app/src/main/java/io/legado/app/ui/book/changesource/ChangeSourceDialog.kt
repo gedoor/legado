@@ -194,9 +194,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     override fun changeTo(searchBook: SearchBook) {
-        val book = searchBook.toBook()
-        book.upInfoFromOld(callBack?.oldBook)
-        callBack?.changeTo(book)
+        changeSource(searchBook)
         dismissAllowingStateLoss()
     }
 
@@ -205,6 +203,31 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     override fun disableSource(searchBook: SearchBook) {
         viewModel.disableSource(searchBook)
+    }
+
+    override fun topSource(searchBook: SearchBook) {
+        viewModel.topSource(searchBook)
+    }
+
+    override fun bottomSource(searchBook: SearchBook) {
+        viewModel.bottomSource(searchBook)
+    }
+
+    override fun deleteSource(searchBook: SearchBook) {
+        if (bookUrl == searchBook.bookUrl) {
+            viewModel.firstSourceOrNull(searchBook)?.let {
+                changeSource(it)
+            }
+        }
+        viewModel.del(searchBook)
+    }
+
+    private fun changeSource(searchBook: SearchBook) {
+        val book = searchBook.toBook()
+        book.upInfoFromOld(callBack?.oldBook)
+        callBack?.changeTo(book)
+        searchBook.time = System.currentTimeMillis()
+        viewModel.updateSource(searchBook)
     }
 
     /**

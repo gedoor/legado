@@ -88,6 +88,16 @@ class ChangeSourceAdapter(
                 R.id.menu_disable_book_source -> {
                     callBack.disableSource(searchBook)
                 }
+                R.id.menu_top_source -> {
+                    callBack.topSource(searchBook)
+                }
+                R.id.menu_bottom_source -> {
+                    callBack.bottomSource(searchBook)
+                }
+                R.id.menu_delete_book_source -> {
+                    callBack.deleteSource(searchBook)
+                    updateItems(0, itemCount, listOf<Int>())
+                }
             }
             true
         }
@@ -98,5 +108,8 @@ class ChangeSourceAdapter(
         val bookUrl: String?
         fun changeTo(searchBook: SearchBook)
         fun disableSource(searchBook: SearchBook)
+        fun topSource(searchBook: SearchBook)
+        fun bottomSource(searchBook: SearchBook)
+        fun deleteSource(searchBook: SearchBook)
     }
 }

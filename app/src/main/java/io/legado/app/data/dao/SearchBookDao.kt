@@ -1,9 +1,6 @@
 package io.legado.app.data.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.data.entities.SearchBook
 
 @Dao
@@ -62,4 +59,9 @@ interface SearchBookDao {
     @Query("delete from searchBooks where time < :time")
     fun clearExpired(time: Long)
 
+    @Update
+    fun update(vararg searchBook: SearchBook)
+
+    @Delete
+    fun delete(vararg searchBook: SearchBook)
 }
