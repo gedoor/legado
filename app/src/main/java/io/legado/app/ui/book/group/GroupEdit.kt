@@ -26,6 +26,7 @@ object GroupEdit {
             customView { alertBinding.root }
             yesButton {
                 alertBinding.editView.text?.toString()?.let {
+                    bookGroup.groupName = it
                     Coroutine.async {
                         appDb.bookGroupDao.update(bookGroup)
                     }
