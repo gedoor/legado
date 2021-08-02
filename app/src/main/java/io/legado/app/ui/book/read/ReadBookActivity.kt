@@ -700,7 +700,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
         var delayMillis = ReadBookConfig.autoReadSpeed * 1000L / binding.readView.height
         var scrollOffset = 1
         if (delayMillis < 20) {
-            scrollOffset = 20 / delayMillis.toInt()
+            var delayInt=delayMillis.toInt()
+            if(delayInt==0)delayInt =1
+            scrollOffset = 20 / delayInt
             delayMillis = 20
         }
         mHandler.removeCallbacks(autoPageRunnable)
