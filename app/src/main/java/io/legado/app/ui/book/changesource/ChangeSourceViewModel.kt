@@ -242,4 +242,49 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
+    fun topSource(searchBook: SearchBook) {
+        execute {
+            appDb.bookSourceDao.getBookSource(searchBook.origin)?.let { source ->
+                val minOrder = appDb.bookSourceDao.minOrder - 1
+                source.customOrder = minOrder
+                searchBook.originOrder = source.customOrder
+                appDb.bookSourceDao.update(source)
+                updateSource(searchBook)
+            }
+            upAdapter()
+        }
+    }
+
+    fun bottomSource(searchBook: SearchBook) {
+        execute {
+            appDb.bookSourceDao.getBookSource(searchBook.origin)?.let { source ->
+                val maxOrder = appDb.bookSourceDao.maxOrder + 1
+                source.customOrder = maxOrder
+                searchBook.originOrder = source.customOrder
+                appDb.bookSourceDao.update(source)
+                updateSource(searchBook)
+            }
+            upAdapter()
+        }
+    }
+
+    fun updateSource(searchBook: SearchBook) {
+        appDb.searchBookDao.update(searchBook)
+    }
+
+    fun del(searchBook: SearchBook) {
+        execute {
+            appDb.bookSourceDao.getBookSource(searchBook.origin)?.let { source ->
+                appDb.bookSourceDao.delete(source)
+                appDb.searchBookDao.delete(searchBook)
+            }
+        }
+        searchBooks.remove(searchBook)
+        upAdapter()
+    }
+
+    fun firstSourceOrNull(searchBook: SearchBook): SearchBook? {
+        return searchBooks.firstOrNull { it.bookUrl != searchBook.bookUrl }
+    }
+
 }

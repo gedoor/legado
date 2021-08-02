@@ -2,7 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_top_source"
+        android:title="@string/to_top" />
+
+    <item
+        android:id="@+id/menu_bottom_source"
+        android:title="@string/to_bottom" />
+
+    <item
         android:id="@+id/menu_disable_book_source"
         android:title="@string/disable_book_source" />
+
+    <item
+        android:id="@+id/menu_delete_book_source"
+        android:title="@string/delete" />
 
 </menu>
