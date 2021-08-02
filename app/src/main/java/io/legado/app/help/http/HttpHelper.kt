@@ -45,7 +45,8 @@ val okHttpClient: OkHttpClient by lazy {
             chain.proceed(request)
         })
     if (AppConfig.isCronet && CronetLoader.install()) {
-        builder.addInterceptor(CronetInterceptor())
+        //提供CookieJar 用于同步Cookie
+        builder.addInterceptor(CronetInterceptor(null))
     }
 
 
