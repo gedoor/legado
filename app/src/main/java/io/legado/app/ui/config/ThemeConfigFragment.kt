@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import io.legado.app.R
@@ -26,6 +25,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
+import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.utils.*
@@ -35,17 +35,21 @@ import java.io.File
 @Suppress("SameParameterValue")
 class ThemeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private val selectLightBg = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        it ?: return@registerForActivityResult
-        setBgFromUri(it, PreferKey.bgImage) {
-            upTheme(false)
-        }
-    }
-    private val selectDarkBg = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        it ?: return@registerForActivityResult
-        setBgFromUri(it, PreferKey.bgImageN) {
-            upTheme(true)
+    private val requestCodeCover = 111
+    private val requestCodeCoverDark = 112
+    private val requestCodeBgLight = 121
+    private val requestCodeBgDark = 122
+    private val selectImage = registerForActivityResult(ActivityResultContractUtils.SelectImage()) {
+        val uri = it?.second ?: return@registerForActivityResult
+        when (it.first) {
+            requestCodeCover -> setCoverFromUri(PreferKey.defaultCover, uri)
+            requestCodeCoverDark -> setCoverFromUri(PreferKey.defaultCoverDark, uri)
+            requestCodeBgLight -> setBgFromUri(uri, PreferKey.bgImage) {
+                upTheme(false)
+            }
+            requestCodeBgDark -> setBgFromUri(uri, PreferKey.bgImageN) {
+                upTheme(true)
+            }
         }
     }
 
@@ -57,6 +61,8 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.bgImage, getPrefString(PreferKey.bgImage))
         upPreferenceSummary(PreferKey.bgImageN, getPrefString(PreferKey.bgImageN))
         upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
+        upPreferenceSummary(PreferKey.defaultCover, getPrefString(PreferKey.defaultCover))
+        upPreferenceSummary(PreferKey.defaultCoverDark, getPrefString(PreferKey.defaultCoverDark))
         findPreference<ColorPreference>(PreferKey.cBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
@@ -85,14 +91,14 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         setHasOptionsMenu(true)
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onPause() {
+    override fun onDestroy() {
+        super.onDestroy()
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        super.onPause()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -128,6 +134,9 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             PreferKey.cNBBackground -> {
                 upTheme(true)
             }
+            PreferKey.defaultCover, PreferKey.defaultCoverDark -> {
+                upPreferenceSummary(key, getPrefString(key))
+            }
         }
 
     }
@@ -151,29 +160,52 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
             "saveDayTheme", "saveNightTheme" -> saveThemeAlert(key)
             PreferKey.bgImage -> if (getPrefString(PreferKey.bgImage).isNullOrEmpty()) {
-                selectLightBg.launch("image/*")
+                selectImage.launch(requestCodeBgLight)
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImage)
                         upTheme(false)
                     } else {
-                        selectLightBg.launch("image/*")
+                        selectImage.launch(requestCodeBgLight)
                     }
                 }
             }
             PreferKey.bgImageN -> if (getPrefString(PreferKey.bgImageN).isNullOrEmpty()) {
-                selectDarkBg.launch("image/*")
+                selectImage.launch(requestCodeBgDark)
             } else {
                 selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                     if (i == 0) {
                         removePref(PreferKey.bgImageN)
                         upTheme(true)
                     } else {
-                        selectDarkBg.launch("image/*")
+                        selectImage.launch(requestCodeBgDark)
                     }
                 }
             }
+            PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
+                selectImage.launch(requestCodeCover)
+            } else {
+                selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
+                    if (i == 0) {
+                        removePref(PreferKey.defaultCover)
+                    } else {
+                        selectImage.launch(requestCodeCover)
+                    }
+                }
+            }
+            PreferKey.defaultCoverDark ->
+                if (getPrefString(PreferKey.defaultCoverDark).isNullOrEmpty()) {
+                    selectImage.launch(requestCodeCoverDark)
+                } else {
+                    selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
+                        if (i == 0) {
+                            removePref(PreferKey.defaultCoverDark)
+                        } else {
+                            selectImage.launch(requestCodeCoverDark)
+                        }
+                    }
+                }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -217,6 +249,14 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         when (preferenceKey) {
             PreferKey.barElevation -> preference.summary =
                 getString(R.string.bar_elevation_s, value)
+            PreferKey.bgImage,
+            PreferKey.bgImageN,
+            PreferKey.defaultCover,
+            PreferKey.defaultCoverDark -> preference.summary = if (value.isNullOrBlank()) {
+                getString(R.string.select_image)
+            } else {
+                value
+            }
             else -> preference.summary = value
         }
     }
@@ -253,6 +293,43 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                             putPrefString(preferenceKey, file.absolutePath)
                             upPreferenceSummary(preferenceKey, file.absolutePath)
                             success()
+                        }
+                    }
+                }
+                .request()
+        }
+    }
+
+    private fun setCoverFromUri(preferenceKey: String, uri: Uri) {
+        if (uri.isContentScheme()) {
+            val doc = DocumentFile.fromSingleUri(requireContext(), uri)
+            doc?.name?.let {
+                var file = requireContext().externalFiles
+                file = FileUtils.createFileIfNotExist(file, "covers", it)
+                kotlin.runCatching {
+                    DocumentUtils.readBytes(requireContext(), doc.uri)
+                }.getOrNull()?.let { byteArray ->
+                    file.writeBytes(byteArray)
+                    putPrefString(preferenceKey, file.absolutePath)
+                    CoverImageView.upDefaultCover()
+                } ?: toastOnUi("获取文件出错")
+            }
+        } else {
+            PermissionsCompat.Builder(this)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                        val imgFile = File(path)
+                        if (imgFile.exists()) {
+                            var file = requireContext().externalFiles
+                            file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
+                            file.writeBytes(imgFile.readBytes())
+                            putPrefString(PreferKey.defaultCover, file.absolutePath)
+                            CoverImageView.upDefaultCover()
                         }
                     }
                 }

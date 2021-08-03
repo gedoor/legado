@@ -66,6 +66,7 @@ object PreferKey {
     const val transparentStatusBar = "transparentStatusBar"
     const val immNavigationBar = "immNavigationBar"
     const val defaultCover = "defaultCover"
+    const val defaultCoverDark = "defaultCoverDark"
     const val replaceEnableDefault = "replaceEnableDefault"
     const val showBrightnessView = "showBrightnessView"
     const val autoClearExpired = "autoClearExpired"

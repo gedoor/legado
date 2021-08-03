@@ -179,7 +179,10 @@ class CoverImageView @JvmOverloads constructor(
 
         @SuppressLint("UseCompatLoadingForDrawables")
         fun upDefaultCover() {
-            val path = appCtx.getPrefString(PreferKey.defaultCover)
+            val preferKey =
+                if (AppConfig.isNightTheme) PreferKey.defaultCoverDark
+                else PreferKey.defaultCover
+            val path = appCtx.getPrefString(preferKey)
             var dw = Drawable.createFromPath(path)
             if (dw == null) {
                 showBookName = true
