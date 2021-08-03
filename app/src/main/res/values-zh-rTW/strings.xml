@@ -345,7 +345,7 @@
     <string name="pt_show_all_find">顯示所有發現</string>
     <string name="ps_show_all_find">關閉則只顯示勾選源的發現</string>
     <string name="update_toc">更新目錄</string>
-    <string name="txt_toc_regex">Txt目錄正則</string>
+    <string name="txt_toc_regex">TXT目錄正則</string>
     <string name="set_charset">設定編碼</string>
     <string name="swap_sort">倒序-順序</string>
     <string name="sort">排序</string>
@@ -843,8 +843,8 @@
     <string name="group_style">分組樣式</string>
     <string name="export_file_name">匯出檔案名</string>
     <string name="reset">重設</string>
-    <string name="null_url">url为空</string>
+    <string name="null_url">url為空</string>
     <string name="dict">字典</string>
-    <string name="unknown_error">未知错误</string>
+    <string name="unknown_error">未知錯誤</string>
 
 </resources>
