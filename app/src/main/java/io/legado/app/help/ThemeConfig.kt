@@ -11,6 +11,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
@@ -28,6 +29,7 @@ object ThemeConfig {
         ReadBookConfig.upBg()
         applyTheme(context)
         initNightMode()
+        CoverImageView.upDefaultCover()
         postEvent(EventBus.RECREATE, "")
     }
 
