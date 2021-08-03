@@ -789,7 +789,7 @@
     <string name="non_action">無操作</string>
     <string name="body_title">正文標題</string>
     <string name="show_hide">顯示/隱藏</string>
-    <string name="header_footer">頁眉<![CDATA[&]]>頁脚</string>
+    <string name="header_footer">頁眉<![CDATA[&]]>頁腳</string>
     <string name="rule_subscription">規則訂閱</string>
     <string name="rule_sub_empty_msg">添加大佬們提供的規則匯入地址 添加後點擊可匯入規則</string>
     <string name="get_book_progress">拉取雲端進度</string>
