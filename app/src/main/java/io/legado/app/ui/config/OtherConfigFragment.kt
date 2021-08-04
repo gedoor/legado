@@ -144,8 +144,10 @@ class OtherConfigFragment : BasePreferenceFragment(),
     @SuppressLint("InflateParams")
     private fun showUserAgentDialog() {
         alert("UserAgent") {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-            alertBinding.editView.setText(AppConfig.userAgent)
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = "UserAgent"
+                editView.setText(AppConfig.userAgent)
+            }
             customView { alertBinding.root }
             okButton {
                 val userAgent = alertBinding.editView.text?.toString()
