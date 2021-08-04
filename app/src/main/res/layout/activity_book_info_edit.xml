@@ -52,7 +52,6 @@
                             android:id="@+id/tie_book_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:minHeight="48dp"
                             android:singleLine="true" />
                     </io.legado.app.ui.widget.text.TextInputLayout>
 
@@ -66,7 +65,6 @@
                             android:id="@+id/tie_book_author"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:minHeight="48dp"
                             android:singleLine="true" />
                     </io.legado.app.ui.widget.text.TextInputLayout>
 
@@ -83,8 +81,7 @@
                 <io.legado.app.ui.widget.text.EditText
                     android:id="@+id/tie_cover_url"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="48dp" />
+                    android:layout_height="wrap_content" />
             </io.legado.app.ui.widget.text.TextInputLayout>
 
             <LinearLayout
@@ -131,8 +128,7 @@
                 <io.legado.app.ui.widget.text.EditText
                     android:id="@+id/tie_book_intro"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="48dp" />
+                    android:layout_height="wrap_content" />
             </io.legado.app.ui.widget.text.TextInputLayout>
 
         </LinearLayout>
