@@ -849,5 +849,6 @@
     <string name="dict">字典</string>
     <string name="unknown_error">未知错误</string>
     <string name="autobackup_fail">Autobackup failed</string>
+    <string name="end">end</string>
 
 </resources>

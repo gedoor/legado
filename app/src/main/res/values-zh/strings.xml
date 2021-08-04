@@ -847,5 +847,6 @@
     <string name="dict">字典</string>
     <string name="unknown_error">未知错误</string>
     <string name="autobackup_fail">自动备份失败</string>
+    <string name="end">结束</string>
 
 </resources>

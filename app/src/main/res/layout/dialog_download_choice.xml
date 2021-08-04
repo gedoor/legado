@@ -4,10 +4,10 @@
     android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
     android:background="@color/background"
     android:gravity="center"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="16dp">
 
     <View
         android:layout_width="0dp"
@@ -30,6 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:background="@drawable/bg_edit"
+        android:hint="@string/start"
+        android:importantForAutofill="no"
         android:inputType="number"
         android:lines="1"
         android:maxLength="5"
@@ -40,7 +42,8 @@
         android:paddingBottom="4dp"
         android:textColor="@color/primaryText"
         android:textCursorDrawable="@drawable/shape_text_cursor"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -58,6 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:background="@drawable/bg_edit"
+        android:hint="@string/end"
+        android:importantForAutofill="no"
         android:inputType="number"
         android:lines="1"
         android:maxLength="5"
@@ -68,7 +73,8 @@
         android:paddingBottom="4dp"
         android:textColor="@color/primaryText"
         android:textCursorDrawable="@drawable/shape_text_cursor"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
     <View
         android:layout_width="0dp"

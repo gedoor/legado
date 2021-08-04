@@ -34,14 +34,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/is_enable" />
+            android:text="@string/is_enable"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <io.legado.app.lib.theme.view.ATECheckBox
             android:id="@+id/cb_single_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="false"
-            android:text="@string/single_url" />
+            android:text="@string/single_url"
+            tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>
 
@@ -64,14 +66,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="false"
-            android:text="@string/enable_js" />
+            android:text="@string/enable_js"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <io.legado.app.lib.theme.view.ATECheckBox
             android:id="@+id/cb_enable_base_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="false"
-            android:text="@string/load_with_base_url" />
+            android:text="@string/load_with_base_url"
+            tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>
 
