@@ -12,7 +12,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import androidx.viewbinding.ViewBinding
 import com.google.android.renderscript.Toolkit
 import io.legado.app.App
@@ -180,7 +179,9 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
         if (imageBg) {
             try {
-                window.decorView.background = BitmapDrawable(resources, getBackgroundImage(ThemeConfig.getBgImage(this) ?: return))
+                getBackgroundImage()?.let {
+                    window.decorView.background = BitmapDrawable(resources, it)
+                }
             } catch (e: OutOfMemoryError) {
                 toastOnUi(e.localizedMessage)
             } catch (e: Exception) {
@@ -189,20 +190,14 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
     }
 
-    private fun getBackgroundImage(bitmap: Bitmap): Bitmap {
-        when (Theme.getTheme()) {
-            Theme.Light -> PreferenceManager.getDefaultSharedPreferences(this).getInt(bgImageBlurring, 0).apply {
-                if (this != 0) {
-                    return Toolkit.blur(bitmap, this)
-                }
-            }
-            Theme.Dark -> PreferenceManager.getDefaultSharedPreferences(this).getInt(bgImageNBlurring, 0).apply {
-                if (this != 0) {
-                    return Toolkit.blur(bitmap, this)
-                }
-            }
+    private fun getBackgroundImage(): Bitmap? {
+        val bgImage = ThemeConfig.getBgImage(this) ?: return null
+        val blur = if (AppConfig.isNightTheme) {
+            getPrefInt(bgImageBlurring, 0)
+        } else {
+            getPrefInt(bgImageNBlurring, 0)
         }
-        return bitmap
+        return Toolkit.blur(bgImage, blur)
     }
 
     private fun setupSystemBar() {
