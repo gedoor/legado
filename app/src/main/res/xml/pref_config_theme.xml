@@ -86,6 +86,10 @@
             android:key="backgroundImage"
             android:title="@string/background_image" />
 
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="backgroundImageBlurring"
+            android:title="@string/background_image_blurring" />
+
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_200"
             android:key="colorBottomBackground"
