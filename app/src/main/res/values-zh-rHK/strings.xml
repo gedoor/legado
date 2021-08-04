@@ -804,6 +804,9 @@
     <string name="pre_download_s">預先下載%s章正文</string>
     <string name="is_enabled">係咪啟用</string>
     <string name="background_image">背景圖片</string>
+    <string name="background_image_blurring">背景圖片虛化</string>
+    <string name="background_image_blurring_radius">虛化半徑</string>
+    <string name="background_image_hint">0為停用，啓用範圍1~25\n半徑數值越大，虛化效果越高</string>
     <string name="export_folder">導出資料夾</string>
     <string name="export_charset">導出編碼</string>
     <string name="export_to_web_dav">導出到WebDav</string>

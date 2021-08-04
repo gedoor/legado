@@ -2,6 +2,8 @@ package io.legado.app.base
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
@@ -10,11 +12,15 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import androidx.viewbinding.ViewBinding
+import com.google.android.renderscript.Toolkit
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
+import io.legado.app.constant.PreferKey.bgImageBlurring
+import io.legado.app.constant.PreferKey.bgImageNBlurring
 import io.legado.app.constant.Theme
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ThemeConfig
@@ -174,15 +180,29 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
         if (imageBg) {
             try {
-                ThemeConfig.getBgImage(this)?.let {
-                    window.decorView.background = it
-                }
+                window.decorView.background = BitmapDrawable(resources, getBackgroundImage(ThemeConfig.getBgImage(this) ?: return))
             } catch (e: OutOfMemoryError) {
                 toastOnUi(e.localizedMessage)
             } catch (e: Exception) {
                 toastOnUi(e.localizedMessage)
             }
         }
+    }
+
+    private fun getBackgroundImage(bitmap: Bitmap): Bitmap {
+        when (Theme.getTheme()) {
+            Theme.Light -> PreferenceManager.getDefaultSharedPreferences(this).getInt(bgImageBlurring, 0).apply {
+                if (this != 0) {
+                    return Toolkit.blur(bitmap, this)
+                }
+            }
+            Theme.Dark -> PreferenceManager.getDefaultSharedPreferences(this).getInt(bgImageNBlurring, 0).apply {
+                if (this != 0) {
+                    return Toolkit.blur(bitmap, this)
+                }
+            }
+        }
+        return bitmap
     }
 
     private fun setupSystemBar() {

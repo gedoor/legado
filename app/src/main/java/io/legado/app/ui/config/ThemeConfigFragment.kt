@@ -183,6 +183,8 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     }
                 }
             }
+            PreferKey.bgImageBlurring -> ImageBlurringDialogFragment(PreferKey.bgImageBlurring) { upTheme(false) }.show(parentFragmentManager)
+            PreferKey.bgImageNBlurring -> ImageBlurringDialogFragment(PreferKey.bgImageNBlurring) { upTheme(true) }.show(parentFragmentManager)
             PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
                 selectImage.launch(requestCodeCover)
             } else {
