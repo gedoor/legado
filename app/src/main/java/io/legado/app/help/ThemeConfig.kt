@@ -1,9 +1,9 @@
 package io.legado.app.help
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatDelegate
 import io.legado.app.R
@@ -43,14 +43,14 @@ object ThemeConfig {
         AppCompatDelegate.setDefaultNightMode(targetMode)
     }
 
-    fun getBgImage(context: Context): Drawable? {
+    fun getBgImage(context: Context): Bitmap? {
         val bgPath = when (Theme.getTheme()) {
             Theme.Light -> context.getPrefString(PreferKey.bgImage)
             Theme.Dark -> context.getPrefString(PreferKey.bgImageN)
             else -> null
         }
         if (bgPath.isNullOrBlank()) return null
-        return BitmapDrawable.createFromPath(bgPath)
+        return BitmapFactory.decodeFile(bgPath)
     }
 
     fun upConfig() {
