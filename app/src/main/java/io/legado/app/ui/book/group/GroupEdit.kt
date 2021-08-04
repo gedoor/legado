@@ -15,7 +15,7 @@ object GroupEdit {
     fun show(context: Context, layoutInflater: LayoutInflater, bookGroup: BookGroup) = context.run {
         alert(title = getString(R.string.group_edit)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
+                textInputLayout.setHint(R.string.group_name)
                 editView.setText(bookGroup.groupName)
             }
             if (bookGroup.groupId >= 0) {

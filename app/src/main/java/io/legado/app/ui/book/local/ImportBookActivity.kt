@@ -280,7 +280,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private fun alertImportFileName() {
         alert(R.string.import_file_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "js"
+                textInputLayout.hint = "js"
                 editView.setText(AppConfig.bookImportFileName)
             }
             customView { alertBinding.root }

@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="48dp"
-    android:layout_marginBottom="48dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="12dp"
     android:overScrollMode="ifContentScrolls">
 
-    <io.legado.app.ui.widget.text.AutoCompleteTextView
-        android:id="@+id/edit_view"
+    <io.legado.app.ui.widget.text.TextInputLayout
+        android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        android:layout_height="wrap_content">
 
-</ScrollView>
+        <io.legado.app.ui.widget.text.AutoCompleteTextView
+            android:id="@+id/edit_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+    </io.legado.app.ui.widget.text.TextInputLayout>
+
+</androidx.core.widget.NestedScrollView>

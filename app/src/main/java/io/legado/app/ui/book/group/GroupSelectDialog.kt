@@ -125,7 +125,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun addGroup() {
         alert(title = getString(R.string.add_group)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
+                textInputLayout.setHint(R.string.group_name)
             }
             customView { alertBinding.root }
             yesButton {
@@ -143,7 +143,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun editGroup(bookGroup: BookGroup) {
         alert(title = getString(R.string.group_edit)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
+                textInputLayout.setHint(R.string.group_name)
                 editView.setText(bookGroup.groupName)
             }
             customView { alertBinding.root }

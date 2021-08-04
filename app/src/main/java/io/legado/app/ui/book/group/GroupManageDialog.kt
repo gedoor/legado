@@ -103,7 +103,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun addGroup() {
         alert(title = getString(R.string.add_group)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
+                textInputLayout.setHint(R.string.group_name)
             }
             customView { alertBinding.root }
             yesButton {

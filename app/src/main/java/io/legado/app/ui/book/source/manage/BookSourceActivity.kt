@@ -327,7 +327,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun checkSource() {
         alert(titleResource = R.string.search_book_key) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "search word"
+                textInputLayout.hint = "search word"
                 editView.setText(CheckSource.keyword)
             }
             customView { alertBinding.root }
@@ -347,7 +347,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun selectionAddToGroups() {
         alert(titleResource = R.string.add_group) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
+                textInputLayout.setHint(R.string.group_name)
                 editView.setFilterValues(groups.toList())
                 editView.dropDownHeight = 180.dp
             }
@@ -367,7 +367,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun selectionRemoveFromGroups() {
         alert(titleResource = R.string.remove_group) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
+                textInputLayout.setHint(R.string.group_name)
                 editView.setFilterValues(groups.toList())
                 editView.dropDownHeight = 180.dp
             }
@@ -401,7 +401,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_on_line) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url"
+                textInputLayout.hint = "url"
                 editView.setFilterValues(cacheUrls)
                 editView.delCallBack = {
                     cacheUrls.remove(it)

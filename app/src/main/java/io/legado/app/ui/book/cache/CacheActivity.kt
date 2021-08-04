@@ -298,7 +298,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun alertExportFileName() {
         alert(R.string.export_file_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "file name js"
+                textInputLayout.hint = "file name js"
                 editView.setText(AppConfig.bookExportFileName)
             }
             customView { alertBinding.root }
@@ -318,7 +318,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun showCharsetConfig() {
         alert(R.string.set_charset) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "charset name"
+                textInputLayout.hint = "charset name"
                 editView.setFilterValues(charsets)
                 editView.setText(AppConfig.exportCharset)
             }
