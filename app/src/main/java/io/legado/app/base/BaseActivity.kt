@@ -2,7 +2,6 @@ package io.legado.app.base
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
@@ -13,13 +12,10 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
-import com.google.android.renderscript.Toolkit
 import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
-import io.legado.app.constant.PreferKey.bgImageBlurring
-import io.legado.app.constant.PreferKey.bgImageNBlurring
 import io.legado.app.constant.Theme
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ThemeConfig
@@ -179,7 +175,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
         if (imageBg) {
             try {
-                getBackgroundImage()?.let {
+                ThemeConfig.getBgImage(this, windowSize)?.let {
                     window.decorView.background = BitmapDrawable(resources, it)
                 }
             } catch (e: OutOfMemoryError) {
@@ -188,16 +184,6 @@ abstract class BaseActivity<VB : ViewBinding>(
                 toastOnUi(e.localizedMessage)
             }
         }
-    }
-
-    private fun getBackgroundImage(): Bitmap? {
-        val bgImage = ThemeConfig.getBgImage(this) ?: return null
-        val blur = if (AppConfig.isNightTheme) {
-            getPrefInt(bgImageBlurring, 0)
-        } else {
-            getPrefInt(bgImageNBlurring, 0)
-        }
-        return Toolkit.blur(bgImage, blur)
     }
 
     private fun setupSystemBar() {
