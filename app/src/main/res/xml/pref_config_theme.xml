@@ -153,6 +153,10 @@
             android:key="backgroundImageNight"
             android:title="@string/background_image" />
 
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="backgroundImageNightBlurring"
+            android:title="@string/background_image_blurring" />
+
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_800"
             android:key="colorBottomBackgroundNight"

@@ -20,6 +20,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.PreferKey.bgImageBlurring
+import io.legado.app.constant.PreferKey.bgImageNBlurring
 import io.legado.app.constant.Theme
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ThemeConfig
@@ -189,9 +190,16 @@ abstract class BaseActivity<VB : ViewBinding>(
     }
 
     private fun getBackgroundImage(bitmap: Bitmap): Bitmap {
-        PreferenceManager.getDefaultSharedPreferences(this).getInt(bgImageBlurring, 0).apply {
-            if (this != 0) {
-                return Toolkit.blur(bitmap, this)
+        when (Theme.getTheme()) {
+            Theme.Light -> PreferenceManager.getDefaultSharedPreferences(this).getInt(bgImageBlurring, 0).apply {
+                if (this != 0) {
+                    return Toolkit.blur(bitmap, this)
+                }
+            }
+            Theme.Dark -> PreferenceManager.getDefaultSharedPreferences(this).getInt(bgImageNBlurring, 0).apply {
+                if (this != 0) {
+                    return Toolkit.blur(bitmap, this)
+                }
             }
         }
         return bitmap

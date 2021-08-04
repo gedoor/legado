@@ -98,5 +98,6 @@ object PreferKey {
     const val cNBackground = "colorBackgroundNight"
     const val cNBBackground = "colorBottomBackgroundNight"
     const val bgImageN = "backgroundImageNight"
+    const val bgImageNBlurring = "backgroundImageNightBlurring"
 
 }
