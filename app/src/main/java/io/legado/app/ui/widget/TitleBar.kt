@@ -17,11 +17,12 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.activity
 import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.statusBarHeight
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.bottomPadding
-import org.jetbrains.anko.topPadding
 
-class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, attrs) {
+@Suppress("unused")
+class TitleBar @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppBarLayout(context, attrs) {
 
     val toolbar: Toolbar
     val menu: Menu
@@ -138,23 +139,24 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
             }
         }
 
-        if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
-            topPadding = context.statusBarHeight
+        if (!isInEditMode) {
+            if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
+                setPadding(paddingLeft, context.statusBarHeight, paddingRight, paddingBottom)
+            }
+
+            if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
+                setPadding(paddingLeft, paddingTop, paddingRight, context.navigationBarHeight)
+            }
+
+            setBackgroundColor(context.primaryColor)
+
+            stateListAnimator = null
+            elevation = if (AppConfig.elevation < 0) {
+                context.elevation
+            } else {
+                AppConfig.elevation.toFloat()
+            }
         }
-
-        if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
-            bottomPadding = context.navigationBarHeight
-        }
-
-        backgroundColor = context.primaryColor
-
-        stateListAnimator = null
-        elevation = if (AppConfig.elevation < 0) {
-            context.elevation
-        } else {
-            AppConfig.elevation.toFloat()
-        }
-
         a.recycle()
     }
 
@@ -193,11 +195,12 @@ class TitleBar(context: Context, attrs: AttributeSet?) : AppBarLayout(context, a
 
     fun transparent() {
         elevation = 0f
-        backgroundColor = Color.TRANSPARENT
+        setBackgroundColor(Color.TRANSPARENT)
     }
 
     fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, fullScreen: Boolean) {
-        topPadding = if (!isInMultiWindowMode && fullScreen) context.statusBarHeight else 0
+        val topPadding = if (!isInMultiWindowMode && fullScreen) context.statusBarHeight else 0
+        setPadding(paddingLeft, topPadding, paddingRight, paddingBottom)
     }
 
     private fun attachToActivity() {

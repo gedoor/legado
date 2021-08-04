@@ -1,22 +1,20 @@
 package io.legado.app.utils
 
 import android.content.Context
-import android.graphics.Bitmap
+import android.graphics.*
 import android.graphics.Bitmap.Config
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
-import io.legado.app.App
+import splitties.init.appCtx
+import java.io.FileInputStream
 import java.io.IOException
 import kotlin.math.*
 
 
-@Suppress("unused", "WeakerAccess")
+@Suppress("unused", "WeakerAccess", "MemberVisibilityCanBePrivate")
 object BitmapUtils {
 
     /**
@@ -28,11 +26,12 @@ object BitmapUtils {
      * @param height 想要显示的图片的高度
      * @return
      */
-    fun decodeBitmap(path: String, width: Int, height: Int): Bitmap {
+    fun decodeBitmap(path: String, width: Int, height: Int): Bitmap? {
         val op = BitmapFactory.Options()
+        val ips = FileInputStream(path)
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, op) //获取尺寸信息
+        BitmapFactory.decodeFileDescriptor(ips.fd, null, op)
         //获取比例大小
         val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
         val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
@@ -45,21 +44,23 @@ object BitmapUtils {
             }
         }
         op.inJustDecodeBounds = false
-        return BitmapFactory.decodeFile(path, op)
+        return BitmapFactory.decodeFileDescriptor(ips.fd, null, op)
+
     }
 
     /** 从path中获取Bitmap图片
      * @param path 图片路径
      * @return
      */
-    fun decodeBitmap(path: String): Bitmap {
+    fun decodeBitmap(path: String): Bitmap? {
+
         val opts = BitmapFactory.Options()
+        val ips = FileInputStream(path)
         opts.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, opts)
+        BitmapFactory.decodeFileDescriptor(ips.fd, null, opts)
         opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
         opts.inJustDecodeBounds = false
-
-        return BitmapFactory.decodeFile(path, opts)
+        return BitmapFactory.decodeFileDescriptor(ips.fd, null, opts)
     }
 
     /**
@@ -221,12 +222,36 @@ object BitmapUtils {
         }
     }
 
+    fun changeBitmapSize(bitmap: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+
+        val width = bitmap.width
+        val height = bitmap.height
+
+        //计算压缩的比率
+        var scaleWidth = newWidth.toFloat() / width
+        var scaleHeight = newHeight.toFloat() / height
+
+        if (scaleWidth > scaleHeight) {
+            scaleWidth = scaleHeight
+        } else {
+            scaleHeight = scaleWidth
+        }
+
+        //获取想要缩放的matrix
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+
+        //获取新的bitmap
+        return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
+
+    }
+
     /**
      * 高斯模糊
      */
     fun stackBlur(srcBitmap: Bitmap?): Bitmap? {
         if (srcBitmap == null) return null
-        val rs = RenderScript.create(App.INSTANCE)
+        val rs = RenderScript.create(appCtx)
         val blurredBitmap = srcBitmap.copy(Config.ARGB_8888, true)
 
         //分配用于渲染脚本的内存

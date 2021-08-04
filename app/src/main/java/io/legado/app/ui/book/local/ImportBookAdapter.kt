@@ -2,37 +2,97 @@ package io.legado.app.ui.book.local
 
 import android.content.Context
 import android.net.Uri
+import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
+import io.legado.app.databinding.ItemImportBookBinding
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.item_import_book.view.*
-import org.jetbrains.anko.sdk27.listeners.onClick
 
 
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<DocItem>(context, R.layout.item_import_book) {
+    RecyclerAdapter<DocItem, ItemImportBookBinding>(context) {
     var selectedUris = hashSetOf<String>()
     var checkableCount = 0
-    private var bookshelf = arrayListOf<String>()
+    private var bookFileNames = arrayListOf<String>()
 
-    fun upBookHas(uriList: List<String>) {
-        bookshelf.clear()
-        bookshelf.addAll(uriList)
-        notifyDataSetChanged()
+    override fun getViewBinding(parent: ViewGroup): ItemImportBookBinding {
+        return ItemImportBookBinding.inflate(inflater, parent, false)
+    }
+
+    override fun onCurrentListChanged() {
         upCheckableCount()
     }
 
-    fun setData(data: List<DocItem>) {
-        setItems(data)
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemImportBookBinding,
+        item: DocItem,
+        payloads: MutableList<Any>
+    ) {
+        binding.run {
+            if (payloads.isEmpty()) {
+                if (item.isDir) {
+                    ivIcon.setImageResource(R.drawable.ic_folder)
+                    ivIcon.visible()
+                    cbSelect.invisible()
+                    llBrief.gone()
+                    cbSelect.isChecked = false
+                } else {
+                    if (bookFileNames.contains(item.name)) {
+                        ivIcon.setImageResource(R.drawable.ic_book_has)
+                        ivIcon.visible()
+                        cbSelect.invisible()
+                    } else {
+                        ivIcon.invisible()
+                        cbSelect.visible()
+                    }
+                    llBrief.visible()
+                    tvTag.text = item.name.substringAfterLast(".")
+                    tvSize.text = StringUtils.toSize(item.size)
+                    tvDate.text = AppConst.dateFormat.format(item.date)
+                    cbSelect.isChecked = selectedUris.contains(item.uri.toString())
+                }
+                tvName.text = item.name
+            } else {
+                cbSelect.isChecked = selectedUris.contains(item.uri.toString())
+            }
+        }
+    }
+
+    override fun registerListener(holder: ItemViewHolder, binding: ItemImportBookBinding) {
+        holder.itemView.setOnClickListener {
+            getItem(holder.layoutPosition)?.let {
+                if (it.isDir) {
+                    callBack.nextDoc(it.uri)
+                } else if (!bookFileNames.contains(it.name)) {
+                    if (!selectedUris.contains(it.uri.toString())) {
+                        selectedUris.add(it.uri.toString())
+                    } else {
+                        selectedUris.remove(it.uri.toString())
+                    }
+                    notifyItemChanged(holder.layoutPosition, true)
+                    callBack.upCountView()
+                }
+            }
+        }
+    }
+
+    fun upBookHas(bookUrls: List<String>) {
+        bookFileNames.clear()
+        bookUrls.forEach {
+            val path = Uri.decode(it)
+            bookFileNames.add(FileUtils.getName(path))
+        }
+        notifyDataSetChanged()
         upCheckableCount()
     }
 
     private fun upCheckableCount() {
         checkableCount = 0
         getItems().forEach {
-            if (!it.isDir && !bookshelf.contains(it.uri.toString())) {
+            if (!it.isDir && !bookFileNames.contains(it.name)) {
                 checkableCount++
             }
         }
@@ -42,7 +102,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     fun selectAll(selectAll: Boolean) {
         if (selectAll) {
             getItems().forEach {
-                if (!it.isDir && !bookshelf.contains(it.uri.toString())) {
+                if (!it.isDir && !bookFileNames.contains(it.name)) {
                     selectedUris.add(it.uri.toString())
                 }
             }
@@ -66,51 +126,10 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         callBack.upCountView()
     }
 
-    override fun convert(holder: ItemViewHolder, item: DocItem, payloads: MutableList<Any>) {
-        holder.itemView.apply {
-            if (payloads.isEmpty()) {
-                if (item.isDir) {
-                    iv_icon.setImageResource(R.drawable.ic_folder)
-                    iv_icon.visible()
-                    cb_select.invisible()
-                    ll_brief.gone()
-                    cb_select.isChecked = false
-                } else {
-                    if (bookshelf.contains(item.uri.toString())) {
-                        iv_icon.setImageResource(R.drawable.ic_book_has)
-                        iv_icon.visible()
-                        cb_select.invisible()
-                    } else {
-                        iv_icon.invisible()
-                        cb_select.visible()
-                    }
-                    ll_brief.visible()
-                    tv_tag.text = item.name.substringAfterLast(".")
-                    tv_size.text = StringUtils.toSize(item.size)
-                    tv_date.text = AppConst.dateFormat.format(item.date)
-                    cb_select.isChecked = selectedUris.contains(item.uri.toString())
-                }
-                tv_name.text = item.name
-            } else {
-                cb_select.isChecked = selectedUris.contains(item.uri.toString())
-            }
-        }
-    }
-
-    override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.onClick {
-            getItem(holder.layoutPosition)?.let {
-                if (it.isDir) {
-                    callBack.nextDoc(it.uri)
-                } else if (!bookshelf.contains(it.uri.toString())) {
-                    if (!selectedUris.contains(it.uri.toString())) {
-                        selectedUris.add(it.uri.toString())
-                    } else {
-                        selectedUris.remove(it.uri.toString())
-                    }
-                    notifyItemChanged(holder.layoutPosition, true)
-                    callBack.upCountView()
-                }
+    fun removeSelection() {
+        for (i in getItems().lastIndex downTo 0) {
+            if (getItem(i)?.uri.toString() in selectedUris) {
+                removeItem(i)
             }
         }
     }

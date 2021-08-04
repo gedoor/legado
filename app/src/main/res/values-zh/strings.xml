@@ -10,6 +10,8 @@
     <string name="menu_import_old">导入阅读数据</string>
     <string name="mkdirs">创建子文件夹</string>
     <string name="mkdirs_description">创建legado文件夹作为备份文件夹</string>
+    <string name="webdav_cache_backup">离线缓存书籍备份</string>
+    <string name="webdav_cache_backup_s">导出本地同时备份到legado文件夹下exports目录</string>
     <string name="backup_path">备份路径</string>
     <string name="select_backup_path">请选择备份路径</string>
     <string name="menu_import_old_version">导入旧版数据</string>
@@ -45,7 +47,7 @@
     <string name="recent_reading">最近阅读</string>
     <string name="last_read">最后阅读</string>
     <string name="update_log">更新日志</string>
-    <string name="bookshelf_empty">书架还空着，先去添加吧！</string>
+    <string name="bookshelf_empty">书架还空着，先去搜索书籍或从发现里添加吧！\n初次使用请关注公众号[开源阅读]获取书源和教程！</string>
     <string name="action_search">搜索</string>
     <string name="action_download">下载</string>
     <string name="layout_list">列表</string>
@@ -82,12 +84,11 @@
     <string name="is_loading">加载中…</string>
     <string name="retry">重试</string>
     <string name="web_service">Web 服务</string>
-    <string name="web_service_desc">启用Web服务</string>
+    <string name="web_service_desc">浏览器写源,看书</string>
     <string name="web_edit_source">web编辑书源</string>
-    <string name="http_ip">http://%1$s:%2$d</string>
-    <string name="download_offline">离线下载</string>
-    <string name="download_offline_t">离线下载</string>
-    <string name="download_offline_s">下载选择的章节到本地</string>
+    <string name="offline_cache">离线缓存</string>
+    <string name="offline_cache_t">离线缓存</string>
+    <string name="offline_cache_s">缓存选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
         \u3000\u3000这是一款使用Kotlin全新开发的开源的阅读软件，欢迎您的加入。关注公众号[开源阅读]！
@@ -96,6 +97,8 @@
         阅读3.0下载地址：\nhttps://www.coolapk.com/apk/256030
     </string>
     <string name="version_name">Version %s</string>
+    <string name="pt_background_verification">后台校验书源</string>
+    <string name="ps_background_verification">打开后可以在校验书源时自由操作</string>
     <string name="pt_auto_refresh">自动刷新</string>
     <string name="ps_auto_refresh">打开软件时自动更新书籍</string>
     <string name="pt_auto_download">自动下载最新章节</string>
@@ -148,10 +151,10 @@
     <string name="set_timer">定时</string>
     <string name="read_aloud_pause">朗读暂停</string>
     <string name="read_aloud_timer">正在朗读(还剩%d分钟)</string>
+    <string name="playing_timer">正在播放(还剩%d分钟)</string>
     <string name="ps_hide_navigation_bar">阅读界面隐藏虚拟按键</string>
     <string name="pt_hide_navigation_bar">隐藏导航栏</string>
     <string name="re_navigation_bar_color">导航栏颜色</string>
-    <string name="git_hub">GitHub</string>
     <string name="scoring">评分</string>
     <string name="send_mail">发送邮件</string>
     <string name="can_not_open">无法打开</string>
@@ -185,8 +188,8 @@
     <string name="flow_sys">跟随系统</string>
     <string name="add">添加</string>
     <string name="import_book_source">导入书源</string>
-    <string name="import_book_source_local">本地导入</string>
-    <string name="import_book_source_on_line">网络导入</string>
+    <string name="import_local">本地导入</string>
+    <string name="import_on_line">网络导入</string>
     <string name="replace_rule_title">替换净化</string>
     <string name="replace_rule_edit">替换规则编辑</string>
     <string name="replace_rule">替换规则</string>
@@ -195,8 +198,8 @@
     <string name="book">书</string>
     <string name="volume_key_page">音量键翻页</string>
     <string name="click_turn_page">点击翻页</string>
-    <string name="click_all_next_page">点击总是翻下一页</string>
     <string name="page_anim">翻页动画</string>
+    <string name="book_page_anim">翻页动画(本书)</string>
     <string name="keep_light">屏幕超时</string>
     <string name="back">返回</string>
     <string name="menu">菜单</string>
@@ -209,7 +212,7 @@
     <string name="select_action">选择操作</string>
     <string name="select_all">全选</string>
     <string name="select_all_count">全选(%1$d/%2$d)</string>
-    <string name="select_cancel_count">取消(%1$d/%2$d)</string>
+    <string name="select_cancel_count">取消全选(%1$d/%2$d)</string>
     <string name="dark_theme">深色模式</string>
     <string name="welcome">启动页</string>
     <string name="download_start">开始下载</string>
@@ -225,9 +228,10 @@
     <string name="load_error_retry">加载失败,点击重试</string>
     <string name="book_intro">内容简介</string>
     <string name="intro_show">简介:%s</string>
+    <string name="intro_show_null">简介: 暂无简介</string>
     <string name="open_from_other">打开外部书籍</string>
     <string name="origin_show">来源: %s</string>
-    <string name="import_replace_rule">本地导入</string>
+    <string name="import_replace_rule">导入替换规则</string>
     <string name="import_replace_rule_on_line">导入在线规则</string>
     <string name="check_update_interval">检查更新间隔</string>
     <string name="bookshelf_px_0">按阅读时间</string>
@@ -290,7 +294,7 @@
     <string name="padding_right">右边距</string>
     <string name="check_book_source">校验书源</string>
     <string name="check_select_source">校验所选</string>
-    <string name="progress_show">进度 %1$d/%2$d</string>
+    <string name="progress_show">%1$s      进度 %2$d/%3$d</string>
     <string name="tts_fix">请安装并选择中文TTS!</string>
     <string name="tts_init_failed">TTS初始化失败!</string>
     <string name="jf_convert">简繁转换</string>
@@ -310,7 +314,9 @@
     <string name="line_size">行距</string>
     <string name="paragraph_size">段距</string>
     <string name="to_top">置顶</string>
+    <string name="selection_to_top">置顶所选</string>
     <string name="to_bottom">置底</string>
+    <string name="selection_to_bottom">置底所选</string>
     <string name="auto_expand_find">自动展开发现</string>
     <string name="default_expand_first">默认展开第一组发现</string>
     <string name="threads_num">当前线程数 %s</string>
@@ -345,7 +351,7 @@
     <string name="sort">排序</string>
     <string name="sort_auto">智能排序</string>
     <string name="sort_manual">手动排序</string>
-    <string name="sort_pin_yin">拼音排序</string>
+    <string name="sort_name">名称排序</string>
     <string name="go_to_top">滚动到顶部</string>
     <string name="go_to_bottom">滚动到底部</string>
     <string name="read_y">已读: %s</string>
@@ -358,8 +364,8 @@
     <string name="finish_book">完结书籍</string>
     <string name="local_book">本地书籍</string>
     <string name="status_bar_immersion">状态栏颜色透明</string>
-    <string name="navigation_bar_color_change">导航栏变色</string>
-    <string name="navigation_bar_color_change_s">导航栏根据夜间模式变化</string>
+    <string name="imm_navigation_bar">沉浸式导航栏</string>
+    <string name="imm_navigation_bar_s">导航栏颜色透明</string>
     <string name="add_to_shelf">放入书架</string>
     <string name="continue_read">继续阅读</string>
     <string name="cover_path">封面地址</string>
@@ -384,6 +390,8 @@
     <string name="source_name">源名称(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分组(sourceGroup)</string>
+    <string name="diy_source_group">自定义源分组</string>
+    <string name="diy_edit_source_group">输入自定义源分组名称</string>
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
@@ -401,6 +409,7 @@
     <string name="book_url_pattern">书籍URL正则(bookUrlPattern)</string>
     <string name="rule_book_info_init">预处理规则(bookInfoInit)</string>
     <string name="rule_toc_url">目录URL规则(tocUrl)</string>
+    <string name="rule_can_re_name">允许修改书名作者(canReName)</string>
     <string name="rule_next_toc_url">目录下一页规则(nextTocUrl)</string>
     <string name="rule_chapter_list">目录列表规则(chapterList)</string>
     <string name="rule_chapter_name">章节名称规则(ChapterName)</string>
@@ -409,7 +418,9 @@
     <string name="rule_update_time">更新时间(ChapterInfo)</string>
     <string name="rule_book_content">正文规则(content)</string>
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
-    <string name="rule_web_js">webJs</string>
+    <string name="rule_web_js">WebViewJs(webJs)</string>
+    <string name="rule_image_style">图片样式(imageStyle)</string>
+    <string name="rule_replace_regex">替换规则(replaceRegex)</string>
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
 
     <string name="source_icon">图标(sourceIcon)</string>
@@ -444,6 +455,7 @@
     <string name="source_http_header">请求头(header)</string>
     <string name="debug_source">调试源</string>
     <string name="import_by_qr_code">二维码导入</string>
+    <string name="share_selected_source">分享选中源</string>
     <string name="scan_qr_code">扫描二维码</string>
     <string name="click_on_selected_show_menu">选中时点击可弹出菜单</string>
     <string name="theme">主题</string>
@@ -457,7 +469,7 @@
     <string name="sure_del_file">确定删除文件吗?</string>
     <string name="files_tree">手机目录</string>
     <string name="intelligent_import">智能导入</string>
-    <string name="find">发现</string>
+    <string name="discovery">发现</string>
     <string name="switch_display_style">切换显示样式</string>
     <string name="import_per">导入本地书籍需存储权限</string>
     <string name="night_theme">夜间模式</string>
@@ -471,6 +483,7 @@
     <string name="no">否</string>
     <string name="sure">确认</string>
     <string name="sure_del">是否确认删除？</string>
+    <string name="sure_del_any">是否确认删除 %s？</string>
     <string name="sure_del_all_book">是否删除全部书籍？</string>
     <string name="sure_del_download_book">是否同时删除已下载的书籍目录？</string>
     <string name="qr_per">扫描二维码需相机权限</string>
@@ -481,7 +494,7 @@
     <string name="no_book_name">未获取到书名</string>
     <string name="input_replace_url">输入替换规则网址</string>
     <string name="get_book_list_success">搜索列表获取成功%d</string>
-    <string name="non_null_source_name_url">书源名称和URL不能为空</string>
+    <string name="non_null_name_url">名称和URL不能为空</string>
     <string name="gallery">图库</string>
     <string name="get_ali_pay_hb">领支付宝红包</string>
     <string name="non_update_url">没有获取到更新地址</string>
@@ -566,6 +579,7 @@
     <string name="export_selection">导出所选</string>
     <string name="export">导出</string>
     <string name="load_toc">加载目录</string>
+    <string name="load_info">加载详情页</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav 密码</string>
     <string name="web_dav_pw_s">输入你的WebDav授权密码</string>
@@ -589,8 +603,6 @@
     <string name="change_cover_source">封面换源</string>
     <string name="select_local_image">选择本地图片</string>
     <string name="book_type">类型:</string>
-    <string name="book_type_text">文本</string>
-    <string name="book_type_audio">音频</string>
     <string name="to_backstage">后台</string>
     <string name="importing">正在导入</string>
     <string name="exporting">正在导出</string>
@@ -615,7 +627,8 @@
     <string name="service_start">正在启动服务\n具体信息查看通知栏</string>
     <string name="default_path">默认路径</string>
     <string name="sys_folder_picker">系统文件夹选择器</string>
-    <string name="app_folder_picker">自带选择器\n(Android10以上因权限限制可能无法使用)</string>
+    <string name="app_folder_picker">自带文件夹选择器</string>
+    <string name="app_file_picker">自带文件选择器</string>
     <string name="a10_permission_toast">Android10以上因权限限制可能无法读写文件</string>
     <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示阅读·搜索</string>
     <string name="add_to_text_context_menu_t">文字操作显示搜索</string>
@@ -677,10 +690,9 @@
     <string name="click_to_apply">点击加入</string>
     <string name="middle">中</string>
     <string name="information">信息</string>
-    <string name="hideHeader">隐藏页眉</string>
-    <string name="hideFooter">隐藏页脚</string>
     <string name="switchLayout">切换布局</string>
     <string name="text_font_weight_converter">文章字重切换</string>
+    <string name="full_screen_gestures_support">全面屏手势优化</string>
 
     <!--color-->
     <string name="primary">主色调</string>
@@ -724,11 +736,8 @@
     <string name="restore_ignore">恢复忽略列表</string>
     <string name="restore_ignore_summary">恢复时忽略一些内容不恢复,方便不同手机配置不同</string>
     <string name="read_config">阅读界面设置</string>
-    <string name="rule_image_style">图片样式(imageStyle)</string>
-    <string name="rule_replace_regex">替换规则(replaceRegex)</string>
     <string name="group_name">分组名称</string>
     <string name="note_content">备注内容</string>
-    <string name="e_ink_change_bg">E-Ink模式下只有白纸黑字,不显示其它背景</string>
     <string name="replace_enable_default_t">默认启用替换净化</string>
     <string name="replace_enable_default_s">新加入书架的书是否启用替换净化</string>
     <string name="select_restore_file">选择恢复文件</string>
@@ -754,10 +763,89 @@
     <string name="import_str">导入</string>
     <string name="export_str">导出</string>
     <string name="save_theme_config">保存主题配置</string>
-    <string name="save_day_theme_summary">保存白天主题配置以共调用和分享</string>
-    <string name="save_night_theme_summary">保存夜间主题配置以共调用和分享</string>
+    <string name="save_day_theme_summary">保存白天主题配置以供调用和分享</string>
+    <string name="save_night_theme_summary">保存夜间主题配置以供调用和分享</string>
     <string name="theme_list">主题列表</string>
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
     <string name="select_theme">切换默认主题</string>
+    <string name="sort_by_lastUpdateTime">时间排序</string>
+    <string name="search_content">全文搜索</string>
+    <string name="rss_source_empty">关注公众号[开源阅读]获取订阅源!</string>
+    <string name="explore_empty">当前没有发现源,关注公众号[开源阅读]添加带发现的书源!</string>
+    <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
+    <string name="theme_name">主题名称</string>
+    <string name="auto_clear_expired">自动清除过期搜索数据</string>
+    <string name="auto_clear_expired_summary">超过一天的搜索数据</string>
+    <string name="re_segment">重新分段</string>
+    <string name="style_name">样式名称:</string>
+    <string name="empty_msg_import_book">点击右上角文件夹图标,选择文件夹</string>
+    <string name="scan_folder">智能扫描</string>
+    <string name="import_file_name">导入文件名</string>
+    <string name="copy_book_url">拷贝书籍URL</string>
+    <string name="copy_toc_url">拷贝目录URL</string>
+    <string name="no_book">没有书籍</string>
+    <string name="keep_original_name">保留原名</string>
+    <string name="click_regional_config">点击区域设置</string>
+    <string name="colse">关闭</string>
+    <string name="next_page">下一页</string>
+    <string name="prev_page">上一页</string>
+    <string name="non_action">无操作</string>
+    <string name="body_title">正文标题</string>
+    <string name="show_hide">显示/隐藏</string>
+    <string name="header_footer">页眉<![CDATA[&]]>页脚</string>
+    <string name="rule_subscription">规则订阅</string>
+    <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
+    <string name="get_book_progress">拉取云端进度</string>
+    <string name="current_progress_exceeds_cloud">当前进度超过云端进度,是否同步?</string>
+    <string name="sync_book_progress_t">同步阅读进度</string>
+    <string name="sync_book_progress_s">进入退出阅读界面时同步阅读进度</string>
+    <string name="create_bookmark_error">创建书签失败</string>
+    <string name="single_url">单URL</string>
+    <string name="export_bookshelf">导出书单</string>
+    <string name="import_bookshelf">导入书单</string>
+    <string name="pre_download">预下载</string>
+    <string name="pre_download_s">预先下载%s章正文</string>
+    <string name="is_enabled">是否启用</string>
+    <string name="background_image">背景图片</string>
+    <string name="export_folder">导出文件夹</string>
+    <string name="export_charset">导出编码</string>
+    <string name="export_to_web_dav">导出到WebDav</string>
+    <string name="reverse_content">反转内容</string>
+    <string name="debug">调试</string>
+    <string name="crash_log">崩溃日志</string>
+    <string name="use_zh_layout">使用自定义中文分行</string>
+    <string name="image_style">图片样式</string>
+    <string name="system_tts">系统TTS</string>
+    <string name="export_type">导出格式</string>
+    <string name="checkAuthor">校验作者</string>
+    <string name="search_src">搜索源码</string>
+    <string name="boo_src">书籍源码</string>
+    <string name="toc_src">目录源码</string>
+    <string name="content_src">正文源码</string>
+    <string name="list_src">列表源码</string>
+    <string name="url_already">此url已订阅</string>
+    <string name="high_brush_title">高刷</string>
+    <string name="high_brush_summary">使用屏幕最高刷新率</string>
+    <string name="export_all">导出所有</string>
+    <string name="complete">完成</string>
+    <string name="show_unread">显示未读标志</string>
+    <string name="use_default_cover">总是使用默认封面</string>
+    <string name="use_default_cover_s">总是显示默认封面,不显示网络封面</string>
+    <string name="title_font_size">字号</string>
+    <string name="title_margin_top">上边距</string>
+    <string name="title_margin_bottom">下边距</string>
+    <string name="show">显示</string>
+    <string name="hide">隐藏</string>
+    <string name="hide_when_status_bar_show">状态栏显示时隐藏</string>
+    <string name="reverse_toc">反转目录</string>
+    <string name="show_discovery">显示发现</string>
+    <string name="style">样式</string>
+    <string name="group_style">分组样式</string>
+    <string name="export_file_name">导出文件名</string>
+    <string name="reset">重置</string>
+    <string name="null_url">url为空</string>
+    <string name="dict">字典</string>
+    <string name="unknown_error">未知错误</string>
+    <string name="autobackup_fail">自动备份失败</string>
 
 </resources>

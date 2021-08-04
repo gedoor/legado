@@ -3,13 +3,14 @@ package io.legado.app.ui.book.read.page.delegate
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.VelocityTracker
-import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
-class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
+class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     // 滑动追踪的时间
     private val velocityDuration = 1000
+
     //速度追踪器
     private val mVelocity: VelocityTracker = VelocityTracker.obtain()
 
@@ -35,13 +36,13 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
                 onScroll(event)
             }
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                onAnimStart(pageView.defaultAnimationSpeed)
+                onAnimStart(readView.defaultAnimationSpeed)
             }
         }
     }
 
     override fun onScroll() {
-        curPage.onScroll(touchY - lastY)
+        curPage.scroll((touchY - lastY).toInt())
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -67,12 +68,12 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         val div = if (pointerUp) count - 1 else count
         val focusX = sumX / div
         val focusY = sumY / div
-        pageView.setTouchPoint(sumX, sumY)
+        readView.setTouchPoint(sumX, sumY)
         if (!isMoved) {
             val deltaX = (focusX - startX).toInt()
             val deltaY = (focusY - startY).toInt()
             val distance = deltaX * deltaX + deltaY * deltaY
-            isMoved = distance > pageView.slopSquare
+            isMoved = distance > readView.slopSquare
         }
         if (isMoved) {
             isRunning = true
@@ -89,26 +90,26 @@ class ScrollPageDelegate(pageView: PageView) : PageDelegate(pageView) {
         isMoved = false
         isRunning = false
         if (!scroller.isFinished) {
-            pageView.isAbortAnim = true
+            readView.isAbortAnim = true
             scroller.abortAnimation()
         } else {
-            pageView.isAbortAnim = false
+            readView.isAbortAnim = false
         }
     }
 
     override fun nextPageByAnim(animationSpeed: Int) {
-        if (pageView.isAbortAnim) {
+        if (readView.isAbortAnim) {
             return
         }
-        pageView.setStartPoint(0f, 0f, false)
+        readView.setStartPoint(0f, 0f, false)
         startScroll(0, 0, 0, -ChapterProvider.visibleHeight, animationSpeed)
     }
 
     override fun prevPageByAnim(animationSpeed: Int) {
-        if (pageView.isAbortAnim) {
+        if (readView.isAbortAnim) {
             return
         }
-        pageView.setStartPoint(0f, 0f, false)
+        readView.setStartPoint(0f, 0f, false)
         startScroll(0, 0, 0, ChapterProvider.visibleHeight, animationSpeed)
     }
 }

@@ -11,8 +11,10 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 
-class AccentBgTextView(context: Context, attrs: AttributeSet?) :
-    AppCompatTextView(context, attrs) {
+class AccentBgTextView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppCompatTextView(context, attrs) {
 
     private var radius = 0
 

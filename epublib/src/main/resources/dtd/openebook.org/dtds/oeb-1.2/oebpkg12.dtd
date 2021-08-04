@@ -1,0 +1,390 @@
+<!--
+
+Title:
+
+     The Package Document Type Definition (DTD) for the Open
+     eBook Publication Structure Version 1.2
+
+
+Version:
+
+     1.2
+
+
+Revision:
+
+     20020930-x  (supercedes 20020605-x)
+
+
+Revision History Note:
+
+     This revision, 20020930-x, which supercedes the prior revision
+     20020605-x, solely updates the email addresses within this
+     comment prologue. No changes whatsover were made to the parsed
+     content of this DTD.
+
+
+Previous Released Version:
+
+     1.0.1 (Revision of 01-February-2001, "Document Type
+            Definition for the Open eBook package version
+            1.0.1")
+
+
+Authors:
+
+     Version 1.0; 1.0.1
+
+          Steve DeRose <sjd@stg.brown.edu>
+          Gunter Hille <hille@abc.de>
+          Ben Trafford <ben@legendary.org>
+          Garret Wilson <garret@globalmentor.com>
+
+     This Version 1.2 updated and edited by:
+
+          Jon Noring <jon@noring.name>
+          Benjamin Jung <benjamin.jung@deepx.com>
+
+
+Usage:
+
+     <?xml version="1.0"?>
+     <!DOCTYPE package
+               PUBLIC "+//ISBN 0-9673008-1-9//DTD OEB 1.2 Package//EN"
+               "http://openebook.org/dtds/oeb-1.2/oebpkg12.dtd">
+     <package unique-identifier="foo">
+          metadata
+          manifest
+          spine
+          tours
+          guide
+     </package>
+
+
+Summary Description:
+
+     This is the Package Document Type Definition (DTD) for
+     the Open eBook Publication Structure version 1.2.
+
+     Changes to this DTD from version 1.0.1 include:
+
+          a. Upgrading the <dc-metadata> content model to
+             fully conform with the OEBPS 1.2 specification
+             requirements. Specifically, <dc:Language> is
+             now required, while in OEBPS 1.0.1 it was
+             optional.
+
+          b. Updating the mnemonic character entity
+             declaration to refer to version 1.2.
+
+          c. Updating the xmlns:dc namespace to refer to
+             version 1.1 of the Dublin Core Metadata
+             Initiative.
+
+          d. Editing and updating the various non-parsed
+             comments.
+
+          e. Revising the layout (e.g., white space
+             alteration) to aid in readability.
+
+-->
+
+
+<!-- *************************************************** -->
+
+<!-- XHTML MNEMONIC CHARACTER ENTITIES ................. -->
+
+<!ENTITY % OEBEntities
+     PUBLIC "+//ISBN 0-9673008-1-9//DTD OEB 1.2 Entities//EN"
+     "http://openebook.org/dtds/oeb-1.2/oeb12.ent">
+
+%OEBEntities;
+
+<!-- *************************************************** -->
+
+<!-- DATATYPE ENTITIES ................................. -->
+
+<!-- Uniform Resource Identifier (URI), per [RFC2396] -->
+
+<!ENTITY % URI "CDATA">
+
+<!-- Language code, per [RFC3066] -->
+
+<!ENTITY % LanguageCode "NMTOKEN">
+
+<!-- *************************************************** -->
+
+<!-- NAMESPACE ENTITIES ................................ -->
+
+<!ENTITY % dc.xmlns
+     "'http://purl.org/dc/elements/1.1/'">
+
+<!ENTITY % oebpk.xmlns
+     "'http://openebook.org/namespaces/oeb-package/1.0/'">
+
+<!-- *************************************************** -->
+
+<!-- ELEMENT ENTITIES .................................. -->
+
+<!-- The entity 'DCMetadataOpt' includes the 12 optional
+     <dc:Xxx> children elements of <dc-metadata>. It will
+     be used in the <dc-metadata> content model. -->
+
+<!ENTITY % DCMetadataOpt
+     "dc:Contributor |
+      dc:Coverage    |
+      dc:Creator     |
+      dc:Date        |
+      dc:Description |
+      dc:Format      |
+      dc:Publisher   |
+      dc:Relation    |
+      dc:Rights      |
+      dc:Source      |
+      dc:Subject     |
+      dc:Type        ">
+
+<!-- *************************************************** -->
+
+<!-- ATTRIBUTE ENTITIES ................................ -->
+
+<!ENTITY % CoreAttributes
+     "id                 ID              #IMPLIED">
+
+<!ENTITY % InternationalAttributes
+     "xml:lang           %LanguageCode;  #IMPLIED">
+
+<!ENTITY % CommonAttributes
+     "%CoreAttributes;
+      %InternationalAttributes;">
+
+<!-- 'DCNamespaceAttribute' is an attribute entity declaring
+     the Dublin Core namespace. Used on each <dc:Xxx> element
+     to accommodate XML parsers which unnecessarily require
+     this. -->
+
+<!ENTITY % DCNamespaceAttribute
+     "xmlns:dc           %URI;           #FIXED %dc.xmlns;">
+
+<!-- *************************************************** -->
+
+<!-- ELEMENTS AND ATTRIBUTES ........................... -->
+
+<!-- <package> must have as children elements, in this order:
+     <metadata>, <manifest>, and <spine>, and optionally may
+     include <tours> and/or <guide>. The 'unique-identifier'
+     attribute is required for <package> (see comment for
+     <dc:Identifier>.) -->
+
+<!ELEMENT package (metadata, manifest, spine, tours?, guide?)>
+<!ATTLIST package
+      %CommonAttributes;
+      unique-identifier  IDREF           #REQUIRED
+      xmlns              %URI;           #FIXED %oebpk.xmlns;>
+
+<!-- <metadata> must contain one <dc-metadata>, and
+     optionally contain one <x-metadata>. There are no
+     attributes for <metadata>. -->
+
+<!ELEMENT metadata (dc-metadata, x-metadata?)>
+
+<!-- <dc-metadata> must contain at least one <dc:Title>,
+     one <dc:Identifier>, and one <dc:Language>, and may
+     contain one or more of each of the other twelve
+     optional <dc:XXX> elements, all in any order. -->
+
+<!ELEMENT dc-metadata
+( (%DCMetadataOpt;)*,
+  ( (dc:Title, (%DCMetadataOpt; | dc:Title)*,
+      ( (dc:Identifier, (%DCMetadataOpt; | dc:Title | dc:Identifier)*,
+         dc:Language) |
+        (dc:Language, (%DCMetadataOpt; | dc:Title | dc:Language)*,
+         dc:Identifier) ) ) |
+    (dc:Identifier, (%DCMetadataOpt; | dc:Identifier)*,
+      ( (dc:Title, (%DCMetadataOpt; | dc:Identifier | dc:Title)*,
+         dc:Language) |
+
+        (dc:Language, (%DCMetadataOpt; | dc:Identifier | dc:Language)*,
+         dc:Title) ) ) |
+    (dc:Language, (%DCMetadataOpt; | dc:Language)*,
+      ( (dc:Identifier, (%DCMetadataOpt; | dc:Language | dc:Identifier)*,
+         dc:Title) |
+        (dc:Title, (%DCMetadataOpt; | dc:Language | dc:Title)*,
+         dc:Identifier) ) ) ),
+  (%DCMetadataOpt; | dc:Title | dc:Identifier | dc:Language)* )>
+
+<!ATTLIST dc-metadata
+      %CommonAttributes;
+      %DCNamespaceAttribute;
+      xmlns:oebpackage   %URI;           #FIXED %oebpk.xmlns;>
+
+<!-- Required elements for <dc-metadata>. -->
+
+<!ELEMENT dc:Title (#PCDATA)>
+<!ATTLIST dc:Title
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!-- One <dc:Identifier> must specify an 'id' identical to
+     the value of the required <package> 'unique-identifier'
+     attribute. -->
+
+<!ELEMENT dc:Identifier (#PCDATA)>
+<!ATTLIST dc:Identifier
+      %CommonAttributes;
+      %DCNamespaceAttribute;
+      scheme             NMTOKEN         #IMPLIED>
+
+<!ELEMENT dc:Language (#PCDATA)>
+<!ATTLIST dc:Language
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!-- Optional elements for <dc-metadata>. -->
+
+<!ELEMENT dc:Contributor (#PCDATA)>
+<!ATTLIST dc:Contributor
+      %CommonAttributes;
+      %DCNamespaceAttribute;
+      file-as            CDATA           #IMPLIED
+      role               NMTOKEN         #IMPLIED>
+
+<!ELEMENT dc:Coverage (#PCDATA)>
+<!ATTLIST dc:Coverage
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!ELEMENT dc:Creator (#PCDATA)>
+<!ATTLIST dc:Creator
+      %CommonAttributes;
+      %DCNamespaceAttribute;
+      file-as            CDATA           #IMPLIED
+      role               NMTOKEN         #IMPLIED>
+
+<!ELEMENT dc:Date (#PCDATA)>
+<!ATTLIST dc:Date
+      %CommonAttributes;
+      %DCNamespaceAttribute;
+      event              NMTOKEN         #IMPLIED>
+
+<!ELEMENT dc:Description (#PCDATA)>
+<!ATTLIST dc:Description
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!ELEMENT dc:Format (#PCDATA)>
+<!ATTLIST dc:Format
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!ELEMENT dc:Publisher (#PCDATA)>
+<!ATTLIST dc:Publisher
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!ELEMENT dc:Relation (#PCDATA)>
+<!ATTLIST dc:Relation
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!ELEMENT dc:Rights (#PCDATA)>
+<!ATTLIST dc:Rights
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!ELEMENT dc:Source (#PCDATA)>
+<!ATTLIST dc:Source
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!ELEMENT dc:Subject (#PCDATA)>
+<!ATTLIST dc:Subject
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!ELEMENT dc:Type (#PCDATA)>
+
+<!ATTLIST dc:Type
+      %CommonAttributes;
+      %DCNamespaceAttribute;>
+
+<!-- <x-metadata> must contain at least one <meta>. -->
+
+<!ELEMENT x-metadata (meta+)>
+<!ATTLIST x-metadata %CommonAttributes;>
+
+<!-- Note that 'content' and 'name' are required attributes
+     for <meta>. -->
+
+<!ELEMENT meta EMPTY>
+<!ATTLIST meta
+      %CommonAttributes;
+      content            CDATA           #REQUIRED
+      name               NMTOKEN         #REQUIRED
+      scheme             CDATA           #IMPLIED>
+
+<!-- <manifest> must contain at least one <item>. -->
+
+<!ELEMENT manifest (item+)>
+<!ATTLIST manifest %CommonAttributes;>
+
+<!-- Note that 'href', 'id' and 'media-type' are required
+     attributes for <item>. -->
+
+<!ELEMENT item EMPTY>
+<!ATTLIST item
+      %InternationalAttributes;
+      fallback           IDREF           #IMPLIED
+      href               %URI;           #REQUIRED
+      id                 ID              #REQUIRED
+      media-type         CDATA           #REQUIRED>
+
+<!-- <spine> must contain at least one <itemref>. -->
+
+<!ELEMENT spine (itemref+)>
+<!ATTLIST spine %CommonAttributes;>
+
+<!-- Note that 'idref' is a required attribute for
+     <itemref>. -->
+
+<!ELEMENT itemref EMPTY>
+<!ATTLIST itemref
+      %CommonAttributes;
+      idref              IDREF           #REQUIRED>
+
+<!-- <tours> must contain at least one <tour>. -->
+
+<!ELEMENT tours (tour+)>
+<!ATTLIST tours %CommonAttributes;>
+
+<!-- <tour> must contain at least one <site>. Note that
+     'title' is a required attribute for <tour>. -->
+
+<!ELEMENT tour (site+)>
+<!ATTLIST tour
+      %CommonAttributes;
+      title              CDATA           #REQUIRED>
+
+<!-- Note that 'href' and 'title' are required attributes
+     for <site>. -->
+
+<!ELEMENT site EMPTY>
+<!ATTLIST site
+      %CommonAttributes;
+      href               %URI;           #REQUIRED
+      title              CDATA           #REQUIRED>
+
+<!-- <guide> must contain at least one <reference>. -->
+
+<!ELEMENT guide (reference+)>
+<!ATTLIST guide %CommonAttributes;>
+
+<!-- Note that 'href', 'title' and 'type' are required
+     attributes for <reference>. -->
+
+<!ELEMENT reference EMPTY>
+<!ATTLIST reference
+      %CommonAttributes;
+      href               %URI;           #REQUIRED
+      title              CDATA           #REQUIRED
+      type               NMTOKEN         #REQUIRED>

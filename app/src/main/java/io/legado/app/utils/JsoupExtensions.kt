@@ -10,41 +10,38 @@ import org.jsoup.select.NodeVisitor
 
 
 fun Element.textArray(): Array<String> {
-    val accum = StringUtil.borrowBuilder()
+    val sb = StringUtil.borrowBuilder()
     NodeTraversor.traverse(object : NodeVisitor {
         override fun head(node: Node, depth: Int) {
             if (node is TextNode) {
-                appendNormalisedText(accum, node)
+                appendNormalisedText(sb, node)
             } else if (node is Element) {
-                if (accum.isNotEmpty() &&
+                if (sb.isNotEmpty() &&
                     (node.isBlock || node.tag().name == "br") &&
-                    !lastCharIsWhitespace(accum)
-                ) accum.append("\n")
+                    !lastCharIsWhitespace(sb)
+                ) sb.append("\n")
             }
         }
 
         override fun tail(node: Node, depth: Int) {
             if (node is Element) {
-                if (node.isBlock && node.nextSibling() is TextNode && !lastCharIsWhitespace(
-                        accum
-                    )
-                ) accum.append("\n")
+                if (node.isBlock && node.nextSibling() is TextNode
+                    && !lastCharIsWhitespace(sb)
+                ) {
+                    sb.append("\n")
+                }
             }
         }
     }, this)
-    val text = StringUtil.releaseBuilder(accum).trim { it <= ' ' }
+    val text = StringUtil.releaseBuilder(sb).trim { it <= ' ' }
     return text.splitNotBlank("\n")
 }
 
-private fun appendNormalisedText(accum: StringBuilder, textNode: TextNode) {
+private fun appendNormalisedText(sb: StringBuilder, textNode: TextNode) {
     val text = textNode.wholeText
     if (preserveWhitespace(textNode.parentNode()) || textNode is CDataNode)
-        accum.append(text)
-    else StringUtil.appendNormalisedWhitespace(
-        accum,
-        text,
-        lastCharIsWhitespace(accum)
-    )
+        sb.append(text)
+    else StringUtil.appendNormalisedWhitespace(sb, text, lastCharIsWhitespace(sb))
 }
 
 private fun preserveWhitespace(node: Node?): Boolean {

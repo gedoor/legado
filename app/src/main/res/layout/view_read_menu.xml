@@ -10,6 +10,7 @@
         android:id="@+id/vw_menu_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/content"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
 
@@ -20,25 +21,49 @@
         android:theme="?attr/actionBarStyle"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tv_chapter_name"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:singleLine="true"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_chapter_url"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:singleLine="true"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/tv_chapter_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/tv_login"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_chapter_url"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/tv_login"
+                app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name" />
+
+            <io.legado.app.ui.widget.text.AccentBgTextView
+                android:id="@+id/tv_login"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/login"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_chapter_url"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </io.legado.app.ui.widget.TitleBar>
 
@@ -46,20 +71,22 @@
         android:id="@+id/ll_brightness"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_margin="8dp"
-        android:orientation="vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_menu"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_menu">
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        tools:ignore="RtlHardcoded">
 
         <ImageView
             android:id="@+id/iv_brightness_auto"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_margin="8dp"
-            android:src="@drawable/ic_brightness_auto"
-            android:contentDescription="@string/brightness_auto" />
+            android:contentDescription="@string/brightness_auto"
+            android:src="@drawable/ic_brightness_auto" />
 
         <io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper
             android:layout_width="wrap_content"
@@ -87,10 +114,30 @@
             android:id="@+id/ll_floating_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingStart="32dp"
             android:paddingEnd="32dp">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/search_content"
+                android:src="@drawable/ic_search"
+                android:tint="@color/primaryText"
+                android:tooltipText="@string/search_content"
+                app:backgroundTint="@color/background_menu"
+                app:elevation="2dp"
+                app:fabSize="mini"
+                app:pressedTranslationZ="2dp"
+                tools:ignore="UnusedAttribute" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabAutoPage"
@@ -152,18 +199,21 @@
         <!--底部设置栏-->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="100dp"
+            android:importantForAccessibility="no">
 
             <View
                 android:id="@+id/vw_bg"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no" />
 
             <LinearLayout
                 android:id="@+id/ll_bottom_bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/background_menu"
+                android:importantForAccessibility="no"
                 android:orientation="vertical">
                 <!--章节设置-->
                 <LinearLayout
@@ -173,6 +223,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="5dp"
+                    android:importantForAccessibility="no"
                     android:orientation="horizontal">
 
                     <TextView
@@ -219,12 +270,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
+                    android:importantForAccessibility="no"
                     android:orientation="horizontal">
 
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:importantForAccessibility="no" />
 
                     <!--目录按钮-->
                     <LinearLayout
@@ -254,7 +307,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:maxLines="1"
+                            android:ellipsize="middle"
+                            android:singleLine="true"
                             android:text="@string/chapter_list"
                             android:textColor="@color/primaryText"
                             android:textSize="12sp" />
@@ -263,7 +317,9 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2" />
+                        android:layout_weight="2"
+                        android:importantForAccessibility="no" />
+
                     <!--调节按钮-->
                     <LinearLayout
                         android:id="@+id/ll_read_aloud"
@@ -292,7 +348,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:maxLines="1"
+                            android:ellipsize="middle"
+                            android:singleLine="true"
                             android:text="@string/read_aloud"
                             android:textColor="@color/primaryText"
                             android:textSize="12sp" />
@@ -301,7 +358,9 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2" />
+                        android:layout_weight="2"
+                        android:importantForAccessibility="no" />
+
                     <!--界面按钮-->
                     <LinearLayout
                         android:id="@+id/ll_font"
@@ -330,7 +389,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:maxLines="1"
+                            android:ellipsize="middle"
+                            android:singleLine="true"
                             android:text="@string/interface_setting"
                             android:textColor="@color/primaryText"
                             android:textSize="12sp" />
@@ -339,7 +399,9 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2" />
+                        android:layout_weight="2"
+                        android:importantForAccessibility="no" />
+
                     <!--设置按钮-->
                     <LinearLayout
                         android:id="@+id/ll_setting"
@@ -368,7 +430,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="3dp"
-                            android:maxLines="1"
+                            android:ellipsize="middle"
+                            android:singleLine="true"
                             android:text="@string/setting"
                             android:textColor="@color/primaryText"
                             android:textSize="12sp" />
@@ -377,7 +440,9 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:importantForAccessibility="no" />
+
                 </LinearLayout>
 
                 <View

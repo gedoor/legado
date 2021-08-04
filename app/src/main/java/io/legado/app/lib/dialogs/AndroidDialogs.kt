@@ -1,19 +1,3 @@
-/*
- * Copyright 2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 @file:Suppress("NOTHING_TO_INLINE", "unused", "DEPRECATION")
 
 package io.legado.app.lib.dialogs
@@ -23,7 +7,6 @@ import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import org.jetbrains.anko.AnkoContext
 
 inline fun Fragment.alert(
     title: CharSequence? = null,
@@ -38,20 +21,20 @@ fun Context.alert(
 ): AlertBuilder<AlertDialog> {
     return AndroidAlertBuilder(this).apply {
         if (title != null) {
-            this.title = title
+            this.setTitle(title)
         }
         if (message != null) {
-            this.message = message
+            this.setMessage(message)
         }
         if (init != null) init()
     }
 }
 
 inline fun Fragment.alert(
-    title: Int? = null,
+    titleResource: Int? = null,
     message: Int? = null,
     noinline init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-) = requireActivity().alert(title, message, init)
+) = requireActivity().alert(titleResource, message, init)
 
 fun Context.alert(
     titleResource: Int? = null,
@@ -60,18 +43,18 @@ fun Context.alert(
 ): AlertBuilder<AlertDialog> {
     return AndroidAlertBuilder(this).apply {
         if (titleResource != null) {
-            this.titleResource = titleResource
+            this.setTitle(titleResource)
         }
         if (messageResource != null) {
-            this.messageResource = messageResource
+            this.setMessage(messageResource)
         }
         if (init != null) init()
     }
 }
 
 
-inline fun AnkoContext<*>.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) = ctx.alert(init)
-inline fun Fragment.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) = requireContext().alert(init)
+inline fun Fragment.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) =
+    requireContext().alert(init)
 
 fun Context.alert(init: AlertBuilder<AlertDialog>.() -> Unit): AlertBuilder<AlertDialog> =
     AndroidAlertBuilder(this).apply { init() }

@@ -2,16 +2,17 @@ package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
 import android.graphics.Matrix
-import io.legado.app.ui.book.read.page.PageView
+import io.legado.app.ui.book.read.page.ReadView
+import io.legado.app.ui.book.read.page.entities.PageDirection
 
-class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
+class SlidePageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
 
     private val bitmapMatrix = Matrix()
 
     override fun onAnimStart(animationSpeed: Int) {
         val distanceX: Float
         when (mDirection) {
-            Direction.NEXT -> distanceX =
+            PageDirection.NEXT -> distanceX =
                 if (isCancel) {
                     var dis = viewWidth - startX + touchX
                     if (dis > viewWidth) {
@@ -34,17 +35,17 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
     override fun onDraw(canvas: Canvas) {
         val offsetX = touchX - startX
 
-        if ((mDirection == Direction.NEXT && offsetX > 0)
-            || (mDirection == Direction.PREV && offsetX < 0)
+        if ((mDirection == PageDirection.NEXT && offsetX > 0)
+            || (mDirection == PageDirection.PREV && offsetX < 0)
         ) return
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         if (!isRunning) return
-        if (mDirection == Direction.PREV) {
+        if (mDirection == PageDirection.PREV) {
             bitmapMatrix.setTranslate(distanceX + viewWidth, 0.toFloat())
             curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
             bitmapMatrix.setTranslate(distanceX, 0.toFloat())
             prevBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
-        } else if (mDirection == Direction.NEXT) {
+        } else if (mDirection == PageDirection.NEXT) {
             bitmapMatrix.setTranslate(distanceX, 0.toFloat())
             nextBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
             bitmapMatrix.setTranslate(distanceX - viewWidth, 0.toFloat())
@@ -54,7 +55,7 @@ class SlidePageDelegate(pageView: PageView) : HorizontalPageDelegate(pageView) {
 
     override fun onAnimStop() {
         if (!isCancel) {
-            pageView.fillPage(mDirection)
+            readView.fillPage(mDirection)
         }
     }
 }

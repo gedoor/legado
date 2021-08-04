@@ -5,6 +5,7 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
+@Suppress("unused")
 class Coroutine<T>(
     val scope: CoroutineScope,
     context: CoroutineContext = Dispatchers.IO,
@@ -13,7 +14,7 @@ class Coroutine<T>(
 
     companion object {
 
-        val DEFAULT = MainScope()
+        private val DEFAULT = MainScope()
 
         fun <T> async(
             scope: CoroutineScope = DEFAULT,
@@ -196,7 +197,9 @@ class Coroutine<T>(
         return withContext(scope.coroutineContext.plus(context)) {
             if (timeMillis > 0L) withTimeout(timeMillis) {
                 block()
-            } else block()
+            } else {
+                block()
+            }
         }
     }
 

@@ -8,19 +8,12 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
 
-abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-    private lateinit var job: Job
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        job = Job()
-    }
+abstract class BaseDialogFragment : DialogFragment(), CoroutineScope by MainScope() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,19 +25,16 @@ abstract class BaseDialogFragment : DialogFragment(), CoroutineScope {
     abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
 
     override fun show(manager: FragmentManager, tag: String?) {
-        try {
+        kotlin.runCatching {
             //在每个add事务前增加一个remove事务，防止连续的add
             manager.beginTransaction().remove(this).commit()
             super.show(manager, tag)
-        } catch (e: Exception) {
-            //同一实例使用不同的tag会异常,这里捕获一下
-            e.printStackTrace()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        job.cancel()
+        cancel()
     }
 
     fun <T> execute(

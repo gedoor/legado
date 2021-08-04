@@ -10,14 +10,24 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
 import io.legado.app.help.ImageLoader
 import io.legado.app.utils.getPrefString
+import splitties.init.appCtx
 
-
-class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
+/**
+ * 封面
+ */
+@Suppress("unused")
+class CoverImageView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : androidx.appcompat.widget.AppCompatImageView(
+    context,
+    attrs
+) {
     internal var width: Float = 0.toFloat()
     internal var height: Float = 0.toFloat()
     private var nameHeight = 0f
@@ -41,16 +51,6 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
     private var name: String? = null
     private var author: String? = null
     private var loadFailed = false
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -133,34 +133,40 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
 
     fun load(path: String?, name: String?, author: String?) {
         setText(name, author)
-        ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
-            .placeholder(defaultDrawable)
-            .error(defaultDrawable)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    loadFailed = true
-                    return false
-                }
+        if (AppConfig.useDefaultCover) {
+            ImageLoader.load(context, defaultDrawable)
+                .centerCrop()
+                .into(this)
+        } else {
+            ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
+                .placeholder(defaultDrawable)
+                .error(defaultDrawable)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        loadFailed = true
+                        return false
+                    }
 
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    loadFailed = false
-                    return false
-                }
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        loadFailed = false
+                        return false
+                    }
 
-            })
-            .centerCrop()
-            .into(this)
+                })
+                .centerCrop()
+                .into(this)
+        }
     }
 
     companion object {
@@ -171,12 +177,16 @@ class CoverImageView : androidx.appcompat.widget.AppCompatImageView {
             upDefaultCover()
         }
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         fun upDefaultCover() {
-            val path = App.INSTANCE.getPrefString(PreferKey.defaultCover)
+            val preferKey =
+                if (AppConfig.isNightTheme) PreferKey.defaultCoverDark
+                else PreferKey.defaultCover
+            val path = appCtx.getPrefString(preferKey)
             var dw = Drawable.createFromPath(path)
             if (dw == null) {
                 showBookName = true
-                dw = App.INSTANCE.resources.getDrawable(R.drawable.image_cover_default, null)
+                dw = appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
             } else {
                 showBookName = false
             }

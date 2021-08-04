@@ -5,7 +5,6 @@ import android.content.ContextWrapper
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,12 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.databinding.DialogRecyclerViewBinding
+import io.legado.app.databinding.ItemIconPreferenceBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.getCompatDrawable
-import kotlinx.android.synthetic.main.dialog_recycler_view.*
-import kotlinx.android.synthetic.main.item_icon_preference.view.*
-import org.jetbrains.anko.sdk27.listeners.onClick
+import io.legado.app.utils.getSize
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
 class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
@@ -54,7 +54,17 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
-        val v = Preference.bindView<ImageView>(context, holder, icon, title, summary, widgetLayoutResource, R.id.preview, 50, 50)
+        val v = Preference.bindView<ImageView>(
+            context,
+            holder,
+            icon,
+            title,
+            summary,
+            widgetLayoutResource,
+            R.id.preview,
+            50,
+            50
+        )
         if (v is ImageView) {
             val selectedIndex = findIndexOfValue(value)
             if (selectedIndex >= 0) {
@@ -117,11 +127,11 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         var dialogEntries: Array<CharSequence>? = null
         var dialogEntryValues: Array<CharSequence>? = null
         var dialogIconNames: Array<CharSequence>? = null
+        private val binding by viewBinding(DialogRecyclerViewBinding::bind)
 
         override fun onStart() {
             super.onStart()
-            val dm = DisplayMetrics()
-            activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+            val dm = requireActivity().getSize()
             dialog?.window?.setLayout(
                 (dm.widthPixels * 0.8).toInt(),
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -137,11 +147,11 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         }
 
         override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-            tool_bar.setBackgroundColor(primaryColor)
-            tool_bar.setTitle(R.string.change_icon)
-            recycler_view.layoutManager = LinearLayoutManager(requireContext())
+            binding.toolBar.setBackgroundColor(primaryColor)
+            binding.toolBar.setTitle(R.string.change_icon)
+            binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
             val adapter = Adapter(requireContext())
-            recycler_view.adapter = adapter
+            binding.recyclerView.adapter = adapter
             arguments?.let {
                 dialogValue = it.getString("value")
                 dialogEntries = it.getCharSequenceArray("entries")
@@ -155,14 +165,19 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
 
         inner class Adapter(context: Context) :
-            SimpleRecyclerAdapter<CharSequence>(context, R.layout.item_icon_preference) {
+            RecyclerAdapter<CharSequence, ItemIconPreferenceBinding>(context) {
+
+            override fun getViewBinding(parent: ViewGroup): ItemIconPreferenceBinding {
+                return ItemIconPreferenceBinding.inflate(inflater, parent, false)
+            }
 
             override fun convert(
                 holder: ItemViewHolder,
+                binding: ItemIconPreferenceBinding,
                 item: CharSequence,
                 payloads: MutableList<Any>
             ) {
-                with(holder.itemView) {
+                binding.run {
                     val index = findIndexOfValue(item.toString())
                     dialogEntries?.let {
                         label.text = it[index]
@@ -180,15 +195,18 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                         }
                     }
                     label.isChecked = item.toString() == dialogValue
-                    onClick {
+                    root.setOnClickListener {
                         onChanged?.invoke(item.toString())
-                        this@IconDialog.dismiss()
+                        this@IconDialog.dismissAllowingStateLoss()
                     }
                 }
             }
 
-            override fun registerListener(holder: ItemViewHolder) {
-                holder.itemView.onClick {
+            override fun registerListener(
+                holder: ItemViewHolder,
+                binding: ItemIconPreferenceBinding
+            ) {
+                holder.itemView.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         onChanged?.invoke(it.toString())
                     }

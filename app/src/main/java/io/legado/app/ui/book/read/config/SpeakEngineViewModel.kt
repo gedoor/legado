@@ -1,34 +1,72 @@
 package io.legado.app.ui.book.read.config
 
 import android.app.Application
-import io.legado.app.App
+import android.net.Uri
 import io.legado.app.base.BaseViewModel
-import io.legado.app.data.entities.TxtTocRule
-import io.legado.app.help.DefaultValueHelp
-import io.legado.app.help.http.HttpHelper
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
+import io.legado.app.data.appDb
+import io.legado.app.data.entities.HttpTTS
+import io.legado.app.help.DefaultData
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
+import io.legado.app.utils.*
 
 class SpeakEngineViewModel(application: Application) : BaseViewModel(application) {
 
     fun importDefault() {
         execute {
-            DefaultValueHelp.initHttpTTS()
+            DefaultData.importDefaultHttpTTS()
         }
     }
 
-    fun importOnLine(url: String, finally: (msg: String) -> Unit) {
+    fun importOnLine(url: String) {
         execute {
-            HttpHelper.simpleGetAsync(url)?.let { json ->
-                GSON.fromJsonArray<TxtTocRule>(json)?.let {
-                    App.db.txtTocRule().insert(*it.toTypedArray())
-                }
+            okHttpClient.newCall {
+                url(url)
+            }.text("utf-8").let { json ->
+                import(json)
             }
         }.onSuccess {
-            finally("导入成功")
+            context.toastOnUi("导入成功")
         }.onError {
-            finally("导入失败")
+            context.toastOnUi("导入失败")
         }
     }
 
+    fun importLocal(uri: Uri) {
+        execute {
+            uri.readText(context)?.let {
+                import(it)
+            }
+        }.onSuccess {
+            context.toastOnUi("导入成功")
+        }.onError {
+            context.toastOnUi("导入失败")
+        }
+    }
+
+    fun import(text: String) {
+        when {
+            text.isJsonArray() -> {
+                GSON.fromJsonArray<HttpTTS>(text)?.let {
+                    appDb.httpTTSDao.insert(*it.toTypedArray())
+                }
+            }
+            text.isJsonObject() -> {
+                GSON.fromJsonObject<HttpTTS>(text)?.let {
+                    appDb.httpTTSDao.insert(it)
+                }
+            }
+            else -> {
+                throw Exception("格式不对")
+            }
+        }
+    }
+
+    fun export(uri: Uri) {
+        execute {
+            val httpTTS = appDb.httpTTSDao.all
+            uri.writeBytes(context, "httpTts.json", GSON.toJson(httpTTS).toByteArray())
+        }
+    }
 }

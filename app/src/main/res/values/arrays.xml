@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string-array name="book_type">
-		<item>@string/book_type_text</item>
-		<item>@string/book_type_audio</item>
+		<item>Text</item>
+		<item>Audio</item>
+	</string-array>
+
+	<string-array name="group_style">
+		<item>Tab</item>
+		<item>Folder</item>
 	</string-array>
 
 	<string-array name="indent">
@@ -47,11 +52,6 @@
 		<item>Always</item>
 	</string-array>
 
-	<string-array name="select_folder">
-		<item>@string/sys_folder_picker</item>
-		<item>@string/app_folder_picker</item>
-	</string-array>
-
 	<string-array name="screen_direction_title">
 		<item>@string/screen_unspecified</item>
 		<item>@string/screen_portrait</item>
@@ -89,6 +89,8 @@
 		<item>Pages</item>
 		<item>Progress</item>
 		<item>Pages and progress</item>
+		<item>Book name</item>
+		<item>Time and Battery</item>
 	</string-array>
 
 	<string-array name="text_font_weight">
@@ -98,10 +100,16 @@
 	</string-array>
 
 	<string-array name="language">
-		<item>跟随系统</item>
-		<item>简体中文</item>
-		<item>繁体中文</item>
-		<item>英文</item>
+		<item>Auto</item>
+		<item>Simplified_Chinese</item>
+		<item>Traditional_Chinese</item>
+		<item>English</item>
+	</string-array>
+
+	<string-array name="rule_type">
+		<item>BookSource</item>
+		<item>RssSource</item>
+		<item>ReplaceRule</item>
 	</string-array>
 
 </resources>

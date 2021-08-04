@@ -8,36 +8,37 @@ import android.view.Menu
 import android.view.MenuItem
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
+import io.legado.app.databinding.ActivityAboutBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.openUrl
-import kotlinx.android.synthetic.main.activity_about.*
-import org.jetbrains.anko.share
+import io.legado.app.utils.share
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-class AboutActivity : BaseActivity(R.layout.activity_about) {
+class AboutActivity : BaseActivity<ActivityAboutBinding>() {
+
+    override val binding by viewBinding(ActivityAboutBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        ll_about.background = ATH.getDialogBackground()
+        binding.llAbout.background = ATH.getDialogBackground()
         val fTag = "aboutFragment"
         var aboutFragment = supportFragmentManager.findFragmentByTag(fTag)
         if (aboutFragment == null) aboutFragment = AboutFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fl_fragment, aboutFragment, fTag)
             .commit()
-        tv_app_summary.post {
-            try {
+        binding.tvAppSummary.post {
+            kotlin.runCatching {
                 val span = ForegroundColorSpan(accentColor)
-                val spannableString = SpannableString(tv_app_summary.text)
+                val spannableString = SpannableString(binding.tvAppSummary.text)
                 val gzh = getString(R.string.legado_gzh)
                 val start = spannableString.indexOf(gzh)
                 spannableString.setSpan(
                     span, start, start + gzh.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-                tv_app_summary.text = spannableString
-            } catch (e: Exception) {
-                e.printStackTrace()
+                binding.tvAppSummary.text = spannableString
             }
         }
     }

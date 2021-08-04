@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/menu_download"
+        android:title="@string/action_download"
+        android:icon="@drawable/ic_play_24dp"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_book_group"
+        android:title="@string/group"
+        android:icon="@drawable/ic_groups"
+        app:showAsAction="always">
+
+        <menu />
+
+    </item>
+
+    <item
+        android:id="@+id/menu_export_all"
+        android:title="@string/export_all"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_enable_replace"
+        android:title="@string/replace_purify"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export_web_dav"
+        android:title="@string/export_to_web_dav"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export_folder"
+        android:title="@string/export_folder"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export_file_name"
+        android:title="@string/export_file_name"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export_type"
+        android:title="@string/export_type"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export_charset"
+        android:title="@string/export_charset"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_log"
+        android:title="@string/log"
+        app:showAsAction="never" />
+
+</menu>

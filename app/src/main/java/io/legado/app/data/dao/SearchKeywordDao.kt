@@ -1,21 +1,24 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.SearchKeyword
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface SearchKeywordDao {
 
+    @get:Query("SELECT * FROM search_keywords")
+    val all: List<SearchKeyword>
+
     @Query("SELECT * FROM search_keywords ORDER BY usage DESC")
-    fun liveDataByUsage(): LiveData<List<SearchKeyword>>
+    fun flowByUsage(): Flow<List<SearchKeyword>>
 
     @Query("SELECT * FROM search_keywords ORDER BY lastUseTime DESC")
-    fun liveDataByTime(): LiveData<List<SearchKeyword>>
+    fun flowByTime(): Flow<List<SearchKeyword>>
 
     @Query("SELECT * FROM search_keywords where word like '%'||:key||'%' ORDER BY usage DESC")
-    fun liveDataSearch(key: String): LiveData<List<SearchKeyword>>
+    fun flowSearch(key: String): Flow<List<SearchKeyword>>
 
     @Query("select * from search_keywords where word = :key")
     fun get(key: String): SearchKeyword?

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.lib.theme
 
 import android.annotation.SuppressLint
@@ -99,9 +101,9 @@ val Fragment.secondaryDisabledTextColor: Int
 
 val Context.buttonDisabledColor: Int
     get() = if (isDarkTheme) {
-        ContextCompat.getColor(this, R.color.ate_button_disabled_dark)
+        ContextCompat.getColor(this, R.color.md_dark_disabled)
     } else {
-        ContextCompat.getColor(this, R.color.ate_button_disabled_light)
+        ContextCompat.getColor(this, R.color.md_light_disabled)
     }
 
 val Context.isDarkTheme: Boolean

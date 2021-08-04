@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--App-->
     <string name="app_name">Legado</string>
@@ -10,6 +11,8 @@
     <string name="menu_import_old">Import Legado data</string>
     <string name="mkdirs">Create a subfolder</string>
     <string name="mkdirs_description">Create a folder named Legado as the backup folder.</string>
+    <string name="webdav_cache_backup">Offline cache book backup</string>
+    <string name="webdav_cache_backup_s">Export to local and back up to the exports directory under the legado folder</string>
     <string name="backup_path">Backup to</string>
     <string name="select_backup_path">Please select a backup path.</string>
     <string name="menu_import_old_version">Import legacy data</string>
@@ -45,7 +48,7 @@
     <string name="recent_reading">Recent reading</string>
     <string name="last_read">Last reading</string>
     <string name="update_log">What\'s new</string>
-    <string name="bookshelf_empty">Still empty,please add it first.</string>
+    <string name="bookshelf_empty">The bookshelf is still empty. Search for books or add them from discovery! \n if you use it for the first time, please pay attention to the public account [开源阅读] to get the book source!</string>
     <string name="action_search">Search</string>
     <string name="action_download">Download</string>
     <string name="layout_list">List</string>
@@ -82,12 +85,11 @@
     <string name="is_loading">Loading…</string>
     <string name="retry">Retry</string>
     <string name="web_service">Web service</string>
-    <string name="web_service_desc">Enable web service</string>
+    <string name="web_service_desc">Web edit source and read book</string>
     <string name="web_edit_source">Edit book sources on the web</string>
-    <string name="http_ip">http://%1$s:%2$d</string>
-    <string name="download_offline">Offline download</string>
-    <string name="download_offline_t">Offline download</string>
-    <string name="download_offline_s">Download the selected chapter(s) to Storage</string>
+    <string name="offline_cache">Offline cache</string>
+    <string name="offline_cache_t">Offline cache</string>
+    <string name="offline_cache_s">cache the selected chapter(s) to Storage</string>
     <string name="change_origin">Change Origin</string>
     <string name="about_description">
         \u3000\u3000 This is an open source reading software newly developed by Kotlin, welcome to join us. Follow the WeChat Official Account [开源阅读]！
@@ -96,6 +98,8 @@
         Legado (YueDu 3.0) download link：\n https://play.google.com/store/apps/details?id=io.legado.play.release
     </string>
     <string name="version_name">Version %s</string>
+    <string name="pt_background_verification">Background-verification</string>
+    <string name="ps_background_verification">you can operate freely when verifying the book source</string>
     <string name="pt_auto_refresh">Auto-refresh</string>
     <string name="ps_auto_refresh">Update books automatically when opening the software</string>
     <string name="pt_auto_download">Auto-download</string>
@@ -148,10 +152,10 @@
     <string name="set_timer">Timer</string>
     <string name="read_aloud_pause">Speak Paused</string>
     <string name="read_aloud_timer">Speaking(%d min left)</string>
+    <string name="playing_timer">Playing(%d min left)</string>
     <string name="ps_hide_navigation_bar">Hide virtual buttons when reading</string>
     <string name="pt_hide_navigation_bar">Hide navigation bar</string>
     <string name="re_navigation_bar_color">Navigation bar color</string>
-    <string name="git_hub">GitHub</string>
     <string name="scoring">Rating</string>
     <string name="send_mail">Email</string>
     <string name="can_not_open">Open failed</string>
@@ -185,8 +189,8 @@
     <string name="flow_sys">Follow system</string>
     <string name="add">Add</string>
     <string name="import_book_source">Import book sources</string>
-    <string name="import_book_source_local">Import local sources</string>
-    <string name="import_book_source_on_line">Import online sources</string>
+    <string name="import_local">Import local</string>
+    <string name="import_on_line">Import online</string>
     <string name="replace_rule_title">Replacement</string>
     <string name="replace_rule_edit">Edit replacement rule</string>
     <string name="replace_rule">Pattern</string>
@@ -195,8 +199,8 @@
     <string name="book">Book</string>
     <string name="volume_key_page">Volume keys to turn page</string>
     <string name="click_turn_page">Tap screen to turn page</string>
-    <string name="click_all_next_page">Tap screen always to next page</string>
     <string name="page_anim">Flip animation</string>
+    <string name="book_page_anim">Flip animation (book)</string>
     <string name="keep_light">Keep screen awake</string>
     <string name="back">Back</string>
     <string name="menu">Menu</string>
@@ -209,7 +213,7 @@
     <string name="select_action">Selection action</string>
     <string name="select_all">Select all</string>
     <string name="select_all_count">Select all(%1$d/%2$d)</string>
-    <string name="select_cancel_count">Cancel(%1$d/%2$d)</string>
+    <string name="select_cancel_count">Cancel select all(%1$d/%2$d)</string>
     <string name="dark_theme">Dark mode</string>
     <string name="welcome">Welcome page</string>
     <string name="download_start">Download start</string>
@@ -225,9 +229,10 @@
     <string name="load_error_retry">Load failed, tap to retry</string>
     <string name="book_intro">Book description</string>
     <string name="intro_show">Description:%s</string>
+    <string name="intro_show_null">Description: no introduction</string>
     <string name="open_from_other">Open external book</string>
     <string name="origin_show">Origin: %s</string>
-    <string name="import_replace_rule">Import local rules</string>
+    <string name="import_replace_rule">Import replace rules</string>
     <string name="import_replace_rule_on_line">Import online rules</string>
     <string name="check_update_interval">Check interval for updates</string>
     <string name="bookshelf_px_0">By recent list</string>
@@ -290,8 +295,7 @@
     <string name="padding_right">Padding right</string>
     <string name="check_book_source">Check book sources</string>
     <string name="check_select_source">Check the selected source</string>
-    <string name="debug_select_source">Debug the selected source</string>
-    <string name="progress_show">Progress %1$d/%2$d</string>
+    <string name="progress_show">%1$s      Progress %2$d/%3$d</string>
     <string name="tts_fix">Please install and select Chinese TTS!</string>
     <string name="tts_init_failed">TTS initialization failed!</string>
     <string name="jf_convert">Simplified conversion</string>
@@ -311,7 +315,9 @@
     <string name="line_size">Line spacing</string>
     <string name="paragraph_size">Paragraph spacing</string>
     <string name="to_top">To Top</string>
+    <string name="selection_to_top">Selection To Top</string>
     <string name="to_bottom">To Bottom</string>
+    <string name="selection_to_bottom">Selection To Bottom</string>
     <string name="auto_expand_find">Auto expand Discovery</string>
     <string name="default_expand_first">Default expand the first Discovery.</string>
     <string name="threads_num">Current threads %s</string>
@@ -319,8 +325,8 @@
     <string name="auto_next_page">Auto scroll</string>
     <string name="auto_next_page_stop">Stop Auto scroll</string>
     <string name="auto_next_page_speed">Auto scroll speed</string>
-    <string name="book_info">Book infomation</string>
-    <string name="book_info_edit">Edit book infomation</string>
+    <string name="book_info">Book information</string>
+    <string name="book_info_edit">Edit book information</string>
     <string name="ps_default_read">Use Bookshelf as start page</string>
     <string name="pt_default_read">Auto jump to Recent list</string>
     <string name="use_to">Replacement object. Book name or source url is available</string>
@@ -346,7 +352,7 @@
     <string name="sort">Sort</string>
     <string name="sort_auto">Sort automatically</string>
     <string name="sort_manual">Sort manually</string>
-    <string name="sort_pin_yin">Sort phonetically</string>
+    <string name="sort_name">Sort by name</string>
     <string name="go_to_top">Scroll to the top</string>
     <string name="go_to_bottom">Scroll to the bottom</string>
     <string name="read_y">Read: %s</string>
@@ -359,8 +365,8 @@
     <string name="finish_book">Finished books</string>
     <string name="local_book">Local books</string>
     <string name="status_bar_immersion">The status bar color becomes transparent</string>
-    <string name="navigation_bar_color_change">Discolored navigation bar</string>
-    <string name="navigation_bar_color_change_s">The navigation bar changes color following the dark mode</string>
+    <string name="imm_navigation_bar">immersion navigation bar</string>
+    <string name="imm_navigation_bar_s">The navigation bar becomes transparent</string>
     <string name="add_to_shelf">Add to Bookshelf</string>
     <string name="continue_read">Continue reading</string>
     <string name="cover_path">Cover path</string>
@@ -385,6 +391,9 @@
     <string name="source_name">源名称(sourceName)</string>
     <string name="source_url">源URL(sourceUrl)</string>
     <string name="source_group">源分组(sourceGroup)</string>
+    <string name="diy_source_group">自定义源分组</string>
+    <string name="diy_edit_source_group">输入自定义源分组名称</string>
+
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
@@ -402,6 +411,7 @@
     <string name="book_url_pattern">书籍URL正则(bookUrlPattern)</string>
     <string name="rule_book_info_init">预处理规则(bookInfoInit)</string>
     <string name="rule_toc_url">目录URL规则(tocUrl)</string>
+    <string name="rule_can_re_name">允许修改书名作者(canReName)</string>
     <string name="rule_next_toc_url">目录下一页规则(nextTocUrl)</string>
     <string name="rule_chapter_list">目录列表规则(chapterList)</string>
     <string name="rule_chapter_name">章节名称规则(ChapterName)</string>
@@ -410,7 +420,7 @@
     <string name="rule_update_time">更新时间(ChapterInfo)</string>
     <string name="rule_book_content">正文规则(content)</string>
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
-    <string name="rule_web_js">webJs</string>
+    <string name="rule_web_js">WebViewJs(webJs)</string>
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
     <string name="rule_replace_regex">替换规则(replaceRegex)</string>
     <string name="rule_image_style">图片样式(imageStyle)</string>
@@ -444,9 +454,10 @@
     <string name="net_error_10003">Data parsing failed</string>
     <!--error string end-->
 
-    <string name="source_http_header">Source http header</string>
+    <string name="source_http_header">HTTP Header</string>
     <string name="debug_source">Debug source</string>
     <string name="import_by_qr_code">Import from QR code</string>
+    <string name="share_selected_source">Share selected sources</string>
     <string name="scan_qr_code">Scan QR code</string>
     <string name="click_on_selected_show_menu">Tap to display Menu when selected </string>
     <string name="theme">Theme</string>
@@ -460,7 +471,7 @@
     <string name="sure_del_file">Are you sure to delete this file?</string>
     <string name="files_tree">Directory</string>
     <string name="intelligent_import">Intelligent import</string>
-    <string name="find">Discovery</string>
+    <string name="discovery">Discovery</string>
     <string name="switch_display_style">Switch display styles</string>
     <string name="import_per">Import local books requires storage permission</string>
     <string name="night_theme">Night Theme</string>
@@ -474,6 +485,7 @@
     <string name="no">No</string>
     <string name="sure">OK</string>
     <string name="sure_del">Are you sure to delete it?</string>
+    <string name="sure_del_any">Are you sure to delete %s?</string>
     <string name="sure_del_all_book">Are you sure to delete all books？</string>
     <string name="sure_del_download_book">Do you want to delete the downloaded book chapters at the same time?</string>
     <string name="qr_per">Scan QR code requires Camera permissions</string>
@@ -484,7 +496,7 @@
     <string name="no_book_name">No bookName</string>
     <string name="input_replace_url">Input replacement rule URL</string>
     <string name="get_book_list_success">Search list obtained successfully%d</string>
-    <string name="non_null_source_name_url">Source name and URL cannot be empty</string>
+    <string name="non_null_name_url">name and URL cannot be empty</string>
     <string name="gallery">Gallery</string>
     <string name="get_ali_pay_hb">get AliPay red envelopes</string>
     <string name="non_update_url">No update address</string>
@@ -569,6 +581,7 @@
     <string name="export_selection">Export selected</string>
     <string name="export">Export</string>
     <string name="load_toc">Load chapters</string>
+    <string name="load_info">Load book detail</string>
     <string name="tts">TTS</string>
     <string name="web_dav_pw">WebDav password</string>
     <string name="web_dav_pw_s">Input you WebDav authorized password</string>
@@ -592,8 +605,6 @@
     <string name="change_cover_source">Change origin</string>
     <string name="select_local_image">Local image</string>
     <string name="book_type">Type:</string>
-    <string name="book_type_text">Text</string>
-    <string name="book_type_audio">Audio</string>
     <string name="to_backstage">Background</string>
     <string name="importing">Importing</string>
     <string name="exporting">Exporting</string>
@@ -618,7 +629,8 @@
     <string name="service_start">Starting service\nChecking notification bar for details</string>
     <string name="default_path">Default path</string>
     <string name="sys_folder_picker">System folder picker</string>
-    <string name="app_folder_picker">App folder picker\n(Android 10+ May not be available due to permission restrictions)</string>
+    <string name="app_folder_picker">App folder picker</string>
+    <string name="app_file_picker">App file picker</string>
     <string name="a10_permission_toast">Android 10+ unable to read and write file due to permission restrictions</string>
     <string name="add_to_text_context_menu_s">Long tap to display Legado·Search in the operation menu</string>
     <string name="add_to_text_context_menu_t">Text operation display Search</string>
@@ -680,11 +692,10 @@
     <string name="click_to_apply">Tap to join</string>
     <string name="middle">Middle</string>
     <string name="information">Information</string>
-    <string name="hideHeader">Hide header</string>
-    <string name="hideFooter">Hide footer</string>
     <string name="switchLayout">Switch Layout</string>
     <string name="text_font_weight_converter">Text font weight switching</string>
-  
+    <string name="full_screen_gestures_support">Full screen gestures support</string>
+
     <!--color-->
     <string name="primary">Primary</string>
     <string name="accent">Accent</string>
@@ -710,10 +721,9 @@
     <string name="import_old_summary">Select a legacy backup folder</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
-
     <string name="starting_download">Starting download</string>
     <string name="already_in_download">This book is already in Download list</string>
-    <string name="click_to_open">click to open</string>
+    <string name="click_to_open">Click to open</string>
     <string name="follow_public_account_summary">Follow [开源阅读] to support me by clicking on ads</string>
     <string name="weChat_appreciation_code">WeChat Tipping Code</string>
     <string name="alipay">AliPay</string>
@@ -730,11 +740,9 @@
     <string name="read_config">Reading interface settings</string>
     <string name="group_name">Group name</string>
     <string name="note_content">Remarks section</string>
-    <string name="e_ink_change_bg">Only white page black text in E-Ink mode</string>
     <string name="replace_enable_default_t">Enable replace rule by default</string>
     <string name="replace_enable_default_s">For new added books</string>
     <string name="select_restore_file">Select restore file</string>
-    <string name="select_theme">Switch default theme</string>
     <string name="day_background_too_dark">Day background can not be too dark!</string>
     <string name="day_bottom_bar_too_dark">Day bottom can not be too dark!</string>
     <string name="night_background_too_light">Night background can not be too bright!</string>
@@ -754,12 +762,92 @@
     <string name="thread_count">Thread count</string>
     <string name="all_read_time">Total read time</string>
     <string name="un_select_all">Unselect all</string>
-    <string name="import_str">Import str</string>
-    <string name="export_str">Export str</string>
+    <string name="import_str">Import</string>
+    <string name="export_str">Export</string>
     <string name="save_theme_config">Save theme config</string>
     <string name="save_day_theme_summary">Save day theme config</string>
     <string name="save_night_theme_summary">Save night theme config</string>
     <string name="theme_list">Theme list</string>
     <string name="theme_list_summary">Save, Import, Share theme</string>
+    <string name="select_theme">Switch default theme</string>
+    <string name="sort_by_lastUpdateTime">Sort by update time</string>
+    <string name="search_content">Search content</string>
+    <string name="rss_source_empty">Follow Wechat official account [开源阅读] to get Subscription source</string>
+    <string name="explore_empty">Empty now,Follow Wechat official account [开源阅读] to get Discovery source</string>
+    <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
+    <string name="theme_name">Theme name</string>
+    <string name="auto_clear_expired">"Clear expired search histories automatically "</string>
+    <string name="auto_clear_expired_summary">Search histories more than one day</string>
+    <string name="re_segment">Re-segment</string>
+    <string name="style_name">Style name:</string>
+    <string name="empty_msg_import_book">Click the folder icon in the upper right corner and select the folder</string>
+    <string name="scan_folder">Intelligent scanning</string>
+    <string name="import_file_name">Imported-file name</string>
+    <string name="no_book">No books</string>
+    <string name="keep_original_name">Keep the original name</string>
+    <string name="click_regional_config">Screen touch control</string>
+    <string name="colse">Close</string>
+    <string name="next_page">Next page</string>
+    <string name="prev_page">Prior page</string>
+    <string name="non_action">None</string>
+    <string name="body_title">Title</string>
+    <string name="show_hide">Show/Hide</string>
+    <string name="header_footer">footer <![CDATA[&]]> header</string>
+    <string name="rule_subscription">Rule Subscription</string>
+    <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
+    <string name="get_book_progress">Pull the cloud  progress</string>
+    <string name="current_progress_exceeds_cloud">The current progress exceeds the cloud progress. Do you want to synchronize?</string>
+    <string name="sync_book_progress_t">Synchronous reading progress</string>
+    <string name="sync_book_progress_s">Synchronize reading progress when entering / exiting the reading interface</string>
+    <string name="create_bookmark_error">Failed to create bookmark</string>
+    <string name="single_url">Single URL</string>
+    <string name="export_bookshelf">Export the list of books</string>
+    <string name="import_bookshelf">Import the list of books</string>
+    <string name="pre_download">Download in advance</string>
+    <string name="pre_download_s">Download %s chapters in advance</string>
+    <string name="is_enabled">Is enabled</string>
+    <string name="background_image">Background image</string>
+    <string name="copy_book_url">Copy book URL</string>
+    <string name="copy_toc_url">Copy chapters URL</string>
+    <string name="export_folder">Export folder</string>
+    <string name="export_charset">Exported text coding</string>
+    <string name="export_to_web_dav">Export to WebDav</string>
+    <string name="reverse_content">Reverse content</string>
+    <string name="debug">Debug</string>
+    <string name="crash_log">Crash log</string>
+    <string name="use_zh_layout">Custom Chinese line feed</string>
+    <string name="image_style">Style of Images</string>
+    <string name="system_tts">System tts</string>
+    <string name="export_type">Exported file format</string>
+    <string name="checkAuthor">Check by author</string>
+    <string name="url_already">This URL has subscribed</string>
+    <string name="high_brush_title">High screen refresh rate</string>
+    <string name="high_brush_summary">Use maximum screen refresh rate</string>
+    <string name="export_all">Export all</string>
+    <string name="complete">Finished</string>
+    <string name="show_unread">Show unread flag</string>
+    <string name="use_default_cover">Always show default cover</string>
+    <string name="use_default_cover_s">Always show the default cover, do not show the network cover</string>
+    <string name="search_src">Search source code</string>
+    <string name="boo_src">Book source code</string>
+    <string name="toc_src">Chapters source code</string>
+    <string name="content_src">Content source code</string>
+    <string name="list_src">List source code</string>
+    <string name="title_font_size">Font size</string>
+    <string name="title_margin_top">Margin top</string>
+    <string name="title_margin_bottom">Marigin bottom</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="hide_when_status_bar_show">Hide when status bar show</string>
+    <string name="reverse_toc">Reverse toc</string>
+    <string name="show_discovery">Show</string>
+    <string name="style">Style</string>
+    <string name="group_style">Group style</string>
+    <string name="export_file_name">Export file name</string>
+    <string name="reset">Reset</string>
+    <string name="null_url">Null url</string>
+    <string name="dict">字典</string>
+    <string name="unknown_error">未知错误</string>
+    <string name="autobackup_fail">Autobackup failed</string>
 
 </resources>

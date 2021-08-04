@@ -1,18 +1,19 @@
+@file:Suppress("unused")
+
 package io.legado.app.utils
 
+import android.icu.text.Collator
+import android.icu.util.ULocale
 import android.net.Uri
 import java.io.File
-
-val removeHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
-val imgRegex = "<img[^>]*>".toRegex()
-val notImgHtmlRegex = "</?(?!img)\\w+[^>]*>".toRegex()
+import java.util.*
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
-fun String?.isContentPath(): Boolean = this?.startsWith("content://") == true
+fun String?.isContentScheme(): Boolean = this?.startsWith("content://") == true
 
 fun String.parseToUri(): Uri {
-    return if (isContentPath()) {
+    return if (isContentScheme()) {
         Uri.parse(this)
     } else {
         Uri.fromFile(File(this))
@@ -21,8 +22,7 @@ fun String.parseToUri(): Uri {
 
 fun String?.isAbsUrl() =
     this?.let {
-        it.startsWith("http://", true)
-                || it.startsWith("https://", true)
+        it.startsWith("http://", true) || it.startsWith("https://", true)
     } ?: false
 
 fun String?.isJson(): Boolean =
@@ -47,23 +47,20 @@ fun String?.isJsonArray(): Boolean =
         str.startsWith("[") && str.endsWith("]")
     } ?: false
 
-fun String?.htmlFormat(): String {
-    this ?: return ""
-    return this
-        .replace(imgRegex, "\n$0\n")
-        .replace(removeHtmlRegex, "\n")
-        .replace(notImgHtmlRegex, "")
-        .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
-        .replace("^[\\n\\s]+".toRegex(), "　　")
-        .replace("[\\n\\s]+$".toRegex(), "")
-}
-
 fun String.splitNotBlank(vararg delimiter: String): Array<String> = run {
     this.split(*delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
 fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
     this.split(regex, limit).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
+}
+
+fun String.cnCompare(other: String): Int {
+    return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        Collator.getInstance(ULocale.SIMPLIFIED_CHINESE).compare(this, other)
+    } else {
+        java.text.Collator.getInstance(Locale.CHINA).compare(this, other)
+    }
 }
 
 /**

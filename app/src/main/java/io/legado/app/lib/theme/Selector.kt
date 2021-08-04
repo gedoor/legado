@@ -13,6 +13,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.IntDef
 import androidx.core.content.ContextCompat
 
+@Suppress("unused")
 object Selector {
     fun shapeBuild(): ShapeSelector {
         return ShapeSelector()
@@ -62,7 +63,12 @@ object Selector {
         private var hasSetFocusedStrokeColor = false
         private var hasSetCheckedStrokeColor = false
 
-        @IntDef(GradientDrawable.RECTANGLE, GradientDrawable.OVAL, GradientDrawable.LINE, GradientDrawable.RING)
+        @IntDef(
+            GradientDrawable.RECTANGLE,
+            GradientDrawable.OVAL,
+            GradientDrawable.LINE,
+            GradientDrawable.RING
+        )
         private annotation class Shape
 
         init {
@@ -260,7 +266,8 @@ object Selector {
      * @author hjy
      * created at 2017/12/11 22:34
      */
-    class DrawableSelector constructor() {
+    @Suppress("MemberVisibilityCanBePrivate")
+    class DrawableSelector {
 
         private var mDefaultDrawable: Drawable? = null
         private var mDisabledDrawable: Drawable? = null
@@ -355,7 +362,7 @@ object Selector {
      * @author hjy
      * created at 2017/12/11 22:26
      */
-    class ColorSelector constructor() {
+    class ColorSelector {
 
         private var mDefaultColor: Int = 0
         private var mDisabledColor: Int = 0

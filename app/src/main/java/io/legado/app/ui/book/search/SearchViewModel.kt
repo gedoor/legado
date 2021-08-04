@@ -2,10 +2,12 @@ package io.legado.app.ui.book.search
 
 import android.app.Application
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
+import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.model.webBook.SearchBookModel
@@ -15,8 +17,8 @@ import kotlinx.coroutines.isActive
 
 class SearchViewModel(application: Application) : BaseViewModel(application),
     SearchBookModel.CallBack {
-    val handler = Handler()
-    private val searchBookModel = SearchBookModel(this, this)
+    val handler = Handler(Looper.getMainLooper())
+    private val searchBookModel = SearchBookModel(viewModelScope, this)
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     var searchKey: String = ""
@@ -61,12 +63,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
     }
 
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
-        if (context.getPrefBoolean(PreferKey.precisionSearch)) {
-            precisionSearch(this, searchBooks)
-        } else {
-            App.db.searchBookDao().insert(*searchBooks.toTypedArray())
-            mergeItems(this, searchBooks)
-        }
+        val precision = context.getPrefBoolean(PreferKey.precisionSearch)
+        appDb.searchBookDao.insert(*searchBooks.toTypedArray())
+        mergeItems(viewModelScope, searchBooks, precision)
     }
 
     override fun onSearchFinish() {
@@ -80,97 +79,72 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
     }
 
     /**
-     * 精确搜索处理
-     */
-    private fun precisionSearch(scope: CoroutineScope, searchBooks: List<SearchBook>) {
-        val books = arrayListOf<SearchBook>()
-        searchBooks.forEach { searchBook ->
-            if (searchBook.name.contains(searchKey, true)
-                || searchBook.author.contains(searchKey, true)
-            ) books.add(searchBook)
-        }
-        App.db.searchBookDao().insert(*books.toTypedArray())
-        if (scope.isActive) {
-            mergeItems(scope, books)
-        }
-    }
-
-    /**
      * 合并搜索结果并排序
      */
     @Synchronized
-    private fun mergeItems(scope: CoroutineScope, newDataS: List<SearchBook>) {
+    private fun mergeItems(scope: CoroutineScope, newDataS: List<SearchBook>, precision: Boolean) {
         if (newDataS.isNotEmpty()) {
-            val copyDataS = ArrayList(searchBooks)
-            val searchBooksAdd = ArrayList<SearchBook>()
-            if (copyDataS.size == 0) {
-                copyDataS.addAll(newDataS)
-            } else {
-                //存在
-                newDataS.forEach { item ->
+            val copyData = ArrayList(searchBooks)
+            val equalData = arrayListOf<SearchBook>()
+            val containsData = arrayListOf<SearchBook>()
+            val otherData = arrayListOf<SearchBook>()
+            copyData.forEach {
+                if (!scope.isActive) return
+                if (it.name == searchKey || it.author == searchKey) {
+                    equalData.add(it)
+                } else if (it.name.contains(searchKey) || it.author.contains(searchKey)) {
+                    containsData.add(it)
+                } else {
+                    otherData.add(it)
+                }
+            }
+            newDataS.forEach { nBook ->
+                if (!scope.isActive) return
+                if (nBook.name == searchKey || nBook.author == searchKey) {
                     var hasSame = false
-                    for (searchBook in copyDataS) {
-                        if (item.name == searchBook.name
-                            && item.author == searchBook.author
-                        ) {
+                    equalData.forEach { pBook ->
+                        if (!scope.isActive) return
+                        if (pBook.name == nBook.name && pBook.author == nBook.author) {
+                            pBook.addOrigin(nBook.origin)
                             hasSame = true
-                            searchBook.addOrigin(item.origin)
-                            break
                         }
                     }
                     if (!hasSame) {
-                        searchBooksAdd.add(item)
+                        equalData.add(nBook)
                     }
-                }
-                //添加
-                searchBooksAdd.forEach { item ->
-                    if (searchKey == item.name) {
-                        for ((index, searchBook) in copyDataS.withIndex()) {
-                            if (searchKey != searchBook.name) {
-                                copyDataS.add(index, item)
-                                break
-                            }
+                } else if (nBook.name.contains(searchKey) || nBook.author.contains(searchKey)) {
+                    var hasSame = false
+                    containsData.forEach { pBook ->
+                        if (!scope.isActive) return
+                        if (pBook.name == nBook.name && pBook.author == nBook.author) {
+                            pBook.addOrigin(nBook.origin)
+                            hasSame = true
                         }
-                    } else if (searchKey == item.author) {
-                        for ((index, searchBook) in copyDataS.withIndex()) {
-                            if (searchKey != searchBook.name && searchKey == searchBook.author) {
-                                copyDataS.add(index, item)
-                                break
-                            }
+                    }
+                    if (!hasSame) {
+                        containsData.add(nBook)
+                    }
+                } else if (!precision) {
+                    var hasSame = false
+                    otherData.forEach { pBook ->
+                        if (!scope.isActive) return
+                        if (pBook.name == nBook.name && pBook.author == nBook.author) {
+                            pBook.addOrigin(nBook.origin)
+                            hasSame = true
                         }
-                    } else {
-                        copyDataS.add(item)
+                    }
+                    if (!hasSame) {
+                        otherData.add(nBook)
                     }
                 }
             }
             if (!scope.isActive) return
-            searchBooks.sortWith(Comparator { o1, o2 ->
-                if (o1.name == searchKey && o2.name != searchKey) {
-                    1
-                } else if (o1.name != searchKey && o2.name == searchKey) {
-                    -1
-                } else if (o1.author == searchKey && o2.author != searchKey) {
-                    1
-                } else if (o1.author != searchKey && o2.author == searchKey) {
-                    -1
-                } else if (o1.name == o2.name) {
-                    when {
-                        o1.origins.size > o2.origins.size -> {
-                            1
-                        }
-                        o1.origins.size < o2.origins.size -> {
-                            -1
-                        }
-                        else -> {
-                            0
-                        }
-                    }
-                } else {
-                    0
-                }
-            })
-            if (!scope.isActive) return
-            searchBooks = copyDataS
+            equalData.sortByDescending { it.origins.size }
+            equalData.addAll(containsData.sortedByDescending { it.origins.size })
+            if (!precision) {
+                equalData.addAll(otherData)
+            }
+            searchBooks = equalData
             upAdapter()
         }
     }
@@ -187,7 +161,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun getSearchBook(name: String, author: String, success: ((searchBook: SearchBook?) -> Unit)?) {
         execute {
-            val searchBook = App.db.searchBookDao().getFirstByNameAuthor(name, author)
+            val searchBook = appDb.searchBookDao.getFirstByNameAuthor(name, author)
             success?.invoke(searchBook)
         }
     }
@@ -197,10 +171,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun saveSearchKey(key: String) {
         execute {
-            App.db.searchKeywordDao().get(key)?.let {
+            appDb.searchKeywordDao.get(key)?.let {
                 it.usage = it.usage + 1
-                App.db.searchKeywordDao().update(it)
-            } ?: App.db.searchKeywordDao().insert(SearchKeyword(key, 1))
+                appDb.searchKeywordDao.update(it)
+            } ?: appDb.searchKeywordDao.insert(SearchKeyword(key, 1))
         }
     }
 
@@ -209,8 +183,12 @@ class SearchViewModel(application: Application) : BaseViewModel(application),
      */
     fun clearHistory() {
         execute {
-            App.db.searchKeywordDao().deleteAll()
+            appDb.searchKeywordDao.deleteAll()
         }
+    }
+
+    fun deleteHistory(searchKeyword: SearchKeyword) {
+        appDb.searchKeywordDao.delete(searchKeyword)
     }
 
     override fun onCleared() {

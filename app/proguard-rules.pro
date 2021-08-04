@@ -54,6 +54,8 @@
 # Android开发中一些需要保留的公共部分
 #
 #############################################
+# 屏蔽错误Unresolved class name
+#noinspection ShrinkerUnresolvedReference
 
 # 保留我们使用的四大组件，自定义的Application等等这些类不被混淆
 # 因为这些子类都有可能被外部调用
@@ -65,7 +67,6 @@
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.preference.Preference
 -keep public class * extends android.view.View
-
 
 # 保留androidx下的所有类及其内部类
 -keep class androidx.** {*;}
@@ -220,4 +221,11 @@
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
+}
+
+
+# Keep all of Cronet API as it's used by the Cronet module.
+-keep public class org.chromium.net.* {
+    !private *;
+    *;
 }

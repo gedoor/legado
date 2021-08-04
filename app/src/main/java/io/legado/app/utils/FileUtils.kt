@@ -3,15 +3,15 @@ package io.legado.app.utils
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
-import io.legado.app.App
-import io.legado.app.ui.filechooser.utils.ConvertUtils
+import io.legado.app.ui.document.utils.ConvertUtils
+import splitties.init.appCtx
 import java.io.*
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object FileUtils {
 
     fun exists(root: File, vararg subDirFiles: String): Boolean {
@@ -55,6 +55,22 @@ object FileUtils {
         return file
     }
 
+    fun createFileWithReplace(filePath: String): File {
+        val file = File(filePath)
+        if (!file.exists()) {
+            //创建父类文件夹
+            file.parent?.let {
+                createFolderIfNotExist(it)
+            }
+            //创建文件
+            file.createNewFile()
+        } else {
+            file.delete()
+            file.createNewFile()
+        }
+        return file
+    }
+
     fun getFile(root: File, vararg subDirFiles: String): File {
         val filePath = getPath(root, *subDirFiles)
         return File(filePath)
@@ -88,8 +104,7 @@ object FileUtils {
     }
 
     fun getCachePath(): String {
-        return App.INSTANCE.externalCacheDir?.absolutePath
-            ?: App.INSTANCE.cacheDir.absolutePath
+        return appCtx.externalCache.absolutePath
     }
 
     fun getSdCardPath(): String {
@@ -472,11 +487,10 @@ object FileUtils {
      */
     @JvmOverloads
     fun writeText(filepath: String, content: String, charset: String = "utf-8"): Boolean {
-        try {
+        return try {
             writeBytes(filepath, content.toByteArray(charset(charset)))
-            return true
         } catch (e: UnsupportedEncodingException) {
-            return false
+            false
         }
 
     }
@@ -494,6 +508,45 @@ object FileUtils {
             }
             fos = FileOutputStream(filepath)
             fos.write(data)
+            true
+        } catch (e: IOException) {
+            false
+        } finally {
+            closeSilently(fos)
+        }
+    }
+
+    /**
+     * 保存文件内容
+     */
+    fun writeInputStream(filepath: String, data: InputStream): Boolean {
+        val file = File(filepath)
+        return writeInputStream(file, data)
+    }
+
+    /**
+     * 保存文件内容
+     */
+    fun writeInputStream(file: File, data: InputStream): Boolean {
+        var fos: FileOutputStream? = null
+        return try {
+            if (!file.exists()) {
+                file.parentFile?.mkdirs()
+                file.createNewFile()
+            }
+            val buffer = ByteArray(1024 * 4)
+            fos = FileOutputStream(file)
+            while (true) {
+                val len = data.read(buffer, 0, buffer.size)
+                if (len == -1) {
+                    break
+                } else {
+                    fos.write(buffer, 0, len)
+                }
+            }
+            data.close()
+            fos.flush()
+
             true
         } catch (e: IOException) {
             false
@@ -552,15 +605,15 @@ object FileUtils {
      * 获取文件名（不包括扩展名）
      */
     fun getNameExcludeExtension(path: String): String {
-        try {
+        return try {
             var fileName = File(path).name
             val lastIndexOf = fileName.lastIndexOf(".")
             if (lastIndexOf != -1) {
                 fileName = fileName.substring(0, lastIndexOf)
             }
-            return fileName
+            fileName
         } catch (e: Exception) {
-            return ""
+            ""
         }
 
     }
@@ -694,7 +747,7 @@ object FileUtils {
                     val s1 = f1.name
                     val s2 = f2.name
                     if (caseSensitive) {
-                        s1.compareTo(s2)
+                        s1.cnCompare(s2)
                     } else {
                         s1.compareTo(s2, ignoreCase = true)
                     }

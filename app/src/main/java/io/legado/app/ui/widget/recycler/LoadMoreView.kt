@@ -1,22 +1,20 @@
 package io.legado.app.ui.widget.recycler
 
 import android.content.Context
-import android.view.View
+import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import io.legado.app.R
+import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.view_load_more.view.*
 
-class LoadMoreView(context: Context) : FrameLayout(context) {
-
+@Suppress("unused")
+class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
+    private val binding = ViewLoadMoreBinding.inflate(LayoutInflater.from(context), this)
     var hasMore = true
         private set
-
-    init {
-        View.inflate(context, R.layout.view_load_more, this)
-    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -24,23 +22,36 @@ class LoadMoreView(context: Context) : FrameLayout(context) {
     }
 
     fun startLoad() {
-        tv_text.invisible()
-        rotate_loading.show()
+        binding.tvText.invisible()
+        binding.rotateLoading.show()
     }
 
     fun stopLoad() {
-        rotate_loading.hide()
+        binding.rotateLoading.hide()
+    }
+
+    fun hasMore() {
+        hasMore = true
+        binding.tvText.invisible()
+        binding.rotateLoading.show()
     }
 
     fun noMore(msg: String? = null) {
         hasMore = false
-        rotate_loading.hide()
+        binding.rotateLoading.hide()
         if (msg != null) {
-            tv_text.text = msg
+            binding.tvText.text = msg
         } else {
-            tv_text.setText(R.string.bottom_line)
+            binding.tvText.setText(R.string.bottom_line)
         }
-        tv_text.visible()
+        binding.tvText.visible()
+    }
+
+    fun error(msg: String) {
+        hasMore = false
+        binding.rotateLoading.hide()
+        binding.tvText.text = msg
+        binding.tvText.visible()
     }
 
 }

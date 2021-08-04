@@ -4,13 +4,16 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.legado.app.App
 import io.legado.app.constant.AppConst
+import io.legado.app.help.AppConfig
+import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
+import io.legado.app.help.http.CookieStore
+import io.legado.app.utils.ACache
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.getPrefString
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
+import splitties.init.appCtx
 import java.util.*
 import javax.script.SimpleBindings
 
@@ -22,8 +25,10 @@ data class RssSource(
     var sourceName: String = "",
     var sourceIcon: String = "",
     var sourceGroup: String? = null,
+    var sourceComment: String? = null,
     var enabled: Boolean = true,
     var sortUrl: String? = null,
+    var singleUrl: Boolean = false,
     var articleStyle: Int = 0,
     //列表规则
     var ruleArticles: String? = null,
@@ -39,17 +44,22 @@ data class RssSource(
     var header: String? = null,
     var enableJs: Boolean = false,
     var loadWithBaseUrl: Boolean = false,
-    
+
     var customOrder: Int = 0
-): Parcelable, JsExtensions {
-    
-    override fun equals(other: Any?) = if (other is RssSource) other.sourceUrl == sourceUrl else false
-    
+) : Parcelable, JsExtensions {
+
+    override fun equals(other: Any?): Boolean {
+        if (other is RssSource) {
+            return other.sourceUrl == sourceUrl
+        }
+        return false
+    }
+
     override fun hashCode() = sourceUrl.hashCode()
-    
+
     @Throws(Exception::class)
     fun getHeaderMap() = HashMap<String, String>().apply {
-        this[AppConst.UA_NAME] = App.INSTANCE.getPrefString("user_agent") ?: AppConst.userAgent
+        this[AppConst.UA_NAME] = AppConfig.userAgent
         header?.let {
             GSON.fromJsonObject<Map<String, String>>(
                 when {
@@ -64,36 +74,63 @@ data class RssSource(
             }
         }
     }
-    
+
     /**
      * 执行JS
      */
     @Throws(Exception::class)
-    private fun evalJS(jsStr: String): Any = AppConst.SCRIPT_ENGINE.eval(jsStr, SimpleBindings().apply { this["java"] = this@RssSource })
-    
+    private fun evalJS(jsStr: String): Any? {
+        val bindings = SimpleBindings()
+        bindings["java"] = this
+        bindings["cookie"] = CookieStore
+        bindings["cache"] = CacheManager
+        return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
+    }
+
     fun equal(source: RssSource): Boolean {
         return equal(sourceUrl, source.sourceUrl)
-            && equal(sourceIcon, source.sourceIcon)
-            && enabled == source.enabled
-            && equal(sourceGroup, source.sourceGroup)
-            && equal(ruleArticles, source.ruleArticles)
-            && equal(ruleNextPage, source.ruleNextPage)
-            && equal(ruleTitle, source.ruleTitle)
-            && equal(rulePubDate, source.rulePubDate)
-            && equal(ruleDescription, source.ruleDescription)
-            && equal(ruleLink, source.ruleLink)
-            && equal(ruleContent, source.ruleContent)
-            && enableJs == source.enableJs
-            && loadWithBaseUrl == source.loadWithBaseUrl
+                && equal(sourceIcon, source.sourceIcon)
+                && enabled == source.enabled
+                && equal(sourceGroup, source.sourceGroup)
+                && equal(ruleArticles, source.ruleArticles)
+                && equal(ruleNextPage, source.ruleNextPage)
+                && equal(ruleTitle, source.ruleTitle)
+                && equal(rulePubDate, source.rulePubDate)
+                && equal(ruleDescription, source.ruleDescription)
+                && equal(ruleLink, source.ruleLink)
+                && equal(ruleContent, source.ruleContent)
+                && enableJs == source.enableJs
+                && loadWithBaseUrl == source.loadWithBaseUrl
     }
-    
+
     private fun equal(a: String?, b: String?): Boolean {
         return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
     }
-    
-    fun sortUrls(): LinkedHashMap<String, String> =
-        linkedMapOf<String, String>().apply {
-            sortUrl?.split("(&&|\n)+".toRegex())?.forEach { c ->
+
+    fun sortUrls(): LinkedHashMap<String, String> = linkedMapOf<String, String>().apply {
+        kotlin.runCatching {
+            var a = sortUrl
+            if (sortUrl?.startsWith("<js>", false) == true
+                || sortUrl?.startsWith("@js", false) == true
+            ) {
+                val aCache = ACache.get(appCtx, "rssSortUrl")
+                a = aCache.getAsString(sourceUrl) ?: ""
+                if (a.isBlank()) {
+                    val bindings = SimpleBindings()
+                    bindings["baseUrl"] = sourceUrl
+                    bindings["java"] = this
+                    bindings["cookie"] = CookieStore
+                    bindings["cache"] = CacheManager
+                    val jsStr = if (sortUrl!!.startsWith("@")) {
+                        sortUrl!!.substring(3)
+                    } else {
+                        sortUrl!!.substring(4, sortUrl!!.lastIndexOf("<"))
+                    }
+                    a = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
+                    aCache.put(sourceUrl, a)
+                }
+            }
+            a?.split("(&&|\n)+".toRegex())?.forEach { c ->
                 val d = c.split("::")
                 if (d.size > 1)
                     this[d[0]] = d[1]
@@ -102,4 +139,5 @@ data class RssSource(
                 this[""] = sourceUrl
             }
         }
+    }
 }

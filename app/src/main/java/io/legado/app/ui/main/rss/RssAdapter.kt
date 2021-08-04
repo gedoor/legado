@@ -2,41 +2,51 @@ package io.legado.app.ui.main.rss
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RssSource
+import io.legado.app.databinding.ItemRssBinding
 import io.legado.app.help.ImageLoader
-import kotlinx.android.synthetic.main.item_rss.view.*
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import splitties.views.onLongClick
 
 class RssAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<RssSource>(context, R.layout.item_rss) {
+    RecyclerAdapter<RssSource, ItemRssBinding>(context) {
 
-    override fun convert(holder: ItemViewHolder, item: RssSource, payloads: MutableList<Any>) {
-        with(holder.itemView) {
-            tv_name.text = item.sourceName
+    override fun getViewBinding(parent: ViewGroup): ItemRssBinding {
+        return ItemRssBinding.inflate(inflater, parent, false)
+    }
+
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemRssBinding,
+        item: RssSource,
+        payloads: MutableList<Any>
+    ) {
+        binding.apply {
+            tvName.text = item.sourceName
             ImageLoader.load(context, item.sourceIcon)
                 .centerCrop()
                 .placeholder(R.drawable.image_rss)
                 .error(R.drawable.image_rss)
-                .into(iv_icon)
+                .into(ivIcon)
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.onClick {
-            getItem(holder.layoutPosition)?.let {
-                callBack.openRss(it)
+    override fun registerListener(holder: ItemViewHolder, binding: ItemRssBinding) {
+        binding.apply {
+            root.setOnClickListener {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
+                    callBack.openRss(it)
+                }
             }
-        }
-        holder.itemView.onLongClick {
-            getItem(holder.layoutPosition)?.let {
-                showMenu(holder.itemView.iv_icon, it)
+            root.onLongClick {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
+                    showMenu(ivIcon, it)
+                }
             }
-            true
         }
     }
 

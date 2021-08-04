@@ -33,9 +33,11 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
+@Suppress("SameParameterValue")
 class FastScroller : LinearLayout {
     @ColorInt
     private var mBubbleColor: Int = 0
+
     @ColorInt
     private var mHandleColor: Int = 0
     private var mBubbleHeight: Int = 0
@@ -89,7 +91,11 @@ class FastScroller : LinearLayout {
     }
 
     @JvmOverloads
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         layout(context, attrs)
         layoutParams = generateLayoutParams(attrs)
     }
@@ -102,16 +108,32 @@ class FastScroller : LinearLayout {
     fun setLayoutParams(viewGroup: ViewGroup) {
         @IdRes val recyclerViewId = mRecyclerView?.id ?: View.NO_ID
         val marginTop = resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_margin_top)
-        val marginBottom = resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_margin_bottom)
+        val marginBottom =
+            resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_margin_bottom)
         require(recyclerViewId != View.NO_ID) { "RecyclerView must have a view ID" }
         when (viewGroup) {
             is ConstraintLayout -> {
                 val constraintSet = ConstraintSet()
                 @IdRes val layoutId = id
                 constraintSet.clone(viewGroup)
-                constraintSet.connect(layoutId, ConstraintSet.TOP, recyclerViewId, ConstraintSet.TOP)
-                constraintSet.connect(layoutId, ConstraintSet.BOTTOM, recyclerViewId, ConstraintSet.BOTTOM)
-                constraintSet.connect(layoutId, ConstraintSet.END, recyclerViewId, ConstraintSet.END)
+                constraintSet.connect(
+                    layoutId,
+                    ConstraintSet.TOP,
+                    recyclerViewId,
+                    ConstraintSet.TOP
+                )
+                constraintSet.connect(
+                    layoutId,
+                    ConstraintSet.BOTTOM,
+                    recyclerViewId,
+                    ConstraintSet.BOTTOM
+                )
+                constraintSet.connect(
+                    layoutId,
+                    ConstraintSet.END,
+                    recyclerViewId,
+                    ConstraintSet.END
+                )
                 constraintSet.applyTo(viewGroup)
                 val layoutParams = layoutParams as ConstraintLayout.LayoutParams
                 layoutParams.setMargins(0, marginTop, 0, marginBottom)
@@ -150,12 +172,10 @@ class FastScroller : LinearLayout {
 
     fun attachRecyclerView(recyclerView: RecyclerView) {
         mRecyclerView = recyclerView
-        if (mRecyclerView != null) {
-            mRecyclerView!!.addOnScrollListener(mScrollListener)
-            post {
-                // set initial positions for bubble and handle
-                setViewPositions(getScrollProportion(mRecyclerView))
-            }
+        mRecyclerView!!.addOnScrollListener(mScrollListener)
+        post {
+            // set initial positions for bubble and handle
+            setViewPositions(getScrollProportion(mRecyclerView))
         }
     }
 
@@ -173,7 +193,7 @@ class FastScroller : LinearLayout {
      */
     fun setFadeScrollbar(fadeScrollbar: Boolean) {
         mFadeScrollbar = fadeScrollbar
-        mScrollbar.visibility = if (fadeScrollbar) View.GONE else View.VISIBLE
+        mScrollbar.visibility = if (fadeScrollbar) View.INVISIBLE else View.VISIBLE
     }
 
     /**
@@ -191,7 +211,7 @@ class FastScroller : LinearLayout {
      * @param visible True to show scroll track, false to hide
      */
     fun setTrackVisible(visible: Boolean) {
-        mTrackView.visibility = if (visible) View.VISIBLE else View.GONE
+        mTrackView.visibility = if (visible) View.VISIBLE else View.INVISIBLE
     }
 
     /**
@@ -264,7 +284,7 @@ class FastScroller : LinearLayout {
 
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
-        visibility = if (enabled) View.VISIBLE else View.GONE
+        visibility = if (enabled) View.VISIBLE else View.INVISIBLE
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -359,8 +379,13 @@ class FastScroller : LinearLayout {
     private fun setViewPositions(y: Float) {
         mBubbleHeight = mBubbleView.height
         mHandleHeight = mHandleView.height
-        val bubbleY = getValueInRange(0, mViewHeight - mBubbleHeight - mHandleHeight / 2, (y - mBubbleHeight).toInt())
-        val handleY = getValueInRange(0, mViewHeight - mHandleHeight, (y - mHandleHeight / 2).toInt())
+        val bubbleY = getValueInRange(
+            0,
+            mViewHeight - mBubbleHeight - mHandleHeight / 2,
+            (y - mBubbleHeight).toInt()
+        )
+        val handleY =
+            getValueInRange(0, mViewHeight - mHandleHeight, (y - mHandleHeight / 2).toInt())
         if (mShowBubble) {
             mBubbleView.y = bubbleY.toFloat()
         }
@@ -368,7 +393,8 @@ class FastScroller : LinearLayout {
     }
 
     private fun updateViewHeights() {
-        val measureSpec = MeasureSpec.makeMeasureSpec(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
+        val measureSpec =
+            MeasureSpec.makeMeasureSpec(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
         mBubbleView.measure(measureSpec, measureSpec)
         mBubbleHeight = mBubbleView.measuredHeight
         mHandleView.measure(measureSpec, measureSpec)
@@ -411,13 +437,13 @@ class FastScroller : LinearLayout {
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         super.onAnimationEnd(animation)
-                        mBubbleView.visibility = View.GONE
+                        mBubbleView.visibility = View.INVISIBLE
                         mBubbleAnimator = null
                     }
 
                     override fun onAnimationCancel(animation: Animator) {
                         super.onAnimationCancel(animation)
-                        mBubbleView.visibility = View.GONE
+                        mBubbleView.visibility = View.INVISIBLE
                         mBubbleAnimator = null
                     }
                 })
@@ -427,7 +453,9 @@ class FastScroller : LinearLayout {
     private fun showScrollbar() {
         mRecyclerView?.let { mRecyclerView ->
             if (mRecyclerView.computeVerticalScrollRange() - mViewHeight > 0) {
-                val transX = resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_padding_end).toFloat()
+                val transX =
+                    resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_padding_end)
+                        .toFloat()
                 mScrollbar.translationX = transX
                 mScrollbar.visibility = View.VISIBLE
                 mScrollbarAnimator = mScrollbar.animate().translationX(0f).alpha(1f)
@@ -441,19 +469,20 @@ class FastScroller : LinearLayout {
     }
 
     private fun hideScrollbar() {
-        val transX = resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_padding_end).toFloat()
+        val transX =
+            resources.getDimensionPixelSize(R.dimen.fastscroll_scrollbar_padding_end).toFloat()
         mScrollbarAnimator = mScrollbar.animate().translationX(transX).alpha(0f)
             .setDuration(sScrollbarAnimDuration.toLong())
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    mScrollbar.visibility = View.GONE
+                    mScrollbar.visibility = View.INVISIBLE
                     mScrollbarAnimator = null
                 }
 
                 override fun onAnimationCancel(animation: Animator) {
                     super.onAnimationCancel(animation)
-                    mScrollbar.visibility = View.GONE
+                    mScrollbar.visibility = View.INVISIBLE
                     mScrollbarAnimator = null
                 }
             })

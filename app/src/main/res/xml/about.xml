@@ -9,13 +9,15 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
-        android:key="check_update"
-        android:title="@string/check_update"
+        android:key="update_log"
+        android:title="@string/update_log"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
-        android:key="update_log"
-        android:title="@string/update_log"
+        android:key="check_update"
+        android:title="@string/check_update"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
@@ -52,6 +54,18 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
+            android:key="discord"
+            android:title="Discord"
+            android:summary="@string/discord_url"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="tg"
+            android:title="TG"
+            android:summary="@string/tg_url"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="sourceRuleSummary"
             android:title="@string/source_rule_s"
             android:summary="@string/source_rule_url"
@@ -73,6 +87,11 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false"
         app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="crashLog"
+            android:title="@string/crash_log"
+            app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="license"

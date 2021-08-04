@@ -1,125 +1,327 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:orientation="vertical">
-
-    <io.legado.app.ui.widget.text.AccentTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/header" />
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="12dp"
-        android:gravity="center_vertical"
-        tools:ignore="RtlHardcoded,RtlSymmetry">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <TextView
+        <io.legado.app.ui.widget.text.AccentTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:text="@string/left" />
+            android:text="@string/body_title"
+            android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tv_header_left"
-            android:layout_width="0dp"
+        <RadioGroup
+            android:id="@+id/rg_title_mode"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:orientation="horizontal">
 
-        <TextView
+            <RadioButton
+                android:id="@+id/rb_title_mode1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="@string/title_left" />
+
+            <RadioButton
+                android:id="@+id/rb_title_mode2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="@string/title_center" />
+
+            <RadioButton
+                android:id="@+id/rb_title_mode3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="@string/title_hide" />
+        </RadioGroup>
+
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_title_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            app:max="10"
+            app:title="@string/title_font_size" />
+
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_title_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            app:max="100"
+            app:title="@string/title_margin_top" />
+
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_title_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            app:max="100"
+            app:title="@string/title_margin_bottom" />
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:id="@+id/tv_header_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:text="@string/middle" />
+            android:text="@string/header"
+            android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tv_header_middle"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/ll_header_show"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
 
-        <TextView
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/show_hide"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_header_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/show_hide" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_header_left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/left"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_header_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/title" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_header_middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/middle"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_header_middle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/title" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_header_right"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/right"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_header_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/title" />
+
+        </LinearLayout>
+
+        <io.legado.app.ui.widget.text.AccentTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:text="@string/right" />
+            android:text="@string/footer"
+            android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tv_header_right"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/ll_footer_show"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/show_hide"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_footer_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/show_hide" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_footer_left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/left"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_footer_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/title" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_footer_middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/middle"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_footer_middle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/title" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_footer_right"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/right"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_footer_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/title" />
+
+        </LinearLayout>
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_footer"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_tip_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/text_color"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_tip_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/text_color" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <io.legado.app.ui.widget.text.AccentTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/footer" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="12dp"
-        android:gravity="center_vertical"
-        tools:ignore="RtlHardcoded,RtlSymmetry">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:text="@string/left" />
-
-        <TextView
-            android:id="@+id/tv_footer_left"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:text="@string/middle" />
-
-        <TextView
-            android:id="@+id/tv_footer_middle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:text="@string/right" />
-
-        <TextView
-            android:id="@+id/tv_footer_right"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-    </LinearLayout>
-
-    <Switch
-        android:id="@+id/sw_hide_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/hideHeader" />
-
-    <Switch
-        android:id="@+id/sw_hide_footer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/hideFooter" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,45 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <cn.bingoogolapple.qrcode.zxing.ZXingView
-        android:id="@+id/zxingview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:qrcv_animTime="1000"
-        app:qrcv_barCodeTipText="将条码放入框内，即可自动扫描"
-        app:qrcv_barcodeRectHeight="120dp"
-        app:qrcv_borderColor="@android:color/white"
-        app:qrcv_borderSize="1dp"
-        app:qrcv_cornerColor="@color/primaryDark"
-        app:qrcv_cornerDisplayType="center"
-        app:qrcv_cornerLength="20dp"
-        app:qrcv_cornerSize="3dp"
-        app:qrcv_isAutoZoom="true"
-        app:qrcv_isBarcode="false"
-        app:qrcv_isOnlyDecodeScanBoxArea="false"
-        app:qrcv_isScanLineReverse="true"
-        app:qrcv_isShowDefaultGridScanLineDrawable="false"
-        app:qrcv_isShowDefaultScanLineDrawable="true"
-        app:qrcv_isShowLocationPoint="true"
-        app:qrcv_isShowTipBackground="true"
-        app:qrcv_isShowTipTextAsSingleLine="false"
-        app:qrcv_isTipTextBelowRect="false"
-        app:qrcv_maskColor="#33FFFFFF"
-        app:qrcv_qrCodeTipText="将二维码放入框内，即可自动扫描"
-        app:qrcv_rectWidth="300dp"
-        app:qrcv_scanLineColor="@color/primaryDark"
-        app:qrcv_scanLineMargin="0dp"
-        app:qrcv_scanLineSize="0.5dp"
-        app:qrcv_tipTextColor="@android:color/white"
-        app:qrcv_tipTextSize="12sp"
-        app:qrcv_toolbarHeight="?attr/actionBarSize"
-        app:qrcv_topOffset="100dp"
-        app:qrcv_verticalBias="-1" />
-
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
@@ -47,35 +11,9 @@
         android:layout_height="wrap_content"
         app:title="@string/scan_qr_code" />
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/fl_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:padding="16dp">
+        android:layout_height="match_parent" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_flashlight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/read_aloud"
-            android:src="@drawable/ic_daytime"
-            android:tint="@color/primaryText"
-            app:backgroundTint="@color/background_menu"
-            app:elevation="2dp"
-            app:fabSize="mini"
-            app:pressedTranslationZ="2dp" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-    </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

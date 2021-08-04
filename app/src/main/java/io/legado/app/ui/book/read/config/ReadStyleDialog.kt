@@ -1,40 +1,38 @@
 package io.legado.app.ui.book.read.config
 
-import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.core.view.get
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.EventBus
+import io.legado.app.databinding.DialogReadBookStyleBinding
+import io.legado.app.databinding.ItemReadStyleBinding
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
-import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_book_read.*
-import kotlinx.android.synthetic.main.dialog_read_book_style.*
-import kotlinx.android.synthetic.main.dialog_title_config.view.*
-import org.jetbrains.anko.sdk27.listeners.onCheckedChange
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.dp
+import io.legado.app.utils.getIndexById
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.views.onLongClick
 
 class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
-
+    private val binding by viewBinding(DialogReadBookStyleBinding::bind)
     val callBack get() = activity as? ReadBookActivity
+    private lateinit var styleAdapter: StyleAdapter
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.let {
-            it.windowManager?.defaultDisplay?.getMetrics(dm)
-        }
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             it.setBackgroundDrawableResource(R.color.background)
@@ -52,6 +50,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as ReadBookActivity).bottomDialog++
         return inflater.inflate(R.layout.dialog_read_book_style, container)
     }
 
@@ -64,212 +63,132 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         ReadBookConfig.save()
+        (activity as ReadBookActivity).bottomDialog--
     }
 
-    private fun initView() {
+    private fun initView() = binding.run {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
-        root_view.setBackgroundColor(bg)
-        tv_page_anim.setTextColor(textColor)
-        tv_bg_ts.setTextColor(textColor)
-        tv_share_layout.setTextColor(textColor)
-        dsb_text_size.valueFormat = {
+        rootView.setBackgroundColor(bg)
+        tvPageAnim.setTextColor(textColor)
+        tvBgTs.setTextColor(textColor)
+        tvShareLayout.setTextColor(textColor)
+        dsbTextSize.valueFormat = {
             (it + 5).toString()
         }
-        dsb_text_letter_spacing.valueFormat = {
+        dsbTextLetterSpacing.valueFormat = {
             ((it - 50) / 100f).toString()
         }
-        dsb_line_size.valueFormat = { ((it - 10) / 10f).toString() }
-        dsb_paragraph_spacing.valueFormat = { (it / 10f).toString() }
+        dsbLineSize.valueFormat = { ((it - 10) / 10f).toString() }
+        dsbParagraphSpacing.valueFormat = { (it / 10f).toString() }
+        styleAdapter = StyleAdapter()
+        rvStyle.adapter = styleAdapter
+        styleAdapter.addFooterView {
+            ItemReadStyleBinding.inflate(layoutInflater, it, false).apply {
+                ivStyle.setPadding(6.dp, 6.dp, 6.dp, 6.dp)
+                ivStyle.setText(null)
+                ivStyle.setColorFilter(textColor)
+                ivStyle.borderColor = textColor
+                ivStyle.setImageResource(R.drawable.ic_add)
+                root.setOnClickListener {
+                    ReadBookConfig.configList.add(ReadBookConfig.Config())
+                    showBgTextConfig(ReadBookConfig.configList.lastIndex)
+                }
+            }
+        }
     }
 
     private fun initData() {
-        cb_share_layout.isChecked = ReadBookConfig.shareLayout
-        ReadBookConfig.pageAnim.let {
-            if (it >= 0 && it < rg_page_anim.childCount) {
-                rg_page_anim.check(rg_page_anim[it].id)
-            }
-        }
-        upStyle()
-        setBg()
-        upBg()
+        binding.cbShareLayout.isChecked = ReadBookConfig.shareLayout
+        upView()
+        styleAdapter.setItems(ReadBookConfig.configList)
     }
 
-    private fun initViewEvent() {
-        chinese_converter.onChanged {
+    private fun initViewEvent() = binding.run {
+        chineseConverter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
-        tv_title_mode.onClick {
-            showTitleConfig()
-        }
-        text_font_weight_converter.onChanged {
+        textFontWeightConverter.onChanged {
             postEvent(EventBus.UP_CONFIG, true)
         }
-        tv_text_font.onClick {
+        tvTextFont.setOnClickListener {
             FontSelectDialog().show(childFragmentManager, "fontSelectDialog")
         }
-        tv_text_indent.onClick {
+        tvTextIndent.setOnClickListener {
             selector(
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
-                ReadBookConfig.bodyIndentCount = index
+                ReadBookConfig.paragraphIndent = "　".repeat(index)
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        tv_padding.onClick {
-            dismiss()
+        tvPadding.setOnClickListener {
+            dismissAllowingStateLoss()
             callBack?.showPaddingConfig()
         }
-        tv_tip.onClick {
+        tvTip.setOnClickListener {
             TipConfigDialog().show(childFragmentManager, "tipConfigDialog")
         }
-        rg_page_anim.onCheckedChange { _, checkedId ->
-            ReadBookConfig.pageAnim = rg_page_anim.getIndexById(checkedId)
-            callBack?.page_view?.upPageAnim()
+        rgPageAnim.setOnCheckedChangeListener { _, checkedId ->
+            ReadBook.book?.setPageAnim(-1)
+            ReadBookConfig.pageAnim = binding.rgPageAnim.getIndexById(checkedId)
+            callBack?.upPageAnim()
         }
-        cb_share_layout.onCheckedChangeListener = { checkBox, isChecked ->
-            if (checkBox.isPressed) {
-                ReadBookConfig.shareLayout = isChecked
-                upStyle()
-                postEvent(EventBus.UP_CONFIG, true)
-            }
+        cbShareLayout.onCheckedChangeListener = { _, isChecked ->
+            ReadBookConfig.shareLayout = isChecked
+            upView()
+            postEvent(EventBus.UP_CONFIG, true)
         }
-        dsb_text_size.onChanged = {
+        dsbTextSize.onChanged = {
             ReadBookConfig.textSize = it + 5
             postEvent(EventBus.UP_CONFIG, true)
         }
-        dsb_text_letter_spacing.onChanged = {
+        dsbTextLetterSpacing.onChanged = {
             ReadBookConfig.letterSpacing = (it - 50) / 100f
             postEvent(EventBus.UP_CONFIG, true)
         }
-        dsb_line_size.onChanged = {
+        dsbLineSize.onChanged = {
             ReadBookConfig.lineSpacingExtra = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        dsb_paragraph_spacing.onChanged = {
+        dsbParagraphSpacing.onChanged = {
             ReadBookConfig.paragraphSpacing = it
             postEvent(EventBus.UP_CONFIG, true)
         }
-        bg0.onClick { changeBg(0) }
-        bg0.onLongClick { showBgTextConfig(0) }
-        bg1.onClick { changeBg(1) }
-        bg1.onLongClick { showBgTextConfig(1) }
-        bg2.onClick { changeBg(2) }
-        bg2.onLongClick { showBgTextConfig(2) }
-        bg3.onClick { changeBg(3) }
-        bg3.onLongClick { showBgTextConfig(3) }
-        bg4.onClick { changeBg(4) }
-        bg4.onLongClick { showBgTextConfig(4) }
-    }
-
-    @SuppressLint("InflateParams")
-    private fun showTitleConfig() = ReadBookConfig.apply {
-        requireContext().alert(R.string.title) {
-            val rootView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_title_config, null).apply {
-                    rg_title_mode.checkByIndex(titleMode)
-                    dsb_title_size.progress = titleSize
-                    dsb_title_top.progress = titleTopSpacing
-                    dsb_title_bottom.progress = titleBottomSpacing
-                    rg_title_mode.onCheckedChange { _, checkedId ->
-                        titleMode = rg_title_mode.getIndexById(checkedId)
-                        postEvent(EventBus.UP_CONFIG, true)
-                    }
-                    dsb_title_size.onChanged = {
-                        titleSize = it
-                        postEvent(EventBus.UP_CONFIG, true)
-                    }
-                    dsb_title_top.onChanged = {
-                        titleTopSpacing = it
-                        postEvent(EventBus.UP_CONFIG, true)
-                    }
-                    dsb_title_bottom.onChanged = {
-                        titleBottomSpacing = it
-                        postEvent(EventBus.UP_CONFIG, true)
-                    }
-                }
-            customView = rootView
-        }.show().applyTint()
     }
 
     private fun changeBg(index: Int) {
-        if (ReadBookConfig.styleSelect != index) {
+        val oldIndex = ReadBookConfig.styleSelect
+        if (index != oldIndex) {
             ReadBookConfig.styleSelect = index
             ReadBookConfig.upBg()
-            upStyle()
-            upBg()
+            upView()
+            styleAdapter.notifyItemChanged(oldIndex)
+            styleAdapter.notifyItemChanged(index)
             postEvent(EventBus.UP_CONFIG, true)
         }
     }
 
     private fun showBgTextConfig(index: Int): Boolean {
-        dismiss()
+        dismissAllowingStateLoss()
         changeBg(index)
         callBack?.showBgTextConfig()
         return true
     }
 
-    private fun upStyle() {
+    private fun upView() = binding.run {
+        ReadBook.pageAnim().let {
+            if (it >= 0 && it < rgPageAnim.childCount) {
+                rgPageAnim.check(rgPageAnim[it].id)
+            }
+        }
         ReadBookConfig.let {
-            dsb_text_size.progress = it.textSize - 5
-            dsb_text_letter_spacing.progress = (it.letterSpacing * 100).toInt() + 50
-            dsb_line_size.progress = it.lineSpacingExtra
-            dsb_paragraph_spacing.progress = it.paragraphSpacing
-        }
-    }
-
-    private fun setBg() = ReadBookConfig.apply {
-        bg0.setTextColor(getConfig(0).textColor())
-        bg1.setTextColor(getConfig(1).textColor())
-        bg2.setTextColor(getConfig(2).textColor())
-        bg3.setTextColor(getConfig(3).textColor())
-        bg4.setTextColor(getConfig(4).textColor())
-        for (i in 0..4) {
-            val iv = when (i) {
-                1 -> bg1
-                2 -> bg2
-                3 -> bg3
-                4 -> bg4
-                else -> bg0
-            }
-            iv.setImageDrawable(getConfig(i).bgDrawable(100, 150))
-        }
-    }
-
-    private fun upBg() = ReadBookConfig.apply {
-        bg0.borderColor = getConfig(0).textColor()
-        bg0.setTextBold(false)
-        bg1.borderColor = getConfig(1).textColor()
-        bg1.setTextBold(false)
-        bg2.borderColor = getConfig(2).textColor()
-        bg2.setTextBold(false)
-        bg3.borderColor = getConfig(3).textColor()
-        bg3.setTextBold(false)
-        bg4.borderColor = getConfig(4).textColor()
-        bg4.setTextBold(false)
-        when (styleSelect) {
-            1 -> {
-                bg1.borderColor = accentColor
-                bg1.setTextBold(true)
-            }
-            2 -> {
-                bg2.borderColor = accentColor
-                bg2.setTextBold(true)
-            }
-            3 -> {
-                bg3.borderColor = accentColor
-                bg3.setTextBold(true)
-            }
-            4 -> {
-                bg4.borderColor = accentColor
-                bg4.setTextBold(true)
-            }
-            else -> {
-                bg0.borderColor = accentColor
-                bg0.setTextBold(true)
-            }
+            dsbTextSize.progress = it.textSize - 5
+            dsbTextLetterSpacing.progress = (it.letterSpacing * 100).toInt() + 50
+            dsbLineSize.progress = it.lineSpacingExtra
+            dsbParagraphSpacing.progress = it.paragraphSpacing
         }
     }
 
@@ -281,5 +200,49 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             ReadBookConfig.textFont = path
             postEvent(EventBus.UP_CONFIG, true)
         }
+    }
+
+    inner class StyleAdapter :
+        RecyclerAdapter<ReadBookConfig.Config, ItemReadStyleBinding>(requireContext()) {
+
+        override fun getViewBinding(parent: ViewGroup): ItemReadStyleBinding {
+            return ItemReadStyleBinding.inflate(inflater, parent, false)
+        }
+
+        override fun convert(
+            holder: ItemViewHolder,
+            binding: ItemReadStyleBinding,
+            item: ReadBookConfig.Config,
+            payloads: MutableList<Any>
+        ) {
+            binding.apply {
+                ivStyle.setText(item.name.ifBlank { "文字" })
+                ivStyle.setTextColor(item.curTextColor())
+                ivStyle.setImageDrawable(item.curBgDrawable(100, 150))
+                if (ReadBookConfig.styleSelect == holder.layoutPosition) {
+                    ivStyle.borderColor = accentColor
+                    ivStyle.setTextBold(true)
+                } else {
+                    ivStyle.borderColor = item.curTextColor()
+                    ivStyle.setTextBold(false)
+                }
+            }
+        }
+
+        override fun registerListener(holder: ItemViewHolder, binding: ItemReadStyleBinding) {
+            binding.apply {
+                ivStyle.setOnClickListener {
+                    if (ivStyle.isInView) {
+                        changeBg(holder.layoutPosition)
+                    }
+                }
+                ivStyle.onLongClick(ivStyle.isInView) {
+                    if (ivStyle.isInView) {
+                        showBgTextConfig(holder.layoutPosition)
+                    }
+                }
+            }
+        }
+
     }
 }

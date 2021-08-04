@@ -13,6 +13,16 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_top_sel"
+        android:title="@string/selection_to_top"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_bottom_sel"
+        android:title="@string/selection_to_bottom"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_export_selection"
         android:title="@string/export_selection"
         app:showAsAction="never" />

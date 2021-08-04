@@ -3,13 +3,13 @@ package io.legado.app.web.utils
 import android.content.res.AssetManager
 import android.text.TextUtils
 import fi.iki.elonen.NanoHTTPD
-import io.legado.app.App
+import splitties.init.appCtx
 import java.io.File
 import java.io.IOException
 
 
 class AssetsWeb(rootPath: String) {
-    private val assetManager: AssetManager = App.INSTANCE.assets
+    private val assetManager: AssetManager = appCtx.assets
     private var rootPath = "web"
 
     init {

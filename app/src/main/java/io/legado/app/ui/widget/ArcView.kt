@@ -8,9 +8,8 @@ import io.legado.app.R
 
 class ArcView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+    attrs: AttributeSet? = null
+) : View(context, attrs) {
     private var mWidth = 0
     private var mHeight = 0
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/menu_scan"
+        android:icon="@drawable/ic_scan"
+        android:title="@string/scan_qr_code"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_search_src"
+        android:title="@string/search_src"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_book_src"
+        android:title="@string/boo_src"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_toc_src"
+        android:title="@string/toc_src"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_content_src"
+        android:title="@string/content_src"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:title="@string/help"
+        app:showAsAction="never" />
+
+</menu>

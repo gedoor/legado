@@ -8,6 +8,6 @@ fun AlertDialog.applyTint(): AlertDialog {
     return ATH.setAlertDialogTint(this)
 }
 
-fun AlertDialog.requestInputMethod(){
+fun AlertDialog.requestInputMethod() {
     window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 }

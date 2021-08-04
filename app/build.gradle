@@ -1,13 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'de.timfreiheit.resourceplaceholders'
-apply plugin: 'io.fabric'
-
-androidExtensions {
-    experimental = true
-}
 
 static def releaseTime() {
     return new Date().format("yy.MMddHH", TimeZone.getTimeZone("GMT+8"))
@@ -18,7 +13,7 @@ def version = "3." + releaseTime()
 def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     signingConfigs {
         if (project.hasProperty("RELEASE_STORE_FILE")) {
             myConfig {
@@ -34,21 +29,25 @@ android {
     defaultConfig {
         applicationId "io.legado.app"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", name + "_" + version)
         multiDexEnabled true
+
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [
+                arguments += [
                         "room.incremental"     : "true",
                         "room.expandProjection": "true",
                         "room.schemaLocation"  : "$projectDir/schemas".toString()
                 ]
             }
         }
+    }
+    buildFeatures {
+        viewBinding true
     }
     buildTypes {
         release {
@@ -86,17 +85,29 @@ android {
             applicationId "io.legado.play"
             manifestPlaceholders = [APP_CHANNEL_VALUE: "google"]
         }
+        cronet {
+            dimension "mode"
+            applicationId "io.legado.cronet"
+            manifestPlaceholders = [APP_CHANNEL_VALUE: "cronet"]
+            ndk {
+                abiFilters 'arm64-v8a','armeabi-v7a','x86_64','x86'
+            }
+        }
     }
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 8
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        // Sets Java compatibility to Java 11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
+    }
+    buildToolsVersion '30.0.3'
+    tasks.withType(JavaCompile) {
+        //options.compilerArgs << "-Xlint:unchecked"
     }
 }
 
@@ -111,102 +122,98 @@ kapt {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation "com.android.support:multidex:1.0.3"
+    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:1.1.5')
+    testImplementation('junit:junit:4.13.2')
+    androidTestImplementation('androidx.test:runner:1.4.0')
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0')
+    implementation('androidx.multidex:multidex:2.0.1')
     //kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    //fireBase
-    implementation 'com.google.firebase:firebase-core:17.5.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    //协程
+    def coroutines_version = '1.5.1'
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
     //androidX
-    implementation 'androidx.core:core-ktx:1.3.1'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.media:media:1.1.0'
-    implementation 'androidx.preference:preference:1.1.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.2.1'
-    implementation 'com.google.android:flexbox:1.1.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation('androidx.appcompat:appcompat:1.3.1')
+    implementation('androidx.core:core-ktx:1.6.0')
+    implementation("androidx.activity:activity-ktx:1.3.0")
+    implementation("androidx.fragment:fragment-ktx:1.3.6")
+    implementation('androidx.preference:preference-ktx:1.1.1')
+    implementation('androidx.constraintlayout:constraintlayout:2.0.4')
+    implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
+    implementation('androidx.viewpager2:viewpager2:1.0.0')
+    implementation('com.google.android.material:material:1.4.0')
+    implementation('com.google.android.flexbox:flexbox:3.0.0')
+    implementation('com.google.code.gson:gson:2.8.7')
+    implementation('androidx.webkit:webkit:1.4.0')
+
+    //media
+    def media2_version = "1.1.3"
+    implementation("androidx.media2:media2-session:$media2_version")
+    implementation("androidx.media:media:1.4.0")
+    //implementation "androidx.media2:media2-player:$media2_version"
+    //implementation 'com.google.android.exoplayer:exoplayer:2.13.0'
+
+    //Splitties
+    def splitties_version = '2.1.1'
+    implementation("com.louiscad.splitties:splitties-appctx:$splitties_version")
+    implementation("com.louiscad.splitties:splitties-systemservices:$splitties_version")
+    implementation("com.louiscad.splitties:splitties-views:$splitties_version")
 
     //lifecycle
-    def lifecycle_version = '2.2.0'
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    def lifecycle_version = '2.3.1'
+    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
 
     //room
-    def room_version = '2.2.5'
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    testImplementation "androidx.room:room-testing:2.2.5"
-
-    //paging
-    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
-
-    //anko
-    def anko_version = '0.10.8'
-    implementation "org.jetbrains.anko:anko-sdk27:$anko_version"
-    implementation "org.jetbrains.anko:anko-sdk27-listeners:$anko_version"
+    def room_version = '2.3.0'
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    testImplementation("androidx.room:room-testing:$room_version")
 
     //liveEventBus
-    implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
-
-    //协程
-    def coroutines_version = '1.3.7'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation('io.github.jeremyliao:live-event-bus-x:1.8.0')
 
     //规则相关
-    implementation 'org.jsoup:jsoup:1.13.1'
-    implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
-    implementation 'com.jayway.jsonpath:json-path:2.4.0'
+    implementation('org.jsoup:jsoup:1.14.1')
+    implementation('com.jayway.jsonpath:json-path:2.6.0')
+    implementation('cn.wanghaomiao:JsoupXpath:2.5.0')
+    implementation(project(path: ':epublib'))
 
     //JS rhino
-    implementation 'com.github.gedoor:rhino-android:1.4'
+    implementation('com.github.gedoor:rhino-android:1.6')
 
     //网络
-    //noinspection GradleDependency
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    implementation('com.squareup.okhttp3:okhttp:4.9.1')
+    compileOnly(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    cronetImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation('com.github.bumptech.glide:glide:4.12.0')
 
     //webServer
-    implementation 'org.nanohttpd:nanohttpd:2.3.1'
-    implementation 'org.nanohttpd:nanohttpd-websocket:2.3.1'
+    implementation('org.nanohttpd:nanohttpd:2.3.1')
+    implementation('org.nanohttpd:nanohttpd-websocket:2.3.1')
+    implementation('org.nanohttpd:nanohttpd-apache-fileupload:2.3.1')
 
     //二维码
-    implementation 'cn.bingoogolapple:bga-qrcode-zxing:1.3.7'
+    implementation('com.github.jenly1314:zxing-lite:2.1.0')
 
     //颜色选择
-    implementation 'com.jaredrummler:colorpicker:1.1.0'
+    implementation('com.jaredrummler:colorpicker:1.1.0')
 
     //apache
-    implementation 'org.apache.commons:commons-lang3:3.11'
-    implementation 'org.apache.commons:commons-text:1.8'
+    implementation('org.apache.commons:commons-text:1.9')
 
     //MarkDown
-    implementation 'ru.noties.markwon:core:3.1.0'
+    def markwonVersion = "4.6.2"
+    implementation("io.noties.markwon:core:$markwonVersion")
+    implementation("io.noties.markwon:image-glide:$markwonVersion")
+    implementation("io.noties.markwon:ext-tables:$markwonVersion")
+    implementation("io.noties.markwon:html:$markwonVersion")
 
     //转换繁体
-    implementation 'com.hankcs:hanlp:portable-1.7.8'
+    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.1')
 
-    //epub
-    implementation('com.positiondev.epublib:epublib-core:3.1') {
-        exclude group: 'org.slf4j'
-        exclude group: 'xmlpull'
-    }
-
-    //E-Ink 有些手机会出现重影
-    //implementation 'fadeapp.widgets:scrollless-recyclerView:1.0.2'
 }
-
-apply plugin: 'com.google.gms.google-services'

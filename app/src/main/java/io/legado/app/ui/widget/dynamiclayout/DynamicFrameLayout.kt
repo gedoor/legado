@@ -4,15 +4,19 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewStub
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
-import kotlinx.android.synthetic.main.view_dynamic.view.*
 
-class DynamicFrameLayout(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), ViewSwitcher {
+@Suppress("unused")
+class DynamicFrameLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : FrameLayout(context, attrs), ViewSwitcher {
 
     private var errorView: View? = null
     private var errorImage: AppCompatImageView? = null
@@ -146,7 +150,7 @@ class DynamicFrameLayout(context: Context, attrs: AttributeSet?) : FrameLayout(c
 
     private fun ensureErrorView() {
         if (errorView == null) {
-            errorView = errorViewStub.inflate()
+            errorView = findViewById<ViewStub>(R.id.error_view_stub).inflate()
             errorImage = errorView?.findViewById(R.id.iv_error_image)
             errorTextView = errorView?.findViewById(R.id.tv_error_message)
             actionBtn = errorView?.findViewById(R.id.btn_error_retry)
@@ -162,7 +166,7 @@ class DynamicFrameLayout(context: Context, attrs: AttributeSet?) : FrameLayout(c
 
     private fun ensureProgressView() {
         if (progressView == null) {
-            progressView = progressViewStub.inflate()
+            progressView = findViewById<ViewStub>(R.id.progress_view_stub).inflate()
             progressBar = progressView?.findViewById(R.id.loading_progress)
         }
     }

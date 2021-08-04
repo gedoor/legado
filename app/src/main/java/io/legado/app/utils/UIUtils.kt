@@ -1,30 +1,12 @@
 package io.legado.app.utils
 
 import android.content.Context
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.os.Build
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import io.legado.app.R
 import io.legado.app.constant.Theme
 import io.legado.app.lib.theme.primaryTextColor
 
 @Suppress("unused")
 object UIUtils {
-
-    /** 设置更多工具条图标和颜色  */
-    fun setToolbarMoreIconCustomColor(toolbar: Toolbar?, color: Int? = null) {
-        toolbar ?: return
-        val moreIcon = ContextCompat.getDrawable(toolbar.context, R.drawable.ic_more)
-        if (moreIcon != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (color != null) {
-                moreIcon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-            }
-            toolbar.overflowIcon = moreIcon
-        }
-    }
-
 
     fun getMenuColor(
         context: Context,

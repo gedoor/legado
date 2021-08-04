@@ -1,27 +1,94 @@
 package io.legado.app.ui.config
 
-import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.PreferKey
+import io.legado.app.help.AppConfig
+import io.legado.app.help.LocalConfig
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.storage.Backup
+import io.legado.app.help.storage.BookWebDav
+import io.legado.app.help.storage.ImportOldData
 import io.legado.app.help.storage.Restore
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.filechooser.FileChooserDialog
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.getPrefString
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers
+import splitties.init.appCtx
 
 class BackupConfigFragment : BasePreferenceFragment(),
-    SharedPreferences.OnSharedPreferenceChangeListener,
-    FileChooserDialog.CallBack {
+    SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private val selectBackupPath = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            AppConfig.backupPath = uri.toString()
+        } else {
+            AppConfig.backupPath = uri.path
+        }
+    }
+    private val backupDir = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            AppConfig.backupPath = uri.toString()
+            Coroutine.async {
+                Backup.backup(appCtx, uri.toString())
+            }.onSuccess {
+                appCtx.toastOnUi(R.string.backup_success)
+            }.onError {
+                appCtx.toastOnUi(R.string.backup_fail)
+            }
+        } else {
+            uri.path?.let { path ->
+                AppConfig.backupPath = path
+                Coroutine.async {
+                    Backup.backup(appCtx, path)
+                }.onSuccess {
+                    appCtx.toastOnUi(R.string.backup_success)
+                }.onError {
+                    appCtx.toastOnUi(R.string.backup_fail)
+                }
+            }
+        }
+    }
+    private val restoreDir = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            AppConfig.backupPath = uri.toString()
+            Coroutine.async {
+                Restore.restore(appCtx, uri.toString())
+            }
+        } else {
+            uri.path?.let { path ->
+                AppConfig.backupPath = path
+                Coroutine.async {
+                    Restore.restore(appCtx, path)
+                }
+            }
+        }
+    }
+    private val restoreOld = registerForActivityResult(FilePicker()) { uri ->
+        uri?.let {
+            ImportOldData.importUri(appCtx, uri)
+        }
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_config_backup)
@@ -48,13 +115,35 @@ class BackupConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
         findPreference<io.legado.app.ui.widget.prefs.Preference>("web_dav_restore")
-            ?.onLongClick = { BackupRestoreUi.restoreByFolder(this) }
+            ?.onLongClick = { restoreDir.launch(null) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         ATH.applyEdgeEffectColor(listView)
+        setHasOptionsMenu(true)
+        if (!LocalConfig.backupHelpVersionIsLast) {
+            showHelp()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.backup_restore, menu)
+        menu.applyTint(requireContext())
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_help -> showHelp()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showHelp() {
+        val text = String(requireContext().assets.open("help/webDavHelp.md").readBytes())
+        TextDialog.show(childFragmentManager, text, TextDialog.MD)
     }
 
     override fun onDestroy() {
@@ -108,11 +197,11 @@ class BackupConfigFragment : BasePreferenceFragment(),
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            PreferKey.backupPath -> BackupRestoreUi.selectBackupFolder(this)
+            PreferKey.backupPath -> selectBackupPath.launch(null)
             PreferKey.restoreIgnore -> restoreIgnore()
-            "web_dav_backup" -> BackupRestoreUi.backup(this)
-            "web_dav_restore" -> BackupRestoreUi.restore(this)
-            "import_old" -> BackupRestoreUi.importOldData(this)
+            "web_dav_backup" -> backup()
+            "web_dav_restore" -> restore()
+            "import_old" -> restoreOld.launch(null)
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -126,19 +215,91 @@ class BackupConfigFragment : BasePreferenceFragment(),
             multiChoiceItems(Restore.ignoreTitle, checkedItems) { _, which, isChecked ->
                 Restore.ignoreConfig[Restore.ignoreKeys[which]] = isChecked
             }
-        }.show()
-            .applyTint()
-            .setOnDismissListener {
+            onDismiss {
                 Restore.saveIgnoreConfig()
             }
+        }.show()
     }
 
-    override fun onFilePicked(requestCode: Int, currentPath: String) {
-        BackupRestoreUi.onFilePicked(requestCode, currentPath)
+
+    fun backup() {
+        val backupPath = AppConfig.backupPath
+        if (backupPath.isNullOrEmpty()) {
+            backupDir.launch(null)
+        } else {
+            if (backupPath.isContentScheme()) {
+                val uri = Uri.parse(backupPath)
+                val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+                if (doc?.canWrite() == true) {
+                    Coroutine.async {
+                        Backup.backup(requireContext(), backupPath)
+                    }.onSuccess {
+                        toastOnUi(R.string.backup_success)
+                    }.onError {
+                        toastOnUi(R.string.backup_fail)
+                    }
+                } else {
+                    backupDir.launch(null)
+                }
+            } else {
+                backupUsePermission(backupPath)
+            }
+        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        BackupRestoreUi.onActivityResult(requestCode, resultCode, data)
+    private fun backupUsePermission(path: String) {
+        PermissionsCompat.Builder(this)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                Coroutine.async {
+                    AppConfig.backupPath = path
+                    Backup.backup(requireContext(), path)
+                }.onSuccess {
+                    toastOnUi(R.string.backup_success)
+                }.onError {
+                    toastOnUi(R.string.backup_fail)
+                }
+            }
+            .request()
     }
+
+    fun restore() {
+        Coroutine.async(context = Dispatchers.Main) {
+            BookWebDav.showRestoreDialog(requireContext())
+        }.onError {
+            longToast("WebDavError:${it.localizedMessage}\n将从本地备份恢复。")
+            val backupPath = getPrefString(PreferKey.backupPath)
+            if (backupPath?.isNotEmpty() == true) {
+                if (backupPath.isContentScheme()) {
+                    val uri = Uri.parse(backupPath)
+                    val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+                    if (doc?.canWrite() == true) {
+                        Restore.restore(requireContext(), backupPath)
+                    } else {
+                        restoreDir.launch(null)
+                    }
+                } else {
+                    restoreUsePermission(backupPath)
+                }
+            } else {
+                restoreDir.launch(null)
+            }
+        }
+    }
+
+    private fun restoreUsePermission(path: String) {
+        PermissionsCompat.Builder(this)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                Coroutine.async {
+                    AppConfig.backupPath = path
+                    Restore.restoreDatabase(path)
+                    Restore.restoreConfig(path)
+                }
+            }
+            .request()
+    }
+
 }

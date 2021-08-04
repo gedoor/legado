@@ -29,7 +29,9 @@ import android.view.View
 import java.util.*
 
 
-class ExplosionView : View {
+@Suppress("unused")
+class ExplosionView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    View(context, attrs) {
 
     private var customDuration = ExplosionAnimator.DEFAULT_DURATION
     private var idPlayAnimationEffect = 0
@@ -39,24 +41,7 @@ class ExplosionView : View {
     private val mExplosions = ArrayList<ExplosionAnimator>()
     private val mExpandInset = IntArray(2)
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init()
-    }
-
-    private fun init() {
-
+    init {
         Arrays.fill(mExpandInset, Utils.dp2Px(32))
     }
 
@@ -75,8 +60,8 @@ class ExplosionView : View {
         this.customDuration = customDuration
     }
 
-    fun addActionEvent(ievents: OnAnimatorListener) {
-        this.mZAnimatorListener = ievents
+    fun addActionEvent(iEvents: OnAnimatorListener) {
+        this.mZAnimatorListener = iEvents
     }
 
 

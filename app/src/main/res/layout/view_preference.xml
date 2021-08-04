@@ -8,7 +8,7 @@
     android:paddingTop="10dp"
     android:paddingRight="16dp"
     android:paddingBottom="10dp"
-    android:minHeight="42dp"
+    android:minHeight="60dp"
     android:clickable="true"
     android:orientation="horizontal"
     android:gravity="center_vertical"

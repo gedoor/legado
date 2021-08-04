@@ -1,73 +1,98 @@
 package io.legado.app.ui.association
 
 import android.app.Application
-import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.AppConfig
+import io.legado.app.help.ContentProcessor
+import io.legado.app.help.SourceHelp
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
 import io.legado.app.help.storage.OldRule
 import io.legado.app.help.storage.Restore
-import io.legado.app.utils.*
-import java.io.File
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
 
 class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
-
+    var groupName: String? = null
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
 
     val allSources = arrayListOf<BookSource>()
-    val sourceCheckState = arrayListOf<Boolean>()
+    val checkSources = arrayListOf<BookSource?>()
     val selectStatus = arrayListOf<Boolean>()
 
-    fun importSourceFromFilePath(path: String) {
+    fun isSelectAll(): Boolean {
+        selectStatus.forEach {
+            if (!it) {
+                return false
+            }
+        }
+        return true
+    }
+
+    fun selectCount(): Int {
+        var count = 0
+        selectStatus.forEach {
+            if (it) {
+                count++
+            }
+        }
+        return count
+    }
+
+    fun importSelect(finally: () -> Unit) {
         execute {
-            val content = if (path.isContentPath()) {
-                //在前面被解码了，如果不进行编码，中文会无法识别
-                val newPath = Uri.encode(path, ":/.")
-                DocumentFile.fromSingleUri(context, Uri.parse(newPath))?.readText(context)
-            } else {
-                val file = File(path)
-                if (file.exists()) {
-                    file.readText()
-                } else {
-                    null
+            val keepName = AppConfig.importKeepName
+            val selectSource = arrayListOf<BookSource>()
+            selectStatus.forEachIndexed { index, b ->
+                if (b) {
+                    val source = allSources[index]
+                    if (keepName) {
+                        checkSources[index]?.let {
+                            source.bookSourceName = it.bookSourceName
+                            source.bookSourceGroup = it.bookSourceGroup
+                            source.customOrder = it.customOrder
+                        }
+                    }
+                    if (groupName != null) {
+                        source.bookSourceGroup = groupName
+                    }
+                    selectSource.add(source)
                 }
             }
-            if (content != null) {
-                importSource(content)
-            } else {
-                errorLiveData.postValue(context.getString(R.string.error_read_file))
-            }
-        }.onError {
-            it.printStackTrace()
-            errorLiveData.postValue(context.getString(R.string.error_read_file))
+            SourceHelp.insertBookSource(*selectSource.toTypedArray())
+            ContentProcessor.upReplaceRules()
+        }.onFinally {
+            finally.invoke()
         }
     }
 
     fun importSource(text: String) {
         execute {
-            val text1 = text.trim()
+            val mText = text.trim()
             when {
-                text1.isJsonObject() -> {
-                    val json = JsonPath.parse(text1)
+                mText.isJsonObject() -> {
+                    val json = JsonPath.parse(mText)
                     val urls = json.read<List<String>>("$.sourceUrls")
                     if (!urls.isNullOrEmpty()) {
                         urls.forEach {
                             importSourceUrl(it)
                         }
                     } else {
-                        OldRule.jsonToBookSource(text1)?.let {
+                        OldRule.jsonToBookSource(mText)?.let {
                             allSources.add(it)
                         }
                     }
                 }
-                text1.isJsonArray() -> {
-                    val items: List<Map<String, Any>> = Restore.jsonPath.parse(text1).read("$")
+                mText.isJsonArray() -> {
+                    val items: List<Map<String, Any>> = Restore.jsonPath.parse(mText).read("$")
                     for (item in items) {
                         val jsonItem = Restore.jsonPath.parse(item)
                         OldRule.jsonToBookSource(jsonItem.jsonString())?.let {
@@ -75,8 +100,8 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                         }
                     }
                 }
-                text1.isAbsUrl() -> {
-                    importSourceUrl(text1)
+                mText.isAbsUrl() -> {
+                    importSourceUrl(mText)
                 }
                 else -> throw Exception(context.getString(R.string.wrong_format))
             }
@@ -88,11 +113,10 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
-    private fun importSourceUrl(url: String) {
-        HttpHelper.simpleGet(url, "UTF-8").let { body ->
-            if (body == null) {
-                throw Exception(context.getString(R.string.error_get_data))
-            }
+    private suspend fun importSourceUrl(url: String) {
+        okHttpClient.newCall {
+            url(url)
+        }.text("utf-8").let { body ->
             val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
             for (item in items) {
                 val jsonItem = Restore.jsonPath.parse(item)
@@ -106,9 +130,9 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val has = App.db.bookSourceDao().getBookSource(it.bookSourceUrl) != null
-                sourceCheckState.add(has)
-                selectStatus.add(!has)
+                val source = appDb.bookSourceDao.getBookSource(it.bookSourceUrl)
+                checkSources.add(source)
+                selectStatus.add(source == null || source.lastUpdateTime < it.lastUpdateTime)
             }
             successLiveData.postValue(allSources.size)
         }

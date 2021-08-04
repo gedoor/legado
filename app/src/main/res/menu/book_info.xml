@@ -9,8 +9,29 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_share_it"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_refresh"
         android:title="@string/refresh"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_login"
+        android:title="@string/login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_copy_book_url"
+        android:title="@string/copy_book_url"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_copy_toc_url"
+        android:title="@string/copy_toc_url"
         app:showAsAction="never" />
 
     <item

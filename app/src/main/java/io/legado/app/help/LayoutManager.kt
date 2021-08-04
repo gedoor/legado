@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
+@Suppress("unused")
 object LayoutManager {
 
     interface LayoutManagerFactory {
@@ -43,10 +44,19 @@ object LayoutManager {
     }
 
 
-    fun grid(spanCount: Int, @Orientation orientation: Int, reverseLayout: Boolean): LayoutManagerFactory {
+    fun grid(
+        spanCount: Int,
+        @Orientation orientation: Int,
+        reverseLayout: Boolean
+    ): LayoutManagerFactory {
         return object : LayoutManagerFactory {
             override fun create(recyclerView: RecyclerView): RecyclerView.LayoutManager {
-                return GridLayoutManager(recyclerView.context, spanCount, orientation, reverseLayout)
+                return GridLayoutManager(
+                    recyclerView.context,
+                    spanCount,
+                    orientation,
+                    reverseLayout
+                )
             }
         }
     }

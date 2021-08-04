@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read.config
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,30 +9,28 @@ import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.getPrefLong
+import io.legado.app.utils.getSize
 import io.legado.app.utils.postEvent
+import splitties.init.appCtx
 
 class ReadAloudConfigDialog : DialogFragment() {
     private val readAloudPreferTag = "readAloudPreferTag"
 
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.let {
-            it.windowManager?.defaultDisplay?.getMetrics(dm)
-        }
+        val dm = requireActivity().getSize()
         dialog?.window?.let {
-
-        it.setBackgroundDrawableResource(R.color.transparent)
+            it.setBackgroundDrawableResource(R.color.transparent)
             it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
@@ -42,7 +39,7 @@ class ReadAloudConfigDialog : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = LinearLayout(requireContext())
         view.setBackgroundColor(requireContext().backgroundColor)
         view.id = R.id.tag1
@@ -64,9 +61,9 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         private val speakEngineSummary: String
             get() {
-                val eid = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
-                val ht = App.db.httpTTSDao().get(eid)
-                return ht?.name ?: getString(R.string.local_tts)
+                val eid = appCtx.getPrefLong(PreferKey.speakEngine)
+                val ht = appDb.httpTTSDao.get(eid)
+                return ht?.name ?: getString(R.string.system_tts)
             }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -121,7 +118,6 @@ class ReadAloudConfigDialog : DialogFragment() {
             when (preference) {
                 is ListPreference -> {
                     val index = preference.findIndexOfValue(value)
-                    // Set the summary to reflect the new value.
                     preference.summary = if (index >= 0) preference.entries[index] else null
                 }
                 else -> {

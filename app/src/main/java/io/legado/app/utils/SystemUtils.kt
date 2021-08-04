@@ -19,13 +19,13 @@ object SystemUtils {
 
     fun getScreenOffTime(context: Context): Int {
         var screenOffTime = 0
-        try {
+        kotlin.runCatching {
             screenOffTime = Settings.System.getInt(
                 context.contentResolver,
                 Settings.System.SCREEN_OFF_TIMEOUT
             )
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }.onFailure {
+            it.printStackTrace()
         }
 
         return screenOffTime
@@ -56,12 +56,16 @@ object SystemUtils {
      */
     fun isNavigationBarExist(activity: Activity?): Boolean {
         activity?.let {
-            val vp = it.window.decorView as? ViewGroup
-            if (vp != null) {
-                for (i in 0 until vp.childCount) {
-                    vp.getChildAt(i).context.packageName
-                    if (vp.getChildAt(i).id != View.NO_ID
-                        && NAVIGATION == activity.resources.getResourceEntryName(vp.getChildAt(i).id)
+            val viewGroup = it.window.decorView as? ViewGroup
+            if (viewGroup != null) {
+                for (i in 0 until viewGroup.childCount) {
+                    viewGroup.getChildAt(i).context.packageName
+                    if (viewGroup.getChildAt(i).id != View.NO_ID
+                        && NAVIGATION == activity.resources.getResourceEntryName(
+                            viewGroup.getChildAt(
+                                i
+                            ).id
+                        )
                     ) {
                         return true
                     }

@@ -10,6 +10,7 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/debug_source" />
@@ -18,6 +19,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@+id/title_bar"
         app:layout_constraintBottom_toBottomOf="parent" />
 

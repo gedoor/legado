@@ -1,36 +1,45 @@
+@file:Suppress("DEPRECATION")
+
 package io.legado.app.ui.rss.article
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.databinding.ActivityRssArtivlesBinding
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
-import io.legado.app.utils.getViewModel
 import io.legado.app.utils.gone
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.activity_rss_artivles.*
-import org.jetbrains.anko.startActivityForResult
 
-class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_artivles) {
+class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>() {
 
-    override val viewModel: RssSortViewModel
-        get() = getViewModel(RssSortViewModel::class.java)
-    private val editSource = 12319
-    private val fragments = linkedMapOf<String, RssArticlesFragment>()
+    override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
+    override val viewModel by viewModels<RssSortViewModel>()
     private lateinit var adapter: TabFragmentPageAdapter
+    private val fragments = linkedMapOf<String, Fragment>()
+    private val upSourceResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == RESULT_OK) {
+            viewModel.initData(intent) {
+                upFragments()
+            }
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        adapter = TabFragmentPageAdapter(supportFragmentManager)
-        tab_layout.setupWithViewPager(view_pager)
-        view_pager.adapter = adapter
+        adapter = TabFragmentPageAdapter()
+        binding.viewPager.adapter = adapter
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
         viewModel.titleLiveData.observe(this, {
-            title_bar.title = it
+            binding.titleBar.title = it
         })
         viewModel.initData(intent) {
             upFragments()
@@ -45,7 +54,10 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
-                startActivityForResult<RssSourceEditActivity>(editSource, Pair("data", it))
+                upSourceResult.launch(
+                    Intent(this, RssSourceEditActivity::class.java)
+                        .putExtra("data", it)
+                )
             }
             R.id.menu_clear -> {
                 viewModel.url?.let {
@@ -66,32 +78,21 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
             fragments[it.key] = RssArticlesFragment.create(it.key, it.value)
         }
         if (fragments.size == 1) {
-            tab_layout.gone()
+            binding.tabLayout.gone()
         } else {
-            tab_layout.visible()
+            binding.tabLayout.visible()
         }
         adapter.notifyDataSetChanged()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            editSource -> if (resultCode == Activity.RESULT_OK) {
-                viewModel.initData(intent) {
-                    upFragments()
-                }
-            }
-        }
-    }
-
-    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
-        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private inner class TabFragmentPageAdapter :
+        FragmentStatePagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItemPosition(`object`: Any): Int {
             return POSITION_NONE
         }
 
-        override fun getPageTitle(position: Int): CharSequence? {
+        override fun getPageTitle(position: Int): CharSequence {
             return fragments.keys.elementAt(position)
         }
 
@@ -102,6 +103,7 @@ class RssSortActivity : VMBaseActivity<RssSortViewModel>(R.layout.activity_rss_a
         override fun getCount(): Int {
             return fragments.size
         }
+
     }
 
 }

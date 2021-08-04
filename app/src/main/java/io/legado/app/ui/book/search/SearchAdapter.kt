@@ -2,66 +2,99 @@ package io.legado.app.ui.book.search
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
+import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_bookshelf_list.view.iv_cover
-import kotlinx.android.synthetic.main.item_bookshelf_list.view.tv_name
-import kotlinx.android.synthetic.main.item_search.view.*
-import org.jetbrains.anko.sdk27.listeners.onClick
+
 
 class SearchAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<SearchBook>(context, R.layout.item_search) {
+    DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
 
-    override fun convert(holder: ItemViewHolder, item: SearchBook, payloads: MutableList<Any>) {
+    override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
+        get() = object : DiffUtil.ItemCallback<SearchBook>() {
+
+            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return when {
+                    oldItem.name != newItem.name -> false
+                    oldItem.author != newItem.author -> false
+                    else -> true
+                }
+            }
+
+            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+                return false
+            }
+
+            override fun getChangePayload(oldItem: SearchBook, newItem: SearchBook): Any {
+                val payload = Bundle()
+                payload.putInt("origins", newItem.origins.size)
+                if (oldItem.coverUrl != newItem.coverUrl)
+                    payload.putString("cover", newItem.coverUrl)
+                if (oldItem.kind != newItem.kind)
+                    payload.putString("kind", newItem.kind)
+                if (oldItem.latestChapterTitle != newItem.latestChapterTitle)
+                    payload.putString("last", newItem.latestChapterTitle)
+                if (oldItem.intro != newItem.intro)
+                    payload.putString("intro", newItem.intro)
+                return payload
+            }
+
+        }
+
+    override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
+        return ItemSearchBinding.inflate(inflater, parent, false)
+    }
+
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemSearchBinding,
+        item: SearchBook,
+        payloads: MutableList<Any>
+    ) {
         val bundle = payloads.getOrNull(0) as? Bundle
         if (bundle == null) {
-            bind(holder.itemView, item)
+            bind(binding, item)
         } else {
-            bindChange(holder.itemView, item, bundle)
+            bindChange(binding, item, bundle)
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
-        holder.itemView.apply {
-            onClick {
-                getItem(holder.layoutPosition)?.let {
-                    callBack.showBookInfo(it.name, it.author)
-                }
+    override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
+        binding.root.setOnClickListener {
+            getItem(holder.layoutPosition)?.let {
+                callBack.showBookInfo(it.name, it.author)
             }
         }
     }
 
-    private fun bind(itemView: View, searchBook: SearchBook) {
-        with(itemView) {
-            tv_name.text = searchBook.name
-            tv_author.text = context.getString(R.string.author_show, searchBook.author)
-            bv_originCount.setBadgeCount(searchBook.origins.size)
-            upLasted(itemView, searchBook.latestChapterTitle)
-            tv_introduce.text = context.getString(R.string.intro_show, searchBook.intro)
-            upKind(itemView, searchBook.getKindList())
-            iv_cover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
+    private fun bind(binding: ItemSearchBinding, searchBook: SearchBook) {
+        binding.run {
+            tvName.text = searchBook.name
+            tvAuthor.text = context.getString(R.string.author_show, searchBook.author)
+            bvOriginCount.setBadgeCount(searchBook.origins.size)
+            upLasted(binding, searchBook.latestChapterTitle)
+            tvIntroduce.text = searchBook.trimIntro(context)
+            upKind(binding, searchBook.getKindList())
+            ivCover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
 
         }
     }
 
-    private fun bindChange(itemView: View, searchBook: SearchBook, bundle: Bundle) {
-        with(itemView) {
+    private fun bindChange(binding: ItemSearchBinding, searchBook: SearchBook, bundle: Bundle) {
+        binding.run {
             bundle.keySet().map {
                 when (it) {
-                    "name" -> tv_name.text = searchBook.name
-                    "author" -> tv_author.text =
-                        context.getString(R.string.author_show, searchBook.author)
-                    "origins" -> bv_originCount.setBadgeCount(searchBook.origins.size)
-                    "last" -> upLasted(itemView, searchBook.latestChapterTitle)
-                    "intro" -> tv_introduce.text =
-                        context.getString(R.string.intro_show, searchBook.intro)
-                    "kind" -> upKind(itemView, searchBook.getKindList())
-                    "cover" -> iv_cover.load(
+                    "origins" -> bvOriginCount.setBadgeCount(searchBook.origins.size)
+                    "last" -> upLasted(binding, searchBook.latestChapterTitle)
+                    "intro" -> tvIntroduce.text = searchBook.trimIntro(context)
+                    "kind" -> upKind(binding, searchBook.getKindList())
+                    "cover" -> ivCover.load(
                         searchBook.coverUrl,
                         searchBook.name,
                         searchBook.author
@@ -71,27 +104,24 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun upLasted(itemView: View, latestChapterTitle: String?) {
-        with(itemView) {
+    private fun upLasted(binding: ItemSearchBinding, latestChapterTitle: String?) {
+        binding.run {
             if (latestChapterTitle.isNullOrEmpty()) {
-                tv_lasted.gone()
+                tvLasted.gone()
             } else {
-                tv_lasted.text =
-                    context.getString(
-                        R.string.lasted_show,
-                        latestChapterTitle
-                    )
-                tv_lasted.visible()
+                tvLasted.text =
+                    context.getString(R.string.lasted_show, latestChapterTitle)
+                tvLasted.visible()
             }
         }
     }
 
-    private fun upKind(itemView: View, kinds: List<String>) = with(itemView) {
+    private fun upKind(binding: ItemSearchBinding, kinds: List<String>) = binding.run {
         if (kinds.isEmpty()) {
-            ll_kind.gone()
+            llKind.gone()
         } else {
-            ll_kind.visible()
-            ll_kind.setLabels(kinds)
+            llKind.visible()
+            llKind.setLabels(kinds)
         }
     }
 

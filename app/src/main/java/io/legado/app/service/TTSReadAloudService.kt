@@ -1,7 +1,6 @@
 package io.legado.app.service
 
 import android.app.PendingIntent
-import android.content.Intent
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import io.legado.app.R
@@ -13,26 +12,13 @@ import io.legado.app.help.MediaHelp
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.launch
-import org.jetbrains.anko.toast
+import io.legado.app.utils.toastOnUi
 import java.util.*
 
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
 
-    companion object {
-        private var textToSpeech: TextToSpeech? = null
-        private var ttsInitFinish = false
-
-        fun clearTTS() {
-            textToSpeech?.let {
-                it.stop()
-                it.shutdown()
-            }
-            textToSpeech = null
-            ttsInitFinish = false
-        }
-    }
-
+    private var textToSpeech: TextToSpeech? = null
+    private var ttsInitFinish = false
     private val ttsUtteranceListener = TTSUtteranceListener()
 
     override fun onCreate() {
@@ -41,20 +27,23 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         upSpeechRate()
     }
 
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        super.onTaskRemoved(rootIntent)
+    override fun onDestroy() {
+        super.onDestroy()
         clearTTS()
-        stopSelf()
     }
 
+    @Synchronized
     private fun initTts() {
         ttsInitFinish = false
         textToSpeech = TextToSpeech(this, this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        clearTTS()
+    @Synchronized
+    fun clearTTS() {
+        textToSpeech?.stop()
+        textToSpeech?.shutdown()
+        textToSpeech = null
+        ttsInitFinish = false
     }
 
     override fun onInit(status: Int) {
@@ -66,9 +55,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 play()
             }
         } else {
-            launch {
-                toast(R.string.tts_init_failed)
-            }
+            toastOnUi(R.string.tts_init_failed)
         }
     }
 
@@ -78,15 +65,11 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             super.play()
             execute {
                 MediaHelp.playSilentSound(this@TTSReadAloudService)
+            }.onFinally {
                 textToSpeech?.let {
                     it.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
                     for (i in nowSpeak until contentList.size) {
-                        it.speak(
-                            contentList[i],
-                            TextToSpeech.QUEUE_ADD,
-                            null,
-                            AppConst.APP_TAG + i
-                        )
+                        it.speak(contentList[i], TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
                     }
                 }
             }

@@ -10,7 +10,7 @@ interface ReadRecordDao {
     @get:Query("select * from readRecord")
     val all: List<ReadRecord>
 
-    @get:Query("select bookName, sum(readTime) as readTime from readRecord group by bookName order by bookName")
+    @get:Query("select bookName, sum(readTime) as readTime from readRecord group by bookName order by bookName collate localized")
     val allShow: List<ReadRecordShow>
 
     @get:Query("select sum(readTime) from readRecord")
@@ -19,7 +19,7 @@ interface ReadRecordDao {
     @Query("select sum(readTime) from readRecord where bookName = :bookName")
     fun getReadTime(bookName: String): Long?
 
-    @Query("select readTime from readRecord where androidId = :androidId and bookName = :bookName")
+    @Query("select readTime from readRecord where deviceId = :androidId and bookName = :bookName")
     fun getReadTime(androidId: String, bookName: String): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

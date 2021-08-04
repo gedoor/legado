@@ -6,7 +6,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.MainActivity
-import org.jetbrains.anko.startActivity
+import io.legado.app.utils.startActivity
+import splitties.init.appCtx
 
 class SharedReceiverActivity : AppCompatActivity() {
 
@@ -19,27 +20,28 @@ class SharedReceiverActivity : AppCompatActivity() {
     }
 
     private fun initIntent() {
-        if (Intent.ACTION_SEND == intent.action && intent.type == receivingType) {
-            intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-                if (openUrl(it)) {
-                    startActivity<SearchActivity>(Pair("key", it))
+        when {
+            intent.action == Intent.ACTION_SEND && intent.type == receivingType -> {
+                intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                    dispose(it)
                 }
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-            && Intent.ACTION_PROCESS_TEXT == intent.action
-            && intent.type == receivingType
-        ) {
-            intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.let {
-                if (openUrl(it)) {
-                    startActivity<SearchActivity>(Pair("key", it))
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && intent.action == Intent.ACTION_PROCESS_TEXT
+                    && intent.type == receivingType -> {
+                intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.let {
+                    dispose(it)
                 }
+            }
+            intent.getStringExtra("action") == "readAloud" -> {
+                MediaButtonReceiver.readAloud(appCtx, false)
             }
         }
     }
 
-    private fun openUrl(text: String): Boolean {
+    private fun dispose(text: String) {
         if (text.isBlank()) {
-            return false
+            return
         }
         val urls = text.split("\\s".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val result = StringBuilder()
@@ -47,11 +49,10 @@ class SharedReceiverActivity : AppCompatActivity() {
             if (url.matches("http.+".toRegex()))
                 result.append("\n").append(url.trim { it <= ' ' })
         }
-        return if (result.length > 1) {
+        if (result.length > 1) {
             startActivity<MainActivity>()
-            false
         } else {
-            true
+            SearchActivity.start(this, text)
         }
     }
 }

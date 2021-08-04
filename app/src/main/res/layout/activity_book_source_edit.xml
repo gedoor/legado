@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -12,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:fitStatusBar="false"
-        app:layout_constraintTop_toTopOf="parent"
         app:title="@string/edit_book_source" />
 
     <LinearLayout
@@ -33,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/find" />
+            android:text="@string/discovery" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -59,37 +57,31 @@
         android:elevation="3dp">
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/item_base"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/source_tab_base" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/item_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/source_tab_search" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/item_find"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/source_tab_find" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/item_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/source_tab_info" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/item_toc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/source_tab_toc" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/item_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/source_tab_content" />

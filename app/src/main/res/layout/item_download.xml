@@ -38,12 +38,12 @@
         android:layout_height="36dp"
         android:padding="6dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="@color/primaryText"
         android:src="@drawable/ic_play_24dp"
         android:contentDescription="@string/start"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/tv_export" />
+        app:layout_constraintRight_toLeftOf="@+id/tv_export"
+        app:tint="@color/primaryText" />
 
     <TextView
         android:id="@+id/tv_export"

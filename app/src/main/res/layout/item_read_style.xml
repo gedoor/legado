@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.legado.app.ui.widget.image.CircleImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/iv_style"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:layout_marginLeft="6dp"
+    android:layout_marginRight="6dp"
+    android:scaleType="centerCrop"
+    android:src="@drawable/image_cover_default"
+    app:civ_border_color="@color/primaryText"
+    app:civ_border_width="1dp"
+    app:text="@string/text" />

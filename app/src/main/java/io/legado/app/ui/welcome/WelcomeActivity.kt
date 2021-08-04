@@ -2,26 +2,29 @@ package io.legado.app.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
-import com.hankcs.hanlp.HanLP
-import io.legado.app.App
-import io.legado.app.R
+import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.base.BaseActivity
+import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
+import io.legado.app.databinding.ActivityWelcomeBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.storage.SyncBookProgress
+import io.legado.app.help.storage.BookWebDav
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getPrefBoolean
-import kotlinx.android.synthetic.main.activity_welcome.*
-import org.jetbrains.anko.startActivity
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.util.concurrent.TimeUnit
 
-open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
+open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
+
+    override val binding by viewBinding(ActivityWelcomeBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        iv_book.setColorFilter(accentColor)
-        vw_title_line.setBackgroundColor(accentColor)
+        binding.ivBook.setColorFilter(accentColor)
+        binding.vwTitleLine.setBackgroundColor(accentColor)
         // 避免从桌面启动程序后，会重新实例化入口类的activity
         if (intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT != 0) {
             finish()
@@ -32,23 +35,42 @@ open class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     private fun init() {
         Coroutine.async {
-            //清楚过期数据
-            App.db.searchBookDao()
-                .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+            val books = appDb.bookDao.all
+            books.forEach { book ->
+                BookWebDav.getBookProgress(book)?.let { bookProgress ->
+                    if (bookProgress.durChapterIndex > book.durChapterIndex ||
+                        (bookProgress.durChapterIndex == book.durChapterIndex &&
+                                bookProgress.durChapterPos > book.durChapterPos)
+                    ) {
+                        book.durChapterIndex = bookProgress.durChapterIndex
+                        book.durChapterPos = bookProgress.durChapterPos
+                        book.durChapterTitle = bookProgress.durChapterTitle
+                        book.durChapterTime = bookProgress.durChapterTime
+                        appDb.bookDao.update(book)
+                    }
+                }
+            }
+        }
+        Coroutine.async {
+            appDb.cacheDao.clearDeadline(System.currentTimeMillis())
+            //清除过期数据
+            if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
+                appDb.searchBookDao
+                    .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+            }
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
-                1 -> HanLP.convertToSimplifiedChinese("初始化")
-                2 -> HanLP.convertToTraditionalChinese("初始化")
+                1 -> ChineseUtils.t2s("初始化")
+                2 -> ChineseUtils.s2t("初始化")
                 else -> null
             }
         }
-        SyncBookProgress.downloadBookProgress()
-        root_view.postDelayed({ startMainActivity() }, 500)
+        binding.root.postDelayed({ startMainActivity() }, 500)
     }
 
     private fun startMainActivity() {
         startActivity<MainActivity>()
-        if (getPrefBoolean(R.string.pk_default_read)) {
+        if (getPrefBoolean(PreferKey.defaultToRead)) {
             startActivity<ReadBookActivity>()
         }
         finish()

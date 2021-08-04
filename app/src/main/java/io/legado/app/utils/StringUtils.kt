@@ -3,7 +3,6 @@ package io.legado.app.utils
 import android.annotation.SuppressLint
 import android.text.TextUtils.isEmpty
 import java.text.DecimalFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
@@ -12,7 +11,7 @@ import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object StringUtils {
     private const val HOUR_OF_DAY = 24
     private const val DAY_OF_YESTERDAY = 2
@@ -45,6 +44,7 @@ object StringUtils {
     //将时间转换成日期
     fun dateConvert(time: Long, pattern: String): String {
         val date = Date(time)
+
         @SuppressLint("SimpleDateFormat")
         val format = SimpleDateFormat(pattern)
         return format.format(date)
@@ -55,7 +55,7 @@ object StringUtils {
         @SuppressLint("SimpleDateFormat")
         val format = SimpleDateFormat(pattern)
         val calendar = Calendar.getInstance()
-        try {
+        kotlin.runCatching {
             val date = format.parse(source) ?: return ""
             val curTime = calendar.timeInMillis
             calendar.time = date
@@ -94,8 +94,8 @@ object StringUtils {
                     convertFormat.format(date)
                 }
             }
-        } catch (e: ParseException) {
-            e.printStackTrace()
+        }.onFailure {
+            it.printStackTrace()
         }
 
         return ""
@@ -105,10 +105,8 @@ object StringUtils {
         if (length <= 0) return "0"
         val units = arrayOf("b", "kb", "M", "G", "T")
         //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
-        //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
         val digitGroups =
             (log10(length.toDouble()) / log10(1024.0)).toInt()
-        //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
         //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
         return DecimalFormat("#,##0.##")
             .format(length / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
@@ -116,7 +114,7 @@ object StringUtils {
 
     @SuppressLint("DefaultLocale")
     fun toFirstCapital(str: String): String {
-        return str.substring(0, 1).toUpperCase() + str.substring(1)
+        return str.substring(0, 1).uppercase(Locale.getDefault()) + str.substring(1)
     }
 
     /**
@@ -125,7 +123,7 @@ object StringUtils {
     fun halfToFull(input: String): String {
         val c = input.toCharArray()
         for (i in c.indices) {
-            if (c[i].toInt() == 32)
+            if (c[i].code == 32)
             //半角空格
             {
                 c[i] = 12288.toChar()
@@ -135,9 +133,9 @@ object StringUtils {
             //if (c[i] == 46) //半角点号，不转换
             // continue;
 
-            if (c[i].toInt() in 33..126)
+            if (c[i].code in 33..126)
             //其他符号都转换为全角
-                c[i] = (c[i].toInt() + 65248).toChar()
+                c[i] = (c[i].code + 65248).toChar()
         }
         return String(c)
     }
@@ -146,15 +144,15 @@ object StringUtils {
     fun fullToHalf(input: String): String {
         val c = input.toCharArray()
         for (i in c.indices) {
-            if (c[i].toInt() == 12288)
+            if (c[i].code == 12288)
             //全角空格
             {
                 c[i] = 32.toChar()
                 continue
             }
 
-            if (c[i].toInt() in 65281..65374)
-                c[i] = (c[i].toInt() - 65248).toChar()
+            if (c[i].code in 65281..65374)
+                c[i] = (c[i].code - 65248).toChar()
         }
         return String(c)
     }
@@ -174,7 +172,7 @@ object StringUtils {
         }
 
         // "一千零二十五", "一千二" 形式
-        try {
+        return kotlin.runCatching {
             for (i in cn.indices) {
                 val tmpNum = ChnMap[cn[i]]!!
                 when {
@@ -205,22 +203,18 @@ object StringUtils {
                 }
             }
             result += tmp + billion
-            return result
-        } catch (e: Exception) {
-            return -1
-        }
-
+            result
+        }.getOrDefault(-1)
     }
 
     fun stringToInt(str: String?): Int {
         if (str != null) {
             val num = fullToHalf(str).replace("\\s+".toRegex(), "")
-            return try {
+            return kotlin.runCatching {
                 Integer.parseInt(num)
-            } catch (e: Exception) {
+            }.getOrElse {
                 chineseNumToInt(num)
             }
-
         }
         return -1
     }
@@ -261,10 +255,10 @@ object StringUtils {
         var start = 0
         val len = s.length
         var end = len - 1
-        while (start < end && (s[start].toInt() <= 0x20 || s[start] == '　')) {
+        while (start < end && (s[start].code <= 0x20 || s[start] == '　')) {
             ++start
         }
-        while (start < end && (s[end].toInt() <= 0x20 || s[end] == '　')) {
+        while (start < end && (s[end].code <= 0x20 || s[end] == '　')) {
             --end
         }
         if (end < len) ++end
@@ -292,4 +286,30 @@ object StringUtils {
         return buf.toString()
     }
 
+    fun byteToHexString(bytes: ByteArray?): String {
+        if (bytes == null) return ""
+        val sb = StringBuilder(bytes.size * 2)
+        for (b in bytes) {
+            val hex = 0xff and b.toInt()
+            if (hex < 16) {
+                sb.append('0')
+            }
+            sb.append(Integer.toHexString(hex))
+        }
+        return sb.toString()
+    }
+
+    fun hexStringToByte(hexString: String): ByteArray {
+        val hexStr = hexString.replace(" ", "")
+        val len = hexStr.length
+        val bytes = ByteArray(len / 2)
+        var i = 0
+        while (i < len) {
+            // 两位一组，表示一个字节,把这样表示的16进制字符串，还原成一个字节
+            bytes[i / 2] = ((Character.digit(hexString[i], 16) shl 4) +
+                    Character.digit(hexString[i + 1], 16)).toByte()
+            i += 2
+        }
+        return bytes
+    }
 }

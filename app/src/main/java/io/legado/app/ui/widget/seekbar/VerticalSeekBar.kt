@@ -16,7 +16,9 @@ import io.legado.app.lib.theme.ThemeStore
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
-class VerticalSeekBar : AppCompatSeekBar {
+@Suppress("SameParameterValue")
+class VerticalSeekBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    AppCompatSeekBar(context, attrs) {
 
     private var mIsDragging: Boolean = false
     private var mThumb: Drawable? = null
@@ -53,38 +55,12 @@ class VerticalSeekBar : AppCompatSeekBar {
             }
         }
 
-    constructor(context: Context) : super(context) {
-        initialize(context, null, 0, 0)
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        initialize(context, attrs, 0, 0)
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
-        context,
-        attrs,
-        defStyle
-    ) {
-        initialize(context, attrs, defStyle, 0)
-    }
-
-    private fun initialize(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) {
+    init {
         ATH.setTint(this, ThemeStore.accentColor(context))
         ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR)
 
         if (attrs != null) {
-            val a = context.obtainStyledAttributes(
-                attrs,
-                R.styleable.VerticalSeekBar,
-                defStyleAttr,
-                defStyleRes
-            )
+            val a = context.obtainStyledAttributes(attrs, R.styleable.VerticalSeekBar)
             val rotationAngle = a.getInteger(R.styleable.VerticalSeekBar_seekBarRotation, 0)
             if (isValidRotationAngle(rotationAngle)) {
                 mRotationAngle = rotationAngle

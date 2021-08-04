@@ -3,15 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/background"
-    android:padding="8dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/tv_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:textColor="@color/primaryText" />
 
     <TextView
         android:id="@+id/tv_edit"
@@ -19,7 +20,8 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:padding="8dp"
-        android:text="@string/edit" />
+        android:text="@string/edit"
+        android:textColor="@color/primaryText" />
 
     <TextView
         android:id="@+id/tv_del"
@@ -27,6 +29,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:padding="8dp"
-        android:text="@string/delete" />
+        android:text="@string/delete"
+        android:textColor="@color/primaryText" />
 
 </LinearLayout>

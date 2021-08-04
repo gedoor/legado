@@ -2,23 +2,23 @@ package io.legado.app.service.help
 
 import android.content.Context
 import android.content.Intent
-import io.legado.app.App
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
 import io.legado.app.utils.getPrefLong
+import splitties.init.appCtx
 
 object ReadAloud {
     private var aloudClass: Class<*> = getReadAloudClass()
     var httpTTS: HttpTTS? = null
 
     private fun getReadAloudClass(): Class<*> {
-        val spId = App.INSTANCE.getPrefLong(PreferKey.speakEngine)
-        httpTTS = App.db.httpTTSDao().get(spId)
-        stop(App.INSTANCE)
+        val spId = appCtx.getPrefLong(PreferKey.speakEngine)
+        httpTTS = appDb.httpTTSDao.get(spId)
         return if (httpTTS != null) {
             HttpReadAloudService::class.java
         } else {
@@ -27,6 +27,7 @@ object ReadAloud {
     }
 
     fun upReadAloudClass() {
+        stop(appCtx)
         aloudClass = getReadAloudClass()
     }
 

@@ -2,18 +2,24 @@ package io.legado.app.base
 
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewbinding.ViewBinding
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
+import io.legado.app.help.AppConfig
+import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.TitleBar
@@ -23,18 +29,20 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseActivity(
-    private val layoutID: Int,
+abstract class BaseActivity<VB : ViewBinding>(
     val fullScreen: Boolean = true,
     private val theme: Theme = Theme.Auto,
     private val toolBarTheme: Theme = Theme.Auto,
-    private val transparent: Boolean = false
+    private val transparent: Boolean = false,
+    private val imageBg: Boolean = true
 ) : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
+    protected abstract val binding: VB
+
     val isInMultiWindow: Boolean
         get() {
-            return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 isInMultiWindowMode
             } else {
                 false
@@ -58,17 +66,44 @@ abstract class BaseActivity(
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            getPrefBoolean(PreferKey.highBrush)
+        ) {
+            /**
+             * 添加高刷新率支持
+             */
+            // 获取系统window支持的模式
+            @Suppress("DEPRECATION")
+            val modes = window.windowManager.defaultDisplay.supportedModes
+            // 对获取的模式，基于刷新率的大小进行排序，从小到大排序
+            modes.sortBy {
+                it.refreshRate
+            }
+            window.let {
+                val lp = it.attributes
+                // 取出最大的那一个刷新率，直接设置给window
+                lp.preferredDisplayModeId = modes.last().modeId
+                it.attributes = lp
+            }
+        }
         window.decorView.disableAutoFill()
         initTheme()
-        setupSystemBar()
         super.onCreate(savedInstanceState)
-        setContentView(layoutID)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        setContentView(binding.root)
+        setupSystemBar()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
         }
         onActivityCreated(savedInstanceState)
         observeLiveBus()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            App.navigationBarHeight = navigationBarHeight
+        }
     }
 
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
@@ -100,24 +135,19 @@ abstract class BaseActivity(
         } ?: super.onCreateOptionsMenu(menu)
     }
 
-    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
-        menu?.let {
-            menu.applyOpenTint(this)
-            return super.onMenuOpened(featureId, menu)
-        }
-        return true
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.applyOpenTint(this)
+        return super.onMenuOpened(featureId, menu)
     }
 
     open fun onCompatCreateOptionsMenu(menu: Menu) = super.onCreateOptionsMenu(menu)
 
-    final override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        item?.let {
-            if (it.itemId == android.R.id.home) {
-                supportFinishAfterTransition()
-                return true
-            }
+    final override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            supportFinishAfterTransition()
+            return true
         }
-        return item != null && onCompatOptionsItemSelected(item)
+        return onCompatOptionsItemSelected(item)
     }
 
     open fun onCompatOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item)
@@ -142,29 +172,39 @@ abstract class BaseActivity(
                 ATH.applyBackgroundTint(window.decorView)
             }
         }
+        if (imageBg) {
+            try {
+                ThemeConfig.getBgImage(this)?.let {
+                    window.decorView.background = it
+                }
+            } catch (e: OutOfMemoryError) {
+                toastOnUi(e.localizedMessage)
+            } catch (e: Exception) {
+                toastOnUi(e.localizedMessage)
+            }
+        }
     }
 
     private fun setupSystemBar() {
         if (fullScreen && !isInMultiWindow) {
-            window.clearFlags(
-                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                        or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-            )
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            ATH.fullScreen(this)
         }
         ATH.setStatusBarColorAuto(this, fullScreen)
         if (toolBarTheme == Theme.Dark) {
-            ATH.setLightStatusBar(window, false)
+            ATH.setLightStatusBar(this, false)
         } else if (toolBarTheme == Theme.Light) {
-            ATH.setLightStatusBar(window, true)
+            ATH.setLightStatusBar(this, true)
         }
         upNavigationBarColor()
     }
 
     open fun upNavigationBarColor() {
-        ATH.setNavigationBarColorAuto(this)
+        if (AppConfig.immNavigationBar) {
+            ATH.setNavigationBarColorAuto(this, ThemeStore.navigationBarColor(this))
+        } else {
+            val nbColor = ColorUtils.darkenColor(ThemeStore.navigationBarColor(this))
+            ATH.setNavigationBarColorAuto(this, nbColor)
+        }
     }
 
     open fun observeLiveBus() {

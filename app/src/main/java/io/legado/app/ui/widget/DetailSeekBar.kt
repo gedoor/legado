@@ -2,79 +2,84 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
+import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import io.legado.app.R
+import io.legado.app.databinding.ViewDetailSeekBarBinding
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.progressAdd
-import kotlinx.android.synthetic.main.view_detail_seek_bar.view.*
-import org.jetbrains.anko.sdk27.listeners.onClick
 
-class DetailSeekBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs),
-    SeekBar.OnSeekBarChangeListener {
+
+class DetailSeekBar @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : FrameLayout(context, attrs),
+    SeekBarChangeListener {
+    private var binding: ViewDetailSeekBarBinding =
+        ViewDetailSeekBarBinding.inflate(LayoutInflater.from(context), this, true)
     private val isBottomBackground: Boolean
+
     var valueFormat: ((progress: Int) -> String)? = null
     var onChanged: ((progress: Int) -> Unit)? = null
     var progress: Int
-        get() = seek_bar.progress
+        get() = binding.seekBar.progress
         set(value) {
-            seek_bar.progress = value
+            binding.seekBar.progress = value
         }
     var max: Int
-        get() = seek_bar.max
+        get() = binding.seekBar.max
         set(value) {
-            seek_bar.max = value
+            binding.seekBar.max = value
         }
 
     init {
-        View.inflate(context, R.layout.view_detail_seek_bar, this)
-
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.DetailSeekBar)
         isBottomBackground =
             typedArray.getBoolean(R.styleable.DetailSeekBar_isBottomBackground, false)
-        tv_seek_title.text = typedArray.getText(R.styleable.DetailSeekBar_title)
-        seek_bar.max = typedArray.getInteger(R.styleable.DetailSeekBar_max, 0)
+        binding.tvSeekTitle.text = typedArray.getText(R.styleable.DetailSeekBar_title)
+        binding.seekBar.max = typedArray.getInteger(R.styleable.DetailSeekBar_max, 0)
         typedArray.recycle()
-        if (isBottomBackground) {
+        if (isBottomBackground && !isInEditMode) {
             val isLight = ColorUtils.isColorLight(context.bottomBackground)
             val textColor = context.getPrimaryTextColor(isLight)
-            tv_seek_title.setTextColor(textColor)
-            iv_seek_plus.setColorFilter(textColor)
-            iv_seek_reduce.setColorFilter(textColor)
-            tv_seek_value.setTextColor(textColor)
+            binding.tvSeekTitle.setTextColor(textColor)
+            binding.ivSeekPlus.setColorFilter(textColor)
+            binding.ivSeekReduce.setColorFilter(textColor)
+            binding.tvSeekValue.setTextColor(textColor)
         }
-        iv_seek_plus.onClick {
-            seek_bar.progressAdd(1)
-            onChanged?.invoke(seek_bar.progress)
+        binding.ivSeekPlus.setOnClickListener {
+            binding.seekBar.progressAdd(1)
+            onChanged?.invoke(binding.seekBar.progress)
         }
-        iv_seek_reduce.onClick {
-            seek_bar.progressAdd(-1)
-            onChanged?.invoke(seek_bar.progress)
+        binding.ivSeekReduce.setOnClickListener {
+            binding.seekBar.progressAdd(-1)
+            onChanged?.invoke(binding.seekBar.progress)
         }
-        seek_bar.setOnSeekBarChangeListener(this)
+        binding.seekBar.setOnSeekBarChangeListener(this)
     }
 
-    private fun upValue(progress: Int = seek_bar.progress) {
+    private fun upValue(progress: Int = binding.seekBar.progress) {
         valueFormat?.let {
-            tv_seek_value.text = it.invoke(progress)
+            binding.tvSeekValue.text = it.invoke(progress)
         } ?: let {
-            tv_seek_value.text = progress.toString()
+            binding.tvSeekValue.text = progress.toString()
         }
     }
 
-    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         upValue(progress)
     }
 
-    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+    override fun onStartTrackingTouch(seekBar: SeekBar) {
 
     }
 
-    override fun onStopTrackingTouch(seekBar: SeekBar?) {
-        onChanged?.invoke(seek_bar.progress)
+    override fun onStopTrackingTouch(seekBar: SeekBar) {
+        onChanged?.invoke(binding.seekBar.progress)
     }
 
 }

@@ -1,5 +1,6 @@
 package io.legado.app.ui.widget
 
+import android.annotation.SuppressLint
 import android.app.SearchableInfo
 import android.content.Context
 import android.graphics.Canvas
@@ -15,21 +16,14 @@ import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import io.legado.app.R
 
-class SearchView : SearchView {
+class SearchView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : SearchView(context, attrs) {
     private var mSearchHintIcon: Drawable? = null
     private var textView: TextView? = null
 
-    constructor(
-        context: Context,
-        attrs: AttributeSet? = null
-    ) : super(context, attrs)
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int
-    ) : super(context, attrs, defStyleAttr)
-
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onLayout(
         changed: Boolean,
         left: Int,

@@ -1,12 +1,16 @@
 package io.legado.app.web
 
+import android.graphics.Bitmap
 import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
-import io.legado.app.web.controller.BookshelfController
-import io.legado.app.web.controller.SourceController
+import io.legado.app.api.ReturnData
+import io.legado.app.api.controller.BookController
+import io.legado.app.api.controller.SourceController
 import io.legado.app.web.utils.AssetsWeb
-import io.legado.app.web.utils.ReturnData
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.util.*
+
 
 class HttpServer(port: Int) : NanoHTTPD(port) {
     private val assetsWeb = AssetsWeb("web")
@@ -17,8 +21,8 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
         var uri = session.uri
 
         try {
-            when (session.method.name) {
-                "OPTIONS" -> {
+            when (session.method) {
+                Method.OPTIONS -> {
                     val response = newFixedLengthResponse("")
                     response.addHeader("Access-Control-Allow-Methods", "POST")
                     response.addHeader("Access-Control-Allow-Headers", "content-type")
@@ -26,33 +30,35 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     //response.addHeader("Access-Control-Max-Age", "3600");
                     return response
                 }
-
-                "POST" -> {
+                Method.POST -> {
                     val files = HashMap<String, String>()
                     session.parseBody(files)
                     val postData = files["postData"]
 
-                    when (uri) {
-                        "/saveSource" -> returnData = SourceController.saveSource(postData)
-                        "/saveSources" -> returnData = SourceController.saveSources(postData)
-                        "/saveBook" -> returnData = BookshelfController.saveBook(postData)
-                        "/deleteSources" -> returnData = SourceController.deleteSources(postData)
+                    returnData = when (uri) {
+                        "/saveSource" -> SourceController.saveSource(postData)
+                        "/saveSources" -> SourceController.saveSources(postData)
+                        "/saveBook" -> BookController.saveBook(postData)
+                        "/deleteSources" -> SourceController.deleteSources(postData)
+                        "/addLocalBook" -> BookController.addLocalBook(session, postData)
+                        else -> null
                     }
                 }
-
-                "GET" -> {
+                Method.GET -> {
                     val parameters = session.parameters
 
-                    when (uri) {
-                        "/getSource" -> returnData = SourceController.getSource(parameters)
-                        "/getSources" -> returnData = SourceController.sources
-                        "/getBookshelf" -> returnData = BookshelfController.bookshelf
-                        "/getChapterList" ->
-                            returnData = BookshelfController.getChapterList(parameters)
-                        "/getBookContent" ->
-                            returnData = BookshelfController.getBookContent(parameters)
+                    returnData = when (uri) {
+                        "/getSource" -> SourceController.getSource(parameters)
+                        "/getSources" -> SourceController.sources
+                        "/getBookshelf" -> BookController.bookshelf
+                        "/getChapterList" -> BookController.getChapterList(parameters)
+                        "/refreshToc" -> BookController.refreshToc(parameters)
+                        "/getBookContent" -> BookController.getBookContent(parameters)
+                        "/cover" -> BookController.getCover(parameters)
+                        else -> null
                     }
                 }
+                else -> Unit
             }
 
             if (returnData == null) {
@@ -61,7 +67,20 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 return assetsWeb.getResponse(uri)
             }
 
-            val response = newFixedLengthResponse(Gson().toJson(returnData))
+            val response = if (returnData.data is Bitmap) {
+                val outputStream = ByteArrayOutputStream()
+                (returnData.data as Bitmap).compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                val byteArray = outputStream.toByteArray()
+                val inputStream = ByteArrayInputStream(byteArray)
+                newFixedLengthResponse(
+                    Response.Status.OK,
+                    "image/png",
+                    inputStream,
+                    byteArray.size.toLong()
+                )
+            } else {
+                newFixedLengthResponse(Gson().toJson(returnData))
+            }
             response.addHeader("Access-Control-Allow-Methods", "GET, POST")
             response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
             return response

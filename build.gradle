@@ -1,33 +1,27 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.5.30-M1'
     repositories {
         google()
-        jcenter()
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'https://s3.amazonaws.com/fabric-artifacts/public' }
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        maven { url 'https://maven.fabric.io/public' }
+        mavenCentral()
         maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:7.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'de.timfreiheit.resourceplaceholders:placeholders:0.3'
-        classpath 'com.google.gms:google-services:4.3.3'
-        classpath 'io.fabric.tools:gradle:1.31.2'
+        classpath 'de.timfreiheit.resourceplaceholders:placeholders:0.4'
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url "https://jitpack.io" }
-        maven { url 'https://maven.google.com/' }
-        maven { url 'https://github.com/psiegman/mvn-repo/raw/master/releases' }
+        mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://jitpack.io' }
     }
 }
 

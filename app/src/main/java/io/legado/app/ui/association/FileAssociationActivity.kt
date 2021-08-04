@@ -1,34 +1,47 @@
 package io.legado.app.ui.association
 
-import android.content.Intent
 import android.os.Bundle
-import io.legado.app.R
+import androidx.activity.viewModels
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.Theme
-import io.legado.app.ui.main.MainActivity
-import io.legado.app.utils.getViewModel
-import kotlinx.android.synthetic.main.activity_translucence.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import io.legado.app.databinding.ActivityTranslucenceBinding
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 
+class FileAssociationActivity :
+    VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>() {
 
-class FileAssociationActivity : VMBaseActivity<FileAssociationViewModel>(
-    R.layout.activity_translucence,
-    theme = Theme.Transparent
-) {
+    override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
 
-    override val viewModel: FileAssociationViewModel
-        get() = getViewModel(FileAssociationViewModel::class.java)
+    override val viewModel by viewModels<FileAssociationViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        rotate_loading.show()
+        binding.rotateLoading.show()
+        viewModel.onLineImportLive.observe(this) {
+            startActivity<OnLineImportActivity> {
+                data = it
+            }
+            finish()
+        }
+        viewModel.importBookSourceLive.observe(this) {
+            binding.rotateLoading.hide()
+            ImportBookSourceDialog.start(supportFragmentManager, it, true)
+        }
+        viewModel.importRssSourceLive.observe(this) {
+            binding.rotateLoading.hide()
+            ImportRssSourceDialog.start(supportFragmentManager, it, true)
+        }
+        viewModel.importReplaceRuleLive.observe(this) {
+            binding.rotateLoading.hide()
+            ImportReplaceRuleDialog.start(supportFragmentManager, it, true)
+        }
         viewModel.errorLiveData.observe(this, {
-            rotate_loading.hide()
-            toast(it)
+            binding.rotateLoading.hide()
+            toastOnUi(it)
             finish()
         })
         viewModel.successLiveData.observe(this, {
-            rotate_loading.hide()
+            binding.rotateLoading.hide()
             startActivity(it)
             finish()
         })
@@ -37,14 +50,4 @@ class FileAssociationActivity : VMBaseActivity<FileAssociationViewModel>(
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        finish()
-        //返回后直接跳转到主页面
-        gotoMainActivity()
-    }
-
-    private fun gotoMainActivity() {
-        startActivity<MainActivity>()
-    }
 }

@@ -1,20 +1,20 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.legado.app.data.entities.BookChapter
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookChapterDao {
 
     @Query("select * from chapters where bookUrl = :bookUrl order by `index`")
-    fun observeByBook(bookUrl: String): LiveData<List<BookChapter>>
+    fun flowByBook(bookUrl: String): Flow<List<BookChapter>>
 
     @Query("SELECT * FROM chapters where bookUrl = :bookUrl and title like '%'||:key||'%' order by `index`")
-    fun liveDataSearch(bookUrl: String, key: String): LiveData<List<BookChapter>>
+    fun flowSearch(bookUrl: String, key: String): Flow<List<BookChapter>>
 
     @Query("select * from chapters where bookUrl = :bookUrl order by `index`")
     fun getChapterList(bookUrl: String): List<BookChapter>
@@ -24,6 +24,9 @@ interface BookChapterDao {
 
     @Query("select * from chapters where bookUrl = :bookUrl and `index` = :index")
     fun getChapter(bookUrl: String, index: Int): BookChapter?
+
+    @Query("select * from chapters where bookUrl = :bookUrl and `title` = :title")
+    fun getChapter(bookUrl: String, title: String): BookChapter?
 
     @Query("select count(url) from chapters where bookUrl = :bookUrl")
     fun getChapterCount(bookUrl: String): Int

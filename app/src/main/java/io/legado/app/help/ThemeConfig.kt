@@ -2,52 +2,83 @@ package io.legado.app.help
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
-import io.legado.app.App
+import androidx.appcompat.app.AppCompatDelegate
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.constant.Theme
+import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.File
 
 object ThemeConfig {
     const val configFileName = "themeConfig.json"
-    val configFilePath = FileUtils.getPath(App.INSTANCE.filesDir, configFileName)
-    private val defaultConfigs by lazy {
-        val json = String(App.INSTANCE.assets.open(configFileName).readBytes())
-        GSON.fromJsonArray<Config>(json)!!
-    }
-    val configList = arrayListOf<Config>()
+    val configFilePath = FileUtils.getPath(appCtx.filesDir, configFileName)
 
-    init {
-        upConfig()
+    val configList: ArrayList<Config> by lazy {
+        val cList = getConfigs() ?: DefaultData.themeConfigs
+        ArrayList(cList)
+    }
+
+    fun applyDayNight(context: Context) {
+        ReadBookConfig.upBg()
+        applyTheme(context)
+        initNightMode()
+        CoverImageView.upDefaultCover()
+        postEvent(EventBus.RECREATE, "")
+    }
+
+    private fun initNightMode() {
+        val targetMode =
+            if (AppConfig.isNightTheme) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+        AppCompatDelegate.setDefaultNightMode(targetMode)
+    }
+
+    fun getBgImage(context: Context): Drawable? {
+        val bgPath = when (Theme.getTheme()) {
+            Theme.Light -> context.getPrefString(PreferKey.bgImage)
+            Theme.Dark -> context.getPrefString(PreferKey.bgImageN)
+            else -> null
+        }
+        if (bgPath.isNullOrBlank()) return null
+        return BitmapDrawable.createFromPath(bgPath)
     }
 
     fun upConfig() {
-        (getConfigs() ?: defaultConfigs).let {
-            configList.clear()
-            configList.addAll(it)
+        getConfigs()?.forEach { config ->
+            addConfig(config)
         }
     }
 
     fun save() {
-        Coroutine.async {
-            synchronized(this) {
-                val json = GSON.toJson(configList)
-                FileUtils.deleteFile(configFilePath)
-                FileUtils.createFileIfNotExist(configFilePath).writeText(json)
-            }
-        }
+        val json = GSON.toJson(configList)
+        FileUtils.deleteFile(configFilePath)
+        FileUtils.createFileIfNotExist(configFilePath).writeText(json)
     }
 
-    fun addConfig(json: String) {
-        GSON.fromJsonObject<Config>(json)?.let {
+    fun delConfig(index: Int) {
+        configList.removeAt(index)
+        save()
+    }
+
+    fun addConfig(json: String): Boolean {
+        GSON.fromJsonObject<Config>(json.trim { it < ' ' })?.let {
             addConfig(it)
+            return true
         }
+        return false
     }
 
-    private fun addConfig(newConfig: Config) {
+    fun addConfig(newConfig: Config) {
         configList.forEachIndexed { index, config ->
             if (newConfig.themeName == config.themeName) {
                 configList[index] = newConfig
@@ -61,11 +92,11 @@ object ThemeConfig {
     private fun getConfigs(): List<Config>? {
         val configFile = File(configFilePath)
         if (configFile.exists()) {
-            try {
+            kotlin.runCatching {
                 val json = configFile.readText()
                 return GSON.fromJsonArray(json)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            }.onFailure {
+                it.printStackTrace()
             }
         }
         return null
@@ -88,8 +119,7 @@ object ThemeConfig {
             context.putPrefInt(PreferKey.cBBackground, bBackground)
         }
         AppConfig.isNightTheme = config.isNightTheme
-        App.INSTANCE.applyDayNight()
-        postEvent(EventBus.RECREATE, "")
+        applyDayNight(context)
     }
 
     fun saveDayTheme(context: Context, name: String) {
@@ -114,9 +144,15 @@ object ThemeConfig {
 
     fun saveNightTheme(context: Context, name: String) {
         val primary =
-            context.getPrefInt(PreferKey.cNPrimary, context.getCompatColor(R.color.md_blue_grey_600))
+            context.getPrefInt(
+                PreferKey.cNPrimary,
+                context.getCompatColor(R.color.md_blue_grey_600)
+            )
         val accent =
-            context.getPrefInt(PreferKey.cNAccent, context.getCompatColor(R.color.md_deep_orange_800))
+            context.getPrefInt(
+                PreferKey.cNAccent,
+                context.getCompatColor(R.color.md_deep_orange_800)
+            )
         val background =
             context.getPrefInt(PreferKey.cNBackground, context.getCompatColor(R.color.md_grey_900))
         val bBackground =
@@ -130,6 +166,62 @@ object ThemeConfig {
             bottomBackground = "#${bBackground.hexString}"
         )
         addConfig(config)
+    }
+
+    /**
+     * 更新主题
+     */
+    fun applyTheme(context: Context) = with(context) {
+        when {
+            AppConfig.isEInkMode -> {
+                ThemeStore.editTheme(this)
+                    .primaryColor(Color.WHITE)
+                    .accentColor(Color.BLACK)
+                    .backgroundColor(Color.WHITE)
+                    .bottomBackground(Color.WHITE)
+                    .apply()
+            }
+            AppConfig.isNightTheme -> {
+                val primary =
+                    getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
+                val accent =
+                    getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
+                var background =
+                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
+                if (ColorUtils.isColorLight(background)) {
+                    background = getCompatColor(R.color.md_grey_900)
+                    putPrefInt(PreferKey.cNBackground, background)
+                }
+                val bBackground =
+                    getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
+                ThemeStore.editTheme(this)
+                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
+                    .accentColor(ColorUtils.withAlpha(accent, 1f))
+                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
+                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
+                    .apply()
+            }
+            else -> {
+                val primary =
+                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))
+                val accent =
+                    getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
+                var background =
+                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                if (!ColorUtils.isColorLight(background)) {
+                    background = getCompatColor(R.color.md_grey_100)
+                    putPrefInt(PreferKey.cBackground, background)
+                }
+                val bBackground =
+                    getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                ThemeStore.editTheme(this)
+                    .primaryColor(ColorUtils.withAlpha(primary, 1f))
+                    .accentColor(ColorUtils.withAlpha(accent, 1f))
+                    .backgroundColor(ColorUtils.withAlpha(background, 1f))
+                    .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
+                    .apply()
+            }
+        }
     }
 
     @Keep

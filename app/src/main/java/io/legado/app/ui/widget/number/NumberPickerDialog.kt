@@ -6,7 +6,6 @@ import androidx.appcompat.app.AlertDialog
 import io.legado.app.R
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.hideSoftInput
-import kotlinx.android.synthetic.main.dialog_number_picker.*
 
 
 class NumberPickerDialog(context: Context) {
@@ -48,7 +47,7 @@ class NumberPickerDialog(context: Context) {
                 listener?.invoke()
             }
         }
-        return this;
+        return this
     }
 
     fun show(callBack: ((value: Int) -> Unit)?) {
@@ -61,7 +60,7 @@ class NumberPickerDialog(context: Context) {
         }
         builder.setNegativeButton(R.string.cancel, null)
         val dialog = builder.show().applyTint()
-        numberPicker = dialog.number_picker
+        numberPicker = dialog.findViewById(R.id.number_picker)
         numberPicker?.let { np ->
             minValue?.let {
                 np.minValue = it

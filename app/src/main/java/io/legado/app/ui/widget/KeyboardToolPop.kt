@@ -1,18 +1,15 @@
 package io.legado.app.ui.widget
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
-import kotlinx.android.synthetic.main.item_fillet_text.view.*
-import kotlinx.android.synthetic.main.popup_keyboard_tool.view.*
-import org.jetbrains.anko.sdk27.listeners.onClick
+import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.databinding.ItemFilletTextBinding
+import io.legado.app.databinding.PopupKeyboardToolBinding
 
 
 class KeyboardToolPop(
@@ -21,9 +18,10 @@ class KeyboardToolPop(
     val callBack: CallBack?
 ) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
 
+    private val binding = PopupKeyboardToolBinding.inflate(LayoutInflater.from(context))
+
     init {
-        @SuppressLint("InflateParams")
-        contentView = LayoutInflater.from(context).inflate(R.layout.popup_keyboard_tool, null)
+        contentView = binding.root
 
         isTouchable = true
         isOutsideTouchable = false
@@ -34,23 +32,33 @@ class KeyboardToolPop(
 
     private fun initRecyclerView() = with(contentView) {
         val adapter = Adapter(context)
-        recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-        recycler_view.adapter = adapter
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        binding.recyclerView.adapter = adapter
         adapter.setItems(chars)
     }
 
     inner class Adapter(context: Context) :
-        SimpleRecyclerAdapter<String>(context, R.layout.item_fillet_text) {
+        RecyclerAdapter<String, ItemFilletTextBinding>(context) {
 
-        override fun convert(holder: ItemViewHolder, item: String, payloads: MutableList<Any>) {
-            with(holder.itemView) {
-                text_view.text = item
+        override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
+            return ItemFilletTextBinding.inflate(inflater, parent, false)
+        }
+
+        override fun convert(
+            holder: ItemViewHolder,
+            binding: ItemFilletTextBinding,
+            item: String,
+            payloads: MutableList<Any>
+        ) {
+            binding.run {
+                textView.text = item
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
+        override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
             holder.itemView.apply {
-                onClick {
+                setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
                         callBack?.sendText(it)
                     }

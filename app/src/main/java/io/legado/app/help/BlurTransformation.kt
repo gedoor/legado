@@ -23,12 +23,17 @@ class BlurTransformation(context: Context, private val radius: Int) : CenterCrop
     private val rs: RenderScript = RenderScript.create(context)
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
+    override fun transform(
+        pool: BitmapPool,
+        toTransform: Bitmap,
+        outWidth: Int,
+        outHeight: Int
+    ): Bitmap {
         val transform = super.transform(pool, toTransform, outWidth, outHeight)
         //图片缩小1/2
         val width = (min(outWidth, transform.width) / 2f).roundToInt()
         val height = (min(outHeight, transform.height) / 2f).roundToInt()
-        val blurredBitmap = Bitmap.createScaledBitmap(transform, width, height, false);
+        val blurredBitmap = Bitmap.createScaledBitmap(transform, width, height, false)
         // Allocate memory for Renderscript to work with
         //分配用于渲染脚本的内存
         val input = Allocation.createFromBitmap(

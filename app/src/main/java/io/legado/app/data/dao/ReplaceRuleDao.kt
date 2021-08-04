@@ -1,18 +1,24 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.ReplaceRule
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface ReplaceRuleDao {
 
     @Query("SELECT * FROM replace_rules ORDER BY sortOrder ASC")
-    fun liveDataAll(): LiveData<List<ReplaceRule>>
+    fun flowAll(): Flow<List<ReplaceRule>>
 
     @Query("SELECT * FROM replace_rules where `group` like :key or name like :key ORDER BY sortOrder ASC")
-    fun liveDataSearch(key: String): LiveData<List<ReplaceRule>>
+    fun flowSearch(key: String): Flow<List<ReplaceRule>>
+
+    @Query("SELECT * FROM replace_rules where `group` like :key ORDER BY sortOrder ASC")
+    fun flowGroupSearch(key: String): Flow<List<ReplaceRule>>
+
+    @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
+    fun flowGroup(): Flow<List<String>>
 
     @get:Query("SELECT MIN(sortOrder) FROM replace_rules")
     val minOrder: Int
@@ -33,25 +39,11 @@ interface ReplaceRuleDao {
     fun findByIds(vararg ids: Long): List<ReplaceRule>
 
     @Query(
-        """
-        SELECT * FROM replace_rules WHERE isEnabled = 1 
-        AND (scope LIKE '%' || :scope || '%' or scope is null or scope = '')
-        order by sortOrder
-        """
-    )
-    fun findEnabledByScope(scope: String): List<ReplaceRule>
-
-    @Query(
-        """
-        SELECT * FROM replace_rules WHERE isEnabled = 1 
+        """SELECT * FROM replace_rules WHERE isEnabled = 1 
         AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
-        order by sortOrder
-        """
+        order by sortOrder"""
     )
     fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
-
-    @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
-    fun liveGroup(): LiveData<List<String>>
 
     @Query("select * from replace_rules where `group` like '%' || :group || '%'")
     fun getByGroup(group: String): List<ReplaceRule>

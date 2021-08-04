@@ -36,9 +36,11 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
         )
         if (v is TextView) {
             v.text = entry
-            val bgColor = context.bottomBackground
-            val pTextColor = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
-            v.setTextColor(pTextColor)
+            if (isBottomBackground) {
+                val bgColor = context.bottomBackground
+                val pTextColor = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
+                v.setTextColor(pTextColor)
+            }
         }
         super.onBindViewHolder(holder)
     }

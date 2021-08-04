@@ -1,28 +1,31 @@
 package io.legado.app.ui.book.read.config
 
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
+import io.legado.app.databinding.DialogTipConfigBinding
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.utils.postEvent
-import kotlinx.android.synthetic.main.dialog_tip_config.*
-import org.jetbrains.anko.sdk27.listeners.onCheckedChange
-import org.jetbrains.anko.sdk27.listeners.onClick
+import io.legado.app.utils.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
+
 
 class TipConfigDialog : BaseDialogFragment() {
 
+    companion object {
+        const val TIP_COLOR = 7897
+    }
+
+    private val binding by viewBinding(DialogTipConfigBinding::bind)
+
     override fun onStart() {
         super.onStart()
-        val dm = DisplayMetrics()
-        activity?.let {
-            it.windowManager?.defaultDisplay?.getMetrics(dm)
-        }
         dialog?.window
             ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
@@ -38,216 +41,163 @@ class TipConfigDialog : BaseDialogFragment() {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initView()
         initEvent()
+        observeEvent<String>(EventBus.TIP_COLOR) {
+            upTvTipColor()
+        }
     }
 
-    private fun initView() {
-        tv_header_left.text = ReadTipConfig.tipHeaderLeftStr
-        tv_header_middle.text = ReadTipConfig.tipHeaderMiddleStr
-        tv_header_right.text = ReadTipConfig.tipHeaderRightStr
-        tv_footer_left.text = ReadTipConfig.tipFooterLeftStr
-        tv_footer_middle.text = ReadTipConfig.tipFooterMiddleStr
-        tv_footer_right.text = ReadTipConfig.tipFooterRightStr
-        sw_hide_header.isChecked = ReadTipConfig.hideHeader
-        sw_hide_footer.isChecked = ReadTipConfig.hideFooter
+    private fun initView() = binding.run {
+        rgTitleMode.checkByIndex(ReadBookConfig.titleMode)
+        dsbTitleSize.progress = ReadBookConfig.titleSize
+        dsbTitleTop.progress = ReadBookConfig.titleTopSpacing
+        dsbTitleBottom.progress = ReadBookConfig.titleBottomSpacing
+
+        tvHeaderShow.text = ReadTipConfig.getHeaderModes(requireContext())[ReadTipConfig.headerMode]
+        tvFooterShow.text = ReadTipConfig.getFooterModes(requireContext())[ReadTipConfig.footerMode]
+
+        tvHeaderLeft.text = ReadTipConfig.tipHeaderLeftStr
+        tvHeaderMiddle.text = ReadTipConfig.tipHeaderMiddleStr
+        tvHeaderRight.text = ReadTipConfig.tipHeaderRightStr
+        tvFooterLeft.text = ReadTipConfig.tipFooterLeftStr
+        tvFooterMiddle.text = ReadTipConfig.tipFooterMiddleStr
+        tvFooterRight.text = ReadTipConfig.tipFooterRightStr
+
+        upTvTipColor()
     }
 
-    private fun initEvent() {
-        tv_header_left.onClick {
-            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.apply {
-                    if (i != none) {
-                        if (tipHeaderMiddle == i) {
-                            tipHeaderMiddle = none
-                            tv_header_middle.text = tipArray[none]
-                        }
-                        if (tipHeaderRight == i) {
-                            tipHeaderRight = none
-                            tv_header_right.text = tipArray[none]
-                        }
-                        if (tipFooterLeft == i) {
-                            tipFooterLeft = none
-                            tv_footer_left.text = tipArray[none]
-                        }
-                        if (tipFooterMiddle == i) {
-                            tipFooterMiddle = none
-                            tv_footer_middle.text = tipArray[none]
-                        }
-                        if (tipFooterRight == i) {
-                            tipFooterRight = none
-                            tv_footer_right.text = tipArray[none]
-                        }
+    private fun upTvTipColor() {
+        binding.tvTipColor.text =
+            if (ReadTipConfig.tipColor == 0) {
+                "跟随正文"
+            } else {
+                "#${ReadTipConfig.tipColor.hexString}"
+            }
+    }
+
+    private fun initEvent() = binding.run {
+        rgTitleMode.setOnCheckedChangeListener { _, checkedId ->
+            ReadBookConfig.titleMode = rgTitleMode.getIndexById(checkedId)
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsbTitleSize.onChanged = {
+            ReadBookConfig.titleSize = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsbTitleTop.onChanged = {
+            ReadBookConfig.titleTopSpacing = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        dsbTitleBottom.onChanged = {
+            ReadBookConfig.titleBottomSpacing = it
+            postEvent(EventBus.UP_CONFIG, true)
+        }
+        llHeaderShow.setOnClickListener {
+            val headerModes = ReadTipConfig.getHeaderModes(requireContext())
+            selector(items = headerModes.values.toList()) { _, i ->
+                ReadTipConfig.headerMode = headerModes.keys.toList()[i]
+                tvHeaderShow.text = headerModes[ReadTipConfig.headerMode]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        llFooterShow.setOnClickListener {
+            val footerModes = ReadTipConfig.getFooterModes(requireContext())
+            selector(items = footerModes.values.toList()) { _, i ->
+                ReadTipConfig.footerMode = footerModes.keys.toList()[i]
+                tvFooterShow.text = footerModes[ReadTipConfig.footerMode]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        llHeaderLeft.setOnClickListener {
+            selector(items = ReadTipConfig.tips) { _, i ->
+                clearRepeat(i)
+                ReadTipConfig.tipHeaderLeft = i
+                tvHeaderLeft.text = ReadTipConfig.tips[i]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        llHeaderMiddle.setOnClickListener {
+            selector(items = ReadTipConfig.tips) { _, i ->
+                clearRepeat(i)
+                ReadTipConfig.tipHeaderMiddle = i
+                tvHeaderMiddle.text = ReadTipConfig.tips[i]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        llHeaderRight.setOnClickListener {
+            selector(items = ReadTipConfig.tips) { _, i ->
+                clearRepeat(i)
+                ReadTipConfig.tipHeaderRight = i
+                tvHeaderRight.text = ReadTipConfig.tips[i]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        llFooterLeft.setOnClickListener {
+            selector(items = ReadTipConfig.tips) { _, i ->
+                clearRepeat(i)
+                ReadTipConfig.tipFooterLeft = i
+                tvFooterLeft.text = ReadTipConfig.tips[i]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        llFooterMiddle.setOnClickListener {
+            selector(items = ReadTipConfig.tips) { _, i ->
+                clearRepeat(i)
+                ReadTipConfig.tipFooterMiddle = i
+                tvFooterMiddle.text = ReadTipConfig.tips[i]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        llFooterRight.setOnClickListener {
+            selector(items = ReadTipConfig.tips) { _, i ->
+                clearRepeat(i)
+                ReadTipConfig.tipFooterRight = i
+                tvFooterRight.text = ReadTipConfig.tips[i]
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+        }
+        llTipColor.setOnClickListener {
+            selector(items = arrayListOf("跟随正文", "自定义")) { _, i ->
+                when (i) {
+                    0 -> {
+                        ReadTipConfig.tipColor = 0
+                        upTvTipColor()
+                        postEvent(EventBus.UP_CONFIG, true)
                     }
-                    tipHeaderLeft = i
-                    tv_header_left.text = tipArray[i]
+                    1 -> ColorPickerDialog.newBuilder()
+                        .setShowAlphaSlider(false)
+                        .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
+                        .setDialogId(TIP_COLOR)
+                        .show(requireActivity())
                 }
-                postEvent(EventBus.UP_CONFIG, true)
             }
         }
-        tv_header_middle.onClick {
-            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.apply {
-                    if (i != none) {
-                        if (tipHeaderLeft == i) {
-                            tipHeaderLeft = none
-                            tv_header_left.text = tipArray[none]
-                        }
-                        if (tipHeaderRight == i) {
-                            tipHeaderRight = none
-                            tv_header_right.text = tipArray[none]
-                        }
-                        if (tipFooterLeft == i) {
-                            tipFooterLeft = none
-                            tv_footer_left.text = tipArray[none]
-                        }
-                        if (tipFooterMiddle == i) {
-                            tipFooterMiddle = none
-                            tv_footer_middle.text = tipArray[none]
-                        }
-                        if (tipFooterRight == i) {
-                            tipFooterRight = none
-                            tv_footer_right.text = tipArray[none]
-                        }
-                    }
-                    tipHeaderMiddle = i
-                    tv_header_middle.text = tipArray[i]
-                }
-                postEvent(EventBus.UP_CONFIG, true)
+    }
+
+    private fun clearRepeat(repeat: Int) = ReadTipConfig.apply {
+        if (repeat != none) {
+            if (tipHeaderLeft == repeat) {
+                tipHeaderLeft = none
+                binding.tvHeaderLeft.text = tips[none]
             }
-        }
-        tv_header_right.onClick {
-            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.apply {
-                    if (i != none) {
-                        if (tipHeaderLeft == i) {
-                            tipHeaderLeft = none
-                            tv_header_left.text = tipArray[none]
-                        }
-                        if (tipHeaderMiddle == i) {
-                            tipHeaderMiddle = none
-                            tv_header_middle.text = tipArray[none]
-                        }
-                        if (tipFooterLeft == i) {
-                            tipFooterLeft = none
-                            tv_footer_left.text = tipArray[none]
-                        }
-                        if (tipFooterMiddle == i) {
-                            tipFooterMiddle = none
-                            tv_footer_middle.text = tipArray[none]
-                        }
-                        if (tipFooterRight == i) {
-                            tipFooterRight = none
-                            tv_footer_right.text = tipArray[none]
-                        }
-                    }
-                    tipHeaderRight = i
-                    tv_header_right.text = tipArray[i]
-                }
-                postEvent(EventBus.UP_CONFIG, true)
+            if (tipHeaderMiddle == repeat) {
+                tipHeaderMiddle = none
+                binding.tvHeaderMiddle.text = tips[none]
             }
-        }
-        tv_footer_left.onClick {
-            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.apply {
-                    if (i != none) {
-                        if (tipHeaderLeft == i) {
-                            tipHeaderLeft = none
-                            tv_header_left.text = tipArray[none]
-                        }
-                        if (tipHeaderMiddle == i) {
-                            tipHeaderMiddle = none
-                            tv_header_middle.text = tipArray[none]
-                        }
-                        if (tipHeaderRight == i) {
-                            tipHeaderRight = none
-                            tv_header_right.text = tipArray[none]
-                        }
-                        if (tipFooterMiddle == i) {
-                            tipFooterMiddle = none
-                            tv_footer_middle.text = tipArray[none]
-                        }
-                        if (tipFooterRight == i) {
-                            tipFooterRight = none
-                            tv_footer_right.text = tipArray[none]
-                        }
-                    }
-                    tipFooterLeft = i
-                    tv_footer_left.text = tipArray[i]
-                }
-                postEvent(EventBus.UP_CONFIG, true)
+            if (tipHeaderRight == repeat) {
+                tipHeaderRight = none
+                binding.tvHeaderRight.text = tips[none]
             }
-        }
-        tv_footer_middle.onClick {
-            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.apply {
-                    if (i != none) {
-                        if (tipHeaderLeft == i) {
-                            tipHeaderLeft = none
-                            tv_header_left.text = tipArray[none]
-                        }
-                        if (tipHeaderMiddle == i) {
-                            tipHeaderMiddle = none
-                            tv_header_middle.text = tipArray[none]
-                        }
-                        if (tipHeaderRight == i) {
-                            tipHeaderRight = none
-                            tv_header_right.text = tipArray[none]
-                        }
-                        if (tipFooterLeft == i) {
-                            tipFooterLeft = none
-                            tv_footer_left.text = tipArray[none]
-                        }
-                        if (tipFooterRight == i) {
-                            tipFooterRight = none
-                            tv_footer_right.text = tipArray[none]
-                        }
-                    }
-                    tipFooterMiddle = i
-                    tv_footer_middle.text = tipArray[i]
-                }
-                postEvent(EventBus.UP_CONFIG, true)
+            if (tipFooterLeft == repeat) {
+                tipFooterLeft = none
+                binding.tvFooterLeft.text = tips[none]
             }
-        }
-        tv_footer_right.onClick {
-            selector(items = ReadTipConfig.tipArray.toList()) { _, i ->
-                ReadTipConfig.apply {
-                    if (i != none) {
-                        if (tipHeaderLeft == i) {
-                            tipHeaderLeft = none
-                            tv_header_left.text = tipArray[none]
-                        }
-                        if (tipHeaderMiddle == i) {
-                            tipHeaderMiddle = none
-                            tv_header_middle.text = tipArray[none]
-                        }
-                        if (tipHeaderRight == i) {
-                            tipHeaderRight = none
-                            tv_header_right.text = tipArray[none]
-                        }
-                        if (tipFooterLeft == i) {
-                            tipFooterLeft = none
-                            tv_footer_left.text = tipArray[none]
-                        }
-                        if (tipFooterMiddle == i) {
-                            tipFooterMiddle = none
-                            tv_footer_middle.text = tipArray[none]
-                        }
-                    }
-                    tipFooterRight = i
-                    tv_footer_right.text = tipArray[i]
-                }
-                postEvent(EventBus.UP_CONFIG, true)
+            if (tipFooterMiddle == repeat) {
+                tipFooterMiddle = none
+                binding.tvFooterMiddle.text = tips[none]
             }
-        }
-        sw_hide_header.onCheckedChange { buttonView, isChecked ->
-            if (buttonView?.isPressed == true) {
-                ReadTipConfig.hideHeader = isChecked
-                postEvent(EventBus.UP_CONFIG, true)
-            }
-        }
-        sw_hide_footer.onCheckedChange { buttonView, isChecked ->
-            if (buttonView?.isPressed == true) {
-                ReadTipConfig.hideFooter = isChecked
-                postEvent(EventBus.UP_CONFIG, true)
+            if (tipFooterRight == repeat) {
+                tipFooterRight = none
+                binding.tvFooterRight.text = tips[none]
             }
         }
     }

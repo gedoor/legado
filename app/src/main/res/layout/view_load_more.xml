@@ -25,6 +25,7 @@
         android:textSize="14sp"
         android:background="?attr/selectableItemBackground"
         android:visibility="invisible"
+        android:singleLine="true"
         tools:text="加载状态"
         tools:visibility="visible" />
 

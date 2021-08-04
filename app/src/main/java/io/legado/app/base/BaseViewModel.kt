@@ -2,23 +2,22 @@ package io.legado.app.base
 
 import android.app.Application
 import android.content.Context
-import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
-import kotlinx.coroutines.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application),
-    CoroutineScope by MainScope(),
-    AnkoLogger {
+@Suppress("unused")
+open class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
     val context: Context by lazy { this.getApplication<App>() }
 
     fun <T> execute(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
@@ -26,40 +25,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun <R> submit(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> Deferred<R>
     ): Coroutine<R> {
         return Coroutine.async(scope, context) { block().await() }
     }
 
-    @CallSuper
-    override fun onCleared() {
-        super.onCleared()
-        cancel()
-    }
-
-    open fun toast(message: Int) {
-        launch {
-            context.toast(message)
-        }
-    }
-
-    open fun toast(message: CharSequence?) {
-        launch {
-            context.toast(message ?: toString())
-        }
-    }
-
-    open fun longToast(message: Int) {
-        launch {
-            context.toast(message)
-        }
-    }
-
-    open fun longToast(message: CharSequence?) {
-        launch {
-            context.toast(message ?: toString())
-        }
-    }
 }

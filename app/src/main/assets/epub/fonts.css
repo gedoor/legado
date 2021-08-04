@@ -1,0 +1,267 @@
+@charset "utf-8";
+/*---常用---*/
+
+@font-face {
+    font-family: "zw";
+    src:
+	local("宋体"),local("明体"),local("明朝"),
+	local("Songti"),local("Songti SC"),local("Songti TC"),			/*iOS6+iBooks3*/
+	local("Song S"),local("Song T"),local("STBShusong"),local("TBMincho"),local("HYMyeongJo"),			/*Kindle Paperwihite*/
+	local("DK-SONGTI"),
+	url(../Fonts/zw.ttf),
+	url(res:///opt/sony/ebook/FONT/zw.ttf),
+	url(res:///Data/FONT/zw.ttf),
+	url(res:///opt/sony/ebook/FONT/tt0011m_.ttf),
+	url(res:///ebook/fonts/../../mnt/sdcard/fonts/zw.ttf),
+	url(res:///ebook/fonts/../../mnt/extsd/fonts/zw.ttf),
+	url(res:///ebook/fonts/zw.ttf),
+	url(res:///ebook/fonts/DroidSansFallback.ttf),
+	url(res:///fonts/ttf/zw.ttf),
+	url(res:///../../media/mmcblk0p1/fonts/zw.ttf),
+	url(file:///mnt/us/DK_System/system/fonts/zw.ttf),				/*Duokan Old Path*/
+	url(file:///mnt/us/DK_System/xKindle/res/userfonts/zw.ttf),		/*Duokan 2012 Path*/
+	url(res:///abook/fonts/zw.ttf),
+	url(res:///system/fonts/zw.ttf),
+	url(res:///system/media/sdcard/fonts/zw.ttf),
+	url(res:///media/fonts/zw.ttf),
+	url(res:///sdcard/fonts/zw.ttf),
+	url(res:///system/fonts/DroidSansFallback.ttf),
+	url(res:///mnt/MOVIFAT/font/zw.ttf),
+	url(res:///media/flash/fonts/zw.ttf),
+	url(res:///media/sd/fonts/zw.ttf),
+	url(res:///opt/onyx/arm/lib/fonts/AdobeHeitiStd-Regular.otf),
+	url(res:///../../fonts/zw.ttf),
+	url(res:///../fonts/zw.ttf),
+	url(../../../../../zw.ttf),										/*EpubReaderI*/
+	url(res:///mnt/sdcard/fonts/zw.ttf),							/*Nook for Android: fonts in TF Card*/
+	url(res:///fonts/zw.ttf),										/*ADE1,8, 2.0 Program Path*/
+	url(res:///../../../../Windows/fonts/zw.ttf);
+    /*ADE1,8, 2.0 Windows Path*/;
+}
+
+@font-face {
+    font-family: "fs";
+    src:
+	local("amasis30"),local("仿宋"),local("仿宋_GB2312"),
+	local("Yuanti"),local("Yuanti SC"),local("Yuanti TC"),			/*iOS6+iBooks3*/
+	local("DK-FANGSONG"),
+	url(../Fonts/fs.ttf),
+	url(res:///opt/sony/ebook/FONT/fs.ttf),
+	url(res:///Data/FONT/fs.ttf),
+	url(res:///opt/sony/ebook/FONT/tt0011m_.ttf),
+	url(res:///ebook/fonts/../../mnt/sdcard/fonts/fs.ttf),
+	url(res:///ebook/fonts/../../mnt/extsd/fonts/fs.ttf),
+	url(res:///ebook/fonts/fs.ttf),
+	url(res:///ebook/fonts/DroidSansFallback.ttf),
+	url(res:///fonts/ttf/fs.ttf),
+	url(res:///../../media/mmcblk0p1/fonts/fs.ttf),
+	url(file:///mnt/us/DK_System/system/fonts/fs.ttf),				/*Duokan Old Path*/
+	url(file:///mnt/us/DK_System/xKindle/res/userfonts/fs.ttf),		/*Duokan 2012 Path*/
+	url(res:///abook/fonts/fs.ttf),
+	url(res:///system/fonts/fs.ttf),
+	url(res:///system/media/sdcard/fonts/fs.ttf),
+	url(res:///media/fonts/fs.ttf),
+	url(res:///sdcard/fonts/fs.ttf),
+	url(res:///system/fonts/DroidSansFallback.ttf),
+	url(res:///mnt/MOVIFAT/font/fs.ttf),
+	url(res:///media/flash/fonts/fs.ttf),
+	url(res:///media/sd/fonts/fs.ttf),
+	url(res:///opt/onyx/arm/lib/fonts/AdobeHeitiStd-Regular.otf),
+	url(res:///../../fonts/fs.ttf),
+	url(res:///../fonts/fs.ttf),
+	url(../../../../../fs.ttf),										/*EpubReaderI*/
+	url(res:///mnt/sdcard/fonts/fs.ttf),							/*Nook for Android: fonts in TF Card*/
+	url(res:///fonts/fs.ttf),										/*ADE1,8, 2.0 Program Path*/
+	url(res:///../../../../Windows/fonts/fs.ttf);
+    /*ADE1,8, 2.0 Windows Path*/;
+}
+
+@font-face {
+    font-family: "kt";
+    src:
+	local("Caecilia"),local("楷体"),local("楷体_GB2312"),
+	local("Kaiti"),local("Kaiti SC"),local("Kaiti TC"),				/*iOS6+iBooks3*/
+	local("MKai PRC"),local("MKaiGB18030C-Medium"),local("MKaiGB18030C-Bold"),			/*Kindle Paperwihite*/
+	local("DK-KAITI"),
+	url(../Fonts/kt.ttf),
+	url(res:///opt/sony/ebook/FONT/kt.ttf),
+	url(res:///Data/FONT/kt.ttf),
+	url(res:///opt/sony/ebook/FONT/tt0011m_.ttf),
+	url(res:///ebook/fonts/../../mnt/sdcard/fonts/kt.ttf),
+	url(res:///ebook/fonts/../../mnt/extsd/fonts/kt.ttf),
+	url(res:///ebook/fonts/kt.ttf),
+	url(res:///ebook/fonts/DroidSansFallback.ttf),
+	url(res:///fonts/ttf/kt.ttf),
+	url(res:///../../media/mmcblk0p1/fonts/kt.ttf),
+	url(file:///mnt/us/DK_System/system/fonts/kt.ttf),				/*Duokan Old Path*/
+	url(file:///mnt/us/DK_System/xKindle/res/userfonts/kt.ttf),		/*Duokan 2012 Path*/
+	url(res:///abook/fonts/kt.ttf),
+	url(res:///system/fonts/kt.ttf),
+	url(res:///system/media/sdcard/fonts/kt.ttf),
+	url(res:///media/fonts/kt.ttf),
+	url(res:///sdcard/fonts/kt.ttf),
+	url(res:///system/fonts/DroidSansFallback.ttf),
+	url(res:///mnt/MOVIFAT/font/kt.ttf),
+	url(res:///media/flash/fonts/kt.ttf),
+	url(res:///media/sd/fonts/kt.ttf),
+	url(res:///opt/onyx/arm/lib/fonts/AdobeHeitiStd-Regular.otf),
+	url(res:///../../fonts/kt.ttf),
+	url(res:///../fonts/kt.ttf),
+	url(../../../../../kt.ttf),										/*EpubReaderI*/
+	url(res:///mnt/sdcard/fonts/kt.ttf),							/*Nook for Android: fonts in TF Card*/
+	url(res:///fonts/kt.ttf),										/*ADE1,8, 2.0 Program Path*/
+	url(res:///../../../../Windows/fonts/kt.ttf);
+    /*ADE1,8, 2.0 Windows Path*/;
+}
+
+@font-face {
+    font-family: "ht";
+    src:
+	local("黑体"),local("微软雅黑"),
+	local("Heiti"),local("Heiti SC"),local("Heiti TC"),				/*iOS6+iBooks3*/
+	local("MYing Hei S"),local("MYing Hei T"),local("TBGothic"),						/*Kindle Paperwihite*/
+	local("DK-HEITI"),
+	url(../Fonts/ht.ttf),
+	url(res:///opt/sony/ebook/FONT/ht.ttf),
+	url(res:///Data/FONT/ht.ttf),
+	url(res:///opt/sony/ebook/FONT/tt0011m_.ttf),
+	url(res:///ebook/fonts/../../mnt/sdcard/fonts/ht.ttf),
+	url(res:///ebook/fonts/../../mnt/extsd/fonts/ht.ttf),
+	url(res:///ebook/fonts/ht.ttf),
+	url(res:///ebook/fonts/DroidSansFallback.ttf),
+	url(res:///fonts/ttf/ht.ttf),
+	url(res:///../../media/mmcblk0p1/fonts/ht.ttf),
+	url(file:///mnt/us/DK_System/system/fonts/ht.ttf),				/*Duokan Old Path*/
+	url(file:///mnt/us/DK_System/xKindle/res/userfonts/ht.ttf),		/*Duokan 2012 Path*/
+	url(res:///abook/fonts/ht.ttf),
+	url(res:///system/fonts/ht.ttf),
+	url(res:///system/media/sdcard/fonts/ht.ttf),
+	url(res:///media/fonts/ht.ttf),
+	url(res:///sdcard/fonts/ht.ttf),
+	url(res:///system/fonts/DroidSansFallback.ttf),
+	url(res:///mnt/MOVIFAT/font/ht.ttf),
+	url(res:///media/flash/fonts/ht.ttf),
+	url(res:///media/sd/fonts/ht.ttf),
+	url(res:///opt/onyx/arm/lib/fonts/AdobeHeitiStd-Regular.otf),
+	url(res:///../../fonts/ht.ttf),
+	url(res:///../fonts/ht.ttf),
+	url(../../../../../ht.ttf),										/*EpubReaderI*/
+	url(res:///mnt/sdcard/fonts/ht.ttf),							/*Nook for Android: fonts in TF Card*/
+	url(res:///fonts/ht.ttf),										/*ADE1,8, 2.0 Program Path*/
+	url(res:///../../../../Windows/fonts/ht.ttf);
+    /*ADE1,8, 2.0 Windows Path*/;
+}
+@font-face {
+	font-family:"h1";
+	src:
+	local("方正兰亭特黑长_GBK"),local("方正兰亭特黑长简体"),local("方正兰亭特黑长繁体"),
+	local("LantingTeheichang"),
+	local("Yuanti"),local("Yuanti SC"),local("Yuanti TC"),
+	local("DK-HEITI"),
+	url(../Fonts/h1.ttf),
+	url(res:///opt/sony/ebook/FONT/h1.ttf),
+	url(res:///Data/FONT/h1.ttf),
+	url(res:///opt/sony/ebook/FONT/tt0011m_.ttf),
+	url(res:///ebook/fonts/../../mnt/sdcard/fonts/h1.ttf),
+	url(res:///ebook/fonts/../../mnt/extsd/fonts/h1.ttf),
+	url(res:///ebook/fonts/h1.ttf),
+	url(res:///ebook/fonts/DroidSansFallback.ttf),
+	url(res:///fonts/ttf/h1.ttf),
+	url(res:///../../media/mmcblk0p1/fonts/h1.ttf),
+	url(file:///mnt/us/DK_System/system/fonts/h1.ttf),				/*Duokan Old Path*/
+	url(file:///mnt/us/DK_System/xKindle/res/userfonts/h1.ttf),		/*Duokan 2012 Path*/
+	url(res:///abook/fonts/h1.ttf),
+	url(res:///system/fonts/h1.ttf),
+	url(res:///system/media/sdcard/fonts/h1.ttf),
+	url(res:///media/fonts/h1.ttf),
+	url(res:///sdcard/fonts/h1.ttf),
+	url(res:///system/fonts/DroidSansFallback.ttf),
+	url(res:///mnt/MOVIFAT/font/h1.ttf),
+	url(res:///media/flash/fonts/h1.ttf),
+	url(res:///media/sd/fonts/h1.ttf),
+	url(res:///opt/onyx/arm/lib/fonts/AdobeHeitiStd-Regular.otf),
+	url(res:///../../fonts/h1.ttf),
+	url(res:///../fonts/h1.ttf),
+	url(../../../../../h1.ttf),										/*EpubReaderI*/
+	url(res:///mnt/sdcard/fonts/h1.ttf),							/*Nook for Android: fonts in TF Card*/
+	url(res:///fonts/h1.ttf),										/*ADE1,8, 2.0 Program Path*/
+	url(res:///../../../../Windows/fonts/h1.ttf);					/*ADE1,8, 2.0 Windows Path*/
+}
+@font-face {
+	font-family:"h2";
+	src:
+	local("方正大标宋_GBK"),local("方正大标宋简体"),local("方正大标宋繁体"),
+	local("Dabiaosong"),
+	local("Heiti"),local("Heiti SC"),local("Heiti TC"),
+	local("DK-XIAOBIAOSONG"),
+	url(../Fonts/h2.ttf),
+	url(res:///opt/sony/ebook/FONT/h2.ttf),
+	url(res:///Data/FONT/h2.ttf),
+	url(res:///opt/sony/ebook/FONT/tt0011m_.ttf),
+	url(res:///ebook/fonts/../../mnt/sdcard/fonts/h2.ttf),
+	url(res:///ebook/fonts/../../mnt/extsd/fonts/h2.ttf),
+	url(res:///ebook/fonts/h2.ttf),
+	url(res:///ebook/fonts/DroidSansFallback.ttf),
+	url(res:///fonts/ttf/h2.ttf),
+	url(res:///../../media/mmcblk0p1/fonts/h2.ttf),
+	url(file:///mnt/us/DK_System/system/fonts/h2.ttf),				/*Duokan Old Path*/
+	url(file:///mnt/us/DK_System/xKindle/res/userfonts/h2.ttf),		/*Duokan 2012 Path*/
+	url(res:///abook/fonts/h2.ttf),
+	url(res:///system/fonts/h2.ttf),
+	url(res:///system/media/sdcard/fonts/h2.ttf),
+	url(res:///media/fonts/h2.ttf),
+	url(res:///sdcard/fonts/h2.ttf),
+	url(res:///system/fonts/DroidSansFallback.ttf),
+	url(res:///mnt/MOVIFAT/font/h2.ttf),
+	url(res:///media/flash/fonts/h2.ttf),
+	url(res:///media/sd/fonts/h2.ttf),
+	url(res:///opt/onyx/arm/lib/fonts/AdobeHeitiStd-Regular.otf),
+	url(res:///../../fonts/h2.ttf),
+	url(res:///../fonts/h2.ttf),
+	url(../../../../../h2.ttf),										/*EpubReaderI*/
+	url(res:///mnt/sdcard/fonts/h2.ttf),							/*Nook for Android: fonts in TF Card*/
+	url(res:///fonts/h2.ttf),										/*ADE1,8, 2.0 Program Path*/
+	url(res:///../../../../Windows/fonts/h2.ttf);					/*ADE1,8, 2.0 Windows Path*/
+}
+
+@font-face {
+	font-family:"h3";
+	src:
+	local("方正华隶_GBK"),local("方正行黑简体"),local("方正行黑繁体"),
+	local("Yuanti"),local("Yuanti SC"),local("Yuanti TC"),
+	local("DK-FANGSONG"),
+	url(../Fonts/h3.ttf),
+	url(res:///opt/sony/ebook/FONT/h3.ttf),
+	url(res:///Data/FONT/h3.ttf),
+	url(res:///opt/sony/ebook/FONT/tt0011m_.ttf),
+	url(res:///ebook/fonts/../../mnt/sdcard/fonts/h3.ttf),
+	url(res:///ebook/fonts/../../mnt/extsd/fonts/h3.ttf),
+	url(res:///ebook/fonts/h3.ttf),
+	url(res:///ebook/fonts/DroidSansFallback.ttf),
+	url(res:///fonts/ttf/h3.ttf),
+	url(res:///../../media/mmcblk0p1/fonts/h3.ttf),
+	url(file:///mnt/us/DK_System/system/fonts/h3.ttf),				/*Duokan Old Path*/
+	url(file:///mnt/us/DK_System/xKindle/res/userfonts/h3.ttf),		/*Duokan 2012 Path*/
+	url(res:///abook/fonts/h3.ttf),
+	url(res:///system/fonts/h3.ttf),
+	url(res:///system/media/sdcard/fonts/h3.ttf),
+	url(res:///media/fonts/h3.ttf),
+	url(res:///sdcard/fonts/h3.ttf),
+	url(res:///system/fonts/DroidSansFallback.ttf),
+	url(res:///mnt/MOVIFAT/font/h3.ttf),
+	url(res:///media/flash/fonts/h3.ttf),
+	url(res:///media/sd/fonts/h3.ttf),
+	url(res:///opt/onyx/arm/lib/fonts/AdobeHeitiStd-Regular.otf),
+	url(res:///../../fonts/h3.ttf),
+	url(res:///../fonts/h3.ttf),
+	url(../../../../../h3.ttf),										/*EpubReaderI*/
+	url(res:///mnt/sdcard/fonts/h3.ttf),							/*Nook for Android: fonts in TF Card*/
+	url(res:///fonts/h3.ttf),										/*ADE1,8, 2.0 Program Path*/
+	url(res:///../../../../Windows/fonts/h3.ttf);					/*ADE1,8, 2.0 Windows Path*/
+}
+
+@font-face {
+	font-family:"luohua";
+	src:local("汉仪落花体"),
+	     url("../Fonts/hylh.ttf");
+}

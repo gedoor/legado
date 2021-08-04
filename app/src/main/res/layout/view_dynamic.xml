@@ -4,14 +4,14 @@
     android:layout_height="match_parent">
 
     <ViewStub
-        android:id="@+id/errorViewStub"
+        android:id="@+id/error_view_stub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout="@layout/view_error" />
 
     <ViewStub
-        android:id="@+id/progressViewStub"
+        android:id="@+id/progress_view_stub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

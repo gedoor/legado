@@ -1,28 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="book_type">
-        <item>@string/book_type_text</item>
-        <item>@string/book_type_audio</item>
+        <item>文本</item>
+        <item>音频</item>
     </string-array>
 
-    <string-array name="indent">
-        <item>@string/indent_0</item>
-        <item>@string/indent_1</item>
-        <item>@string/indent_2</item>
-        <item>@string/indent_3</item>
-        <item>@string/indent_4</item>
+    <string-array name="group_style">
+        <item>标签</item>
+        <item>文件夹</item>
     </string-array>
 
     <string-array name="text_suffix">
         <item>.txt</item>
         <item>.json</item>
         <item>.xml</item>
-    </string-array>
-
-    <string-array name="convert_s">
-        <item>@string/jf_convert_o</item>
-        <item>@string/jf_convert_j</item>
-        <item>@string/jf_convert_f</item>
     </string-array>
 
     <string-array name="theme_mode">
@@ -45,18 +36,6 @@
         <item>2分钟</item>
         <item>3分钟</item>
         <item>常亮</item>
-    </string-array>
-
-    <string-array name="select_folder">
-        <item>@string/sys_folder_picker</item>
-        <item>@string/app_folder_picker</item>
-    </string-array>
-
-    <string-array name="screen_direction_title">
-        <item>@string/screen_unspecified</item>
-        <item>@string/screen_portrait</item>
-        <item>@string/screen_landscape</item>
-        <item>@string/screen_sensor</item>
     </string-array>
 
     <string-array name="icon_names">
@@ -89,6 +68,8 @@
         <item>页数</item>
         <item>进度</item>
         <item>页数及进度</item>
+        <item>书名</item>
+        <item>时间及电量</item>
     </string-array>
 
     <string-array name="text_font_weight">
@@ -102,6 +83,12 @@
         <item>简体中文</item>
         <item>繁体中文</item>
         <item>英文</item>
+    </string-array>
+
+    <string-array name="rule_type">
+        <item>书源</item>
+        <item>订阅源</item>
+        <item>替换规则</item>
     </string-array>
 
 </resources>

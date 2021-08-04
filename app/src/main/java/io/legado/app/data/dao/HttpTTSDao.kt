@@ -1,8 +1,8 @@
 package io.legado.app.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.data.entities.HttpTTS
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HttpTTSDao {
@@ -11,7 +11,7 @@ interface HttpTTSDao {
     val all: List<HttpTTS>
 
     @Query("select * from httpTTS order by name")
-    fun observeAll(): LiveData<List<HttpTTS>>
+    fun flowAll(): Flow<List<HttpTTS>>
 
     @get:Query("select count(*) from httpTTS")
     val count: Int
@@ -28,4 +28,6 @@ interface HttpTTSDao {
     @Update
     fun update(vararg httpTTS: HttpTTS)
 
+    @Query("delete from httpTTS where id < 0")
+    fun deleteDefault()
 }

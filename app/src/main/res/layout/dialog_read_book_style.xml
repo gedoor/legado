@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -18,25 +19,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5" />
-
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_title_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:text="@string/title"
-            android:gravity="center"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            app:radius="3dp" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
 
         <io.legado.app.ui.book.read.config.TextFontWeightConverter
             android:id="@+id/text_font_weight_converter"
@@ -323,87 +305,12 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-
-        <io.legado.app.ui.widget.image.CircleImageView
-            android:id="@+id/bg0"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/primaryText"
-            app:civ_border_width="1dp"
-            app:text="@string/text" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <io.legado.app.ui.widget.image.CircleImageView
-            android:id="@+id/bg1"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/primaryText"
-            app:civ_border_width="1dp"
-            app:text="@string/text" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <io.legado.app.ui.widget.image.CircleImageView
-            android:id="@+id/bg2"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/primaryText"
-            app:civ_border_width="1dp"
-            app:text="@string/text" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <io.legado.app.ui.widget.image.CircleImageView
-            android:id="@+id/bg3"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/primaryText"
-            app:civ_border_width="1dp"
-            app:text="@string/text" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <io.legado.app.ui.widget.image.CircleImageView
-            android:id="@+id/bg4"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/image_cover_default"
-            app:civ_border_color="@color/primaryText"
-            app:civ_border_width="1dp"
-            app:text="@string/text" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-
-    </LinearLayout>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tool:listitem="@layout/item_read_style" />
 
 </LinearLayout>

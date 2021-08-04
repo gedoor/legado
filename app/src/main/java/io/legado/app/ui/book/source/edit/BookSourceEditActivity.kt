@@ -1,9 +1,7 @@
 package io.legado.app.ui.book.source.edit
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
@@ -11,32 +9,39 @@ import android.view.MenuItem
 import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.PopupWindow
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
+import io.legado.app.databinding.ActivityBookSourceEditBinding
+import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
-import io.legado.app.ui.login.SourceLogin
-import io.legado.app.ui.qrcode.QrCodeActivity
+import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.FilePickerParam
+import io.legado.app.ui.login.SourceLoginActivity
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.KeyboardToolPop
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
-import kotlinx.android.synthetic.main.activity_book_source_edit.*
-import org.jetbrains.anko.*
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.math.abs
 
 class BookSourceEditActivity :
-    VMBaseActivity<BookSourceEditViewModel>(R.layout.activity_book_source_edit, false),
+    VMBaseActivity<ActivityBookSourceEditBinding, BookSourceEditViewModel>(false),
     KeyboardToolPop.CallBack {
-    override val viewModel: BookSourceEditViewModel
-        get() = getViewModel(BookSourceEditViewModel::class.java)
 
-    private val qrRequestCode = 101
+    override val binding by viewBinding(ActivityBookSourceEditBinding::inflate)
+    override val viewModel by viewModels<BookSourceEditViewModel>()
+
     private val adapter = BookSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
@@ -44,6 +49,20 @@ class BookSourceEditActivity :
     private val infoEntities: ArrayList<EditEntity> = ArrayList()
     private val tocEntities: ArrayList<EditEntity> = ArrayList()
     private val contentEntities: ArrayList<EditEntity> = ArrayList()
+    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
+        it ?: return@registerForActivityResult
+        viewModel.importSource(it) { source ->
+            upRecyclerView(source)
+        }
+    }
+    private val selectDoc = registerForActivityResult(FilePicker()) { uri ->
+        uri ?: return@registerForActivityResult
+        if (uri.isContentScheme()) {
+            sendText(uri.toString())
+        } else {
+            sendText(uri.path.toString())
+        }
+    }
 
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
@@ -55,6 +74,13 @@ class BookSourceEditActivity :
         }
     }
 
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        if (!LocalConfig.ruleHelpVersionIsLast) {
+            showRuleHelp()
+        }
+    }
+
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.source_edit, menu)
         return super.onCompatCreateOptionsMenu(menu)
@@ -63,6 +89,9 @@ class BookSourceEditActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> getSource().let { source ->
+                if (!source.equal(viewModel.bookSource ?: BookSource())) {
+                    source.lastUpdateTime = System.currentTimeMillis()
+                }
                 if (checkSource(source)) {
                     viewModel.save(source) { setResult(Activity.RESULT_OK); finish() }
                 }
@@ -70,33 +99,32 @@ class BookSourceEditActivity :
             R.id.menu_debug_source -> getSource().let { source ->
                 if (checkSource(source)) {
                     viewModel.save(source) {
-                        startActivity<BookSourceDebugActivity>(Pair("key", source.bookSourceUrl))
+                        startActivity<BookSourceDebugActivity> {
+                            putExtra("key", source.bookSourceUrl)
+                        }
                     }
                 }
             }
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getSource()))
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
-            R.id.menu_qr_code_camera -> startActivityForResult<QrCodeActivity>(qrRequestCode)
+            R.id.menu_qr_code_camera -> qrCodeResult.launch(null)
             R.id.menu_share_str -> share(GSON.toJson(getSource()))
-            R.id.menu_share_qr -> shareWithQr(getString(R.string.share_book_source), GSON.toJson(getSource()))
-            R.id.menu_rule_summary -> {
-                try {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(getString(R.string.source_rule_url))
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    toast(R.string.can_not_open)
-                }
-            }
+            R.id.menu_share_qr -> shareWithQr(
+                GSON.toJson(getSource()),
+                getString(R.string.share_book_source),
+                ErrorCorrectionLevel.L
+            )
+            R.id.menu_help -> showRuleHelp()
             R.id.menu_login -> getSource().let {
                 if (checkSource(it)) {
                     if (it.loginUrl.isNullOrEmpty()) {
-                        toast(R.string.source_no_login)
+                        toastOnUi(R.string.source_no_login)
                     } else {
-                        startActivity<SourceLogin>(
-                            Pair("sourceUrl", it.bookSourceUrl),
-                            Pair("loginUrl", it.loginUrl)
-                        )
+                        startActivity<SourceLoginActivity> {
+                            putExtra("sourceUrl", it.bookSourceUrl)
+                            putExtra("loginUrl", it.loginUrl)
+                            putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
+                        }
                     }
                 }
             }
@@ -105,13 +133,13 @@ class BookSourceEditActivity :
     }
 
     private fun initView() {
-        ATH.applyEdgeEffectColor(recycler_view)
+        ATH.applyEdgeEffectColor(binding.recyclerView)
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        recycler_view.adapter = adapter
-        tab_layout.setBackgroundColor(backgroundColor)
-        tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
+        binding.tabLayout.setBackgroundColor(backgroundColor)
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
 
             }
@@ -130,12 +158,12 @@ class BookSourceEditActivity :
         val source = getSource()
         if (!source.equal(viewModel.bookSource ?: BookSource())) {
             alert(R.string.exit) {
-                messageResource = R.string.exit_no_save
+                setMessage(R.string.exit_no_save)
                 positiveButton(R.string.yes)
                 negativeButton(R.string.no) {
                     super.finish()
                 }
-            }.show().applyTint()
+            }.show()
         } else {
             super.finish()
         }
@@ -155,14 +183,14 @@ class BookSourceEditActivity :
             5 -> adapter.editEntities = contentEntities
             else -> adapter.editEntities = sourceEntities
         }
-        recycler_view.scrollToPosition(0)
+        binding.recyclerView.scrollToPosition(0)
     }
 
     private fun upRecyclerView(source: BookSource? = viewModel.bookSource) {
         source?.let {
-            cb_is_enable.isChecked = it.enabled
-            cb_is_enable_find.isChecked = it.enabledExplore
-            sp_type.setSelection(it.bookSourceType)
+            binding.cbIsEnable.isChecked = it.enabled
+            binding.cbIsEnableFind.isChecked = it.enabledExplore
+            binding.spType.setSelection(it.bookSourceType)
         }
         //基本信息
         sourceEntities.clear()
@@ -170,10 +198,11 @@ class BookSourceEditActivity :
             add(EditEntity("bookSourceUrl", source?.bookSourceUrl, R.string.source_url))
             add(EditEntity("bookSourceName", source?.bookSourceName, R.string.source_name))
             add(EditEntity("bookSourceGroup", source?.bookSourceGroup, R.string.source_group))
+            add(EditEntity("bookSourceComment", source?.bookSourceComment, R.string.comment))
             add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
             add(EditEntity("bookUrlPattern", source?.bookUrlPattern, R.string.book_url_pattern))
             add(EditEntity("header", source?.header, R.string.source_http_header))
-            add(EditEntity("bookSourceComment", source?.bookSourceComment, R.string.comment))
+
         }
         //搜索
         val sr = source?.getSearchRule()
@@ -203,6 +232,7 @@ class BookSourceEditActivity :
             add(EditEntity("intro", ir?.intro, R.string.rule_book_intro))
             add(EditEntity("coverUrl", ir?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("tocUrl", ir?.tocUrl, R.string.rule_toc_url))
+            add(EditEntity("canReName", ir?.canReName, R.string.rule_can_re_name))
         }
         //目录页
         val tr = source?.getTocRule()
@@ -241,15 +271,15 @@ class BookSourceEditActivity :
             add(EditEntity("coverUrl", er?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("bookUrl", er?.bookUrl, R.string.r_book_url))
         }
-        tab_layout.selectTab(tab_layout.getTabAt(0))
+        binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         setEditEntities(0)
     }
 
     private fun getSource(): BookSource {
         val source = viewModel.bookSource?.copy() ?: BookSource()
-        source.enabled = cb_is_enable.isChecked
-        source.enabledExplore = cb_is_enable_find.isChecked
-        source.bookSourceType = sp_type.selectedItemPosition
+        source.enabled = binding.cbIsEnable.isChecked
+        source.enabledExplore = binding.cbIsEnableFind.isChecked
+        source.bookSourceType = binding.spType.selectedItemPosition
         val searchRule = SearchRule()
         val exploreRule = ExploreRule()
         val bookInfoRule = BookInfoRule()
@@ -308,6 +338,7 @@ class BookSourceEditActivity :
                 "lastChapter" -> bookInfoRule.lastChapter = it.value
                 "coverUrl" -> bookInfoRule.coverUrl = it.value
                 "tocUrl" -> bookInfoRule.tocUrl = it.value
+                "canReName" -> bookInfoRule.canReName = it.value
             }
         }
         tocEntities.forEach {
@@ -340,7 +371,7 @@ class BookSourceEditActivity :
 
     private fun checkSource(source: BookSource): Boolean {
         if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
-            toast("书源名称和URL不能为空")
+            toastOnUi(R.string.non_null_name_url)
             return false
         }
         return true
@@ -363,17 +394,43 @@ class BookSourceEditActivity :
 
     override fun sendText(text: String) {
         if (text == AppConst.keyboardToolChars[0]) {
-            insertText(AppConst.urlOption)
+            showHelpDialog()
         } else {
             insertText(text)
         }
+    }
+
+    private fun showHelpDialog() {
+        val items = arrayListOf("插入URL参数", "书源教程", "正则教程", "选择文件")
+        selector(getString(R.string.help), items) { _, index ->
+            when (index) {
+                0 -> insertText(AppConst.urlOption)
+                1 -> showRuleHelp()
+                2 -> showRegexHelp()
+                3 -> selectDoc.launch(
+                    FilePickerParam(
+                        mode = FilePicker.FILE
+                    )
+                )
+            }
+        }
+    }
+
+    private fun showRuleHelp() {
+        val mdText = String(assets.open("help/ruleHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
+    }
+
+    private fun showRegexHelp() {
+        val mdText = String(assets.open("help/regexHelp.md").readBytes())
+        TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
     }
 
     private fun showKeyboardTopPopupWindow() {
         mSoftKeyboardTool?.let {
             if (it.isShowing) return
             if (!isFinishing) {
-                it.showAtLocation(ll_content, Gravity.BOTTOM, 0, 0)
+                it.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
             }
         }
     }
@@ -382,34 +439,21 @@ class BookSourceEditActivity :
         mSoftKeyboardTool?.dismiss()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            qrRequestCode -> if (resultCode == RESULT_OK) {
-                data?.getStringExtra("result")?.let {
-                    viewModel.importSource(it) { source ->
-                        upRecyclerView(source)
-                    }
-                }
-            }
-        }
-    }
-
     private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             val rect = Rect()
             // 获取当前页面窗口的显示范围
             window.decorView.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = this@BookSourceEditActivity.displayMetrics.heightPixels
+            val screenHeight = this@BookSourceEditActivity.getSize().heightPixels
             val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
             val preShowing = mIsSoftKeyBoardShowing
             if (abs(keyboardHeight) > screenHeight / 5) {
                 mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-                recycler_view.setPadding(0, 0, 0, 100)
+                binding.recyclerView.setPadding(0, 0, 0, 100)
                 showKeyboardTopPopupWindow()
             } else {
                 mIsSoftKeyBoardShowing = false
-                recycler_view.setPadding(0, 0, 0, 0)
+                binding.recyclerView.setPadding(0, 0, 0, 0)
                 if (preShowing) {
                     closePopupWindow()
                 }

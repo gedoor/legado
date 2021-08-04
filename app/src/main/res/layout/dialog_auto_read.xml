@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/background_menu"
@@ -48,8 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:min="10"
-            android:max="100"
+            android:min="2"
+            android:max="60"
             tools:ignore="UnusedAttribute" />
 
     </LinearLayout>

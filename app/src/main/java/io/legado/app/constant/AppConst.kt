@@ -1,9 +1,10 @@
 package io.legado.app.constant
 
 import android.annotation.SuppressLint
-import io.legado.app.App
+import android.provider.Settings
+import io.legado.app.BuildConfig
 import io.legado.app.R
-import io.legado.app.data.entities.BookGroup
+import splitties.init.appCtx
 import java.text.SimpleDateFormat
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -18,10 +19,6 @@ object AppConst {
     const val channelIdWeb = "channel_web"
 
     const val UA_NAME = "User-Agent"
-
-    val userAgent: String by lazy {
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36"
-    }
 
     val SCRIPT_ENGINE: ScriptEngine by lazy {
         ScriptEngineManager().getEngineByName("rhino")
@@ -41,16 +38,16 @@ object AppConst {
 
     val keyboardToolChars: List<String> by lazy {
         arrayListOf(
-            "※", "@", "&", "|", "%", "/", ":", "[", "]", "{", "}", "<", ">", "\\",
-            "$", "#", "!", ".", "href", "src", "textNodes", "xpath", "json", "css",
-            "id", "class", "tag"
+            "❓", "@css:", "<js></js>", "{{}}", "##", "&&", "%%", "||", "//", "\\", "$.",
+            "@", ":", "class", "text", "href", "textNodes", "ownText", "all", "html",
+            "[", "]", "<", ">", "#", "!", ".", "+", "-", "*", "=", "{'webView': true}"
         )
     }
 
-    val bookGroupAll = BookGroup(-1, App.INSTANCE.getString(R.string.all))
-    val bookGroupLocal = BookGroup(-2, App.INSTANCE.getString(R.string.local))
-    val bookGroupAudio = BookGroup(-3, App.INSTANCE.getString(R.string.audio))
-    val bookGroupNone = BookGroup(-4, App.INSTANCE.getString(R.string.no_group))
+    const val bookGroupAllId = -1L
+    const val bookGroupLocalId = -2L
+    const val bookGroupAudioId = -3L
+    const val bookGroupNoneId = -4L
 
     const val notificationIdRead = 1144771
     const val notificationIdAudio = 1144772
@@ -60,10 +57,12 @@ object AppConst {
     val urlOption: String by lazy {
         """
         ,{
-        "charset": "",
-        "method": "POST",
-        "body": "",
-        "headers": {"User-Agent": ""}
+        'charset': '',
+        'method': 'POST',
+        'body': '',
+        'headers': {
+            'User-Agent': ''
+            }
         }
         """.trimIndent()
     }
@@ -72,4 +71,42 @@ object AppConst {
         "com.android.internal.view.menu.ListMenuItemView",
         "androidx.appcompat.view.menu.ListMenuItemView"
     )
+
+    val sysElevation = appCtx.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
+
+    val darkWebViewJs by lazy {
+        """
+            document.body.style.backgroundColor = "#222222";
+            document.getElementsByTagName('body')[0].style.webkitTextFillColor = '#8a8a8a';
+        """.trimIndent()
+    }
+
+    val androidId: String by lazy {
+        Settings.System.getString(appCtx.contentResolver, Settings.Secure.ANDROID_ID)
+    }
+
+    val appInfo: AppInfo by lazy {
+        val appInfo = AppInfo()
+        appCtx.packageManager.getPackageInfo(appCtx.packageName, 0)?.let {
+            appInfo.versionName = it.versionName
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                appInfo.versionCode = it.longVersionCode
+            } else {
+                @Suppress("DEPRECATION")
+                appInfo.versionCode = it.versionCode.toLong()
+            }
+        }
+        appInfo
+    }
+
+    val charsets =
+        arrayListOf("UTF-8", "GB2312", "GB18030", "GBK", "Unicode", "UTF-16", "UTF-16LE", "ASCII")
+
+    data class AppInfo(
+        var versionCode: Long = 0L,
+        var versionName: String = ""
+    )
+
+    const val authority = BuildConfig.APPLICATION_ID + ".fileProvider"
+
 }

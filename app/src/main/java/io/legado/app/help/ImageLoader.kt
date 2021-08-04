@@ -7,9 +7,9 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
-import io.legado.app.utils.isAbsUrl
-import io.legado.app.utils.isContentPath
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isContentScheme
 import java.io.File
 
 object ImageLoader {
@@ -21,11 +21,37 @@ object ImageLoader {
         return when {
             path.isNullOrEmpty() -> Glide.with(context).load(path)
             path.isAbsUrl() -> Glide.with(context).load(AnalyzeUrl(path).getGlideUrl())
-            path.isContentPath() -> Glide.with(context).load(Uri.parse(path))
-            else -> try {
+            path.isContentScheme() -> Glide.with(context).load(Uri.parse(path))
+            else -> kotlin.runCatching {
                 Glide.with(context).load(File(path))
-            } catch (e: Exception) {
+            }.getOrElse {
                 Glide.with(context).load(path)
+            }
+        }
+    }
+
+    fun loadBitmap(context: Context, path: String?): RequestBuilder<Bitmap> {
+        return when {
+            path.isNullOrEmpty() -> Glide.with(context).asBitmap().load(path)
+            path.isAbsUrl() -> Glide.with(context).asBitmap().load(AnalyzeUrl(path).getGlideUrl())
+            path.isContentScheme() -> Glide.with(context).asBitmap().load(Uri.parse(path))
+            else -> kotlin.runCatching {
+                Glide.with(context).asBitmap().load(File(path))
+            }.getOrElse {
+                Glide.with(context).asBitmap().load(path)
+            }
+        }
+    }
+
+    fun loadFile(context: Context, path: String?): RequestBuilder<File> {
+        return when {
+            path.isNullOrEmpty() -> Glide.with(context).asFile().load(path)
+            path.isAbsUrl() -> Glide.with(context).asFile().load(AnalyzeUrl(path).getGlideUrl())
+            path.isContentScheme() -> Glide.with(context).asFile().load(Uri.parse(path))
+            else -> kotlin.runCatching {
+                Glide.with(context).asFile().load(File(path))
+            }.getOrElse {
+                Glide.with(context).asFile().load(path)
             }
         }
     }

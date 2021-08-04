@@ -9,6 +9,7 @@ import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
 import java.util.regex.Pattern
 
+@Suppress("RegExpRedundantEscape")
 object OldRule {
     private val headerPattern = Pattern.compile("@Header:\\{.+?\\}", Pattern.CASE_INSENSITIVE)
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)

@@ -4,14 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_select_all"
-        android:title="@string/select_all"
+        android:id="@+id/menu_new_group"
+        android:title="@string/diy_source_group"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/menu_un_select_all"
-        android:title="@string/un_select_all"
+        android:id="@+id/menu_Keep_original_name"
+        android:title="@string/keep_original_name"
+        android:checkable="true"
         app:showAsAction="never" />
 
 </menu>

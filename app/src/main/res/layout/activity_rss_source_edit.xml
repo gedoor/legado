@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -19,8 +18,16 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:orientation="horizontal"
         android:layout_gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="source:"
+            tools:ignore="HardcodedText,RtlHardcoded" />
 
         <io.legado.app.lib.theme.view.ATECheckBox
             android:id="@+id/cb_is_enable"
@@ -29,13 +36,22 @@
             android:checked="true"
             android:text="@string/is_enable" />
 
-        <TextView
+        <io.legado.app.lib.theme.view.ATECheckBox
+            android:id="@+id/cb_single_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="|"
-            tools:ignore="HardcodedText,RtlHardcoded" />
+            android:checked="false"
+            android:text="@string/single_url" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -62,6 +78,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_source_edit" />
 
 </LinearLayout>

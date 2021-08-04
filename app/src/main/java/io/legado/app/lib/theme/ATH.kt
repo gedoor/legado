@@ -9,27 +9,26 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-import android.view.Window
+import android.view.WindowInsetsController
+import android.view.WindowManager
 import android.widget.EdgeEffect
 import android.widget.ScrollView
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
-import kotlinx.android.synthetic.main.activity_main.view.*
-import org.jetbrains.anko.backgroundColor
-
+import splitties.init.appCtx
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object ATH {
 
     @SuppressLint("CommitPrefEdits")
@@ -40,13 +39,28 @@ object ATH {
         ) > since
     }
 
+    fun fullScreen(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.window.setDecorFitsSystemWindows(true)
+        }
+        fullScreenO(activity)
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun fullScreenO(activity: Activity) {
+        activity.window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        activity.window.clearFlags(
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+        )
+    }
+
     fun setStatusBarColorAuto(activity: Activity, fullScreen: Boolean) {
         val isTransparentStatusBar = AppConfig.isTransparentStatusBar
-        setStatusBarColor(
-            activity,
-            ThemeStore.statusBarColor(activity, isTransparentStatusBar),
-            isTransparentStatusBar, fullScreen
-        )
+        val statusBarColor = ThemeStore.statusBarColor(activity, isTransparentStatusBar)
+        setStatusBarColor(activity, statusBarColor, isTransparentStatusBar, fullScreen)
     }
 
     fun setStatusBarColor(
@@ -64,16 +78,36 @@ object ATH {
         } else {
             activity.window.statusBarColor = color
         }
-        setLightStatusBarAuto(activity.window, color)
+        setLightStatusBarAuto(activity, color)
     }
 
-    fun setLightStatusBarAuto(window: Window, bgColor: Int) {
-        setLightStatusBar(window, ColorUtils.isColorLight(bgColor))
+    fun setLightStatusBarAuto(activity: Activity, bgColor: Int) {
+        setLightStatusBar(activity, ColorUtils.isColorLight(bgColor))
     }
 
-    fun setLightStatusBar(window: Window, enabled: Boolean) {
+    fun setLightStatusBar(activity: Activity, enabled: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.window.insetsController?.let {
+                if (enabled) {
+                    it.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    )
+                } else {
+                    it.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    )
+                }
+            }
+        }
+        setLightStatusBarO(activity, enabled)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setLightStatusBarO(activity: Activity, enabled: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val decorView = window.decorView
+            val decorView = activity.window.decorView
             val systemUiVisibility = decorView.systemUiVisibility
             if (enabled) {
                 decorView.systemUiVisibility =
@@ -85,7 +119,35 @@ object ATH {
         }
     }
 
+    fun setNavigationBarColorAuto(
+        activity: Activity,
+        color: Int,
+    ) {
+        activity.window.navigationBarColor = color
+        setLightNavigationBar(activity, ColorUtils.isColorLight(color))
+    }
+
     fun setLightNavigationBar(activity: Activity, enabled: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.window.insetsController?.let {
+                if (enabled) {
+                    it.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                } else {
+                    it.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+            }
+        }
+        setLightNavigationBarO(activity, enabled)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setLightNavigationBarO(activity: Activity, enabled: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val decorView = activity.window.decorView
             var systemUiVisibility = decorView.systemUiVisibility
@@ -98,33 +160,20 @@ object ATH {
         }
     }
 
-    fun setNavigationBarColorAuto(
-        activity: Activity,
-        color: Int = ThemeStore.navigationBarColor(activity)
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.window.navigationBarColor = color
-            setLightNavigationBar(activity, ColorUtils.isColorLight(color))
-        }
-    }
-
     fun setTaskDescriptionColorAuto(activity: Activity) {
         setTaskDescriptionColor(activity, ThemeStore.primaryColor(activity))
     }
 
     fun setTaskDescriptionColor(activity: Activity, @ColorInt color: Int) {
-        val color1: Int
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            color1 = ColorUtils.stripAlpha(color)
-            @Suppress("DEPRECATION")
-            activity.setTaskDescription(
-                ActivityManager.TaskDescription(
-                    activity.title as String,
-                    null,
-                    color1
-                )
+        val color1: Int = ColorUtils.stripAlpha(color)
+        @Suppress("DEPRECATION")
+        activity.setTaskDescription(
+            ActivityManager.TaskDescription(
+                activity.title as String,
+                null,
+                color1
             )
-        }
+        )
     }
 
     fun setTint(
@@ -170,9 +219,9 @@ object ATH {
         }
     }
 
-    fun setEdgeEffectColor(viewPager: ViewPager?, @ColorInt color: Int) {
+    fun setEdgeEffectColor(viewPager: ViewPager2?, @ColorInt color: Int) {
         try {
-            val clazz = ViewPager::class.java
+            val clazz = ViewPager2::class.java
             for (name in arrayOf("mLeftEdge", "mRightEdge")) {
                 val field = clazz.getDeclaredField(name)
                 field.isAccessible = true
@@ -206,7 +255,7 @@ object ATH {
             val textColor = context.getSecondaryTextColor(textIsDark)
             val colorStateList = Selector.colorBuild()
                 .setDefaultColor(textColor)
-                .setSelectedColor(ThemeStore.accentColor(bottom_navigation_view.context)).create()
+                .setSelectedColor(ThemeStore.accentColor(context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList
         }
@@ -221,7 +270,7 @@ object ATH {
     fun applyBackgroundTint(view: View?) {
         view?.apply {
             if (background == null) {
-                backgroundColor = context.backgroundColor
+                setBackgroundColor(context.backgroundColor)
             } else {
                 setBackgroundTint(this, context.backgroundColor)
             }
@@ -231,7 +280,7 @@ object ATH {
     fun applyEdgeEffectColor(view: View?) {
         when (view) {
             is RecyclerView -> view.edgeEffectFactory = DEFAULT_EFFECT_FACTORY
-            is ViewPager -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
+            is ViewPager2 -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
             is ScrollView -> setEdgeEffectColor(view, ThemeStore.primaryColor(view.context))
         }
     }
@@ -239,7 +288,7 @@ object ATH {
     fun getDialogBackground(): GradientDrawable {
         val background = GradientDrawable()
         background.cornerRadius = 3F.dp
-        background.setColor(App.INSTANCE.backgroundColor)
+        background.setColor(appCtx.backgroundColor)
         return background
     }
 

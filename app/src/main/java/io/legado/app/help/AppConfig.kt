@@ -1,13 +1,56 @@
 package io.legado.app.help
 
-import android.annotation.SuppressLint
 import android.content.Context
-import io.legado.app.App
-import io.legado.app.R
+import android.content.SharedPreferences
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.utils.*
+import splitties.init.appCtx
 
-object AppConfig {
+@Suppress("MemberVisibilityCanBePrivate")
+object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
+    val isGooglePlay = appCtx.channel == "google"
+    val isCronet = appCtx.channel == "cronet"
+    var userAgent: String = getPrefUserAgent()
+    var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
+    var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
+    var clickActionTC = appCtx.getPrefInt(PreferKey.clickActionTC, 2)
+    var clickActionTR = appCtx.getPrefInt(PreferKey.clickActionTR, 1)
+    var clickActionML = appCtx.getPrefInt(PreferKey.clickActionML, 2)
+    var clickActionMC = appCtx.getPrefInt(PreferKey.clickActionMC, 0)
+    var clickActionMR = appCtx.getPrefInt(PreferKey.clickActionMR, 1)
+    var clickActionBL = appCtx.getPrefInt(PreferKey.clickActionBL, 2)
+    var clickActionBC = appCtx.getPrefInt(PreferKey.clickActionBC, 1)
+    var clickActionBR = appCtx.getPrefInt(PreferKey.clickActionBR, 1)
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        when (key) {
+            PreferKey.themeMode -> isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
+            PreferKey.clickActionTL -> clickActionTL =
+                appCtx.getPrefInt(PreferKey.clickActionTL, 2)
+            PreferKey.clickActionTC -> clickActionTC =
+                appCtx.getPrefInt(PreferKey.clickActionTC, 2)
+            PreferKey.clickActionTR -> clickActionTR =
+                appCtx.getPrefInt(PreferKey.clickActionTR, 2)
+            PreferKey.clickActionML -> clickActionML =
+                appCtx.getPrefInt(PreferKey.clickActionML, 2)
+            PreferKey.clickActionMC -> clickActionMC =
+                appCtx.getPrefInt(PreferKey.clickActionMC, 2)
+            PreferKey.clickActionMR -> clickActionMR =
+                appCtx.getPrefInt(PreferKey.clickActionMR, 2)
+            PreferKey.clickActionBL -> clickActionBL =
+                appCtx.getPrefInt(PreferKey.clickActionBL, 2)
+            PreferKey.clickActionBC -> clickActionBC =
+                appCtx.getPrefInt(PreferKey.clickActionBC, 2)
+            PreferKey.clickActionBR -> clickActionBR =
+                appCtx.getPrefInt(PreferKey.clickActionBR, 2)
+            PreferKey.readBodyToLh -> ReadBookConfig.readBodyToLh =
+                appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
+            PreferKey.useZhLayout -> ReadBookConfig.useZhLayout =
+                appCtx.getPrefBoolean(PreferKey.useZhLayout)
+            PreferKey.userAgent -> userAgent = getPrefUserAgent()
+        }
+    }
 
     fun isNightTheme(context: Context): Boolean {
         return when (context.getPrefString(PreferKey.themeMode, "0")) {
@@ -19,127 +62,192 @@ object AppConfig {
     }
 
     var isNightTheme: Boolean
-        get() = isNightTheme(App.INSTANCE)
+        get() = isNightTheme(appCtx)
         set(value) {
             if (isNightTheme != value) {
                 if (value) {
-                    App.INSTANCE.putPrefString(PreferKey.themeMode, "2")
+                    appCtx.putPrefString(PreferKey.themeMode, "2")
                 } else {
-                    App.INSTANCE.putPrefString(PreferKey.themeMode, "1")
+                    appCtx.putPrefString(PreferKey.themeMode, "1")
                 }
             }
         }
 
-    val isEInkMode: Boolean
-        get() = App.INSTANCE.getPrefString(PreferKey.themeMode) == "3"
-
-    var isTransparentStatusBar: Boolean
-        get() = App.INSTANCE.getPrefBoolean(PreferKey.transparentStatusBar)
+    var showUnread: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.showUnread, true)
         set(value) {
-            App.INSTANCE.putPrefBoolean(PreferKey.transparentStatusBar, value)
+            appCtx.putPrefBoolean(PreferKey.showUnread, value)
         }
 
-    val requestedDirection: String?
-        get() = App.INSTANCE.getPrefString(R.string.pk_requested_direction)
-
-    var backupPath: String?
-        get() = App.INSTANCE.getPrefString(PreferKey.backupPath)
+    var readBrightness: Int
+        get() = if (isNightTheme) {
+            appCtx.getPrefInt(PreferKey.nightBrightness, 100)
+        } else {
+            appCtx.getPrefInt(PreferKey.brightness, 100)
+        }
         set(value) {
-            if (value.isNullOrEmpty()) {
-                App.INSTANCE.removePref(PreferKey.backupPath)
+            if (isNightTheme) {
+                appCtx.putPrefInt(PreferKey.nightBrightness, value)
             } else {
-                App.INSTANCE.putPrefString(PreferKey.backupPath, value)
+                appCtx.putPrefInt(PreferKey.brightness, value)
             }
         }
 
-    var isShowRSS: Boolean
-        get() = App.INSTANCE.getPrefBoolean(PreferKey.showRss, true)
+    val useDefaultCover: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
+
+    val isTransparentStatusBar: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.transparentStatusBar, true)
+
+    val immNavigationBar: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.immNavigationBar, true)
+
+    val screenOrientation: String?
+        get() = appCtx.getPrefString(PreferKey.screenOrientation)
+
+    var bookGroupStyle: Int
+        get() = appCtx.getPrefInt(PreferKey.bookGroupStyle, 0)
         set(value) {
-            App.INSTANCE.putPrefBoolean(PreferKey.showRss, value)
+            appCtx.putPrefInt(PreferKey.bookGroupStyle, value)
         }
 
+    var bookExportFileName: String?
+        get() = appCtx.getPrefString(PreferKey.bookExportFileName)
+        set(value) {
+            appCtx.putPrefString(PreferKey.bookExportFileName, value)
+        }
+
+    var bookImportFileName: String?
+        get() = appCtx.getPrefString(PreferKey.bookImportFileName)
+        set(value) {
+            appCtx.putPrefString(PreferKey.bookImportFileName, value)
+        }
+
+    var backupPath: String?
+        get() = appCtx.getPrefString(PreferKey.backupPath)
+        set(value) {
+            if (value.isNullOrEmpty()) {
+                appCtx.removePref(PreferKey.backupPath)
+            } else {
+                appCtx.putPrefString(PreferKey.backupPath, value)
+            }
+        }
+
+    val showDiscovery: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.showDiscovery, true)
+
+    val showRSS: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.showRss, true)
+
     val autoRefreshBook: Boolean
-        get() = App.INSTANCE.getPrefBoolean(R.string.pk_auto_refresh)
+        get() = appCtx.getPrefBoolean(PreferKey.autoRefresh)
 
     var threadCount: Int
-        get() = App.INSTANCE.getPrefInt(PreferKey.threadCount, 16)
+        get() = appCtx.getPrefInt(PreferKey.threadCount, 8)
         set(value) {
-            App.INSTANCE.putPrefInt(PreferKey.threadCount, value)
+            appCtx.putPrefInt(PreferKey.threadCount, value)
         }
 
     var importBookPath: String?
-        get() = App.INSTANCE.getPrefString("importBookPath")
+        get() = appCtx.getPrefString("importBookPath")
         set(value) {
             if (value == null) {
-                App.INSTANCE.removePref("importBookPath")
+                appCtx.removePref("importBookPath")
             } else {
-                App.INSTANCE.putPrefString("importBookPath", value)
+                appCtx.putPrefString("importBookPath", value)
             }
         }
 
     var ttsSpeechRate: Int
-        get() = App.INSTANCE.getPrefInt(PreferKey.ttsSpeechRate, 5)
+        get() = appCtx.getPrefInt(PreferKey.ttsSpeechRate, 5)
         set(value) {
-            App.INSTANCE.putPrefInt(PreferKey.ttsSpeechRate, value)
+            appCtx.putPrefInt(PreferKey.ttsSpeechRate, value)
         }
 
-    val clickAllNext: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.clickAllNext, false)
-
     var chineseConverterType: Int
-        get() = App.INSTANCE.getPrefInt(PreferKey.chineseConverterType)
+        get() = appCtx.getPrefInt(PreferKey.chineseConverterType)
         set(value) {
-            App.INSTANCE.putPrefInt(PreferKey.chineseConverterType, value)
+            appCtx.putPrefInt(PreferKey.chineseConverterType, value)
         }
 
     var systemTypefaces: Int
-        get() = App.INSTANCE.getPrefInt(PreferKey.systemTypefaces)
+        get() = appCtx.getPrefInt(PreferKey.systemTypefaces)
         set(value) {
-            App.INSTANCE.putPrefInt(PreferKey.systemTypefaces, value)
-        }
-
-    var bookGroupAllShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupAll", true)
-        set(value) {
-            App.INSTANCE.putPrefBoolean("bookGroupAll", value)
-        }
-
-    var bookGroupLocalShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupLocal", false)
-        set(value) {
-            App.INSTANCE.putPrefBoolean("bookGroupLocal", value)
-        }
-
-    var bookGroupAudioShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupAudio", false)
-        set(value) {
-            App.INSTANCE.putPrefBoolean("bookGroupAudio", value)
-        }
-
-    var bookGroupNoneShow: Boolean
-        get() = App.INSTANCE.getPrefBoolean("bookGroupNone", false)
-        set(value) {
-            App.INSTANCE.putPrefBoolean("bookGroupNone", value)
+            appCtx.putPrefInt(PreferKey.systemTypefaces, value)
         }
 
     var elevation: Int
-        @SuppressLint("PrivateResource")
-        get() = App.INSTANCE.getPrefInt(
-            PreferKey.barElevation,
-            App.INSTANCE.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
-        )
+        get() = appCtx.getPrefInt(PreferKey.barElevation, AppConst.sysElevation)
         set(value) {
-            App.INSTANCE.putPrefInt(PreferKey.barElevation, value)
+            appCtx.putPrefInt(PreferKey.barElevation, value)
         }
 
-    var replaceEnableDefault: Boolean =
-        App.INSTANCE.getPrefBoolean(PreferKey.replaceEnableDefault, true)
+    var exportCharset: String
+        get() {
+            val c = appCtx.getPrefString(PreferKey.exportCharset)
+            if (c.isNullOrBlank()) {
+                return "UTF-8"
+            }
+            return c
+        }
+        set(value) {
+            appCtx.putPrefString(PreferKey.exportCharset, value)
+        }
 
-    val autoChangeSource: Boolean get() = App.INSTANCE.getPrefBoolean("autoChangeSource", true)
+    var exportUseReplace: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.exportUseReplace, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.exportUseReplace, value)
+        }
 
-    val readBodyToLh: Boolean get() = App.INSTANCE.getPrefBoolean(PreferKey.readBodyToLh, true)
+    var exportToWebDav: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.exportToWebDav)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.exportToWebDav, value)
+        }
 
-    val isGooglePlay: Boolean get() = App.INSTANCE.channel == "google"
+    var exportType: Int
+        get() = appCtx.getPrefInt(PreferKey.exportType)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.exportType, value)
+        }
 
-    val isCoolApk: Boolean get() = App.INSTANCE.channel == "coolApk"
+    var changeSourceCheckAuthor: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.changeSourceCheckAuthor)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.changeSourceCheckAuthor, value)
+        }
+
+    val autoChangeSource: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.autoChangeSource, true)
+
+    val changeSourceLoadInfo get() = appCtx.getPrefBoolean(PreferKey.changeSourceLoadToc)
+
+    val changeSourceLoadToc get() = appCtx.getPrefBoolean(PreferKey.changeSourceLoadToc)
+
+    val importKeepName get() = appCtx.getPrefBoolean(PreferKey.importKeepName)
+
+    val syncBookProgress get() = appCtx.getPrefBoolean(PreferKey.syncBookProgress, true)
+
+    var preDownloadNum
+        get() = appCtx.getPrefInt(PreferKey.preDownloadNum, 10)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.preDownloadNum, value)
+        }
+
+    val mediaButtonOnExit get() = appCtx.getPrefBoolean("mediaButtonOnExit", true)
+
+    val replaceEnableDefault get() = appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
+
+    val fullScreenGesturesSupport: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.fullScreenGesturesSupport, false)
+
+    private fun getPrefUserAgent(): String {
+        val ua = appCtx.getPrefString(PreferKey.userAgent)
+        if (ua.isNullOrBlank()) {
+            return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        return ua
+    }
 }
 

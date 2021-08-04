@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class UpLinearLayoutManager(val context: Context) : LinearLayoutManager(context) {
 
     fun smoothScrollToPosition(position: Int) {
@@ -16,23 +17,30 @@ class UpLinearLayoutManager(val context: Context) : LinearLayoutManager(context)
         scroller.offset = offset
         startSmoothScroll(scroller)
     }
-}
 
-class UpLinearSmoothScroller(context: Context?): LinearSmoothScroller(context) {
-    var offset = 0
+    class UpLinearSmoothScroller(context: Context?) : LinearSmoothScroller(context) {
+        var offset = 0
 
-    override fun getVerticalSnapPreference(): Int {
-        return SNAP_TO_START
-    }
-
-    override fun getHorizontalSnapPreference(): Int {
-        return SNAP_TO_START
-    }
-
-    override fun calculateDtToFit(viewStart: Int, viewEnd: Int, boxStart: Int, boxEnd: Int, snapPreference: Int): Int {
-        if (snapPreference == SNAP_TO_START) {
-            return boxStart - viewStart + offset
+        override fun getVerticalSnapPreference(): Int {
+            return SNAP_TO_START
         }
-        throw IllegalArgumentException("snap preference should be SNAP_TO_START")
+
+        override fun getHorizontalSnapPreference(): Int {
+            return SNAP_TO_START
+        }
+
+        override fun calculateDtToFit(
+            viewStart: Int,
+            viewEnd: Int,
+            boxStart: Int,
+            boxEnd: Int,
+            snapPreference: Int
+        ): Int {
+            if (snapPreference == SNAP_TO_START) {
+                return boxStart - viewStart + offset
+            }
+            throw IllegalArgumentException("snap preference should be SNAP_TO_START")
+        }
     }
+
 }

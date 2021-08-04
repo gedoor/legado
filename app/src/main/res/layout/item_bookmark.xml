@@ -14,6 +14,14 @@
         android:singleLine="true" />
 
     <TextView
+        android:id="@+id/tv_book_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textSize="12sp"
+        android:singleLine="true" />
+
+    <TextView
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams
-import android.widget.TabWidget
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
@@ -24,11 +23,11 @@ import io.legado.app.utils.visible
 /**
  * Created by milad heydari on 5/6/2016.
  */
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class BadgeView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyle: Int = android.R.attr.textViewStyle
-) : AppCompatTextView(context, attrs, defStyle) {
+    attrs: AttributeSet? = null
+) : AppCompatTextView(context, attrs) {
 
     var isHideOnNull = true
         set(hideOnNull) {
@@ -44,12 +43,9 @@ class BadgeView @JvmOverloads constructor(
                 return null
             }
             val text = text.toString()
-            return try {
+            return kotlin.runCatching {
                 Integer.parseInt(text)
-            } catch (e: NumberFormatException) {
-                null
-            }
-
+            }.getOrNull()
         }
 
     var badgeGravity: Int
@@ -114,7 +110,9 @@ class BadgeView @JvmOverloads constructor(
         val radius = dip2Px(dipRadius).toFloat()
         val radiusArray =
             floatArrayOf(radius, radius, radius, radius, radius, radius, radius, radius)
-        if (flatangle) { radiusArray.fill(0f, 0, 3) }
+        if (flatangle) {
+            radiusArray.fill(0f, 0, 3)
+        }
 
         val roundRect = RoundRectShape(radiusArray, null, null)
         val bgDrawable = ShapeDrawable(roundRect)
@@ -184,16 +182,6 @@ class BadgeView @JvmOverloads constructor(
 
     fun decrementBadgeCount(decrement: Int) {
         incrementBadgeCount(-decrement)
-    }
-
-    /**
-     * Attach the BadgeView to the TabWidget
-     * @param target the TabWidget to attach the BadgeView
-     * @param tabIndex index of the tab
-     */
-    fun setTargetView(target: TabWidget, tabIndex: Int) {
-        val tabView = target.getChildTabViewAt(tabIndex)
-        setTargetView(tabView)
     }
 
     /**

@@ -3,6 +3,9 @@
     <color name="primary">@color/md_light_blue_600</color>
     <color name="primaryDark">@color/md_light_blue_700</color>
     <color name="accent">@color/md_pink_800</color>
+
+    <color name="disabled">@color/md_light_disabled</color>
+
     <color name="divider">#66666666</color>
 
     <color name="lightBlue_color">#FF578FCC</color>
@@ -16,9 +19,11 @@
     <color name="background_card">@color/md_grey_100</color>
     <color name="background_menu">@color/md_grey_200</color>
     <color name="background_prefs">#7fffffff</color>
+
     <color name="transparent">#00000000</color>
 
     <color name="transparent10">#10000000</color>
+    <color name="transparent20">#20000000</color>
     <color name="transparent30">#30000000</color>
     <color name="transparent50">#50000000</color>
 

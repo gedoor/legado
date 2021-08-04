@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:gravity="center"
-    android:text="@string/add"
-    android:textSize="24sp" />

@@ -53,17 +53,34 @@
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
+    <io.legado.app.ui.widget.anima.RefreshProgressBar
+        android:id="@+id/refresh_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:layout_constraintTop_toBottomOf="@id/lay_top" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layout_constraintTop_toBottomOf="@id/lay_top"
+        app:layout_constraintTop_toBottomOf="@id/refresh_progress_bar"
         app:layout_constraintBottom_toTopOf="@id/select_action_bar">
 
         <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_empty_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text="@string/empty_msg_import_book"
+            tools:text="TextView" />
 
     </FrameLayout>
 
@@ -72,41 +89,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/hint_per"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:orientation="vertical"
-        android:padding="36dp"
-        android:gravity="center"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:text="@string/tip_local_perm_request_storage"
-            android:layout_marginBottom="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </TextView>
-
-        <io.legado.app.ui.widget.text.AccentBgTextView
-            android:id="@+id/tv_request_per"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:minHeight="42dp"
-            android:gravity="center"
-            android:text="@string/request_permission"
-            android:textSize="14sp"
-            app:radius="30dp" />
-
-    </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,9 +3,8 @@ package io.legado.app.ui.rss.article
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
-import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssReadRecord
 import io.legado.app.data.entities.RssSource
@@ -17,18 +16,12 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
     val titleLiveData = MutableLiveData<String>()
     var order = System.currentTimeMillis()
     val isGridLayout get() = rssSource?.articleStyle == 2
-    val layoutId
-        get() = when (rssSource?.articleStyle) {
-            1 -> R.layout.item_rss_article_1
-            2 -> R.layout.item_rss_article_2
-            else -> R.layout.item_rss_article
-        }
 
     fun initData(intent: Intent, finally: () -> Unit) {
         execute {
             url = intent.getStringExtra("url")
             url?.let { url ->
-                rssSource = App.db.rssSourceDao().getByKey(url)
+                rssSource = appDb.rssSourceDao.getByKey(url)
                 rssSource?.let {
                     titleLiveData.postValue(it.sourceName)
                 } ?: let {
@@ -48,21 +41,21 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
                 it.articleStyle = 0
             }
             execute {
-                App.db.rssSourceDao().update(it)
+                appDb.rssSourceDao.update(it)
             }
         }
     }
 
     fun read(rssArticle: RssArticle) {
         execute {
-            App.db.rssArticleDao().insertRecord(RssReadRecord(rssArticle.link))
+            appDb.rssArticleDao.insertRecord(RssReadRecord(rssArticle.link))
         }
     }
 
     fun clearArticles() {
         execute {
             url?.let {
-                App.db.rssArticleDao().delete(it)
+                appDb.rssArticleDao.delete(it)
             }
             order = System.currentTimeMillis()
         }.onSuccess {

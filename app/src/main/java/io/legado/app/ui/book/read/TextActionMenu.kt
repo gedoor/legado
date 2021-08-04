@@ -8,6 +8,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.ViewGroup
@@ -19,88 +20,101 @@ import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.PreferKey
+import io.legado.app.databinding.ItemTextBinding
+import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.utils.gone
-import io.legado.app.utils.isAbsUrl
-import io.legado.app.utils.sendToClip
-import io.legado.app.utils.visible
-import kotlinx.android.synthetic.main.item_fillet_text.view.*
-import kotlinx.android.synthetic.main.popup_action_menu.view.*
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.share
-import org.jetbrains.anko.toast
+import io.legado.app.utils.*
 import java.util.*
 
 @SuppressLint("RestrictedApi")
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
     PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
     TextToSpeech.OnInitListener {
-
+    private val binding = PopupActionMenuBinding.inflate(LayoutInflater.from(context))
     private val adapter = Adapter(context)
-    private val menu = MenuBuilder(context)
-    private val moreMenu = MenuBuilder(context)
+    private val menuItems: List<MenuItemImpl>
+    private val visibleMenuItems = arrayListOf<MenuItemImpl>()
+    private val moreMenuItems = arrayListOf<MenuItemImpl>()
+    private val ttsListener by lazy {
+        TTSUtteranceListener()
+    }
 
     init {
         @SuppressLint("InflateParams")
-        contentView = LayoutInflater.from(context).inflate(R.layout.popup_action_menu, null)
+        contentView = binding.root
 
         isTouchable = true
         isOutsideTouchable = false
         isFocusable = false
 
-        initRecyclerView()
+        val myMenu = MenuBuilder(context)
+        val otherMenu = MenuBuilder(context)
+        SupportMenuInflater(context).inflate(R.menu.content_select_action, myMenu)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            onInitializeMenu(otherMenu)
+        }
+        menuItems = myMenu.visibleItems + otherMenu.visibleItems
+        visibleMenuItems.addAll(menuItems.subList(0, 5))
+        moreMenuItems.addAll(menuItems.subList(5, menuItems.lastIndex))
+        binding.recyclerView.adapter = adapter
+        binding.recyclerViewMore.adapter = adapter
         setOnDismissListener {
-            contentView.apply {
-                iv_menu_more.setImageResource(R.drawable.ic_more_vert)
-                recycler_view_more.gone()
-                adapter.setItems(menu.visibleItems)
-                recycler_view.visible()
+            if (!context.getPrefBoolean(PreferKey.expandTextMenu)) {
+                binding.ivMenuMore.setImageResource(R.drawable.ic_more_vert)
+                binding.recyclerViewMore.gone()
+                adapter.setItems(visibleMenuItems)
+                binding.recyclerView.visible()
             }
         }
+        binding.ivMenuMore.setOnClickListener {
+            if (binding.recyclerView.isVisible) {
+                binding.ivMenuMore.setImageResource(R.drawable.ic_arrow_back)
+                adapter.setItems(moreMenuItems)
+                binding.recyclerView.gone()
+                binding.recyclerViewMore.visible()
+            } else {
+                binding.ivMenuMore.setImageResource(R.drawable.ic_more_vert)
+                binding.recyclerViewMore.gone()
+                adapter.setItems(visibleMenuItems)
+                binding.recyclerView.visible()
+            }
+        }
+        upMenu()
     }
 
-    private fun initRecyclerView() = with(contentView) {
-        recycler_view.adapter = adapter
-        recycler_view_more.adapter = adapter
-        SupportMenuInflater(context).inflate(R.menu.content_select_action, menu)
-        adapter.setItems(menu.visibleItems)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            onInitializeMenu(moreMenu)
-        }
-        if (moreMenu.size() > 0) {
-            iv_menu_more.visible()
-        }
-        iv_menu_more.onClick {
-            if (recycler_view.isVisible) {
-                iv_menu_more.setImageResource(R.drawable.ic_arrow_back)
-                adapter.setItems(moreMenu.visibleItems)
-                recycler_view.gone()
-                recycler_view_more.visible()
-            } else {
-                iv_menu_more.setImageResource(R.drawable.ic_more_vert)
-                recycler_view_more.gone()
-                adapter.setItems(menu.visibleItems)
-                recycler_view.visible()
-            }
+    fun upMenu() {
+        val expandTextMenu = context.getPrefBoolean(PreferKey.expandTextMenu)
+        if (expandTextMenu) {
+            adapter.setItems(menuItems)
+            binding.ivMenuMore.gone()
+        } else {
+            adapter.setItems(visibleMenuItems)
+            binding.ivMenuMore.visible()
         }
     }
 
     inner class Adapter(context: Context) :
-        SimpleRecyclerAdapter<MenuItemImpl>(context, R.layout.item_text) {
+        RecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
+
+        override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
+            return ItemTextBinding.inflate(inflater, parent, false)
+        }
 
         override fun convert(
             holder: ItemViewHolder,
+            binding: ItemTextBinding,
             item: MenuItemImpl,
             payloads: MutableList<Any>
         ) {
-            with(holder.itemView) {
-                text_view.text = item.title
+            with(binding) {
+                textView.text = item.title
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder) {
-            holder.itemView.onClick {
+        override fun registerListener(holder: ItemViewHolder, binding: ItemTextBinding) {
+            holder.itemView.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     if (!callBack.onMenuItemSelected(it.itemId)) {
                         onMenuItemSelected(it)
@@ -117,13 +131,13 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             R.id.menu_share_str -> context.share(callBack.selectedText)
             R.id.menu_aloud -> {
                 if (BaseReadAloudService.isRun) {
-                    context.toast(R.string.alouding_disable)
+                    context.toastOnUi(R.string.alouding_disable)
                     return
                 }
                 readAloud(callBack.selectedText)
             }
             R.id.menu_browser -> {
-                try {
+                kotlin.runCatching {
                     val intent = if (callBack.selectedText.isAbsUrl()) {
                         Intent(Intent.ACTION_VIEW).apply {
                             data = Uri.parse(callBack.selectedText)
@@ -134,9 +148,9 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         }
                     }
                     context.startActivity(intent)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    context.toast(e.localizedMessage ?: "ERROR")
+                }.onFailure {
+                    it.printStackTrace()
+                    context.toastOnUi(it.localizedMessage ?: "ERROR")
                 }
             }
             else -> item.intent?.let {
@@ -156,22 +170,29 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     private fun readAloud(text: String) {
         lastText = text
         if (textToSpeech == null) {
-            textToSpeech = TextToSpeech(context, this)
+            textToSpeech = TextToSpeech(context, this).apply {
+                setOnUtteranceProgressListener(ttsListener)
+            }
             return
         }
         if (!ttsInitFinish) return
         if (text == "") return
-        if (textToSpeech?.isSpeaking == true)
+        if (textToSpeech?.isSpeaking == true) {
             textToSpeech?.stop()
+        }
         textToSpeech?.speak(text, TextToSpeech.QUEUE_ADD, null, "select_text")
         lastText = ""
     }
 
     @Synchronized
     override fun onInit(status: Int) {
-        textToSpeech?.language = Locale.CHINA
-        ttsInitFinish = true
-        readAloud(lastText)
+        if (status == TextToSpeech.SUCCESS) {
+            textToSpeech?.language = Locale.CHINA
+            ttsInitFinish = true
+            readAloud(lastText)
+        } else {
+            context.toastOnUi(R.string.tts_init_failed)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -201,7 +222,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
      */
     @RequiresApi(Build.VERSION_CODES.M)
     private fun onInitializeMenu(menu: Menu) {
-        try {
+        kotlin.runCatching {
             var menuItemOrder = 100
             for (resolveInfo in getSupportedActivities()) {
                 menu.add(
@@ -209,8 +230,24 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                     menuItemOrder++, resolveInfo.loadLabel(context.packageManager)
                 ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
             }
-        } catch (e: Exception) {
-            context.toast("获取文字操作菜单出错:${e.localizedMessage}")
+        }.onFailure {
+            context.toastOnUi("获取文字操作菜单出错:${it.localizedMessage}")
+        }
+    }
+
+    private inner class TTSUtteranceListener : UtteranceProgressListener() {
+
+        override fun onStart(utteranceId: String?) {
+
+        }
+
+        override fun onDone(utteranceId: String?) {
+            textToSpeech?.shutdown()
+            textToSpeech = null
+        }
+
+        override fun onError(utteranceId: String?) {
+
         }
     }
 

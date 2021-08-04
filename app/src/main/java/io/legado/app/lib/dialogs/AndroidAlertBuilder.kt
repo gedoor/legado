@@ -1,19 +1,3 @@
-/*
- * Copyright 2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.legado.app.lib.dialogs
 
 import android.content.Context
@@ -22,50 +6,46 @@ import android.graphics.drawable.Drawable
 import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import org.jetbrains.anko.internals.AnkoInternals
-import org.jetbrains.anko.internals.AnkoInternals.NO_GETTER
-import kotlin.DeprecationLevel.ERROR
-
-val Android: AlertBuilderFactory<AlertDialog> = ::AndroidAlertBuilder
+import io.legado.app.utils.applyTint
 
 internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<AlertDialog> {
     private val builder = AlertDialog.Builder(ctx)
 
-    override var title: CharSequence
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setTitle(value) }
+    override fun setTitle(title: CharSequence) {
+        builder.setTitle(title)
+    }
 
-    override var titleResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setTitle(value) }
+    override fun setTitle(titleResource: Int) {
+        builder.setTitle(titleResource)
+    }
 
-    override var message: CharSequence
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setMessage(value) }
+    override fun setMessage(message: CharSequence) {
+        builder.setMessage(message)
+    }
 
-    override var messageResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setMessage(value) }
+    override fun setMessage(messageResource: Int) {
+        builder.setMessage(messageResource)
+    }
 
-    override var icon: Drawable
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setIcon(value) }
+    override fun setIcon(icon: Drawable) {
+        builder.setIcon(icon)
+    }
 
-    override var iconResource: Int
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setIcon(value) }
+    override fun setIcon(iconResource: Int) {
+        builder.setIcon(iconResource)
+    }
 
-    override var customTitle: View
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setCustomTitle(value) }
+    override fun setCustomTitle(customTitle: View) {
+        builder.setCustomTitle(customTitle)
+    }
 
-    override var customView: View
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setView(value) }
+    override fun setCustomView(customView: View) {
+        builder.setView(customView)
+    }
 
-    override var isCancelable: Boolean
-        @Deprecated(NO_GETTER, level = ERROR) get() = AnkoInternals.noGetter()
-        set(value) { builder.setCancelable(value) }
+    override fun setCancelable(isCancelable: Boolean) {
+        builder.setCancelable(isCancelable)
+    }
 
     override fun onCancelled(handler: (DialogInterface) -> Unit) {
         builder.setOnCancelListener(handler)
@@ -75,31 +55,56 @@ internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<Ale
         builder.setOnKeyListener(handler)
     }
 
-    override fun positiveButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun positiveButton(
+        buttonText: String,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setPositiveButton(buttonText) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun positiveButton(buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun positiveButton(
+        buttonTextResource: Int,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setPositiveButton(buttonTextResource) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun negativeButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun negativeButton(
+        buttonText: String,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setNegativeButton(buttonText) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun negativeButton(buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun negativeButton(
+        buttonTextResource: Int,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setNegativeButton(buttonTextResource) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun neutralButton(buttonText: String, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun neutralButton(
+        buttonText: String,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setNeutralButton(buttonText) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun neutralButton(buttonTextResource: Int, onClicked: ((dialog: DialogInterface) -> Unit)?) {
+    override fun neutralButton(
+        buttonTextResource: Int,
+        onClicked: ((dialog: DialogInterface) -> Unit)?
+    ) {
         builder.setNeutralButton(buttonTextResource) { dialog, _ -> onClicked?.invoke(dialog) }
     }
 
-    override fun items(items: List<CharSequence>, onItemSelected: (dialog: DialogInterface, index: Int) -> Unit) {
+    override fun onDismiss(handler: (dialog: DialogInterface) -> Unit) {
+        builder.setOnDismissListener(handler)
+    }
+
+    override fun items(
+        items: List<CharSequence>,
+        onItemSelected: (dialog: DialogInterface, index: Int) -> Unit
+    ) {
         builder.setItems(Array(items.size) { i -> items[i].toString() }) { dialog, which ->
             onItemSelected(dialog, which)
         }
@@ -136,5 +141,5 @@ internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<Ale
 
     override fun build(): AlertDialog = builder.create()
 
-    override fun show(): AlertDialog = builder.show()
+    override fun show(): AlertDialog = builder.show().applyTint()
 }

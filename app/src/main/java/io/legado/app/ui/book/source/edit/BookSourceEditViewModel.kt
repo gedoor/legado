@@ -2,13 +2,14 @@ package io.legado.app.ui.book.source.edit
 
 import android.app.Application
 import android.content.Intent
-import io.legado.app.App
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.storage.OldRule
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getClipText
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
@@ -21,7 +22,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             val key = intent.getStringExtra("data")
             var source: BookSource? = null
             if (key != null) {
-                source = App.db.bookSourceDao().getBookSource(key)
+                source = appDb.bookSourceDao.getBookSource(key)
             }
             source?.let {
                 oldSourceUrl = it.bookSourceUrl
@@ -36,16 +37,17 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         execute {
             oldSourceUrl?.let {
                 if (oldSourceUrl != source.bookSourceUrl) {
-                    App.db.bookSourceDao().delete(it)
+                    appDb.bookSourceDao.delete(it)
                 }
             }
             oldSourceUrl = source.bookSourceUrl
-            App.db.bookSourceDao().insert(source)
+            source.lastUpdateTime = System.currentTimeMillis()
+            appDb.bookSourceDao.insert(source)
             bookSource = source
         }.onSuccess {
             success?.invoke()
         }.onError {
-            toast(it.localizedMessage)
+            context.toastOnUi(it.localizedMessage)
             it.printStackTrace()
         }
     }
@@ -58,13 +60,13 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             }
             source
         }.onError {
-            toast(it.localizedMessage)
+            context.toastOnUi(it.localizedMessage)
             it.printStackTrace()
         }.onSuccess {
             if (it != null) {
                 onSuccess(it)
             } else {
-                toast("格式不对")
+                context.toastOnUi("格式不对")
             }
         }
     }
@@ -76,7 +78,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                 finally.invoke(it)
             }
         }.onError {
-            toast(it.localizedMessage ?: "Error")
+            context.toastOnUi(it.localizedMessage ?: "Error")
         }
     }
 }

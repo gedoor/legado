@@ -9,22 +9,20 @@ import android.util.Base64
 import android.webkit.URLUtil
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
+import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
-import io.legado.app.help.http.HttpHelper
-import io.legado.app.model.rss.Rss
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isContentPath
-import io.legado.app.utils.writeBytes
+import io.legado.app.model.rss.Rss
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
@@ -45,22 +43,35 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         execute {
             val origin = intent.getStringExtra("origin")
             val link = intent.getStringExtra("link")
-            if (origin != null && link != null) {
-                rssSource = App.db.rssSourceDao().getByKey(origin)
-                rssStar = App.db.rssStarDao().get(origin, link)
-                rssArticle = rssStar?.toRssArticle() ?: App.db.rssArticleDao().get(origin, link)
-                rssArticle?.let { rssArticle ->
-                    if (!rssArticle.description.isNullOrBlank()) {
-                        contentLiveData.postValue(rssArticle.description)
+            origin?.let {
+                rssSource = appDb.rssSourceDao.getByKey(origin)
+                if (link != null) {
+                    rssStar = appDb.rssStarDao.get(origin, link)
+                    rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
+                    rssArticle?.let { rssArticle ->
+                        if (!rssArticle.description.isNullOrBlank()) {
+                            contentLiveData.postValue(rssArticle.description!!)
+                        } else {
+                            rssSource?.let {
+                                val ruleContent = it.ruleContent
+                                if (!ruleContent.isNullOrBlank()) {
+                                    loadContent(rssArticle, ruleContent)
+                                } else {
+                                    loadUrl(rssArticle.link, rssArticle.origin)
+                                }
+                            } ?: loadUrl(rssArticle.link, rssArticle.origin)
+                        }
+                    }
+                } else {
+                    val ruleContent = rssSource?.ruleContent
+                    if (ruleContent.isNullOrBlank()) {
+                        loadUrl(origin, origin)
                     } else {
-                        rssSource?.let {
-                            val ruleContent = it.ruleContent
-                            if (!ruleContent.isNullOrBlank()) {
-                                loadContent(rssArticle, ruleContent)
-                            } else {
-                                loadUrl(rssArticle)
-                            }
-                        } ?: loadUrl(rssArticle)
+                        val rssArticle = RssArticle()
+                        rssArticle.origin = origin
+                        rssArticle.link = origin
+                        rssArticle.title = rssSource!!.sourceName
+                        loadContent(rssArticle, ruleContent)
                     }
                 }
             }
@@ -69,10 +80,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
-    private fun loadUrl(rssArticle: RssArticle) {
+    private fun loadUrl(url: String, baseUrl: String) {
         val analyzeUrl = AnalyzeUrl(
-            rssArticle.link,
-            baseUrl = rssArticle.origin,
+            ruleUrl = url,
+            baseUrl = baseUrl,
             useWebView = true,
             headerMapF = rssSource?.getHeaderMap()
         )
@@ -80,25 +91,40 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     }
 
     private fun loadContent(rssArticle: RssArticle, ruleContent: String) {
-        Rss.getContent(rssArticle, ruleContent, rssSource, this)
-            .onSuccess(IO) { body ->
-                rssArticle.description = body
-                App.db.rssArticleDao().insert(rssArticle)
-                rssStar?.let {
-                    it.description = body
-                    App.db.rssStarDao().insert(it)
+        rssSource?.let { source ->
+            Rss.getContent(viewModelScope, rssArticle, ruleContent, source)
+                .onSuccess(IO) { body ->
+                    rssArticle.description = body
+                    appDb.rssArticleDao.insert(rssArticle)
+                    rssStar?.let {
+                        it.description = body
+                        appDb.rssStarDao.insert(it)
+                    }
+                    contentLiveData.postValue(body)
                 }
-                contentLiveData.postValue(body)
-            }
+        }
+    }
+
+    fun refresh() {
+        rssArticle?.let { rssArticle ->
+            rssSource?.let {
+                val ruleContent = it.ruleContent
+                if (!ruleContent.isNullOrBlank()) {
+                    loadContent(rssArticle, ruleContent)
+                } else {
+                    loadUrl(rssArticle.link, rssArticle.origin)
+                }
+            } ?: loadUrl(rssArticle.link, rssArticle.origin)
+        }
     }
 
     fun favorite() {
         execute {
             rssStar?.let {
-                App.db.rssStarDao().delete(it.origin, it.link)
+                appDb.rssStarDao.delete(it.origin, it.link)
                 rssStar = null
             } ?: rssArticle?.toStar()?.let {
-                App.db.rssStarDao().insert(it)
+                appDb.rssStarDao.insert(it)
                 rssStar = it
             }
         }.onSuccess {
@@ -111,7 +137,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         execute {
             val fileName = "${AppConst.fileNameFormat.format(Date(System.currentTimeMillis()))}.jpg"
             webData2bitmap(webPic)?.let { biteArray ->
-                if (path.isContentPath()) {
+                if (path.isContentScheme()) {
                     val uri = Uri.parse(path)
                     DocumentFile.fromTreeUri(context, uri)?.let { doc ->
                         DocumentUtils.createFileIfNotExist(doc, fileName)
@@ -123,15 +149,18 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                 }
             } ?: throw Throwable("NULL")
         }.onError {
-            toast("保存图片失败:${it.localizedMessage}")
+            context.toastOnUi("保存图片失败:${it.localizedMessage}")
         }.onSuccess {
-            toast("保存成功")
+            context.toastOnUi("保存成功")
         }
     }
 
     private suspend fun webData2bitmap(data: String): ByteArray? {
         return if (URLUtil.isValidUrl(data)) {
-            HttpHelper.simpleGetBytesAsync(data)
+            @Suppress("BlockingMethodInNonBlockingContext")
+            okHttpClient.newCall {
+                url(data)
+            }.bytes()
         } else {
             Base64.decode(data.split(",").toTypedArray()[1], Base64.DEFAULT)
         }
@@ -171,9 +200,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             ttsInitFinish = true
             play()
         } else {
-            launch {
-                toast(R.string.tts_init_failed)
-            }
+            context.toastOnUi(R.string.tts_init_failed)
         }
     }
 

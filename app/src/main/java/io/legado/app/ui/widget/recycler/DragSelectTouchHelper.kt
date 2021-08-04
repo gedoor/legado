@@ -51,7 +51,7 @@ import kotlin.math.min
  *  |                   | ----------------------------------------------> |                       |
  *  +-------------------+                                                 +-----------------------+
  */
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class DragSelectTouchHelper(
     /**
      * Developer callback which controls the behavior of DragSelectTouchHelper.
@@ -136,10 +136,14 @@ class DragSelectTouchHelper(
         View.OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (oldLeft != left || oldRight != right || oldTop != top || oldBottom != bottom) {
                 if (v === mRecyclerView) {
-                    Logger.i("onLayoutChange:new: "
-                            + left + " " + top + " " + right + " " + bottom)
-                    Logger.i("onLayoutChange:old: "
-                            + oldLeft + " " + oldTop + " " + oldRight + " " + oldBottom)
+                    Logger.i(
+                        "onLayoutChange:new: "
+                                + left + " " + top + " " + right + " " + bottom
+                    )
+                    Logger.i(
+                        "onLayoutChange:old: "
+                                + oldLeft + " " + oldTop + " " + oldRight + " " + oldBottom
+                    )
                     init(bottom - top)
                 }
             }
@@ -203,8 +207,10 @@ class DragSelectTouchHelper(
     private val mOnItemTouchListener: OnItemTouchListener by lazy {
         object : OnItemTouchListener {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                Logger.d("onInterceptTouchEvent: x:" + e.x + ",y:" + e.y
-                        + ", " + MotionEvent.actionToString(e.action))
+                Logger.d(
+                    "onInterceptTouchEvent: x:" + e.x + ",y:" + e.y
+                            + ", " + MotionEvent.actionToString(e.action)
+                )
                 val adapter = rv.adapter
                 if (adapter == null || adapter.itemCount == 0) {
                     return false
@@ -267,8 +273,10 @@ class DragSelectTouchHelper(
                 if (!isActivated) {
                     return
                 }
-                Logger.d("onTouchEvent: x:" + e.x + ",y:" + e.y
-                        + ", " + MotionEvent.actionToString(e.action))
+                Logger.d(
+                    "onTouchEvent: x:" + e.x + ",y:" + e.y
+                            + ", " + MotionEvent.actionToString(e.action)
+                )
                 val action = e.action
                 when (action and MotionEvent.ACTION_MASK) {
                     MotionEvent.ACTION_MOVE -> {
@@ -506,8 +514,10 @@ class DragSelectTouchHelper(
             mBottomRegionFrom = (rvHeight shr 1.toFloat().toInt()).toFloat()
             mTopRegionTo = mBottomRegionFrom
         }
-        Logger.d("Hotspot: [" + mTopRegionFrom + ", " + mTopRegionTo + "], ["
-                + mBottomRegionFrom + ", " + mBottomRegionTo + "]")
+        Logger.d(
+            "Hotspot: [" + mTopRegionFrom + ", " + mTopRegionTo + "], ["
+                    + mBottomRegionFrom + ", " + mBottomRegionTo + "]"
+        )
     }
 
     private fun activeSelectInternal(position: Int) {
@@ -613,12 +623,14 @@ class DragSelectTouchHelper(
             SELECT_STATE_DRAG_FROM_NORMAL -> mSelectState = if (mShouldAutoChangeState) {
                 Logger.logSelectStateChange(
                     mSelectState,
-                    SELECT_STATE_SLIDE)
+                    SELECT_STATE_SLIDE
+                )
                 SELECT_STATE_SLIDE
             } else {
                 Logger.logSelectStateChange(
                     mSelectState,
-                    SELECT_STATE_NORMAL)
+                    SELECT_STATE_NORMAL
+                )
                 SELECT_STATE_NORMAL
             }
             SELECT_STATE_DRAG_FROM_SLIDE -> {
@@ -705,8 +717,10 @@ class DragSelectTouchHelper(
     }
 
     private fun dp2px(dpVal: Float): Int {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-            dpVal, mDisplayMetrics).toInt()
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dpVal, mDisplayMetrics
+        ).toInt()
     }
 
     private val isRtl: Boolean
@@ -848,8 +862,10 @@ class DragSelectTouchHelper(
                     if (isSelected) {
                         updateSelectState(position, true)
                     } else {
-                        updateSelectState(position,
-                            mOriginalSelection.contains(getItemId(position)))
+                        updateSelectState(
+                            position,
+                            mOriginalSelection.contains(getItemId(position))
+                        )
                     }
                 }
                 Mode.ToggleAndKeep -> {
@@ -866,8 +882,10 @@ class DragSelectTouchHelper(
                     if (isSelected) {
                         updateSelectState(position, !mFirstWasSelected)
                     } else {
-                        updateSelectState(position,
-                            mOriginalSelection.contains(getItemId(position)))
+                        updateSelectState(
+                            position,
+                            mOriginalSelection.contains(getItemId(position))
+                        )
                     }
                 }
                 else ->                     // SelectAndReverse Mode

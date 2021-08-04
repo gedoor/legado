@@ -1,9 +1,10 @@
 package io.legado.app.base.adapter
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 
 /**
  * Created by Invincible on 2017/11/28.
  */
-class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+@Suppress("MemberVisibilityCanBePrivate")
+class ItemViewHolder(val binding: ViewBinding) : RecyclerView.ViewHolder(binding.root)

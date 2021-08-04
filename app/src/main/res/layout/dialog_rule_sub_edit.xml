@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/book_type"
+            android:padding="3dp"
+            tools:ignore="RtlHardcoded" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/sp_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/rule_type"
+            app:theme="@style/Spinner" />
+
+    </LinearLayout>
+
+    <io.legado.app.ui.widget.text.TextInputLayout
+        android:id="@+id/til_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/name">
+
+        <io.legado.app.ui.widget.text.EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </io.legado.app.ui.widget.text.TextInputLayout>
+
+    <io.legado.app.ui.widget.text.TextInputLayout
+        android:id="@+id/til_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Url"
+        tools:ignore="HardcodedText">
+
+        <io.legado.app.ui.widget.text.EditText
+            android:id="@+id/et_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </io.legado.app.ui.widget.text.TextInputLayout>
+
+</LinearLayout>

@@ -19,6 +19,23 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
+        android:id="@+id/menu_source_manage"
+        android:title="@string/book_source_manage"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_check_author"
+        android:title="@string/checkAuthor"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_load_info"
+        android:title="@string/load_info"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_load_toc"
         android:title="@string/load_toc"
         android:checkable="true"

@@ -1,54 +1,50 @@
 package io.legado.app.ui.association
 
 import android.app.Application
-import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.help.http.HttpHelper
+import io.legado.app.help.AppConfig
+import io.legado.app.help.http.newCall
+import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
 import io.legado.app.help.storage.OldReplace
 import io.legado.app.utils.isAbsUrl
-import io.legado.app.utils.isContentPath
-import io.legado.app.utils.readText
-import java.io.File
 
 class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     val errorLiveData = MutableLiveData<String>()
-    val successLiveData = MutableLiveData<ArrayList<ReplaceRule>>()
+    val successLiveData = MutableLiveData<Int>()
 
-    private val allRules = arrayListOf<ReplaceRule>()
+    val allRules = arrayListOf<ReplaceRule>()
+    val checkRules = arrayListOf<ReplaceRule?>()
+    val selectStatus = arrayListOf<Boolean>()
 
-    fun importFromFilePath(path: String) {
-        execute {
-            val content = if (path.isContentPath()) {
-                //在前面被解码了，如果不进行编码，中文会无法识别
-                val newPath = Uri.encode(path, ":/.")
-                DocumentFile.fromSingleUri(context, Uri.parse(newPath))?.readText(context)
-            } else {
-                val file = File(path)
-                if (file.exists()) {
-                    file.readText()
-                } else {
-                    null
-                }
+    fun isSelectAll(): Boolean {
+        selectStatus.forEach {
+            if (!it) {
+                return false
             }
-            if (content != null) {
-                import(content)
-            } else {
-                errorLiveData.postValue(context.getString(R.string.error_read_file))
-            }
-        }.onError {
-            it.printStackTrace()
-            errorLiveData.postValue(context.getString(R.string.error_read_file))
         }
+        return true
+    }
+
+    fun selectCount(): Int {
+        var count = 0
+        selectStatus.forEach {
+            if (it) {
+                count++
+            }
+        }
+        return count
     }
 
     fun import(text: String) {
         execute {
             if (text.isAbsUrl()) {
-                HttpHelper.simpleGet(text)?.let {
+                okHttpClient.newCall {
+                    url(text)
+                }.text("utf-8").let {
                     val rules = OldReplace.jsonToReplaceRules(it)
                     allRules.addAll(rules)
                 }
@@ -59,7 +55,34 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
         }.onError {
             errorLiveData.postValue(it.localizedMessage ?: "ERROR")
         }.onSuccess {
-            successLiveData.postValue(allRules)
+            comparisonSource()
+        }
+    }
+
+    fun importSelect(finally: () -> Unit) {
+        execute {
+            val keepName = AppConfig.importKeepName
+            val selectRules = arrayListOf<ReplaceRule>()
+            selectStatus.forEachIndexed { index, b ->
+                if (b) {
+                    val rule = allRules[index]
+                    selectRules.add(rule)
+                }
+            }
+            appDb.replaceRuleDao.insert(*selectRules.toTypedArray())
+        }.onFinally {
+            finally.invoke()
+        }
+    }
+
+    private fun comparisonSource() {
+        execute {
+            allRules.forEach {
+                checkRules.add(null)
+                selectStatus.add(false)
+            }
+        }.onSuccess {
+            successLiveData.postValue(allRules.size)
         }
     }
 }

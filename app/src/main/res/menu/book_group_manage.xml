@@ -10,36 +10,4 @@
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
 
-    <group android:id="@+id/menu_groups">
-
-        <item
-            android:id="@+id/menu_group_all"
-            android:title="@string/all"
-            android:checkable="true"
-            android:checked="true"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/menu_group_local"
-            android:title="@string/local"
-            android:checkable="true"
-            android:checked="false"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/menu_group_audio"
-            android:title="@string/audio"
-            android:checkable="true"
-            android:checked="false"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/menu_group_none"
-            android:title="@string/no_group"
-            android:checkable="true"
-            android:checked="false"
-            app:showAsAction="never" />
-
-    </group>
-
 </menu>

@@ -9,6 +9,51 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_name_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/style_name"
+            android:textColor="@color/primaryText"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:textColor="@color/secondaryText"
+            tools:text="文字" />
+
+        <ImageView
+            android:id="@+id/iv_edit"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_edit"
+            app:tint="@color/secondaryText"
+            android:contentDescription="@string/edit" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_restore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/restore"
+            android:textColor="@color/primaryText" />
+
+    </LinearLayout>
+
     <io.legado.app.lib.theme.view.ATESwitch
         android:id="@+id/sw_dark_status_icon"
         android:layout_width="match_parent"
@@ -19,18 +64,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="6dp">
 
         <io.legado.app.ui.widget.text.StrokeTextView
             android:id="@+id/tv_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
             android:layout_gravity="center"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
+            android:layout_weight="5"
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="6dp"
@@ -44,10 +89,10 @@
             android:id="@+id/tv_bg_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
             android:layout_gravity="center"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
+            android:layout_weight="5"
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="6dp"
@@ -57,56 +102,42 @@
             app:isBottomBackground="true"
             tools:ignore="HardcodedText" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_default"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:layout_gravity="center"
+        <ImageView
+            android:id="@+id/iv_import"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="@string/btn_default_s"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            tools:ignore="HardcodedText" />
+            android:contentDescription="@string/import_str"
+            android:src="@drawable/ic_import"
+            android:tooltipText="@string/import_str"
+            tools:ignore="UnusedAttribute" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_import"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:layout_gravity="center"
+        <ImageView
+            android:id="@+id/iv_export"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="@string/import_str"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            tools:ignore="HardcodedText" />
+            android:contentDescription="@string/import_str"
+            android:src="@drawable/ic_export"
+            android:tooltipText="@string/export_str"
+            tools:ignore="UnusedAttribute" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_export"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:layout_gravity="center"
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="@string/export_str"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            tools:ignore="HardcodedText" />
+            android:contentDescription="@string/delete"
+            android:src="@drawable/ic_clear_all"
+            android:tooltipText="@string/delete"
+            tools:ignore="UnusedAttribute" />
+
     </LinearLayout>
 
     <TextView
@@ -121,7 +152,9 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:padding="6dp" />
-
+        android:orientation="horizontal"
+        android:padding="6dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_bg_image" />
 
 </LinearLayout>

@@ -11,9 +11,13 @@ import androidx.core.graphics.drawable.DrawableCompat
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
+@Suppress("unused")
 object DrawableUtils {
 
-    fun createTransitionDrawable(@ColorInt startColor: Int, @ColorInt endColor: Int): TransitionDrawable {
+    fun createTransitionDrawable(
+        @ColorInt startColor: Int,
+        @ColorInt endColor: Int
+    ): TransitionDrawable {
         return createTransitionDrawable(ColorDrawable(startColor), ColorDrawable(endColor))
     }
 
@@ -26,7 +30,11 @@ object DrawableUtils {
         return TransitionDrawable(drawables)
     }
 
-    fun setTintList(drawable: Drawable?, tint: ColorStateList, tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP) {
+    fun setTintList(
+        drawable: Drawable?,
+        tint: ColorStateList,
+        tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP
+    ) {
         drawable?.let {
             val wrappedDrawable = DrawableCompat.wrap(it)
             wrappedDrawable.mutate()
@@ -36,7 +44,11 @@ object DrawableUtils {
     }
 
 
-    fun setTint(drawable: Drawable?, @ColorInt tint: Int, tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP) {
+    fun setTint(
+        drawable: Drawable?,
+        @ColorInt tint: Int,
+        tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP
+    ) {
         drawable?.let {
             val wrappedDrawable = DrawableCompat.wrap(it)
             wrappedDrawable.mutate()

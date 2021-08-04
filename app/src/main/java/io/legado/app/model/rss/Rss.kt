@@ -3,10 +3,10 @@ package io.legado.app.model.rss
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.rss.Result
-import io.legado.app.model.rss.RssParserByRule
+import io.legado.app.model.analyzeRule.RuleData
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,42 +15,46 @@ import kotlin.coroutines.CoroutineContext
 object Rss {
 
     fun getArticles(
+        scope: CoroutineScope,
         sortName: String,
         sortUrl: String,
         rssSource: RssSource,
         page: Int,
-        scope: CoroutineScope = Coroutine.DEFAULT,
         context: CoroutineContext = Dispatchers.IO
-    ): Coroutine<Result> {
+    ): Coroutine<RssResult> {
         return Coroutine.async(scope, context) {
+            val ruleData = RuleData()
             val analyzeUrl = AnalyzeUrl(
                 sortUrl,
                 page = page,
+                ruleData = ruleData,
                 headerMapF = rssSource.getHeaderMap()
             )
-            val body = analyzeUrl.getResponseAwait(rssSource.sourceUrl).body
-            RssParserByRule.parseXML(sortName, sortUrl, body, rssSource)
+            val body = analyzeUrl.getStrResponse(rssSource.sourceUrl).body
+            RssParserByRule.parseXML(sortName, sortUrl, body, rssSource, ruleData)
         }
     }
 
     fun getContent(
+        scope: CoroutineScope,
         rssArticle: RssArticle,
         ruleContent: String,
-        rssSource: RssSource?,
-        scope: CoroutineScope = Coroutine.DEFAULT,
+        rssSource: RssSource,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
-            val body = AnalyzeUrl(
-                rssArticle.link, baseUrl = rssArticle.origin,
-                headerMapF = rssSource?.getHeaderMap()
-            ).getResponseAwait(rssArticle.origin)
-                .body
-            val analyzeRule = AnalyzeRule()
-            analyzeRule.setContent(
-                body,
-                NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link)
+            val analyzeUrl = AnalyzeUrl(
+                rssArticle.link,
+                baseUrl = rssArticle.origin,
+                ruleData = rssArticle,
+                headerMapF = rssSource.getHeaderMap()
             )
+            val body = analyzeUrl.getStrResponse(rssArticle.origin).body
+            Debug.log(rssSource.sourceUrl, "≡获取成功:${rssSource.sourceUrl}")
+            Debug.log(rssSource.sourceUrl, body, state = 20)
+            val analyzeRule = AnalyzeRule(rssArticle)
+            analyzeRule.setContent(body)
+                .setBaseUrl(NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link))
             analyzeRule.getString(ruleContent)
         }
     }

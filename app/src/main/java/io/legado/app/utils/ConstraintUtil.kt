@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.transition.TransitionManager
 
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class ConstraintUtil(private val constraintLayout: ConstraintLayout) {
 
     private var begin: ConstraintBegin? = null
@@ -55,6 +56,7 @@ class ConstraintUtil(private val constraintLayout: ConstraintLayout) {
 
 }
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class ConstraintBegin(
     private val constraintLayout: ConstraintLayout,
     private val applyConstraintSet: ConstraintSet

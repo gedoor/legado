@@ -1,0 +1,269 @@
+<!-- NCX 2005-1 DTD  2005-06-26
+file: ncx-2005-1.dtd                                 
+
+  Authors: Mark Hakkinen, George Kerscher, Tom McLaughlin, James Pritchett, and Michael Moodie
+  Change list:
+  2002-02-12 M. Moodie. Changed content model of navLabel element to eliminate ambiguity.
+  2002-02-27 M. Moodie. Grammatical changes suggested by editor.
+  2004-03-31 J. Pritchett.  Various changes per the 2004 change list:
+            - Changed internal version numbers from 1.1.0 to 1.2.0
+            - Made audio clipBegin/clipEnd mandatory (change #10)
+            - Dropped value attribute from navPoint (change #11)
+            - Replaced lang attribute with xml:lang (change #12)
+            - Added <pageList> and <pageTarget> elements (change #48)
+            - Dropped onFocus and onBlur attributes from navPoint and navTarget (change #49)
+            - Added <img> to content models of docTitle and docAuthor (change #50)
+            - Removed reference to pages in description of navList (change #52)
+            - Added <navInfo> element (change #53)
+            - Added default namespace attribute to description of <ncx> (change #L8)
+            - Removed pageRef and mapRef attributes
+  2004-04-05 J. Pritchett.  Changes after feedback from MM and MG to 2004-03-31 version
+            - Changed internal version numbers from 1.2.0 to 1.1.2 (per MM e-mail of 3/31)
+            - Changed system identifier to use z3986/2004 as path instead of z3986/v100 (per 3/31 con call)
+            - Added class attribute to both pageTarget and pageList (per MG e-mail of 4/1)
+            - Added comment text describing value attribute for pageTarget and navTarget (per MM e-mail of 3/31)
+            - Changed declaration of type attribute on pageTarget to enumerate allowed values 
+            - Added playOrder attribute to navPoint, navTarget, and pageTarget (per Lloyd's proposal)
+2004-04-05 T. McLaughlin. In description of smilCustomTest, added id and defaultState are to be copied. 
+Version update to 1.1.3.
+2004-05-14 T. McLaughlin. Reinstated override attribute to be copied also. Added bookStruct attribute 
+and enum list to smilCustomTest. Update to 1.1.4.
+Revised, 4/5/2004:  Changed version to 1.1.2 
+Revised, 4/5/2004:  Changed system identifier to use '2004' path 
+Revised, 4/5/2004:  TM, Changed version to 1.1.3 
+Revised, 5/14/2004:  TM, Changed version to 1.1.4 
+2004-07-07 M. Moodie Updated version to 1.2.0 everywhere but at top, where version was set to 1.1.5.
+2004-09-15 M. Moodie.  Changed uri to URI throughout.  Set version to 1.1.6.
+2004-09-16 M. Moodie.  Changed version to 1.2.0
+2005-06-26 M. Gylling. Changed pid, sid, ns uri, and filename for Z3986-2005
+            
+  Description:
+                                                  
+  NCX (Navigation Control for XML applications) is a generalized navigation definition DTD for application
+to Digital Talking Books, eBooks, and general web content models.                                                
+This DTD is an XML application that layers navigation functionality on top of SMIL 2.0  content.                                       
+  
+  The NCX defines a navigation path/model that may be applied upon existing publications,
+without modification of the existing publication source, so long as the navigation targets within
+the source publication can be directly referenced via a URI.                      
+             
+The following identifiers apply to this DTD:
+  "-//NISO//DTD ncx 2005-1//EN"
+  "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd"
+-->
+
+<!-- Basic Entities -->
+
+<!ENTITY % i18n 
+  "xml:lang    NMTOKEN    #IMPLIED
+  dir    (ltr|rtl)  #IMPLIED" >
+
+<!ENTITY % SMILtimeVal  "CDATA" >
+<!ENTITY % URI    "CDATA" >
+<!ENTITY % script  "CDATA" >
+
+<!-- ELEMENTS -->
+
+<!-- Top Level NCX Container. -->
+<!-- Revised, 3/31/2004:  Added pageList to content model -->
+<!ELEMENT ncx (head, docTitle, docAuthor*, navMap, pageList?, navList*)>
+<!-- Revised, 4/5/2004:  Changed version to 1.1.2 -->
+<!-- Revised 3/29/2004:  Added xmlns -->
+<!-- Revised, 4/5/2004:  TM, Changed version to 1.1.3 -->
+<!-- Revised, 5/14/2004:  TM, Changed version to 1.1.4 -->
+<!-- Revised, 7/7/2004:  MM, Changed version to 1.2.0 -->
+<!ATTLIST ncx 
+  version     CDATA     #FIXED "2005-1"
+  xmlns       %URI;     #FIXED "http://www.daisy.org/z3986/2005/ncx/"
+  %i18n;
+>
+
+<!-- Document Head - Contains all NCX metadata.  
+-->
+
+<!ELEMENT head (smilCustomTest | meta)+>
+
+<!-- 2004-04-05 TM - only id and defaultState are copied -->
+<!-- 2004-05-14 TM - revert to override copied too; added bookStruct attribute -->
+<!-- smilCustomTest - Duplicates customTest data found in SMIL files.  Each unique customTest 
+element that appears in one or more SMIL files must have its id, defaultState and override 
+attributes duplicated in a smilCustomTest element in the NCX.  The NCX thus gathers in one 
+place all customTest elements used in the SMIL files, for presentation to the user.
+-->
+<!ELEMENT smilCustomTest EMPTY>
+<!ATTLIST smilCustomTest
+id    ID    #REQUIRED
+defaultState  (true|false)   'false'
+override  (visible|hidden) 'hidden'
+bookStruct  (PAGE_NUMBER|NOTE|NOTE_REFERENCE|ANNOTATION|LINE_NUMBER|OPTIONAL_SIDEBAR|OPTIONAL_PRODUCER_NOTE)  #IMPLIED
+>
+
+<!-- Meta Element - metadata about this NCX -->
+<!ELEMENT meta EMPTY>
+<!ATTLIST meta
+  name    CDATA    #REQUIRED
+  content  CDATA    #REQUIRED
+  scheme  CDATA    #IMPLIED
+>
+
+<!-- DocTitle - the title of the document, required and must immediately follow head. 
+-->
+
+<!-- Revised, 3/31/2004:  Added img to content model -->
+<!ELEMENT docTitle (text, audio?, img?)>
+<!ATTLIST docTitle
+  id    ID    #IMPLIED
+  %i18n;
+>
+
+<!-- DocAuthor - the author of the document, immediately follows docTitle.
+-->
+
+<!-- Revised, 3/31/2004:  Added img to content model -->
+<!ELEMENT docAuthor (text, audio?, img?)>
+<!ATTLIST docAuthor
+  id    ID    #IMPLIED
+  %i18n;
+>
+
+<!-- Navigation Structure - container for all of the NCX objects that are part of the 
+hierarchical structure of the document.
+-->
+
+<!-- Revised, 3/31/2004:  Added navInfo to content model -->
+<!ELEMENT navMap (navInfo*, navLabel*, navPoint+)>
+<!ATTLIST navMap
+  id    ID    #IMPLIED
+>
+
+<!-- Navigation Point - contains description(s) of target, as well as a pointer to 
+entire content of target.
+Hierarchy is represented by nesting navPoints.  "class" attribute describes the kind 
+of structural unit this object represents (e.g., "chapter", "section").
+-->
+<!ELEMENT navPoint (navLabel+, content, navPoint*)>
+<!-- Revised, 3/29/2004:  Removed onFocus/onBlur -->
+<!-- Revised, 3/29/2004:  Removed value -->
+<!-- Revised, 3/31/2004:  Removed pageRef -->
+<!-- Revised, 4/5/2004:  Added playOrder -->
+<!ATTLIST navPoint
+  id    ID      #REQUIRED
+  class    CDATA    #IMPLIED
+  playOrder CDATA       #REQUIRED
+>
+
+<!-- Revised, 3/31/2004:  Added pageList element -->
+<!-- Page List -  Container for pagination information.
+  -->
+<!ELEMENT pageList (navInfo*, navLabel*, pageTarget+)>
+<!-- Revised, 4/5/2004:  Added class attribute -->
+<!ATTLIST pageList
+   id       ID          #IMPLIED
+   class    CDATA       #IMPLIED
+>
+
+<!-- Revised, 3/31/2004:  Added pageTarget element -->
+<!-- Revised, 4/5/2004:  Added description of value attribute to comment -->
+<!-- Page Target -  Container for 
+  text, audio, image, and content elements containing navigational 
+  information for pages.  The "value" attribute is a positive integer representing 
+the numeric value associated with a page. Combination of values of type and 
+value attributes must be unique, when value attribute is present. 
+-->
+<!ELEMENT pageTarget (navLabel+, content)>
+<!-- Revised, 4/5/2004:  Added class attribute -->
+<!-- Revised, 4/5/2004:  Changed declaration of type attribute to enumerate values -->
+<!-- Revised, 4/5/2004:  Added playOrder -->
+<!ATTLIST pageTarget
+   id       ID          #IMPLIED
+   value    CDATA       #IMPLIED
+   type     (front | normal | special)       #REQUIRED
+   class    CDATA       #IMPLIED
+   playOrder CDATA      #REQUIRED
+>
+
+<!-- Navigation List - container for distinct, flat sets of navigable elements, e.g.  
+notes, figures, tables, etc.  Essentially a flat version of navMap.  The "class" attribute 
+describes the type of object contained in this navList, using dtbook element names, e.g., note.
+-->
+
+<!-- Revised, 3/31/2004:  Added navInfo to content model -->
+<!ELEMENT navList   (navInfo*, navLabel+, navTarget+) >
+<!ATTLIST navList
+  id    ID    #IMPLIED
+  class    CDATA    #IMPLIED
+>
+
+<!-- Revised, 4/5/2004:  Added description of value attribute to comment -->
+<!-- Navigation Target - contains description(s) of target, as well as a pointer to 
+entire content of target.
+navTargets are the equivalent of navPoints for use in navLists.  "class" attribute 
+describes the kind of structure this target represents, using its dtbook element 
+name, e.g., note.  The "value" attribute is a positive integer representing the 
+numeric value associated with the navTarget.
+-->
+
+<!ELEMENT navTarget  (navLabel+, content) >
+<!-- Revised, 3/29/2004:  Removed onFocus/onBlur -->
+<!-- Revised, 3/31/2004:  Removed mapRef -->
+<!-- Revised, 4/5/2004:  Added playOrder -->
+<!ATTLIST navTarget
+  id    ID    #REQUIRED
+  class    CDATA    #IMPLIED
+  value    CDATA    #IMPLIED
+  playOrder CDATA       #REQUIRED
+>
+
+
+<!-- Revised, 3/31/2004:  Added navInfo element -->
+<!-- Navigation Information - Contains an informative comment
+  about a navMap, pageList, or navList in various media for presentation to the user.
+-->
+<!ELEMENT navInfo (((text, audio?) | audio), img?)>
+<!ATTLIST navInfo
+  %i18n; 
+>
+
+
+<!-- Navigation Label - Contains a description of a given <navMap>, <navPoint>, 
+<navList>, or <navTarget> in various media for presentation to the user. Can be 
+repeated so descriptions can be provided in multiple languages. -->
+<!ELEMENT navLabel (((text, audio?) | audio), img?)>
+<!ATTLIST navLabel
+  %i18n; 
+>
+
+
+<!-- Content Element - pointer into SMIL to beginning of navPoint. -->
+<!ELEMENT content EMPTY>
+<!ATTLIST content
+  id    ID    #IMPLIED
+  src    %URI;    #REQUIRED
+>
+
+<!-- Text Element - Contains text of docTitle, navPoint heading, navTarget (e.g., page number), 
+or label for navMap or navList. -->
+<!ELEMENT text (#PCDATA)>
+<!ATTLIST text
+  id    ID        #IMPLIED
+  class  CDATA      #IMPLIED
+>
+
+<!-- Audio Element - audio clip of navPoint heading. -->
+<!ELEMENT audio EMPTY>
+<!-- Revised, 3/29/2004:  clipBegin/clipEnd now REQUIRED -->
+<!ATTLIST audio
+  id    ID        #IMPLIED
+  class  CDATA      #IMPLIED
+  src    %URI;      #REQUIRED
+  clipBegin %SMILtimeVal;  #REQUIRED
+  clipEnd  %SMILtimeVal;  #REQUIRED
+>
+
+<!-- Image Element - image that may accompany heading. -->
+<!ELEMENT img EMPTY>
+<!ATTLIST img
+  id    ID      #IMPLIED
+  class  CDATA    #IMPLIED
+  src    %URI;    #REQUIRED
+>

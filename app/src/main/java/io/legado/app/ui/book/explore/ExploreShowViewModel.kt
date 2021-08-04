@@ -3,18 +3,20 @@ package io.legado.app.ui.book.explore
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.App
+import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.utils.msg
 import kotlinx.coroutines.Dispatchers.IO
 
 class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
 
     val booksData = MutableLiveData<List<SearchBook>>()
+    val errorLiveData = MutableLiveData<String>()
     private var bookSource: BookSource? = null
-    private val variableBook = SearchBook()
     private var exploreUrl: String? = null
     private var page = 1
 
@@ -23,7 +25,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
             val sourceUrl = intent.getStringExtra("sourceUrl")
             exploreUrl = intent.getStringExtra("exploreUrl")
             if (bookSource == null && sourceUrl != null) {
-                bookSource = App.db.bookSourceDao().getBookSource(sourceUrl)
+                bookSource = appDb.bookSourceDao.getBookSource(sourceUrl)
             }
             explore()
         }
@@ -33,12 +35,15 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         val source = bookSource
         val url = exploreUrl
         if (source != null && url != null) {
-            WebBook(source).exploreBook(url, page, variableBook, this)
+            WebBook(source).exploreBook(viewModelScope, url, page)
                 .timeout(30000L)
                 .onSuccess(IO) { searchBooks ->
                     booksData.postValue(searchBooks)
-                    App.db.searchBookDao().insert(*searchBooks.toTypedArray())
+                    appDb.searchBookDao.insert(*searchBooks.toTypedArray())
                     page++
+                }.onError {
+                    it.printStackTrace()
+                    errorLiveData.postValue(it.msg)
                 }
         }
     }

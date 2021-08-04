@@ -8,10 +8,11 @@
 
     <TextView
         android:id="@+id/tv_seek_title"
-        android:layout_width="50dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:text="seek"
+        android:textColor="@color/primaryText"
         tools:ignore="HardcodedText" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -42,11 +43,12 @@
 
     <TextView
         android:id="@+id/tv_seek_value"
-        android:layout_width="40dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:gravity="right"
         android:singleLine="true"
         android:text="0"
+        android:textColor="@color/primaryText"
         tools:ignore="HardcodedText,RtlHardcoded" />
 
 </LinearLayout>

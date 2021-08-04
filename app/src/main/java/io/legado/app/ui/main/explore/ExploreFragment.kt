@@ -6,46 +6,52 @@ import android.view.MenuItem
 import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.LiveData
+import androidx.core.view.isGone
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.databinding.FragmentExploreBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.utils.getViewModel
+import io.legado.app.utils.cnCompare
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
-import kotlinx.android.synthetic.main.fragment_find_book.*
-import kotlinx.android.synthetic.main.view_search.*
-import kotlinx.android.synthetic.main.view_title_bar.*
-import java.text.Collator
+import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-
-class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_book),
+/**
+ * 发现界面
+ */
+class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
     ExploreAdapter.CallBack {
-    override val viewModel: ExploreViewModel
-        get() = getViewModel(ExploreViewModel::class.java)
-
+    override val viewModel by viewModels<ExploreViewModel>()
+    private val binding by viewBinding(FragmentExploreBinding::bind)
     private lateinit var adapter: ExploreAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var searchView: SearchView
     private val groups = linkedSetOf<String>()
-    private var liveGroup: LiveData<List<String>>? = null
-    private var liveExplore: LiveData<List<BookSource>>? = null
+    private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        setSupportToolbar(toolbar)
+        searchView = binding.titleBar.findViewById(R.id.search_view)
+        setSupportToolbar(binding.titleBar.toolbar)
         initSearchView()
         initRecyclerView()
         initGroupData()
-        initExploreData()
+        upExploreData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -55,103 +61,135 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_find_
         upGroupsMenu()
     }
 
+    override fun onPause() {
+        super.onPause()
+        searchView.clearFocus()
+    }
+
     private fun initSearchView() {
-        ATH.setTint(search_view, primaryTextColor)
-        search_view.onActionViewExpanded()
-        search_view.isSubmitButtonEnabled = true
-        search_view.queryHint = getString(R.string.screen_find)
-        search_view.clearFocus()
-        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        ATH.setTint(searchView, primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.queryHint = getString(R.string.screen_find)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                initExploreData(newText)
+                upExploreData(newText)
                 return false
             }
         })
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(rv_find)
+        ATH.applyEdgeEffectColor(binding.rvFind)
         linearLayoutManager = LinearLayoutManager(context)
-        rv_find.layoutManager = linearLayoutManager
-        adapter = ExploreAdapter(requireContext(), this, this)
-        rv_find.adapter = adapter
+        binding.rvFind.layoutManager = linearLayoutManager
+        adapter = ExploreAdapter(requireContext(), lifecycleScope, this)
+        binding.rvFind.adapter = adapter
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
 
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
                 if (positionStart == 0) {
-                    rv_find.scrollToPosition(0)
+                    binding.rvFind.scrollToPosition(0)
                 }
             }
         })
     }
 
     private fun initGroupData() {
-        liveGroup?.removeObservers(viewLifecycleOwner)
-        liveGroup = App.db.bookSourceDao().liveGroupExplore()
-        liveGroup?.observe(viewLifecycleOwner, {
-            groups.clear()
-            it.map { group ->
-                groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-            }
-            upGroupsMenu()
-        })
-    }
-
-    private fun initExploreData(key: String? = null) {
-        liveExplore?.removeObservers(viewLifecycleOwner)
-        liveExplore = if (key.isNullOrBlank()) {
-            App.db.bookSourceDao().liveExplore()
-        } else {
-            App.db.bookSourceDao().liveExplore("%$key%")
-        }
-        liveExplore?.observe(viewLifecycleOwner, {
-            val diffResult = DiffUtil
-                .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
-            adapter.setItems(it)
-            diffResult.dispatchUpdatesTo(adapter)
-        })
-    }
-
-    private fun upGroupsMenu() {
-        groupsMenu?.let { subMenu ->
-            subMenu.removeGroup(R.id.menu_group_text)
-            groups.sortedWith(Collator.getInstance(java.util.Locale.CHINESE))
-                .forEach {
-                    subMenu.add(R.id.menu_group_text, Menu.NONE, Menu.NONE, it)
+        launch {
+            appDb.bookSourceDao.flowExploreGroup()
+                .collect {
+                    groups.clear()
+                    it.map { group ->
+                        groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                    }
+                    upGroupsMenu()
                 }
+        }
+    }
+
+    private fun upExploreData(searchKey: String? = null) {
+        exploreFlowJob?.cancel()
+        exploreFlowJob = launch {
+            val exploreFlow = when {
+                searchKey.isNullOrBlank() -> {
+                    appDb.bookSourceDao.flowExplore()
+                }
+                searchKey.startsWith("group:") -> {
+                    val key = searchKey.substringAfter("group:")
+                    appDb.bookSourceDao.flowGroupExplore("%$key%")
+                }
+                else -> {
+                    appDb.bookSourceDao.flowExplore("%$searchKey%")
+                }
+            }
+            exploreFlow.collect {
+                binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
+                val diffResult = DiffUtil
+                    .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
+                adapter.setItems(it)
+                diffResult.dispatchUpdatesTo(adapter)
+            }
+        }
+    }
+
+    private fun upGroupsMenu() = groupsMenu?.let { subMenu ->
+        subMenu.removeGroup(R.id.menu_group_text)
+        groups.sortedWith { o1, o2 ->
+            o1.cnCompare(o2)
+        }.forEach {
+            subMenu.add(R.id.menu_group_text, Menu.NONE, Menu.NONE, it)
         }
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         super.onCompatOptionsItemSelected(item)
         if (item.groupId == R.id.menu_group_text) {
-            search_view.setQuery(item.title, true)
+            searchView.setQuery("group:${item.title}", true)
         }
     }
 
-    override fun scrollTo(pos: Int) {
-        (rv_find.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, 0)
+    override fun refreshData() {
+        upExploreData(searchView.query?.toString())
     }
 
-    override fun openExplore(sourceUrl: String, title: String, exploreUrl: String) {
-        startActivity<ExploreShowActivity>(
-            Pair("exploreName", title),
-            Pair("sourceUrl", sourceUrl),
-            Pair("exploreUrl", exploreUrl)
-        )
+    override fun scrollTo(pos: Int) {
+        (binding.rvFind.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, 0)
+    }
+
+    override fun openExplore(sourceUrl: String, title: String, exploreUrl: String?) {
+        if (exploreUrl.isNullOrBlank()) return
+        startActivity<ExploreShowActivity> {
+            putExtra("exploreName", title)
+            putExtra("sourceUrl", sourceUrl)
+            putExtra("exploreUrl", exploreUrl)
+        }
     }
 
     override fun editSource(sourceUrl: String) {
-        startActivity<BookSourceEditActivity>(Pair("data", sourceUrl))
+        startActivity<BookSourceEditActivity> {
+            putExtra("data", sourceUrl)
+        }
     }
 
     override fun toTop(source: BookSource) {
         viewModel.topSource(source)
+    }
+
+    fun compressExplore() {
+        if (!adapter.compressExplore()) {
+            if (AppConfig.isEInkMode) {
+                binding.rvFind.scrollToPosition(0)
+            } else {
+                binding.rvFind.smoothScrollToPosition(0)
+            }
+        }
     }
 
 }

@@ -1,19 +1,23 @@
 package io.legado.app.model
 
 import android.annotation.SuppressLint
-import io.legado.app.data.entities.*
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.RssArticle
+import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.htmlFormat
+import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.msg
+import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
 
 object Debug {
-    private var debugSource: String? = null
     var callback: Callback? = null
+    private var debugSource: String? = null
     private val tasks: CompositeCoroutine = CompositeCoroutine()
 
     @SuppressLint("ConstantLocale")
@@ -29,16 +33,23 @@ object Debug {
         showTime: Boolean = true,
         state: Int = 1
     ) {
-        if (debugSource != sourceUrl || callback == null || !print) return
-        var printMsg = msg ?: ""
-        if (isHtml) {
-            printMsg = printMsg.htmlFormat()
+        callback?.let {
+            if (debugSource != sourceUrl || !print) return
+            var printMsg = msg ?: ""
+            if (isHtml) {
+                printMsg = HtmlFormatter.format(msg)
+            }
+            if (showTime) {
+                val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))
+                printMsg = "$time $printMsg"
+            }
+            it.printLog(state, printMsg)
         }
-        if (showTime) {
-            printMsg =
-                "${DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))} $printMsg"
-        }
-        callback?.printLog(state, printMsg)
+    }
+
+    @Synchronized
+    fun log(msg: String?) {
+        log(debugSource, msg, true)
     }
 
     fun cancelDebug(destroy: Boolean = false) {
@@ -50,12 +61,12 @@ object Debug {
         }
     }
 
-    fun startDebug(rssSource: RssSource) {
+    fun startDebug(scope: CoroutineScope, rssSource: RssSource) {
         cancelDebug()
         debugSource = rssSource.sourceUrl
         log(debugSource, "︾开始解析")
         val sort = rssSource.sortUrls().entries.first()
-        Rss.getArticles(sort.key, sort.value, rssSource, 1)
+        Rss.getArticles(scope, sort.key, sort.value, rssSource, 1)
             .onSuccess {
                 if (it.articles.isEmpty()) {
                     log(debugSource, "⇒列表页解析成功，为空")
@@ -68,7 +79,7 @@ object Debug {
                         if (ruleContent.isNullOrEmpty()) {
                             log(debugSource, "⇒内容规则为空，默认获取整个网页", state = 1000)
                         } else {
-                            rssContentDebug(it.articles[0], ruleContent, rssSource)
+                            rssContentDebug(scope, it.articles[0], ruleContent, rssSource)
                         }
                     } else {
                         log(debugSource, "⇒存在描述规则，不解析内容页")
@@ -81,9 +92,14 @@ object Debug {
             }
     }
 
-    private fun rssContentDebug(rssArticle: RssArticle, ruleContent: String, rssSource: RssSource) {
+    private fun rssContentDebug(
+        scope: CoroutineScope,
+        rssArticle: RssArticle,
+        ruleContent: String,
+        rssSource: RssSource
+    ) {
         log(debugSource, "︾开始解析内容页")
-        Rss.getContent(rssArticle, ruleContent, rssSource)
+        Rss.getContent(scope, rssArticle, ruleContent, rssSource)
             .onSuccess {
                 log(debugSource, it)
                 log(debugSource, "︽内容页解析完成", state = 1000)
@@ -93,7 +109,7 @@ object Debug {
             }
     }
 
-    fun startDebug(webBook: WebBook, key: String) {
+    fun startDebug(scope: CoroutineScope, webBook: WebBook, key: String) {
         cancelDebug()
         debugSource = webBook.sourceUrl
         startTime = System.currentTimeMillis()
@@ -103,22 +119,22 @@ object Debug {
                 book.origin = webBook.sourceUrl
                 book.bookUrl = key
                 log(webBook.sourceUrl, "⇒开始访问详情页:$key")
-                infoDebug(webBook, book)
+                infoDebug(scope, webBook, book)
             }
             key.contains("::") -> {
-                val url = key.substring(key.indexOf("::") + 2)
+                val url = key.substringAfter("::")
                 log(webBook.sourceUrl, "⇒开始访问发现页:$url")
-                exploreDebug(webBook, url)
+                exploreDebug(scope, webBook, url)
             }
-            key.startsWith("++")-> {
+            key.startsWith("++") -> {
                 val url = key.substring(2)
                 val book = Book()
                 book.origin = webBook.sourceUrl
                 book.tocUrl = url
                 log(webBook.sourceUrl, "⇒开始访目录页:$url")
-                tocDebug(webBook, book)
+                tocDebug(scope, webBook, book)
             }
-            key.startsWith("--")-> {
+            key.startsWith("--") -> {
                 val url = key.substring(2)
                 val book = Book()
                 book.origin = webBook.sourceUrl
@@ -126,24 +142,23 @@ object Debug {
                 val chapter = BookChapter()
                 chapter.title = "调试"
                 chapter.url = url
-                contentDebug(webBook, book, chapter, null)
+                contentDebug(scope, webBook, book, chapter, null)
             }
             else -> {
                 log(webBook.sourceUrl, "⇒开始搜索关键字:$key")
-                searchDebug(webBook, key)
+                searchDebug(scope, webBook, key)
             }
         }
     }
 
-    private fun exploreDebug(webBook: WebBook, url: String) {
+    private fun exploreDebug(scope: CoroutineScope, webBook: WebBook, url: String) {
         log(debugSource, "︾开始解析发现页")
-        val variableBook = SearchBook()
-        val explore = webBook.exploreBook(url, 1, variableBook)
+        val explore = webBook.exploreBook(scope, url, 1)
             .onSuccess { exploreBooks ->
                 if (exploreBooks.isNotEmpty()) {
                     log(debugSource, "︽发现页解析完成")
                     log(debugSource, showTime = false)
-                    infoDebug(webBook, exploreBooks[0].toBook())
+                    infoDebug(scope, webBook, exploreBooks[0].toBook())
                 } else {
                     log(debugSource, "︽未获取到书籍", state = -1)
                 }
@@ -154,15 +169,14 @@ object Debug {
         tasks.add(explore)
     }
 
-    private fun searchDebug(webBook: WebBook, key: String) {
+    private fun searchDebug(scope: CoroutineScope, webBook: WebBook, key: String) {
         log(debugSource, "︾开始解析搜索页")
-        val variableBook = SearchBook()
-        val search = webBook.searchBook(key, 1, variableBook)
+        val search = webBook.searchBook(scope, key, 1)
             .onSuccess { searchBooks ->
                 if (searchBooks.isNotEmpty()) {
                     log(debugSource, "︽搜索页解析完成")
                     log(debugSource, showTime = false)
-                    infoDebug(webBook, searchBooks[0].toBook())
+                    infoDebug(scope, webBook, searchBooks[0].toBook())
                 } else {
                     log(debugSource, "︽未获取到书籍", state = -1)
                 }
@@ -173,13 +187,19 @@ object Debug {
         tasks.add(search)
     }
 
-    private fun infoDebug(webBook: WebBook, book: Book) {
+    private fun infoDebug(scope: CoroutineScope, webBook: WebBook, book: Book) {
+        if (book.tocUrl.isNotBlank()) {
+            log(debugSource, "≡已获取目录链接,跳过详情页")
+            log(debugSource, showTime = false)
+            tocDebug(scope, webBook, book)
+            return
+        }
         log(debugSource, "︾开始解析详情页")
-        val info = webBook.getBookInfo(book)
+        val info = webBook.getBookInfo(scope, book)
             .onSuccess {
                 log(debugSource, "︽详情页解析完成")
                 log(debugSource, showTime = false)
-                tocDebug(webBook, book)
+                tocDebug(scope, webBook, book)
             }
             .onError {
                 log(debugSource, it.msg, state = -1)
@@ -187,15 +207,15 @@ object Debug {
         tasks.add(info)
     }
 
-    private fun tocDebug(webBook: WebBook, book: Book) {
+    private fun tocDebug(scope: CoroutineScope, webBook: WebBook, book: Book) {
         log(debugSource, "︾开始解析目录页")
-        val chapterList = webBook.getChapterList(book)
+        val chapterList = webBook.getChapterList(scope, book)
             .onSuccess {
                 if (it.isNotEmpty()) {
                     log(debugSource, "︽目录页解析完成")
                     log(debugSource, showTime = false)
-                    val nextChapterUrl = if (it.size > 1) it[1].url else null
-                    contentDebug(webBook, book, it[0], nextChapterUrl)
+                    val nextChapterUrl = it.getOrNull(1)?.url
+                    contentDebug(scope, webBook, book, it[0], nextChapterUrl)
                 } else {
                     log(debugSource, "︽目录列表为空", state = -1)
                 }
@@ -207,13 +227,14 @@ object Debug {
     }
 
     private fun contentDebug(
+        scope: CoroutineScope,
         webBook: WebBook,
         book: Book,
         bookChapter: BookChapter,
         nextChapterUrl: String?
     ) {
         log(debugSource, "︾开始解析正文页")
-        val content = webBook.getContent(book, bookChapter, nextChapterUrl)
+        val content = webBook.getContent(scope, book, bookChapter, nextChapterUrl)
             .onSuccess {
                 log(debugSource, "︽正文页解析完成", state = 1000)
             }

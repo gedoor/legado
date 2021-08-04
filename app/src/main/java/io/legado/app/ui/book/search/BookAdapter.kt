@@ -1,25 +1,34 @@
 package io.legado.app.ui.book.search
 
 import android.content.Context
-import io.legado.app.R
+import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
-import kotlinx.android.synthetic.main.item_fillet_text.view.*
-import org.jetbrains.anko.sdk27.listeners.onClick
+import io.legado.app.databinding.ItemFilletTextBinding
+
 
 class BookAdapter(context: Context, val callBack: CallBack) :
-    SimpleRecyclerAdapter<Book>(context, R.layout.item_fillet_text) {
+    RecyclerAdapter<Book, ItemFilletTextBinding>(context) {
 
-    override fun convert(holder: ItemViewHolder, item: Book, payloads: MutableList<Any>) {
-        with(holder.itemView) {
-            text_view.text = item.name
+    override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
+        return ItemFilletTextBinding.inflate(inflater, parent, false)
+    }
+
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemFilletTextBinding,
+        item: Book,
+        payloads: MutableList<Any>
+    ) {
+        binding.run {
+            textView.text = item.name
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
         holder.itemView.apply {
-            onClick {
+            setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.showBookInfo(it)
                 }

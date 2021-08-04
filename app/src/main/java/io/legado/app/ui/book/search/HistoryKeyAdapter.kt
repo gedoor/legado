@@ -1,52 +1,51 @@
 package io.legado.app.ui.book.search
 
-import io.legado.app.App
-import io.legado.app.R
+import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.SimpleRecyclerAdapter
+import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.SearchKeyword
+import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.ui.widget.anima.explosion_field.ExplosionField
-import kotlinx.android.synthetic.main.item_fillet_text.view.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.jetbrains.anko.sdk27.listeners.onClick
-import org.jetbrains.anko.sdk27.listeners.onLongClick
-
+import splitties.views.onLongClick
 
 class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
-    SimpleRecyclerAdapter<SearchKeyword>(activity, R.layout.item_fillet_text) {
+    RecyclerAdapter<SearchKeyword, ItemFilletTextBinding>(activity) {
 
     private val explosionField = ExplosionField.attach2Window(activity)
 
-    override fun convert(holder: ItemViewHolder, item: SearchKeyword, payloads: MutableList<Any>) {
-        with(holder.itemView) {
-            text_view.text = item.word
+    override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
+        return ItemFilletTextBinding.inflate(inflater, parent, false)
+    }
+
+    override fun convert(
+        holder: ItemViewHolder,
+        binding: ItemFilletTextBinding,
+        item: SearchKeyword,
+        payloads: MutableList<Any>
+    ) {
+        binding.run {
+            textView.text = item.word
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
         holder.itemView.apply {
-            onClick {
+            setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.searchHistory(it.word)
                 }
             }
             onLongClick {
-                it?.let {
-                    explosionField.explode(it, true)
-                }
+                explosionField.explode(this, true)
                 getItem(holder.layoutPosition)?.let {
-                    GlobalScope.launch(IO) {
-                        App.db.searchKeywordDao().delete(it)
-                    }
+                    callBack.deleteHistory(it)
                 }
-                true
             }
         }
     }
 
     interface CallBack {
         fun searchHistory(key: String)
+        fun deleteHistory(searchKeyword: SearchKeyword)
     }
 }
