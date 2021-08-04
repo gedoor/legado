@@ -47,12 +47,12 @@ class BgTextConfigDialog : BaseDialogFragment() {
     private var secondaryTextColor = 0
     private val importFormNet = "网络导入"
     private val selectBgImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        it ?: return@registerForActivityResult
         setBgFromUri(it)
     }
     private val selectExportDir = registerForActivityResult(FilePicker()) {
-        it?.let {
-            exportConfig(it)
-        }
+        it ?: return@registerForActivityResult
+        exportConfig(it)
     }
     private val selectImportDoc = registerForActivityResult(FilePicker()) {
         it ?: return@registerForActivityResult
