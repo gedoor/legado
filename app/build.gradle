@@ -98,8 +98,8 @@ android {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
         // Sets Java compatibility to Java 11
-        sourceCompatibility "1.8"
-        targetCompatibility "1.8"
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
