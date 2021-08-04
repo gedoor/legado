@@ -213,9 +213,6 @@ dependencies {
     implementation("io.noties.markwon:ext-tables:$markwonVersion")
     implementation("io.noties.markwon:html:$markwonVersion")
 
-    // 谷歌RenderScript库
-    implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
-
     //转换繁体
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.1')
 

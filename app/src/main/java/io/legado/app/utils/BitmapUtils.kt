@@ -249,7 +249,7 @@ object BitmapUtils {
     /**
      * 高斯模糊
      */
-    fun stackBlur(srcBitmap: Bitmap?): Bitmap? {
+    fun stackBlur(srcBitmap: Bitmap?, radius: Float = 8f): Bitmap? {
         if (srcBitmap == null) return null
         val rs = RenderScript.create(appCtx)
         val blurredBitmap = srcBitmap.copy(Config.ARGB_8888, true)
@@ -268,7 +268,7 @@ object BitmapUtils {
         script.setInput(input)
 
         //设置模糊半径
-        script.setRadius(8f)
+        script.setRadius(radius)
 
         //启动 ScriptIntrinsicBlur
         script.forEach(output)

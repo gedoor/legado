@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.util.DisplayMetrics
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatDelegate
-import com.google.android.renderscript.Toolkit
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -60,7 +59,7 @@ object ThemeConfig {
         val bgImage = BitmapUtils
             .decodeBitmap(bgCfg.first!!, metrics.widthPixels, metrics.heightPixels)
             ?: return null
-        return Toolkit.blur(bgImage, bgCfg.second)
+        return BitmapUtils.stackBlur(bgImage, bgCfg.second.toFloat())
     }
 
     fun upConfig() {
