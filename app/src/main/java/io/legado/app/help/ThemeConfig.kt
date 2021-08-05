@@ -59,6 +59,9 @@ object ThemeConfig {
         val bgImage = BitmapUtils
             .decodeBitmap(bgCfg.first!!, metrics.widthPixels, metrics.heightPixels)
             ?: return null
+        if (bgCfg.second == 0) {
+            return bgImage
+        }
         return BitmapUtils.stackBlur(bgImage, bgCfg.second.toFloat())
     }
 
