@@ -55,26 +55,30 @@ jobs:
           echo "开始进行release构建"
           chmod +x gradlew
           ./gradlew assembleAppRelease --build-cache --parallel
+          echo "开始进行cronet构建"
+          ./gradlew assembleCronetRelease --build-cache --parallel
+      - name: Organize the files
+        run: |
+          mkdir -p ${{ github.workspace }}/apk/
+          cp -rf ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk ${{ github.workspace }}/apk/
       - name: Upload App To Artifact
         if: ${{ env.UPLOAD_ARTIFACT != 'false' }}
         uses: actions/upload-artifact@v2
         with:
           name: legado apk
-          path: ${{ github.workspace }}/app/build/outputs/apk/app/release/*.apk
+          path: ${{ github.workspace }}/apk/*.apk
       - name: Upload App To Lanzou
         if: ${{ env.ylogin }}
         run: |
-          path="$GITHUB_WORKSPACE/app/build/outputs/apk/app/release"
+          path="$GITHUB_WORKSPACE/apk"
           files=$(ls $path)
           for f in $files
           do
            if [[ $f == *"apk" ]]; then
             file=$f
             echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 文件:$file"
-            break
+            python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path/$file" "$LANZOU_FOLDER_ID"
            fi
           done
-
-          python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path/$file" "$LANZOU_FOLDER_ID"
           echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f810h4b"
  
