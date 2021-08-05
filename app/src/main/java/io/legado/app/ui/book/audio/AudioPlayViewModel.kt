@@ -100,6 +100,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             } else {
                 loadChapterList(book1) { upChangeDurChapterIndex(book1, oldTocSize, it) }
             }
+        }.onFinally {
             postEvent(EventBus.SOURCE_CHANGED, book1.bookUrl)
         }
     }

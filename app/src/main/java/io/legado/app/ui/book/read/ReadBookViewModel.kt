@@ -209,6 +209,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     upChangeDurChapterIndex(newBook, oldTocSize, it)
                 }
             }
+        }.onFinally {
             postEvent(EventBus.SOURCE_CHANGED, newBook.bookUrl)
         }
     }
