@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
@@ -36,6 +37,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
+import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -151,6 +153,14 @@ class BookInfoActivity :
                     viewModel.loadBookInfo(it, false)
                 }
             }
+            R.id.menu_login -> viewModel.bookSource?.let {
+                startActivity<SourceLoginActivity> {
+                    putExtra("sourceUrl", it.bookSourceUrl)
+                    putExtra("loginUrl", it.loginUrl)
+                    putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
+                }
+            }
+            R.id.menu_top -> viewModel.topBook()
             R.id.menu_copy_book_url -> viewModel.bookData.value?.bookUrl?.let {
                 sendToClip(it)
             } ?: toastOnUi(R.string.no_book)

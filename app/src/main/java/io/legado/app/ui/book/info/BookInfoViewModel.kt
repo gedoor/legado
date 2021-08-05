@@ -196,6 +196,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun topBook() {
+        execute {
+            bookData.value?.let { book ->
+                val minOrder = appDb.bookDao.minOrder
+                book.order = minOrder - 1
+                appDb.bookDao.update(book)
+            }
+        }
+    }
+
     fun saveBook(success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let { book ->
