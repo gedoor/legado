@@ -686,6 +686,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
             binding.readView.upContent(1)
             autoPagePlus()
             binding.readMenu.setAutoPage(true)
+            screenTimeOut=-1L
+            screenOffTimerStart()
         }
     }
 
@@ -694,6 +696,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         mHandler.removeCallbacks(autoPageRunnable)
         binding.readView.upContent()
         binding.readMenu.setAutoPage(false)
+        upScreenTimeOut()
     }
 
     private fun autoPagePlus() {
