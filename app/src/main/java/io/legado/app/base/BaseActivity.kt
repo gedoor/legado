@@ -2,6 +2,7 @@ package io.legado.app.base
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
@@ -174,8 +175,8 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
         if (imageBg) {
             try {
-                ThemeConfig.getBgImage(this)?.let {
-                    window.decorView.background = it
+                ThemeConfig.getBgImage(this, windowSize)?.let {
+                    window.decorView.background = BitmapDrawable(resources, it)
                 }
             } catch (e: OutOfMemoryError) {
                 toastOnUi(e.localizedMessage)

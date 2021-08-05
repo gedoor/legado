@@ -11,9 +11,9 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.databinding.DialogReadPaddingBinding
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.utils.getSize
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.windowSize
 
 class PaddingConfigDialog : BaseDialogFragment() {
 
@@ -21,7 +21,7 @@ class PaddingConfigDialog : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().getSize()
+        val dm = requireActivity().windowSize
         dialog?.window?.let {
             it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             val attr = it.attributes

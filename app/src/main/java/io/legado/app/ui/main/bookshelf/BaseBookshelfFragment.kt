@@ -65,7 +65,9 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     @SuppressLint("InflateParams")
     fun addBookByUrl() {
         alert(titleResource = R.string.add_book_url) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                textInputLayout.hint = "url"
+            }
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
@@ -122,7 +124,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     private fun importBookshelfAlert(groupId: Long) {
         alert(titleResource = R.string.import_bookshelf) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url/json"
+                textInputLayout.hint = "url/json"
             }
             customView { alertBinding.root }
             okButton {

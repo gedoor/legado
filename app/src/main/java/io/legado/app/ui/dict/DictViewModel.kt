@@ -16,7 +16,7 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
     fun dict(word: String) {
         execute {
             val body = okHttpClient.newCallStrResponse {
-                get("http://apii.dict.cn/mini.php", mapOf(Pair("q", word)))
+                get("https://apii.dict.cn/mini.php", mapOf(Pair("q", word)))
             }.body
             val jsoup = Jsoup.parse(body!!)
             jsoup.body()

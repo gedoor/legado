@@ -25,7 +25,8 @@
         android:layout_height="0dp"
         android:overScrollMode="never"
         app:layout_constraintBottom_toTopOf="@+id/ll_search_base_info"
-        app:layout_constraintTop_toBottomOf="@id/refresh_progress_bar" />
+        app:layout_constraintTop_toBottomOf="@id/refresh_progress_bar"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <LinearLayout
         android:id="@+id/ll_search_base_info"

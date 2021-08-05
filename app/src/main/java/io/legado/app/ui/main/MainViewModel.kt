@@ -12,7 +12,6 @@ import io.legado.app.help.DefaultData
 import io.legado.app.help.LocalConfig
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
-import io.legado.app.utils.FileUtils
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -143,7 +142,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun postLoad() {
         execute {
-            FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
             if (appDb.httpTTSDao.count == 0) {
                 DefaultData.httpTTS.let {
                     appDb.httpTTSDao.insert(*it.toTypedArray())

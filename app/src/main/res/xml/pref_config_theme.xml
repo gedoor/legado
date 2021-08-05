@@ -33,6 +33,15 @@
         android:title="@string/bar_elevation"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:key="useDefaultCover"
+        android:title="@string/use_default_cover"
+        android:summary="@string/use_default_cover_s"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.ui.widget.prefs.Preference
         android:key="themeList"
         android:summary="@string/theme_list_summary"
@@ -77,6 +86,10 @@
             android:key="backgroundImage"
             android:title="@string/background_image" />
 
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="backgroundImageBlurring"
+            android:title="@string/background_image_blurring" />
+
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_200"
             android:key="colorBottomBackground"
@@ -85,6 +98,13 @@
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="defaultCover"
+            android:title="@string/default_cover"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
@@ -133,12 +153,23 @@
             android:key="backgroundImageNight"
             android:title="@string/background_image" />
 
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="backgroundImageNightBlurring"
+            android:title="@string/background_image_blurring" />
+
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_800"
             android:key="colorBottomBackgroundNight"
             android:summary="@string/night_navbar_color"
             android:title="@string/navbar_color"
             app:cpv_dialogType="preset"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="defaultCoverDark"
+            android:title="@string/default_cover"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference

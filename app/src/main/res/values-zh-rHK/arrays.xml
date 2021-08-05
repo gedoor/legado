@@ -7,8 +7,8 @@
     </string-array>
 
     <string-array name="group_style">
-        <item>标签</item>
-        <item>文件夹</item>
+        <item>標籤</item>
+        <item>文件夾</item>
     </string-array>
 
     <string-array name="theme_mode">

@@ -255,6 +255,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_replace_rule_on_line) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                textInputLayout.hint = "url"
                 editView.setFilterValues(cacheUrls)
                 editView.delCallBack = {
                     cacheUrls.remove(it)

@@ -29,9 +29,9 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getSize
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.windowSize
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -61,7 +61,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().getSize()
+        val dm = requireActivity().windowSize
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 
@@ -125,7 +125,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun addGroup() {
         alert(title = getString(R.string.add_group)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
+                textInputLayout.setHint(R.string.group_name)
             }
             customView { alertBinding.root }
             yesButton {
@@ -143,7 +143,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun editGroup(bookGroup: BookGroup) {
         alert(title = getString(R.string.group_edit)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
+                textInputLayout.setHint(R.string.group_name)
                 editView.setText(bookGroup.groupName)
             }
             customView { alertBinding.root }

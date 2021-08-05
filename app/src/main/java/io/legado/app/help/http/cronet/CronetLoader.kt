@@ -142,9 +142,9 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     @Suppress("SameParameterValue")
     private fun getUrlMd5(url: String): String? {
         //这样在下载成功后，遇到无网条件下，只要版本未发生变化也能获取md5
-        if (md5 != null && md5!!.length == 32&& version==ImplVersion.getCronetVersion()) {
-            appCtx.putPrefString("soMd5",md5)
-            appCtx.putPrefString("soVersion",ImplVersion.getCronetVersion())
+        if (md5 != null && md5!!.length == 32 && version == ImplVersion.getCronetVersion()) {
+            appCtx.putPrefString("soMd5", md5)
+            appCtx.putPrefString("soVersion", ImplVersion.getCronetVersion())
             return md5
         }
         val inputStream: InputStream
@@ -159,11 +159,11 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
                 outputStream.write(buffer, 0, read)
                 outputStream.flush()
             }
-            val tmd5=outputStream.toString()
+            val tmd5 = outputStream.toString()
             //成功获取到md5后保存md5和版本
-            if(tmd5.length==32){
-                appCtx.putPrefString("soMd5",tmd5)
-                appCtx.putPrefString("soVersion",ImplVersion.getCronetVersion())
+            if (tmd5.length == 32) {
+                appCtx.putPrefString("soMd5", tmd5)
+                appCtx.putPrefString("soVersion", ImplVersion.getCronetVersion())
             }
 
             return tmd5

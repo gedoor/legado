@@ -73,7 +73,7 @@ class AutoReadDialog : BaseDialogFragment() {
     }
 
     private fun initData() {
-        val speed = if (ReadBookConfig.autoReadSpeed < 10) 10 else ReadBookConfig.autoReadSpeed
+        val speed = if (ReadBookConfig.autoReadSpeed < 2) 2 else ReadBookConfig.autoReadSpeed
         binding.tvReadSpeed.text = String.format("%ds", speed)
         binding.seekAutoRead.progress = speed
     }
@@ -81,13 +81,13 @@ class AutoReadDialog : BaseDialogFragment() {
     private fun initOnChange() {
         binding.seekAutoRead.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val speed = if (progress < 10) 10 else progress
+                val speed = if (progress < 2) 2 else progress
                 binding.tvReadSpeed.text = String.format("%ds", speed)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 ReadBookConfig.autoReadSpeed =
-                    if (binding.seekAutoRead.progress < 10) 10 else binding.seekAutoRead.progress
+                    if (binding.seekAutoRead.progress < 2) 2 else binding.seekAutoRead.progress
                 upTtsSpeechRate()
             }
         })

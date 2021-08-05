@@ -20,6 +20,6 @@
         android:layout_height="wrap_content"
         android:padding="6dp"
         android:gravity="center"
-        android:text="执行中......"
+        android:text="@string/loading"
         android:textColor="@color/primaryText" />
 </LinearLayout>

@@ -135,7 +135,7 @@ object ReadBookConfig {
 
     //配置写入读取
     var readBodyToLh = appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
-    var autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
+    var autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 10)
         set(value) {
             field = value
             appCtx.putPrefInt(PreferKey.autoReadSpeed, value)

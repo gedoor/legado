@@ -23,7 +23,8 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none" />
+            android:scrollbars="none"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <io.legado.app.ui.widget.anima.RotateLoading
             android:id="@+id/rotate_loading"
@@ -60,6 +61,10 @@
             android:padding="12dp"
             android:visibility="gone"
             tools:ignore="RtlHardcoded" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
 
         <LinearLayout
             android:layout_width="wrap_content"

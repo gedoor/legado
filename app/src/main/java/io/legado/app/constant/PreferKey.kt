@@ -66,6 +66,7 @@ object PreferKey {
     const val transparentStatusBar = "transparentStatusBar"
     const val immNavigationBar = "immNavigationBar"
     const val defaultCover = "defaultCover"
+    const val defaultCoverDark = "defaultCoverDark"
     const val replaceEnableDefault = "replaceEnableDefault"
     const val showBrightnessView = "showBrightnessView"
     const val autoClearExpired = "autoClearExpired"
@@ -90,11 +91,13 @@ object PreferKey {
     const val cBackground = "colorBackground"
     const val cBBackground = "colorBottomBackground"
     const val bgImage = "backgroundImage"
+    const val bgImageBlurring = "backgroundImageBlurring"
 
     const val cNPrimary = "colorPrimaryNight"
     const val cNAccent = "colorAccentNight"
     const val cNBackground = "colorBackgroundNight"
     const val cNBBackground = "colorBottomBackgroundNight"
     const val bgImageN = "backgroundImageNight"
+    const val bgImageNBlurring = "backgroundImageNightBlurring"
 
 }
