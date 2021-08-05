@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -20,6 +21,7 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.msg
+import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -207,6 +209,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     upChangeDurChapterIndex(newBook, oldTocSize, it)
                 }
             }
+            postEvent(EventBus.SOURCE_CHANGED, newBook.bookUrl)
         }
     }
 
