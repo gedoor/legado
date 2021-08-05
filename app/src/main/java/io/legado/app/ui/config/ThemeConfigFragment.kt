@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.SeekBar
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import io.legado.app.R
@@ -17,6 +18,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.DialogImageBlurringBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ThemeConfig
@@ -28,6 +30,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import java.io.File
 
@@ -134,7 +137,10 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             PreferKey.cNBBackground -> {
                 upTheme(true)
             }
-            PreferKey.defaultCover, PreferKey.defaultCoverDark -> {
+            PreferKey.bgImage,
+            PreferKey.bgImageN,
+            PreferKey.defaultCover,
+            PreferKey.defaultCoverDark -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
         }
@@ -183,8 +189,12 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     }
                 }
             }
-            PreferKey.bgImageBlurring -> ImageBlurringDialogFragment(PreferKey.bgImageBlurring) { upTheme(false) }.show(parentFragmentManager)
-            PreferKey.bgImageNBlurring -> ImageBlurringDialogFragment(PreferKey.bgImageNBlurring) { upTheme(true) }.show(parentFragmentManager)
+            PreferKey.bgImageBlurring -> alertImageBlurring(PreferKey.bgImageBlurring) {
+                upTheme(false)
+            }
+            PreferKey.bgImageNBlurring -> alertImageBlurring(PreferKey.bgImageNBlurring) {
+                upTheme(true)
+            }
             PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
                 selectImage.launch(requestCodeCover)
             } else {
@@ -235,6 +245,34 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         }.show()
     }
 
+    private fun alertImageBlurring(preferKey: String, success: () -> Unit) {
+        alert(R.string.background_image_blurring) {
+            val alertBinding = DialogImageBlurringBinding.inflate(layoutInflater).apply {
+                getPrefInt(preferKey, 0).let {
+                    seekBar.progress = it
+                    textViewValue.text = it.toString()
+                }
+                seekBar.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+                    override fun onProgressChanged(
+                        seekBar: SeekBar,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        textViewValue.text = progress.toString()
+                    }
+                })
+            }
+            customView { alertBinding.root }
+            okButton {
+                alertBinding.seekBar.progress.let {
+                    putPrefInt(preferKey, it)
+                    success.invoke()
+                }
+            }
+            noButton()
+        }.show()
+    }
+
     private fun upTheme(isNightTheme: Boolean) {
         if (AppConfig.isNightTheme == isNightTheme) {
             listView.post {
@@ -276,7 +314,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }.getOrNull()?.let { byteArray ->
                     file.writeBytes(byteArray)
                     putPrefString(preferenceKey, file.absolutePath)
-                    upPreferenceSummary(preferenceKey, file.absolutePath)
                     success()
                 } ?: toastOnUi("获取文件出错")
             }
@@ -295,7 +332,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                             file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
                             file.writeBytes(imgFile.readBytes())
                             putPrefString(preferenceKey, file.absolutePath)
-                            upPreferenceSummary(preferenceKey, file.absolutePath)
                             success()
                         }
                     }
