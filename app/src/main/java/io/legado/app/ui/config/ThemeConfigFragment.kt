@@ -164,37 +164,9 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     recreateActivities()
                 }
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
-            "saveDayTheme", "saveNightTheme" -> saveThemeAlert(key)
-            PreferKey.bgImage -> if (getPrefString(PreferKey.bgImage).isNullOrEmpty()) {
-                selectImage.launch(requestCodeBgLight)
-            } else {
-                selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
-                    if (i == 0) {
-                        removePref(PreferKey.bgImage)
-                        upTheme(false)
-                    } else {
-                        selectImage.launch(requestCodeBgLight)
-                    }
-                }
-            }
-            PreferKey.bgImageN -> if (getPrefString(PreferKey.bgImageN).isNullOrEmpty()) {
-                selectImage.launch(requestCodeBgDark)
-            } else {
-                selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
-                    if (i == 0) {
-                        removePref(PreferKey.bgImageN)
-                        upTheme(true)
-                    } else {
-                        selectImage.launch(requestCodeBgDark)
-                    }
-                }
-            }
-            PreferKey.bgImageBlurring -> alertImageBlurring(PreferKey.bgImageBlurring) {
-                upTheme(false)
-            }
-            PreferKey.bgImageNBlurring -> alertImageBlurring(PreferKey.bgImageNBlurring) {
-                upTheme(true)
-            }
+            "saveDayTheme", "saveNightTheme" -> alertSaveTheme(key)
+            PreferKey.bgImage -> selectBgAction(false)
+            PreferKey.bgImageN -> selectBgAction(true)
             PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
                 selectImage.launch(requestCodeCover)
             } else {
@@ -223,7 +195,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     }
 
     @SuppressLint("InflateParams")
-    private fun saveThemeAlert(key: String) {
+    private fun alertSaveTheme(key: String) {
         alert(R.string.theme_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 textInputLayout.hint = "name"
@@ -243,6 +215,36 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             }
             noButton()
         }.show()
+    }
+
+    private fun selectBgAction(isNight: Boolean) {
+        val bgKey = if (isNight) PreferKey.bgImageN else PreferKey.bgImage
+        val blurringKey = if (isNight) PreferKey.bgImageNBlurring else PreferKey.bgImageBlurring
+        val actions = arrayListOf(
+            getString(R.string.background_image_blurring),
+            getString(R.string.select_image)
+        )
+        if (!getPrefString(bgKey).isNullOrEmpty()) {
+            actions.add(getString(R.string.delete))
+        }
+        selector(items = actions) { _, i ->
+            when (i) {
+                0 -> alertImageBlurring(blurringKey) {
+                    upTheme(isNight)
+                }
+                1 -> {
+                    if (isNight) {
+                        selectImage.launch(requestCodeBgDark)
+                    } else {
+                        selectImage.launch(requestCodeBgLight)
+                    }
+                }
+                2 -> {
+                    removePref(bgKey)
+                    upTheme(isNight)
+                }
+            }
+        }
     }
 
     private fun alertImageBlurring(preferKey: String, success: () -> Unit) {
