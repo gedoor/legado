@@ -150,6 +150,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
+        binding.readView.upStyle()
         upSystemUiVisibility()
     }
 

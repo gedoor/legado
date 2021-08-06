@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -262,10 +263,11 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     override fun observeLiveBus() {
         observeEvent<String>(EventBus.SOURCE_CHANGED) {
-            val payload = Bundle().apply {
-                putString("upCurSource", bookUrl)
-            }
-            adapter.notifyItemRangeChanged(0, adapter.itemCount, payload)
+            adapter.notifyItemRangeChanged(
+                0,
+                adapter.itemCount,
+                bundleOf(Pair("upCurSource", bookUrl))
+            )
         }
     }
 
