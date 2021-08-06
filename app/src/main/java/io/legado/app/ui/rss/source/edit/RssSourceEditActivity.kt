@@ -256,7 +256,7 @@ class RssSourceEditActivity :
         val rect = Rect()
         // 获取当前页面窗口的显示范围
         window.decorView.getWindowVisibleDisplayFrame(rect)
-        val screenHeight = this@RssSourceEditActivity.getSize().heightPixels
+        val screenHeight = this@RssSourceEditActivity.windowSize.heightPixels
         val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
         val preShowing = mIsSoftKeyBoardShowing
         if (abs(keyboardHeight) > screenHeight / 5) {

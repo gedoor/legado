@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -53,7 +55,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().getSize()
+        val dm = requireActivity().windowSize
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 
@@ -218,12 +220,12 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     override fun deleteSource(searchBook: SearchBook) {
+        viewModel.del(searchBook)
         if (bookUrl == searchBook.bookUrl) {
             viewModel.firstSourceOrNull(searchBook)?.let {
                 changeSource(it)
             }
         }
-        viewModel.del(searchBook)
     }
 
     private fun changeSource(searchBook: SearchBook) {
@@ -256,6 +258,16 @@ class ChangeSourceDialog : BaseDialogFragment(),
         menu.setGroupCheckable(R.id.source_group, true, true)
         if (!hasSelectedGroup) {
             allItem.isChecked = true
+        }
+    }
+
+    override fun observeLiveBus() {
+        observeEvent<String>(EventBus.SOURCE_CHANGED) {
+            adapter.notifyItemRangeChanged(
+                0,
+                adapter.itemCount,
+                bundleOf(Pair("upCurSource", bookUrl))
+            )
         }
     }
 

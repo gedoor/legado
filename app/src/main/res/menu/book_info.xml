@@ -25,6 +25,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_top"
+        android:title="@string/to_top"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_copy_book_url"
         android:title="@string/copy_book_url"
         app:showAsAction="never" />

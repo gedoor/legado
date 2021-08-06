@@ -2,6 +2,7 @@ package io.legado.app.base
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
@@ -11,7 +12,6 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
@@ -99,13 +99,6 @@ abstract class BaseActivity<VB : ViewBinding>(
         observeLiveBus()
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            App.navigationBarHeight = navigationBarHeight
-        }
-    }
-
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
         findViewById<TitleBar>(R.id.title_bar)
@@ -174,8 +167,8 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
         if (imageBg) {
             try {
-                ThemeConfig.getBgImage(this)?.let {
-                    window.decorView.background = it
+                ThemeConfig.getBgImage(this, windowSize)?.let {
+                    window.decorView.background = BitmapDrawable(resources, it)
                 }
             } catch (e: OutOfMemoryError) {
                 toastOnUi(e.localizedMessage)

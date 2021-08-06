@@ -62,6 +62,11 @@ class ChangeSourceAdapter(
                     when (it) {
                         "name" -> tvOrigin.text = item.originName
                         "latest" -> tvLast.text = item.getDisplayLastChapterTitle()
+                        "upCurSource" -> if (callBack.bookUrl == item.bookUrl) {
+                            ivChecked.visible()
+                        } else {
+                            ivChecked.invisible()
+                        }
                     }
                 }
             }

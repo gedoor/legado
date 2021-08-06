@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.SeekBar
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import io.legado.app.R
@@ -17,6 +18,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.DialogImageBlurringBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ThemeConfig
@@ -28,6 +30,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import java.io.File
 
@@ -134,7 +137,10 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             PreferKey.cNBBackground -> {
                 upTheme(true)
             }
-            PreferKey.defaultCover, PreferKey.defaultCoverDark -> {
+            PreferKey.bgImage,
+            PreferKey.bgImageN,
+            PreferKey.defaultCover,
+            PreferKey.defaultCoverDark -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
         }
@@ -158,31 +164,9 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     recreateActivities()
                 }
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
-            "saveDayTheme", "saveNightTheme" -> saveThemeAlert(key)
-            PreferKey.bgImage -> if (getPrefString(PreferKey.bgImage).isNullOrEmpty()) {
-                selectImage.launch(requestCodeBgLight)
-            } else {
-                selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
-                    if (i == 0) {
-                        removePref(PreferKey.bgImage)
-                        upTheme(false)
-                    } else {
-                        selectImage.launch(requestCodeBgLight)
-                    }
-                }
-            }
-            PreferKey.bgImageN -> if (getPrefString(PreferKey.bgImageN).isNullOrEmpty()) {
-                selectImage.launch(requestCodeBgDark)
-            } else {
-                selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
-                    if (i == 0) {
-                        removePref(PreferKey.bgImageN)
-                        upTheme(true)
-                    } else {
-                        selectImage.launch(requestCodeBgDark)
-                    }
-                }
-            }
+            "saveDayTheme", "saveNightTheme" -> alertSaveTheme(key)
+            PreferKey.bgImage -> selectBgAction(false)
+            PreferKey.bgImageN -> selectBgAction(true)
             PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
                 selectImage.launch(requestCodeCover)
             } else {
@@ -211,9 +195,11 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     }
 
     @SuppressLint("InflateParams")
-    private fun saveThemeAlert(key: String) {
+    private fun alertSaveTheme(key: String) {
         alert(R.string.theme_name) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                textInputLayout.hint = "name"
+            }
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let { themeName ->
@@ -225,6 +211,64 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                             ThemeConfig.saveNightTheme(requireContext(), themeName)
                         }
                     }
+                }
+            }
+            noButton()
+        }.show()
+    }
+
+    private fun selectBgAction(isNight: Boolean) {
+        val bgKey = if (isNight) PreferKey.bgImageN else PreferKey.bgImage
+        val blurringKey = if (isNight) PreferKey.bgImageNBlurring else PreferKey.bgImageBlurring
+        val actions = arrayListOf(
+            getString(R.string.background_image_blurring),
+            getString(R.string.select_image)
+        )
+        if (!getPrefString(bgKey).isNullOrEmpty()) {
+            actions.add(getString(R.string.delete))
+        }
+        selector(items = actions) { _, i ->
+            when (i) {
+                0 -> alertImageBlurring(blurringKey) {
+                    upTheme(isNight)
+                }
+                1 -> {
+                    if (isNight) {
+                        selectImage.launch(requestCodeBgDark)
+                    } else {
+                        selectImage.launch(requestCodeBgLight)
+                    }
+                }
+                2 -> {
+                    removePref(bgKey)
+                    upTheme(isNight)
+                }
+            }
+        }
+    }
+
+    private fun alertImageBlurring(preferKey: String, success: () -> Unit) {
+        alert(R.string.background_image_blurring) {
+            val alertBinding = DialogImageBlurringBinding.inflate(layoutInflater).apply {
+                getPrefInt(preferKey, 0).let {
+                    seekBar.progress = it
+                    textViewValue.text = it.toString()
+                }
+                seekBar.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+                    override fun onProgressChanged(
+                        seekBar: SeekBar,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        textViewValue.text = progress.toString()
+                    }
+                })
+            }
+            customView { alertBinding.root }
+            okButton {
+                alertBinding.seekBar.progress.let {
+                    putPrefInt(preferKey, it)
+                    success.invoke()
                 }
             }
             noButton()
@@ -272,7 +316,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }.getOrNull()?.let { byteArray ->
                     file.writeBytes(byteArray)
                     putPrefString(preferenceKey, file.absolutePath)
-                    upPreferenceSummary(preferenceKey, file.absolutePath)
                     success()
                 } ?: toastOnUi("获取文件出错")
             }
@@ -291,7 +334,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                             file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
                             file.writeBytes(imgFile.readBytes())
                             putPrefString(preferenceKey, file.absolutePath)
-                            upPreferenceSummary(preferenceKey, file.absolutePath)
                             success()
                         }
                     }

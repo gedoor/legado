@@ -176,6 +176,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                         appDb.bookSourceDao.allGroup.forEach { group ->
                             groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                         }
+                        textInputLayout.setHint(R.string.group_name)
                         editView.setFilterValues(groups.toList())
                         editView.dropDownHeight = 180.dp
                     }

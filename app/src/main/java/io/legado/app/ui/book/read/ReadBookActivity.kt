@@ -150,6 +150,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
+        binding.readView.upStyle()
         upSystemUiVisibility()
     }
 
@@ -686,6 +687,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
             binding.readView.upContent(1)
             autoPagePlus()
             binding.readMenu.setAutoPage(true)
+            screenTimeOut = -1L
+            screenOffTimerStart()
         }
     }
 
@@ -694,14 +697,15 @@ class ReadBookActivity : ReadBookBaseActivity(),
         mHandler.removeCallbacks(autoPageRunnable)
         binding.readView.upContent()
         binding.readMenu.setAutoPage(false)
+        upScreenTimeOut()
     }
 
     private fun autoPagePlus() {
         var delayMillis = ReadBookConfig.autoReadSpeed * 1000L / binding.readView.height
         var scrollOffset = 1
         if (delayMillis < 20) {
-            var delayInt=delayMillis.toInt()
-            if(delayInt==0)delayInt =1
+            var delayInt = delayMillis.toInt()
+            if (delayInt == 0) delayInt = 1
             scrollOffset = 20 / delayInt
             delayMillis = 20
         }
@@ -970,9 +974,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     private fun upScreenTimeOut() {
-        getPrefString(PreferKey.keepLight)?.let {
-            screenTimeOut = it.toLong() * 1000
-        }
+        val keepLightPrefer = getPrefString(PreferKey.keepLight)?.toInt() ?: 0
+        screenTimeOut = keepLightPrefer * 1000L
         screenOffTimerStart()
     }
 
