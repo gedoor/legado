@@ -198,8 +198,12 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
                 if (viewModel.groupName.isNullOrBlank()) {
                     item.title = getString(R.string.diy_source_group)
                 } else {
-                    item.title =
-                        getString(R.string.diy_edit_source_group_title, viewModel.groupName)
+                    val group = getString(R.string.diy_edit_source_group_title, viewModel.groupName)
+                    if (viewModel.isAddGroup) {
+                        item.title = "+$group"
+                    } else {
+                        item.title = group
+                    }
                 }
             }
             noButton()
