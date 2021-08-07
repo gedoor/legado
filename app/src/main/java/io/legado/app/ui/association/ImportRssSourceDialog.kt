@@ -20,7 +20,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
-import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.DialogCustomGroupBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.AppConfig
@@ -80,6 +80,7 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
         return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.import_rss_source)
@@ -165,35 +166,45 @@ class ImportRssSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListe
     @SuppressLint("InflateParams")
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_new_group -> {
-                alert(R.string.diy_edit_source_group) {
-                    val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                        val groups = linkedSetOf<String>()
-                        appDb.rssSourceDao.allGroup.forEach { group ->
-                            groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-                        }
-                        textInputLayout.setHint(R.string.group_name)
-                        editView.setFilterValues(groups.toList())
-                        editView.dropDownHeight = 180.dp
-                    }
-                    customView {
-                        alertBinding.root
-                    }
-                    okButton {
-                        alertBinding.editView.text?.toString()?.let { group ->
-                            viewModel.groupName = group
-                            item.title = getString(R.string.diy_edit_source_group_title, group)
-                        }
-                    }
-                    noButton()
-                }.show()
-            }
+            R.id.menu_new_group -> alertCustomGroup(item)
             R.id.menu_Keep_original_name -> {
                 item.isChecked = !item.isChecked
                 putPrefBoolean(PreferKey.importKeepName, item.isChecked)
             }
         }
         return false
+    }
+
+    private fun alertCustomGroup(item: MenuItem) {
+        alert(R.string.diy_edit_source_group) {
+            val alertBinding = DialogCustomGroupBinding.inflate(layoutInflater).apply {
+                val groups = linkedSetOf<String>()
+                appDb.rssSourceDao.allGroup.forEach { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                }
+                textInputLayout.setHint(R.string.group_name)
+                editView.setFilterValues(groups.toList())
+                editView.dropDownHeight = 180.dp
+            }
+            customView {
+                alertBinding.root
+            }
+            okButton {
+                viewModel.isAddGroup = alertBinding.swAddGroup.isChecked
+                viewModel.groupName = alertBinding.editView.text?.toString()
+                if (viewModel.groupName.isNullOrBlank()) {
+                    item.title = getString(R.string.diy_source_group)
+                } else {
+                    val group = getString(R.string.diy_edit_source_group_title, viewModel.groupName)
+                    if (viewModel.isAddGroup) {
+                        item.title = "+$group"
+                    } else {
+                        item.title = group
+                    }
+                }
+            }
+            noButton()
+        }.show()
     }
 
     inner class SourcesAdapter(context: Context) :

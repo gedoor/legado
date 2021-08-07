@@ -72,6 +72,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                                 groups.addAll(it)
                             }
                             groups.add(group)
+                            source.bookSourceGroup = groups.joinToString(",")
                         } else {
                             source.bookSourceGroup = group
                         }
