@@ -851,5 +851,6 @@
     <string name="unknown_error">未知错误</string>
     <string name="autobackup_fail">自动备份失败</string>
     <string name="end">结束</string>
+    <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
 
 </resources>
