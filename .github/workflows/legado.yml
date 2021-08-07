@@ -32,7 +32,6 @@ jobs:
           key: ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-
-
       - name: Clear 18PlusList.txt
         run: |
           echo "清空18PlusList.txt"
@@ -45,14 +44,13 @@ jobs:
           sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
-      - name: Apk Live Together
+      - name: Unify Version Name
         run: |
-          echo "设置apk共存"
-          sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
-          sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
           echo "统一版本号"
-          version=$(date -d "8 hour" -u +3.%y.%m%d%H%M)
-          sed "/def version/c def version = \"$version\"" $GITHUB_WORKSPACE/app/build.gradle  -i
+          VERSION=$(date -d "8 hour" -u +3.%y.%m%d%H)
+          VERSIONL=$(date -d "8 hour" -u +3.%y.%m%d%H%M)
+          echo "VERSION=$VERSIONL" >> $GITHUB_ENV
+          sed "/def version/c def version = \"$VERSION\"" $GITHUB_WORKSPACE/app/build.gradle  -i
       - name: Build With Gradle
         run: |
           echo "开始进行release构建"
@@ -60,10 +58,29 @@ jobs:
           ./gradlew assembleAppRelease --build-cache --parallel
           echo "开始进行cronet构建"
           ./gradlew assembleCronetRelease --build-cache --parallel
-      - name: Organize the files
-        run: |
+          echo "修改文件名"
           mkdir -p ${{ github.workspace }}/apk/
-          cp -rf ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk ${{ github.workspace }}/apk/
+          for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
+            mv "$file" ${{ github.workspace }}/apk/`echo "$file"|sed 's/.*\/\(.*\)\(\.apk\)$/\1_原包名\2/'`
+          done
+      - name: Apk Live Together
+        run: |
+          echo "设置apk共存"
+          sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
+          sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
+          echo "统一版本号"
+          sed "/def version/c def version = \"${{ env.VERSION }}\"" $GITHUB_WORKSPACE/app/build.gradle  -i
+      - name: Build With Gradle
+        run: |
+          echo "开始进行release构建"
+          chmod +x gradlew
+          ./gradlew assembleAppRelease --build-cache --parallel
+          echo "开始进行cronet构建"
+          ./gradlew assembleCronetRelease --build-cache --parallel
+          echo "修改文件名"
+          for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
+            mv "$file" ${{ github.workspace }}/apk/`echo "$file"|sed 's/.*\/\(.*\)\(\.apk\)$/\1_共存\2/'`
+          done
       - name: Upload App To Artifact
         if: ${{ env.UPLOAD_ARTIFACT != 'false' }}
         uses: actions/upload-artifact@v2
