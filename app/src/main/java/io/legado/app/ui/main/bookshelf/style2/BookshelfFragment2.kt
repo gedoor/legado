@@ -120,7 +120,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.collect { list ->
-                binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 books = when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime
@@ -136,6 +135,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                     }
                 }
                 booksAdapter.notifyDataSetChanged()
+                binding.tvEmptyMsg.isGone = getItemCount() > 0
             }
         }
     }
