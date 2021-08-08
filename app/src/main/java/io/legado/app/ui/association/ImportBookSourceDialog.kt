@@ -107,7 +107,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         }
         binding.tvFooterLeft.visible()
         binding.tvFooterLeft.setOnClickListener {
-            val selectAll = viewModel.isSelectAll()
+            val selectAll = viewModel.isSelectAll
             viewModel.selectStatus.forEachIndexed { index, b ->
                 if (b != !selectAll) {
                     viewModel.selectStatus[index] = !selectAll
@@ -144,16 +144,16 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
     }
 
     private fun upSelectText() {
-        if (viewModel.isSelectAll()) {
+        if (viewModel.isSelectAll) {
             binding.tvFooterLeft.text = getString(
                 R.string.select_cancel_count,
-                viewModel.selectCount(),
+                viewModel.selectCount,
                 viewModel.allSources.size
             )
         } else {
             binding.tvFooterLeft.text = getString(
                 R.string.select_all_count,
-                viewModel.selectCount(),
+                viewModel.selectCount,
                 viewModel.allSources.size
             )
         }

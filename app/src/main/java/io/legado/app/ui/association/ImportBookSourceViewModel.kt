@@ -31,24 +31,26 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     val checkSources = arrayListOf<BookSource?>()
     val selectStatus = arrayListOf<Boolean>()
 
-    fun isSelectAll(): Boolean {
-        selectStatus.forEach {
-            if (!it) {
-                return false
+    val isSelectAll: Boolean
+        get() {
+            selectStatus.forEach {
+                if (!it) {
+                    return false
+                }
             }
+            return true
         }
-        return true
-    }
 
-    fun selectCount(): Int {
-        var count = 0
-        selectStatus.forEach {
-            if (it) {
-                count++
+    val selectCount: Int
+        get() {
+            var count = 0
+            selectStatus.forEach {
+                if (it) {
+                    count++
+                }
             }
+            return count
         }
-        return count
-    }
 
     fun importSelect(finally: () -> Unit) {
         execute {
