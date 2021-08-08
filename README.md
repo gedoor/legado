@@ -31,24 +31,21 @@
 * path类型解释: 书源,订阅源,替换规则,本地txt小说目录规则,在线朗读引擎,主题,阅读排版
 
 ## 感谢
-```
-org.jsoup:jsoup
-cn.wanghaomiao:JsoupXpath
-com.jayway.jsonpath:json-path
-com.github.gedoor:rhino-android
-com.squareup.okhttp3:okhttp
-com.ljx.rxhttp:rxhttp
-com.github.bumptech.glide:glide
-org.nanohttpd:nanohttpd
-org.nanohttpd:nanohttpd-websocket
-cn.bingoogolapple:bga-qrcode-zxing
-com.jaredrummler:colorpicker
-org.apache.commons:commons-text
-io.noties.markwon:core
-io.noties.markwon:image-glide
-com.hankcs:hanlp
-com.positiondev.epublib:epublib-core
-```
+> org.jsoup:jsoup
+> cn.wanghaomiao:JsoupXpath
+> com.jayway.jsonpath:json-path
+> com.github.gedoor:rhino-android
+> com.squareup.okhttp3:okhttp
+> com.github.bumptech.glide:glide
+> org.nanohttpd:nanohttpd
+> org.nanohttpd:nanohttpd-websocket
+> cn.bingoogolapple:bga-qrcode-zxing
+> com.jaredrummler:colorpicker
+> org.apache.commons:commons-text
+> io.noties.markwon:core
+> io.noties.markwon:image-glide
+> com.hankcs:hanlp
+> com.positiondev.epublib:epublib-core
 
 ## 免责声明
 https://gedoor.github.io/MyBookshelf/disclaimer.html
