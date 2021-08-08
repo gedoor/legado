@@ -18,7 +18,11 @@
 * [web端](https://github.com/celetor/web-yuedu3)
 
 ## 下载
-<a href="https://play.google.com/store/apps/details?id=io.legado.play.release"><img width="200px" alt="Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/></a> or <a href="https://www.coolapk.com/apk/io.legado.app.release"><img width="100px" height="100px" alt="CoolApk" src="https://github.com/Celeter/build/raw/master/.github/scripts/coolapk.png"/></a> or [Releases](https://github.com/gedoor/legado/releases/latest)
+* [google play](https://play.google.com/store/apps/details?id=io.legado.play.release)
+* [酷安](https://www.coolapk.com/apk/io.legado.app.release)
+* [release](https://github.com/gedoor/legado/releases/latest)
+* [网盘](https://kunfei.lanzoui.com/b0f7pt4ja)
+* [测试版](https://kunfei.lanzoui.com/b0f810h4b)
 
 ## 阅读API
 * 阅读3.0 提供了2种方式的API：`Web方式`和`Content Provider方式`。您可以在[这里](api.md)根据需要自行调用。 
@@ -27,24 +31,21 @@
 * path类型解释: 书源,订阅源,替换规则,本地txt小说目录规则,在线朗读引擎,主题,阅读排版
 
 ## 感谢
-```
-org.jsoup:jsoup
-cn.wanghaomiao:JsoupXpath
-com.jayway.jsonpath:json-path
-com.github.gedoor:rhino-android
-com.squareup.okhttp3:okhttp
-com.ljx.rxhttp:rxhttp
-com.github.bumptech.glide:glide
-org.nanohttpd:nanohttpd
-org.nanohttpd:nanohttpd-websocket
-cn.bingoogolapple:bga-qrcode-zxing
-com.jaredrummler:colorpicker
-org.apache.commons:commons-text
-io.noties.markwon:core
-io.noties.markwon:image-glide
-com.hankcs:hanlp
-com.positiondev.epublib:epublib-core
-```
+> * org.jsoup:jsoup
+> * cn.wanghaomiao:JsoupXpath
+> * com.jayway.jsonpath:json-path
+> * com.github.gedoor:rhino-android
+> * com.squareup.okhttp3:okhttp
+> * com.github.bumptech.glide:glide
+> * org.nanohttpd:nanohttpd
+> * org.nanohttpd:nanohttpd-websocket
+> * cn.bingoogolapple:bga-qrcode-zxing
+> * com.jaredrummler:colorpicker
+> * org.apache.commons:commons-text
+> * io.noties.markwon:core
+> * io.noties.markwon:image-glide
+> * com.hankcs:hanlp
+> * com.positiondev.epublib:epublib-core
 
 ## 免责声明
 https://gedoor.github.io/MyBookshelf/disclaimer.html
