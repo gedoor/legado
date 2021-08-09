@@ -22,7 +22,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.audio.AudioPlayActivity
-import io.legado.app.ui.book.group.GroupEdit
+import io.legado.app.ui.book.group.GroupEditDialog
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
@@ -190,7 +190,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 putExtra("name", item.name)
                 putExtra("author", item.author)
             }
-            is BookGroup -> GroupEdit.show(requireContext(), layoutInflater, item)
+            is BookGroup -> GroupEditDialog.start(childFragmentManager, item)
         }
     }
 

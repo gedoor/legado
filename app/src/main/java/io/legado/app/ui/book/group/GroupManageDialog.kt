@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.group
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,17 +17,14 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemBookGroupManageBinding
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import io.legado.app.utils.windowSize
@@ -94,27 +90,9 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> addGroup()
+            R.id.menu_add -> GroupEditDialog.start(childFragmentManager)
         }
         return true
-    }
-
-    @SuppressLint("InflateParams")
-    private fun addGroup() {
-        alert(title = getString(R.string.add_group)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.setHint(R.string.group_name)
-            }
-            customView { alertBinding.root }
-            yesButton {
-                alertBinding.editView.text?.toString()?.let {
-                    if (it.isNotBlank()) {
-                        viewModel.addGroup(it)
-                    }
-                }
-            }
-            noButton()
-        }.show().requestInputMethod()
     }
 
     private inner class GroupAdapter(context: Context) :
@@ -144,7 +122,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             binding.run {
                 tvEdit.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { bookGroup ->
-                        GroupEdit.show(context, layoutInflater, bookGroup)
+                        GroupEditDialog.start(childFragmentManager, bookGroup)
                     }
                 }
                 swShow.setOnCheckedChangeListener { buttonView, isChecked ->

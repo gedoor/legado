@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_menu">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_menu"
+        android:elevation="5dp"
+        android:theme="?attr/actionBarStyle"
+        app:displayHomeAsUp="false"
+        app:fitStatusBar="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:title="@string/group_edit"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <io.legado.app.ui.widget.image.CoverImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="90dp"
+        android:layout_height="126dp"
+        android:layout_margin="6dp"
+        android:contentDescription="@string/img_cover"
+        android:scaleType="centerCrop"
+        android:src="@drawable/image_cover_default"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
+
+
+    <io.legado.app.ui.widget.text.TextInputLayout
+        android:id="@+id/til_group_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:hint="@string/group_name"
+        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar"
+        app:layout_constraintBottom_toTopOf="@+id/btn_ok">
+
+        <io.legado.app.ui.widget.text.EditText
+            android:id="@+id/tie_group_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+    </io.legado.app.ui.widget.text.TextInputLayout>
+
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:id="@+id/btn_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:layout_marginLeft="12dp"
+        android:text="@string/delete"
+        app:layout_constraintBottom_toBottomOf="@id/btn_ok"
+        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
+        app:layout_constraintTop_toTopOf="@+id/btn_ok"
+        tools:ignore="RtlHardcoded" />
+
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:id="@+id/btn_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:layout_marginRight="12dp"
+        android:text="@string/ok"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_group_name"
+        tools:ignore="RtlHardcoded" />
+
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="@string/cancel"
+        app:layout_constraintBottom_toBottomOf="@id/btn_ok"
+        app:layout_constraintRight_toLeftOf="@+id/btn_ok"
+        app:layout_constraintTop_toTopOf="@+id/btn_ok" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
