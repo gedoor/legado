@@ -1,8 +1,6 @@
-name: Android CI
+name: Test Build
 
 on:
-  release:
-    types: [published]
   push:
     branches:
       - master
