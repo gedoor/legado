@@ -30,7 +30,8 @@
         android:src="@drawable/image_cover_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar"
+        tools:ignore="ImageContrastCheck" />
 
 
     <io.legado.app.ui.widget.text.TextInputLayout
