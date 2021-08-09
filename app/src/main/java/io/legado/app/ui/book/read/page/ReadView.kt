@@ -43,9 +43,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
             upContent()
         }
     var isScroll = false
-    var prevPage: PageView = PageView(context)
-    var curPage: PageView = PageView(context)
-    var nextPage: PageView = PageView(context)
+    val prevPage by lazy { PageView(context) }
+    val curPage by lazy { PageView(context) }
+    val nextPage by lazy { PageView(context) }
     val defaultAnimationSpeed = 300
     private var pressDown = false
     private var isMove = false

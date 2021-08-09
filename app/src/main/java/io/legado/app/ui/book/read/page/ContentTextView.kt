@@ -250,7 +250,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 selectStart[2] != charIndex
             ) {
                 if (selectToInt(relativePos, lineIndex, charIndex)
-                    < selectToInt(selectEnd)
+                    <= selectToInt(selectEnd)
                 ) {
                     selectStart[0] = relativePos
                     selectStart[1] = lineIndex
@@ -276,7 +276,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 || selectEnd[2] != charIndex
             ) {
                 if (selectToInt(relativePos, lineIndex, charIndex)
-                    > selectToInt(selectStart)
+                    >= selectToInt(selectStart)
                 ) {
                     selectEnd[0] = relativePos
                     selectEnd[1] = lineIndex
