@@ -32,7 +32,8 @@
                 android:src="@drawable/image_cover_default"
                 android:transitionName="img_cover"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UnusedAttribute" />
+                tools:ignore="UnusedAttribute,ImageContrastCheck"
+                tools:layout_editor_absoluteX="8dp" />
 
             <io.legado.app.ui.widget.text.BadgeView
                 android:id="@+id/bv_unread"

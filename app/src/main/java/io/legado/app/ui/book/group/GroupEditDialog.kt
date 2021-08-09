@@ -12,10 +12,8 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.DialogBookGroupEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.gone
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.legado.app.utils.windowSize
 import splitties.views.onClick
 
 class GroupEditDialog : BaseDialogFragment() {
@@ -35,6 +33,15 @@ class GroupEditDialog : BaseDialogFragment() {
     private val binding by viewBinding(DialogBookGroupEditBinding::bind)
     private val viewModel by viewModels<GroupViewModel>()
     private var bookGroup: BookGroup? = null
+    val selectImage = registerForActivityResult(ActivityResultContractUtils.SelectImage()) {
+        it?.second?.let { uri ->
+            if (uri.isContentScheme()) {
+                binding.ivCover.load(uri.toString())
+            } else {
+                binding.ivCover.load(uri.path)
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -64,6 +71,9 @@ class GroupEditDialog : BaseDialogFragment() {
             binding.btnDelete.gone()
         }
         binding.run {
+            ivCover.onClick {
+                selectImage.launch(null)
+            }
             btnCancel.onClick {
                 dismiss()
             }
