@@ -86,3 +86,22 @@ jobs:
           files: ${{ github.workspace }}/apk/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push Assets To "release" Branch
+        run: |
+          cd $GITHUB_WORKSPACE/apk || exit 1
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b release
+          git add *.apk
+          git commit -m "${{ env.RELEASE_NAME }}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git push -f -u origin release
+      - name: Purge Jsdelivr Cache
+        run: |
+          result=$(curl -s https://purge.jsdelivr.net/gh/${{ github.repository }}@release/)
+          if echo $result |grep -q 'success.*true'; then
+            echo "jsdelivr缓存更新成功"
+          else
+            echo $result
+          fi
