@@ -14,6 +14,7 @@ data class BookGroup(
     @PrimaryKey
     val groupId: Long = 0b1,
     var groupName: String,
+    var cover: String? = null,
     var order: Int = 0,
     var show: Boolean = true
 ) : Parcelable {
@@ -36,6 +37,7 @@ data class BookGroup(
         if (other is BookGroup) {
             return other.groupId == groupId
                     && other.groupName == groupName
+                    && other.cover == cover
                     && other.order == order
                     && other.show == show
         }
