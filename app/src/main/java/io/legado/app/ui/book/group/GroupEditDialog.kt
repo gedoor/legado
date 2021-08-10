@@ -33,7 +33,7 @@ class GroupEditDialog : BaseDialogFragment() {
     private val binding by viewBinding(DialogBookGroupEditBinding::bind)
     private val viewModel by viewModels<GroupViewModel>()
     private var bookGroup: BookGroup? = null
-    val selectImage = registerForActivityResult(ActivityResultContractUtils.SelectImage()) {
+    val selectImage = registerForActivityResult(SelectImageContract()) {
         it?.second?.let { uri ->
             if (uri.isContentScheme()) {
                 binding.ivCover.load(uri.toString())

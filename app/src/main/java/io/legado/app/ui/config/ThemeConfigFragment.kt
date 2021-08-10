@@ -42,7 +42,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     private val requestCodeCoverDark = 112
     private val requestCodeBgLight = 121
     private val requestCodeBgDark = 122
-    private val selectImage = registerForActivityResult(ActivityResultContractUtils.SelectImage()) {
+    private val selectImage = registerForActivityResult(SelectImageContract()) {
         val uri = it?.second ?: return@registerForActivityResult
         when (it.first) {
             requestCodeCover -> setCoverFromUri(PreferKey.defaultCover, uri)

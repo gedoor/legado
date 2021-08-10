@@ -22,7 +22,7 @@ class BookInfoEditActivity :
     VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
     ChangeCoverDialog.CallBack {
 
-    private val selectCover = registerForActivityResult(ActivityResultContractUtils.SelectImage()) {
+    private val selectCover = registerForActivityResult(SelectImageContract()) {
         it?.second?.let { uri ->
             coverChangeTo(uri)
         }
