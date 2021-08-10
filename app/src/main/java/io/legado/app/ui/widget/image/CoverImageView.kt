@@ -133,7 +133,7 @@ class CoverImageView @JvmOverloads constructor(
             }
     }
 
-    fun load(path: String?, name: String? = null, author: String? = null) {
+    fun load(path: String? = null, name: String? = null, author: String? = null) {
         this.path = path
         setText(name, author)
         if (AppConfig.useDefaultCover) {

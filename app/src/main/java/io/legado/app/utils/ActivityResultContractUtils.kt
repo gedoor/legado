@@ -14,7 +14,7 @@ object ActivityResultContractUtils {
 
         override fun createIntent(context: Context, input: Int?): Intent {
             requestCode = input
-            return Intent(Intent.ACTION_GET_CONTENT)
+            return Intent(Intent.ACTION_OPEN_DOCUMENT)
                 .addCategory(Intent.CATEGORY_OPENABLE)
                 .setType("image/*")
         }

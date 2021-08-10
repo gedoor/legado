@@ -69,6 +69,7 @@ class GroupEditDialog : BaseDialogFragment() {
         } ?: let {
             binding.toolBar.title = getString(R.string.add_group)
             binding.btnDelete.gone()
+            binding.ivCover.load()
         }
         binding.run {
             ivCover.onClick {

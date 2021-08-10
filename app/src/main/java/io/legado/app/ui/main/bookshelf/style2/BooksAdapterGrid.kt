@@ -89,6 +89,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
             val item = callBack.getItem(position)
             if (item is BookGroup) {
                 tvName.text = item.groupName
+                ivCover.load(item.cover)
             }
             root.setOnClickListener {
                 callBack.onItemClick(position)

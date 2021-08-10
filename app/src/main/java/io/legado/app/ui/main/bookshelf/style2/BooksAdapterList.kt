@@ -91,6 +91,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
             val item = callBack.getItem(position)
             if (item is BookGroup) {
                 tvName.text = item.groupName
+                ivCover.load(item.cover)
                 flHasNew.gone()
                 ivAuthor.gone()
                 ivLast.gone()
