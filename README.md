@@ -21,6 +21,7 @@
 * [google play](https://play.google.com/store/apps/details?id=io.legado.play.release)
 * [酷安](https://www.coolapk.com/apk/io.legado.app.release)
 * [release](https://github.com/gedoor/legado/releases/latest)
+* [jsdelivr](https://cdn.jsdelivr.net/gh/gedoor/legado@release/)
 * [网盘](https://kunfei.lanzoui.com/b0f7pt4ja)
 * [测试版](https://kunfei.lanzoui.com/b0f810h4b)
 
