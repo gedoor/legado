@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
@@ -23,12 +22,11 @@ class BookInfoEditActivity :
     VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
     ChangeCoverDialog.CallBack {
 
-    private val selectCoverResult =
-        registerForActivityResult(ActivityResultContracts.GetContent()) {
-            it?.let { uri ->
-                coverChangeTo(uri)
-            }
+    private val selectCover = registerForActivityResult(ActivityResultContractUtils.SelectImage()) {
+        it?.second?.let { uri ->
+            coverChangeTo(uri)
         }
+    }
 
     override val binding by viewBinding(ActivityBookInfoEditBinding::inflate)
     override val viewModel by viewModels<BookInfoEditViewModel>()
@@ -62,7 +60,7 @@ class BookInfoEditActivity :
             }
         }
         tvSelectCover.setOnClickListener {
-            selectCoverResult.launch("image/*")
+            selectCover.launch(null)
         }
         tvRefreshCover.setOnClickListener {
             viewModel.book?.customCoverUrl = tieCoverUrl.text?.toString()
