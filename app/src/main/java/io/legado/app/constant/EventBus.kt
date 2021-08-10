@@ -24,4 +24,5 @@ object EventBus {
     const val CHECK_SOURCE = "checkSource"
     const val CHECK_SOURCE_DONE = "checkSourceDone"
     const val TIP_COLOR = "tipColor"
+    const val SOURCE_CHANGED = "sourceChanged"
 }

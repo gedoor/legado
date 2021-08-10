@@ -7,7 +7,15 @@ import io.legado.app.data.entities.BookGroup
 
 class GroupViewModel(application: Application) : BaseViewModel(application) {
 
-    fun addGroup(groupName: String) {
+    fun upGroup(vararg bookGroup: BookGroup, finally: (() -> Unit)? = null) {
+        execute {
+            appDb.bookGroupDao.update(*bookGroup)
+        }.onFinally {
+            finally?.invoke()
+        }
+    }
+
+    fun addGroup(groupName: String, cover: String?, finally: () -> Unit) {
         execute {
             var id = 1L
             val idsSum = appDb.bookGroupDao.idsSum
@@ -17,19 +25,16 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
             val bookGroup = BookGroup(
                 groupId = id,
                 groupName = groupName,
+                cover = cover,
                 order = appDb.bookGroupDao.maxOrder.plus(1)
             )
             appDb.bookGroupDao.insert(bookGroup)
+        }.onFinally {
+            finally()
         }
     }
 
-    fun upGroup(vararg bookGroup: BookGroup) {
-        execute {
-            appDb.bookGroupDao.update(*bookGroup)
-        }
-    }
-
-    fun delGroup(vararg bookGroup: BookGroup) {
+    fun delGroup(vararg bookGroup: BookGroup, finally: () -> Unit) {
         execute {
             appDb.bookGroupDao.delete(*bookGroup)
             bookGroup.forEach { group ->
@@ -39,6 +44,8 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
                 }
                 appDb.bookDao.update(*books.toTypedArray())
             }
+        }.onFinally {
+            finally()
         }
     }
 

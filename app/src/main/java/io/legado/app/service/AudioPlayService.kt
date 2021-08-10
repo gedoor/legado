@@ -161,17 +161,22 @@ class AudioPlayService : BaseService(),
     }
 
     private fun resume() {
-        pause = false
-        if (!mediaPlayer.isPlaying) {
-            mediaPlayer.start()
-            mediaPlayer.seekTo(position)
+        try {
+            pause = false
+            if (!mediaPlayer.isPlaying) {
+                mediaPlayer.start()
+                mediaPlayer.seekTo(position)
+            }
+            handler.removeCallbacks(mpRunnable)
+            handler.postDelayed(mpRunnable, 1000)
+            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+            AudioPlay.status = Status.PLAY
+            postEvent(EventBus.AUDIO_STATE, Status.PLAY)
+            upNotification()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            stopSelf()
         }
-        handler.removeCallbacks(mpRunnable)
-        handler.postDelayed(mpRunnable, 1000)
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        AudioPlay.status = Status.PLAY
-        postEvent(EventBus.AUDIO_STATE, Status.PLAY)
-        upNotification()
     }
 
     private fun adjustProgress(position: Int) {

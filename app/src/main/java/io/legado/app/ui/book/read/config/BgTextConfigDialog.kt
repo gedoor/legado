@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
@@ -46,9 +45,10 @@ class BgTextConfigDialog : BaseDialogFragment() {
     private var primaryTextColor = 0
     private var secondaryTextColor = 0
     private val importFormNet = "网络导入"
-    private val selectBgImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        it ?: return@registerForActivityResult
-        setBgFromUri(it)
+    private val selectBgImage = registerForActivityResult(SelectImageContract()) {
+        it?.second?.let { uri ->
+            setBgFromUri(uri)
+        }
     }
     private val selectExportDir = registerForActivityResult(FilePicker()) {
         it ?: return@registerForActivityResult
@@ -122,7 +122,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 ivBg.setImageResource(R.drawable.ic_image)
                 ivBg.setColorFilter(primaryTextColor)
                 root.setOnClickListener {
-                    selectBgImage.launch("image/*")
+                    selectBgImage.launch(null)
                 }
             }
         }

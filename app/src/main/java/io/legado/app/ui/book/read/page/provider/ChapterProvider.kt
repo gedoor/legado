@@ -343,8 +343,10 @@ object ChapterProvider {
             }
             x = x1
         }
-        val words1 = words.copyOfRange(bodyIndent.length, words.size)
-        addCharsToLineMiddle(textLine, words1, textPaint, desiredWidth, x, srcList)
+        if (words.size > bodyIndent.length) {
+            val words1 = words.copyOfRange(bodyIndent.length, words.size)
+            addCharsToLineMiddle(textLine, words1, textPaint, desiredWidth, x, srcList)
+        }
     }
 
     /**

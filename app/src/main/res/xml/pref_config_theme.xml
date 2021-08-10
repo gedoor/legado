@@ -82,14 +82,6 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.Preference
-            android:key="backgroundImage"
-            android:title="@string/background_image" />
-
-        <io.legado.app.ui.widget.prefs.Preference
-            android:key="backgroundImageBlurring"
-            android:title="@string/background_image_blurring" />
-
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_200"
             android:key="colorBottomBackground"
@@ -101,11 +93,12 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
+            android:key="backgroundImage"
+            android:title="@string/background_image" />
+
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="defaultCover"
-            android:title="@string/default_cover"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
+            android:title="@string/default_cover" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="saveDayTheme"
@@ -149,14 +142,6 @@
             app:cpv_dialogType="preset"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.Preference
-            android:key="backgroundImageNight"
-            android:title="@string/background_image" />
-
-        <io.legado.app.ui.widget.prefs.Preference
-            android:key="backgroundImageNightBlurring"
-            android:title="@string/background_image_blurring" />
-
         <io.legado.app.ui.widget.prefs.ColorPreference
             android:defaultValue="@color/md_grey_800"
             android:key="colorBottomBackgroundNight"
@@ -166,16 +151,19 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
+            android:key="backgroundImageNight"
+            android:title="@string/background_image" />
+
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="defaultCoverDark"
-            android:title="@string/default_cover"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
+            android:title="@string/default_cover" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="saveNightTheme"
             android:summary="@string/save_night_theme_summary"
             android:title="@string/save_theme_config"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
