@@ -17,7 +17,7 @@ jobs:
       ylogin: ${{ secrets.LANZOU_ID }}
       phpdisk_info: ${{ secrets.LANZOU_PSD }}
       # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
-      LANZOU_FOLDER_ID: 'b0f8pv92b'
+      LANZOU_FOLDER_ID: 'b0f7pt4ja'
       # 是否上传到artifact
       UPLOAD_ARTIFACT: 'true'
     steps:
@@ -64,17 +64,9 @@ jobs:
       - name: Upload App To Lanzou
         if: ${{ env.ylogin }}
         run: |
-          path="$GITHUB_WORKSPACE/apk"
-          files=$(ls $path)
-          for f in $files
-          do
-           if [[ $f == *"apk" ]]; then
-            file=$f
-            echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 文件:$file"
-            python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path/$file" "$LANZOU_FOLDER_ID"
-           fi
-          done
-          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f810h4b"
+          path="$GITHUB_WORKSPACE/apk/"
+          python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path" "$LANZOU_FOLDER_ID"
+          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f7pt4ja"
       - name: Release
         uses: softprops/action-gh-release@59c3b4891632ff9a897f99a91d7bc557467a3a22
         with:
