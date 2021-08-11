@@ -71,6 +71,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 val outputStream = ByteArrayOutputStream()
                 (returnData.data as Bitmap).compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 val byteArray = outputStream.toByteArray()
+                outputStream.close()
                 val inputStream = ByteArrayInputStream(byteArray)
                 newFixedLengthResponse(
                     Response.Status.OK,
