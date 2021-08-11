@@ -193,9 +193,9 @@ dependencies {
     implementation('com.github.bumptech.glide:glide:4.12.0')
 
     //webServer
-    implementation('org.nanohttpd:nanohttpd:2.3.1')
-    implementation('org.nanohttpd:nanohttpd-websocket:2.3.1')
-    implementation('org.nanohttpd:nanohttpd-apache-fileupload:2.3.1')
+    def nanoHttpdVersion = "2.3.1"
+    implementation("org.nanohttpd:nanohttpd:$nanoHttpdVersion")
+    implementation("org.nanohttpd:nanohttpd-websocket:$nanoHttpdVersion")
 
     //二维码
     implementation('com.github.jenly1314:zxing-lite:2.1.1')

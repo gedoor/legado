@@ -18,6 +18,8 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
 
     override fun serve(session: IHTTPSession): Response {
         var returnData: ReturnData? = null
+        val ct = ContentType(session.headers["content-type"]).tryUTF8()
+        session.headers["content-type"] = ct.contentTypeHeader
         var uri = session.uri
 
         try {
@@ -40,7 +42,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "/saveSources" -> SourceController.saveSources(postData)
                         "/saveBook" -> BookController.saveBook(postData)
                         "/deleteSources" -> SourceController.deleteSources(postData)
-                        "/addLocalBook" -> BookController.addLocalBook(session, postData)
+                        "/addLocalBook" -> BookController.addLocalBook(session)
                         else -> null
                     }
                 }

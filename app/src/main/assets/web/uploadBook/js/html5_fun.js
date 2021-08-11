@@ -126,7 +126,6 @@ try {
 		var fd = new FormData();
 		fd.append("Filename", file.name);
 		fd.append("Filedata", file);
-		fd.append("Upload", "Submit Query");
 		//设置当前的上传对象
 		currUploadfile = file;
 
