@@ -104,6 +104,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 if (it != bookGroups) {
                     bookGroups = it
                     booksAdapter.notifyDataSetChanged()
+                    binding.tvEmptyMsg.isGone = getItemCount() > 0
                 }
             }
         }
