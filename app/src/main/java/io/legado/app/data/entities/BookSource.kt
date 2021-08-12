@@ -49,11 +49,11 @@ data class BookSource(
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
-    val logInRule by lazy {
+    val loginRule by lazy {
         if (loginUrl.isJsonObject()) {
-            return@lazy GSON.fromJsonObject<LogInRule>(loginUrl)
+            return@lazy GSON.fromJsonObject<LoginRule>(loginUrl)
         } else {
-            return@lazy LogInRule(url = loginUrl)
+            return@lazy LoginRule(url = loginUrl)
         }
     }
 
