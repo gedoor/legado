@@ -49,6 +49,17 @@ data class BookSource(
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
+    val logInRule by lazy {
+        if (loginUrl.isJsonObject()) {
+            return@lazy GSON.fromJsonObject<LogInRule>(loginUrl)
+        } else {
+            return@lazy LogInRule(url = loginUrl)
+        }
+    }
+
+    @delegate:Transient
+    @delegate:Ignore
+    @IgnoredOnParcel
     val exploreKinds by lazy {
         val exploreUrl = exploreUrl ?: return@lazy emptyList()
         val kinds = arrayListOf<ExploreKind>()
