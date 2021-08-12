@@ -88,15 +88,6 @@ jobs:
       - name: Upload App To Lanzou
         if: ${{ env.ylogin }}
         run: |
-          path="$GITHUB_WORKSPACE/apk"
-          files=$(ls $path)
-          for f in $files
-          do
-           if [[ $f == *"apk" ]]; then
-            file=$f
-            echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 文件:$file"
-            python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path/$file" "$LANZOU_FOLDER_ID"
-           fi
-          done
+          path="$GITHUB_WORKSPACE/apk/"
+          python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path" "$LANZOU_FOLDER_ID"
           echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f810h4b"
- 
