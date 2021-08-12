@@ -1,7 +1,7 @@
 package io.legado.app.api.controller
 
+import android.util.Base64
 import androidx.core.graphics.drawable.toBitmap
-import fi.iki.elonen.NanoHTTPD
 import io.legado.app.R
 import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
@@ -19,7 +19,6 @@ import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
-import java.io.FileOutputStream
 
 object BookController {
 
@@ -192,22 +191,16 @@ object BookController {
         }
     }
 
-    fun addLocalBook(session: NanoHTTPD.IHTTPSession): ReturnData {
+    fun addLocalBook(parameters: Map<String, List<String>>): ReturnData {
         val returnData = ReturnData()
         try {
-            val fileName = session.parameters["file"]?.firstOrNull()
-            val contentLength = session.headers["content-length"]?.toInt()
-            fileName ?: let {
-                return returnData.setErrorMsg("文件名为空")
-            }
-            contentLength ?: let {
-                return returnData.setErrorMsg("文件长度为空")
-            }
+            val fileName = parameters["fileName"]?.firstOrNull()
+                ?: return returnData.setErrorMsg("fileName 不能为空")
+            val fileData = parameters["fileData"]?.firstOrNull()
+                ?: return returnData.setErrorMsg("fileData 不能为空")
             val file = FileUtils.createFileIfNotExist(LocalBook.cacheFolder, fileName)
-            val outputStream = FileOutputStream(file)
-            session.inputStream.copyTo(outputStream, contentLength)
-            outputStream.close()
-            session.inputStream.close()
+            val fileBytes = Base64.decode(fileData.substringAfter("base64,"), Base64.DEFAULT)
+            file.writeBytes(fileBytes)
             val nameAuthor = LocalBook.analyzeNameAuthor(fileName)
             val book = Book(
                 bookUrl = file.absolutePath,
