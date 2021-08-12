@@ -10,7 +10,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
-import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
@@ -24,15 +23,12 @@ import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.permission.Permissions
-import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
-import java.io.File
 
 
 @Suppress("SameParameterValue")
@@ -306,76 +302,22 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     }
 
     private fun setBgFromUri(uri: Uri, preferenceKey: String, success: () -> Unit) {
-        if (uri.isContentScheme()) {
-            val doc = DocumentFile.fromSingleUri(requireContext(), uri)
-            doc?.name?.let {
-                var file = requireContext().externalFiles
-                file = FileUtils.createFileIfNotExist(file, preferenceKey, it)
-                kotlin.runCatching {
-                    DocumentUtils.readBytes(requireContext(), doc.uri)
-                }.getOrNull()?.let { byteArray ->
-                    file.writeBytes(byteArray)
-                    putPrefString(preferenceKey, file.absolutePath)
-                    success()
-                } ?: toastOnUi("获取文件出错")
-            }
-        } else {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                        val imgFile = File(path)
-                        if (imgFile.exists()) {
-                            var file = requireContext().externalFiles
-                            file = FileUtils.createFileIfNotExist(file, preferenceKey, imgFile.name)
-                            file.writeBytes(imgFile.readBytes())
-                            putPrefString(preferenceKey, file.absolutePath)
-                            success()
-                        }
-                    }
-                }
-                .request()
+        uri.read(this) { name, bytes ->
+            var file = requireContext().externalFiles
+            file = FileUtils.createFileIfNotExist(file, preferenceKey, name)
+            file.writeBytes(bytes)
+            putPrefString(preferenceKey, file.absolutePath)
+            success()
         }
     }
 
     private fun setCoverFromUri(preferenceKey: String, uri: Uri) {
-        if (uri.isContentScheme()) {
-            val doc = DocumentFile.fromSingleUri(requireContext(), uri)
-            doc?.name?.let {
-                var file = requireContext().externalFiles
-                file = FileUtils.createFileIfNotExist(file, "covers", it)
-                kotlin.runCatching {
-                    DocumentUtils.readBytes(requireContext(), doc.uri)
-                }.getOrNull()?.let { byteArray ->
-                    file.writeBytes(byteArray)
-                    putPrefString(preferenceKey, file.absolutePath)
-                    CoverImageView.upDefaultCover()
-                } ?: toastOnUi("获取文件出错")
-            }
-        } else {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                        val imgFile = File(path)
-                        if (imgFile.exists()) {
-                            var file = requireContext().externalFiles
-                            file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
-                            file.writeBytes(imgFile.readBytes())
-                            putPrefString(PreferKey.defaultCover, file.absolutePath)
-                            CoverImageView.upDefaultCover()
-                        }
-                    }
-                }
-                .request()
+        uri.read(this) { name, bytes ->
+            var file = requireContext().externalFiles
+            file = FileUtils.createFileIfNotExist(file, "covers", name)
+            file.writeBytes(bytes)
+            putPrefString(preferenceKey, file.absolutePath)
+            CoverImageView.upDefaultCover()
         }
     }
 

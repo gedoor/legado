@@ -12,55 +12,69 @@ import java.io.File
 
 fun Uri.isContentScheme() = this.scheme == "content"
 
-@Throws(Exception::class)
+/**
+ * 读取URI
+ */
 fun Uri.read(activity: AppCompatActivity, success: (name: String, bytes: ByteArray) -> Unit) {
-    if (isContentScheme()) {
-        val doc = DocumentFile.fromSingleUri(activity, this)
-        doc ?: error("未获取到文件")
-        val name = doc.name ?: error("未获取到文件名")
-        val fileBytes = DocumentUtils.readBytes(activity, doc.uri)
-        fileBytes ?: error("读取文件出错")
-        success.invoke(name, fileBytes)
-    } else {
-        PermissionsCompat.Builder(activity)
-            .addPermissions(
-                Permissions.READ_EXTERNAL_STORAGE,
-                Permissions.WRITE_EXTERNAL_STORAGE
-            )
-            .rationale(R.string.bg_image_per)
-            .onGranted {
-                RealPathUtil.getPath(activity, this)?.let { path ->
-                    val imgFile = File(path)
-                    success.invoke(imgFile.name, imgFile.readBytes())
+    try {
+        if (isContentScheme()) {
+            val doc = DocumentFile.fromSingleUri(activity, this)
+            doc ?: error("未获取到文件")
+            val name = doc.name ?: error("未获取到文件名")
+            val fileBytes = DocumentUtils.readBytes(activity, doc.uri)
+            fileBytes ?: error("读取文件出错")
+            success.invoke(name, fileBytes)
+        } else {
+            PermissionsCompat.Builder(activity)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    RealPathUtil.getPath(activity, this)?.let { path ->
+                        val imgFile = File(path)
+                        success.invoke(imgFile.name, imgFile.readBytes())
+                    }
                 }
-            }
-            .request()
+                .request()
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        activity.toastOnUi(e.localizedMessage ?: "read uri error")
     }
 }
 
-@Throws(Exception::class)
+/**
+ * 读取URI
+ */
 fun Uri.read(fragment: Fragment, success: (name: String, bytes: ByteArray) -> Unit) {
-    if (isContentScheme()) {
-        val doc = DocumentFile.fromSingleUri(fragment.requireContext(), this)
-        doc ?: error("未获取到文件")
-        val name = doc.name ?: error("未获取到文件名")
-        val fileBytes = DocumentUtils.readBytes(fragment.requireContext(), doc.uri)
-        fileBytes ?: error("读取文件出错")
-        success.invoke(name, fileBytes)
-    } else {
-        PermissionsCompat.Builder(fragment)
-            .addPermissions(
-                Permissions.READ_EXTERNAL_STORAGE,
-                Permissions.WRITE_EXTERNAL_STORAGE
-            )
-            .rationale(R.string.bg_image_per)
-            .onGranted {
-                RealPathUtil.getPath(fragment.requireContext(), this)?.let { path ->
-                    val imgFile = File(path)
-                    success.invoke(imgFile.name, imgFile.readBytes())
+    try {
+        if (isContentScheme()) {
+            val doc = DocumentFile.fromSingleUri(fragment.requireContext(), this)
+            doc ?: error("未获取到文件")
+            val name = doc.name ?: error("未获取到文件名")
+            val fileBytes = DocumentUtils.readBytes(fragment.requireContext(), doc.uri)
+            fileBytes ?: error("读取文件出错")
+            success.invoke(name, fileBytes)
+        } else {
+            PermissionsCompat.Builder(fragment)
+                .addPermissions(
+                    Permissions.READ_EXTERNAL_STORAGE,
+                    Permissions.WRITE_EXTERNAL_STORAGE
+                )
+                .rationale(R.string.bg_image_per)
+                .onGranted {
+                    RealPathUtil.getPath(fragment.requireContext(), this)?.let { path ->
+                        val imgFile = File(path)
+                        success.invoke(imgFile.name, imgFile.readBytes())
+                    }
                 }
-            }
-            .request()
+                .request()
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        fragment.toastOnUi(e.localizedMessage ?: "read uri error")
     }
 }
 
