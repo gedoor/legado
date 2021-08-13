@@ -49,6 +49,7 @@
             android:id="@+id/tie_group_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="2"
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
     </io.legado.app.ui.widget.text.TextInputLayout>
 
