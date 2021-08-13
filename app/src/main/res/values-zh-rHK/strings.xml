@@ -845,5 +845,6 @@
     <string name="null_url">url为空</string>
     <string name="dict">字典</string>
     <string name="unknown_error">未知错误</string>
+    <string name="export_no_chapter_name">TXT不導出章節名</string>
 
 </resources>
