@@ -7,7 +7,6 @@ import org.jsoup.select.Collector
 import org.jsoup.select.Elements
 import org.jsoup.select.Evaluator
 import org.seimicrawler.xpath.JXNode
-import java.util.*
 
 /**
  * Created by GKF on 2018/1/25.
@@ -71,7 +70,7 @@ class AnalyzeByJSoup(doc: Any) {
             val results = ArrayList<List<String>>()
             for (ruleStrX in ruleStrS) {
 
-                val temp: List<String>? =
+                val temp: ArrayList<String>? =
                     if (sourceRule.isCss) {
                         val lastIndex = ruleStrX.lastIndexOf('@')
                         getResultLast(
@@ -83,11 +82,8 @@ class AnalyzeByJSoup(doc: Any) {
                     }
 
                 if (!temp.isNullOrEmpty()) {
-
-                    results.add(temp) //!temp.isNullOrEmpty()时，results.isNotEmpty()为true
-
+                    results.add(temp)
                     if (ruleAnalyzes.elementsType == "||") break
-
                 }
             }
             if (results.size > 0) {
@@ -181,7 +177,7 @@ class AnalyzeByJSoup(doc: Any) {
     /**
      * 获取内容列表
      */
-    private fun getResultList(ruleStr: String): List<String>? {
+    private fun getResultList(ruleStr: String): ArrayList<String>? {
 
         if (ruleStr.isEmpty()) return null
 
@@ -210,32 +206,42 @@ class AnalyzeByJSoup(doc: Any) {
     /**
      * 根据最后一个规则获取内容
      */
-    private fun getResultLast(elements: Elements, lastRule: String): List<String> {
+    private fun getResultLast(elements: Elements, lastRule: String): ArrayList<String> {
         val textS = ArrayList<String>()
         try {
             when (lastRule) {
                 "text" -> for (element in elements) {
-                    textS.add(element.text())
+                    val text = element.text()
+                    if (text.isNotEmpty()) {
+                        textS.add(text)
+                    }
                 }
                 "textNodes" -> for (element in elements) {
                     val tn = arrayListOf<String>()
                     val contentEs = element.textNodes()
                     for (item in contentEs) {
-                        val temp = item.text().trim { it <= ' ' }
-                        if (temp.isNotEmpty()) {
-                            tn.add(temp)
+                        val text = item.text().trim { it <= ' ' }
+                        if (text.isNotEmpty()) {
+                            tn.add(text)
                         }
                     }
-                    textS.add(tn.joinToString("\n"))
+                    if (tn.isNotEmpty()) {
+                        textS.add(tn.joinToString("\n"))
+                    }
                 }
                 "ownText" -> for (element in elements) {
-                    textS.add(element.ownText())
+                    val text = element.ownText()
+                    if (text.isNotEmpty()) {
+                        textS.add(text)
+                    }
                 }
                 "html" -> {
                     elements.select("script").remove()
                     elements.select("style").remove()
                     val html = elements.outerHtml()
-                    textS.add(html)
+                    if (html.isNotEmpty()) {
+                        textS.add(html)
+                    }
                 }
                 "all" -> textS.add(elements.outerHtml())
                 else -> for (element in elements) {
