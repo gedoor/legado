@@ -23,7 +23,7 @@ import kotlin.collections.HashMap
  * 解析规则获取结果
  */
 @Keep
-@Suppress("unused", "RegExpRedundantEscape")
+@Suppress("unused", "RegExpRedundantEscape", "MemberVisibilityCanBePrivate")
 class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
 
     var book = if (ruleData is BaseBook) ruleData else null
@@ -31,8 +31,11 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     var chapter: BookChapter? = null
     var nextChapterUrl: String? = null
     var content: Any? = null
+        private set
     var baseUrl: String? = null
+        private set
     var redirectUrl: URL? = null
+        private set
     private var isJSON: Boolean = false
     private var isRegex: Boolean = false
 
@@ -337,9 +340,10 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
      * 正则替换
      */
     private fun replaceRegex(result: String, rule: SourceRule): String {
+        if (rule.replaceRegex.isEmpty()) return result
         var vResult = result
-        if (rule.replaceRegex.isNotEmpty()) {
-            vResult = if (rule.replaceFirst) {
+        vResult = if (rule.replaceFirst) {
+            kotlin.runCatching {
                 val pattern = Pattern.compile(rule.replaceRegex)
                 val matcher = pattern.matcher(vResult)
                 if (matcher.find()) {
@@ -347,8 +351,14 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                 } else {
                     ""
                 }
-            } else {
+            }.getOrElse {
+                vResult.replaceFirst(rule.replaceRegex, rule.replacement)
+            }
+        } else {
+            kotlin.runCatching {
                 vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
+            }.getOrElse {
+                vResult.replace(rule.replaceRegex, rule.replacement)
             }
         }
         return vResult
@@ -396,7 +406,6 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     /**
      * 规则类
      */
-
     inner class SourceRule internal constructor(
         ruleStr: String,
         internal var mode: Mode = Mode.Default
@@ -427,16 +436,16 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
                     mode = Mode.XPath
                     ruleStr.substring(7)
                 }
-                ruleStr.startsWith("/") -> {//XPath特征很明显,无需配置单独的识别标头
-                    mode = Mode.XPath
-                    ruleStr
-                }
                 ruleStr.startsWith("@Json:", true) -> {
                     mode = Mode.Json
                     ruleStr.substring(6)
                 }
                 isJSON || ruleStr.startsWith("$.") || ruleStr.startsWith("$[") -> {
                     mode = Mode.Json
+                    ruleStr
+                }
+                ruleStr.startsWith("/") -> {//XPath特征很明显,无需配置单独的识别标头
+                    mode = Mode.XPath
                     ruleStr
                 }
                 else -> ruleStr

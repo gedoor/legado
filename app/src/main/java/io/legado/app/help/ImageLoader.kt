@@ -12,6 +12,7 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isContentScheme
 import java.io.File
 
+@Suppress("unused")
 object ImageLoader {
 
     /**

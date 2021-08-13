@@ -90,20 +90,20 @@ android {
             applicationId "io.legado.cronet"
             manifestPlaceholders = [APP_CHANNEL_VALUE: "cronet"]
             ndk {
-                abiFilters 'arm64-v8a'
+                abiFilters 'arm64-v8a','armeabi-v7a','x86_64','x86'
             }
         }
     }
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 8
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        // Sets Java compatibility to Java 11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildToolsVersion '30.0.3'
     tasks.withType(JavaCompile) {
@@ -123,7 +123,6 @@ kapt {
 
 dependencies {
     coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:1.1.5')
-    implementation(fileTree(dir: 'libs', include: ['*.jar', '*.aar']))
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.4.0')
     androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0')
@@ -136,10 +135,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
     //androidX
-    implementation('androidx.appcompat:appcompat:1.3.0')
+    implementation('androidx.appcompat:appcompat:1.3.1')
     implementation('androidx.core:core-ktx:1.6.0')
-    implementation("androidx.activity:activity-ktx:1.2.3")
-    implementation("androidx.fragment:fragment-ktx:1.3.5")
+    implementation("androidx.activity:activity-ktx:1.3.0")
+    implementation("androidx.fragment:fragment-ktx:1.3.6")
     implementation('androidx.preference:preference-ktx:1.1.1')
     implementation('androidx.constraintlayout:constraintlayout:2.0.4')
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
@@ -152,7 +151,7 @@ dependencies {
     //media
     def media2_version = "1.1.3"
     implementation("androidx.media2:media2-session:$media2_version")
-    implementation("androidx.media:media:1.3.1")
+    implementation("androidx.media:media:1.4.0")
     //implementation "androidx.media2:media2-player:$media2_version"
     //implementation 'com.google.android.exoplayer:exoplayer:2.13.0'
 
@@ -187,22 +186,19 @@ dependencies {
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.9.1')
-    def cronet_version = '92.0.4509.1'
-    compileOnly("org.microg:cronet-api:$cronet_version")
-    cronetImplementation("org.microg:cronet-native:$cronet_version")
-    cronetImplementation("org.microg:cronet-api:$cronet_version")
-    cronetImplementation("org.microg:cronet-common:$cronet_version")
+    compileOnly(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    cronetImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
     implementation('com.github.bumptech.glide:glide:4.12.0')
 
     //webServer
-    implementation('org.nanohttpd:nanohttpd:2.3.1')
-    implementation('org.nanohttpd:nanohttpd-websocket:2.3.1')
-    implementation('org.nanohttpd:nanohttpd-apache-fileupload:2.3.1')
+    def nanoHttpdVersion = "2.3.1"
+    implementation("org.nanohttpd:nanohttpd:$nanoHttpdVersion")
+    implementation("org.nanohttpd:nanohttpd-websocket:$nanoHttpdVersion")
 
     //二维码
-    implementation('com.github.jenly1314:zxing-lite:2.1.0')
+    implementation('com.github.jenly1314:zxing-lite:2.1.1')
 
     //颜色选择
     implementation('com.jaredrummler:colorpicker:1.1.0')

@@ -14,7 +14,6 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.webBook.WebBook
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.CopyOnWriteArraySet
@@ -50,7 +49,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     }
 
     private fun initSearchPool() {
-        searchPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
+        searchPool = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
         searchIndex = -1
     }
 
@@ -105,7 +104,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         val task = WebBook(source)
             .searchBook(viewModelScope, name, context = searchPool!!)
             .timeout(60000L)
-            .onSuccess(Dispatchers.IO) {
+            .onSuccess(searchPool) {
                 if (it.isNotEmpty()) {
                     val searchBook = it[0]
                     if (searchBook.name == name && searchBook.author == author
@@ -119,7 +118,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                     }
                 }
             }
-            .onFinally {
+            .onFinally(searchPool) {
                 searchNext()
             }
         tasks.add(task)

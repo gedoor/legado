@@ -13,6 +13,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.AudioPlayService
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.startService
 
 object AudioPlay {
     var titleData = MutableLiveData<String>()
@@ -52,43 +53,43 @@ object AudioPlay {
 
     fun pause(context: Context) {
         if (AudioPlayService.isRun) {
-            val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = IntentAction.pause
-            context.startService(intent)
+            context.startService<AudioPlayService> {
+                action = IntentAction.pause
+            }
         }
     }
 
     fun resume(context: Context) {
         if (AudioPlayService.isRun) {
-            val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = IntentAction.resume
-            context.startService(intent)
+            context.startService<AudioPlayService> {
+                action = IntentAction.resume
+            }
         }
     }
 
     fun stop(context: Context) {
         if (AudioPlayService.isRun) {
-            val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = IntentAction.stop
-            context.startService(intent)
+            context.startService<AudioPlayService> {
+                action = IntentAction.stop
+            }
         }
     }
 
     fun adjustSpeed(context: Context, adjust: Float) {
         if (AudioPlayService.isRun) {
-            val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = IntentAction.adjustSpeed
-            intent.putExtra("adjust", adjust)
-            context.startService(intent)
+            context.startService<AudioPlayService> {
+                action = IntentAction.adjustSpeed
+                putExtra("adjust", adjust)
+            }
         }
     }
 
     fun adjustProgress(context: Context, position: Int) {
         if (AudioPlayService.isRun) {
-            val intent = Intent(context, AudioPlayService::class.java)
-            intent.action = IntentAction.adjustProgress
-            intent.putExtra("position", position)
-            context.startService(intent)
+            context.startService<AudioPlayService> {
+                action = IntentAction.adjustProgress
+                putExtra("position", position)
+            }
         }
     }
 

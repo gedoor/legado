@@ -63,6 +63,7 @@ class DictDialog : BaseDialogFragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 binding.tvDict.text = Html.fromHtml(it, Html.FROM_HTML_MODE_LEGACY)
             } else {
+                @Suppress("DEPRECATION")
                 binding.tvDict.text = Html.fromHtml(it)
             }
         }

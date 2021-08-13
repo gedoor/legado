@@ -10,6 +10,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.IntentHelp
+import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.*
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
@@ -26,11 +27,7 @@ class WebService : BaseService() {
         }
 
         fun stop(context: Context) {
-            if (isRun) {
-                val intent = Intent(context, WebService::class.java)
-                intent.action = IntentAction.stop
-                context.startService(intent)
-            }
+            context.stopService<WebService>()
         }
 
     }
@@ -44,6 +41,7 @@ class WebService : BaseService() {
         isRun = true
         notificationContent = getString(R.string.service_starting)
         upNotification()
+        WebTileService.setState(this, true)
     }
 
     override fun onDestroy() {
@@ -56,6 +54,7 @@ class WebService : BaseService() {
             webSocketServer?.stop()
         }
         postEvent(EventBus.WEB_SERVICE, "")
+        WebTileService.setState(this, false)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -113,6 +112,9 @@ class WebService : BaseService() {
             .setOngoing(true)
             .setContentTitle(getString(R.string.web_service))
             .setContentText(notificationContent)
+            .setContentIntent(
+                IntentHelp.activityPendingIntent<MainActivity>(this, "webService")
+            )
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),

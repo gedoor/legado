@@ -58,7 +58,8 @@ object Restore {
 
     //默认忽略keys
     private val ignorePrefKeys = arrayOf(
-        PreferKey.defaultCover
+        PreferKey.defaultCover,
+        PreferKey.defaultCoverDark
     )
     private val readPrefKeys = arrayOf(
         PreferKey.readStyleSelect,

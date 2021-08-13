@@ -37,7 +37,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().getSize()
+        val dm = requireActivity().windowSize
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 
@@ -89,12 +89,10 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     @SuppressLint("InflateParams")
     private fun addGroup() {
         alert(title = getString(R.string.add_group)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-            customView {
-                alertBinding.apply {
-                    editView.setHint(R.string.group_name)
-                }.root
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                textInputLayout.setHint(R.string.group_name)
             }
+            customView { alertBinding.root }
             yesButton {
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotBlank()) {
@@ -109,13 +107,11 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     @SuppressLint("InflateParams")
     private fun editGroup(group: String) {
         alert(title = getString(R.string.group_edit)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-            customView {
-                alertBinding.apply {
-                    editView.setHint(R.string.group_name)
-                    editView.setText(group)
-                }.root
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                textInputLayout.setHint(R.string.group_name)
+                editView.setText(group)
             }
+            customView { alertBinding.root }
             yesButton {
                 viewModel.upGroup(group, alertBinding.editView.text?.toString())
             }

@@ -17,14 +17,13 @@ import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 import kotlin.math.min
 
 class CheckSourceService : BaseService() {
     private var threadCount = AppConfig.threadCount
-    private var searchCoroutine = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
+    private var searchCoroutine = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val allIds = ArrayList<String>()
     private val checkedIds = ArrayList<String>()
@@ -95,7 +94,7 @@ class CheckSourceService : BaseService() {
         synchronized(this) {
             processIndex++
         }
-        execute {
+        execute(context = searchCoroutine) {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
                 appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
@@ -130,14 +129,14 @@ class CheckSourceService : BaseService() {
                 throw Exception("正文内容为空")
             }
         }.timeout(180000L)
-            .onError(IO) {
+            .onError(searchCoroutine) {
                 source.addGroup("失效")
                 source.bookSourceComment = """
                     "error:${it.localizedMessage}
                     ${source.bookSourceComment}"
                 """.trimIndent()
                 appDb.bookSourceDao.update(source)
-            }.onSuccess(IO) {
+            }.onSuccess(searchCoroutine) {
                 source.removeGroup("失效")
                 source.bookSourceComment = source.bookSourceComment
                     ?.split("\n")
@@ -145,7 +144,7 @@ class CheckSourceService : BaseService() {
                         it.startsWith("error:")
                     }?.joinToString("\n")
                 appDb.bookSourceDao.update(source)
-            }.onFinally {
+            }.onFinally(searchCoroutine) {
                 onNext(source.bookSourceUrl, source.bookSourceName)
             }
     }

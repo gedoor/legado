@@ -444,7 +444,7 @@ class BookSourceEditActivity :
             val rect = Rect()
             // 获取当前页面窗口的显示范围
             window.decorView.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = this@BookSourceEditActivity.getSize().heightPixels
+            val screenHeight = this@BookSourceEditActivity.windowSize.heightPixels
             val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
             val preShowing = mIsSoftKeyBoardShowing
             if (abs(keyboardHeight) > screenHeight / 5) {

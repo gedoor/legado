@@ -807,6 +807,9 @@
     <string name="pre_download_s">Download %s chapters in advance</string>
     <string name="is_enabled">Is enabled</string>
     <string name="background_image">Background image</string>
+    <string name="background_image_blurring">Background image blurring</string>
+    <string name="background_image_blurring_radius">Blurring radius</string>
+    <string name="background_image_hint">Disabled when 0, enable range from 1 to 25\nThe greater the radius, the stronger the effect of blurring</string>
     <string name="copy_book_url">Copy book URL</string>
     <string name="copy_toc_url">Copy chapters URL</string>
     <string name="export_folder">Export folder</string>
@@ -849,5 +852,8 @@
     <string name="dict">字典</string>
     <string name="unknown_error">未知错误</string>
     <string name="export_no_chapter_name">No export chapter names</string>
+    <string name="autobackup_fail">Autobackup failed</string>
+    <string name="end">end</string>
+    <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
 
 </resources>

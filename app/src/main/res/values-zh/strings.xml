@@ -807,6 +807,9 @@
     <string name="pre_download_s">预先下载%s章正文</string>
     <string name="is_enabled">是否启用</string>
     <string name="background_image">背景图片</string>
+    <string name="background_image_blurring">背景图片虚化</string>
+    <string name="background_image_blurring_radius">虚化半径</string>
+    <string name="background_image_hint">0为停用，启用范围1~25\n半径数值越大，虚化效果越高</string>
     <string name="export_folder">导出文件夹</string>
     <string name="export_charset">导出编码</string>
     <string name="export_no_chapter_name">TXT不导出章节名</string>
@@ -847,5 +850,8 @@
     <string name="null_url">url为空</string>
     <string name="dict">字典</string>
     <string name="unknown_error">未知错误</string>
+    <string name="autobackup_fail">自动备份失败</string>
+    <string name="end">结束</string>
+    <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package io.legado.app.ui.rss.source.edit
 
+import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import io.legado.app.databinding.ItemSourceEditBinding
 class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHolder>() {
 
     var editEntities: ArrayList<EditEntity> = ArrayList()
+        @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
             notifyDataSetChanged()

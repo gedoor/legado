@@ -51,9 +51,9 @@ public class ResourceUtil {
     public static Resource createPublicResource(String name, String author, String intro, String kind, String wordCount, String model, String href) {
         String html = model.replace("{name}", name)
                 .replace("{author}", author)
-                .replace("{kind}", kind)
-                .replace("{wordCount}", wordCount)
-                .replace("{intro}", StringUtil.formatHtml(intro));
+                .replace("{kind}", kind == null ? "" : kind)
+                .replace("{wordCount}", wordCount == null ? "" : wordCount)
+                .replace("{intro}", StringUtil.formatHtml(intro == null ? "" : intro));
         return new Resource(html.getBytes(), href);
     }
 

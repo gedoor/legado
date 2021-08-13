@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.cache
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -44,6 +45,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     override val viewModel by viewModels<CacheViewModel>()
 
     private val exportBookPathKey = "exportBookPath"
+    private val exportTypes = arrayListOf("txt", "epub")
     lateinit var adapter: CacheAdapter
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
@@ -92,6 +94,10 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         menu.findItem(R.id.menu_enable_replace)?.isChecked = AppConfig.exportUseReplace
         menu.findItem(R.id.menu_export_no_chapter_name)?.isChecked = AppConfig.exportNoChapterName
         menu.findItem(R.id.menu_export_web_dav)?.isChecked = AppConfig.exportToWebDav
+        menu.findItem(R.id.menu_export_type)?.title =
+            "${getString(R.string.export_type)}(${getTypeName()})"
+        menu.findItem(R.id.menu_export_charset)?.title =
+            "${getString(R.string.export_charset)}(${AppConfig.exportCharset})"
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -175,6 +181,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         launch {
             appDb.bookGroupDao.flowAll().collect {
@@ -300,6 +307,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun alertExportFileName() {
         alert(R.string.export_file_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                textInputLayout.hint = "file name js"
                 editView.setText(AppConfig.bookExportFileName)
             }
             customView { alertBinding.root }
@@ -310,8 +318,14 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }.show()
     }
 
+    private fun getTypeName(): String {
+        return exportTypes.getOrElse(AppConfig.exportType) {
+            exportTypes[0]
+        }
+    }
+
     private fun showExportTypeConfig() {
-        selector(R.string.export_type, arrayListOf("txt", "epub")) { _, i ->
+        selector(R.string.export_type, exportTypes) { _, i ->
             AppConfig.exportType = i
         }
     }
@@ -319,6 +333,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun showCharsetConfig() {
         alert(R.string.set_charset) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                textInputLayout.hint = "charset name"
                 editView.setFilterValues(charsets)
                 editView.setText(AppConfig.exportCharset)
             }

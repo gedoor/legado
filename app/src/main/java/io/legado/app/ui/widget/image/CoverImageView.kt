@@ -30,6 +30,8 @@ class CoverImageView @JvmOverloads constructor(
 ) {
     internal var width: Float = 0.toFloat()
     internal var height: Float = 0.toFloat()
+    var path: String? = null
+        private set
     private var nameHeight = 0f
     private var authorHeight = 0f
     private val namePaint by lazy {
@@ -131,7 +133,8 @@ class CoverImageView @JvmOverloads constructor(
             }
     }
 
-    fun load(path: String?, name: String?, author: String?) {
+    fun load(path: String? = null, name: String? = null, author: String? = null) {
+        this.path = path
         setText(name, author)
         if (AppConfig.useDefaultCover) {
             ImageLoader.load(context, defaultDrawable)
@@ -179,7 +182,10 @@ class CoverImageView @JvmOverloads constructor(
 
         @SuppressLint("UseCompatLoadingForDrawables")
         fun upDefaultCover() {
-            val path = appCtx.getPrefString(PreferKey.defaultCover)
+            val preferKey =
+                if (AppConfig.isNightTheme) PreferKey.defaultCoverDark
+                else PreferKey.defaultCover
+            val path = appCtx.getPrefString(preferKey)
             var dw = Drawable.createFromPath(path)
             if (dw == null) {
                 showBookName = true

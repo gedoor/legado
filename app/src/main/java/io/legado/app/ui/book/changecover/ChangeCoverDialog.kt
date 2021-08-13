@@ -14,9 +14,8 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogChangeCoverBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.getSize
-
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.windowSize
 
 
 class ChangeCoverDialog : BaseDialogFragment(),
@@ -45,7 +44,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().getSize()
+        val dm = requireActivity().windowSize
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
     }
 

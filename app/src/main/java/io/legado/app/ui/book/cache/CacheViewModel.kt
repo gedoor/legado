@@ -33,7 +33,7 @@ import javax.script.SimpleBindings
 
 class CacheViewModel(application: Application) : BaseViewModel(application) {
 
-    fun getExportFileName(book: Book): String {
+    private fun getExportFileName(book: Book): String {
         val jsStr = AppConfig.bookExportFileName
         if (jsStr.isNullOrBlank()) {
             return "${book.name} 作者：${book.getRealAuthor()}"
@@ -56,6 +56,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             }
         }.onError {
             finally(it.localizedMessage ?: "ERROR")
+            it.printStackTrace()
         }.onSuccess {
             finally(context.getString(R.string.success))
         }
@@ -188,6 +189,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             }
         }.onError {
             finally(it.localizedMessage ?: "ERROR")
+            it.printStackTrace()
         }.onSuccess {
             finally(context.getString(R.string.success))
         }

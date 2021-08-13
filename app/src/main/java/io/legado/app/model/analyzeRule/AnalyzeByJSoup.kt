@@ -7,7 +7,6 @@ import org.jsoup.select.Collector
 import org.jsoup.select.Elements
 import org.jsoup.select.Evaluator
 import org.seimicrawler.xpath.JXNode
-import java.util.*
 
 /**
  * Created by GKF on 2018/1/25.
@@ -16,10 +15,6 @@ import java.util.*
 @Keep
 class AnalyzeByJSoup(doc: Any) {
     companion object {
-        /**
-         * "class", "id", "tag", "text", "children"
-         */
-        val validKeys = arrayOf("class", "id", "tag", "text", "children")
 
         fun parse(doc: Any): Element {
             return when (doc) {
@@ -75,7 +70,7 @@ class AnalyzeByJSoup(doc: Any) {
             val results = ArrayList<List<String>>()
             for (ruleStrX in ruleStrS) {
 
-                val temp: List<String>? =
+                val temp: ArrayList<String>? =
                     if (sourceRule.isCss) {
                         val lastIndex = ruleStrX.lastIndexOf('@')
                         getResultLast(
@@ -87,11 +82,8 @@ class AnalyzeByJSoup(doc: Any) {
                     }
 
                 if (!temp.isNullOrEmpty()) {
-
-                    results.add(temp) //!temp.isNullOrEmpty()时，results.isNotEmpty()为true
-
+                    results.add(temp)
                     if (ruleAnalyzes.elementsType == "||") break
-
                 }
             }
             if (results.size > 0) {
@@ -185,7 +177,7 @@ class AnalyzeByJSoup(doc: Any) {
     /**
      * 获取内容列表
      */
-    private fun getResultList(ruleStr: String): List<String>? {
+    private fun getResultList(ruleStr: String): ArrayList<String>? {
 
         if (ruleStr.isEmpty()) return null
 
@@ -214,32 +206,42 @@ class AnalyzeByJSoup(doc: Any) {
     /**
      * 根据最后一个规则获取内容
      */
-    private fun getResultLast(elements: Elements, lastRule: String): List<String> {
+    private fun getResultLast(elements: Elements, lastRule: String): ArrayList<String> {
         val textS = ArrayList<String>()
         try {
             when (lastRule) {
                 "text" -> for (element in elements) {
-                    textS.add(element.text())
+                    val text = element.text()
+                    if (text.isNotEmpty()) {
+                        textS.add(text)
+                    }
                 }
                 "textNodes" -> for (element in elements) {
                     val tn = arrayListOf<String>()
                     val contentEs = element.textNodes()
                     for (item in contentEs) {
-                        val temp = item.text().trim { it <= ' ' }
-                        if (temp.isNotEmpty()) {
-                            tn.add(temp)
+                        val text = item.text().trim { it <= ' ' }
+                        if (text.isNotEmpty()) {
+                            tn.add(text)
                         }
                     }
-                    textS.add(tn.joinToString("\n"))
+                    if (tn.isNotEmpty()) {
+                        textS.add(tn.joinToString("\n"))
+                    }
                 }
                 "ownText" -> for (element in elements) {
-                    textS.add(element.ownText())
+                    val text = element.ownText()
+                    if (text.isNotEmpty()) {
+                        textS.add(text)
+                    }
                 }
                 "html" -> {
                     elements.select("script").remove()
                     elements.select("style").remove()
                     val html = elements.outerHtml()
-                    textS.add(html)
+                    if (html.isNotEmpty()) {
+                        textS.add(html)
+                    }
                 }
                 "all" -> textS.add(elements.outerHtml())
                 else -> for (element in elements) {
@@ -260,22 +262,16 @@ class AnalyzeByJSoup(doc: Any) {
 
     /**
      * 1.支持阅读原有写法，':'分隔索引，!或.表示筛选方式，索引可为负数
-     *
      * 例如 tag.div.-1:10:2 或 tag.div!0:3
      *
      * 2. 支持与jsonPath类似的[]索引写法
-     *
      * 格式形如 [it,it，。。。] 或 [!it,it，。。。] 其中[!开头表示筛选方式为排除，it为单个索引或区间。
-     *
      * 区间格式为 start:end 或 start:end:step，其中start为0可省略，end为-1可省略。
-     *
      * 索引，区间两端及间隔都支持负数
-     *
      * 例如 tag.div[-1, 3:-2:-10, 2]
-     *
      * 特殊用法 tag.div[-1:0] 可在任意地方让列表反向
-     *
      * */
+    @Suppress("UNCHECKED_CAST")
     data class ElementsSingle(
         var split: Char = '.',
         var beforeRule: String = "",
@@ -322,7 +318,6 @@ class AnalyzeByJSoup(doc: Any) {
             } else for (ix in lastIndexs downTo 0) { //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
                 if (indexs[ix] is Triple<*, *, *>) { //区间
-
                     val (startx, endx, stepx) = indexs[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
 
                     val start = if (startx == null) 0 //左端省略表示0
@@ -401,7 +396,7 @@ class AnalyzeByJSoup(doc: Any) {
                     var rl = rus[len]
                     if (rl == ' ') continue //跳过空格
 
-                    if (rl in '0'..'9') l += rl //将数值累接入临时字串中，遇到分界符才取出
+                    if (rl in '0'..'9') l = rl + l //将数值累接入临时字串中，遇到分界符才取出
                     else if (rl == '-') curMinus = true
                     else {
 
@@ -461,7 +456,7 @@ class AnalyzeByJSoup(doc: Any) {
                 val rl = rus[len]
                 if (rl == ' ') continue //跳过空格
 
-                if (rl in '0'..'9') l += rl //将数值累接入临时字串中，遇到分界符才取出
+                if (rl in '0'..'9') l = rl + l //将数值累接入临时字串中，遇到分界符才取出
                 else if (rl == '-') curMinus = true
                 else {
 

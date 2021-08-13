@@ -12,7 +12,6 @@ import io.legado.app.help.DefaultData
 import io.legado.app.help.LocalConfig
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CacheBook
-import io.legado.app.utils.FileUtils
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -23,7 +22,7 @@ import kotlin.math.min
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
     private var threadCount = AppConfig.threadCount
-    private var upTocPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
+    private var upTocPool = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
     val updateList = CopyOnWriteArraySet<String>()
     private val bookMap = ConcurrentHashMap<String, Book>()
 
@@ -38,7 +37,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun upPool() {
         threadCount = AppConfig.threadCount
         upTocPool.close()
-        upTocPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
+        upTocPool = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
     }
 
     fun upAllBookToc() {
@@ -48,7 +47,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun upToc(books: List<Book>) {
-        execute {
+        execute(context = upTocPool) {
             books.filter {
                 it.origin != BookType.local && it.canUpdate
             }.forEach {
@@ -72,7 +71,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 val book = bookEntry.value
                 synchronized(this) {
                     updateList.add(book.bookUrl)
-                    postEvent(EventBus.UP_BOOK, book.bookUrl)
+                    postEvent(EventBus.UP_BOOKSHELF, book.bookUrl)
                 }
                 appDb.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
                     execute(context = upTocPool) {
@@ -85,20 +84,20 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         appDb.bookChapterDao.delByBook(book.bookUrl)
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
                         cacheBook(webBook, book)
-                    }.onError {
+                    }.onError(upTocPool) {
                         it.printStackTrace()
-                    }.onFinally {
+                    }.onFinally(upTocPool) {
                         synchronized(this) {
                             bookMap.remove(bookEntry.key)
                             updateList.remove(book.bookUrl)
-                            postEvent(EventBus.UP_BOOK, book.bookUrl)
+                            postEvent(EventBus.UP_BOOKSHELF, book.bookUrl)
                             upNext()
                         }
                     }
                 } ?: synchronized(this) {
                     bookMap.remove(bookEntry.key)
                     updateList.remove(book.bookUrl)
-                    postEvent(EventBus.UP_BOOK, book.bookUrl)
+                    postEvent(EventBus.UP_BOOKSHELF, book.bookUrl)
                     upNext()
                 }
                 return
@@ -143,7 +142,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun postLoad() {
         execute {
-            FileUtils.deleteFile(FileUtils.getPath(context.cacheDir, "Fonts"))
             if (appDb.httpTTSDao.count == 0) {
                 DefaultData.httpTTS.let {
                     appDb.httpTTSDao.insert(*it.toTypedArray())
@@ -154,13 +152,13 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     fun upVersion() {
         execute {
-            if (LocalConfig.hasUpHttpTTS) {
+            if (LocalConfig.needUpHttpTTS) {
                 DefaultData.importDefaultHttpTTS()
             }
-            if (LocalConfig.hasUpTxtTocRule) {
+            if (LocalConfig.needUpTxtTocRule) {
                 DefaultData.importDefaultTocRules()
             }
-            if (LocalConfig.hasUpRssSources) {
+            if (LocalConfig.needUpRssSources) {
                 DefaultData.importDefaultRssSources()
             }
         }

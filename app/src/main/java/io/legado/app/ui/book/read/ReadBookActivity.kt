@@ -125,6 +125,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private var loadStates: Boolean = false
     override val pageFactory: TextPageFactory get() = binding.readView.pageFactory
     override val headerHeight: Int get() = binding.readView.curPage.headerHeight
+    private val menuLayoutIsVisible get() = bottomDialog > 0 || binding.readMenu.isVisible
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -140,6 +141,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
             upMenu()
             upView()
         }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         viewModel.initData(intent)
     }
 
@@ -163,6 +168,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun onPause() {
         super.onPause()
+        autoPageStop()
         mHandler.removeCallbacks(backupRunnable)
         ReadBook.saveRead()
         timeBatteryReceiver?.let {
@@ -326,6 +332,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 按键事件
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (menuLayoutIsVisible) {
+            return super.onKeyDown(keyCode, event)
+        }
         when {
             isPrevKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
@@ -589,7 +598,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         resetPageOffset: Boolean,
         success: (() -> Unit)?
     ) {
-        runOnUI {
+        launch {
             autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
@@ -602,13 +611,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 更新视图
      */
     override fun upView() {
-        runOnUI {
+        launch {
             binding.readMenu.upBookView()
         }
     }
 
     override fun upPageAnim() {
-        runOnUI {
+        launch {
             binding.readView.upPageAnim()
         }
     }
@@ -617,7 +626,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 页面改变
      */
     override fun pageChanged() {
-        runOnUI {
+        launch {
             autoPageProgress = 0
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
             mHandler.postDelayed(backupRunnable, 600000)
@@ -677,6 +686,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
             binding.readView.upContent(1)
             autoPagePlus()
             binding.readMenu.setAutoPage(true)
+            screenTimeOut = -1L
+            screenOffTimerStart()
         }
     }
 
@@ -685,27 +696,32 @@ class ReadBookActivity : ReadBookBaseActivity(),
         mHandler.removeCallbacks(autoPageRunnable)
         binding.readView.upContent()
         binding.readMenu.setAutoPage(false)
+        upScreenTimeOut()
     }
 
     private fun autoPagePlus() {
         var delayMillis = ReadBookConfig.autoReadSpeed * 1000L / binding.readView.height
         var scrollOffset = 1
         if (delayMillis < 20) {
-            scrollOffset = 20 / delayMillis.toInt()
+            var delayInt = delayMillis.toInt()
+            if (delayInt == 0) delayInt = 1
+            scrollOffset = 20 / delayInt
             delayMillis = 20
         }
         mHandler.removeCallbacks(autoPageRunnable)
-        if (binding.readView.isScroll) {
-            binding.readView.curPage.scroll(-scrollOffset)
-        } else {
-            autoPageProgress += scrollOffset
-            if (autoPageProgress >= binding.readView.height) {
-                autoPageProgress = 0
-                if (!binding.readView.fillPage(PageDirection.NEXT)) {
-                    autoPageStop()
-                }
+        if (!menuLayoutIsVisible) {
+            if (binding.readView.isScroll) {
+                binding.readView.curPage.scroll(-scrollOffset)
             } else {
-                binding.readView.invalidate()
+                autoPageProgress += scrollOffset
+                if (autoPageProgress >= binding.readView.height) {
+                    autoPageProgress = 0
+                    if (!binding.readView.fillPage(PageDirection.NEXT)) {
+                        autoPageStop()
+                    }
+                } else {
+                    binding.readView.invalidate()
+                }
             }
         }
         mHandler.postDelayed(autoPageRunnable, delayMillis)
@@ -957,9 +973,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     private fun upScreenTimeOut() {
-        getPrefString(PreferKey.keepLight)?.let {
-            screenTimeOut = it.toLong() * 1000
-        }
+        val keepLightPrefer = getPrefString(PreferKey.keepLight)?.toInt() ?: 0
+        screenTimeOut = keepLightPrefer * 1000L
         screenOffTimerStart()
     }
 

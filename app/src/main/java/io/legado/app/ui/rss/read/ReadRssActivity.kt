@@ -37,12 +37,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override val binding by viewBinding(ActivityRssReadBinding::inflate)
     override val viewModel by viewModels<ReadRssViewModel>()
-    private val imagePathKey = ""
+    private val imagePathKey = "imagePath"
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
     private var webPic: String? = null
     private val saveImage = registerForActivityResult(FilePicker()) {
+        it ?: return@registerForActivityResult
         ACache.get(this).put(imagePathKey, it.toString())
         viewModel.saveImage(webPic, it.toString())
     }
@@ -85,6 +86,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_rss_refresh -> viewModel.refresh()
             R.id.menu_rss_star -> viewModel.favorite()
             R.id.menu_share_it -> viewModel.rssArticle?.let {
                 share(it.link)
@@ -107,7 +109,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
             allowContentAccess = true
-            //javaScriptEnabled = true
         }
         binding.webView.addJavascriptInterface(this, "app")
         upWebViewTheme()
@@ -155,8 +156,17 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     private fun saveImage() {
+        val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
+        if (path.isNullOrEmpty()) {
+            selectSaveFolder()
+        } else {
+            viewModel.saveImage(webPic, path)
+        }
+    }
+
+    private fun selectSaveFolder() {
         val default = arrayListOf<String>()
-        val path = ACache.get(this).getAsString(imagePathKey)
+        val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
         if (!path.isNullOrEmpty()) {
             default.add(path)
         }

@@ -1,6 +1,6 @@
 package io.legado.app.help.http.cronet
 
-import io.legado.app.help.http.CookieStore
+import android.util.Log
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.Request
@@ -14,19 +14,28 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 
-val executor: Executor by lazy { Executors.newSingleThreadExecutor() }
+val executor: Executor by lazy { Executors.newCachedThreadPool() }
 
 val cronetEngine: ExperimentalCronetEngine by lazy {
+    CronetLoader.preDownload()
 
     val builder = ExperimentalCronetEngine.Builder(appCtx)
-        .setStoragePath(appCtx.externalCacheDir?.absolutePath)
-        .enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50))
-        .enableQuic(true)
+        .setLibraryLoader(CronetLoader)//设置自定义so库加载
+        .setStoragePath(appCtx.externalCacheDir?.absolutePath)//设置缓存路径
+        .enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50))//设置缓存模式
+        .enableQuic(true)//设置支持http/3
+        .enableHttp2(true)  //设置支持http/2
         .enablePublicKeyPinningBypassForLocalTrustAnchors(true)
-        .enableHttp2(true)
+    //.enableNetworkQualityEstimator(true)
+
     //Brotli压缩
     builder.enableBrotli(true)
-    return@lazy builder.build()
+    //builder.setExperimentalOptions("{\"quic_version\": \"h3-29\"}")
+    val engine = builder.build()
+    Log.d("Cronet", "Cronet Version:" + engine.versionString)
+    //这会导致Jsoup的网络请求出现问题，暂时不接管系统URL
+    //URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
+    return@lazy engine
 
 }
 
@@ -35,17 +44,10 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
     val url = request.url.toString()
     val requestBuilder = cronetEngine.newUrlRequestBuilder(url, callback, executor)
     requestBuilder.setHttpMethod(request.method)
-    val cookie = CookieStore.getCookie(url)
-    if (cookie.length > 1) {
-        requestBuilder.addHeader("Cookie", cookie)
-    }
+
     val headers: Headers = request.headers
     headers.forEachIndexed { index, _ ->
-        val name = headers.name(index)
-        if (!name.equals("Keep-Alive", true)) {
-            requestBuilder.addHeader(name, headers.value(index))
-        }
-
+        requestBuilder.addHeader(headers.name(index), headers.value(index))
     }
 
     val requestBody = request.body

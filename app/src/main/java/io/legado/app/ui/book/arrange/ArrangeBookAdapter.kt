@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.arrange
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
@@ -88,6 +89,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun selectAll(selectAll: Boolean) {
         if (selectAll) {
             getItems().forEach {
@@ -100,6 +102,7 @@ class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
         callBack.upSelectCount()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun revertSelection() {
         getItems().forEach {
             if (selectedBooks.contains(it)) {

@@ -1,7 +1,6 @@
 package io.legado.app.service.help
 
 import android.content.Context
-import android.content.Intent
 import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.Book
@@ -9,6 +8,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.msg
+import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
 import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
@@ -29,27 +29,24 @@ object CacheBook {
     }
 
     fun start(context: Context, bookUrl: String, start: Int, end: Int) {
-        Intent(context, CacheBookService::class.java).let {
-            it.action = IntentAction.start
-            it.putExtra("bookUrl", bookUrl)
-            it.putExtra("start", start)
-            it.putExtra("end", end)
-            context.startService(it)
+        context.startService<CacheBookService> {
+            action = IntentAction.start
+            putExtra("bookUrl", bookUrl)
+            putExtra("start", start)
+            putExtra("end", end)
         }
     }
 
     fun remove(context: Context, bookUrl: String) {
-        Intent(context, CacheBookService::class.java).let {
-            it.action = IntentAction.remove
-            it.putExtra("bookUrl", bookUrl)
-            context.startService(it)
+        context.startService<CacheBookService> {
+            action = IntentAction.remove
+            putExtra("bookUrl", bookUrl)
         }
     }
 
     fun stop(context: Context) {
-        Intent(context, CacheBookService::class.java).let {
-            it.action = IntentAction.stop
-            context.startService(it)
+        context.startService<CacheBookService> {
+            action = IntentAction.stop
         }
     }
 

@@ -62,6 +62,9 @@ interface BookDao {
     @get:Query("SELECT COUNT(*) FROM books")
     val allBookCount: Int
 
+    @get:Query("select min(`order`) from books")
+    val minOrder: Int
+
     @get:Query("select max(`order`) from books")
     val maxOrder: Int
 

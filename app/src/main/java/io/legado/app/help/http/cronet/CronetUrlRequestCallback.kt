@@ -6,14 +6,13 @@ import io.legado.app.help.http.okHttpClient
 import okhttp3.*
 import okhttp3.EventListener
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.ResponseBody.Companion.toResponseBody
+import okhttp3.ResponseBody.Companion.asResponseBody
+import okio.Buffer
 import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
 import org.chromium.net.UrlResponseInfo
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.ByteBuffer
-import java.nio.channels.Channels
 import java.util.*
 
 class CronetUrlRequestCallback @JvmOverloads internal constructor(
@@ -29,8 +28,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
     private var mResponse: Response
     private var mException: IOException? = null
     private val mResponseCondition = ConditionVariable()
-    private val mBytesReceived = ByteArrayOutputStream()
-    private val mReceiveChannel = Channels.newChannel(mBytesReceived)
+    private val mBuffer = Buffer()
 
     @Throws(IOException::class)
     fun waitForDone(): Response {
@@ -64,6 +62,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
 
     override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
         this.mResponse = responseFromResponse(this.mResponse, info)
+//        用于调试
 //        val sb: StringBuilder = StringBuilder(info.url).append("\r\n")
 //        sb.append("[Cached:").append(info.wasCached()).append("][StatusCode:")
 //            .append(info.httpStatusCode).append("][StatusText:").append(info.httpStatusText)
@@ -74,6 +73,8 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
 //            sb.append("[").append(h.key).append("]").append(h.value).append("\r\n");
 //        }
 //        Log.e("Cronet", sb.toString())
+        //打印协议，用于调试
+        Log.e("Cronet", info.negotiatedProtocol)
         if (eventListener != null) {
             eventListener.responseHeadersEnd(mCall, this.mResponse)
             eventListener.responseBodyStart(mCall)
@@ -89,7 +90,8 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
     ) {
         byteBuffer.flip()
         try {
-            mReceiveChannel.write(byteBuffer)
+            //mReceiveChannel.write(byteBuffer)
+            mBuffer.write(byteBuffer)
         } catch (e: IOException) {
             Log.i(TAG, "IOException during ByteBuffer read. Details: ", e)
             throw e
@@ -102,8 +104,10 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
         eventListener?.responseBodyEnd(mCall, info.receivedByteCount)
         val contentType: MediaType? = (this.mResponse.header("content-type")
             ?: "text/plain; charset=\"utf-8\"").toMediaTypeOrNull()
+//        val responseBody: ResponseBody =
+//            mBytesReceived.toByteArray().toResponseBody(contentType)
         val responseBody: ResponseBody =
-            mBytesReceived.toByteArray().toResponseBody(contentType)
+            mBuffer.asResponseBody(contentType)
         val newRequest = originalRequest.newBuilder().url(info.url).build()
         this.mResponse = this.mResponse.newBuilder().body(responseBody).request(newRequest).build()
         mResponseCondition.open()
@@ -142,11 +146,11 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
     companion object {
         private const val TAG = "Callback"
         private const val MAX_FOLLOW_COUNT = 20
+
         private fun protocolFromNegotiatedProtocol(responseInfo: UrlResponseInfo): Protocol {
             val negotiatedProtocol = responseInfo.negotiatedProtocol.lowercase(Locale.getDefault())
 //            Log.e("Cronet", responseInfo.url)
 //            Log.e("Cronet", negotiatedProtocol)
-
             return when {
                 negotiatedProtocol.contains("h3") -> {
                     return Protocol.QUIC
@@ -155,6 +159,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
                     Protocol.QUIC
                 }
                 negotiatedProtocol.contains("spdy") -> {
+                    @Suppress("DEPRECATION")
                     Protocol.SPDY_3
                 }
                 negotiatedProtocol.contains("h2") -> {

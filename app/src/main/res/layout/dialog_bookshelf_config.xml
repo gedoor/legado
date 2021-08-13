@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/ll_group_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="6dp"
+            android:text="@string/group_style"
+            android:textColor="@color/primaryText" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/sp_group_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/group_style"
+            app:theme="@style/Spinner"
+            tools:ignore="TouchTargetSizeCheck" />
+
+    </LinearLayout>
+
+    <io.legado.app.lib.theme.view.ATESwitch
+        android:id="@+id/sw_show_unread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="@string/show_unread"
+        app:layout_constraintTop_toBottomOf="@+id/ll_group_style"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <LinearLayout
         android:id="@+id/ll_layout"
@@ -11,29 +46,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintRight_toLeftOf="@+id/ll_sort"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sw_show_unread"
         app:layout_constraintLeft_toLeftOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <io.legado.app.ui.widget.text.AccentTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="6dp"
-                android:text="@string/group_style"
-                android:textSize="16sp" />
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/sp_group_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:entries="@array/group_style"
-                app:theme="@style/Spinner" />
-
-        </LinearLayout>
 
         <io.legado.app.ui.widget.text.AccentTextView
             android:layout_width="match_parent"
@@ -51,41 +65,35 @@
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_list" />
+                android:text="@string/layout_list"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_grid3" />
+                android:text="@string/layout_grid3"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_grid4" />
+                android:text="@string/layout_grid4"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_grid5" />
+                android:text="@string/layout_grid5"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_grid6" />
+                android:text="@string/layout_grid6"
+                tools:ignore="TouchTargetSizeCheck" />
         </RadioGroup>
 
     </LinearLayout>
-
-
-    <io.legado.app.lib.theme.view.ATESwitch
-        android:id="@+id/sw_show_unread"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/show_unread"
-        app:layout_constraintLeft_toRightOf="@+id/ll_layout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
 
     <LinearLayout
         android:id="@+id/ll_sort"
@@ -112,22 +120,26 @@
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_0" />
+                android:text="@string/bookshelf_px_0"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_1" />
+                android:text="@string/bookshelf_px_1"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_2" />
+                android:text="@string/bookshelf_px_2"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_3" />
+                android:text="@string/bookshelf_px_3"
+                tools:ignore="TouchTargetSizeCheck" />
 
         </RadioGroup>
 

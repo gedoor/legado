@@ -89,11 +89,6 @@ function checkFile(file) {
 	return null;
 }
 
-
-
-
-
-
 /**
  * 添加文件时，回调的函数
  * @param object file 文件对象

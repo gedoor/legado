@@ -362,6 +362,7 @@
                         android:layout_marginTop="8dp"
                         android:clickable="true"
                         android:focusable="true"
+                        android:minHeight="48dp"
                         android:paddingLeft="8dp"
                         android:paddingBottom="8dp"
                         android:text="@string/book_intro"

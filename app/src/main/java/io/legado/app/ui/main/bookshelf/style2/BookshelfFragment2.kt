@@ -1,11 +1,11 @@
 package io.legado.app.ui.main.bookshelf.style2
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,8 +21,8 @@ import io.legado.app.databinding.FragmentBookshelf1Binding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.audio.AudioPlayActivity
+import io.legado.app.ui.book.group.GroupEditDialog
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
@@ -45,18 +45,14 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     BaseBooksAdapter.CallBack {
 
     private val binding by viewBinding(FragmentBookshelf1Binding::bind)
-    private lateinit var searchView: SearchView
     private lateinit var booksAdapter: BaseBooksAdapter<*>
     override var groupId = AppConst.bookGroupNoneId
-    private var bookGroupLiveData: LiveData<List<BookGroup>>? = null
     private var booksFlowJob: Job? = null
     private var bookGroups: List<BookGroup> = emptyList()
     override var books: List<Book> = emptyList()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        searchView = binding.titleBar.findViewById(R.id.search_view)
         setSupportToolbar(binding.titleBar.toolbar)
-        initSearchView()
         initRecyclerView()
         initGroupData()
         initBooksData()
@@ -64,25 +60,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
         menuInflater.inflate(R.menu.main_bookshelf, menu)
-        menu.findItem(R.id.menu_search).isVisible = false
-    }
-
-    private fun initSearchView() {
-        ATH.setTint(searchView, primaryTextColor)
-        searchView.onActionViewExpanded()
-        searchView.isSubmitButtonEnabled = true
-        searchView.queryHint = getString(R.string.screen_find)
-        searchView.clearFocus()
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                SearchActivity.start(requireContext(), newText)
-                return false
-            }
-        })
     }
 
     private fun initRecyclerView() {
@@ -120,18 +97,30 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         launch {
             appDb.bookGroupDao.flowShow().collect {
                 if (it != bookGroups) {
                     bookGroups = it
                     booksAdapter.notifyDataSetChanged()
+                    binding.tvEmptyMsg.isGone = getItemCount() > 0
                 }
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initBooksData() {
+        if (groupId == AppConst.bookGroupNoneId) {
+            binding.titleBar.title = getString(R.string.bookshelf)
+        } else {
+            bookGroups.forEach {
+                if (groupId == it.groupId) {
+                    binding.titleBar.title = "${getString(R.string.bookshelf)}(${it.groupName})"
+                }
+            }
+        }
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             when (groupId) {
@@ -141,7 +130,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.collect { list ->
-                binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 books = when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime
@@ -157,8 +145,18 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                     }
                 }
                 booksAdapter.notifyDataSetChanged()
+                binding.tvEmptyMsg.isGone = getItemCount() > 0
             }
         }
+    }
+
+    fun back(): Boolean {
+        if (groupId != AppConst.bookGroupNoneId) {
+            groupId = AppConst.bookGroupNoneId
+            initBooksData()
+            return true
+        }
+        return false
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -179,34 +177,30 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun onItemClick(position: Int) {
-        if (position < bookGroups.size) {
-            val bookGroup = bookGroups[position]
-            groupId = bookGroup.groupId
-            initBooksData()
-        } else {
-            val book = books[position - bookGroups.size]
-            when (book.type) {
+        when (val item = getItem(position)) {
+            is Book -> when (item.type) {
                 BookType.audio ->
                     startActivity<AudioPlayActivity> {
-                        putExtra("bookUrl", book.bookUrl)
+                        putExtra("bookUrl", item.bookUrl)
                     }
                 else -> startActivity<ReadBookActivity> {
-                    putExtra("bookUrl", book.bookUrl)
+                    putExtra("bookUrl", item.bookUrl)
                 }
+            }
+            is BookGroup -> {
+                groupId = item.groupId
+                initBooksData()
             }
         }
     }
 
     override fun onItemLongClick(position: Int) {
-        if (position < bookGroups.size) {
-            val bookGroup = bookGroups[position]
-
-        } else {
-            val book = books[position - bookGroups.size]
-            startActivity<BookInfoActivity> {
-                putExtra("name", book.name)
-                putExtra("author", book.author)
+        when (val item = getItem(position)) {
+            is Book -> startActivity<BookInfoActivity> {
+                putExtra("name", item.name)
+                putExtra("author", item.author)
             }
+            is BookGroup -> GroupEditDialog.start(childFragmentManager, item)
         }
     }
 
@@ -215,20 +209,37 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun getItemCount(): Int {
-        return bookGroups.size + books.size
-    }
-
-    override fun getItem(position: Int): Any {
-        return if (position < bookGroups.size) {
-            bookGroups[position]
+        return if (groupId == AppConst.bookGroupNoneId) {
+            bookGroups.size + books.size
         } else {
-            books[position - bookGroups.size]
+            books.size
         }
     }
 
+    override fun getItemType(position: Int): Int {
+        return if (groupId == AppConst.bookGroupNoneId) {
+            if (position < bookGroups.size) 1 else 0
+        } else {
+            0
+        }
+    }
+
+    override fun getItem(position: Int): Any {
+        return if (groupId == AppConst.bookGroupNoneId) {
+            if (position < bookGroups.size) {
+                bookGroups[position]
+            } else {
+                books[position - bookGroups.size]
+            }
+        } else {
+            books[position]
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun observeLiveBus() {
         super.observeLiveBus()
-        observeEvent<String>(EventBus.UP_BOOK) {
+        observeEvent<String>(EventBus.UP_BOOKSHELF) {
             booksAdapter.notification(it)
         }
         observeEvent<String>(EventBus.BOOKSHELF_REFRESH) {

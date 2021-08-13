@@ -85,7 +85,9 @@ class PageView(context: Context) : FrameLayout(context) {
             vwTopDivider.visible(it.showHeaderLine)
             vwBottomDivider.visible(it.showFooterLine)
             pageNvBar.layoutParams = pageNvBar.layoutParams.apply {
-                height = if (it.hideNavigationBar) 0 else App.navigationBarHeight
+                height =
+                    if (it.hideNavigationBar) 0
+                    else App.navigationBarHeight
             }
         }
         contentTextView.upVisibleRect()

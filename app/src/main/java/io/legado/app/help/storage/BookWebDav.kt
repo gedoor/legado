@@ -102,7 +102,7 @@ object BookWebDav {
 
     suspend fun backUpWebDav(path: String) {
         try {
-            if (initWebDav()) {
+            if (initWebDav() && NetworkUtils.isAvailable()) {
                 val paths = arrayListOf(*Backup.backupFileNames)
                 for (i in 0 until paths.size) {
                     paths[i] = path + File.separator + paths[i]
@@ -116,15 +116,13 @@ object BookWebDav {
                 }
             }
         } catch (e: Exception) {
-            Handler(Looper.getMainLooper()).post {
-                appCtx.toastOnUi("WebDav\n${e.localizedMessage}")
-            }
+            appCtx.toastOnUi("WebDav\n${e.localizedMessage}")
         }
     }
 
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         try {
-            if (initWebDav()) {
+            if (initWebDav() && NetworkUtils.isAvailable()) {
                 // 默认导出到legado文件夹下exports目录
                 val exportsWebDavUrl = rootWebDavUrl + EncoderUtils.escape("exports") + "/"
                 // 在legado文件夹创建exports目录,如果不存在的话
@@ -141,6 +139,7 @@ object BookWebDav {
     }
 
     fun uploadBookProgress(book: Book) {
+        if (!NetworkUtils.isAvailable()) return
         Coroutine.async {
             val bookProgress = BookProgress(
                 name = book.name,
@@ -159,7 +158,7 @@ object BookWebDav {
     }
 
     suspend fun getBookProgress(book: Book): BookProgress? {
-        if (initWebDav()) {
+        if (initWebDav() && NetworkUtils.isAvailable()) {
             val url = getProgressUrl(book)
             WebDav(url).download()?.let { byteArray ->
                 val json = String(byteArray)

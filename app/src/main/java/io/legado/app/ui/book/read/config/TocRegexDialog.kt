@@ -45,7 +45,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().getSize()
+        val dm = requireActivity().windowSize
         dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.8).toInt())
     }
 
@@ -135,8 +135,8 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
             cacheUrls.add(0, defaultUrl)
         }
         requireContext().alert(titleResource = R.string.import_on_line) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
-            alertBinding.apply {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                textInputLayout.hint = "url"
                 editView.setFilterValues(cacheUrls)
                 editView.delCallBack = {
                     cacheUrls.remove(it)

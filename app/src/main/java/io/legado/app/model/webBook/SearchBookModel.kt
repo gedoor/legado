@@ -7,7 +7,6 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import splitties.init.appCtx
@@ -27,7 +26,7 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
     private var searchIndex = -1
 
     private fun initSearchPool() {
-        searchPool = Executors.newFixedThreadPool(threadCount).asCoroutineDispatcher()
+        searchPool = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
     }
 
     fun search(searchId: Long, key: String) {
@@ -74,12 +73,12 @@ class SearchBookModel(private val scope: CoroutineScope, private val callBack: C
                 searchPage,
                 context = searchPool!!
             ).timeout(30000L)
-                .onSuccess(IO) {
+                .onSuccess(searchPool) {
                     if (searchId == mSearchId) {
                         callBack.onSearchSuccess(it)
                     }
                 }
-                .onFinally {
+                .onFinally(searchPool) {
                     synchronized(this) {
                         if (searchIndex < bookSourceList.lastIndex) {
                             search(searchId)

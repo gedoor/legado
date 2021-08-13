@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
@@ -18,8 +19,10 @@ import io.legado.app.help.storage.Restore
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.splitNotBlank
 
 class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
+    var isAddGroup = false
     var groupName: String? = null
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
@@ -28,27 +31,30 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     val checkSources = arrayListOf<BookSource?>()
     val selectStatus = arrayListOf<Boolean>()
 
-    fun isSelectAll(): Boolean {
-        selectStatus.forEach {
-            if (!it) {
-                return false
+    val isSelectAll: Boolean
+        get() {
+            selectStatus.forEach {
+                if (!it) {
+                    return false
+                }
             }
+            return true
         }
-        return true
-    }
 
-    fun selectCount(): Int {
-        var count = 0
-        selectStatus.forEach {
-            if (it) {
-                count++
+    val selectCount: Int
+        get() {
+            var count = 0
+            selectStatus.forEach {
+                if (it) {
+                    count++
+                }
             }
+            return count
         }
-        return count
-    }
 
     fun importSelect(finally: () -> Unit) {
         execute {
+            val group = groupName?.trim()
             val keepName = AppConfig.importKeepName
             val selectSource = arrayListOf<BookSource>()
             selectStatus.forEachIndexed { index, b ->
@@ -61,8 +67,17 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                             source.customOrder = it.customOrder
                         }
                     }
-                    if (groupName != null) {
-                        source.bookSourceGroup = groupName
+                    if (!group.isNullOrEmpty()) {
+                        if (isAddGroup) {
+                            val groups = linkedSetOf<String>()
+                            source.bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.let {
+                                groups.addAll(it)
+                            }
+                            groups.add(group)
+                            source.bookSourceGroup = groups.joinToString(",")
+                        } else {
+                            source.bookSourceGroup = group
+                        }
                     }
                     selectSource.add(source)
                 }

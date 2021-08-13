@@ -99,7 +99,7 @@
         app:layout_constraintLeft_toRightOf="@+id/iv_author"
         app:layout_constraintRight_toRightOf="@id/fl_has_new"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        tools:ignore="RtlSymmetry" />
+        tools:ignore="RtlSymmetry,TextContrastCheck" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_read"
@@ -127,7 +127,8 @@
         app:layout_constraintBottom_toTopOf="@id/tv_last"
         app:layout_constraintLeft_toRightOf="@+id/iv_read"
         app:layout_constraintRight_toRightOf="@+id/fl_has_new"
-        app:layout_constraintTop_toBottomOf="@+id/tv_author" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_author"
+        tools:ignore="TextContrastCheck" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_last"
@@ -155,7 +156,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/iv_last"
         app:layout_constraintRight_toRightOf="@id/fl_has_new"
-        app:layout_constraintTop_toBottomOf="@+id/tv_read" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_read"
+        tools:ignore="TextContrastCheck" />
 
     <View
         android:id="@+id/vw_foreground"

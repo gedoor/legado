@@ -21,7 +21,6 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ActivityMainBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.DefaultData
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.ATH
@@ -124,7 +123,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             } else if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
                 TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
-                DefaultData.importDefaultTocRules()//版本更新时更新自带本地txt目录规则
             }
             viewModel.upVersion()
         }
@@ -137,6 +135,11 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     if (pagePosition != 0) {
                         binding.viewPagerMain.currentItem = 0
                         return true
+                    }
+                    (fragmentMap[getFragmentId(0)] as? BookshelfFragment2)?.let {
+                        if (it.back()) {
+                            return true
+                        }
                     }
                     if (System.currentTimeMillis() - exitTime > 2000) {
                         toastOnUi(R.string.double_click_exit)

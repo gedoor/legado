@@ -848,4 +848,6 @@
     <string name="dict">字典</string>
     <string name="unknown_error">未知错误</string>
     <string name="export_no_chapter_name">No export chapter names</string>
+    <string name="end">end</string>
+    <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
 </resources>

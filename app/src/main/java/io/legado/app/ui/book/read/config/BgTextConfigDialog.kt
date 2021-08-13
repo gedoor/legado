@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
@@ -21,8 +20,6 @@ import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.permission.Permissions
-import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
@@ -46,13 +43,14 @@ class BgTextConfigDialog : BaseDialogFragment() {
     private var primaryTextColor = 0
     private var secondaryTextColor = 0
     private val importFormNet = "网络导入"
-    private val selectBgImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        setBgFromUri(it)
+    private val selectBgImage = registerForActivityResult(SelectImageContract()) {
+        it?.second?.let { uri ->
+            setBgFromUri(uri)
+        }
     }
     private val selectExportDir = registerForActivityResult(FilePicker()) {
-        it?.let {
-            exportConfig(it)
-        }
+        it ?: return@registerForActivityResult
+        exportConfig(it)
     }
     private val selectImportDoc = registerForActivityResult(FilePicker()) {
         it ?: return@registerForActivityResult
@@ -122,7 +120,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 ivBg.setImageResource(R.drawable.ic_image)
                 ivBg.setColorFilter(primaryTextColor)
                 root.setOnClickListener {
-                    selectBgImage.launch("image/*")
+                    selectBgImage.launch(null)
                 }
             }
         }
@@ -142,6 +140,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         binding.ivEdit.setOnClickListener {
             alert(R.string.style_name) {
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                    textInputLayout.hint = "name"
                     editView.setText(ReadBookConfig.durConfig.name)
                 }
                 customView { alertBinding.root }
@@ -344,35 +343,13 @@ class BgTextConfigDialog : BaseDialogFragment() {
     }
 
     private fun setBgFromUri(uri: Uri) {
-        if (uri.toString().isContentScheme()) {
-            val doc = DocumentFile.fromSingleUri(requireContext(), uri)
-            doc?.name?.let {
-                val file =
-                    FileUtils.createFileIfNotExist(requireContext().externalFiles, "bg", it)
-                kotlin.runCatching {
-                    DocumentUtils.readBytes(requireContext(), doc.uri)
-                }.getOrNull()?.let { byteArray ->
-                    file.writeBytes(byteArray)
-                    ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
-                    ReadBookConfig.upBg()
-                    postEvent(EventBus.UP_CONFIG, false)
-                } ?: toastOnUi("获取文件出错")
-            }
-        } else {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                        ReadBookConfig.durConfig.setCurBg(2, path)
-                        ReadBookConfig.upBg()
-                        postEvent(EventBus.UP_CONFIG, false)
-                    }
-                }
-                .request()
+        uri.read(this) { name, bytes ->
+            var file = requireContext().externalFiles
+            file = FileUtils.createFileIfNotExist(file, "bg", name)
+            file.writeBytes(bytes)
+            ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
+            ReadBookConfig.upBg()
+            postEvent(EventBus.UP_CONFIG, false)
         }
     }
 }

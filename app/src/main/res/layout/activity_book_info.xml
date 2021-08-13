@@ -333,16 +333,17 @@
 
                 <io.legado.app.ui.widget.text.ScrollTextView
                     android:id="@+id/tv_intro"
-                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:clickable="true"
                     android:focusable="true"
+                    android:minHeight="48dp"
+                    android:paddingLeft="8dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/book_intro"
                     android:textColor="@color/secondaryText"
                     android:textSize="14sp"
-                    android:paddingLeft="8dp"
-                    android:paddingBottom="8dp"
                     android:visibility="visible"
                     tools:ignore="RtlHardcoded,RtlSymmetry" />
 
