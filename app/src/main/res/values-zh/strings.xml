@@ -812,6 +812,7 @@
     <string name="background_image_hint">0为停用，启用范围1~25\n半径数值越大，虚化效果越高</string>
     <string name="export_folder">导出文件夹</string>
     <string name="export_charset">导出编码</string>
+    <string name="export_no_chapter_name">TXT不导出章节名</string>
     <string name="export_to_web_dav">导出到WebDav</string>
     <string name="reverse_content">反转内容</string>
     <string name="debug">调试</string>
