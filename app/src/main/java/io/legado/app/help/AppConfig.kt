@@ -205,7 +205,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefBoolean(PreferKey.exportToWebDav, value)
         }
-
+    var exportNoChapterName: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.exportNoChapterName)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.exportNoChapterName, value)
+        }
     var exportType: Int
         get() = appCtx.getPrefInt(PreferKey.exportType)
         set(value) {
