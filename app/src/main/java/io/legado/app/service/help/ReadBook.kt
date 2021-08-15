@@ -80,10 +80,14 @@ object ReadBook {
     }
 
     fun setProgress(progress: BookProgress) {
-        durChapterIndex = progress.durChapterIndex
-        durChapterPos = progress.durChapterPos
-        clearTextChapter()
-        loadContent(resetPageOffset = true)
+        if (durChapterIndex != progress.durChapterIndex
+            || durChapterPos != progress.durChapterPos
+        ) {
+            durChapterIndex = progress.durChapterIndex
+            durChapterPos = progress.durChapterPos
+            clearTextChapter()
+            loadContent(resetPageOffset = true)
+        }
     }
 
     fun clearTextChapter() {
