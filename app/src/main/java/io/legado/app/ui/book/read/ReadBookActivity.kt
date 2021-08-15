@@ -45,6 +45,7 @@ import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.book.toc.BookmarkDialog
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.dict.DictDialog
 import io.legado.app.ui.login.SourceLoginActivity
@@ -110,7 +111,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = binding.readView.isScroll
     private val mHandler = Handler(Looper.getMainLooper())
-    private val keepScreenRunnable = Runnable { keepScreenOn(window, false) }
+    private val keepScreenRunnable = Runnable { keepScreenOn(false) }
     private val autoPageRunnable = Runnable { autoPagePlus() }
     private val backupRunnable = Runnable {
         if (!BuildConfig.DEBUG) {
@@ -251,7 +252,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                         chapterName = page.title
                         bookText = page.text.trim()
                     }
-                    showBookMark(bookmark)
+                    BookmarkDialog.start(supportFragmentManager, bookmark)
                 }
             }
             R.id.menu_copy_text ->
@@ -513,7 +514,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 if (bookmark == null) {
                     toastOnUi(R.string.create_bookmark_error)
                 } else {
-                    showBookMark(bookmark)
+                    BookmarkDialog.start(supportFragmentManager, bookmark)
                 }
                 return true
             }
@@ -983,16 +984,16 @@ class ReadBookActivity : ReadBookBaseActivity(),
      */
     override fun screenOffTimerStart() {
         if (screenTimeOut < 0) {
-            keepScreenOn(window, true)
+            keepScreenOn(true)
             return
         }
         val t = screenTimeOut - sysScreenOffTime
         if (t > 0) {
             mHandler.removeCallbacks(keepScreenRunnable)
-            keepScreenOn(window, true)
+            keepScreenOn(true)
             mHandler.postDelayed(keepScreenRunnable, screenTimeOut)
         } else {
-            keepScreenOn(window, false)
+            keepScreenOn(false)
         }
     }
 }
