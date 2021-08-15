@@ -67,6 +67,7 @@ abstract class BaseReadAloudService : BaseService(),
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        doDs()
     }
 
     override fun onDestroy() {
