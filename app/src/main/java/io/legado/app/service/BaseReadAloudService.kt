@@ -137,6 +137,8 @@ abstract class BaseReadAloudService : BaseService(),
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
 
+    abstract fun playStop()
+
     @CallSuper
     open fun pauseReadAloud(pause: Boolean) {
         BaseReadAloudService.pause = pause
@@ -157,9 +159,27 @@ abstract class BaseReadAloudService : BaseService(),
 
     abstract fun upSpeechRate(reset: Boolean = false)
 
-    abstract fun prevP()
+    private fun prevP() {
+        if (nowSpeak > 0) {
+            playStop()
+            nowSpeak--
+            readAloudNumber -= contentList[nowSpeak].length.minus(1)
+            play()
+        } else {
+            ReadBook.moveToPrevChapter(true)
+        }
+    }
 
-    abstract fun nextP()
+    private fun nextP() {
+        if (nowSpeak < contentList.size - 1) {
+            playStop()
+            readAloudNumber += contentList[nowSpeak].length.plus(1)
+            nowSpeak++
+            play()
+        } else {
+            nextChapter()
+        }
+    }
 
     private fun setTimer(minute: Int) {
         timeMinute = minute

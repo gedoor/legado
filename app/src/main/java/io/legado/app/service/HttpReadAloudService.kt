@@ -68,6 +68,10 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
+    override fun playStop() {
+        player.stop()
+    }
+
     private fun downloadAudio() {
         task?.cancel()
         task = execute {
@@ -214,30 +218,6 @@ class HttpReadAloudService : BaseReadAloudService(),
         player.stop()
         playingIndex = -1
         downloadAudio()
-    }
-
-    /**
-     * 上一段
-     */
-    override fun prevP() {
-        if (nowSpeak > 0) {
-            player.stop()
-            nowSpeak--
-            readAloudNumber -= contentList[nowSpeak].length.minus(1)
-            play()
-        }
-    }
-
-    /**
-     * 下一段
-     */
-    override fun nextP() {
-        if (nowSpeak < contentList.size - 1) {
-            player.stop()
-            readAloudNumber += contentList[nowSpeak].length.plus(1)
-            nowSpeak++
-            play()
-        }
     }
 
     override fun onPrepared(mp: MediaPlayer?) {

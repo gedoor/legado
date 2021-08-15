@@ -3,6 +3,9 @@ package io.legado.app.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.view.KeyEvent
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
@@ -12,10 +15,12 @@ import io.legado.app.service.AudioPlayService
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.service.help.ReadAloud
+import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.postEvent
+import splitties.init.appCtx
 
 
 /**
@@ -32,6 +37,21 @@ class MediaButtonReceiver : BroadcastReceiver() {
 
     companion object {
 
+        val handler = object : Handler(Looper.getMainLooper()) {
+
+            override fun handleMessage(msg: Message) {
+                when (msg.what) {
+                    KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+                        ReadAloud.prevParagraph(appCtx)
+                    }
+                    KeyEvent.KEYCODE_MEDIA_NEXT -> {
+                        ReadAloud.nextParagraph(appCtx)
+                    }
+                }
+            }
+
+        }
+
         fun handleIntent(context: Context, intent: Intent): Boolean {
             val intentAction = intent.action
             if (Intent.ACTION_MEDIA_BUTTON == intentAction) {
@@ -42,10 +62,23 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 if (action == KeyEvent.ACTION_DOWN) {
                     when (keycode) {
                         KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
-                            ReadAloud.prevParagraph(context)
+                            if (handler.hasMessages(KeyEvent.KEYCODE_MEDIA_PREVIOUS)) {
+                                handler.removeMessages(KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+                                ReadBook.moveToPrevChapter(true)
+                            } else {
+                                handler.sendEmptyMessageDelayed(
+                                    KeyEvent.KEYCODE_MEDIA_PREVIOUS,
+                                    500
+                                )
+                            }
                         }
                         KeyEvent.KEYCODE_MEDIA_NEXT -> {
-                            ReadAloud.nextParagraph(context)
+                            if (handler.hasMessages(KeyEvent.KEYCODE_MEDIA_NEXT)) {
+                                handler.removeMessages(KeyEvent.KEYCODE_MEDIA_NEXT)
+                                ReadBook.moveToNextChapter(true)
+                            } else {
+                                handler.sendEmptyMessageDelayed(KeyEvent.KEYCODE_MEDIA_NEXT, 500)
+                            }
                         }
                         else -> readAloud(context)
                     }

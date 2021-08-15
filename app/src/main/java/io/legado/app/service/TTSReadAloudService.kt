@@ -76,6 +76,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         }
     }
 
+    override fun playStop() {
+        textToSpeech?.stop()
+    }
+
     /**
      * 更新朗读速度
      */
@@ -87,30 +91,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             }
         } else {
             textToSpeech?.setSpeechRate((AppConfig.ttsSpeechRate + 5) / 10f)
-        }
-    }
-
-    /**
-     * 上一段
-     */
-    override fun prevP() {
-        if (nowSpeak > 0) {
-            textToSpeech?.stop()
-            nowSpeak--
-            readAloudNumber -= contentList[nowSpeak].length.minus(1)
-            play()
-        }
-    }
-
-    /**
-     * 下一段
-     */
-    override fun nextP() {
-        if (nowSpeak < contentList.size - 1) {
-            textToSpeech?.stop()
-            readAloudNumber += contentList[nowSpeak].length.plus(1)
-            nowSpeak++
-            play()
         }
     }
 
