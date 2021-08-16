@@ -428,7 +428,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun observeLiveBus() {
-        val checkSourceMessageFlow = flow<String> {}
         observeEvent<String>(EventBus.CHECK_SOURCE) { msg ->
             snackBar?.setText(msg) ?: let {
                 snackBar = Snackbar
@@ -449,24 +448,16 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 //                }
 //            }
         }
-        observeEvent<Pair<String, String>>(EventBus.CHECK_SOURCE_MESSAGE) { messagePair ->
+        observeEvent<Pair<String, String?>>(EventBus.CHECK_SOURCE_MESSAGE) { messagePair ->
             sourceFlowJob?.cancel()
-
-            val messageFlow =  Debug.debugMessageMap[messagePair.first]?.asFlow()
-            if (messageFlow != null) {
                 sourceFlowJob = launch {
                     var index: Int = -1
                     appDb.bookSourceDao.flowSearch(messagePair.first)
                         .map { adapter.getItems().indexOf(it[0]) }
                         .collect {
-                            index = it }
-                    if (index > -1){
-                        messageFlow.onEach { delay(300L) }.buffer(10)
-                            .collect { adapter.notifyItemChanged(index, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, it))) }
-                    }
-
+                            index = it
+                            adapter.notifyItemChanged(index, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, messagePair.second))) }
                 }
-            }
 
 
         }

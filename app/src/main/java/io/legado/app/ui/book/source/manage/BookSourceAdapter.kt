@@ -109,7 +109,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 }
                 swtEnabled.isChecked = item.enabled
                 cbBookSource.isChecked = selected.contains(item)
-                ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl]?.lastOrNull() ?: ""
+                ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
                 ivDebugText.visibility = if(ivDebugText.text.toString().length > 1) View.VISIBLE else View.GONE
                 upShowExplore(ivExplore, item)
             } else {
@@ -117,13 +117,20 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     when (it) {
                         "selected" -> cbBookSource.isChecked = selected.contains(item)
                         "startChecking" -> {
-                            ivProgressBar.visibility = if(selected.contains(item)) View.VISIBLE else View.GONE
-                        }
-                        "checkSourceDone" -> {
                             ivProgressBar.visibility = if(selected.contains(item)) View.VISIBLE else ivProgressBar.visibility
                         }
+                        "checkSourceDone" -> {
+                            ivProgressBar.visibility = if(selected.contains(item)) View.GONE else ivProgressBar.visibility
+                        }
                         EventBus.CHECK_SOURCE_MESSAGE -> {
-                            ivDebugText.text = (payload[it] as? String)  ?: ""
+                            val message = payload[it] as? String?
+                            if (message != null) {
+                                ivDebugText.text = message
+                                ivProgressBar.visibility = View.GONE
+                            }
+                            else{
+                                ivDebugText.text =  Debug.debugMessageMap[item.bookSourceUrl] ?: ""
+                            }
                             ivDebugText.visibility = if(ivDebugText.text.toString().length > 1) View.VISIBLE else View.GONE
                         }
                     }

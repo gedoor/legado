@@ -21,7 +21,8 @@ object Debug {
     var callback: Callback? = null
     private var debugSource: String? = null
     private val tasks: CompositeCoroutine = CompositeCoroutine()
-    val debugMessageMap = ConcurrentHashMap<String, ArrayList<String>>()
+    val debugMessageMap = ConcurrentHashMap<String, String>()
+    var isChecking: Boolean = false
 
     @SuppressLint("ConstantLocale")
     private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
@@ -37,7 +38,7 @@ object Debug {
         state: Int = 1
     ) {
         callback?.let {
-            if (debugSource != sourceUrl || !print) return
+            if ((debugSource != sourceUrl || !print) && !isChecking) return
             var printMsg = msg ?: ""
             if (isHtml) {
                 printMsg = HtmlFormatter.format(msg)
@@ -49,7 +50,8 @@ object Debug {
             it.printLog(state, printMsg)
             Log.d(EventBus.CHECK_SOURCE_MESSAGE, "debugMessage to filter $printMsg")
             if (sourceUrl != null && printMsg.length < 30) {
-                debugMessageMap[sourceUrl]?.add(printMsg)
+                debugMessageMap[sourceUrl] = printMsg
+                callback?.printCheckSourceMessage(sourceUrl, printMsg)
             }
         }
     }
@@ -68,10 +70,10 @@ object Debug {
         }
     }
 
-    fun startCheck(source: BookSource) {
-        debugSource = source.bookSourceUrl
+    fun startChecking(source: BookSource) {
         startTime = System.currentTimeMillis()
-        debugMessageMap[source.bookSourceUrl] = arrayListOf()
+        isChecking = true
+        debugMessageMap[source.bookSourceUrl] = "开始校验"
     }
 
     fun startDebug(scope: CoroutineScope, rssSource: RssSource) {

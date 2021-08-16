@@ -10,7 +10,6 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.Debug
@@ -24,7 +23,7 @@ import java.util.concurrent.Executors
 import kotlin.math.min
 
 class CheckSourceService : BaseService() {
-    private var threadCount = AppConfig.threadCount
+    private var threadCount = 1
     private var searchCoroutine = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val allIds = ArrayList<String>()
@@ -37,7 +36,7 @@ class CheckSourceService : BaseService() {
 
         @Synchronized
         override fun printCheckSourceMessage(sourceUrl: String, msg: String) {
-            postEvent(EventBus.CHECK_SOURCE_MESSAGE, Pair(sourceUrl, msg))
+            postEvent(EventBus.CHECK_SOURCE_MESSAGE, Pair(sourceUrl, null))
             Log.d(EventBus.CHECK_SOURCE_MESSAGE, "printCheckSourceMessage to post $msg")
         }
     }
@@ -79,6 +78,7 @@ class CheckSourceService : BaseService() {
         tasks.clear()
         searchCoroutine.close()
         Debug.callback = null
+        Debug.isChecking = false
         postEvent(EventBus.CHECK_SOURCE_DONE, 0)
     }
 
@@ -112,7 +112,7 @@ class CheckSourceService : BaseService() {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
                 appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
-                    Debug.startCheck(source)
+                    Debug.startChecking(source)
                     check(source)
                 } ?: onNext(sourceUrl, "")
             }
@@ -150,6 +150,8 @@ class CheckSourceService : BaseService() {
                     "error:${it.localizedMessage}
                     ${source.bookSourceComment}"
                 """.trimIndent()
+                val message = Debug.debugMessageMap[source.bookSourceUrl] + " 失败"
+                postEvent(EventBus.CHECK_SOURCE_MESSAGE, Pair(source.bookSourceUrl, message))
                 appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
                 source.removeGroup("失效")
@@ -158,9 +160,16 @@ class CheckSourceService : BaseService() {
                     ?.filterNot {
                         it.startsWith("error:")
                     }?.joinToString("\n")
+                Debug.debugMessageMap[source.bookSourceUrl]?.let { lastMessage ->
+                    lastMessage.indexOf("]").let {
+                        if (it > 0) {
+                            val timeMessage = lastMessage.substring(0, it) + " 校验成功"
+                            postEvent(EventBus.CHECK_SOURCE_MESSAGE, Pair(source.bookSourceUrl, timeMessage))
+                        }
+                    }
+                }
                 appDb.bookSourceDao.update(source)
             }.onFinally(searchCoroutine) {
-                postEvent(EventBus.CHECK_SOURCE_MESSAGE, Pair(source.bookSourceUrl, null))
                 onNext(source.bookSourceUrl, source.bookSourceName)
             }
     }
