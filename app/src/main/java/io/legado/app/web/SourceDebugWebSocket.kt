@@ -95,4 +95,8 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
         }
     }
 
+    override fun printCheckSourceMessage(sourceUrl: String, msg: String) {
+        TODO("Not yet implemented")
+    }
+
 }

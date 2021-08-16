@@ -22,6 +22,7 @@ object EventBus {
     const val UP_DOWNLOAD = "upDownload"
     const val SAVE_CONTENT = "saveContent"
     const val CHECK_SOURCE = "checkSource"
+    const val CHECK_SOURCE_MESSAGE = "checkSourceMessage"
     const val CHECK_SOURCE_DONE = "checkSourceDone"
     const val TIP_COLOR = "tipColor"
     const val SOURCE_CHANGED = "sourceChanged"

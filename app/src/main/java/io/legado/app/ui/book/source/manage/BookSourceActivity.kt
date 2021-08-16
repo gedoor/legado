@@ -9,6 +9,7 @@ import android.view.SubMenu
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
@@ -24,6 +25,7 @@ import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.model.Debug
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
@@ -39,7 +41,8 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -337,6 +340,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         CheckSource.keyword = it
                     }
                 }
+                adapter.notifyItemRangeChanged(0, adapter.itemCount, bundleOf(Pair("startChecking", null)))
                 CheckSource.start(this@BookSourceActivity, adapter.selection)
             }
             noButton()
@@ -424,6 +428,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun observeLiveBus() {
+        val checkSourceMessageFlow = flow<String> {}
         observeEvent<String>(EventBus.CHECK_SOURCE) { msg ->
             snackBar?.setText(msg) ?: let {
                 snackBar = Snackbar
@@ -434,14 +439,36 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
         }
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
+            adapter.notifyItemRangeChanged(0, adapter.itemCount, bundleOf(Pair("checkSourceDone", null)))
             snackBar?.dismiss()
             snackBar = null
-            groups.map { group ->
-                if (group.contains("失效")) {
-                    searchView.setQuery("失效", true)
-                    toastOnUi("发现有失效书源，已为您自动筛选！")
+//            groups.map { group ->
+//                if (group.contains("失效")) {
+//                    searchView.setQuery("失效", true)
+//                    toastOnUi("发现有失效书源，已为您自动筛选！")
+//                }
+//            }
+        }
+        observeEvent<Pair<String, String>>(EventBus.CHECK_SOURCE_MESSAGE) { messagePair ->
+            sourceFlowJob?.cancel()
+
+            val messageFlow =  Debug.debugMessageMap[messagePair.first]?.asFlow()
+            if (messageFlow != null) {
+                sourceFlowJob = launch {
+                    var index: Int = -1
+                    appDb.bookSourceDao.flowSearch(messagePair.first)
+                        .map { adapter.getItems().indexOf(it[0]) }
+                        .collect {
+                            index = it }
+                    if (index > -1){
+                        messageFlow.onEach { delay(300L) }.buffer(10)
+                            .collect { adapter.notifyItemChanged(index, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, it))) }
+                    }
+
                 }
             }
+
+
         }
     }
 

@@ -17,7 +17,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/swt_enabled"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/iv_menu_more" />
 
     <io.legado.app.lib.theme.view.ATESwitch
         android:id="@+id/swt_enabled"
@@ -29,7 +29,7 @@
         tools:ignore="RtlSymmetry"
         app:layout_constraintRight_toLeftOf="@id/iv_edit"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/iv_menu_more" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_edit"
@@ -43,7 +43,7 @@
         android:tint="@color/primaryText"
         app:layout_constraintRight_toLeftOf="@id/iv_menu_more"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/iv_menu_more" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu_more"
@@ -55,7 +55,7 @@
         android:tint="@color/primaryText"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/iv_progressBar"
         tools:ignore="RtlHardcoded" />
 
     <io.legado.app.ui.widget.image.CircleImageView
@@ -67,5 +67,33 @@
         android:src="@color/md_green_600"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <io.legado.app.lib.theme.view.ATEProgressBar
+        android:id="@+id/iv_progressBar"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="start|center_vertical"
+        android:animationResolution="1000"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:indeterminateBehavior="repeat"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_menu_more"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/iv_debug_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="@string/debug_hint"
+        android:text=""
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@id/iv_progressBar"
+        app:layout_constraintTop_toTopOf="@id/iv_progressBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
