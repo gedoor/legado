@@ -1,6 +1,7 @@
 package io.legado.app.service
 
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -12,6 +13,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
+import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -29,6 +31,16 @@ class CheckSourceService : BaseService() {
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
     private var notificationMsg = ""
+    private val debugCallback = object : Debug.Callback{
+        override fun printLog(state: Int, msg: String) {
+        }
+
+        @Synchronized
+        override fun printCheckSourceMessage(sourceUrl: String, msg: String) {
+            postEvent(EventBus.CHECK_SOURCE_MESSAGE, Pair(sourceUrl, msg))
+            Log.d(EventBus.CHECK_SOURCE_MESSAGE, "printCheckSourceMessage to post $msg")
+        }
+    }
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_network_check)
@@ -48,6 +60,7 @@ class CheckSourceService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         notificationMsg = getString(R.string.start)
+        Debug.callback = debugCallback
         upNotification()
     }
 
@@ -65,6 +78,7 @@ class CheckSourceService : BaseService() {
         super.onDestroy()
         tasks.clear()
         searchCoroutine.close()
+        Debug.callback = null
         postEvent(EventBus.CHECK_SOURCE_DONE, 0)
     }
 
@@ -98,6 +112,7 @@ class CheckSourceService : BaseService() {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
                 appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
+                    Debug.startCheck(source)
                     check(source)
                 } ?: onNext(sourceUrl, "")
             }
@@ -145,6 +160,7 @@ class CheckSourceService : BaseService() {
                     }?.joinToString("\n")
                 appDb.bookSourceDao.update(source)
             }.onFinally(searchCoroutine) {
+                postEvent(EventBus.CHECK_SOURCE_MESSAGE, Pair(source.bookSourceUrl, null))
                 onNext(source.bookSourceUrl, source.bookSourceName)
             }
     }

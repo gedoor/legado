@@ -51,6 +51,10 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
         }
     }
 
+    override fun printCheckSourceMessage(sourceUrl: String, msg: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun onCleared() {
         super.onCleared()
         Debug.cancelDebug(true)
