@@ -293,7 +293,7 @@
             android:launchMode="singleTop" />
         <!-- 书源登录 -->
         <activity
-            android:name=".ui.login.SourceLoginActivity"
+            android:name="io.legado.app.ui.book.login.SourceLoginActivity"
             android:configChanges="orientation|screenSize"
             android:hardwareAccelerated="true" />
         <!-- 阅读记录 -->

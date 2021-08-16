@@ -1,4 +1,4 @@
-package io.legado.app.ui.login
+package io.legado.app.ui.book.login
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
