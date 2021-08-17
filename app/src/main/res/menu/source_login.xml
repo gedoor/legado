@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_success"
+        android:id="@+id/menu_ok"
         android:icon="@drawable/ic_check"
-        android:title="@string/success"
+        android:title="@string/ok"
         app:showAsAction="always" />
 
 </menu>

@@ -5,7 +5,16 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class LoginRule(
-    val ui: HashMap<String, String>? = null,
-    val url: String? = null,
-    val checkJs: String? = null
-) : Parcelable
+    var ui: List<RowUi>? = null,
+    var url: String? = null,
+    var checkJs: String? = null
+) : Parcelable {
+
+    @Parcelize
+    data class RowUi(
+        var name: String,
+        var type: String,
+    ) : Parcelable
+
+
+}
