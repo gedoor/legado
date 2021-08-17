@@ -27,7 +27,9 @@ val appDb by lazy {
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
         RuleSub::class],
-    autoMigrations = [AutoMigration(from = 34, to = 35)]
+    autoMigrations = [
+        AutoMigration(from = 33, to = 35),
+    ]
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -62,7 +64,7 @@ abstract class AppDatabase : RoomDatabase() {
                     migration_19_20, migration_20_21, migration_21_22, migration_22_23,
                     migration_23_24, migration_24_25, migration_25_26, migration_26_27,
                     migration_27_28, migration_28_29, migration_29_30, migration_30_31,
-                    migration_31_32, migration_32_33, migration_33_34
+                    migration_31_32, migration_32_33
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -331,12 +333,6 @@ abstract class AppDatabase : RoomDatabase() {
                     left join books b on o.bookUrl = b.bookUrl
                 """
                 )
-            }
-        }
-
-        private val migration_33_34 = object : Migration(33, 34) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE `book_groups` ADD `cover` TEXT")
             }
         }
 
