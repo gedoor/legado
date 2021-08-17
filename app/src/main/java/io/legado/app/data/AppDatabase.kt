@@ -1,6 +1,7 @@
 package io.legado.app.data
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -19,13 +20,14 @@ val appDb by lazy {
 }
 
 @Database(
+    version = 35,
+    exportSchema = true,
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
         RuleSub::class],
-    version = 34,
-    exportSchema = true
+    autoMigrations = [AutoMigration(from = 34, to = 35)]
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -337,6 +339,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `book_groups` ADD `cover` TEXT")
             }
         }
+
     }
 
 }

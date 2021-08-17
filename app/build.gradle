@@ -14,6 +14,10 @@ def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], projec
 
 android {
     compileSdkVersion 30
+    buildToolsVersion '30.0.3'
+    kotlinOptions {
+        jvmTarget = "11"
+    }
     signingConfigs {
         if (project.hasProperty("RELEASE_STORE_FILE")) {
             myConfig {
@@ -102,10 +106,10 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
+    sourceSets {
+        // Adds exported schema location as test app assets.
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
-    buildToolsVersion '30.0.3'
     tasks.withType(JavaCompile) {
         //options.compilerArgs << "-Xlint:unchecked"
     }
@@ -166,7 +170,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
 
     //room
-    def room_version = '2.3.0'
+    def room_version = '2.4.0-alpha04'
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
