@@ -28,9 +28,8 @@ val appDb by lazy {
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
         RuleSub::class],
     autoMigrations = [
-        AutoMigration(from = 1, to = 10),
-        AutoMigration(from = 12, to = 13),
-        AutoMigration(from = 19, to = 21),
+        AutoMigration(from = 11, to = 12),
+        AutoMigration(from = 19, to = 20),
         AutoMigration(from = 27, to = 29),
         AutoMigration(from = 33, to = 35),
     ]
@@ -63,14 +62,24 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .addMigrations(
-                    migration_10_11, migration_13_14,
-                    migration_14_15, migration_15_17,
-                    migration_17_18, migration_18_19,
-                    migration_21_22, migration_22_23,
-                    migration_23_24, migration_24_25,
-                    migration_25_26, migration_26_27,
-                    migration_29_30, migration_30_31,
-                    migration_31_32, migration_32_33
+                    migration_10_11,
+                    migration_12_13,
+                    migration_13_14,
+                    migration_14_15,
+                    migration_15_17,
+                    migration_17_18,
+                    migration_18_19,
+                    migration_20_21,
+                    migration_21_22,
+                    migration_22_23,
+                    migration_23_24,
+                    migration_24_25,
+                    migration_25_26,
+                    migration_26_27,
+                    migration_29_30,
+                    migration_30_31,
+                    migration_31_32,
+                    migration_32_33
                 )
                 .allowMainThreadQueries()
                 .addCallback(dbCallback)
@@ -120,6 +129,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val migration_12_13 = object : Migration(12, 13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE rssSources ADD articleStyle INTEGER NOT NULL DEFAULT 0 ")
+            }
+        }
+
         private val migration_13_14 = object : Migration(13, 14) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
@@ -165,6 +180,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${androidId}' as androidId, bookName, readTime from readRecord")
                 database.execSQL("DROP TABLE readRecord")
                 database.execSQL("ALTER TABLE readRecordNew RENAME TO readRecord")
+            }
+        }
+
+        private val migration_20_21 = object : Migration(20, 21) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE book_groups ADD show INTEGER NOT NULL DEFAULT 1")
             }
         }
 
