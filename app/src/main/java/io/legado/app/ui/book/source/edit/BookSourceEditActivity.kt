@@ -202,7 +202,13 @@ class BookSourceEditActivity :
             add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
             add(EditEntity("bookUrlPattern", source?.bookUrlPattern, R.string.book_url_pattern))
             add(EditEntity("header", source?.header, R.string.source_http_header))
-
+            add(
+                EditEntity(
+                    "concurrentRate",
+                    source?.concurrentRate,
+                    R.string.source_concurrent_rate
+                )
+            )
         }
         //搜索
         val sr = source?.getSearchRule()
@@ -294,6 +300,7 @@ class BookSourceEditActivity :
                 "bookUrlPattern" -> source.bookUrlPattern = it.value
                 "header" -> source.header = it.value
                 "bookSourceComment" -> source.bookSourceComment = it.value ?: ""
+                "concurrentRate" -> source.concurrentRate = it.value
             }
         }
         searchEntities.forEach {
