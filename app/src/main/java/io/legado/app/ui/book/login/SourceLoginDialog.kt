@@ -73,7 +73,7 @@ class SourceLoginDialog : BaseDialogFragment() {
                         ),
                         Base64.DEFAULT
                     )
-                    CacheManager.put("login_$sourceUrl", GSON.toJson(loginData))
+                    CacheManager.put("login_$sourceUrl", data)
                 }
             }
             return@setOnMenuItemClickListener true
