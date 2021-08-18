@@ -4,7 +4,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.constant.AppConst
 
-object DatabaseMigration {
+object DatabaseMigrations {
 
     val migrations: Array<Migration> by lazy {
         arrayOf(
