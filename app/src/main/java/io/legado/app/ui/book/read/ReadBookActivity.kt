@@ -855,7 +855,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private fun skipToSearch(index: Int, indexWithinChapter: Int) {
         viewModel.openChapter(index) {
             val pages = ReadBook.curTextChapter?.pages ?: return@openChapter
-            val positions = ReadBook.searchResultPositions(
+            val positions = viewModel.searchResultPositions(
                 pages,
                 indexWithinChapter,
                 viewModel.searchContentQuery

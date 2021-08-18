@@ -13,7 +13,6 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.CacheBook
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.msg
@@ -134,25 +133,24 @@ object ReadBook {
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
-            book?.let {
-                if (curTextChapter == null) {
-                    loadContent(durChapterIndex, upContent, false)
-                } else if (upContent) {
-                    callBack?.upContent()
-                }
-                loadContent(durChapterIndex.plus(1), upContent, false)
-                Coroutine.async {
-                    val maxChapterIndex =
-                        min(chapterSize - 1, durChapterIndex + AppConfig.preDownloadNum)
-                    for (i in durChapterIndex.plus(2)..maxChapterIndex) {
-                        delay(1000)
-                        download(i)
-                    }
-                }
+            if (curTextChapter == null) {
+                loadContent(durChapterIndex, upContent, false)
+            } else if (upContent) {
+                callBack?.upContent()
             }
+            loadContent(durChapterIndex.plus(1), upContent, false)
             saveRead()
             callBack?.upView()
             curPageChanged()
+            Coroutine.async {
+                //预下载
+                val maxChapterIndex =
+                    min(chapterSize - 1, durChapterIndex + AppConfig.preDownloadNum)
+                for (i in durChapterIndex.plus(2)..maxChapterIndex) {
+                    delay(1000)
+                    download(i)
+                }
+            }
             return true
         } else {
             return false
@@ -169,24 +167,23 @@ object ReadBook {
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
             prevTextChapter = null
-            book?.let {
-                if (curTextChapter == null) {
-                    loadContent(durChapterIndex, upContent, false)
-                } else if (upContent) {
-                    callBack?.upContent()
-                }
-                loadContent(durChapterIndex.minus(1), upContent, false)
-                Coroutine.async {
-                    val minChapterIndex = max(0, durChapterIndex - 5)
-                    for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
-                        delay(1000)
-                        download(i)
-                    }
-                }
+            if (curTextChapter == null) {
+                loadContent(durChapterIndex, upContent, false)
+            } else if (upContent) {
+                callBack?.upContent()
             }
+            loadContent(durChapterIndex.minus(1), upContent, false)
             saveRead()
             callBack?.upView()
             curPageChanged()
+            Coroutine.async {
+                //预下载
+                val minChapterIndex = max(0, durChapterIndex - 5)
+                for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
+                    delay(1000)
+                    download(i)
+                }
+            }
             return true
         } else {
             return false
@@ -208,12 +205,21 @@ object ReadBook {
         curPageChanged()
     }
 
+    /**
+     * 当前页面变化
+     */
     private fun curPageChanged() {
         callBack?.pageChanged()
         if (BaseReadAloudService.isRun) {
             readAloud(!BaseReadAloudService.pause)
         }
         upReadStartTime()
+        book?.let { book ->
+            //最后一章时检查更新
+            if (durChapterPos == 0 && durChapterIndex == chapterSize - 1 && book.isOnLineTxt()) {
+                callBack?.loadChapterList(book)
+            }
+        }
     }
 
     /**
@@ -337,66 +343,6 @@ object ReadBook {
         synchronized(this) {
             loadingChapters.remove(index)
         }
-    }
-
-    fun searchResultPositions(
-        pages: List<TextPage>,
-        indexWithinChapter: Int,
-        query: String
-    ): Array<Int> {
-        // calculate search result's pageIndex
-        var content = ""
-        pages.map {
-            content += it.text
-        }
-        var count = 1
-        var index = content.indexOf(query)
-        while (count != indexWithinChapter) {
-            index = content.indexOf(query, index + 1)
-            count += 1
-        }
-        val contentPosition = index
-        var pageIndex = 0
-        var length = pages[pageIndex].text.length
-        while (length < contentPosition) {
-            pageIndex += 1
-            if (pageIndex > pages.size) {
-                pageIndex = pages.size
-                break
-            }
-            length += pages[pageIndex].text.length
-        }
-
-        // calculate search result's lineIndex
-        val currentPage = pages[pageIndex]
-        var lineIndex = 0
-        length = length - currentPage.text.length + currentPage.textLines[lineIndex].text.length
-        while (length < contentPosition) {
-            lineIndex += 1
-            if (lineIndex > currentPage.textLines.size) {
-                lineIndex = currentPage.textLines.size
-                break
-            }
-            length += currentPage.textLines[lineIndex].text.length
-        }
-
-        // charIndex
-        val currentLine = currentPage.textLines[lineIndex]
-        length -= currentLine.text.length
-        val charIndex = contentPosition - length
-        var addLine = 0
-        var charIndex2 = 0
-        // change line
-        if ((charIndex + query.length) > currentLine.text.length) {
-            addLine = 1
-            charIndex2 = charIndex + query.length - currentLine.text.length - 1
-        }
-        // changePage
-        if ((lineIndex + addLine + 1) > currentPage.textLines.size) {
-            addLine = -1
-            charIndex2 = charIndex + query.length - currentLine.text.length - 1
-        }
-        return arrayOf(pageIndex, lineIndex, charIndex, addLine, charIndex2)
     }
 
     /**
