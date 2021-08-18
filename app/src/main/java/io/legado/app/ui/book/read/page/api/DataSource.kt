@@ -1,6 +1,6 @@
 package io.legado.app.ui.book.read.page.api
 
-import io.legado.app.service.help.ReadBook
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChapter
 
 interface DataSource {

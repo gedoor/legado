@@ -9,9 +9,11 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.entities.rule.LoginRule
 import io.legado.app.databinding.DialogLoginBinding
+import io.legado.app.help.CacheManager
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.EditText
 import io.legado.app.ui.widget.text.TextInputLayout
+import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -30,6 +32,7 @@ class SourceLoginDialog : BaseDialogFragment() {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
+        val sourceUrl = arguments?.getString("sourceUrl")
         val loginRule = arguments?.getParcelable<LoginRule>("loginRule")
         loginRule?.ui?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
@@ -60,7 +63,7 @@ class SourceLoginDialog : BaseDialogFragment() {
                             }
                         }
                     }
-
+                    CacheManager.put("login_$sourceUrl", GSON.toJson(loginData))
                 }
             }
             return@setOnMenuItemClickListener true

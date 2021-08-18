@@ -1,4 +1,4 @@
-package io.legado.app.service.help
+package io.legado.app.model
 
 import androidx.lifecycle.MutableLiveData
 import com.github.liuyueyi.quick.transfer.ChineseUtils
@@ -10,6 +10,8 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.BookWebDav
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.service.help.CacheBook
+import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
@@ -44,7 +46,7 @@ object ReadBook {
     var readStartTime: Long = System.currentTimeMillis()
 
     fun resetData(book: Book) {
-        this.book = book
+        ReadBook.book = book
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         durChapterIndex = book.durChapterIndex
@@ -113,8 +115,8 @@ object ReadBook {
     }
 
     fun upMsg(msg: String?) {
-        if (this.msg != msg) {
-            this.msg = msg
+        if (ReadBook.msg != msg) {
+            ReadBook.msg = msg
             callBack?.upContent()
         }
     }
