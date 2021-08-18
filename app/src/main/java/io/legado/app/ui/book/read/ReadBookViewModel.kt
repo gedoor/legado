@@ -311,8 +311,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      */
     fun searchResultPositions(
         pages: List<TextPage>,
-        indexWithinChapter: Int,
-        query: String
+        indexWithinChapter: Int
     ): Array<Int> {
         // calculate search result's pageIndex
         var content = ""
@@ -320,9 +319,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             content += it.text
         }
         var count = 1
-        var index = content.indexOf(query)
+        var index = content.indexOf(searchContentQuery)
         while (count != indexWithinChapter) {
-            index = content.indexOf(query, index + 1)
+            index = content.indexOf(searchContentQuery, index + 1)
             count += 1
         }
         val contentPosition = index
@@ -357,14 +356,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         var addLine = 0
         var charIndex2 = 0
         // change line
-        if ((charIndex + query.length) > currentLine.text.length) {
+        if ((charIndex + searchContentQuery.length) > currentLine.text.length) {
             addLine = 1
-            charIndex2 = charIndex + query.length - currentLine.text.length - 1
+            charIndex2 = charIndex + searchContentQuery.length - currentLine.text.length - 1
         }
         // changePage
         if ((lineIndex + addLine + 1) > currentPage.textLines.size) {
             addLine = -1
-            charIndex2 = charIndex + query.length - currentLine.text.length - 1
+            charIndex2 = charIndex + searchContentQuery.length - currentLine.text.length - 1
         }
         return arrayOf(pageIndex, lineIndex, charIndex, addLine, charIndex2)
     }
