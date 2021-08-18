@@ -2,17 +2,20 @@ package io.legado.app.ui.book.login
 
 import android.os.Bundle
 import android.text.InputType
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.rule.LoginRule
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.help.CacheManager
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.EditText
 import io.legado.app.ui.widget.text.TextInputLayout
+import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -63,12 +66,18 @@ class SourceLoginDialog : BaseDialogFragment() {
                             }
                         }
                     }
+                    val data = Base64.encodeToString(
+                        EncoderUtils.decryptAES(
+                            GSON.toJson(loginData).toByteArray(),
+                            AppConst.androidId.toByteArray()
+                        ),
+                        Base64.DEFAULT
+                    )
                     CacheManager.put("login_$sourceUrl", GSON.toJson(loginData))
                 }
             }
             return@setOnMenuItemClickListener true
         }
     }
-
 
 }

@@ -92,8 +92,8 @@ object EncoderUtils {
     fun decryptBase64AES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String?,
-        iv: ByteArray?
+        transformation: String = "DES/CBC/PKCS5Padding",
+        iv: ByteArray? = null
     ): ByteArray? {
         return decryptAES(Base64.decode(data, Base64.NO_WRAP), key, transformation, iv)
     }
@@ -111,10 +111,10 @@ object EncoderUtils {
     fun decryptAES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String?,
-        iv: ByteArray?
+        transformation: String = "DES/CBC/PKCS5Padding",
+        iv: ByteArray? = null
     ): ByteArray? {
-        return symmetricTemplate(data, key, "AES", transformation!!, iv, false)
+        return symmetricTemplate(data, key, "AES", transformation, iv, false)
     }
 
 
@@ -128,7 +128,7 @@ object EncoderUtils {
      * @param isEncrypt      True to encrypt, false otherwise.
      * @return the bytes of symmetric encryption or decryption
      */
-
+    @Suppress("SameParameterValue")
     private fun symmetricTemplate(
         data: ByteArray?,
         key: ByteArray?,
@@ -137,7 +137,8 @@ object EncoderUtils {
         iv: ByteArray?,
         isEncrypt: Boolean
     ): ByteArray? {
-        return if (data == null || data.isEmpty() || key == null || key.isEmpty()) null else try {
+        return if (data == null || data.isEmpty() || key == null || key.isEmpty()) null
+        else try {
             val keySpec = SecretKeySpec(key, algorithm)
             val cipher = Cipher.getInstance(transformation)
             if (iv == null || iv.isEmpty()) {
