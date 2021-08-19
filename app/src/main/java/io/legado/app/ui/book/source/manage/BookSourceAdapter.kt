@@ -127,8 +127,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-
-
     override fun registerListener(holder: ItemViewHolder, binding: ItemBookSourceBinding) {
         binding.apply {
             swtEnabled.setOnCheckedChangeListener { view, checked ->

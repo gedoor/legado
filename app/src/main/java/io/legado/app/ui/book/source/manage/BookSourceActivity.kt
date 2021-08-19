@@ -437,9 +437,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
         }
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
-            adapter.notifyItemRangeChanged(0, adapter.itemCount, bundleOf(Pair("checkSourceDone", null)))
-            snackBar?.dismiss()
             Debug.finishChecking()
+            snackBar?.dismiss()
             snackBar = null
             groups.map { group ->
                 if (group.contains("失效")) {
