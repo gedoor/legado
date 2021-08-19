@@ -18,6 +18,7 @@ import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.msg
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import splitties.init.appCtx
 import kotlin.math.max
@@ -150,6 +151,21 @@ object ReadBook {
                     delay(1000)
                     download(i)
                 }
+                book?.let { book ->
+                    //最后一章时检查更新
+                    if (durChapterPos == 0 && durChapterIndex == chapterSize - 1) {
+                        webBook?.getChapterList(this, book)
+                            ?.onSuccess(IO) { cList ->
+                                if (book.bookUrl == ReadBook.book?.bookUrl
+                                    && cList.size > chapterSize
+                                ) {
+                                    appDb.bookChapterDao.insert(*cList.toTypedArray())
+                                    chapterSize = cList.size
+                                    nextTextChapter ?: loadContent(1)
+                                }
+                            }
+                    }
+                }
             }
             return true
         } else {
@@ -214,12 +230,6 @@ object ReadBook {
             readAloud(!BaseReadAloudService.pause)
         }
         upReadStartTime()
-        book?.let { book ->
-            //最后一章时检查更新
-            if (durChapterPos == 0 && durChapterIndex == chapterSize - 1 && book.isOnLineTxt()) {
-
-            }
-        }
     }
 
     /**
@@ -269,7 +279,7 @@ object ReadBook {
     fun loadContent(
         index: Int,
         upContent: Boolean = true,
-        resetPageOffset: Boolean,
+        resetPageOffset: Boolean = false,
         success: (() -> Unit)? = null
     ) {
         book?.let { book ->
