@@ -1,10 +1,7 @@
 package io.legado.app.model
 
 import android.annotation.SuppressLint
-import android.util.Log
-import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.*
-import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
