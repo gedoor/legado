@@ -92,6 +92,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.findItem(R.id.menu_enable_replace)?.isChecked = AppConfig.exportUseReplace
+        menu.findItem(R.id.menu_export_no_chapter_name)?.isChecked = AppConfig.exportNoChapterName
         menu.findItem(R.id.menu_export_web_dav)?.isChecked = AppConfig.exportToWebDav
         menu.findItem(R.id.menu_export_type)?.title =
             "${getString(R.string.export_type)}(${getTypeName()})"
@@ -127,6 +128,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
             R.id.menu_export_all -> exportAll()
             R.id.menu_enable_replace -> AppConfig.exportUseReplace = !item.isChecked
+            R.id.menu_export_no_chapter_name -> AppConfig.exportNoChapterName = !item.isChecked
             R.id.menu_export_web_dav -> AppConfig.exportToWebDav = !item.isChecked
             R.id.menu_export_folder -> {
                 exportPosition = -1

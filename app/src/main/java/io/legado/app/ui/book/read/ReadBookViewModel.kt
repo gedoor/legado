@@ -14,12 +14,13 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.BookWebDav
+import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.PreciseSearch
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.service.help.ReadBook
+import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.msg
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
@@ -303,6 +304,68 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
         }
+    }
+
+    /**
+     * 内容搜索跳转
+     */
+    fun searchResultPositions(
+        pages: List<TextPage>,
+        indexWithinChapter: Int
+    ): Array<Int> {
+        // calculate search result's pageIndex
+        var content = ""
+        pages.map {
+            content += it.text
+        }
+        var count = 1
+        var index = content.indexOf(searchContentQuery)
+        while (count != indexWithinChapter) {
+            index = content.indexOf(searchContentQuery, index + 1)
+            count += 1
+        }
+        val contentPosition = index
+        var pageIndex = 0
+        var length = pages[pageIndex].text.length
+        while (length < contentPosition) {
+            pageIndex += 1
+            if (pageIndex > pages.size) {
+                pageIndex = pages.size
+                break
+            }
+            length += pages[pageIndex].text.length
+        }
+
+        // calculate search result's lineIndex
+        val currentPage = pages[pageIndex]
+        var lineIndex = 0
+        length = length - currentPage.text.length + currentPage.textLines[lineIndex].text.length
+        while (length < contentPosition) {
+            lineIndex += 1
+            if (lineIndex > currentPage.textLines.size) {
+                lineIndex = currentPage.textLines.size
+                break
+            }
+            length += currentPage.textLines[lineIndex].text.length
+        }
+
+        // charIndex
+        val currentLine = currentPage.textLines[lineIndex]
+        length -= currentLine.text.length
+        val charIndex = contentPosition - length
+        var addLine = 0
+        var charIndex2 = 0
+        // change line
+        if ((charIndex + searchContentQuery.length) > currentLine.text.length) {
+            addLine = 1
+            charIndex2 = charIndex + searchContentQuery.length - currentLine.text.length - 1
+        }
+        // changePage
+        if ((lineIndex + addLine + 1) > currentPage.textLines.size) {
+            addLine = -1
+            charIndex2 = charIndex + searchContentQuery.length - currentLine.text.length - 1
+        }
+        return arrayOf(pageIndex, lineIndex, charIndex, addLine, charIndex2)
     }
 
     /**

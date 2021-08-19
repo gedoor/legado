@@ -21,8 +21,8 @@ import io.legado.app.constant.*
 import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
+import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
-import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.getPrefBoolean
@@ -67,6 +67,7 @@ abstract class BaseReadAloudService : BaseService(),
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        doDs()
     }
 
     override fun onDestroy() {
@@ -137,6 +138,8 @@ abstract class BaseReadAloudService : BaseService(),
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
 
+    abstract fun playStop()
+
     @CallSuper
     open fun pauseReadAloud(pause: Boolean) {
         BaseReadAloudService.pause = pause
@@ -157,9 +160,27 @@ abstract class BaseReadAloudService : BaseService(),
 
     abstract fun upSpeechRate(reset: Boolean = false)
 
-    abstract fun prevP()
+    private fun prevP() {
+        if (nowSpeak > 0) {
+            playStop()
+            nowSpeak--
+            readAloudNumber -= contentList[nowSpeak].length.minus(1)
+            play()
+        } else {
+            ReadBook.moveToPrevChapter(true)
+        }
+    }
 
-    abstract fun nextP()
+    private fun nextP() {
+        if (nowSpeak < contentList.size - 1) {
+            playStop()
+            readAloudNumber += contentList[nowSpeak].length.plus(1)
+            nowSpeak++
+            play()
+        } else {
+            nextChapter()
+        }
+    }
 
     private fun setTimer(minute: Int) {
         timeMinute = minute

@@ -9,6 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -30,7 +31,8 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 
 class BackupConfigFragment : BasePreferenceFragment(),
@@ -265,26 +267,38 @@ class BackupConfigFragment : BasePreferenceFragment(),
     }
 
     fun restore() {
-        Coroutine.async(context = Dispatchers.Main) {
+        Coroutine.async(context = Main) {
             BookWebDav.showRestoreDialog(requireContext())
         }.onError {
-            longToast("WebDavError:${it.localizedMessage}\n将从本地备份恢复。")
-            val backupPath = getPrefString(PreferKey.backupPath)
-            if (backupPath?.isNotEmpty() == true) {
-                if (backupPath.isContentScheme()) {
-                    val uri = Uri.parse(backupPath)
-                    val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-                    if (doc?.canWrite() == true) {
+            alert {
+                setTitle(R.string.restore)
+                setMessage("WebDavError:${it.localizedMessage}\n将从本地备份恢复。")
+                okButton {
+                    restoreFromLocal()
+                }
+                cancelButton()
+            }
+        }
+    }
+
+    private fun restoreFromLocal() {
+        val backupPath = getPrefString(PreferKey.backupPath)
+        if (backupPath?.isNotEmpty() == true) {
+            if (backupPath.isContentScheme()) {
+                val uri = Uri.parse(backupPath)
+                val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+                if (doc?.canWrite() == true) {
+                    lifecycleScope.launch {
                         Restore.restore(requireContext(), backupPath)
-                    } else {
-                        restoreDir.launch(null)
                     }
                 } else {
-                    restoreUsePermission(backupPath)
+                    restoreDir.launch(null)
                 }
             } else {
-                restoreDir.launch(null)
+                restoreUsePermission(backupPath)
             }
+        } else {
+            restoreDir.launch(null)
         }
     }
 

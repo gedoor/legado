@@ -1,4 +1,4 @@
-package io.legado.app.ui.login
+package io.legado.app.ui.book.login
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -74,7 +74,7 @@ class SourceLoginActivity : BaseActivity<ActivitySourceLoginBinding>() {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_success -> {
+            R.id.menu_ok -> {
                 if (!checking) {
                     checking = true
                     binding.titleBar.snackbar(R.string.check_host_cookie)

@@ -12,7 +12,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst.charsets
 import io.legado.app.constant.PreferKey
-import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ActivityBookReadBinding
 import io.legado.app.databinding.DialogDownloadChoiceBinding
 import io.legado.app.databinding.DialogEditTextBinding
@@ -24,12 +23,11 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.model.ReadBook
 import io.legado.app.service.help.CacheBook
-import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
-import io.legado.app.ui.book.toc.BookmarkDialog
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -152,7 +150,7 @@ abstract class ReadBookBaseActivity :
     /**
      * 保持亮屏
      */
-    fun keepScreenOn(window: Window, on: Boolean) {
+    fun keepScreenOn(on: Boolean) {
         if (on) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         } else {
@@ -192,11 +190,6 @@ abstract class ReadBookBaseActivity :
                 noButton()
             }.show()
         }
-    }
-
-    @SuppressLint("InflateParams")
-    fun showBookMark(bookmark: Bookmark) {
-        BookmarkDialog.start(supportFragmentManager, bookmark)
     }
 
     fun showCharsetConfig() {

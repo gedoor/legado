@@ -8,6 +8,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LifecycleHelp
+import io.legado.app.model.ReadBook
 import io.legado.app.service.AudioPlayService
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.AudioPlay
@@ -15,6 +16,7 @@ import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 
 
@@ -42,10 +44,18 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 if (action == KeyEvent.ACTION_DOWN) {
                     when (keycode) {
                         KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
-                            ReadAloud.prevParagraph(context)
+                            if (context.getPrefBoolean("mediaButtonPerNext", false)) {
+                                ReadBook.moveToPrevChapter(true)
+                            } else {
+                                ReadAloud.prevParagraph(context)
+                            }
                         }
                         KeyEvent.KEYCODE_MEDIA_NEXT -> {
-                            ReadAloud.nextParagraph(context)
+                            if (context.getPrefBoolean("mediaButtonPerNext", false)) {
+                                ReadBook.moveToNextChapter(true)
+                            } else {
+                                ReadAloud.nextParagraph(context)
+                            }
                         }
                         else -> readAloud(context)
                     }

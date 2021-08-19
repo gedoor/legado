@@ -1,8 +1,7 @@
 package io.legado.app.api.controller
 
+import android.util.Base64
 import androidx.core.graphics.drawable.toBitmap
-import fi.iki.elonen.NanoFileUpload
-import fi.iki.elonen.NanoHTTPD
 import io.legado.app.R
 import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
@@ -11,15 +10,14 @@ import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.ImageLoader
+import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.localBook.UmdFile
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
-import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import splitties.init.appCtx
 
 object BookController {
@@ -193,32 +191,31 @@ object BookController {
         }
     }
 
-    private val uploader by lazy {
-        val dif = DiskFileItemFactory(0, LocalBook.cacheFolder)
-        NanoFileUpload(dif)
-    }
-
-    fun addLocalBook(session: NanoHTTPD.IHTTPSession, postData: String?): ReturnData {
+    fun addLocalBook(parameters: Map<String, List<String>>): ReturnData {
         val returnData = ReturnData()
         try {
-            uploader.parseRequest(session).forEach {
-                val path = FileUtils.getPath(LocalBook.cacheFolder, it.name)
-                val nameAuthor = LocalBook.analyzeNameAuthor(it.name)
-                val book = Book(
-                    bookUrl = path,
-                    name = nameAuthor.first,
-                    author = nameAuthor.second,
-                    originName = it.name,
-                    coverUrl = FileUtils.getPath(
-                        appCtx.externalFiles,
-                        "covers",
-                        "${MD5Utils.md5Encode16(path)}.jpg"
-                    )
+            val fileName = parameters["fileName"]?.firstOrNull()
+                ?: return returnData.setErrorMsg("fileName 不能为空")
+            val fileData = parameters["fileData"]?.firstOrNull()
+                ?: return returnData.setErrorMsg("fileData 不能为空")
+            val file = FileUtils.createFileIfNotExist(LocalBook.cacheFolder, fileName)
+            val fileBytes = Base64.decode(fileData.substringAfter("base64,"), Base64.DEFAULT)
+            file.writeBytes(fileBytes)
+            val nameAuthor = LocalBook.analyzeNameAuthor(fileName)
+            val book = Book(
+                bookUrl = file.absolutePath,
+                name = nameAuthor.first,
+                author = nameAuthor.second,
+                originName = fileName,
+                coverUrl = FileUtils.getPath(
+                    appCtx.externalFiles,
+                    "covers",
+                    "${MD5Utils.md5Encode16(file.absolutePath)}.jpg"
                 )
-                if (book.isEpub()) EpubFile.upBookInfo(book)
-                if (book.isUmd()) UmdFile.upBookInfo(book)
-                appDb.bookDao.insert(book)
-            }
+            )
+            if (book.isEpub()) EpubFile.upBookInfo(book)
+            if (book.isUmd()) UmdFile.upBookInfo(book)
+            appDb.bookDao.insert(book)
         } catch (e: Exception) {
             e.printStackTrace()
             return returnData.setErrorMsg(

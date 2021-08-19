@@ -104,6 +104,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 if (it != bookGroups) {
                     bookGroups = it
                     booksAdapter.notifyDataSetChanged()
+                    binding.tvEmptyMsg.isGone = getItemCount() > 0
                 }
             }
         }
@@ -111,6 +112,15 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initBooksData() {
+        if (groupId == AppConst.bookGroupNoneId) {
+            binding.titleBar.title = getString(R.string.bookshelf)
+        } else {
+            bookGroups.forEach {
+                if (groupId == it.groupId) {
+                    binding.titleBar.title = "${getString(R.string.bookshelf)}(${it.groupName})"
+                }
+            }
+        }
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             when (groupId) {

@@ -5,13 +5,13 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.result.contract.ActivityResultContracts
 import com.google.zxing.Result
 import com.king.zxing.CameraScan.OnScanResultCallback
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.databinding.ActivityQrcodeCaptureBinding
 import io.legado.app.utils.QRCodeUtils
+import io.legado.app.utils.SelectImageContract
 import io.legado.app.utils.readBytes
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -19,8 +19,8 @@ class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), OnScanResul
 
     override val binding by viewBinding(ActivityQrcodeCaptureBinding::inflate)
 
-    private val selectQrImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        it?.readBytes(this)?.let { bytes ->
+    private val selectQrImage = registerForActivityResult(SelectImageContract()) {
+        it?.second?.readBytes(this)?.let { bytes ->
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             onScanResultCallback(QRCodeUtils.parseCodeResult(bitmap))
         }
@@ -41,7 +41,7 @@ class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), OnScanResul
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_choose_from_gallery -> selectQrImage.launch("image/*")
+            R.id.action_choose_from_gallery -> selectQrImage.launch(null)
         }
         return super.onCompatOptionsItemSelected(item)
     }

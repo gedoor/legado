@@ -123,41 +123,45 @@ try {
 		//正在上传
 		isUploading = true;
 		//设置上传的数据
-		var fd = new FormData();
-		fd.append("Filename", file.name);
-		fd.append("Filedata", file);
-		fd.append("Upload", "Submit Query");
-		//设置当前的上传对象
-		currUploadfile = file;
+		var reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = function (e) {
+		    var data = e.target.result;
+		    var fd = new FormData();
+            fd.append("fileName", file.name);
+            fd.append("fileData", data);
+            //设置当前的上传对象
+            currUploadfile = file;
 
-		if (XHR.readyState > 0) {
-			XHR = new XMLHttpRequest();
+            if (XHR.readyState > 0) {
+                XHR = new XMLHttpRequest();
+            }
+
+            XHR.upload.addEventListener("progress", progress, false);
+            XHR.upload.addEventListener("load", requestLoad, false);
+            XHR.upload.addEventListener("error", error, false);
+            XHR.upload.addEventListener("abort", abort, false);
+            XHR.upload.addEventListener("loadend", loadend, false);
+            XHR.upload.addEventListener("loadstart", loadstart, false);
+            XHR.open("POST", config.url);
+            XHR.send(fd);
+            XHR.onreadystatechange = function () {
+
+                //只要上传完成不管成功失败
+                if (XHR.readyState == 4) {
+                    console.log("onreadystatechange ", XHR.status, +new Date());
+
+                    if (XHR.status == 200) {
+                        uploadSuccess(currUploadfile, {}, XHR.status)
+                    } else {
+                        uploadError()
+                    }
+
+                    //进行下一个上传
+                    nextUpload()
+                }
+            };
 		}
-
-		XHR.upload.addEventListener("progress", progress, false);
-		XHR.upload.addEventListener("load", requestLoad, false);
-		XHR.upload.addEventListener("error", error, false);
-		XHR.upload.addEventListener("abort", abort, false);
-		XHR.upload.addEventListener("loadend", loadend, false);
-		XHR.upload.addEventListener("loadstart", loadstart, false);
-		XHR.open("POST", config.url);
-		XHR.send(fd);
-		XHR.onreadystatechange = function () {
-
-			//只要上传完成不管成功失败
-			if (XHR.readyState == 4) {
-				console.log("onreadystatechange ", XHR.status, +new Date());
-
-				if (XHR.status == 200) {
-					uploadSuccess(currUploadfile, {}, XHR.status)
-				} else {
-					uploadError()
-				}
-
-				//进行下一个上传
-				nextUpload()
-			}
-		};
 
 	}
 

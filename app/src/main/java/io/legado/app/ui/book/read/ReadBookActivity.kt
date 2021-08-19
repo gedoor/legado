@@ -29,12 +29,13 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.model.ReadBook
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.service.help.ReadBook
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
+import io.legado.app.ui.book.login.SourceLoginActivity
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
@@ -45,9 +46,9 @@ import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.book.toc.BookmarkDialog
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.dict.DictDialog
-import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -110,7 +111,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = binding.readView.isScroll
     private val mHandler = Handler(Looper.getMainLooper())
-    private val keepScreenRunnable = Runnable { keepScreenOn(window, false) }
+    private val keepScreenRunnable = Runnable { keepScreenOn(false) }
     private val autoPageRunnable = Runnable { autoPagePlus() }
     private val backupRunnable = Runnable {
         if (!BuildConfig.DEBUG) {
@@ -251,7 +252,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                         chapterName = page.title
                         bookText = page.text.trim()
                     }
-                    showBookMark(bookmark)
+                    BookmarkDialog.start(supportFragmentManager, bookmark)
                 }
             }
             R.id.menu_copy_text ->
@@ -513,7 +514,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 if (bookmark == null) {
                     toastOnUi(R.string.create_bookmark_error)
                 } else {
-                    showBookMark(bookmark)
+                    BookmarkDialog.start(supportFragmentManager, bookmark)
                 }
                 return true
             }
@@ -854,11 +855,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     private fun skipToSearch(index: Int, indexWithinChapter: Int) {
         viewModel.openChapter(index) {
             val pages = ReadBook.curTextChapter?.pages ?: return@openChapter
-            val positions = ReadBook.searchResultPositions(
-                pages,
-                indexWithinChapter,
-                viewModel.searchContentQuery
-            )
+            val positions = viewModel.searchResultPositions(pages, indexWithinChapter)
             ReadBook.skipToPage(positions[0]) {
                 launch {
                     binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
@@ -983,16 +980,16 @@ class ReadBookActivity : ReadBookBaseActivity(),
      */
     override fun screenOffTimerStart() {
         if (screenTimeOut < 0) {
-            keepScreenOn(window, true)
+            keepScreenOn(true)
             return
         }
         val t = screenTimeOut - sysScreenOffTime
         if (t > 0) {
             mHandler.removeCallbacks(keepScreenRunnable)
-            keepScreenOn(window, true)
+            keepScreenOn(true)
             mHandler.postDelayed(keepScreenRunnable, screenTimeOut)
         } else {
-            keepScreenOn(window, false)
+            keepScreenOn(false)
         }
     }
 }

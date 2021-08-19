@@ -33,11 +33,11 @@ import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
+import io.legado.app.ui.book.login.SourceLoginActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
-import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding

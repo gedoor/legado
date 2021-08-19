@@ -29,6 +29,7 @@ data class BookSource(
     var bookSourceUrl: String = "",                 // 地址，包括 http/https
     var bookSourceType: Int = BookType.default,     // 类型，0 文本，1 音频
     var bookUrlPattern: String? = null,             // 详情页url正则
+    var concurrentRate: String? = null,             //并发率
     var customOrder: Int = 0,                       // 手动排序编号
     var enabled: Boolean = true,                    // 是否启用
     var enabledExplore: Boolean = true,             // 启用发现
@@ -45,6 +46,17 @@ data class BookSource(
     var ruleToc: TocRule? = null,                   // 目录页规则
     var ruleContent: ContentRule? = null            // 正文页规则
 ) : Parcelable, JsExtensions {
+
+    @delegate:Transient
+    @delegate:Ignore
+    @IgnoredOnParcel
+    val loginRule by lazy {
+        if (loginUrl.isJsonObject()) {
+            return@lazy GSON.fromJsonObject<LoginRule>(loginUrl)
+        } else {
+            return@lazy LoginRule(url = loginUrl)
+        }
+    }
 
     @delegate:Transient
     @delegate:Ignore
@@ -178,6 +190,19 @@ data class BookSource(
     private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
 
     class Converters {
+        @TypeConverter
+        fun loginRuleTString(loginRule: LoginRule?): String = GSON.toJson(loginRule)
+
+        @TypeConverter
+        fun stringToLoginRule(json: String?): LoginRule? {
+            json ?: return null
+            return if (json.isJsonObject()) {
+                GSON.fromJsonObject(json)
+            } else {
+                LoginRule(url = json)
+            }
+        }
+
         @TypeConverter
         fun exploreRuleToString(exploreRule: ExploreRule?): String = GSON.toJson(exploreRule)
 

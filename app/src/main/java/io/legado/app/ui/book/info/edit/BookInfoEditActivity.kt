@@ -6,17 +6,16 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityBookInfoEditBinding
-import io.legado.app.lib.permission.Permissions
-import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.SelectImageContract
+import io.legado.app.utils.externalFiles
+import io.legado.app.utils.read
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import java.io.File
 
 class BookInfoEditActivity :
     VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
@@ -103,37 +102,11 @@ class BookInfoEditActivity :
     }
 
     private fun coverChangeTo(uri: Uri) {
-        if (uri.isContentScheme()) {
-            val doc = DocumentFile.fromSingleUri(this, uri)
-            doc?.name?.let {
-                var file = this.externalFiles
-                file = FileUtils.createFileIfNotExist(file, "covers", it)
-                kotlin.runCatching {
-                    DocumentUtils.readBytes(this, doc.uri)
-                }.getOrNull()?.let { byteArray ->
-                    file.writeBytes(byteArray)
-                    coverChangeTo(file.absolutePath)
-                } ?: toastOnUi("获取文件出错")
-            }
-        } else {
-            PermissionsCompat.Builder(this)
-                .addPermissions(
-                    Permissions.READ_EXTERNAL_STORAGE,
-                    Permissions.WRITE_EXTERNAL_STORAGE
-                )
-                .rationale(R.string.bg_image_per)
-                .onGranted {
-                    RealPathUtil.getPath(this, uri)?.let { path ->
-                        val imgFile = File(path)
-                        if (imgFile.exists()) {
-                            var file = this.externalFiles
-                            file = FileUtils.createFileIfNotExist(file, "covers", imgFile.name)
-                            file.writeBytes(imgFile.readBytes())
-                            coverChangeTo(file.absolutePath)
-                        }
-                    }
-                }
-                .request()
+        uri.read(this) { name, bytes ->
+            var file = this.externalFiles
+            file = FileUtils.createFileIfNotExist(file, "covers", name)
+            file.writeBytes(bytes)
+            coverChangeTo(file.absolutePath)
         }
     }
 

@@ -6,9 +6,9 @@ import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.service.help.ReadBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
@@ -66,6 +66,10 @@ class HttpReadAloudService : BaseReadAloudService(),
                 }
             }
         }
+    }
+
+    override fun playStop() {
+        player.stop()
     }
 
     private fun downloadAudio() {
@@ -214,30 +218,6 @@ class HttpReadAloudService : BaseReadAloudService(),
         player.stop()
         playingIndex = -1
         downloadAudio()
-    }
-
-    /**
-     * 上一段
-     */
-    override fun prevP() {
-        if (nowSpeak > 0) {
-            player.stop()
-            nowSpeak--
-            readAloudNumber -= contentList[nowSpeak].length.minus(1)
-            play()
-        }
-    }
-
-    /**
-     * 下一段
-     */
-    override fun nextP() {
-        if (nowSpeak < contentList.size - 1) {
-            player.stop()
-            readAloudNumber += contentList[nowSpeak].length.plus(1)
-            nowSpeak++
-            play()
-        }
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
