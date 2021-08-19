@@ -217,7 +217,7 @@ object ReadBook {
         book?.let { book ->
             //最后一章时检查更新
             if (durChapterPos == 0 && durChapterIndex == chapterSize - 1 && book.isOnLineTxt()) {
-                callBack?.loadChapterList(book)
+
             }
         }
     }

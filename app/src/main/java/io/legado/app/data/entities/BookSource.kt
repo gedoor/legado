@@ -191,6 +191,19 @@ data class BookSource(
 
     class Converters {
         @TypeConverter
+        fun loginRuleTString(loginRule: LoginRule?): String = GSON.toJson(loginRule)
+
+        @TypeConverter
+        fun stringToLoginRule(json: String?): LoginRule? {
+            json ?: return null
+            return if (json.isJsonObject()) {
+                GSON.fromJsonObject(json)
+            } else {
+                LoginRule(url = json)
+            }
+        }
+
+        @TypeConverter
         fun exploreRuleToString(exploreRule: ExploreRule?): String = GSON.toJson(exploreRule)
 
         @TypeConverter
