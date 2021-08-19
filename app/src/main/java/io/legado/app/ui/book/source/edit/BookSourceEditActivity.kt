@@ -24,10 +24,10 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.ui.book.login.SourceLoginActivity
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
-import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -202,7 +202,13 @@ class BookSourceEditActivity :
             add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
             add(EditEntity("bookUrlPattern", source?.bookUrlPattern, R.string.book_url_pattern))
             add(EditEntity("header", source?.header, R.string.source_http_header))
-
+            add(
+                EditEntity(
+                    "concurrentRate",
+                    source?.concurrentRate,
+                    R.string.source_concurrent_rate
+                )
+            )
         }
         //搜索
         val sr = source?.getSearchRule()
@@ -294,6 +300,7 @@ class BookSourceEditActivity :
                 "bookUrlPattern" -> source.bookUrlPattern = it.value
                 "header" -> source.header = it.value
                 "bookSourceComment" -> source.bookSourceComment = it.value ?: ""
+                "concurrentRate" -> source.concurrentRate = it.value
             }
         }
         searchEntities.forEach {

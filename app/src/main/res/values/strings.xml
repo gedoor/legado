@@ -393,7 +393,7 @@
     <string name="source_group">源分组(sourceGroup)</string>
     <string name="diy_source_group">自定义源分组</string>
     <string name="diy_edit_source_group">输入自定义源分组名称</string>
-
+    <string name="source_concurrent_rate">并发率(concurrentRate)</string>
     <string name="sort_url">分类Url</string>
     <string name="login_url">登录URL(loginUrl)</string>
     <string name="comment">源注释(sourceComment)</string>
@@ -855,6 +855,9 @@
     <string name="autobackup_fail">Autobackup failed</string>
     <string name="end">end</string>
     <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
+    <string name="pref_media_button_per_next">媒体按钮•上一首|下一首</string>
+    <string name="pref_media_button_per_next_summary">上一段|下一段/上一章|下一章</string>
+    <string name="read_aloud_by_page_summary">及时翻页,翻页时会停顿一下</string>
     <string name="check_source_show_debug_message">Check book source shows debug message</string>
     <string name="check_source_show_debug_message_summary">Show network status and timestamp during source checking, currently only supports single-thread</string>
 

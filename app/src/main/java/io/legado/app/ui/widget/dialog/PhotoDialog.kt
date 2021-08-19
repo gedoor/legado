@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogPhotoViewBinding
-import io.legado.app.service.help.ReadBook
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
