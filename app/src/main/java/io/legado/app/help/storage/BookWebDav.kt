@@ -141,14 +141,7 @@ object BookWebDav {
     fun uploadBookProgress(book: Book) {
         if (!NetworkUtils.isAvailable()) return
         Coroutine.async {
-            val bookProgress = BookProgress(
-                name = book.name,
-                author = book.author,
-                durChapterIndex = book.durChapterIndex,
-                durChapterPos = book.durChapterPos,
-                durChapterTime = book.durChapterTime,
-                durChapterTitle = book.durChapterTitle
-            )
+            val bookProgress = BookProgress(book)
             val json = GSON.toJson(bookProgress)
             val url = getProgressUrl(book)
             if (initWebDav()) {
