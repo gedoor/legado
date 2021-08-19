@@ -11,11 +11,9 @@ import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.msg
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.ArrayList
 
 object Debug {
     var callback: Callback? = null
@@ -48,10 +46,10 @@ object Debug {
                 printMsg = "$time $printMsg"
             }
             it.printLog(state, printMsg)
-            Log.d(EventBus.CHECK_SOURCE_MESSAGE, "debugMessage to filter $printMsg")
             if (sourceUrl != null && printMsg.length < 30) {
                 debugMessageMap[sourceUrl] = printMsg
                 callback?.printCheckSourceMessage(sourceUrl, printMsg)
+                Log.d(EventBus.CHECK_SOURCE_MESSAGE, "debugMessage after filter $printMsg")
             }
         }
     }
@@ -74,6 +72,11 @@ object Debug {
         startTime = System.currentTimeMillis()
         isChecking = true
         debugMessageMap[source.bookSourceUrl] = "开始校验"
+    }
+
+    fun finishChecking() {
+        callback = null
+        isChecking = false
     }
 
     fun startDebug(scope: CoroutineScope, rssSource: RssSource) {

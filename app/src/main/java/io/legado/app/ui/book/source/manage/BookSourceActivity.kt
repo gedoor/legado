@@ -440,6 +440,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
             adapter.notifyItemRangeChanged(0, adapter.itemCount, bundleOf(Pair("checkSourceDone", null)))
             snackBar?.dismiss()
+            Debug.finishChecking()
             snackBar = null
 //            groups.map { group ->
 //                if (group.contains("失效")) {
@@ -451,12 +452,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         observeEvent<Pair<String, String?>>(EventBus.CHECK_SOURCE_MESSAGE) { messagePair ->
             sourceFlowJob?.cancel()
                 sourceFlowJob = launch {
-                    var index: Int = -1
                     appDb.bookSourceDao.flowSearch(messagePair.first)
                         .map { adapter.getItems().indexOf(it[0]) }
                         .collect {
-                            index = it
-                            adapter.notifyItemChanged(index, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, messagePair.second))) }
+                            adapter.notifyItemChanged(it, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, messagePair.second))) }
                 }
 
 
