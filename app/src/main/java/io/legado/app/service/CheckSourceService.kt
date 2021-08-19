@@ -37,7 +37,7 @@ class CheckSourceService : BaseService() {
         @Synchronized
         override fun printCheckSourceMessage(sourceUrl: String, msg: String) {
             postEvent(EventBus.CHECK_SOURCE_MESSAGE, Pair(sourceUrl, null))
-            Log.d(EventBus.CHECK_SOURCE_MESSAGE, "printCheckSourceMessage to post $msg")
+            Log.d(EventBus.CHECK_SOURCE_MESSAGE, "printCheckSourceMessage to post $sourceUrl $msg")
         }
     }
     private val notificationBuilder by lazy {
@@ -77,8 +77,6 @@ class CheckSourceService : BaseService() {
         super.onDestroy()
         tasks.clear()
         searchCoroutine.close()
-        Debug.callback = null
-        Debug.isChecking = false
         postEvent(EventBus.CHECK_SOURCE_DONE, 0)
     }
 
@@ -112,7 +110,6 @@ class CheckSourceService : BaseService() {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
                 appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
-                    Debug.startChecking(source)
                     check(source)
                 } ?: onNext(sourceUrl, "")
             }
@@ -121,6 +118,7 @@ class CheckSourceService : BaseService() {
 
     fun check(source: BookSource) {
         execute(context = searchCoroutine) {
+            Debug.startChecking(source)
             val webBook = WebBook(source)
             var books = webBook.searchBookAwait(this, CheckSource.keyword)
             if (books.isEmpty()) {
@@ -181,7 +179,7 @@ class CheckSourceService : BaseService() {
             notificationMsg =
                 getString(R.string.progress_show, sourceName, checkedIds.size, allIds.size)
             upNotification()
-            if (processIndex >= allIds.size + threadCount - 1) {
+            if (processIndex > allIds.size + threadCount - 1) {
                 stopSelf()
             }
         }
