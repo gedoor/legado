@@ -44,9 +44,7 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    override fun printCheckSourceMessage(sourceUrl: String, msg: String) {
-        TODO("Not yet implemented")
-    }
+    override fun postCheckMessageEvent(sourceUrl: String) {}
 
     override fun onCleared() {
         super.onCleared()

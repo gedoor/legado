@@ -858,5 +858,7 @@
     <string name="pref_media_button_per_next">媒体按钮•上一首|下一首</string>
     <string name="pref_media_button_per_next_summary">上一段|下一段/上一章|下一章</string>
     <string name="read_aloud_by_page_summary">及时翻页,翻页时会停顿一下</string>
+    <string name="check_source_show_debug_message">Check book source shows debug message</string>
+    <string name="check_source_show_debug_message_summary">Show network status and timestamp during source checking, currently only supports single-thread</string>
 
 </resources>

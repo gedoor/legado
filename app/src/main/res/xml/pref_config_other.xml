@@ -104,6 +104,13 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="checkSourceMessage"
+            android:summary="@string/check_source_show_debug_message_summary"
+            android:title="@string/check_source_show_debug_message"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="process_text"
             android:summary="@string/add_to_text_context_menu_s"

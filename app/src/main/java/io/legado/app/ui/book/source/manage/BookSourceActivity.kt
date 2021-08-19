@@ -340,7 +340,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         CheckSource.keyword = it
                     }
                 }
-                adapter.notifyItemRangeChanged(0, adapter.itemCount, bundleOf(Pair("startChecking", null)))
                 CheckSource.start(this@BookSourceActivity, adapter.selection)
             }
             noButton()
@@ -442,23 +441,21 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             snackBar?.dismiss()
             Debug.finishChecking()
             snackBar = null
-//            groups.map { group ->
-//                if (group.contains("失效")) {
-//                    searchView.setQuery("失效", true)
-//                    toastOnUi("发现有失效书源，已为您自动筛选！")
-//                }
-//            }
+            groups.map { group ->
+                if (group.contains("失效")) {
+                    searchView.setQuery("失效", true)
+                    toastOnUi("发现有失效书源，已为您自动筛选！")
+                }
+            }
         }
-        observeEvent<Pair<String, String?>>(EventBus.CHECK_SOURCE_MESSAGE) { messagePair ->
+        observeEvent<String>(EventBus.CHECK_SOURCE_MESSAGE) { bookSourceUrl ->
             sourceFlowJob?.cancel()
                 sourceFlowJob = launch {
-                    appDb.bookSourceDao.flowSearch(messagePair.first)
+                    appDb.bookSourceDao.flowSearch(bookSourceUrl)
                         .map { adapter.getItems().indexOf(it[0]) }
                         .collect {
-                            adapter.notifyItemChanged(it, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, messagePair.second))) }
+                            adapter.notifyItemChanged(it, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, null))) }
                 }
-
-
         }
     }
 
