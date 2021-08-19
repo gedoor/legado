@@ -849,4 +849,6 @@
     <string name="unknown_error">未知错误</string>
     <string name="end">end</string>
     <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
+    <string name="check_source_show_debug_message">Verificar a fonte do livro mostra uma mensagem de depuração</string>
+    <string name="check_source_show_debug_message_summary">Exibir etapas de solicitação de rede e tempo durante a verificação da fonte do livro; atualmente, oferece suporte apenas à verificação de thread único</string>
 </resources>

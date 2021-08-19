@@ -116,22 +116,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 payload.keySet().map {
                     when (it) {
                         "selected" -> cbBookSource.isChecked = selected.contains(item)
-                        "startChecking" -> {
-                            ivProgressBar.visibility = if(selected.contains(item)) View.VISIBLE else ivProgressBar.visibility
-                        }
-                        "checkSourceDone" -> {
-                            ivProgressBar.visibility = if(selected.contains(item)) View.GONE else ivProgressBar.visibility
-                        }
                         EventBus.CHECK_SOURCE_MESSAGE -> {
-                            val message = payload[it] as? String?
-                            if (message != null) {
-                                ivDebugText.text = message
-                                ivProgressBar.visibility = View.GONE
-                            }
-                            else{
-                                ivDebugText.text =  Debug.debugMessageMap[item.bookSourceUrl] ?: ""
-                            }
+                            ivDebugText.text =  Debug.debugMessageMap[item.bookSourceUrl] ?: ""
                             ivDebugText.visibility = if(ivDebugText.text.toString().length > 1) View.VISIBLE else View.GONE
+                            ivProgressBar.visibility = if(ivDebugText.text.toString().contains(Regex("成功|失败"))) View.GONE else View.VISIBLE
                         }
                     }
                 }

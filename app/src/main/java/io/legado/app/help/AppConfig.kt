@@ -246,6 +246,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val fullScreenGesturesSupport: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.fullScreenGesturesSupport, false)
 
+    val checkSourceMessage: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.checkSourceMessage)
+
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {

@@ -852,5 +852,7 @@
     <string name="export_no_chapter_name">TXT不匯出章節名</string>
     <string name="end">end</string>
     <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
+    <string name="check_source_show_debug_message">校驗書源顯示詳細信息</string>
+    <string name="check_source_show_debug_message_summary">書源校驗時顯示網絡請求步驟和時間，當前只支持單線程校驗</string>
 
 </resources>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.*
+import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
@@ -20,7 +21,7 @@ object Debug {
     private var debugSource: String? = null
     private val tasks: CompositeCoroutine = CompositeCoroutine()
     val debugMessageMap = ConcurrentHashMap<String, String>()
-    var isChecking: Boolean = false
+    private var isChecking: Boolean = false
 
     @SuppressLint("ConstantLocale")
     private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
@@ -48,8 +49,7 @@ object Debug {
             it.printLog(state, printMsg)
             if (sourceUrl != null && printMsg.length < 30) {
                 debugMessageMap[sourceUrl] = printMsg
-                callback?.printCheckSourceMessage(sourceUrl, printMsg)
-                Log.d(EventBus.CHECK_SOURCE_MESSAGE, "debugMessage after filter $printMsg")
+                callback?.postCheckMessageEvent(sourceUrl)
             }
         }
     }
@@ -264,7 +264,7 @@ object Debug {
 
     interface Callback {
         fun printLog(state: Int, msg: String)
-        fun printCheckSourceMessage(sourceUrl: String, msg: String)
+        fun postCheckMessageEvent(sourceUrl: String)
     }
 
 }

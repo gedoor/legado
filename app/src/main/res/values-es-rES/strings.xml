@@ -849,4 +849,6 @@
     <string name="unknown_error">未知错误</string>
     <string name="end">end</string>
     <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
+    <string name="check_source_show_debug_message">La fuente del libro de cheques muestra un mensaje de depuración</string>
+    <string name="check_source_show_debug_message_summary">Muestra los pasos y el tiempo de la solicitud de red durante la verificación de la fuente del libro; actualmente solo admite la verificación de un solo hilo</string>
 </resources>
