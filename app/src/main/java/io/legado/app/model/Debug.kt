@@ -87,6 +87,14 @@ object Debug {
         isChecking = false
     }
 
+    fun updateFinalMessage(sourceUrl: String, state: String) {
+        if (debugTimeMap[sourceUrl] != null && debugMessageMap[sourceUrl] != null) {
+            val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
+            val originalMessage = debugMessageMap[sourceUrl]!!.substringAfter("] ")
+            debugMessageMap[sourceUrl] = "$time $originalMessage $state"
+        }
+    }
+
     fun startDebug(scope: CoroutineScope, rssSource: RssSource) {
         cancelDebug()
         debugSource = rssSource.sourceUrl

@@ -118,11 +118,16 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                         "checkSourceMessage" -> {
                             ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
                             val isEmpty = ivDebugText.text.toString().isEmpty()
+                            var isFinalMessage = ivDebugText.text.toString().contains(Regex("成功|失败"))
+                            if (!isEmpty && !Debug.isChecking && !isFinalMessage){
+                                Debug.updateFinalMessage(item.bookSourceUrl, "失败")
+                                ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
+                                isFinalMessage = true
+                            }
                             ivDebugText.visibility =
                                 if (!isEmpty) View.VISIBLE else View.GONE
                             ivProgressBar.visibility =
-                                if (ivDebugText.text.toString().contains(Regex("成功|失败")) || isEmpty) View.GONE
-                                else View.VISIBLE
+                                if (isFinalMessage || isEmpty) View.GONE else View.VISIBLE
                         }
                     }
                 }

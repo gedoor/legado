@@ -435,11 +435,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     .make(binding.root, msg, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.cancel) {
                         CheckSource.stop(this)
+                        if (AppConfig.checkSourceMessage) {
+                            Debug.finishChecking()
+                            adapter.notifyItemRangeChanged(0, adapter.itemCount, bundleOf(Pair("checkSourceMessage", null)))
+                        }
                     }.apply { show() }
             }
         }
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
-            Debug.finishChecking()
             snackBar?.dismiss()
             snackBar = null
             groups.map { group ->

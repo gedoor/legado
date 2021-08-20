@@ -65,6 +65,7 @@ class CheckSourceService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Debug.finishChecking()
         tasks.clear()
         searchCoroutine.close()
         postEvent(EventBus.CHECK_SOURCE_DONE, 0)
@@ -141,7 +142,7 @@ class CheckSourceService : BaseService() {
                     ${source.bookSourceComment}"
                 """.trimIndent()
                 if (showCheckSourceMessage) {
-                    Debug.debugMessageMap[source.bookSourceUrl] = Debug.debugMessageMap[source.bookSourceUrl] + " 失败"
+                    Debug.updateFinalMessage(source.bookSourceUrl, "失败")
                 }
                 appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
@@ -152,7 +153,7 @@ class CheckSourceService : BaseService() {
                         it.startsWith("error:")
                     }?.joinToString("\n")
                 if (showCheckSourceMessage) {
-                    Debug.debugMessageMap[source.bookSourceUrl] = Debug.debugMessageMap[source.bookSourceUrl] + " 成功"
+                    Debug.updateFinalMessage(source.bookSourceUrl, "成功")
                 }
                 appDb.bookSourceDao.update(source)
             }.onFinally(searchCoroutine) {
