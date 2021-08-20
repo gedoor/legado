@@ -35,8 +35,8 @@ object Debug {
         showTime: Boolean = true,
         state: Int = 1
     ) {
-        if (AppConfig.checkSourceMessage) {
-            if (isChecking && sourceUrl != null && (msg ?: "").length < 30) {
+        if (AppConfig.checkSourceMessage && isChecking) {
+            if (sourceUrl != null && (msg ?: "").length < 30) {
                 var printMsg = msg ?: ""
                 if (isHtml) {
                     printMsg = HtmlFormatter.format(msg)
