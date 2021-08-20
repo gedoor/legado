@@ -475,8 +475,8 @@ interface JsExtensions {
         str: String, key: String, transformation: String, iv: String
     ): ByteArray? {
         return EncoderUtils.decryptBase64AES(
-            data = str.encodeToByteArray(),
-            key = key.encodeToByteArray(),
+            str.encodeToByteArray(),
+            key.encodeToByteArray(),
             transformation,
             iv.encodeToByteArray()
         )
@@ -539,7 +539,7 @@ interface JsExtensions {
     ): ByteArray? {
         return EncoderUtils.encryptAES2Base64(
             data.encodeToByteArray(),
-            key = key.encodeToByteArray(),
+            key.encodeToByteArray(),
             transformation,
             iv.encodeToByteArray()
         )
