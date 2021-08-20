@@ -21,6 +21,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
@@ -40,9 +41,8 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import java.io.File
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
@@ -340,6 +340,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     }
                 }
                 CheckSource.start(this@BookSourceActivity, adapter.selection)
+                if(AppConfig.checkSourceMessage) {
+                   checkMessageRefreshJob().start()
+                }
             }
             noButton()
         }.show()
@@ -446,14 +449,24 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
         }
-        observeEvent<String>(EventBus.CHECK_SOURCE_MESSAGE) { bookSourceUrl ->
-            sourceFlowJob?.cancel()
-                sourceFlowJob = launch {
-                    appDb.bookSourceDao.flowSearch(bookSourceUrl)
-                        .map { adapter.getItems().indexOf(it[0]) }
-                        .collect {
-                            adapter.notifyItemChanged(it, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, null))) }
+    }
+
+    private fun checkMessageRefreshJob(): Job {
+        val firstIndex = adapter.getItems().indexOf(adapter.selection.first())
+        val lastIndex = adapter.getItems().indexOf(adapter.selection.last())
+        Debug.isChecking = true
+        return async(start = CoroutineStart.LAZY) {
+            flow {
+                while (true) {
+                    emit(Debug.isChecking)
+                    delay(300L)
                 }
+            }.collect {
+                adapter.notifyItemRangeChanged(firstIndex, lastIndex + 1, bundleOf(Pair("checkSourceMessage", null)))
+                if (!it) {
+                    this.cancel()
+                }
+            }
         }
     }
 

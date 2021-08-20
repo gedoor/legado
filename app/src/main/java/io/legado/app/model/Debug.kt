@@ -2,6 +2,7 @@ package io.legado.app.model
 
 import android.annotation.SuppressLint
 import io.legado.app.data.entities.*
+import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
@@ -11,14 +12,15 @@ import io.legado.app.utils.msg
 import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.HashMap
 
 object Debug {
     var callback: Callback? = null
     private var debugSource: String? = null
     private val tasks: CompositeCoroutine = CompositeCoroutine()
-    val debugMessageMap = ConcurrentHashMap<String, String>()
-    private var isChecking: Boolean = false
+    val debugMessageMap = HashMap<String, String>()
+    private val debugTimeMap = HashMap<String, Long>()
+    var isChecking: Boolean = false
 
     @SuppressLint("ConstantLocale")
     private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
@@ -33,20 +35,30 @@ object Debug {
         showTime: Boolean = true,
         state: Int = 1
     ) {
-        callback?.let {
-            if ((debugSource != sourceUrl || !print) && !isChecking) return
-            var printMsg = msg ?: ""
-            if (isHtml) {
-                printMsg = HtmlFormatter.format(msg)
-            }
-            if (showTime) {
-                val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))
-                printMsg = "$time $printMsg"
-            }
-            it.printLog(state, printMsg)
-            if (sourceUrl != null && printMsg.length < 30) {
-                debugMessageMap[sourceUrl] = printMsg
-                callback?.postCheckMessageEvent(sourceUrl)
+        if (AppConfig.checkSourceMessage) {
+            if (isChecking && sourceUrl != null && (msg ?: "").length < 30) {
+                var printMsg = msg ?: ""
+                if (isHtml) {
+                    printMsg = HtmlFormatter.format(msg)
+                }
+                if (showTime && debugTimeMap[sourceUrl] != null) {
+                    val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
+                    printMsg = "$time $printMsg"
+                    debugMessageMap[sourceUrl] = printMsg
+                }
+            } else {
+                callback?.let {
+                    if ((debugSource != sourceUrl || !print)) return
+                    var printMsg = msg ?: ""
+                    if (isHtml) {
+                        printMsg = HtmlFormatter.format(msg)
+                    }
+                    if (showTime) {
+                        val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))
+                        printMsg = "$time $printMsg"
+                    }
+                    it.printLog(state, printMsg)
+                }
             }
         }
     }
@@ -66,13 +78,12 @@ object Debug {
     }
 
     fun startChecking(source: BookSource) {
-        startTime = System.currentTimeMillis()
         isChecking = true
-        debugMessageMap[source.bookSourceUrl] = "开始校验"
+        debugTimeMap[source.bookSourceUrl] = System.currentTimeMillis()
+        debugMessageMap[source.bookSourceUrl] = "${DEBUG_TIME_FORMAT.format(Date(0))} 开始校验"
     }
 
     fun finishChecking() {
-        callback = null
         isChecking = false
     }
 
@@ -261,7 +272,5 @@ object Debug {
 
     interface Callback {
         fun printLog(state: Int, msg: String)
-        fun postCheckMessageEvent(sourceUrl: String)
     }
-
 }

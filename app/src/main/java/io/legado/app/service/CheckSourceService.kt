@@ -30,7 +30,7 @@ class CheckSourceService : BaseService() {
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
     private var notificationMsg = ""
-    private var debugCallback : Debug.Callback? = null
+    private val showCheckSourceMessage = AppConfig.checkSourceMessage
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_network_check)
@@ -50,18 +50,6 @@ class CheckSourceService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         notificationMsg = getString(R.string.start)
-        if (AppConfig.checkSourceMessage) {
-            debugCallback = object : Debug.Callback {
-                override fun printLog(state: Int, msg: String) {}
-
-                @Synchronized
-                override fun postCheckMessageEvent(sourceUrl: String) {
-                    postEvent(EventBus.CHECK_SOURCE_MESSAGE, sourceUrl)
-                }
-            }
-            Debug.callback = debugCallback
-            threadCount = 1
-        }
         upNotification()
     }
 
@@ -120,7 +108,7 @@ class CheckSourceService : BaseService() {
 
     fun check(source: BookSource) {
         execute(context = searchCoroutine) {
-            if (AppConfig.checkSourceMessage) {
+            if (showCheckSourceMessage) {
                 Debug.startChecking(source)
             }
             val webBook = WebBook(source)
@@ -152,9 +140,8 @@ class CheckSourceService : BaseService() {
                     "error:${it.localizedMessage}
                     ${source.bookSourceComment}"
                 """.trimIndent()
-                debugCallback?.let {
+                if (showCheckSourceMessage) {
                     Debug.debugMessageMap[source.bookSourceUrl] = Debug.debugMessageMap[source.bookSourceUrl] + " 失败"
-                    postEvent(EventBus.CHECK_SOURCE_MESSAGE, source.bookSourceUrl)
                 }
                 appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
@@ -164,11 +151,9 @@ class CheckSourceService : BaseService() {
                     ?.filterNot {
                         it.startsWith("error:")
                     }?.joinToString("\n")
-                debugCallback?.let { debugCallback
+                if (showCheckSourceMessage) {
                     Debug.debugMessageMap[source.bookSourceUrl] = Debug.debugMessageMap[source.bookSourceUrl] + " 成功"
-                    postEvent(EventBus.CHECK_SOURCE_MESSAGE, source.bookSourceUrl)
                 }
-
                 appDb.bookSourceDao.update(source)
             }.onFinally(searchCoroutine) {
                 onNext(source.bookSourceUrl, source.bookSourceName)
