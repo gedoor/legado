@@ -44,6 +44,8 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    override fun postCheckMessageEvent(sourceUrl: String) {}
+
     override fun onCleared() {
         super.onCleared()
         Debug.cancelDebug(true)
