@@ -13,9 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ItemBookSourceBinding
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.model.Debug
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
 import io.legado.app.utils.ColorUtils
@@ -107,11 +109,18 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 }
                 swtEnabled.isChecked = item.enabled
                 cbBookSource.isChecked = selected.contains(item)
+                ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
+                ivDebugText.visibility = if(ivDebugText.text.toString().length > 1) View.VISIBLE else View.GONE
                 upShowExplore(ivExplore, item)
             } else {
                 payload.keySet().map {
                     when (it) {
                         "selected" -> cbBookSource.isChecked = selected.contains(item)
+                        EventBus.CHECK_SOURCE_MESSAGE -> {
+                            ivDebugText.text =  Debug.debugMessageMap[item.bookSourceUrl] ?: ""
+                            ivDebugText.visibility = if(ivDebugText.text.toString().length > 1) View.VISIBLE else View.GONE
+                            ivProgressBar.visibility = if(ivDebugText.text.toString().contains(Regex("成功|失败"))) View.GONE else View.VISIBLE
+                        }
                     }
                 }
             }

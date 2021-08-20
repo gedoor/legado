@@ -1,10 +1,7 @@
 package io.legado.app.model
 
 import android.annotation.SuppressLint
-import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.RssArticle
-import io.legado.app.data.entities.RssSource
+import io.legado.app.data.entities.*
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
@@ -14,11 +11,14 @@ import io.legado.app.utils.msg
 import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 object Debug {
     var callback: Callback? = null
     private var debugSource: String? = null
     private val tasks: CompositeCoroutine = CompositeCoroutine()
+    val debugMessageMap = ConcurrentHashMap<String, String>()
+    private var isChecking: Boolean = false
 
     @SuppressLint("ConstantLocale")
     private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
@@ -34,7 +34,7 @@ object Debug {
         state: Int = 1
     ) {
         callback?.let {
-            if (debugSource != sourceUrl || !print) return
+            if ((debugSource != sourceUrl || !print) && !isChecking) return
             var printMsg = msg ?: ""
             if (isHtml) {
                 printMsg = HtmlFormatter.format(msg)
@@ -44,6 +44,10 @@ object Debug {
                 printMsg = "$time $printMsg"
             }
             it.printLog(state, printMsg)
+            if (sourceUrl != null && printMsg.length < 30) {
+                debugMessageMap[sourceUrl] = printMsg
+                callback?.postCheckMessageEvent(sourceUrl)
+            }
         }
     }
 
@@ -59,6 +63,17 @@ object Debug {
             debugSource = null
             callback = null
         }
+    }
+
+    fun startChecking(source: BookSource) {
+        startTime = System.currentTimeMillis()
+        isChecking = true
+        debugMessageMap[source.bookSourceUrl] = "开始校验"
+    }
+
+    fun finishChecking() {
+        callback = null
+        isChecking = false
     }
 
     fun startDebug(scope: CoroutineScope, rssSource: RssSource) {
@@ -246,6 +261,7 @@ object Debug {
 
     interface Callback {
         fun printLog(state: Int, msg: String)
+        fun postCheckMessageEvent(sourceUrl: String)
     }
 
 }

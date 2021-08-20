@@ -9,6 +9,7 @@ import android.view.SubMenu
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
@@ -24,6 +25,7 @@ import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.model.Debug
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
@@ -39,7 +41,7 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -434,6 +436,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
         }
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
+            Debug.finishChecking()
             snackBar?.dismiss()
             snackBar = null
             groups.map { group ->
@@ -442,6 +445,15 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     toastOnUi("发现有失效书源，已为您自动筛选！")
                 }
             }
+        }
+        observeEvent<String>(EventBus.CHECK_SOURCE_MESSAGE) { bookSourceUrl ->
+            sourceFlowJob?.cancel()
+                sourceFlowJob = launch {
+                    appDb.bookSourceDao.flowSearch(bookSourceUrl)
+                        .map { adapter.getItems().indexOf(it[0]) }
+                        .collect {
+                            adapter.notifyItemChanged(it, bundleOf(Pair(EventBus.CHECK_SOURCE_MESSAGE, null))) }
+                }
         }
     }
 

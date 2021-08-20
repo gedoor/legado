@@ -12,6 +12,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
+import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -29,6 +30,7 @@ class CheckSourceService : BaseService() {
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
     private var notificationMsg = ""
+    private var debugCallback : Debug.Callback? = null
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_network_check)
@@ -48,6 +50,18 @@ class CheckSourceService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         notificationMsg = getString(R.string.start)
+        if (AppConfig.checkSourceMessage) {
+            debugCallback = object : Debug.Callback {
+                override fun printLog(state: Int, msg: String) {}
+
+                @Synchronized
+                override fun postCheckMessageEvent(sourceUrl: String) {
+                    postEvent(EventBus.CHECK_SOURCE_MESSAGE, sourceUrl)
+                }
+            }
+            Debug.callback = debugCallback
+            threadCount = 1
+        }
         upNotification()
     }
 
@@ -106,6 +120,9 @@ class CheckSourceService : BaseService() {
 
     fun check(source: BookSource) {
         execute(context = searchCoroutine) {
+            if (AppConfig.checkSourceMessage) {
+                Debug.startChecking(source)
+            }
             val webBook = WebBook(source)
             var books = webBook.searchBookAwait(this, CheckSource.keyword)
             if (books.isEmpty()) {
@@ -135,6 +152,10 @@ class CheckSourceService : BaseService() {
                     "error:${it.localizedMessage}
                     ${source.bookSourceComment}"
                 """.trimIndent()
+                debugCallback?.let {
+                    Debug.debugMessageMap[source.bookSourceUrl] = Debug.debugMessageMap[source.bookSourceUrl] + " 失败"
+                    postEvent(EventBus.CHECK_SOURCE_MESSAGE, source.bookSourceUrl)
+                }
                 appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
                 source.removeGroup("失效")
@@ -143,6 +164,11 @@ class CheckSourceService : BaseService() {
                     ?.filterNot {
                         it.startsWith("error:")
                     }?.joinToString("\n")
+                debugCallback?.let { debugCallback
+                    Debug.debugMessageMap[source.bookSourceUrl] = Debug.debugMessageMap[source.bookSourceUrl] + " 成功"
+                    postEvent(EventBus.CHECK_SOURCE_MESSAGE, source.bookSourceUrl)
+                }
+
                 appDb.bookSourceDao.update(source)
             }.onFinally(searchCoroutine) {
                 onNext(source.bookSourceUrl, source.bookSourceName)
@@ -156,7 +182,7 @@ class CheckSourceService : BaseService() {
             notificationMsg =
                 getString(R.string.progress_show, sourceName, checkedIds.size, allIds.size)
             upNotification()
-            if (processIndex >= allIds.size + threadCount - 1) {
+            if (processIndex > allIds.size + threadCount - 1) {
                 stopSelf()
             }
         }
