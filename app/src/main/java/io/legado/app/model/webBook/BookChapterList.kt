@@ -120,8 +120,8 @@ object BookChapterList {
         if (book.totalChapterNum < list.size) {
             book.lastCheckCount = list.size - book.totalChapterNum
             book.latestChapterTime = System.currentTimeMillis()
-            book.lastCheckTime = System.currentTimeMillis()
         }
+        book.lastCheckTime = System.currentTimeMillis()
         book.totalChapterNum = list.size
         return list
     }

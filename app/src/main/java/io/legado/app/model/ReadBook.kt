@@ -19,14 +19,13 @@ import io.legado.app.utils.msg
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import splitties.init.appCtx
-import kotlin.math.max
-import kotlin.math.min
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-object ReadBook {
+object ReadBook : CoroutineScope by MainScope() {
     var titleDate = MutableLiveData<String>()
     var book: Book? = null
     var inBookshelf = false
@@ -145,26 +144,10 @@ object ReadBook {
             curPageChanged()
             Coroutine.async {
                 //预下载
-                val maxChapterIndex =
-                    min(chapterSize - 1, durChapterIndex + AppConfig.preDownloadNum)
+                val maxChapterIndex = durChapterIndex + AppConfig.preDownloadNum
                 for (i in durChapterIndex.plus(2)..maxChapterIndex) {
                     delay(1000)
                     download(i)
-                }
-                book?.let { book ->
-                    //最后一章时检查更新
-                    if (durChapterPos == 0 && durChapterIndex == chapterSize - 1) {
-                        webBook?.getChapterList(this, book)
-                            ?.onSuccess(IO) { cList ->
-                                if (book.bookUrl == ReadBook.book?.bookUrl
-                                    && cList.size > chapterSize
-                                ) {
-                                    appDb.bookChapterDao.insert(*cList.toTypedArray())
-                                    chapterSize = cList.size
-                                    nextTextChapter ?: loadContent(1)
-                                }
-                            }
-                    }
                 }
             }
             return true
@@ -194,7 +177,7 @@ object ReadBook {
             curPageChanged()
             Coroutine.async {
                 //预下载
-                val minChapterIndex = max(0, durChapterIndex - 5)
+                val minChapterIndex = durChapterIndex - 5
                 for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
                     delay(1000)
                     download(i)
@@ -301,6 +284,11 @@ object ReadBook {
     }
 
     private fun download(index: Int) {
+        if (index < 0) return
+        if (index > chapterSize - 1) {
+            upToc()
+            return
+        }
         book?.let { book ->
             if (book.isLocalBook()) return
             if (addLoading(index)) {
@@ -401,6 +389,23 @@ object ReadBook {
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.msg}")
         }.onSuccess {
             success?.invoke()
+        }
+    }
+
+    @Synchronized
+    fun upToc() {
+        val webBook = webBook ?: return
+        val book = book ?: return
+        if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
+        book.lastCheckTime = System.currentTimeMillis()
+        webBook.getChapterList(this, book).onSuccess(IO) { cList ->
+            if (book.bookUrl == ReadBook.book?.bookUrl
+                && cList.size > chapterSize
+            ) {
+                appDb.bookChapterDao.insert(*cList.toTypedArray())
+                chapterSize = cList.size
+                nextTextChapter ?: loadContent(1)
+            }
         }
     }
 
