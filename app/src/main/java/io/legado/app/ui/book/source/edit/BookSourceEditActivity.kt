@@ -41,7 +41,7 @@ class BookSourceEditActivity :
 
     override val binding by viewBinding(ActivityBookSourceEditBinding::inflate)
     override val viewModel by viewModels<BookSourceEditViewModel>()
-
+    private val converters = BookSource.Converters()
     private val adapter = BookSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
@@ -117,7 +117,7 @@ class BookSourceEditActivity :
             R.id.menu_help -> showRuleHelp()
             R.id.menu_login -> getSource().let {
                 if (checkSource(it)) {
-                    if (it.loginUrl.isNullOrEmpty()) {
+                    if (it.loginUrl?.url.isNullOrEmpty()) {
                         toastOnUi(R.string.source_no_login)
                     } else {
                         startActivity<SourceLoginActivity> {
@@ -199,7 +199,13 @@ class BookSourceEditActivity :
             add(EditEntity("bookSourceName", source?.bookSourceName, R.string.source_name))
             add(EditEntity("bookSourceGroup", source?.bookSourceGroup, R.string.source_group))
             add(EditEntity("bookSourceComment", source?.bookSourceComment, R.string.comment))
-            add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
+            add(
+                EditEntity(
+                    "loginUrl",
+                    converters.loginRuleToString(source?.loginUrl),
+                    R.string.login_url
+                )
+            )
             add(EditEntity("bookUrlPattern", source?.bookUrlPattern, R.string.book_url_pattern))
             add(EditEntity("header", source?.header, R.string.source_http_header))
             add(
@@ -296,7 +302,7 @@ class BookSourceEditActivity :
                 "bookSourceUrl" -> source.bookSourceUrl = it.value ?: ""
                 "bookSourceName" -> source.bookSourceName = it.value ?: ""
                 "bookSourceGroup" -> source.bookSourceGroup = it.value
-                "loginUrl" -> source.loginUrl = it.value
+                "loginUrl" -> source.loginUrl = converters.stringToLoginRule(it.value)
                 "bookUrlPattern" -> source.bookUrlPattern = it.value
                 "header" -> source.header = it.value
                 "bookSourceComment" -> source.bookSourceComment = it.value ?: ""

@@ -96,7 +96,7 @@ object ImportOldData {
         val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
         for (item in items) {
             val jsonItem = Restore.jsonPath.parse(item)
-            OldRule.jsonToBookSource(jsonItem.jsonString())?.let {
+            BookSourceAnalyzer.jsonToBookSource(jsonItem.jsonString())?.let {
                 bookSources.add(it)
             }
         }

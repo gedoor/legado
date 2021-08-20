@@ -14,7 +14,7 @@ import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
-import io.legado.app.help.storage.OldRule
+import io.legado.app.help.storage.BookSourceAnalyzer
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
@@ -101,7 +101,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                             importSourceUrl(it)
                         }
                     } else {
-                        OldRule.jsonToBookSource(mText)?.let {
+                        BookSourceAnalyzer.jsonToBookSource(mText)?.let {
                             allSources.add(it)
                         }
                     }
@@ -110,7 +110,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                     val items: List<Map<String, Any>> = Restore.jsonPath.parse(mText).read("$")
                     for (item in items) {
                         val jsonItem = Restore.jsonPath.parse(item)
-                        OldRule.jsonToBookSource(jsonItem.jsonString())?.let {
+                        BookSourceAnalyzer.jsonToBookSource(jsonItem.jsonString())?.let {
                             allSources.add(it)
                         }
                     }
@@ -132,11 +132,23 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
         okHttpClient.newCall {
             url(url)
         }.text("utf-8").let { body ->
-            val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
-            for (item in items) {
-                val jsonItem = Restore.jsonPath.parse(item)
-                OldRule.jsonToBookSource(jsonItem.jsonString())?.let { source ->
-                    allSources.add(source)
+            when {
+                body.isJsonArray() -> {
+                    val items: List<Map<String, Any>> = Restore.jsonPath.parse(body).read("$")
+                    for (item in items) {
+                        val jsonItem = Restore.jsonPath.parse(item)
+                        BookSourceAnalyzer.jsonToBookSource(jsonItem.jsonString())?.let { source ->
+                            allSources.add(source)
+                        }
+                    }
+                }
+                body.isJsonObject() -> {
+                    BookSourceAnalyzer.jsonToBookSource(body)?.let {
+                        allSources.add(it)
+                    }
+                }
+                else -> {
+                    throw Exception(context.getString(R.string.wrong_format))
                 }
             }
         }

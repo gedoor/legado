@@ -10,7 +10,7 @@ import io.legado.app.utils.*
 import java.util.regex.Pattern
 
 @Suppress("RegExpRedundantEscape")
-object OldRule {
+object BookSourceAnalyzer {
     private val headerPattern = Pattern.compile("@Header:\\{.+?\\}", Pattern.CASE_INSENSITIVE)
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)
 
@@ -25,10 +25,11 @@ object OldRule {
             if (sourceAny?.ruleToc == null) {
                 source.apply {
                     val jsonItem = jsonPath.parse(json.trim())
-                    bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: ""
+                    bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: return null
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     bookSourceGroup = jsonItem.readString("bookSourceGroup")
-                    loginUrl = jsonItem.readString("loginUrl")
+                    loginUrl =
+                        BookSource.Converters().stringToLoginRule(jsonItem.readString("loginUrl"))
                     bookSourceComment = jsonItem.readString("bookSourceComment") ?: ""
                     bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
                     customOrder = jsonItem.readInt("serialNumber") ?: 0
@@ -97,34 +98,38 @@ object OldRule {
                 source.enabled = sourceAny.enabled
                 source.enabledExplore = sourceAny.enabledExplore
                 source.header = sourceAny.header
-                source.loginUrl = sourceAny.loginUrl
+                source.loginUrl = if (sourceAny.loginUrl is String) {
+                    BookSource.Converters().stringToLoginRule(sourceAny.loginUrl.toString())
+                } else {
+                    GSON.fromJsonObject(GSON.toJson(sourceAny.loginUrl))
+                }
                 source.bookSourceComment = sourceAny.bookSourceComment
                 source.lastUpdateTime = sourceAny.lastUpdateTime
                 source.weight = sourceAny.weight
                 source.exploreUrl = sourceAny.exploreUrl
                 source.ruleExplore = if (sourceAny.ruleExplore is String) {
-                    GSON.fromJsonObject(sourceAny.ruleExplore as? String)
+                    GSON.fromJsonObject(sourceAny.ruleExplore.toString())
                 } else {
                     GSON.fromJsonObject(GSON.toJson(sourceAny.ruleExplore))
                 }
                 source.searchUrl = sourceAny.searchUrl
                 source.ruleSearch = if (sourceAny.ruleSearch is String) {
-                    GSON.fromJsonObject(sourceAny.ruleSearch as? String)
+                    GSON.fromJsonObject(sourceAny.ruleSearch.toString())
                 } else {
                     GSON.fromJsonObject(GSON.toJson(sourceAny.ruleSearch))
                 }
                 source.ruleBookInfo = if (sourceAny.ruleBookInfo is String) {
-                    GSON.fromJsonObject(sourceAny.ruleBookInfo as? String)
+                    GSON.fromJsonObject(sourceAny.ruleBookInfo.toString())
                 } else {
                     GSON.fromJsonObject(GSON.toJson(sourceAny.ruleBookInfo))
                 }
                 source.ruleToc = if (sourceAny.ruleToc is String) {
-                    GSON.fromJsonObject(sourceAny.ruleToc as? String)
+                    GSON.fromJsonObject(sourceAny.ruleToc.toString())
                 } else {
                     GSON.fromJsonObject(GSON.toJson(sourceAny.ruleToc))
                 }
                 source.ruleContent = if (sourceAny.ruleContent is String) {
-                    GSON.fromJsonObject(sourceAny.ruleContent as? String)
+                    GSON.fromJsonObject(sourceAny.ruleContent.toString())
                 } else {
                     GSON.fromJsonObject(GSON.toJson(sourceAny.ruleContent))
                 }
@@ -146,7 +151,7 @@ object OldRule {
         var enabled: Boolean = true,                    // 是否启用
         var enabledExplore: Boolean = true,             // 启用发现
         var header: String? = null,                     // 请求头
-        var loginUrl: String? = null,                   // 登录地址
+        var loginUrl: Any? = null,                   // 登录规则
         var bookSourceComment: String? = "",             //书源注释
         var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
         var weight: Int = 0,                            // 智能排序的权重

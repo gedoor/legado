@@ -5,7 +5,7 @@ import android.content.Intent
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.storage.OldRule
+import io.legado.app.help.storage.BookSourceAnalyzer
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getClipText
@@ -56,7 +56,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         execute(context = Dispatchers.Main) {
             var source: BookSource? = null
             context.getClipText()?.let { json ->
-                source = OldRule.jsonToBookSource(json)
+                source = BookSourceAnalyzer.jsonToBookSource(json)
             }
             source
         }.onError {

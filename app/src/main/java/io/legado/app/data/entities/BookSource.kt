@@ -27,15 +27,15 @@ data class BookSource(
     var bookSourceGroup: String? = null,            // 分组
     @PrimaryKey
     var bookSourceUrl: String = "",                 // 地址，包括 http/https
-    var bookSourceType: Int = BookType.default,     // 类型，0 文本，1 音频
+    var bookSourceType: Int = BookType.default,     // 类型，0 文本，1 音频, 3 图片
     var bookUrlPattern: String? = null,             // 详情页url正则
     var concurrentRate: String? = null,             //并发率
     var customOrder: Int = 0,                       // 手动排序编号
     var enabled: Boolean = true,                    // 是否启用
     var enabledExplore: Boolean = true,             // 启用发现
     var header: String? = null,                     // 请求头
-    var loginUrl: String? = null,                   // 登录地址
-    var bookSourceComment: String? = null,            // 注释
+    var loginUrl: LoginRule? = null,                // 登录地址
+    var bookSourceComment: String? = null,          // 注释
     var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
     var weight: Int = 0,                            // 智能排序的权重
     var exploreUrl: String? = null,                 // 发现url
@@ -46,17 +46,6 @@ data class BookSource(
     var ruleToc: TocRule? = null,                   // 目录页规则
     var ruleContent: ContentRule? = null            // 正文页规则
 ) : Parcelable, JsExtensions {
-
-    @delegate:Transient
-    @delegate:Ignore
-    @IgnoredOnParcel
-    val loginRule by lazy {
-        if (loginUrl.isJsonObject()) {
-            return@lazy GSON.fromJsonObject<LoginRule>(loginUrl)
-        } else {
-            return@lazy LoginRule(url = loginUrl)
-        }
-    }
 
     @delegate:Transient
     @delegate:Ignore
@@ -178,7 +167,7 @@ data class BookSource(
                 && enabled == source.enabled
                 && enabledExplore == source.enabledExplore
                 && equal(header, source.header)
-                && equal(loginUrl, source.loginUrl)
+                && loginUrl == source.loginUrl
                 && equal(exploreUrl, source.exploreUrl)
                 && equal(searchUrl, source.searchUrl)
                 && getSearchRule() == source.getSearchRule()
@@ -191,7 +180,7 @@ data class BookSource(
 
     class Converters {
         @TypeConverter
-        fun loginRuleTString(loginRule: LoginRule?): String = GSON.toJson(loginRule)
+        fun loginRuleToString(loginRule: LoginRule?): String = GSON.toJson(loginRule)
 
         @TypeConverter
         fun stringToLoginRule(json: String?): LoginRule? {
