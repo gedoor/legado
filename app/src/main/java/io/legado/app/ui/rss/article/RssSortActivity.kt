@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
@@ -23,7 +24,8 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
     override val viewModel by viewModels<RssSortViewModel>()
     private lateinit var adapter: TabFragmentPageAdapter
-    private val fragments = linkedMapOf<String, Fragment>()
+    private val sortList = mutableListOf<Pair<String, String>>()
+    private val fragmentMap = hashMapOf<String, Fragment>()
     private val upSourceResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -73,11 +75,11 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     }
 
     private fun upFragments() {
-        fragments.clear()
-        viewModel.rssSource?.sortUrls()?.forEach {
-            fragments[it.key] = RssArticlesFragment.create(it.key, it.value)
+        viewModel.rssSource?.sortUrls()?.let {
+            sortList.clear()
+            sortList.addAll(it)
         }
-        if (fragments.size == 1) {
+        if (sortList.size == 1) {
             binding.tabLayout.gone()
         } else {
             binding.tabLayout.visible()
@@ -93,17 +95,23 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         }
 
         override fun getPageTitle(position: Int): CharSequence {
-            return fragments.keys.elementAt(position)
+            return sortList[position].first
         }
 
         override fun getItem(position: Int): Fragment {
-            return fragments.values.elementAt(position)
+            val sort = sortList[position]
+            return RssArticlesFragment.create(sort.first, sort.second)
         }
 
         override fun getCount(): Int {
-            return fragments.size
+            return sortList.size
         }
 
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val fragment = super.instantiateItem(container, position) as Fragment
+            fragmentMap[sortList[position].first] = fragment
+            return fragment
+        }
     }
 
 }

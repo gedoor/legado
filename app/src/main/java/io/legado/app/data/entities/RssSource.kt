@@ -107,7 +107,7 @@ data class RssSource(
         return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
     }
 
-    fun sortUrls(): LinkedHashMap<String, String> = linkedMapOf<String, String>().apply {
+    fun sortUrls(): List<Pair<String, String>> = arrayListOf<Pair<String, String>>().apply {
         kotlin.runCatching {
             var a = sortUrl
             if (sortUrl?.startsWith("<js>", false) == true
@@ -133,10 +133,10 @@ data class RssSource(
             a?.split("(&&|\n)+".toRegex())?.forEach { c ->
                 val d = c.split("::")
                 if (d.size > 1)
-                    this[d[0]] = d[1]
+                    add(Pair(d[0], d[1]))
             }
             if (isEmpty()) {
-                this[""] = sourceUrl
+                add(Pair("", sourceUrl))
             }
         }
     }

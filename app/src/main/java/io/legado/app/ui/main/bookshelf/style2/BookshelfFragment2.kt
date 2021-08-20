@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -100,11 +101,13 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         launch {
-            appDb.bookGroupDao.flowShow().collect {
-                if (it != bookGroups) {
-                    bookGroups = it
-                    booksAdapter.notifyDataSetChanged()
-                    binding.tvEmptyMsg.isGone = getItemCount() > 0
+            lifecycle.whenStarted {
+                appDb.bookGroupDao.flowShow().collect {
+                    if (it != bookGroups) {
+                        bookGroups = it
+                        booksAdapter.notifyDataSetChanged()
+                        binding.tvEmptyMsg.isGone = getItemCount() > 0
+                    }
                 }
             }
         }
@@ -123,29 +126,31 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         }
         booksFlowJob?.cancel()
         booksFlowJob = launch {
-            when (groupId) {
-                AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
-                AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
-                AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
-                AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
-                else -> appDb.bookDao.flowByGroup(groupId)
-            }.collect { list ->
-                books = when (getPrefInt(PreferKey.bookshelfSort)) {
-                    1 -> list.sortedByDescending {
-                        it.latestChapterTime
+            lifecycle.whenStarted {
+                when (groupId) {
+                    AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
+                    AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
+                    AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
+                    AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
+                    else -> appDb.bookDao.flowByGroup(groupId)
+                }.collect { list ->
+                    books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                        1 -> list.sortedByDescending {
+                            it.latestChapterTime
+                        }
+                        2 -> list.sortedWith { o1, o2 ->
+                            o1.name.cnCompare(o2.name)
+                        }
+                        3 -> list.sortedBy {
+                            it.order
+                        }
+                        else -> list.sortedByDescending {
+                            it.durChapterTime
+                        }
                     }
-                    2 -> list.sortedWith { o1, o2 ->
-                        o1.name.cnCompare(o2.name)
-                    }
-                    3 -> list.sortedBy {
-                        it.order
-                    }
-                    else -> list.sortedByDescending {
-                        it.durChapterTime
-                    }
+                    booksAdapter.notifyDataSetChanged()
+                    binding.tvEmptyMsg.isGone = getItemCount() > 0
                 }
-                booksAdapter.notifyDataSetChanged()
-                binding.tvEmptyMsg.isGone = getItemCount() > 0
             }
         }
     }

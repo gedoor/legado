@@ -80,8 +80,8 @@ object Debug {
         cancelDebug()
         debugSource = rssSource.sourceUrl
         log(debugSource, "︾开始解析")
-        val sort = rssSource.sortUrls().entries.first()
-        Rss.getArticles(scope, sort.key, sort.value, rssSource, 1)
+        val sort = rssSource.sortUrls().first()
+        Rss.getArticles(scope, sort.first, sort.second, rssSource, 1)
             .onSuccess {
                 if (it.articles.isEmpty()) {
                     log(debugSource, "⇒列表页解析成功，为空")

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.whenStarted
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.EventBus
@@ -109,14 +110,16 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     override fun upChapterList(searchKey: String?) {
         tocFlowJob?.cancel()
         tocFlowJob = launch {
-            when {
-                searchKey.isNullOrBlank() -> appDb.bookChapterDao.flowByBook(viewModel.bookUrl)
-                else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
-            }.collect {
-                adapter.setItems(it)
-                if (searchKey.isNullOrBlank() && !scrollToDurChapter) {
-                    mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
-                    scrollToDurChapter = true
+            lifecycle.whenStarted {
+                when {
+                    searchKey.isNullOrBlank() -> appDb.bookChapterDao.flowByBook(viewModel.bookUrl)
+                    else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
+                }.collect {
+                    adapter.setItems(it)
+                    if (searchKey.isNullOrBlank() && !scrollToDurChapter) {
+                        mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+                        scrollToDurChapter = true
+                    }
                 }
             }
         }

@@ -1,10 +1,12 @@
 package io.legado.app.ui.book.arrange
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -106,13 +108,16 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         binding.selectActionBar.setCallBack(this)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         launch {
-            appDb.bookGroupDao.flowAll().collect {
-                groupList.clear()
-                groupList.addAll(it)
-                adapter.notifyDataSetChanged()
-                upMenu()
+            lifecycle.whenStarted {
+                appDb.bookGroupDao.flowAll().collect {
+                    groupList.clear()
+                    groupList.addAll(it)
+                    adapter.notifyDataSetChanged()
+                    upMenu()
+                }
             }
         }
     }
@@ -120,22 +125,24 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     private fun initBookData() {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
-            when (groupId) {
-                AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
-                AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
-                AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
-                AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
-                else -> appDb.bookDao.flowByGroup(groupId)
-            }.collect { list ->
-                val books = when (getPrefInt(PreferKey.bookshelfSort)) {
-                    1 -> list.sortedByDescending { it.latestChapterTime }
-                    2 -> list.sortedWith { o1, o2 ->
-                        o1.name.cnCompare(o2.name)
+            lifecycle.whenStarted {
+                when (groupId) {
+                    AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
+                    AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
+                    AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
+                    AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
+                    else -> appDb.bookDao.flowByGroup(groupId)
+                }.collect { list ->
+                    val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                        1 -> list.sortedByDescending { it.latestChapterTime }
+                        2 -> list.sortedWith { o1, o2 ->
+                            o1.name.cnCompare(o2.name)
+                        }
+                        3 -> list.sortedBy { it.order }
+                        else -> list.sortedByDescending { it.durChapterTime }
                     }
-                    3 -> list.sortedBy { it.order }
-                    else -> list.sortedByDescending { it.durChapterTime }
+                    adapter.setItems(books)
                 }
-                adapter.setItems(books)
             }
         }
     }

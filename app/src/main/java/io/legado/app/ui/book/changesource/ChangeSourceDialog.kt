@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -153,12 +154,14 @@ class ChangeSourceDialog : BaseDialogFragment(),
             adapter.setItems(it)
         })
         launch {
-            appDb.bookSourceDao.flowGroupEnabled().collect {
-                groups.clear()
-                it.map { group ->
-                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+            lifecycle.whenStarted {
+                appDb.bookSourceDao.flowGroupEnabled().collect {
+                    groups.clear()
+                    it.map { group ->
+                        groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                    }
+                    upGroupMenu()
                 }
-                upGroupMenu()
             }
         }
     }
