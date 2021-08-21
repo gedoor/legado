@@ -18,6 +18,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/swt_enabled"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/book_source"
         tools:ignore="TouchTargetSizeCheck" />
 
     <io.legado.app.lib.theme.view.ATESwitch
@@ -25,12 +26,11 @@
         android:name="@string/enable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
         app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintRight_toLeftOf="@id/iv_edit"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+        tools:ignore="RtlHardcoded,RtlSymmetry,TouchTargetSizeCheck" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_edit"
