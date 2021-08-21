@@ -71,15 +71,15 @@ interface JsExtensions {
     /**
      * 访问网络,返回Response<String>
      */
-    fun connect(urlStr: String): Any {
+    fun connect(urlStr: String): StrResponse {
         return runBlocking {
+            val analyzeUrl = AnalyzeUrl(urlStr)
             kotlin.runCatching {
-                val analyzeUrl = AnalyzeUrl(urlStr)
                 analyzeUrl.getStrResponse(urlStr)
             }.onFailure {
                 it.printStackTrace()
             }.getOrElse {
-                it.msg
+                StrResponse(analyzeUrl.url, it.localizedMessage)
             }
         }
     }

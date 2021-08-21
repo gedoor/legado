@@ -6,9 +6,7 @@ import androidx.room.*
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
-import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
-import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.*
 import kotlinx.parcelize.IgnoredOnParcel
@@ -33,7 +31,7 @@ data class BookSource(
     var customOrder: Int = 0,                       // 手动排序编号
     var enabled: Boolean = true,                    // 是否启用
     var enabledExplore: Boolean = true,             // 启用发现
-    var header: String? = null,                     // 请求头
+    override var header: String? = null,                     // 请求头
     var loginUrl: LoginRule? = null,                // 登录地址
     var bookSourceComment: String? = null,          // 注释
     var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
@@ -45,7 +43,7 @@ data class BookSource(
     var ruleBookInfo: BookInfoRule? = null,         // 书籍信息页规则
     var ruleToc: TocRule? = null,                   // 目录页规则
     var ruleContent: ContentRule? = null            // 正文页规则
-) : Parcelable, JsExtensions {
+) : Parcelable, BaseSource {
 
     @delegate:Transient
     @delegate:Ignore
@@ -100,23 +98,6 @@ data class BookSource(
     override fun equals(other: Any?) =
         if (other is BookSource) other.bookSourceUrl == bookSourceUrl else false
 
-    @Throws(Exception::class)
-    fun getHeaderMap() = (HashMap<String, String>().apply {
-        this[AppConst.UA_NAME] = AppConfig.userAgent
-        header?.let {
-            GSON.fromJsonObject<Map<String, String>>(
-                when {
-                    it.startsWith("@js:", true) ->
-                        evalJS(it.substring(4)).toString()
-                    it.startsWith("<js>", true) ->
-                        evalJS(it.substring(4, it.lastIndexOf("<"))).toString()
-                    else -> it
-                }
-            )?.let { map ->
-                putAll(map)
-            }
-        }
-    }) as Map<String, String>
 
     fun getSearchRule() = ruleSearch ?: SearchRule()
 
@@ -143,18 +124,6 @@ data class BookSource(
             it.remove(group)
             bookSourceGroup = TextUtils.join(",", it)
         }
-    }
-
-    /**
-     * 执行JS
-     */
-    @Throws(Exception::class)
-    private fun evalJS(jsStr: String): Any {
-        val bindings = SimpleBindings()
-        bindings["java"] = this
-        bindings["cookie"] = CookieStore
-        bindings["cache"] = CacheManager
-        return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
     fun equal(source: BookSource) =

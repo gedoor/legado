@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class LoginRule(
     var ui: List<RowUi>? = null,
-    var url: String? = null,
-    var checkJs: String? = null
+    var url: String? = null, //url或js,js必须使用js标记
+    var checkJs: String? = null, //只能写js,不用js标记
 ) : Parcelable {
 
     @Parcelize
