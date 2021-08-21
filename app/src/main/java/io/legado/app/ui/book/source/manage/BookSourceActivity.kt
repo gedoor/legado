@@ -44,6 +44,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.io.File
+import kotlin.math.min
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
     PopupMenu.OnMenuItemClickListener,
@@ -457,16 +458,19 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun checkMessageRefreshJob(): Job {
         val firstIndex = adapter.getItems().indexOf(adapter.selection.first())
         val lastIndex = adapter.getItems().indexOf(adapter.selection.last())
+        var refreshCount = 0
         Debug.isChecking = true
         return async(start = CoroutineStart.LAZY) {
             flow {
                 while (true) {
-                    emit(Debug.isChecking)
+                    refreshCount += 1
+                    emit(refreshCount)
                     delay(300L)
                 }
             }.collect {
                 adapter.notifyItemRangeChanged(firstIndex, lastIndex + 1, bundleOf(Pair("checkSourceMessage", null)))
-                if (!it) {
+                if (!Debug.isChecking || (refreshCount > (600 * (lastIndex + 1 - firstIndex) / min(AppConfig.threadCount,8)))) {
+                    Debug.finishChecking()
                     this.cancel()
                 }
             }
