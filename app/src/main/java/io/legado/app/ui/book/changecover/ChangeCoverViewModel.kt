@@ -137,6 +137,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             )
         ) {
             searchStateData.postValue(false)
+            tasks.clear()
         }
     }
 

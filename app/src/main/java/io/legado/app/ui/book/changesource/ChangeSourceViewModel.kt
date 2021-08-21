@@ -163,10 +163,13 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         || searchIndex >= bookSourceList.lastIndex + threadCount
                     ) {
                         searchStateData.postValue(false)
+                        tasks.clear()
                     }
                 }
+
             }
         tasks.add(task)
+
     }
 
     private fun loadBookInfo(webBook: WebBook, book: Book) {
