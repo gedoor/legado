@@ -14,7 +14,7 @@ import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.SelectImageContract
 import io.legado.app.utils.externalFiles
-import io.legado.app.utils.read
+import io.legado.app.utils.readUri
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class BookInfoEditActivity :
@@ -102,7 +102,7 @@ class BookInfoEditActivity :
     }
 
     private fun coverChangeTo(uri: Uri) {
-        uri.read(this) { name, bytes ->
+        readUri(uri) { name, bytes ->
             var file = this.externalFiles
             file = FileUtils.createFileIfNotExist(file, "covers", name)
             file.writeBytes(bytes)

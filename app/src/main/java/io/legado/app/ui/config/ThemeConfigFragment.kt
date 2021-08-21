@@ -302,7 +302,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     }
 
     private fun setBgFromUri(uri: Uri, preferenceKey: String, success: () -> Unit) {
-        uri.read(this) { name, bytes ->
+        readUri(uri) { name, bytes ->
             var file = requireContext().externalFiles
             file = FileUtils.createFileIfNotExist(file, preferenceKey, name)
             file.writeBytes(bytes)
@@ -312,7 +312,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     }
 
     private fun setCoverFromUri(preferenceKey: String, uri: Uri) {
-        uri.read(this) { name, bytes ->
+        readUri(uri) { name, bytes ->
             var file = requireContext().externalFiles
             file = FileUtils.createFileIfNotExist(file, "covers", name)
             file.writeBytes(bytes)

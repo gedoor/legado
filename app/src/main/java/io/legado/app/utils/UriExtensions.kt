@@ -15,24 +15,25 @@ fun Uri.isContentScheme() = this.scheme == "content"
 /**
  * 读取URI
  */
-fun Uri.read(activity: AppCompatActivity, success: (name: String, bytes: ByteArray) -> Unit) {
+fun AppCompatActivity.readUri(uri: Uri?, success: (name: String, bytes: ByteArray) -> Unit) {
+    uri ?: return
     try {
-        if (isContentScheme()) {
-            val doc = DocumentFile.fromSingleUri(activity, this)
+        if (uri.isContentScheme()) {
+            val doc = DocumentFile.fromSingleUri(this, uri)
             doc ?: error("未获取到文件")
             val name = doc.name ?: error("未获取到文件名")
-            val fileBytes = DocumentUtils.readBytes(activity, doc.uri)
+            val fileBytes = DocumentUtils.readBytes(this, doc.uri)
             fileBytes ?: error("读取文件出错")
             success.invoke(name, fileBytes)
         } else {
-            PermissionsCompat.Builder(activity)
+            PermissionsCompat.Builder(this)
                 .addPermissions(
                     Permissions.READ_EXTERNAL_STORAGE,
                     Permissions.WRITE_EXTERNAL_STORAGE
                 )
                 .rationale(R.string.bg_image_per)
                 .onGranted {
-                    RealPathUtil.getPath(activity, this)?.let { path ->
+                    RealPathUtil.getPath(this, uri)?.let { path ->
                         val imgFile = File(path)
                         success.invoke(imgFile.name, imgFile.readBytes())
                     }
@@ -41,31 +42,32 @@ fun Uri.read(activity: AppCompatActivity, success: (name: String, bytes: ByteArr
         }
     } catch (e: Exception) {
         e.printStackTrace()
-        activity.toastOnUi(e.localizedMessage ?: "read uri error")
+        toastOnUi(e.localizedMessage ?: "read uri error")
     }
 }
 
 /**
  * 读取URI
  */
-fun Uri.read(fragment: Fragment, success: (name: String, bytes: ByteArray) -> Unit) {
+fun Fragment.readUri(uri: Uri?, success: (name: String, bytes: ByteArray) -> Unit) {
+    uri ?: return
     try {
-        if (isContentScheme()) {
-            val doc = DocumentFile.fromSingleUri(fragment.requireContext(), this)
+        if (uri.isContentScheme()) {
+            val doc = DocumentFile.fromSingleUri(requireContext(), uri)
             doc ?: error("未获取到文件")
             val name = doc.name ?: error("未获取到文件名")
-            val fileBytes = DocumentUtils.readBytes(fragment.requireContext(), doc.uri)
+            val fileBytes = DocumentUtils.readBytes(requireContext(), doc.uri)
             fileBytes ?: error("读取文件出错")
             success.invoke(name, fileBytes)
         } else {
-            PermissionsCompat.Builder(fragment)
+            PermissionsCompat.Builder(this)
                 .addPermissions(
                     Permissions.READ_EXTERNAL_STORAGE,
                     Permissions.WRITE_EXTERNAL_STORAGE
                 )
                 .rationale(R.string.bg_image_per)
                 .onGranted {
-                    RealPathUtil.getPath(fragment.requireContext(), this)?.let { path ->
+                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
                         val imgFile = File(path)
                         success.invoke(imgFile.name, imgFile.readBytes())
                     }
@@ -74,7 +76,7 @@ fun Uri.read(fragment: Fragment, success: (name: String, bytes: ByteArray) -> Un
         }
     } catch (e: Exception) {
         e.printStackTrace()
-        fragment.toastOnUi(e.localizedMessage ?: "read uri error")
+        toastOnUi(e.localizedMessage ?: "read uri error")
     }
 }
 

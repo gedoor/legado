@@ -343,7 +343,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
     }
 
     private fun setBgFromUri(uri: Uri) {
-        uri.read(this) { name, bytes ->
+        readUri(uri) { name, bytes ->
             var file = requireContext().externalFiles
             file = FileUtils.createFileIfNotExist(file, "bg", name)
             file.writeBytes(bytes)
