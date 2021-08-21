@@ -30,7 +30,6 @@ class CheckSourceService : BaseService() {
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
     private var notificationMsg = ""
-    private val showCheckSourceMessage = AppConfig.checkSourceMessage
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_network_check)
@@ -109,9 +108,7 @@ class CheckSourceService : BaseService() {
 
     fun check(source: BookSource) {
         execute(context = searchCoroutine) {
-            if (showCheckSourceMessage) {
-                Debug.startChecking(source)
-            }
+            Debug.startChecking(source)
             val webBook = WebBook(source)
             var books = webBook.searchBookAwait(this, CheckSource.keyword)
             if (books.isEmpty()) {
@@ -141,9 +138,7 @@ class CheckSourceService : BaseService() {
                     "error:${it.localizedMessage}
                     ${source.bookSourceComment}"
                 """.trimIndent()
-                if (showCheckSourceMessage) {
-                    Debug.updateFinalMessage(source.bookSourceUrl, "失败")
-                }
+                Debug.updateFinalMessage(source.bookSourceUrl, "失败")
                 appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
                 source.removeGroup("失效")
@@ -152,9 +147,7 @@ class CheckSourceService : BaseService() {
                     ?.filterNot {
                         it.startsWith("error:")
                     }?.joinToString("\n")
-                if (showCheckSourceMessage) {
-                    Debug.updateFinalMessage(source.bookSourceUrl, "成功")
-                }
+                Debug.updateFinalMessage(source.bookSourceUrl, "成功")
                 appDb.bookSourceDao.update(source)
             }.onFinally(searchCoroutine) {
                 onNext(source.bookSourceUrl, source.bookSourceName)

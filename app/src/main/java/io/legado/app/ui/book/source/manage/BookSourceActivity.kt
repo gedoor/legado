@@ -341,9 +341,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     }
                 }
                 CheckSource.start(this@BookSourceActivity, adapter.selection)
-                if(AppConfig.checkSourceMessage) {
-                   checkMessageRefreshJob().start()
-                }
+                checkMessageRefreshJob().start()
             }
             noButton()
         }.show()
@@ -436,10 +434,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     .make(binding.root, msg, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.cancel) {
                         CheckSource.stop(this)
-                        if (AppConfig.checkSourceMessage) {
-                            Debug.finishChecking()
-                            adapter.notifyItemRangeChanged(0, adapter.itemCount, bundleOf(Pair("checkSourceMessage", null)))
-                        }
+                        Debug.finishChecking()
+                        adapter.notifyItemRangeChanged(
+                            0,
+                            adapter.itemCount,
+                            bundleOf(Pair("checkSourceMessage", null))
+                        )
                     }.apply { show() }
             }
         }
