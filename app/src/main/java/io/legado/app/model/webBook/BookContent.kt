@@ -47,7 +47,7 @@ object BookContent {
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
         val contentRule = bookSource.getContentRule()
-        val analyzeRule = AnalyzeRule(book).setContent(body, baseUrl)
+        val analyzeRule = AnalyzeRule(book, bookSource).setContent(body, baseUrl)
         analyzeRule.setRedirectUrl(baseUrl)
         analyzeRule.nextChapterUrl = mNextChapterUrl
         scope.ensureActive()
@@ -131,7 +131,7 @@ object BookContent {
         nextChapterUrl: String?,
         printLog: Boolean = true
     ): ContentData<List<String>> {
-        val analyzeRule = AnalyzeRule(book)
+        val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body, baseUrl)
         val rUrl = analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.nextChapterUrl = nextChapterUrl

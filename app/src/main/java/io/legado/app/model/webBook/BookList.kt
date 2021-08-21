@@ -39,7 +39,7 @@ object BookList {
         val bookList = ArrayList<SearchBook>()
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${analyzeUrl.ruleUrl}")
         Debug.log(bookSource.bookSourceUrl, body, state = 10)
-        val analyzeRule = AnalyzeRule(variableBook)
+        val analyzeRule = AnalyzeRule(variableBook, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(baseUrl)
         bookSource.bookUrlPattern?.let {

@@ -1,16 +1,19 @@
 package io.legado.app.data.entities
 
+import android.util.Base64
 import io.legado.app.constant.AppConst
 import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
+import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
-import java.util.*
 import javax.script.SimpleBindings
 
 interface BaseSource : JsExtensions {
+
+    fun getStoreUrl(): String
 
     var header: String?
 
@@ -29,6 +32,26 @@ interface BaseSource : JsExtensions {
                 putAll(map)
             }
         }
+    }
+
+    fun getLoginHeader(): Map<String, String>? {
+        val cache = CacheManager.get("login_${getStoreUrl()}") ?: return null
+        val byteArrayB = Base64.decode(cache, Base64.DEFAULT)
+        val byteArrayA = EncoderUtils.decryptAES(byteArrayB, AppConst.androidId.toByteArray())
+            ?: return null
+        val headerStr = String(byteArrayA)
+        return GSON.fromJsonObject(headerStr)
+    }
+
+    fun putLoginHeader(header: String) {
+        val data = Base64.encodeToString(
+            EncoderUtils.decryptAES(
+                header.toByteArray(),
+                AppConst.androidId.toByteArray()
+            ),
+            Base64.DEFAULT
+        )
+        CacheManager.put("login_${getStoreUrl()}", data)
     }
 
     /**

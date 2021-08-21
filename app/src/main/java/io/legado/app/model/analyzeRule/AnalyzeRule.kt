@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
@@ -24,7 +25,7 @@ import kotlin.collections.HashMap
  */
 @Keep
 @Suppress("unused", "RegExpRedundantEscape", "MemberVisibilityCanBePrivate")
-class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
+class AnalyzeRule(val ruleData: RuleDataInterface, private val source: BaseSource) : JsExtensions {
 
     var book = if (ruleData is BaseBook) ruleData else null
 
@@ -626,6 +627,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
         bindings["java"] = this
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
+        bindings["source"] = source
         bindings["book"] = book
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
@@ -642,7 +644,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface) : JsExtensions {
     override fun ajax(urlStr: String): String? {
         return runBlocking {
             kotlin.runCatching {
-                val analyzeUrl = AnalyzeUrl(urlStr, book = book)
+                val analyzeUrl = AnalyzeUrl(urlStr, book = book, source = source)
                 analyzeUrl.getStrResponse(urlStr).body
             }.onFailure {
                 it.printStackTrace()

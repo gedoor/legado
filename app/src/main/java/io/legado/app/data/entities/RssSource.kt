@@ -43,6 +43,10 @@ data class RssSource(
     var customOrder: Int = 0
 ) : Parcelable, BaseSource {
 
+    override fun getStoreUrl(): String {
+        return sourceUrl
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is RssSource) {
             return other.sourceUrl == sourceUrl

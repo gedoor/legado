@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.NetworkUtils
@@ -39,16 +40,16 @@ data class BookChapter(
     var startFragmentId: String? = null,  //EPUB书籍当前章节的fragmentId
     var endFragmentId: String? = null,    //EPUB书籍下一章节的fragmentId
     var variable: String? = null        //变量
-) : Parcelable {
+) : Parcelable, RuleDataInterface {
 
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
-    val variableMap by lazy {
+    override val variableMap by lazy {
         GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
     }
 
-    fun putVariable(key: String, value: String) {
+    override fun putVariable(key: String, value: String) {
         variableMap[key] = value
         variable = GSON.toJson(variableMap)
     }

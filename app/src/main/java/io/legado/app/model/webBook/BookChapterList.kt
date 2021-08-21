@@ -140,7 +140,7 @@ object BookChapterList {
         getNextUrl: Boolean = true,
         log: Boolean = false
     ): ChapterData<List<String>> {
-        val analyzeRule = AnalyzeRule(book)
+        val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
         //获取目录列表

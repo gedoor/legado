@@ -45,6 +45,10 @@ data class BookSource(
     var ruleContent: ContentRule? = null            // 正文页规则
 ) : Parcelable, BaseSource {
 
+    override fun getStoreUrl(): String {
+        return bookSourceUrl
+    }
+
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel

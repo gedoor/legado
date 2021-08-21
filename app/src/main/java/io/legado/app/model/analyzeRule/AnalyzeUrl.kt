@@ -8,6 +8,7 @@ import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
@@ -36,7 +37,8 @@ class AnalyzeUrl(
     val book: BaseBook? = null,
     val chapter: BookChapter? = null,
     private val ruleData: RuleDataInterface? = null,
-    headerMapF: Map<String, String>? = null
+    private val source: BaseSource? = null,
+    headerMapF: Map<String, String>? = null,
 ) : JsExtensions {
     companion object {
         val paramPattern: Pattern = Pattern.compile("\\s*,\\s*(?=\\{)")
@@ -104,20 +106,9 @@ class AnalyzeUrl(
 
             val analyze = RuleAnalyzer(ruleUrl) //创建解析
 
-            val bindings = SimpleBindings()
-            bindings["java"] = this
-            bindings["cookie"] = CookieStore
-            bindings["cache"] = CacheManager
-            bindings["baseUrl"] = baseUrl
-            bindings["page"] = page
-            bindings["key"] = key
-            bindings["speakText"] = speakText
-            bindings["speakSpeed"] = speakSpeed
-            bindings["book"] = book
-
             //替换所有内嵌{{js}}
             val url = analyze.innerRule("{{", "}}") {
-                val jsEval = SCRIPT_ENGINE.eval(it, bindings) ?: ""
+                val jsEval = evalJS(it) ?: ""
                 when {
                     jsEval is String -> jsEval
                     jsEval is Double && jsEval % 1.0 == 0.0 -> String.format("%.0f", jsEval)
@@ -234,6 +225,7 @@ class AnalyzeUrl(
     private fun evalJS(jsStr: String, result: Any? = null): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["baseUrl"] = baseUrl
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
         bindings["page"] = page
@@ -241,8 +233,8 @@ class AnalyzeUrl(
         bindings["speakText"] = speakText
         bindings["speakSpeed"] = speakSpeed
         bindings["book"] = book
+        bindings["source"] = source
         bindings["result"] = result
-        bindings["baseUrl"] = baseUrl
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
