@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?android:attr/selectableItemBackground"
     android:padding="16dp">
 
@@ -14,10 +14,11 @@
         android:layout_gravity="center"
         android:singleLine="true"
         android:textColor="@color/primaryText"
+        app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/swt_enabled"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/iv_debug_text" />
+        tools:ignore="TouchTargetSizeCheck" />
 
     <io.legado.app.lib.theme.view.ATESwitch
         android:id="@+id/swt_enabled"
@@ -26,10 +27,10 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
-        tools:ignore="RtlSymmetry"
+        app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintRight_toLeftOf="@id/iv_edit"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/iv_debug_text" />
+        tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_edit"
@@ -41,9 +42,9 @@
         android:padding="6dp"
         android:src="@drawable/ic_edit"
         android:tint="@color/primaryText"
+        app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintRight_toLeftOf="@id/iv_menu_more"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/iv_debug_text" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu_more"
@@ -53,20 +54,33 @@
         android:padding="6dp"
         android:src="@drawable/ic_more_vert"
         android:tint="@color/primaryText"
+        app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         tools:ignore="RtlHardcoded" />
 
     <io.legado.app.ui.widget.image.CircleImageView
         android:id="@+id/iv_explore"
         android:layout_width="8dp"
         android:layout_height="8dp"
-        android:scaleType="centerCrop"
         android:contentDescription="@string/more_menu"
+        android:scaleType="centerCrop"
         android:src="@color/md_green_600"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/iv_debug_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/iv_progressBar"
+        app:layout_constraintTop_toBottomOf="@id/cb_book_source"
+        tools:text="@string/debug_hint"
+        tools:visibility="visible" />
 
     <io.legado.app.lib.theme.view.ATEProgressBar
         android:id="@+id/iv_progressBar"
@@ -75,25 +89,11 @@
         android:layout_gravity="start|center_vertical"
         android:animationResolution="1000"
         android:indeterminate="true"
-        android:visibility="gone"
         android:indeterminateBehavior="repeat"
-        tools:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/iv_debug_text"
-        app:layout_constraintBottom_toBottomOf="@id/iv_debug_text" />
-
-    <TextView
-        android:id="@+id/iv_debug_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        tools:text="@string/debug_hint"
-        android:text=""
         android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/iv_progressBar"
-        app:layout_constraintTop_toBottomOf="@id/cb_book_source"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/iv_debug_text"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_debug_text"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
