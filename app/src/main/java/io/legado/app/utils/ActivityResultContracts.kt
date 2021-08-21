@@ -12,7 +12,7 @@ class SelectImageContract : ActivityResultContract<Int, Pair<Int?, Uri?>?>() {
 
     override fun createIntent(context: Context, input: Int?): Intent {
         requestCode = input
-        return Intent(Intent.ACTION_OPEN_DOCUMENT)
+        return Intent(Intent.ACTION_GET_CONTENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
             .setType("image/*")
     }
