@@ -7,6 +7,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ContentRule
 import io.legado.app.help.BookHelp
+import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -24,14 +25,15 @@ object BookContent {
     @Throws(Exception::class)
     suspend fun analyzeContent(
         scope: CoroutineScope,
-        body: String?,
+        strResponse: StrResponse,
+        bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
-        bookSource: BookSource,
-        baseUrl: String,
         redirectUrl: String,
         nextChapterUrl: String? = null
     ): String {
+        val baseUrl = strResponse.url
+        val body = strResponse.body
         body ?: throw Exception(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )

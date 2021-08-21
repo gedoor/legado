@@ -21,11 +21,16 @@ class StrResponse {
     }
 
     constructor(url: String, body: String?) {
+        val request = try {
+            Request.Builder().url(url).build()
+        } catch (e: Exception) {
+            Request.Builder().url("http://localhost/").build()
+        }
         raw = Builder()
             .code(200)
             .message("OK")
             .protocol(Protocol.HTTP_1_1)
-            .request(Request.Builder().url(url).build())
+            .request(request)
             .build()
         this.body = body
     }

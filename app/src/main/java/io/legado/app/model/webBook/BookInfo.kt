@@ -4,6 +4,7 @@ import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
+import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.HtmlFormatter
@@ -18,13 +19,14 @@ object BookInfo {
     @Throws(Exception::class)
     fun analyzeBookInfo(
         scope: CoroutineScope,
-        book: Book,
-        body: String?,
+        strResponse: StrResponse,
         bookSource: BookSource,
-        baseUrl: String,
+        book: Book,
         redirectUrl: String,
         canReName: Boolean,
     ) {
+        val baseUrl = strResponse.url
+        val body = strResponse.body
         body ?: throw Exception(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )

@@ -6,6 +6,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.rule.BookListRule
 import io.legado.app.help.BookHelp
+import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -21,20 +22,21 @@ object BookList {
     @Throws(Exception::class)
     fun analyzeBookList(
         scope: CoroutineScope,
-        body: String?,
+        strResponse: StrResponse,
         bookSource: BookSource,
         analyzeUrl: AnalyzeUrl,
-        baseUrl: String,
         variableBook: SearchBook,
         isSearch: Boolean = true,
     ): ArrayList<SearchBook> {
-        val bookList = ArrayList<SearchBook>()
+        val baseUrl = strResponse.url
+        val body = strResponse.body
         body ?: throw Exception(
             appCtx.getString(
                 R.string.error_get_web_content,
                 analyzeUrl.ruleUrl
             )
         )
+        val bookList = ArrayList<SearchBook>()
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${analyzeUrl.ruleUrl}")
         Debug.log(bookSource.bookSourceUrl, body, state = 10)
         val analyzeRule = AnalyzeRule(variableBook)

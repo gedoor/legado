@@ -6,6 +6,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
+import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -21,16 +22,17 @@ object BookChapterList {
 
     suspend fun analyzeChapterList(
         scope: CoroutineScope,
-        book: Book,
-        body: String?,
+        strResponse: StrResponse,
         bookSource: BookSource,
-        baseUrl: String,
+        book: Book,
         redirectUrl: String
     ): List<BookChapter> {
-        val chapterList = ArrayList<BookChapter>()
+        val baseUrl = strResponse.url
+        val body = strResponse.body
         body ?: throw Exception(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )
+        val chapterList = ArrayList<BookChapter>()
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         Debug.log(bookSource.bookSourceUrl, body, state = 30)
         val tocRule = bookSource.getTocRule()
