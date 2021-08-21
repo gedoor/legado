@@ -34,6 +34,19 @@ object Debug {
         showTime: Boolean = true,
         state: Int = 1
     ) {
+        //调试信息始终要执行
+        callback?.let {
+            if ((debugSource != sourceUrl || !print)) return
+            var printMsg = msg ?: ""
+            if (isHtml) {
+                printMsg = HtmlFormatter.format(msg)
+            }
+            if (showTime) {
+                val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))
+                printMsg = "$time $printMsg"
+            }
+            it.printLog(state, printMsg)
+        }
         if (isChecking) {
             if (sourceUrl != null && (msg ?: "").length < 30) {
                 var printMsg = msg ?: ""
@@ -45,19 +58,6 @@ object Debug {
                         DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
                     printMsg = "$time $printMsg"
                     debugMessageMap[sourceUrl] = printMsg
-                }
-            } else {
-                callback?.let {
-                    if ((debugSource != sourceUrl || !print)) return
-                    var printMsg = msg ?: ""
-                    if (isHtml) {
-                        printMsg = HtmlFormatter.format(msg)
-                    }
-                    if (showTime) {
-                        val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))
-                        printMsg = "$time $printMsg"
-                    }
-                    it.printLog(state, printMsg)
                 }
             }
         }
