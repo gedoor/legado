@@ -46,11 +46,12 @@ object BookList {
             scope.ensureActive()
             if (baseUrl.matches(it.toRegex())) {
                 Debug.log(bookSource.bookSourceUrl, "≡链接为详情页")
-                getInfoItem(scope, body, analyzeRule, bookSource, baseUrl, variableBook.variable)
-                    ?.let { searchBook ->
-                        searchBook.infoHtml = body
-                        bookList.add(searchBook)
-                    }
+                getInfoItem(
+                    scope, bookSource, analyzeRule, analyzeUrl, body, baseUrl, variableBook.variable
+                )?.let { searchBook ->
+                    searchBook.infoHtml = body
+                    bookList.add(searchBook)
+                }
                 return bookList
             }
         }
@@ -74,11 +75,12 @@ object BookList {
         scope.ensureActive()
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
-            getInfoItem(scope, body, analyzeRule, bookSource, baseUrl, variableBook.variable)
-                ?.let { searchBook ->
-                    searchBook.infoHtml = body
-                    bookList.add(searchBook)
-                }
+            getInfoItem(
+                scope, bookSource, analyzeRule, analyzeUrl, body, baseUrl, variableBook.variable
+            )?.let { searchBook ->
+                searchBook.infoHtml = body
+                bookList.add(searchBook)
+            }
         } else {
             val ruleName = analyzeRule.splitSourceRule(bookListRule.name)
             val ruleBookUrl = analyzeRule.splitSourceRule(bookListRule.bookUrl)
@@ -91,12 +93,7 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└列表大小:${collections.size}")
             for ((index, item) in collections.withIndex()) {
                 getSearchItem(
-                    scope,
-                    item,
-                    analyzeRule,
-                    bookSource,
-                    baseUrl,
-                    variableBook.variable,
+                    scope, bookSource, analyzeRule, item, baseUrl, variableBook.variable,
                     index == 0,
                     ruleName = ruleName,
                     ruleBookUrl = ruleBookUrl,
@@ -123,14 +120,15 @@ object BookList {
     @Throws(Exception::class)
     private fun getInfoItem(
         scope: CoroutineScope,
-        body: String,
-        analyzeRule: AnalyzeRule,
         bookSource: BookSource,
+        analyzeRule: AnalyzeRule,
+        analyzeUrl: AnalyzeUrl,
+        body: String,
         baseUrl: String,
         variable: String?
     ): SearchBook? {
         val book = Book(variable = variable)
-        book.bookUrl = baseUrl
+        book.bookUrl = analyzeUrl.ruleUrl
         book.origin = bookSource.bookSourceUrl
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder
@@ -155,9 +153,9 @@ object BookList {
     @Throws(Exception::class)
     private fun getSearchItem(
         scope: CoroutineScope,
-        item: Any,
-        analyzeRule: AnalyzeRule,
         bookSource: BookSource,
+        analyzeRule: AnalyzeRule,
+        item: Any,
         baseUrl: String,
         variable: String?,
         log: Boolean,
