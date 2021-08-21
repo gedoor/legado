@@ -2,7 +2,6 @@ package io.legado.app.model
 
 import android.annotation.SuppressLint
 import io.legado.app.data.entities.*
-import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
@@ -35,14 +34,15 @@ object Debug {
         showTime: Boolean = true,
         state: Int = 1
     ) {
-        if (AppConfig.checkSourceMessage && isChecking) {
+        if (isChecking) {
             if (sourceUrl != null && (msg ?: "").length < 30) {
                 var printMsg = msg ?: ""
                 if (isHtml) {
                     printMsg = HtmlFormatter.format(msg)
                 }
                 if (showTime && debugTimeMap[sourceUrl] != null) {
-                    val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
+                    val time =
+                        DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
                     printMsg = "$time $printMsg"
                     debugMessageMap[sourceUrl] = printMsg
                 }
