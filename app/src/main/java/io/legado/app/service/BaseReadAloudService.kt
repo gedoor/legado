@@ -68,7 +68,7 @@ abstract class BaseReadAloudService : BaseService(),
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        doDs()
+        resumeDs()
     }
 
     override fun onDestroy() {
@@ -154,9 +154,7 @@ abstract class BaseReadAloudService : BaseService(),
     open fun resumeReadAloud() {
         pause = false
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        if (timeMinute > 1) {
-            doDs()
-        }
+        resumeDs()
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)
@@ -204,6 +202,14 @@ abstract class BaseReadAloudService : BaseService(),
         }
         postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
+    }
+
+    private fun resumeDs() {
+        if (timeMinute > 1) {
+            doDs()
+        } else {
+            timeMinute = 0
+        }
     }
 
     /**
