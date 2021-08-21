@@ -60,6 +60,7 @@ abstract class BaseReadAloudService : BaseService(),
     override fun onCreate() {
         super.onCreate()
         isRun = true
+        pause = false
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         mFocusRequest = MediaHelp.getFocusRequest(this)
         mediaSessionCompat = MediaSessionCompat(this, "readAloud")
