@@ -533,6 +533,13 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!Debug.isChecking) {
+            Debug.debugMessageMap.clear()
+        }
+    }
+
     enum class Sort {
         Default, Name, Url, Weight, Update, Enable
     }
