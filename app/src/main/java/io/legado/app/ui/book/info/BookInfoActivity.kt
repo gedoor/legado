@@ -156,7 +156,7 @@ class BookInfoActivity :
             R.id.menu_login -> viewModel.bookSource?.let {
                 startActivity<SourceLoginActivity> {
                     putExtra("sourceUrl", it.bookSourceUrl)
-                    putExtra("loginUrl", it.loginUrl)
+                    putExtra("loginUrl", it.loginUrl?.url)
                     putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
                 }
             }
