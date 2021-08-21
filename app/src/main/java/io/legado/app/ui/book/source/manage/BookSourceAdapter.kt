@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ItemBookSourceBinding
 import io.legado.app.lib.theme.backgroundColor
@@ -115,11 +114,20 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             } else {
                 payload.keySet().map {
                     when (it) {
-                        "selected" -> cbBookSource.isChecked = selected.contains(item)
-                        EventBus.CHECK_SOURCE_MESSAGE -> {
-                            ivDebugText.text =  Debug.debugMessageMap[item.bookSourceUrl] ?: ""
-                            ivDebugText.visibility = if(ivDebugText.text.toString().length > 1) View.VISIBLE else View.GONE
-                            ivProgressBar.visibility = if(ivDebugText.text.toString().contains(Regex("成功|失败"))) View.GONE else View.VISIBLE
+                        "selected"           -> cbBookSource.isChecked = selected.contains(item)
+                        "checkSourceMessage" -> {
+                            ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
+                            val isEmpty = ivDebugText.text.toString().isEmpty()
+                            var isFinalMessage = ivDebugText.text.toString().contains(Regex("成功|失败"))
+                            if (!isEmpty && !Debug.isChecking && !isFinalMessage){
+                                Debug.updateFinalMessage(item.bookSourceUrl, "失败")
+                                ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
+                                isFinalMessage = true
+                            }
+                            ivDebugText.visibility =
+                                if (!isEmpty) View.VISIBLE else View.GONE
+                            ivProgressBar.visibility =
+                                if (isFinalMessage || isEmpty) View.GONE else View.VISIBLE
                         }
                     }
                 }
