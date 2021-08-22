@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.glide
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -21,7 +21,7 @@ object ImageLoader {
     fun load(context: Context, path: String?): RequestBuilder<Drawable> {
         return when {
             path.isNullOrEmpty() -> Glide.with(context).load(path)
-            path.isAbsUrl() -> Glide.with(context).load(AnalyzeUrl(path).getGlideUrl())
+            path.isAbsUrl() -> GlideApp.with(context).load(AnalyzeUrl(path).getGlideUrl())
             path.isContentScheme() -> Glide.with(context).load(Uri.parse(path))
             else -> kotlin.runCatching {
                 Glide.with(context).load(File(path))

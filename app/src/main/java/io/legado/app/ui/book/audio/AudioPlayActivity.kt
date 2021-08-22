@@ -20,7 +20,7 @@ import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityAudioPlayBinding
 import io.legado.app.help.BlurTransformation
-import io.legado.app.help.ImageLoader
+import io.legado.app.help.glide.ImageLoader
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.book.changesource.ChangeSourceDialog

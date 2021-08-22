@@ -11,7 +11,7 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.databinding.ItemRssArticle2Binding
-import io.legado.app.help.ImageLoader
+import io.legado.app.help.glide.ImageLoader
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible

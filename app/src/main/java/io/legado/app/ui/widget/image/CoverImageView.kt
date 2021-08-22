@@ -13,7 +13,7 @@ import com.bumptech.glide.request.target.Target
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
-import io.legado.app.help.ImageLoader
+import io.legado.app.help.glide.ImageLoader
 import io.legado.app.utils.getPrefString
 import splitties.init.appCtx
 

@@ -189,28 +189,6 @@
 |g|全局搜索: 搜索整个输入字符串中的所有匹配。|
 |m|多行匹配: 会匹配输入字符串每一行。|
 
-### 5.1 不区分大小写
-
-`i` 修饰符用于执行不区分大小写匹配。例如正则表达式 `/The/gi`，表示: 大写字母 `T`，后跟小写字母 `h`，后跟字母 `e`。
-但是在正则匹配结束时 `i` 标记会告诉正则表达式引擎忽略这种情况。正如你所看到的，我们还使用了 `g` 标记，因为我们要在整个输入字符串中搜索匹配。<pre>"The" => <a href="#learn-regex"><strong>The</strong></a> fat cat sat on the mat.</pre><pre>"/The/gi" => <a href="#learn-regex"><strong>The</strong></a> fat cat sat on <a href="#learn-regex"><strong>the</strong></a> mat.</pre>
-
-### 5.2 全局搜索
-
-`g` 修饰符用于执行全局匹配 (会查找所有匹配，不会在查找到第一个匹配时就停止)。
-例如正则表达式 `/.(at)/g`，表示: 除换行符之外的任意字符，后跟小写字母 `a`，后跟小写字母 `t`。
-因为我们在正则表达式的末尾使用了 `g` 标记，它会从整个输入字符串中找到每个匹配项。<pre>".(at)" => The <a href="#learn-regex"><strong>fat</strong></a> cat sat on the mat.</pre><pre>"/.(at)/g" => The <a href="#learn-regex"><strong>fat</strong></a> <a href="#learn-regex"><strong>cat</strong></a> <a href="#learn-regex"><strong>sat</strong></a> on the <a href="#learn-regex"><strong>mat</strong></a>.</pre>
-
-### 5.3 多行匹配
-
-`m` 修饰符被用来执行多行的匹配。正如我们前面讨论过的 `(^, $)`，使用定位符来检查匹配字符是输入字符串开始或者结束。但是我们希望每一行都使用定位符，所以我们就使用 `m` 修饰符。
-例如正则表达式 `/at(.)?$/gm`，表示: 小写字母 `a`，后跟小写字母 `t`，匹配除了换行符以外任意字符零次或一次。而且因为 `m` 标记，现在正则表达式引擎匹配字符串中每一行的末尾。<pre>"/.at(.)?$/" => The fat
-                cat sat
-                on the <a href="#learn-regex"><strong>mat.</strong></a></pre><pre>"/.at(.)?$/gm" => The <a href="#learn-regex"><strong>fat</strong></a>
-                  cat <a href="#learn-regex"><strong>sat</strong></a>
-                  on the <a href="#learn-regex"><strong>mat.</strong></a></pre>
-
-## 常用正则表达式
-
 * **数字**: `\d+$`
 * **用户名**: `^[\w\d_.]{4,16}$`
 * **字母数字字符**: `^[a-zA-Z0-9]*$`

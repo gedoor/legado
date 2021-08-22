@@ -9,7 +9,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ItemRssBinding
-import io.legado.app.help.ImageLoader
+import io.legado.app.help.glide.ImageLoader
 import splitties.views.onLongClick
 
 class RssAdapter(context: Context, val callBack: CallBack) :
