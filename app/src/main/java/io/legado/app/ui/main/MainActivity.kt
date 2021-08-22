@@ -122,7 +122,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 TextDialog.show(supportFragmentManager, text, TextDialog.MD)
             } else if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
-                TextDialog.show(supportFragmentManager, log, TextDialog.MD, 5000, true)
+                TextDialog.show(supportFragmentManager, log, TextDialog.MD)
             }
             viewModel.upVersion()
         }
