@@ -683,8 +683,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
             autoPageStop()
         } else {
             isAutoPage = true
-            binding.readView.upContent(resetPageOffset = false)
-            binding.readView.upContent(1, resetPageOffset = false)
             autoPagePlus()
             binding.readMenu.setAutoPage(true)
             screenTimeOut = -1L
@@ -696,7 +694,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
         if (isAutoPage) {
             isAutoPage = false
             mHandler.removeCallbacks(autoPageRunnable)
-            binding.readView.upContent(resetPageOffset = false)
             binding.readMenu.setAutoPage(false)
             upScreenTimeOut()
         }
