@@ -91,7 +91,7 @@ class ReadAloudDialog : BaseDialogFragment() {
         seekTimer.progress = BaseReadAloudService.timeMinute
         cbTtsFollowSys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         seekTtsSpeechRate.isEnabled = !cbTtsFollowSys.isChecked
-        seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate
+        upSeekTimer()
     }
 
     private fun initEvent() = binding.run {
@@ -119,7 +119,6 @@ class ReadAloudDialog : BaseDialogFragment() {
             upTtsSpeechRate()
         }
         seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 AppConfig.ttsSpeechRate = seekBar.progress
                 upTtsSpeechRate()
@@ -146,6 +145,16 @@ class ReadAloudDialog : BaseDialogFragment() {
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
         binding.ivPlayPause.setColorFilter(textColor)
+    }
+
+    private fun upSeekTimer() {
+        binding.seekTimer.post {
+            if (BaseReadAloudService.timeMinute > 0) {
+                binding.seekTimer.progress = BaseReadAloudService.timeMinute
+            } else {
+                binding.seekTimer.progress = 0
+            }
+        }
     }
 
     private fun upTimerText(timeMinute: Int) {
