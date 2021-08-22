@@ -119,7 +119,7 @@ object BookInfo {
         Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
         try {
             analyzeRule.getString(infoRule.coverUrl).let {
-                if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(redirectUrl, it)
+                if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
             }
             Debug.log(bookSource.bookSourceUrl, "└${book.coverUrl}")
         } catch (e: Exception) {
@@ -128,8 +128,8 @@ object BookInfo {
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
         book.tocUrl = analyzeRule.getString(infoRule.tocUrl, true)
-        if (book.tocUrl.isEmpty()) book.tocUrl = baseUrl
-        if (book.tocUrl == baseUrl) {
+        if (book.tocUrl.isEmpty()) book.tocUrl = redirectUrl
+        if (book.tocUrl == redirectUrl) {
             book.tocHtml = body
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.tocUrl}")
