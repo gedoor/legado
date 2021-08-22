@@ -68,7 +68,7 @@ abstract class BaseReadAloudService : BaseService(),
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        resumeDs()
+        handler.postDelayed(dsRunnable, 60000)
     }
 
     override fun onDestroy() {
@@ -154,7 +154,6 @@ abstract class BaseReadAloudService : BaseService(),
     open fun resumeReadAloud() {
         pause = false
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        resumeDs()
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)
@@ -183,33 +182,18 @@ abstract class BaseReadAloudService : BaseService(),
 
     private fun setTimer(minute: Int) {
         timeMinute = minute
-        if (minute > 0) {
-            handler.removeCallbacks(dsRunnable)
-            handler.postDelayed(dsRunnable, 60000)
-        }
         upNotification()
     }
 
     private fun addTimer() {
         if (timeMinute == 180) {
             timeMinute = 0
-            handler.removeCallbacks(dsRunnable)
         } else {
             timeMinute += 10
             if (timeMinute > 180) timeMinute = 180
-            handler.removeCallbacks(dsRunnable)
-            handler.postDelayed(dsRunnable, 60000)
         }
         postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
-    }
-
-    private fun resumeDs() {
-        if (timeMinute > 1) {
-            doDs()
-        } else {
-            timeMinute = 0
-        }
     }
 
     /**
@@ -217,13 +201,14 @@ abstract class BaseReadAloudService : BaseService(),
      */
     private fun doDs() {
         if (!pause) {
-            timeMinute--
-            if (timeMinute == 0) {
+            if (timeMinute > 0) {
+                timeMinute--
+            } else if (timeMinute == 0) {
                 stopSelf()
-            } else if (timeMinute > 0) {
-                handler.postDelayed(dsRunnable, 60000)
             }
         }
+        handler.removeCallbacks(dsRunnable)
+        handler.postDelayed(dsRunnable, 60000)
         postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
     }
@@ -320,7 +305,7 @@ abstract class BaseReadAloudService : BaseService(),
     private fun upNotification() {
         var nTitle: String = when {
             pause -> getString(R.string.read_aloud_pause)
-            timeMinute in 1..180 -> getString(
+            timeMinute > 0 -> getString(
                 R.string.read_aloud_timer,
                 timeMinute
             )
