@@ -23,6 +23,7 @@ import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
+import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.getPrefBoolean
@@ -212,7 +213,7 @@ abstract class BaseReadAloudService : BaseService(),
                 timeMinute--
             }
             if (timeMinute == 0) {
-                stopSelf()
+                ReadAloud.stop(this)
             }
         }
         handler.removeCallbacks(dsRunnable)
