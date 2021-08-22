@@ -138,7 +138,7 @@ class CheckSourceService : BaseService() {
                     "error:${it.localizedMessage}
                     ${source.bookSourceComment}"
                 """.trimIndent()
-                Debug.updateFinalMessage(source.bookSourceUrl, "失败")
+                Debug.updateFinalMessage(source.bookSourceUrl, "失败:${it.localizedMessage}")
                 appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
                 source.removeGroup("失效")
