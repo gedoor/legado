@@ -68,7 +68,7 @@ abstract class BaseReadAloudService : BaseService(),
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        handler.postDelayed(dsRunnable, 60000)
+        startDs()
     }
 
     override fun onDestroy() {
@@ -148,6 +148,7 @@ abstract class BaseReadAloudService : BaseService(),
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
         ReadBook.uploadProgress()
+        startDs()
     }
 
     @CallSuper
@@ -182,7 +183,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     private fun setTimer(minute: Int) {
         timeMinute = minute
-        upNotification()
+        startDs()
     }
 
     private fun addTimer() {
@@ -192,6 +193,12 @@ abstract class BaseReadAloudService : BaseService(),
             timeMinute += 10
             if (timeMinute > 180) timeMinute = 180
         }
+        startDs()
+    }
+
+    private fun startDs() {
+        handler.removeCallbacks(dsRunnable)
+        handler.postDelayed(dsRunnable, 60000)
         postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
     }
@@ -201,9 +208,10 @@ abstract class BaseReadAloudService : BaseService(),
      */
     private fun doDs() {
         if (!pause) {
-            if (timeMinute > 0) {
+            if (timeMinute >= 0) {
                 timeMinute--
-            } else if (timeMinute == 0) {
+            }
+            if (timeMinute == 0) {
                 stopSelf()
             }
         }
