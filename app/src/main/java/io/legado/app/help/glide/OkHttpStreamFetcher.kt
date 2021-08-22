@@ -7,6 +7,7 @@ import com.bumptech.glide.load.data.DataFetcher
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.util.ContentLengthInputStream
 import com.bumptech.glide.util.Preconditions
+import io.legado.app.help.http.okHttpClient
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
@@ -15,7 +16,7 @@ import java.io.IOException
 import java.io.InputStream
 
 
-class OkHttpStreamFetcher(private val client: Call.Factory, private val url: GlideUrl) :
+class OkHttpStreamFetcher(private val url: GlideUrl) :
     DataFetcher<InputStream>, okhttp3.Callback {
     private var stream: InputStream? = null
     private var responseBody: ResponseBody? = null
@@ -29,7 +30,7 @@ class OkHttpStreamFetcher(private val client: Call.Factory, private val url: Gli
         }
         val request: Request = requestBuilder.build()
         this.callback = callback
-        call = client.newCall(request)
+        call = okHttpClient.newCall(request)
         call?.enqueue(this)
     }
 

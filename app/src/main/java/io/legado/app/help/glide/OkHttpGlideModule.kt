@@ -15,7 +15,7 @@ class OkHttpGlideModule : AppGlideModule() {
         registry.replace(
             GlideUrl::class.java,
             InputStream::class.java,
-            OkHttpModeLoaderFactory()
+            OkHttpModeLoaderFactory
         )
     }
 }
