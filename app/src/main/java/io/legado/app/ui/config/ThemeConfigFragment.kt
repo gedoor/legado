@@ -194,7 +194,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     private fun alertSaveTheme(key: String) {
         alert(R.string.theme_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.hint = "name"
+                editView.hint = "name"
             }
             customView { alertBinding.root }
             okButton {

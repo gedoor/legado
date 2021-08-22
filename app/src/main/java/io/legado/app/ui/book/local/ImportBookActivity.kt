@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.local
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -100,6 +101,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         adapter.revertSelection()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onClickMainAction() {
         viewModel.addToBookshelf(adapter.selectedUris) {
             adapter.notifyDataSetChanged()
@@ -280,7 +282,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private fun alertImportFileName() {
         alert(R.string.import_file_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.hint = "js"
+                editView.hint = "js"
                 editView.setText(AppConfig.bookImportFileName)
             }
             customView { alertBinding.root }

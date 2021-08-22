@@ -136,7 +136,7 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         }
         requireContext().alert(titleResource = R.string.import_on_line) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.hint = "url"
+                editView.hint = "url"
                 editView.setFilterValues(cacheUrls)
                 editView.delCallBack = {
                     cacheUrls.remove(it)

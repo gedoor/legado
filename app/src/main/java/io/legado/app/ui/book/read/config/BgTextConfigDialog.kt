@@ -140,7 +140,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         binding.ivEdit.setOnClickListener {
             alert(R.string.style_name) {
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    textInputLayout.hint = "name"
+                    editView.hint = "name"
                     editView.setText(ReadBookConfig.durConfig.name)
                 }
                 customView { alertBinding.root }

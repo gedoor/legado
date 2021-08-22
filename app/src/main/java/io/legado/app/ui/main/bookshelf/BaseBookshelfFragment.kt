@@ -66,7 +66,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     fun addBookByUrl() {
         alert(titleResource = R.string.add_book_url) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.hint = "url"
+                editView.hint = "url"
             }
             customView { alertBinding.root }
             okButton {
@@ -124,7 +124,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     private fun importBookshelfAlert(groupId: Long) {
         alert(titleResource = R.string.import_bookshelf) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.hint = "url/json"
+                editView.hint = "url/json"
             }
             customView { alertBinding.root }
             okButton {

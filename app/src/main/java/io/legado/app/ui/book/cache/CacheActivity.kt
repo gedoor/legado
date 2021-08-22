@@ -307,8 +307,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun alertExportFileName() {
         alert(R.string.export_file_name) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.hint = "file name js"
+                editView.hint = "file name js"
                 editView.setText(AppConfig.bookExportFileName)
+                tvSummary.text = """使用js返回一个json结构,{"name":"xxx", "author":"yyy"}"""
             }
             customView { alertBinding.root }
             okButton {
@@ -333,7 +334,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun showCharsetConfig() {
         alert(R.string.set_charset) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.hint = "charset name"
+                editView.hint = "charset name"
                 editView.setFilterValues(charsets)
                 editView.setText(AppConfig.exportCharset)
             }

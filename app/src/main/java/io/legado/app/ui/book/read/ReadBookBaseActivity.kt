@@ -195,7 +195,7 @@ abstract class ReadBookBaseActivity :
     fun showCharsetConfig() {
         alert(R.string.set_charset) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                textInputLayout.hint = "charset"
+                editView.hint = "charset"
                 editView.setFilterValues(charsets)
                 editView.setText(ReadBook.book?.charset)
             }

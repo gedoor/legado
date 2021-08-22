@@ -130,8 +130,7 @@ class UmdFile(var book: Book) {
     }
 
     private fun getImage(href: String): InputStream? {
-        TODO("Not yet implemented")
+        return null
     }
-
 
 }
