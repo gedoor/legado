@@ -6,8 +6,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.storage.BookSourceAnalyzer
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getClipText
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
@@ -54,29 +52,21 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
 
     fun pasteSource(onSuccess: (source: BookSource) -> Unit) {
         execute(context = Dispatchers.Main) {
-            var source: BookSource? = null
-            context.getClipText()?.let { json ->
-                source = BookSourceAnalyzer.jsonToBookSource(json)
+            context.getClipText()?.let { text ->
+                importSource(text, onSuccess)
             }
-            source
         }.onError {
-            context.toastOnUi(it.localizedMessage)
+            context.toastOnUi(it.localizedMessage ?: "Error")
             it.printStackTrace()
-        }.onSuccess {
-            if (it != null) {
-                onSuccess(it)
-            } else {
-                context.toastOnUi("格式不对")
-            }
         }
     }
 
     fun importSource(text: String, finally: (source: BookSource) -> Unit) {
         execute {
             val text1 = text.trim()
-            GSON.fromJsonObject<BookSource>(text1)?.let {
-                finally.invoke(it)
-            }
+            BookSourceAnalyzer.jsonToBookSource(text1)
+        }.onSuccess {
+            it?.let(finally) ?: context.toastOnUi("格式不对")
         }.onError {
             context.toastOnUi(it.localizedMessage ?: "Error")
         }

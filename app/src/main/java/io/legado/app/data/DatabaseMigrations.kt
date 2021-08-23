@@ -31,7 +31,8 @@ object DatabaseMigrations {
             migration_31_32,
             migration_32_33,
             migration_33_34,
-            migration_34_35
+            migration_34_35,
+            migration_35_36
         )
     }
 
@@ -280,4 +281,10 @@ object DatabaseMigrations {
         }
     }
 
+    private val migration_35_36 = object : Migration(35, 36) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE `book_sources` ADD `loginUi` TEXT")
+            database.execSQL("ALTER TABLE `book_sources` ADD`loginCheckJs` TEXT")
+        }
+    }
 }

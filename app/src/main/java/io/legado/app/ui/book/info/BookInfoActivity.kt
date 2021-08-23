@@ -119,7 +119,7 @@ class BookInfoActivity :
         menu.findItem(R.id.menu_can_update)?.isChecked =
             viewModel.bookData.value?.canUpdate ?: true
         menu.findItem(R.id.menu_login)?.isVisible =
-            !viewModel.bookSource?.loginUrl?.url.isNullOrBlank()
+            !viewModel.bookSource?.loginUrl.isNullOrBlank()
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -156,7 +156,7 @@ class BookInfoActivity :
             R.id.menu_login -> viewModel.bookSource?.let {
                 startActivity<SourceLoginActivity> {
                     putExtra("sourceUrl", it.bookSourceUrl)
-                    putExtra("loginUrl", it.loginUrl?.url)
+                    putExtra("loginUrl", it.loginUrl)
                     putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
                 }
             }

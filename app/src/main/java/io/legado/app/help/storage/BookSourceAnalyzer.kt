@@ -1,6 +1,7 @@
 package io.legado.app.help.storage
 
 import androidx.annotation.Keep
+import com.jayway.jsonpath.JsonPath
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
@@ -28,8 +29,7 @@ object BookSourceAnalyzer {
                     bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: return null
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     bookSourceGroup = jsonItem.readString("bookSourceGroup")
-                    loginUrl =
-                        BookSource.Converters().stringToLoginRule(jsonItem.readString("loginUrl"))
+                    loginUrl = jsonItem.readString("loginUrl")
                     bookSourceComment = jsonItem.readString("bookSourceComment") ?: ""
                     bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
                     customOrder = jsonItem.readInt("serialNumber") ?: 0
@@ -99,10 +99,12 @@ object BookSourceAnalyzer {
                 source.enabledExplore = sourceAny.enabledExplore
                 source.header = sourceAny.header
                 source.loginUrl = if (sourceAny.loginUrl is String) {
-                    BookSource.Converters().stringToLoginRule(sourceAny.loginUrl.toString())
+                    sourceAny.loginUrl.toString()
                 } else {
-                    GSON.fromJsonObject(GSON.toJson(sourceAny.loginUrl))
+                    JsonPath.parse(sourceAny.loginUrl).readString("url")
                 }
+                source.loginUi = sourceAny.loginUi
+                source.loginCheckJs = sourceAny.loginCheckJs
                 source.bookSourceComment = sourceAny.bookSourceComment
                 source.lastUpdateTime = sourceAny.lastUpdateTime
                 source.weight = sourceAny.weight
@@ -152,6 +154,8 @@ object BookSourceAnalyzer {
         var enabledExplore: Boolean = true,             // 启用发现
         var header: String? = null,                     // 请求头
         var loginUrl: Any? = null,                   // 登录规则
+        var loginUi: List<RowUi>? = null,             //登录UI
+        var loginCheckJs: String? = null,               //登录检测js
         var bookSourceComment: String? = "",             //书源注释
         var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
         var weight: Int = 0,                            // 智能排序的权重

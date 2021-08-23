@@ -41,7 +41,7 @@ class BookSourceEditActivity :
 
     override val binding by viewBinding(ActivityBookSourceEditBinding::inflate)
     override val viewModel by viewModels<BookSourceEditViewModel>()
-    private val converters = BookSource.Converters()
+
     private val adapter = BookSourceEditAdapter()
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
@@ -117,12 +117,12 @@ class BookSourceEditActivity :
             R.id.menu_help -> showRuleHelp()
             R.id.menu_login -> getSource().let {
                 if (checkSource(it)) {
-                    if (it.loginUrl?.url.isNullOrEmpty()) {
+                    if (it.loginUrl.isNullOrEmpty()) {
                         toastOnUi(R.string.source_no_login)
                     } else {
                         startActivity<SourceLoginActivity> {
                             putExtra("sourceUrl", it.bookSourceUrl)
-                            putExtra("loginUrl", it.loginUrl?.url)
+                            putExtra("loginUrl", it.loginUrl)
                             putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
                         }
                     }
@@ -202,7 +202,7 @@ class BookSourceEditActivity :
             add(
                 EditEntity(
                     "loginUrl",
-                    converters.loginRuleToString(source?.loginUrl),
+                    source?.loginUrl,
                     R.string.login_url
                 )
             )
@@ -302,7 +302,7 @@ class BookSourceEditActivity :
                 "bookSourceUrl" -> source.bookSourceUrl = it.value ?: ""
                 "bookSourceName" -> source.bookSourceName = it.value ?: ""
                 "bookSourceGroup" -> source.bookSourceGroup = it.value
-                "loginUrl" -> source.loginUrl = converters.stringToLoginRule(it.value)
+                "loginUrl" -> source.loginUrl = it.value
                 "bookUrlPattern" -> source.bookUrlPattern = it.value
                 "header" -> source.header = it.value
                 "bookSourceComment" -> source.bookSourceComment = it.value ?: ""

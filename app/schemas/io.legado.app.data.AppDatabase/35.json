@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 35,
-    "identityHash": "cb54781f92ec7a911a363d0bcefa4845",
+    "identityHash": "25948a8defe4d091514bb725b4db7683",
     "entities": [
       {
         "tableName": "books",
@@ -254,7 +254,7 @@
       },
       {
         "tableName": "book_sources",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookSourceName` TEXT NOT NULL, `bookSourceGroup` TEXT, `bookSourceUrl` TEXT NOT NULL, `bookSourceType` INTEGER NOT NULL, `bookUrlPattern` TEXT, `concurrentRate` TEXT, `customOrder` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `enabledExplore` INTEGER NOT NULL, `header` TEXT, `loginUrl` TEXT, `bookSourceComment` TEXT, `lastUpdateTime` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `exploreUrl` TEXT, `ruleExplore` TEXT, `searchUrl` TEXT, `ruleSearch` TEXT, `ruleBookInfo` TEXT, `ruleToc` TEXT, `ruleContent` TEXT, PRIMARY KEY(`bookSourceUrl`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookSourceName` TEXT NOT NULL, `bookSourceGroup` TEXT, `bookSourceUrl` TEXT NOT NULL, `bookSourceType` INTEGER NOT NULL, `bookUrlPattern` TEXT, `concurrentRate` TEXT, `customOrder` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `enabledExplore` INTEGER NOT NULL, `header` TEXT, `loginUrl` TEXT, `loginUi` TEXT, `loginCheckJs` TEXT, `bookSourceComment` TEXT, `lastUpdateTime` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `exploreUrl` TEXT, `ruleExplore` TEXT, `searchUrl` TEXT, `ruleSearch` TEXT, `ruleBookInfo` TEXT, `ruleToc` TEXT, `ruleContent` TEXT, PRIMARY KEY(`bookSourceUrl`))",
         "fields": [
           {
             "fieldPath": "bookSourceName",
@@ -319,6 +319,18 @@
           {
             "fieldPath": "loginUrl",
             "columnName": "loginUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "loginUi",
+            "columnName": "loginUi",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "loginCheckJs",
+            "columnName": "loginCheckJs",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -1423,7 +1435,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cb54781f92ec7a911a363d0bcefa4845')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '25948a8defe4d091514bb725b4db7683')"
     ]
   }
 }

@@ -40,8 +40,8 @@ class SourceLoginDialog : BaseDialogFragment() {
         val sourceUrl = arguments?.getString("sourceUrl") ?: return
         val bookSource = appDb.bookSourceDao.getBookSource(sourceUrl) ?: return
         val loginHeader = bookSource.getLoginHeader()
-        val loginRule = bookSource.loginUrl
-        loginRule?.ui?.forEachIndexed { index, rowUi ->
+        val loginUi = bookSource.loginUi
+        loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 "text" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root)
                     .apply {
@@ -67,7 +67,7 @@ class SourceLoginDialog : BaseDialogFragment() {
             when (it.itemId) {
                 R.id.menu_ok -> {
                     val loginData = hashMapOf<String, String?>()
-                    loginRule?.ui?.forEachIndexed { index, rowUi ->
+                    loginUi?.forEachIndexed { index, rowUi ->
                         when (rowUi.type) {
                             "text", "password" -> {
                                 val value = binding.root.findViewById<TextInputLayout>(index)

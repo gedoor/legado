@@ -31,8 +31,10 @@ data class BookSource(
     var customOrder: Int = 0,                       // 手动排序编号
     var enabled: Boolean = true,                    // 是否启用
     var enabledExplore: Boolean = true,             // 启用发现
-    override var header: String? = null,                     // 请求头
-    var loginUrl: LoginRule? = null,                // 登录地址
+    override var header: String? = null,            // 请求头
+    var loginUrl: String? = null,                // 登录地址
+    var loginUi: List<RowUi>? = null,             //登录UI
+    var loginCheckJs: String? = null,               //登录检测js
     var bookSourceComment: String? = null,          // 注释
     var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
     var weight: Int = 0,                            // 智能排序的权重
@@ -153,16 +155,10 @@ data class BookSource(
 
     class Converters {
         @TypeConverter
-        fun loginRuleToString(loginRule: LoginRule?): String = GSON.toJson(loginRule)
+        fun loginUiRuleToString(loginUi: List<RowUi>?): String = GSON.toJson(loginUi)
 
         @TypeConverter
-        fun stringToLoginRule(json: String?): LoginRule? {
-            return when {
-                json.isNullOrEmpty() -> null
-                json.isJsonObject() -> GSON.fromJsonObject(json)
-                else -> LoginRule(url = json)
-            }
-        }
+        fun stringToLoginRule(json: String?): List<RowUi>? = GSON.fromJsonArray(json)
 
         @TypeConverter
         fun exploreRuleToString(exploreRule: ExploreRule?): String = GSON.toJson(exploreRule)

@@ -16,13 +16,13 @@ val appDb by lazy {
 }
 
 @Database(
-    version = 35,
+    version = 36,
     exportSchema = true,
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
-        RuleSub::class],
+        RuleSub::class]
 )
 abstract class AppDatabase : RoomDatabase() {
 
