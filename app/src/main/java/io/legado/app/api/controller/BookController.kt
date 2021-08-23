@@ -177,7 +177,7 @@ object BookController {
     }
 
     private fun saveBookReadIndex(book: Book, index: Int) {
-        if (index > book.durChapterIndex) {
+        if (index != book.durChapterIndex) {
             book.durChapterIndex = index
             book.durChapterTime = System.currentTimeMillis()
             appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let {
