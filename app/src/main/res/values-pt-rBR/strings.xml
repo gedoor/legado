@@ -394,8 +394,10 @@
     <string name="diy_source_group">自定义源分组</string>
     <string name="diy_edit_source_group">输入自定义源分组名称</string>
     <string name="source_concurrent_rate">并发率(concurrentRate)</string>
-    <string name="sort_url">分类Url</string>
+    <string name="sort_url">分类Url(sortUrl)</string>
     <string name="login_url">登录URL(loginUrl)</string>
+    <string name="login_ui">登录UI(loginUi)</string>
+    <string name="login_check_js">登录检查JS(loginCheckJs)</string>
     <string name="comment">源注释(fonteComentário)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
@@ -855,10 +857,8 @@
     <string name="read_aloud_by_page_summary">及时翻页,翻页时会停顿一下</string>
     <string name="check_source_show_debug_message">Verificar a fonte do livro mostra uma mensagem de depuração</string>
     <string name="check_source_show_debug_message_summary">Exibir etapas de solicitação de rede e tempo durante a verificação da fonte do livro</string>
-    <string name="login_ui">登录UI</string>
     <string name="export_no_chapter_name">No export chapter names</string>
     <string name="autobackup_fail">Autobackup failed</string>
-    <string name="login_check_js">登录检查JS</string>
     <string name="background_image_blurring">Background image blurring</string>
     <string name="background_image_blurring_radius">Blurring radius</string>
     <string name="background_image_hint">Disabled when 0, enable range from 1 to 25\nThe greater the radius, the stronger the effect of blurring</string>

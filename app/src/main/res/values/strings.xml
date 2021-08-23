@@ -394,8 +394,10 @@
     <string name="diy_source_group">自定义源分组</string>
     <string name="diy_edit_source_group">输入自定义源分组名称</string>
     <string name="source_concurrent_rate">并发率(concurrentRate)</string>
-    <string name="sort_url">分类Url</string>
+    <string name="sort_url">分类Url(sortUrl)</string>
     <string name="login_url">登录URL(loginUrl)</string>
+    <string name="login_ui">Login UI(loginUi)</string>
+    <string name="login_check_js">登录检查JS(loginCheckJs)</string>
     <string name="comment">源注释(sourceComment)</string>
     <string name="r_search_url">搜索地址(url)</string>
     <string name="r_find_url">发现地址规则(url)</string>
@@ -860,7 +862,5 @@
     <string name="read_aloud_by_page_summary">及时翻页,翻页时会停顿一下</string>
     <string name="check_source_show_debug_message">Check book source shows debug message</string>
     <string name="check_source_show_debug_message_summary">Show network status and timestamp during source checking</string>
-    <string name="login_ui">Login UI</string>
-    <string name="login_check_js">登录检查JS</string>
 
 </resources>
