@@ -15,7 +15,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
@@ -156,8 +155,6 @@ class BookInfoActivity :
             R.id.menu_login -> viewModel.bookSource?.let {
                 startActivity<SourceLoginActivity> {
                     putExtra("sourceUrl", it.bookSourceUrl)
-                    putExtra("loginUrl", it.loginUrl)
-                    putExtra("userAgent", it.getHeaderMap()[AppConst.UA_NAME])
                 }
             }
             R.id.menu_top -> viewModel.topBook()

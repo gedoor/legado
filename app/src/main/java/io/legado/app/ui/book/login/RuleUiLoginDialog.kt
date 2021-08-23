@@ -5,10 +5,9 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.activityViewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.EditText
@@ -17,15 +16,10 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class SourceLoginDialog : BaseDialogFragment() {
-
-    companion object {
-        fun start(fragmentManager: FragmentManager, sourceUrl: String) {
-
-        }
-    }
+class RuleUiLoginDialog : BaseDialogFragment() {
 
     private val binding by viewBinding(DialogLoginBinding::bind)
+    private val viewModel by activityViewModels<SourceLoginViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,8 +31,7 @@ class SourceLoginDialog : BaseDialogFragment() {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        val sourceUrl = arguments?.getString("sourceUrl") ?: return
-        val bookSource = appDb.bookSourceDao.getBookSource(sourceUrl) ?: return
+        val bookSource = viewModel.bookSource ?: return
         val loginHeader = bookSource.getLoginHeader()
         val loginUi = bookSource.loginUi
         loginUi?.forEachIndexed { index, rowUi ->
