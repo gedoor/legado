@@ -157,7 +157,9 @@ data class BookSource(
 
         @TypeConverter
         fun stringToLoginRule(json: String?): LoginRule? {
-            json ?: return null
+            if (json.isNullOrEmpty()) {
+                return null
+            }
             return if (json.isJsonObject()) {
                 GSON.fromJsonObject(json)
             } else {
