@@ -11,12 +11,18 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import javax.script.SimpleBindings
 
+/**
+ * 可在js里调用,source.xxx()
+ */
 interface BaseSource : JsExtensions {
 
     fun getStoreUrl(): String
 
     var header: String?
 
+    /**
+     * 解析header规则
+     */
     fun getHeaderMap() = HashMap<String, String>().apply {
         this[AppConst.UA_NAME] = AppConfig.userAgent
         header?.let {
@@ -34,24 +40,46 @@ interface BaseSource : JsExtensions {
         }
     }
 
+    /**
+     * 获取用于登录的头部信息
+     */
     fun getLoginHeader(): Map<String, String>? {
-        val cache = CacheManager.get("login_${getStoreUrl()}") ?: return null
+        val cache = CacheManager.get("loginHeader_${getStoreUrl()}") ?: return null
+        return GSON.fromJsonObject(cache)
+    }
+
+    /**
+     * 保存登录头部信息,map格式,访问时自动添加
+     */
+    fun putLoginHeader(header: String) {
+        CacheManager.put("loginHeader_${getStoreUrl()}", header)
+    }
+
+    /**
+     * 获取用户信息,可以用来登录
+     * 用户信息采用aes加密存储
+     */
+    fun getLoginInfo(): Map<String, String>? {
+        val cache = CacheManager.get("userInfo_${getStoreUrl()}") ?: return null
         val byteArrayB = Base64.decode(cache, Base64.DEFAULT)
         val byteArrayA = EncoderUtils.decryptAES(byteArrayB, AppConst.androidId.toByteArray())
             ?: return null
-        val headerStr = String(byteArrayA)
-        return GSON.fromJsonObject(headerStr)
+        val info = String(byteArrayA)
+        return GSON.fromJsonObject(info)
     }
 
-    fun putLoginHeader(header: String) {
+    /**
+     * 保存用户信息,aes加密
+     */
+    fun putLoginInfo(info: String) {
         val data = Base64.encodeToString(
             EncoderUtils.decryptAES(
-                header.toByteArray(),
+                info.toByteArray(),
                 AppConst.androidId.toByteArray()
             ),
             Base64.DEFAULT
         )
-        CacheManager.put("login_${getStoreUrl()}", data)
+        CacheManager.put("userInfo_${getStoreUrl()}", data)
     }
 
     /**

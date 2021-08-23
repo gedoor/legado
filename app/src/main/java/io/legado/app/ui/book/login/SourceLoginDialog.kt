@@ -76,7 +76,7 @@ class SourceLoginDialog : BaseDialogFragment() {
                             }
                         }
                     }
-                    bookSource.putLoginHeader(GSON.toJson(loginData))
+                    bookSource.putLoginInfo(GSON.toJson(loginData))
                 }
             }
             return@setOnMenuItemClickListener true
