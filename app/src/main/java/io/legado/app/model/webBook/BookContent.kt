@@ -69,6 +69,7 @@ object BookContent {
                 val res = AnalyzeUrl(
                     ruleUrl = nextUrl,
                     book = book,
+                    source = bookSource,
                     headerMapF = bookSource.getHeaderMap()
                 ).getStrResponse(bookSource.bookSourceUrl)
                 res.body?.let { nextBody ->
@@ -91,6 +92,7 @@ object BookContent {
                         val analyzeUrl = AnalyzeUrl(
                             ruleUrl = urlStr,
                             book = book,
+                            source = bookSource,
                             headerMapF = bookSource.getHeaderMap()
                         )
                         val res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)

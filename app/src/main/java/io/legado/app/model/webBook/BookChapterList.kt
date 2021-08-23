@@ -64,6 +64,7 @@ object BookChapterList {
                     AnalyzeUrl(
                         ruleUrl = nextUrl,
                         book = book,
+                        source = bookSource,
                         headerMapF = bookSource.getHeaderMap()
                     ).getStrResponse(bookSource.bookSourceUrl).body?.let { nextBody ->
                         chapterData = analyzeChapterList(
@@ -87,6 +88,7 @@ object BookChapterList {
                             val analyzeUrl = AnalyzeUrl(
                                 ruleUrl = urlStr,
                                 book = book,
+                                source = bookSource,
                                 headerMapF = bookSource.getHeaderMap()
                             )
                             val res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)

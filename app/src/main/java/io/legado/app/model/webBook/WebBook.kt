@@ -44,7 +44,7 @@ class WebBook(val bookSource: BookSource) {
                 key = key,
                 page = page,
                 baseUrl = sourceUrl,
-                headerMapF = bookSource.getHeaderMap(),
+                headerMapF = bookSource.getHeaderMap(true),
                 book = variableBook,
                 source = bookSource
             )
@@ -86,7 +86,7 @@ class WebBook(val bookSource: BookSource) {
             baseUrl = sourceUrl,
             book = variableBook,
             source = bookSource,
-            headerMapF = bookSource.getHeaderMap()
+            headerMapF = bookSource.getHeaderMap(true)
         )
         var res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
         //检测书源是否已登录
@@ -127,7 +127,7 @@ class WebBook(val bookSource: BookSource) {
                 baseUrl = sourceUrl,
                 book = book,
                 source = bookSource,
-                headerMapF = bookSource.getHeaderMap()
+                headerMapF = bookSource.getHeaderMap(true)
             )
             var res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
             //检测书源是否已登录
@@ -168,7 +168,7 @@ class WebBook(val bookSource: BookSource) {
                 baseUrl = book.bookUrl,
                 book = book,
                 source = bookSource,
-                headerMapF = bookSource.getHeaderMap()
+                headerMapF = bookSource.getHeaderMap(true)
             )
             var res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
             //检测书源是否已登录
@@ -221,10 +221,10 @@ class WebBook(val bookSource: BookSource) {
             val analyzeUrl = AnalyzeUrl(
                 ruleUrl = bookChapter.getAbsoluteURL(),
                 baseUrl = book.tocUrl,
-                headerMapF = bookSource.getHeaderMap(),
                 book = book,
                 source = bookSource,
-                chapter = bookChapter
+                chapter = bookChapter,
+                headerMapF = bookSource.getHeaderMap(true)
             )
             var res = analyzeUrl.getStrResponse(
                 bookSource.bookSourceUrl,

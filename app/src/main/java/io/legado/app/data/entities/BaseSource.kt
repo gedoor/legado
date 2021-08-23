@@ -23,7 +23,7 @@ interface BaseSource : JsExtensions {
     /**
      * 解析header规则
      */
-    fun getHeaderMap() = HashMap<String, String>().apply {
+    fun getHeaderMap(hasLoginHeader: Boolean = false) = HashMap<String, String>().apply {
         this[AppConst.UA_NAME] = AppConfig.userAgent
         header?.let {
             GSON.fromJsonObject<Map<String, String>>(
@@ -36,6 +36,11 @@ interface BaseSource : JsExtensions {
                 }
             )?.let { map ->
                 putAll(map)
+            }
+        }
+        if (hasLoginHeader) {
+            getLoginHeader()?.let {
+                putAll(it)
             }
         }
     }
