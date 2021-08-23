@@ -16,6 +16,7 @@ import io.legado.app.utils.StringUtils.wordCountFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ensureActive
 import splitties.init.appCtx
+import java.net.URLDecoder
 
 object BookList {
 
@@ -28,7 +29,7 @@ object BookList {
         variableBook: SearchBook,
         isSearch: Boolean = true,
     ): ArrayList<SearchBook> {
-        val baseUrl = strResponse.url
+        val baseUrl = URLDecoder.decode(strResponse.url, "utf-8")
         val body = strResponse.body
         body ?: throw Exception(
             appCtx.getString(

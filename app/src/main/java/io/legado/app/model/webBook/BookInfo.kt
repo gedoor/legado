@@ -13,6 +13,7 @@ import io.legado.app.utils.StringUtils.wordCountFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ensureActive
 import splitties.init.appCtx
+import java.net.URLDecoder
 
 object BookInfo {
 
@@ -25,7 +26,7 @@ object BookInfo {
         redirectUrl: String,
         canReName: Boolean,
     ) {
-        val baseUrl = strResponse.url
+        val baseUrl = URLDecoder.decode(strResponse.url, "utf-8")
         val body = strResponse.body
         body ?: throw Exception(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
