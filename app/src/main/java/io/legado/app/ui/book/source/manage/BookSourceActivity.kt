@@ -456,10 +456,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun checkMessageRefreshJob(): Job {
-        val firstIndex = adapter.getItems().indexOf(adapter.selection.first())
-        val lastIndex = adapter.getItems().indexOf(adapter.selection.last())
+        val firstIndex = adapter.getItems().indexOf(adapter.selection.firstOrNull())
+        val lastIndex = adapter.getItems().indexOf(adapter.selection.lastOrNull())
         var refreshCount = 0
-        Debug.isChecking = true
+        Debug.isChecking = firstIndex >= 0 && lastIndex >= 0
         return async(start = CoroutineStart.LAZY) {
             flow {
                 while (true) {
