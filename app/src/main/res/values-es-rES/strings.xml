@@ -855,4 +855,11 @@
     <string name="read_aloud_by_page_summary">及时翻页,翻页时会停顿一下</string>
     <string name="check_source_show_debug_message">La fuente del libro de cheques muestra un mensaje de depuración</string>
     <string name="check_source_show_debug_message_summary">Muestra los pasos y el tiempo de la solicitud de red durante la verificación de la fuente del libro</string>
+    <string name="login_ui">登录UI</string>
+    <string name="export_no_chapter_name">No export chapter names</string>
+    <string name="autobackup_fail">Autobackup failed</string>
+    <string name="login_check_js">登录检查JS</string>
+    <string name="background_image_blurring">Background image blurring</string>
+    <string name="background_image_blurring_radius">Blurring radius</string>
+    <string name="background_image_hint">Disabled when 0, enable range from 1 to 25\nThe greater the radius, the stronger the effect of blurring</string>
 </resources>

@@ -860,5 +860,7 @@
     <string name="read_aloud_by_page_summary">及时翻页,翻页时会停顿一下</string>
     <string name="check_source_show_debug_message">Check book source shows debug message</string>
     <string name="check_source_show_debug_message_summary">Show network status and timestamp during source checking</string>
+    <string name="login_ui">Login UI</string>
+    <string name="login_check_js">登录检查JS</string>
 
 </resources>
