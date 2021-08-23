@@ -45,9 +45,16 @@ class WebBook(val bookSource: BookSource) {
                 page = page,
                 baseUrl = sourceUrl,
                 headerMapF = bookSource.getHeaderMap(),
-                book = variableBook
+                book = variableBook,
+                source = bookSource
             )
-            val res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
+            var res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
+            //检测书源是否已登录
+            bookSource.loginCheckJs?.let { checkJs ->
+                if (checkJs.isNotBlank()) {
+                    res = analyzeUrl.evalJS(checkJs) as StrResponse
+                }
+            }
             return BookList.analyzeBookList(scope, res, bookSource, analyzeUrl, variableBook, true)
         }
         return arrayListOf()
@@ -78,9 +85,16 @@ class WebBook(val bookSource: BookSource) {
             page = page,
             baseUrl = sourceUrl,
             book = variableBook,
+            source = bookSource,
             headerMapF = bookSource.getHeaderMap()
         )
-        val res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
+        var res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
+        //检测书源是否已登录
+        bookSource.loginCheckJs?.let { checkJs ->
+            if (checkJs.isNotBlank()) {
+                res = analyzeUrl.evalJS(checkJs) as StrResponse
+            }
+        }
         return BookList.analyzeBookList(scope, res, bookSource, analyzeUrl, variableBook, false)
     }
 
@@ -108,12 +122,20 @@ class WebBook(val bookSource: BookSource) {
             val strResponse = StrResponse(book.bookUrl, book.infoHtml)
             BookInfo.analyzeBookInfo(scope, strResponse, bookSource, book, book.bookUrl, canReName)
         } else {
-            val res = AnalyzeUrl(
+            val analyzeUrl = AnalyzeUrl(
                 ruleUrl = book.bookUrl,
                 baseUrl = sourceUrl,
-                headerMapF = bookSource.getHeaderMap(),
-                book = book
-            ).getStrResponse(bookSource.bookSourceUrl)
+                book = book,
+                source = bookSource,
+                headerMapF = bookSource.getHeaderMap()
+            )
+            var res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
+            //检测书源是否已登录
+            bookSource.loginCheckJs?.let { checkJs ->
+                if (checkJs.isNotBlank()) {
+                    res = analyzeUrl.evalJS(checkJs) as StrResponse
+                }
+            }
             BookInfo.analyzeBookInfo(scope, res, bookSource, book, book.bookUrl, canReName)
         }
         return book
@@ -141,12 +163,20 @@ class WebBook(val bookSource: BookSource) {
             val strResponse = StrResponse(book.tocUrl, book.tocHtml)
             BookChapterList.analyzeChapterList(scope, strResponse, bookSource, book, book.tocUrl)
         } else {
-            val res = AnalyzeUrl(
-                book = book,
+            val analyzeUrl = AnalyzeUrl(
                 ruleUrl = book.tocUrl,
                 baseUrl = book.bookUrl,
+                book = book,
+                source = bookSource,
                 headerMapF = bookSource.getHeaderMap()
-            ).getStrResponse(bookSource.bookSourceUrl)
+            )
+            var res = analyzeUrl.getStrResponse(bookSource.bookSourceUrl)
+            //检测书源是否已登录
+            bookSource.loginCheckJs?.let { checkJs ->
+                if (checkJs.isNotBlank()) {
+                    res = analyzeUrl.evalJS(checkJs) as StrResponse
+                }
+            }
             BookChapterList.analyzeChapterList(scope, res, bookSource, book, book.tocUrl)
         }
     }
@@ -188,17 +218,25 @@ class WebBook(val bookSource: BookSource) {
                 nextChapterUrl
             )
         } else {
-            val res = AnalyzeUrl(
+            val analyzeUrl = AnalyzeUrl(
                 ruleUrl = bookChapter.getAbsoluteURL(),
                 baseUrl = book.tocUrl,
                 headerMapF = bookSource.getHeaderMap(),
                 book = book,
+                source = bookSource,
                 chapter = bookChapter
-            ).getStrResponse(
+            )
+            var res = analyzeUrl.getStrResponse(
                 bookSource.bookSourceUrl,
                 jsStr = bookSource.getContentRule().webJs,
                 sourceRegex = bookSource.getContentRule().sourceRegex
             )
+            //检测书源是否已登录
+            bookSource.loginCheckJs?.let { checkJs ->
+                if (checkJs.isNotBlank()) {
+                    res = analyzeUrl.evalJS(checkJs) as StrResponse
+                }
+            }
             BookContent.analyzeContent(
                 scope,
                 res,
