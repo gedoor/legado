@@ -25,7 +25,7 @@ class SourceLoginActivity : BaseActivity<ActivitySourceLoginBinding>() {
     private fun initView(bookSource: BookSource) {
         if (bookSource.loginUi.isNullOrEmpty()) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment, WebViewLoginFragment())
+                .replace(R.id.fl_fragment, WebViewLoginFragment())
                 .commit()
         } else {
             RuleUiLoginDialog().show(supportFragmentManager, "ruleUiLogin")
