@@ -18,7 +18,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
-import io.legado.app.help.storage.BookWebDav
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.utils.*
 import me.ag2s.epublib.domain.*
 import me.ag2s.epublib.epub.EpubWriter
@@ -78,7 +78,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 // 导出到webdav
                 val byteArray =
                     stringBuilder.toString().toByteArray(Charset.forName(AppConfig.exportCharset))
-                BookWebDav.exportWebDav(byteArray, filename)
+                AppWebDav.exportWebDav(byteArray, filename)
             }
         }
         getSrcList(book).forEach {
@@ -105,7 +105,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         if (AppConfig.exportToWebDav) {
             val byteArray =
                 stringBuilder.toString().toByteArray(Charset.forName(AppConfig.exportCharset))
-            BookWebDav.exportWebDav(byteArray, filename) // 导出到webdav
+            AppWebDav.exportWebDav(byteArray, filename) // 导出到webdav
         }
         getSrcList(book).forEach {
             val vFile = BookHelp.getImage(book, it.third)

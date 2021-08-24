@@ -19,8 +19,8 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.BookWebDav
 import io.legado.app.help.storage.ImportOldData
 import io.legado.app.help.storage.Restore
 import io.legado.app.lib.dialogs.alert
@@ -268,7 +268,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
 
     fun restore() {
         Coroutine.async(context = Main) {
-            BookWebDav.showRestoreDialog(requireContext())
+            AppWebDav.showRestoreDialog(requireContext())
         }.onError {
             alert {
                 setTitle(R.string.restore)

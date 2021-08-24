@@ -10,7 +10,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.whenStarted
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
 import io.legado.app.constant.AppConst
@@ -79,11 +78,9 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
 
     private fun initBookGroupData() {
         launch {
-            lifecycle.whenStarted {
-                appDb.bookGroupDao.flowShow().collect {
-                    viewModel.checkGroup(it)
-                    upGroup(it)
-                }
+            appDb.bookGroupDao.flowShow().collect {
+                viewModel.checkGroup(it)
+                upGroup(it)
             }
         }
     }

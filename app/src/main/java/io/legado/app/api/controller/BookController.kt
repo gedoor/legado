@@ -10,6 +10,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.LocalBook
@@ -167,6 +168,7 @@ object BookController {
         val returnData = ReturnData()
         if (book != null) {
             book.save()
+            AppWebDav.uploadBookProgress(book)
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book
                 ReadBook.durChapterIndex = book.durChapterIndex
@@ -177,17 +179,16 @@ object BookController {
     }
 
     private fun saveBookReadIndex(book: Book, index: Int) {
-        if (index > book.durChapterIndex) {
-            book.durChapterIndex = index
-            book.durChapterTime = System.currentTimeMillis()
-            appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let {
-                book.durChapterTitle = it.title
-            }
-            appDb.bookDao.update(book)
-            if (ReadBook.book?.bookUrl == book.bookUrl) {
-                ReadBook.book = book
-                ReadBook.durChapterIndex = index
-            }
+        book.durChapterIndex = index
+        book.durChapterTime = System.currentTimeMillis()
+        appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let {
+            book.durChapterTitle = it.title
+        }
+        appDb.bookDao.update(book)
+        AppWebDav.uploadBookProgress(book)
+        if (ReadBook.book?.bookUrl == book.bookUrl) {
+            ReadBook.book = book
+            ReadBook.durChapterIndex = index
         }
     }
 

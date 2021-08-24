@@ -20,7 +20,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-object BookWebDav {
+object AppWebDav {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
     private val bookProgressUrl = "${rootWebDavUrl}bookProgress/"
     private val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"

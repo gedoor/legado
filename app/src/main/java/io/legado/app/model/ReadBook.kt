@@ -7,7 +7,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
 import io.legado.app.help.*
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.storage.BookWebDav
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.CacheBook
@@ -100,7 +100,7 @@ object ReadBook : CoroutineScope by MainScope() {
     fun uploadProgress(syncBookProgress: Boolean = AppConfig.syncBookProgress) {
         if (syncBookProgress) {
             book?.let {
-                BookWebDav.uploadBookProgress(it)
+                AppWebDav.uploadBookProgress(it)
             }
         }
     }

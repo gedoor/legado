@@ -13,7 +13,7 @@ import io.legado.app.data.entities.BookProgress
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
-import io.legado.app.help.storage.BookWebDav
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.PreciseSearch
@@ -169,7 +169,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     ) {
         if (syncBookProgress)
             execute {
-                BookWebDav.getBookProgress(book)
+                AppWebDav.getBookProgress(book)
             }.onSuccess {
                 it?.let { progress ->
                     if (progress.durChapterIndex < book.durChapterIndex ||

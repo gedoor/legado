@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.isGone
-import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
@@ -63,11 +62,9 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     private fun initData() {
         launch {
-            lifecycle.whenStarted {
-                appDb.ruleSubDao.flowAll().collect {
-                    binding.tvEmptyMsg.isGone = it.isNotEmpty()
-                    adapter.setItems(it)
-                }
+            appDb.ruleSubDao.flowAll().collect {
+                binding.tvEmptyMsg.isGone = it.isNotEmpty()
+                adapter.setItems(it)
             }
         }
     }

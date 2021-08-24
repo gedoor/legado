@@ -9,7 +9,7 @@ import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityWelcomeBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.storage.BookWebDav
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
@@ -37,7 +37,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
         Coroutine.async {
             val books = appDb.bookDao.all
             books.forEach { book ->
-                BookWebDav.getBookProgress(book)?.let { bookProgress ->
+                AppWebDav.getBookProgress(book)?.let { bookProgress ->
                     if (bookProgress.durChapterIndex > book.durChapterIndex ||
                         (bookProgress.durChapterIndex == book.durChapterIndex &&
                                 bookProgress.durChapterPos > book.durChapterPos)

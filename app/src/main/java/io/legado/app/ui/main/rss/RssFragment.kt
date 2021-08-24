@@ -7,7 +7,6 @@ import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.whenStarted
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppPattern
@@ -122,14 +121,12 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     private fun initGroupData() {
         launch {
-            lifecycle.whenStarted {
-                appDb.rssSourceDao.flowGroup().collect {
-                    groups.clear()
-                    it.map { group ->
-                        groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-                    }
-                    upGroupsMenu()
+            appDb.rssSourceDao.flowGroup().collect {
+                groups.clear()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                 }
+                upGroupsMenu()
             }
         }
     }
