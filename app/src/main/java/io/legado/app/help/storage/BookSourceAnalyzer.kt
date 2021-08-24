@@ -30,6 +30,8 @@ object BookSourceAnalyzer {
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     bookSourceGroup = jsonItem.readString("bookSourceGroup")
                     loginUrl = jsonItem.readString("loginUrl")
+                    loginUi = GSON.fromJsonArray(jsonItem.readString("loginUi"))
+                    loginCheckJs = jsonItem.readString("loginCheckJs")
                     bookSourceComment = jsonItem.readString("bookSourceComment") ?: ""
                     bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
                     customOrder = jsonItem.readInt("serialNumber") ?: 0
