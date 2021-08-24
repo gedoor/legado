@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.login
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -21,6 +22,14 @@ class RuleUiLoginDialog : BaseDialogFragment() {
     private val binding by viewBinding(DialogLoginBinding::bind)
     private val viewModel by activityViewModels<SourceLoginViewModel>()
 
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,24 +41,27 @@ class RuleUiLoginDialog : BaseDialogFragment() {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         val bookSource = viewModel.bookSource ?: return
-        val loginHeader = bookSource.getLoginHeader()
+        binding.toolBar.title = getString(R.string.login_source, bookSource.bookSourceName)
+        val loginInfo = bookSource.getLoginInfo()
         val loginUi = bookSource.loginUi
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 "text" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root)
                     .apply {
                         id = index
+                        findViewById<TextInputLayout>(R.id.textInputLayout).hint = rowUi.name
                         findViewById<EditText>(R.id.editText).apply {
-                            setText(loginHeader?.get(rowUi.name))
+                            setText(loginInfo?.get(rowUi.name))
                         }
                     }
                 "password" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root)
                     .apply {
                         id = index
+                        findViewById<TextInputLayout>(R.id.textInputLayout).hint = rowUi.name
                         findViewById<EditText>(R.id.editText).apply {
                             inputType =
                                 InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
-                            setText(loginHeader?.get(rowUi.name))
+                            setText(loginInfo?.get(rowUi.name))
                         }
                     }
             }
@@ -74,6 +86,11 @@ class RuleUiLoginDialog : BaseDialogFragment() {
             }
             return@setOnMenuItemClickListener true
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        activity?.finish()
     }
 
 }
