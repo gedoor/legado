@@ -10,6 +10,10 @@
         android:title="@string/to_bottom" />
 
     <item
+        android:id="@+id/menu_login"
+        android:title="@string/login" />
+
+    <item
         android:id="@+id/menu_debug_source"
         android:title="@string/debug" />
 

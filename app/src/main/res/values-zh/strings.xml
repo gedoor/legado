@@ -861,5 +861,6 @@
     <string name="read_aloud_by_page_summary">及时翻页,翻页时会停顿一下</string>
     <string name="check_source_show_debug_message">校验显示详细信息</string>
     <string name="check_source_show_debug_message_summary">书源校验时显示网络请求步骤和时间</string>
+    <string name="need_login">需登录</string>
 
 </resources>
