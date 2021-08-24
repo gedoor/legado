@@ -70,6 +70,10 @@
                 android:id="@+id/menu_disabled_group"
                 android:title="@string/disabled" />
 
+            <item
+                android:id="@+id/menu_group_login"
+                android:title="@string/need_login" />
+
             <group android:id="@+id/source_group">
 
             </group>

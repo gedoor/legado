@@ -166,6 +166,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_disabled_group -> {
                 searchView.setQuery(getString(R.string.disabled), true)
             }
+            R.id.menu_group_login -> {
+                searchView.setQuery(getString(R.string.need_login), true)
+            }
             R.id.menu_help -> showHelp()
         }
         if (item.groupId == R.id.source_group) {
@@ -210,6 +213,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
                 searchKey == getString(R.string.disabled) -> {
                     appDb.bookSourceDao.flowDisabled()
+                }
+                searchKey == getString(R.string.need_login) -> {
+                    appDb.bookSourceDao.flowLogin()
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")

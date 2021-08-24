@@ -18,8 +18,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/swt_enabled"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/book_source"
-        tools:ignore="TouchTargetSizeCheck" />
+        tools:ignore="TouchTargetSizeCheck"
+        tools:text="@string/book_source" />
 
     <io.legado.app.lib.theme.view.ATESwitch
         android:id="@+id/swt_enabled"
@@ -66,8 +66,8 @@
         android:contentDescription="@string/more_menu"
         android:scaleType="centerCrop"
         android:src="@color/md_green_600"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toRightOf="@id/iv_menu_more"
+        app:layout_constraintTop_toTopOf="@id/iv_menu_more" />
 
     <TextView
         android:id="@+id/iv_debug_text"
@@ -75,6 +75,7 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:visibility="gone"
+        android:layout_marginTop="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/iv_progressBar"
