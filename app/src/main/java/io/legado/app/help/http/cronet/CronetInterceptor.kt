@@ -44,7 +44,7 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
         val callback = CronetUrlRequestCallback(request, call)
         val urlRequest = buildRequest(request, callback)
         urlRequest.start()
-        return callback.waitForDone()
+       return callback.waitForDone(urlRequest)
     }
 
     private fun getCookie(url: HttpUrl): String {
