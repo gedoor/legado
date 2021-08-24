@@ -401,6 +401,10 @@ class BookInfoActivity :
         viewModel.bookData.value?.group = groupId
         if (viewModel.inBookshelf) {
             viewModel.saveBook()
+        } else if (groupId > 0) {
+            viewModel.saveBook()
+            viewModel.inBookshelf = true
+            upTvBookshelf()
         }
     }
 
