@@ -57,10 +57,10 @@
             android:title="UserAgent" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
-            android:key="highBrush"
+            android:key="Cronet"
             android:defaultValue="false"
-            android:title="@string/high_brush_title"
-            android:summary="@string/high_brush_summary" />
+            android:title="Cronet"
+            android:summary="@string/pref_cronet_summary" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="preDownloadNum"

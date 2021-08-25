@@ -863,5 +863,6 @@
     <string name="background_image_blurring_radius">Blurring radius</string>
     <string name="background_image_hint">Disabled when 0, enable range from 1 to 25\nThe greater the radius, the stronger the effect of blurring</string>
     <string name="need_login">需登录</string>
+    <string name="pref_cronet_summary">使用Cronet网络组件</string>
 
 </resources>

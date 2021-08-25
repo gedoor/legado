@@ -89,14 +89,6 @@ android {
             applicationId "io.legado.play"
             manifestPlaceholders = [APP_CHANNEL_VALUE: "google"]
         }
-        cronet {
-            dimension "mode"
-            applicationId "io.legado.cronet"
-            manifestPlaceholders = [APP_CHANNEL_VALUE: "cronet"]
-            ndk {
-                abiFilters 'arm64-v8a','armeabi-v7a','x86_64','x86'
-            }
-        }
     }
     compileOptions {
         // Flag to enable support for the new language APIs
@@ -190,8 +182,7 @@ dependencies {
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.9.1')
-    compileOnly(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    cronetImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
     implementation('com.github.bumptech.glide:glide:4.12.0')

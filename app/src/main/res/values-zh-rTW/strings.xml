@@ -861,5 +861,6 @@
     <string name="check_source_show_debug_message">校驗書源顯示詳細信息</string>
     <string name="check_source_show_debug_message_summary">書源校驗時顯示網絡請求步驟和時間</string>
     <string name="need_login">需登录</string>
+    <string name="pref_cronet_summary">使用Cronet网络组件</string>
 
 </resources>

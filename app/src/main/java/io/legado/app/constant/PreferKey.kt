@@ -82,7 +82,6 @@ object PreferKey {
     const val exportUseReplace = "exportUseReplace"
     const val useZhLayout = "useZhLayout"
     const val fullScreenGesturesSupport = "fullScreenGesturesSupport"
-    const val highBrush = "highBrush"
     const val brightness = "brightness"
     const val nightBrightness = "nightBrightness"
     const val expandTextMenu = "expandTextMenu"
