@@ -76,13 +76,13 @@ data class RssSource(
         kotlin.runCatching {
             var a = sortUrl
             if (sortUrl?.startsWith("<js>", false) == true
-                || sortUrl?.startsWith("@js", false) == true
+                || sortUrl?.startsWith("@js:", false) == true
             ) {
                 val aCache = ACache.get(appCtx, "rssSortUrl")
                 a = aCache.getAsString(sourceUrl) ?: ""
                 if (a.isBlank()) {
                     val jsStr = if (sortUrl!!.startsWith("@")) {
-                        sortUrl!!.substring(3)
+                        sortUrl!!.substring(4)
                     } else {
                         sortUrl!!.substring(4, sortUrl!!.lastIndexOf("<"))
                     }
