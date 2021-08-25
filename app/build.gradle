@@ -182,7 +182,9 @@ dependencies {
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.9.1')
-    compileOnly("com.google.android.gms:play-services-cronet:17.0.1"){ exclude(group: "org.chromium.net") }
+    compileOnly('com.google.android.gms:play-services-cronet:17.0.1'){
+        exclude(group: "org.chromium.net")
+    }
     googleImplementation("com.google.android.gms:play-services-cronet:17.0.1")
     appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
