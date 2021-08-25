@@ -42,7 +42,7 @@ class RuleUiLoginDialog : BaseDialogFragment() {
         binding.toolBar.setBackgroundColor(primaryColor)
         val bookSource = viewModel.bookSource ?: return
         binding.toolBar.title = getString(R.string.login_source, bookSource.bookSourceName)
-        val loginInfo = bookSource.getLoginInfo()
+        val loginInfo = bookSource.getLoginInfoMap()
         val loginUi = bookSource.loginUi
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
@@ -70,8 +70,8 @@ class RuleUiLoginDialog : BaseDialogFragment() {
         }
         binding.toolBar.inflateMenu(R.menu.source_login)
         binding.toolBar.menu.applyTint(requireContext())
-        binding.toolBar.setOnMenuItemClickListener {
-            when (it.itemId) {
+        binding.toolBar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
                 R.id.menu_ok -> {
                     val loginData = hashMapOf<String, String?>()
                     loginUi?.forEachIndexed { index, rowUi ->
@@ -84,6 +84,10 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                         }
                     }
                     bookSource.putLoginInfo(GSON.toJson(loginData))
+                    bookSource.loginUrl?.let {
+
+                        bookSource.evalJS(it)
+                    }
                 }
             }
             return@setOnMenuItemClickListener true

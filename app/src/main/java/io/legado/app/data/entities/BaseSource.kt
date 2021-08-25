@@ -69,13 +69,16 @@ interface BaseSource : JsExtensions {
      * 获取用户信息,可以用来登录
      * 用户信息采用aes加密存储
      */
-    fun getLoginInfo(): Map<String, String>? {
+    fun getLoginInfo(): String? {
         val cache = CacheManager.get("userInfo_${getStoreUrl()}") ?: return null
         val byteArrayB = Base64.decode(cache, Base64.DEFAULT)
         val byteArrayA = EncoderUtils.decryptAES(byteArrayB, AppConst.androidId.toByteArray())
             ?: return null
-        val info = String(byteArrayA)
-        return GSON.fromJsonObject(info)
+        return String(byteArrayA)
+    }
+
+    fun getLoginInfoMap(): Map<String, String>? {
+        return GSON.fromJsonObject(getLoginInfo())
     }
 
     /**
