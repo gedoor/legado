@@ -1,14 +1,16 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
+import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.utils.ACache
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 
 @Parcelize
+@TypeConverters(RssSource.Converters::class)
 @Entity(tableName = "rssSources", indices = [(Index(value = ["sourceUrl"], unique = false))])
 data class RssSource(
     @PrimaryKey
@@ -18,6 +20,10 @@ data class RssSource(
     var sourceGroup: String? = null,
     var sourceComment: String? = null,
     var enabled: Boolean = true,
+    override var header: String? = null,            // 请求头
+    var loginUrl: String? = null,                // 登录地址
+    var loginUi: List<RowUi>? = null,             //登录UI
+    var loginCheckJs: String? = null,               //登录检测js
     var sortUrl: String? = null,
     var singleUrl: Boolean = false,
     var articleStyle: Int = 0,
@@ -32,7 +38,6 @@ data class RssSource(
     var ruleLink: String? = null,
     var ruleContent: String? = null,
     var style: String? = null,
-    override var header: String? = null,
     var enableJs: Boolean = false,
     var loadWithBaseUrl: Boolean = false,
 
@@ -99,5 +104,13 @@ data class RssSource(
                 add(Pair("", sourceUrl))
             }
         }
+    }
+
+    class Converters {
+        @TypeConverter
+        fun loginUiRuleToString(loginUi: List<RowUi>?): String = GSON.toJson(loginUi)
+
+        @TypeConverter
+        fun stringToLoginRule(json: String?): List<RowUi>? = GSON.fromJsonArray(json)
     }
 }

@@ -230,9 +230,12 @@ object BookSourceAnalyzer {
 
     private fun toNewUrls(oldUrls: String?): String? {
         if (oldUrls.isNullOrBlank()) return null
-        if (!oldUrls.contains("\n") && !oldUrls.contains("&&"))
+        if (oldUrls.startsWith("@js:") || oldUrls.startsWith("<js>")) {
+            return oldUrls
+        }
+        if (!oldUrls.contains("\n") && !oldUrls.contains("&&")) {
             return toNewUrl(oldUrls)
-
+        }
         val urls = oldUrls.split("(&&|\r?\n)+".toRegex())
         return urls.map {
             toNewUrl(it)?.replace("\n\\s*".toRegex(), "")
