@@ -1,4 +1,4 @@
-package io.legado.app.help.storage
+package io.legado.app.help
 
 import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath
@@ -100,10 +100,10 @@ object BookSourceAnalyzer {
                 source.enabled = sourceAny.enabled
                 source.enabledExplore = sourceAny.enabledExplore
                 source.header = sourceAny.header
-                source.loginUrl = if (sourceAny.loginUrl is String) {
-                    sourceAny.loginUrl.toString()
-                } else {
-                    JsonPath.parse(sourceAny.loginUrl).readString("url")
+                source.loginUrl = when (sourceAny.loginUrl) {
+                    null -> null
+                    is String -> sourceAny.loginUrl.toString()
+                    else -> JsonPath.parse(sourceAny.loginUrl).readString("url")
                 }
                 source.loginUi = sourceAny.loginUi
                 source.loginCheckJs = sourceAny.loginCheckJs

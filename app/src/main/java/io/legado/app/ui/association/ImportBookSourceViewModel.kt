@@ -9,12 +9,12 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
+import io.legado.app.help.BookSourceAnalyzer
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
-import io.legado.app.help.storage.BookSourceAnalyzer
 import io.legado.app.help.storage.Restore
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray

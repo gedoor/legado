@@ -198,9 +198,9 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     private fun startDs() {
-        handler.removeCallbacks(dsRunnable)
         postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
+        handler.removeCallbacks(dsRunnable)
         handler.postDelayed(dsRunnable, 60000)
     }
 
