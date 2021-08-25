@@ -19,4 +19,10 @@
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
+    <LinearLayout
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
 </LinearLayout>

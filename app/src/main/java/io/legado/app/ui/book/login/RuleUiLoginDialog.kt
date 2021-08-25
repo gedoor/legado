@@ -46,19 +46,21 @@ class RuleUiLoginDialog : BaseDialogFragment() {
         val loginUi = bookSource.loginUi
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
-                "text" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root)
-                    .apply {
-                        id = index
-                        findViewById<TextInputLayout>(R.id.textInputLayout).hint = rowUi.name
-                        findViewById<EditText>(R.id.editText).apply {
+                "text" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root, false)
+                    .let {
+                        binding.listView.addView(it)
+                        it.id = index
+                        (it as TextInputLayout).hint = rowUi.name
+                        it.findViewById<EditText>(R.id.editText).apply {
                             setText(loginInfo?.get(rowUi.name))
                         }
                     }
-                "password" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root)
-                    .apply {
-                        id = index
-                        findViewById<TextInputLayout>(R.id.textInputLayout).hint = rowUi.name
-                        findViewById<EditText>(R.id.editText).apply {
+                "password" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root, false)
+                    .let {
+                        binding.listView.addView(it)
+                        it.id = index
+                        (it as TextInputLayout).hint = rowUi.name
+                        it.findViewById<EditText>(R.id.editText).apply {
                             inputType =
                                 InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
                             setText(loginInfo?.get(rowUi.name))

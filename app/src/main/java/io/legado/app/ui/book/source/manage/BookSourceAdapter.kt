@@ -17,10 +17,12 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ItemBookSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.model.Debug
+import io.legado.app.ui.book.login.SourceLoginActivity
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
 
 
@@ -166,6 +168,9 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
                 R.id.menu_bottom -> callBack.toBottom(source)
+                R.id.menu_login -> context.startActivity<SourceLoginActivity> {
+                    putExtra("sourceUrl", source.bookSourceUrl)
+                }
                 R.id.menu_debug_source -> callBack.debug(source)
                 R.id.menu_del -> callBack.del(source)
                 R.id.menu_enable_explore -> {
