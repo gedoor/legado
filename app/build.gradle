@@ -182,7 +182,8 @@ dependencies {
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.9.1')
-    implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    googleImplementation 'com.google.android.gms:play-services-cronet:17.0.0'
 
     //Glide
     implementation('com.github.bumptech.glide:glide:4.12.0')
