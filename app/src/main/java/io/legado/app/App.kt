@@ -23,7 +23,7 @@ class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         CrashHandler(this)
-        if (AppConfig.isCronet) {
+        if (AppConfig.isCronet && !AppConfig.isGooglePlay) {
             //预下载Cronet so
             CronetLoader.preDownload()
         }

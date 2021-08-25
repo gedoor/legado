@@ -1,6 +1,7 @@
 package io.legado.app.help.http.cronet
 
 import android.util.Log
+import io.legado.app.help.AppConfig
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.Request
@@ -19,18 +20,21 @@ val executor: Executor by lazy { Executors.newCachedThreadPool() }
 val cronetEngine: ExperimentalCronetEngine by lazy {
     CronetLoader.preDownload()
 
-    val builder = ExperimentalCronetEngine.Builder(appCtx)
-        .setLibraryLoader(CronetLoader)//设置自定义so库加载
-        .setStoragePath(appCtx.externalCacheDir?.absolutePath)//设置缓存路径
-        .enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50))//设置缓存模式
-        .enableQuic(true)//设置支持http/3
-        .enableHttp2(true)  //设置支持http/2
-        .enablePublicKeyPinningBypassForLocalTrustAnchors(true)
-    //.enableNetworkQualityEstimator(true)
+    val builder = ExperimentalCronetEngine.Builder(appCtx).apply {
+        if (!AppConfig.isGooglePlay) {
+            setLibraryLoader(CronetLoader)//设置自定义so库加载
+        }
+        setStoragePath(appCtx.externalCacheDir?.absolutePath)//设置缓存路径
+        enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50))//设置缓存模式
+        enableQuic(true)//设置支持http/3
+        enableHttp2(true)  //设置支持http/2
+        enablePublicKeyPinningBypassForLocalTrustAnchors(true)
+        //enableNetworkQualityEstimator(true)
 
-    //Brotli压缩
-    builder.enableBrotli(true)
-    //builder.setExperimentalOptions("{\"quic_version\": \"h3-29\"}")
+        //Brotli压缩
+        enableBrotli(true)
+        //setExperimentalOptions("{\"quic_version\": \"h3-29\"}")
+    }
     val engine = builder.build()
     Log.d("Cronet", "Cronet Version:" + engine.versionString)
     //这会导致Jsoup的网络请求出现问题，暂时不接管系统URL
