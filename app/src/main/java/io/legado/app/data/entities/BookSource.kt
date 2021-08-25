@@ -3,16 +3,12 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.*
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
-import io.legado.app.help.CacheManager
-import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.*
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
-import javax.script.SimpleBindings
 
 @Parcelize
 @TypeConverters(BookSource.Converters::class)
@@ -66,18 +62,12 @@ data class BookSource(
                     val aCache = ACache.get(appCtx, "explore")
                     ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
                     if (ruleStr.isBlank()) {
-                        val bindings = SimpleBindings()
-                        bindings["java"] = this
-                        bindings["source"] = this
-                        bindings["baseUrl"] = bookSourceUrl
-                        bindings["cookie"] = CookieStore
-                        bindings["cache"] = CacheManager
                         val jsStr = if (exploreUrl.startsWith("@")) {
                             exploreUrl.substring(4)
                         } else {
                             exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
                         }
-                        ruleStr = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString().trim()
+                        ruleStr = evalJS(jsStr).toString().trim()
                         aCache.put(bookSourceUrl, ruleStr)
                     }
                 }

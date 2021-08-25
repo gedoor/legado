@@ -96,9 +96,11 @@ interface BaseSource : JsExtensions {
      * 执行JS
      */
     @Throws(Exception::class)
-    private fun evalJS(jsStr: String): Any? {
+    fun evalJS(jsStr: String): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["source"] = this
+        bindings["baseUrl"] = getStoreUrl()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
