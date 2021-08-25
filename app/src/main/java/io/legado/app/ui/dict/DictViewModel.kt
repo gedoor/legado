@@ -74,7 +74,7 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
      * @return
      */
 
-    fun isChinese(str: String): Boolean {
+    private fun isChinese(str: String): Boolean {
         val p = Pattern.compile("[\u4e00-\u9fa5]")
         val m = p.matcher(str)
         return m.find()

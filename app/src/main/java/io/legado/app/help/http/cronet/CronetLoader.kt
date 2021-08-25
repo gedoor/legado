@@ -40,7 +40,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
         md5Url = ("https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@" +
                 ImplVersion.getCronetVersion() + "/cronet/" + ImplVersion.getCronetVersion() + "/"
                 + getCpuAbi(appCtx) + "/" + soName + ".js")
-        val dir = appCtx.getDir("lib", Context.MODE_PRIVATE)
+        val dir = appCtx.getDir("cronet", Context.MODE_PRIVATE)
         soFile = File(dir.toString() + "/" + getCpuAbi(appCtx), soName)
         downloadFile = File(appCtx.cacheDir.toString() + "/so_download", soName)
         Log.e(TAG, "soName+:$soName")

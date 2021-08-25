@@ -31,8 +31,20 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
     private val mBuffer = Buffer()
 
     @Throws(IOException::class)
-    fun waitForDone(): Response {
-        mResponseCondition.block()
+    fun waitForDone(urlRequest: UrlRequest): Response {
+        //获取okhttp call的完整请求的超时时间
+        val timeOutMs: Long = mCall.timeout().timeoutNanos() / 1000000
+        if (timeOutMs > 0) {
+            mResponseCondition.block(timeOutMs)
+        } else {
+            mResponseCondition.block()
+        }
+        //ConditionVariable 正常open或者超时open后，检查urlRequest是否完成
+        if (!urlRequest.isDone) {
+            urlRequest.cancel()
+            mException = IOException("Cronet timeout after wait " + timeOutMs + "ms")
+        }
+
         if (mException != null) {
             throw mException as IOException
         }
@@ -74,7 +86,7 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
 //        }
 //        Log.e("Cronet", sb.toString())
         //打印协议，用于调试
-        Log.e("Cronet", info.negotiatedProtocol)
+        Log.i("Cronet", info.negotiatedProtocol)
         if (eventListener != null) {
             eventListener.responseHeadersEnd(mCall, this.mResponse)
             eventListener.responseBodyStart(mCall)
@@ -89,8 +101,8 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
         byteBuffer: ByteBuffer
     ) {
         byteBuffer.flip()
+
         try {
-            //mReceiveChannel.write(byteBuffer)
             mBuffer.write(byteBuffer)
         } catch (e: IOException) {
             Log.i(TAG, "IOException during ByteBuffer read. Details: ", e)
@@ -104,8 +116,6 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
         eventListener?.responseBodyEnd(mCall, info.receivedByteCount)
         val contentType: MediaType? = (this.mResponse.header("content-type")
             ?: "text/plain; charset=\"utf-8\"").toMediaTypeOrNull()
-//        val responseBody: ResponseBody =
-//            mBytesReceived.toByteArray().toResponseBody(contentType)
         val responseBody: ResponseBody =
             mBuffer.asResponseBody(contentType)
         val newRequest = originalRequest.newBuilder().url(info.url).build()
