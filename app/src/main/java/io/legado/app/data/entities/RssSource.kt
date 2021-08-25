@@ -4,13 +4,9 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.legado.app.constant.AppConst
-import io.legado.app.help.CacheManager
-import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.ACache
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
-import javax.script.SimpleBindings
 
 @Parcelize
 @Entity(tableName = "rssSources", indices = [(Index(value = ["sourceUrl"], unique = false))])
@@ -85,17 +81,12 @@ data class RssSource(
                 val aCache = ACache.get(appCtx, "rssSortUrl")
                 a = aCache.getAsString(sourceUrl) ?: ""
                 if (a.isBlank()) {
-                    val bindings = SimpleBindings()
-                    bindings["baseUrl"] = sourceUrl
-                    bindings["java"] = this
-                    bindings["cookie"] = CookieStore
-                    bindings["cache"] = CacheManager
                     val jsStr = if (sortUrl!!.startsWith("@")) {
                         sortUrl!!.substring(3)
                     } else {
                         sortUrl!!.substring(4, sortUrl!!.lastIndexOf("<"))
                     }
-                    a = AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
+                    a = evalJS(jsStr).toString()
                     aCache.put(sourceUrl, a)
                 }
             }
