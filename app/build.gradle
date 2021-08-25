@@ -185,7 +185,7 @@ dependencies {
     compileOnly('com.google.android.gms:play-services-cronet:17.0.1'){
         exclude(group: "org.chromium.net")
     }
-    googleImplementation("com.google.android.gms:play-services-cronet:17.0.1")
+    googleImplementation('com.google.android.gms:play-services-cronet:17.0.1')
     appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
