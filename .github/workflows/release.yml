@@ -48,9 +48,7 @@ jobs:
         run: |
           echo "开始进行release构建"
           chmod +x gradlew
-          ./gradlew assembleAppRelease --build-cache --parallel
-          echo "开始进行cronet构建"
-          ./gradlew assembleCronetRelease --build-cache --parallel
+          ./gradlew assembleRelease --build-cache --parallel
       - name: Organize the Files
         run: |
           mkdir -p ${{ github.workspace }}/apk/
