@@ -208,6 +208,7 @@ abstract class BaseReadAloudService : BaseService(),
      * 定时
      */
     private fun doDs() {
+        handler.removeCallbacks(dsRunnable)
         if (!pause) {
             if (timeMinute >= 0) {
                 timeMinute--
@@ -216,7 +217,6 @@ abstract class BaseReadAloudService : BaseService(),
                 ReadAloud.stop(this)
             }
         }
-        handler.removeCallbacks(dsRunnable)
         handler.postDelayed(dsRunnable, 60000)
         postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
