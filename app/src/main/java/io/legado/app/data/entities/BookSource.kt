@@ -61,18 +61,19 @@ data class BookSource(
         if (ruleStr.isNotBlank()) {
             kotlin.runCatching {
                 if (exploreUrl.startsWith("<js>", false)
-                    || exploreUrl.startsWith("@js", false)
+                    || exploreUrl.startsWith("@js:", false)
                 ) {
                     val aCache = ACache.get(appCtx, "explore")
                     ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
                     if (ruleStr.isBlank()) {
                         val bindings = SimpleBindings()
-                        bindings["baseUrl"] = bookSourceUrl
                         bindings["java"] = this
+                        bindings["source"] = this
+                        bindings["baseUrl"] = bookSourceUrl
                         bindings["cookie"] = CookieStore
                         bindings["cache"] = CacheManager
                         val jsStr = if (exploreUrl.startsWith("@")) {
-                            exploreUrl.substring(3)
+                            exploreUrl.substring(4)
                         } else {
                             exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
                         }
@@ -91,6 +92,7 @@ data class BookSource(
                     }
                 }
             }.onFailure {
+                it.printStackTrace()
                 kinds.add(ExploreKind(it.localizedMessage ?: ""))
             }
         }

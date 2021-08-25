@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.login
+package io.legado.app.ui.login
 
 import android.content.DialogInterface
 import android.os.Bundle
