@@ -70,9 +70,7 @@ jobs:
         run: |
           echo "开始进行release构建"
           chmod +x gradlew
-          ./gradlew assembleAppRelease --build-cache --parallel
-          echo "开始进行cronet构建"
-          ./gradlew assembleCronetRelease --build-cache --parallel
+          ./gradlew assembleRelease --build-cache --parallel
           echo "修改文件名"
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
             mv "$file" ${{ github.workspace }}/apk/`echo "$file"|sed 's/.*\/\(.*\)\(\.apk\)$/\1_共存\2/'`
