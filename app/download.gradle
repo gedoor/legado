@@ -77,6 +77,8 @@ task downloadX86(type: Download) {
 
 /**
  * 更新Cronet版本时执行这个task
+ * 先更改gradle.properties 里面的版本号，然后再执行
+ * gradlew app:downloadCronet
  */
 task downloadCronet() {
     dependsOn downloadJar, downloadARM64, downloadARMv7, downloadX86_64, downloadX86
