@@ -125,6 +125,8 @@ object EncoderUtils {
      * @param key            The key.
      * @param algorithm      The name of algorithm.
      * @param transformation The name of the transformation, e.g., <i>DES/CBC/PKCS5Padding</i>.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
      * @param isEncrypt      True to encrypt, false otherwise.
      * @return the bytes of symmetric encryption or decryption
      */
