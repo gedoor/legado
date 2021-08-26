@@ -16,7 +16,7 @@ static def generateMD5(final file) {
     MessageDigest digest = MessageDigest.getInstance("MD5")
     file.withInputStream() { is ->
         byte[] buffer = new byte[1024]
-        //int numRead = 0
+        int numRead = 0
         while ((numRead = is.read(buffer)) > 0) {
             digest.update(buffer, 0, numRead)
         }
