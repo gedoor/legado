@@ -50,7 +50,7 @@ data class BookSource(
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
-    val exploreKinds by lazy {
+    val exploreKinds: List<ExploreKind> by lazy {
         val exploreUrl = exploreUrl ?: return@lazy emptyList()
         val kinds = arrayListOf<ExploreKind>()
         var ruleStr = exploreUrl

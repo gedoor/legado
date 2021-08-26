@@ -113,9 +113,6 @@ class CheckSourceService : BaseService() {
             var books = webBook.searchBookAwait(this, CheckSource.keyword)
             if (books.isEmpty()) {
                 val exs = source.exploreKinds
-                if (exs.isEmpty()) {
-                    throw Exception("搜索内容为空并且没有发现")
-                }
                 var url: String? = null
                 for (ex in exs) {
                     url = ex.url
@@ -123,11 +120,14 @@ class CheckSourceService : BaseService() {
                         break
                     }
                 }
-                books = webBook.exploreBookAwait(this, url!!)
+                if (url.isNullOrBlank()) {
+                    throw Exception("搜索内容为空并且没有发现")
+                }
+                books = webBook.exploreBookAwait(this, url)
             }
             val book = webBook.getBookInfoAwait(this, books.first().toBook())
             val toc = webBook.getChapterListAwait(this, book)
-            val content = webBook.getContentAwait(this, book, toc.first())
+            val content = webBook.getContentAwait(this, book, toc.first(), toc.getOrNull(2)?.url)
             if (content.isBlank()) {
                 throw Exception("正文内容为空")
             }
