@@ -22,6 +22,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
@@ -881,6 +882,12 @@ class ReadBookActivity : ReadBookBaseActivity(),
         backupJob?.cancel()
         backupJob = launch {
             delay(120000)
+            if (isActive) {
+                ReadBook.book?.let {
+                    AppWebDav.uploadBookProgress(it)
+                    Backup.autoBack(this@ReadBookActivity)
+                }
+            }
         }
     }
 
@@ -990,7 +997,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
             if (t > 0) {
                 keepScreenOn(true)
                 delay(screenTimeOut)
-                keepScreenOn(false)
+                if (isActive) {
+                    keepScreenOn(false)
+                }
             } else {
                 keepScreenOn(false)
             }
