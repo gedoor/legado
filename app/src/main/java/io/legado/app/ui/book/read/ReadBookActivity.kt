@@ -687,6 +687,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         if (isAutoPage) {
             isAutoPage = false
             autoPageJob?.cancel()
+            binding.readView.invalidate()
             binding.readMenu.setAutoPage(false)
             upScreenTimeOut()
         }
