@@ -28,7 +28,7 @@ data class BookSource(
     var enabled: Boolean = true,                    // 是否启用
     var enabledExplore: Boolean = true,             // 启用发现
     override var header: String? = null,            // 请求头
-    var loginUrl: String? = null,                // 登录地址
+    override var loginUrl: String? = null,                // 登录地址
     var loginUi: List<RowUi>? = null,             //登录UI
     var loginCheckJs: String? = null,               //登录检测js
     var bookSourceComment: String? = null,          // 注释
