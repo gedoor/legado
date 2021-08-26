@@ -10,8 +10,10 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -238,7 +240,8 @@ class HttpReadAloudService : BaseReadAloudService(),
         if (what == -38 && extra == 0) {
             return true
         }
-        handler.postDelayed({
+        launch {
+            delay(100)
             readAloudNumber += contentList[nowSpeak].length + 1
             if (nowSpeak < contentList.lastIndex) {
                 nowSpeak++
@@ -246,7 +249,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             } else {
                 nextChapter()
             }
-        }, 50)
+        }
         return true
     }
 
