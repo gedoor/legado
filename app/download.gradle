@@ -4,7 +4,7 @@ apply plugin: 'de.undercouch.download'
 
 def BASE_PATH = "https://storage.googleapis.com/chromium-cronet/android/" + CronetVersion + "/Release/cronet/"
 def assetsDir = projectDir.toString() + "/src/main/assets"
-def libPath = projectDir.toString() + "/libs"
+def libPath = projectDir.toString() + "/cronetlib"
 def soPath = projectDir.toString() + "/so"
 
 /**
