@@ -5,9 +5,9 @@ import android.text.TextUtils
 import io.legado.app.api.ReturnData
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.BookSourceAnalyzer
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
-import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.msg
 
 object SourceController {
@@ -23,8 +23,9 @@ object SourceController {
 
     fun saveSource(postData: String?): ReturnData {
         val returnData = ReturnData()
+        postData ?: return returnData.setErrorMsg("数据不能为空")
         kotlin.runCatching {
-            val bookSource = GSON.fromJsonObject<BookSource>(postData)
+            val bookSource = BookSourceAnalyzer.jsonToBookSource(postData)
             if (bookSource != null) {
                 if (TextUtils.isEmpty(bookSource.bookSourceName) || TextUtils.isEmpty(bookSource.bookSourceUrl)) {
                     returnData.setErrorMsg("书源名称和URL不能为空")

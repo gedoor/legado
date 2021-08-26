@@ -5,8 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.activity.result.contract.ActivityResultContracts
@@ -53,7 +51,9 @@ import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class ReadBookActivity : ReadBookBaseActivity(),
@@ -109,15 +109,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = binding.readView.isScroll
-    private val mHandler = Handler(Looper.getMainLooper())
-    private val keepScreenRunnable = Runnable { keepScreenOn(false) }
-    private val autoPageRunnable = Runnable { autoPagePlus() }
-    private val backupRunnable = Runnable {
-        if (!BuildConfig.DEBUG) {
-            ReadBook.uploadProgress()
-            Backup.autoBack(this)
-        }
-    }
+    private var keepScreenJon: Job? = null
+    private var autoPageJob: Job? = null
+    private var backupJob: Job? = null
     override var autoPageProgress = 0
     override var isAutoPage = false
     private var screenTimeOut: Long = 0
@@ -169,7 +163,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun onPause() {
         super.onPause()
         autoPageStop()
-        mHandler.removeCallbacks(backupRunnable)
+        backupJob?.cancel()
         ReadBook.saveRead()
         timeBatteryReceiver?.let {
             unregisterReceiver(it)
@@ -629,7 +623,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         launch {
             autoPageProgress = 0
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
-            mHandler.postDelayed(backupRunnable, 600000)
+            startBackupJob()
         }
     }
 
@@ -692,38 +686,43 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun autoPageStop() {
         if (isAutoPage) {
             isAutoPage = false
-            mHandler.removeCallbacks(autoPageRunnable)
+            autoPageJob?.cancel()
+            binding.readView.invalidate()
             binding.readMenu.setAutoPage(false)
             upScreenTimeOut()
         }
     }
 
     private fun autoPagePlus() {
-        var delayMillis = ReadBookConfig.autoReadSpeed * 1000L / binding.readView.height
-        var scrollOffset = 1
-        if (delayMillis < 20) {
-            var delayInt = delayMillis.toInt()
-            if (delayInt == 0) delayInt = 1
-            scrollOffset = 20 / delayInt
-            delayMillis = 20
-        }
-        mHandler.removeCallbacks(autoPageRunnable)
-        if (!menuLayoutIsVisible) {
-            if (binding.readView.isScroll) {
-                binding.readView.curPage.scroll(-scrollOffset)
-            } else {
-                autoPageProgress += scrollOffset
-                if (autoPageProgress >= binding.readView.height) {
-                    autoPageProgress = 0
-                    if (!binding.readView.fillPage(PageDirection.NEXT)) {
-                        autoPageStop()
+        autoPageJob?.cancel()
+        autoPageJob = launch {
+            while (isActive) {
+                var delayMillis = ReadBookConfig.autoReadSpeed * 1000L / binding.readView.height
+                var scrollOffset = 1
+                if (delayMillis < 20) {
+                    var delayInt = delayMillis.toInt()
+                    if (delayInt == 0) delayInt = 1
+                    scrollOffset = 20 / delayInt
+                    delayMillis = 20
+                }
+                delay(delayMillis)
+                if (!menuLayoutIsVisible && isActive) {
+                    if (binding.readView.isScroll) {
+                        binding.readView.curPage.scroll(-scrollOffset)
+                    } else {
+                        autoPageProgress += scrollOffset
+                        if (autoPageProgress >= binding.readView.height) {
+                            autoPageProgress = 0
+                            if (!binding.readView.fillPage(PageDirection.NEXT)) {
+                                autoPageStop()
+                            }
+                        } else {
+                            binding.readView.invalidate()
+                        }
                     }
-                } else {
-                    binding.readView.invalidate()
                 }
             }
         }
-        mHandler.postDelayed(autoPageRunnable, delayMillis)
     }
 
     override fun openSourceEditActivity() {
@@ -878,6 +877,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }
     }
 
+    private fun startBackupJob() {
+        backupJob?.cancel()
+        backupJob = launch {
+            delay(120000)
+        }
+    }
+
     override fun finish() {
         ReadBook.book?.let {
             if (!ReadBook.inBookshelf) {
@@ -897,7 +903,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        mHandler.removeCallbacks(keepScreenRunnable)
         textActionMenu.dismiss()
         binding.readView.onDestroy()
         ReadBook.msg = null
@@ -975,17 +980,20 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 重置黑屏时间
      */
     override fun screenOffTimerStart() {
-        if (screenTimeOut < 0) {
-            keepScreenOn(true)
-            return
-        }
-        val t = screenTimeOut - sysScreenOffTime
-        if (t > 0) {
-            mHandler.removeCallbacks(keepScreenRunnable)
-            keepScreenOn(true)
-            mHandler.postDelayed(keepScreenRunnable, screenTimeOut)
-        } else {
-            keepScreenOn(false)
+        keepScreenJon?.cancel()
+        keepScreenJon = launch {
+            if (screenTimeOut < 0) {
+                keepScreenOn(true)
+                return@launch
+            }
+            val t = screenTimeOut - sysScreenOffTime
+            if (t > 0) {
+                keepScreenOn(true)
+                delay(screenTimeOut)
+                keepScreenOn(false)
+            } else {
+                keepScreenOn(false)
+            }
         }
     }
 }

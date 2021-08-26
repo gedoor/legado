@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioManager
-import android.os.Handler
-import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
@@ -29,6 +27,10 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 
 abstract class BaseReadAloudService : BaseService(),
@@ -44,7 +46,6 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
-    internal val handler = Handler(Looper.getMainLooper())
     private lateinit var audioManager: AudioManager
     private var mFocusRequest: AudioFocusRequestCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
@@ -56,7 +57,7 @@ abstract class BaseReadAloudService : BaseService(),
     internal var readAloudNumber: Int = 0
     internal var textChapter: TextChapter? = null
     internal var pageIndex = 0
-    private val dsRunnable: Runnable = Runnable { doDs() }
+    private var dsJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -69,7 +70,7 @@ abstract class BaseReadAloudService : BaseService(),
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        startDs()
+        doDs()
     }
 
     override fun onDestroy() {
@@ -149,7 +150,7 @@ abstract class BaseReadAloudService : BaseService(),
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
         ReadBook.uploadProgress()
-        startDs()
+        doDs()
     }
 
     @CallSuper
@@ -184,7 +185,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     private fun setTimer(minute: Int) {
         timeMinute = minute
-        startDs()
+        doDs()
     }
 
     private fun addTimer() {
@@ -194,32 +195,34 @@ abstract class BaseReadAloudService : BaseService(),
             timeMinute += 10
             if (timeMinute > 180) timeMinute = 180
         }
-        startDs()
-    }
-
-    private fun startDs() {
-        postEvent(EventBus.TTS_DS, timeMinute)
-        upNotification()
-        handler.removeCallbacks(dsRunnable)
-        handler.postDelayed(dsRunnable, 60000)
+        doDs()
     }
 
     /**
      * 定时
      */
+    @Synchronized
     private fun doDs() {
-        handler.removeCallbacks(dsRunnable)
-        if (!pause) {
-            if (timeMinute >= 0) {
-                timeMinute--
-            }
-            if (timeMinute == 0) {
-                ReadAloud.stop(this)
-            }
-        }
         postEvent(EventBus.TTS_DS, timeMinute)
         upNotification()
-        handler.postDelayed(dsRunnable, 60000)
+        dsJob?.cancel()
+        dsJob = launch {
+            while (isActive) {
+                delay(60000)
+                if (isActive) {
+                    if (!pause) {
+                        if (timeMinute >= 0) {
+                            timeMinute--
+                        }
+                        if (timeMinute == 0) {
+                            ReadAloud.stop(this@BaseReadAloudService)
+                        }
+                    }
+                    postEvent(EventBus.TTS_DS, timeMinute)
+                    upNotification()
+                }
+            }
+        }
     }
 
     /**
