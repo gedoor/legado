@@ -17,9 +17,21 @@ import javax.script.SimpleBindings
 @Suppress("unused")
 interface BaseSource : JsExtensions {
 
+    var loginUrl: String?
+    var header: String?
+
     fun getStoreUrl(): String
 
-    var header: String?
+    fun getLoginJs(): String? {
+        val loginJs = loginUrl
+        return when {
+            loginJs == null -> null
+            loginJs.startsWith("@js:") -> loginJs.substring(4)
+            loginJs.startsWith("<js>") ->
+                loginJs.substring(4, loginJs.lastIndexOf("<"))
+            else -> loginJs
+        }
+    }
 
     /**
      * 解析header规则

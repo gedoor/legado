@@ -15,6 +15,7 @@ import io.legado.app.ui.widget.text.EditText
 import io.legado.app.ui.widget.text.TextInputLayout
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class RuleUiLoginDialog : BaseDialogFragment() {
@@ -84,9 +85,14 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                         }
                     }
                     bookSource.putLoginInfo(GSON.toJson(loginData))
-                    bookSource.loginUrl?.let {
-
-                        bookSource.evalJS(it)
+                    bookSource.getLoginJs()?.let {
+                        try {
+                            bookSource.evalJS(it)
+                            toastOnUi(R.string.success)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            toastOnUi(e.localizedMessage ?: "ERROR")
+                        }
                     }
                 }
             }
