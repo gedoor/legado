@@ -2,8 +2,6 @@ package io.legado.app.ui.book.changesource
 
 import android.app.Application
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
@@ -18,9 +16,8 @@ import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.ExecutorCoroutineDispatcher
-import kotlinx.coroutines.asCoroutineDispatcher
 import splitties.init.appCtx
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
@@ -29,7 +26,7 @@ import kotlin.math.min
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
-    val handler = Handler(Looper.getMainLooper())
+    private var upAdapterJob: Job? = null
     val searchStateData = MutableLiveData<Boolean>()
     val searchBooksLiveData = MutableLiveData<List<SearchBook>>()
     var name: String = ""
@@ -39,7 +36,6 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private var bookSourceList = arrayListOf<BookSource>()
     private val searchBooks = CopyOnWriteArraySet<SearchBook>()
     private var postTime = 0L
-    private val sendRunnable = Runnable { upAdapter() }
     private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
 
     @Volatile
@@ -81,13 +77,16 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     @Synchronized
     private fun upAdapter() {
         if (System.currentTimeMillis() >= postTime + 500) {
-            handler.removeCallbacks(sendRunnable)
+            upAdapterJob?.cancel()
             postTime = System.currentTimeMillis()
             val books = searchBooks.toList()
             searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
         } else {
-            handler.removeCallbacks(sendRunnable)
-            handler.postDelayed(sendRunnable, 500)
+            upAdapterJob?.cancel()
+            upAdapterJob = viewModelScope.launch {
+                delay(500)
+                upAdapter()
+            }
         }
     }
 

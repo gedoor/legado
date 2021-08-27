@@ -2,8 +2,6 @@ package io.legado.app.ui.book.changecover
 
 import android.app.Application
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
@@ -14,8 +12,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.webBook.WebBook
-import kotlinx.coroutines.ExecutorCoroutineDispatcher
-import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.*
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -23,7 +20,7 @@ import kotlin.math.min
 class ChangeCoverViewModel(application: Application) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
-    val handler = Handler(Looper.getMainLooper())
+    private var upAdapterJob: Job? = null
     var name: String = ""
     var author: String = ""
     private var tasks = CompositeCoroutine()
@@ -31,7 +28,6 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     val searchStateData = MutableLiveData<Boolean>()
     val searchBooksLiveData = MutableLiveData<List<SearchBook>>()
     private val searchBooks = CopyOnWriteArraySet<SearchBook>()
-    private val sendRunnable = Runnable { upAdapter() }
     private var postTime = 0L
 
     @Volatile
@@ -68,13 +64,16 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     @Synchronized
     private fun upAdapter() {
         if (System.currentTimeMillis() >= postTime + 500) {
-            handler.removeCallbacks(sendRunnable)
+            upAdapterJob?.cancel()
             postTime = System.currentTimeMillis()
             val books = searchBooks.toList()
             searchBooksLiveData.postValue(books.sortedBy { it.originOrder })
         } else {
-            handler.removeCallbacks(sendRunnable)
-            handler.postDelayed(sendRunnable, 500)
+            upAdapterJob?.cancel()
+            upAdapterJob = viewModelScope.launch {
+                delay(500)
+                upAdapter()
+            }
         }
     }
 
