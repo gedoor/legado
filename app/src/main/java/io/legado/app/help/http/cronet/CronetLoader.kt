@@ -6,11 +6,12 @@ import android.content.pm.ApplicationInfo
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
+import com.google.android.gms.net.CronetProviderInstaller
+import io.legado.app.BuildConfig
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.utils.getPrefString
-import io.legado.app.utils.putPrefString
 import org.chromium.net.CronetEngine
+import org.json.JSONObject
 import splitties.init.appCtx
 import java.io.*
 import java.math.BigInteger
@@ -19,28 +20,25 @@ import java.net.URL
 import java.security.MessageDigest
 import java.util.*
 
+
 object CronetLoader : CronetEngine.Builder.LibraryLoader() {
-    //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.127/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.127.so
-    //https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@92.0.4515.127/cronet/92.0.4515.127/arm64-v8a/libcronet.92.0.4515.127.so.js
+    //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.127/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so
+    //https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@92.0.4515.127/cronet/92.0.4515.127/arm64-v8a/libcronet.92.0.4515.159.so.js
     private const val TAG = "CronetLoader"
-    private const val soVersion = "92.0.4515.159"
+    private const val soVersion = BuildConfig.Cronet_Version
     private const val soName = "libcronet.$soVersion.so"
     private val soUrl: String
-    private val md5Url: String
     private val soFile: File
     private val downloadFile: File
     private var cpuAbi: String? = null
-    private var md5: String? = appCtx.getPrefString("soMd5")
-    private val version: String? = appCtx.getPrefString("soVersion", soVersion)
+    private var md5: String
     var download = false
 
     init {
         soUrl = ("https://storage.googleapis.com/chromium-cronet/android/"
                 + soVersion + "/Release/cronet/libs/"
                 + getCpuAbi(appCtx) + "/" + soName)
-        md5Url = ("https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@" +
-                soVersion + "/cronet/" + soVersion + "/"
-                + getCpuAbi(appCtx) + "/" + soName + ".js")
+        md5 = getMd5(appCtx)
         val dir = appCtx.getDir("cronet", Context.MODE_PRIVATE)
         soFile = File(dir.toString() + "/" + getCpuAbi(appCtx), soName)
         downloadFile = File(appCtx.cacheDir.toString() + "/so_download", soName)
@@ -54,19 +52,47 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
         if (AppConfig.isGooglePlay) {
             return true
         }
+        if (md5.length != 32 || !soFile.exists() || md5 != getFileMD5(soFile)) {
+            return false
+        }
         return soFile.exists()
     }
 
+
     fun preDownload() {
-        if (AppConfig.isGooglePlay) return
+        if (AppConfig.isGooglePlay) {
+            CronetProviderInstaller.installProvider(appCtx)
+            return
+        }
         Coroutine.async {
-            md5 = getUrlMd5(md5Url)
+            //md5 = getUrlMd5(md5Url)
             if (soFile.exists() && md5 == getFileMD5(soFile)) {
                 Log.e(TAG, "So 库已存在")
             } else {
                 download(soUrl, md5, downloadFile, soFile)
             }
             Log.e(TAG, soName)
+        }
+    }
+
+    private fun getMd5(context: Context): String {
+        val stringBuilder = StringBuilder()
+        return try {
+            //获取assets资源管理器
+            val assetManager = context.assets
+            //通过管理器打开文件并读取
+            val bf = BufferedReader(
+                InputStreamReader(
+                    assetManager.open("cronet.json")
+                )
+            )
+            var line: String?
+            while (bf.readLine().also { line = it } != null) {
+                stringBuilder.append(line)
+            }
+            JSONObject(stringBuilder.toString()).optString(getCpuAbi(context), "")
+        } catch (e: java.lang.Exception) {
+            return ""
         }
     }
 
@@ -89,9 +115,9 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             //如果找不到，则从远程下载
             //删除历史文件
             deleteHistoryFile(Objects.requireNonNull(soFile.parentFile), soFile)
-            md5 = getUrlMd5(md5Url)
+            //md5 = getUrlMd5(md5Url)
             Log.i(TAG, "soMD5:$md5")
-            if (md5 == null || md5!!.length != 32 || soUrl.isEmpty()) {
+            if (md5.length != 32 || soUrl.isEmpty()) {
                 //如果md5或下载的url为空，则调用系统行为进行加载
                 System.loadLibrary(libName)
                 return
@@ -144,39 +170,6 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
         return cpuAbi
     }
 
-    @Suppress("SameParameterValue")
-    private fun getUrlMd5(url: String): String? {
-        //这样在下载成功后，遇到无网条件下，只要版本未发生变化也能获取md5
-        if (md5 != null && md5!!.length == 32 && version == soVersion) {
-            appCtx.putPrefString("soMd5", md5)
-            appCtx.putPrefString("soVersion", soVersion)
-            return md5
-        }
-        val inputStream: InputStream
-        val outputStream: OutputStream
-        return try {
-            outputStream = ByteArrayOutputStream()
-            val connection = URL(url).openConnection() as HttpURLConnection
-            inputStream = connection.inputStream
-            val buffer = ByteArray(1024)
-            var read: Int
-            while (inputStream.read(buffer).also { read = it } != -1) {
-                outputStream.write(buffer, 0, read)
-                outputStream.flush()
-            }
-            val tmd5 = outputStream.toString()
-            //成功获取到md5后保存md5和版本
-            if (tmd5.length == 32) {
-                appCtx.putPrefString("soMd5", tmd5)
-                appCtx.putPrefString("soVersion", soVersion)
-            }
-
-            return tmd5
-
-        } catch (e: IOException) {
-            null
-        }
-    }
 
     /**
      * 删除历史文件

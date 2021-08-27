@@ -1,6 +1,7 @@
 package io.legado.app.help.http.cronet
 
 import android.util.Log
+import com.google.android.gms.net.CronetProviderInstaller
 import io.legado.app.help.AppConfig
 import okhttp3.Headers
 import okhttp3.MediaType
@@ -18,22 +19,24 @@ import java.util.concurrent.Executors
 val executor: Executor by lazy { Executors.newCachedThreadPool() }
 
 val cronetEngine: ExperimentalCronetEngine by lazy {
-    CronetLoader.preDownload()
+    if (AppConfig.isGooglePlay) {
+        CronetProviderInstaller.installProvider(appCtx)
+    } else {
+        CronetLoader.preDownload()
+    }
+
 
     val builder = ExperimentalCronetEngine.Builder(appCtx).apply {
-        if (!AppConfig.isGooglePlay) {
+        if (!AppConfig.isGooglePlay&&CronetLoader.install()) {
             setLibraryLoader(CronetLoader)//设置自定义so库加载
         }
         setStoragePath(appCtx.externalCacheDir?.absolutePath)//设置缓存路径
-        enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50))//设置缓存模式
+        enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50).toLong())//设置缓存模式
         enableQuic(true)//设置支持http/3
         enableHttp2(true)  //设置支持http/2
         enablePublicKeyPinningBypassForLocalTrustAnchors(true)
-        //enableNetworkQualityEstimator(true)
 
-        //Brotli压缩
-        enableBrotli(true)
-        //setExperimentalOptions("{\"quic_version\": \"h3-29\"}")
+        enableBrotli(true)//Brotli压缩
     }
     val engine = builder.build()
     Log.d("Cronet", "Cronet Version:" + engine.versionString)

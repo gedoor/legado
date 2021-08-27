@@ -15,6 +15,7 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
         } else try {
             //移除Keep-Alive,手动设置会导致400 BadRequest
             builder.removeHeader("Keep-Alive")
+            builder.removeHeader("Accept-Encoding")
             val cookieStr = getCookie(original.url)
             //设置Cookie
             if (cookieStr.length > 3) {
@@ -44,7 +45,7 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
         val callback = CronetUrlRequestCallback(request, call)
         val urlRequest = buildRequest(request, callback)
         urlRequest.start()
-       return callback.waitForDone(urlRequest)
+        return callback.waitForDone(urlRequest)
     }
 
     private fun getCookie(url: HttpUrl): String {
