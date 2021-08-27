@@ -19,6 +19,7 @@ import io.legado.app.utils.msg
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import splitties.systemservices.downloadManager
 import java.io.File
@@ -77,8 +78,10 @@ class DownloadService : BaseService() {
     private fun checkDownloadState() {
         upStateJob?.cancel()
         upStateJob = launch {
-            queryState()
-            delay(1000)
+            while (isActive) {
+                queryState()
+                delay(1000)
+            }
         }
     }
 
