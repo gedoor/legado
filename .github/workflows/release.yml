@@ -22,6 +22,8 @@ jobs:
       UPLOAD_ARTIFACT: 'true'
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/cache@v2
         with:
           path: |

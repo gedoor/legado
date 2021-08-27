@@ -13,6 +13,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:7.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'de.timfreiheit.resourceplaceholders:placeholders:0.4'
+        classpath 'de.undercouch:gradle-download-task:4.1.2'
     }
 }
 
