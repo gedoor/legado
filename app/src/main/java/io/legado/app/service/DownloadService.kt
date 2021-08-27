@@ -7,8 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import io.legado.app.R
@@ -19,6 +17,9 @@ import io.legado.app.help.IntentHelp
 import io.legado.app.utils.RealPathUtil
 import io.legado.app.utils.msg
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import splitties.systemservices.downloadManager
 import java.io.File
 
@@ -27,11 +28,7 @@ class DownloadService : BaseService() {
 
     private val downloads = hashMapOf<Long, String>()
     private val completeDownloads = hashSetOf<Long>()
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable = Runnable {
-        checkDownloadState()
-    }
-
+    private var upStateJob: Job? = null
     private val downloadReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             queryState()
@@ -78,9 +75,11 @@ class DownloadService : BaseService() {
     }
 
     private fun checkDownloadState() {
-        handler.removeCallbacks(runnable)
-        queryState()
-        handler.postDelayed(runnable, 1000)
+        upStateJob?.cancel()
+        upStateJob = launch {
+            queryState()
+            delay(1000)
+        }
     }
 
     //查询下载进度

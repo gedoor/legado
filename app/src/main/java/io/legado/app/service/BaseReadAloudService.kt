@@ -31,7 +31,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import splitties.init.appCtx
 
 abstract class BaseReadAloudService : BaseService(),
     AudioManager.OnAudioFocusChangeListener {
@@ -209,18 +208,16 @@ abstract class BaseReadAloudService : BaseService(),
         dsJob = launch {
             while (isActive) {
                 delay(60000)
-                if (isActive) {
-                    if (!pause) {
-                        if (timeMinute >= 0) {
-                            timeMinute--
-                        }
-                        if (timeMinute == 0) {
-                            ReadAloud.stop(this@BaseReadAloudService)
-                        }
+                if (!pause) {
+                    if (timeMinute >= 0) {
+                        timeMinute--
                     }
-                    postEvent(EventBus.TTS_DS, timeMinute)
-                    upNotification()
+                    if (timeMinute == 0) {
+                        ReadAloud.stop(this@BaseReadAloudService)
+                    }
                 }
+                postEvent(EventBus.TTS_DS, timeMinute)
+                upNotification()
             }
         }
     }
@@ -259,16 +256,9 @@ abstract class BaseReadAloudService : BaseService(),
             }
         })
         mediaSessionCompat.setMediaButtonReceiver(
-            PendingIntent.getBroadcast(
+            IntentHelp.broadcastPendingIntent<MediaButtonReceiver>(
                 this,
-                0,
-                Intent(
-                    Intent.ACTION_MEDIA_BUTTON,
-                    null,
-                    appCtx,
-                    MediaButtonReceiver::class.java
-                ),
-                PendingIntent.FLAG_CANCEL_CURRENT
+                Intent.ACTION_MEDIA_BUTTON
             )
         )
         mediaSessionCompat.isActive = true

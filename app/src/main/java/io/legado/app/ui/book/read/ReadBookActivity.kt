@@ -707,7 +707,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     delayMillis = 20
                 }
                 delay(delayMillis)
-                if (!menuLayoutIsVisible && isActive) {
+                if (!menuLayoutIsVisible) {
                     if (binding.readView.isScroll) {
                         binding.readView.curPage.scroll(-scrollOffset)
                     } else {
@@ -882,11 +882,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
         backupJob?.cancel()
         backupJob = launch {
             delay(120000)
-            if (isActive) {
-                ReadBook.book?.let {
-                    AppWebDav.uploadBookProgress(it)
-                    Backup.autoBack(this@ReadBookActivity)
-                }
+            ReadBook.book?.let {
+                AppWebDav.uploadBookProgress(it)
+                Backup.autoBack(this@ReadBookActivity)
             }
         }
     }
@@ -997,9 +995,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             if (t > 0) {
                 keepScreenOn(true)
                 delay(screenTimeOut)
-                if (isActive) {
-                    keepScreenOn(false)
-                }
+                keepScreenOn(false)
             } else {
                 keepScreenOn(false)
             }

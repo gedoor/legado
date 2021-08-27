@@ -54,4 +54,15 @@ object IntentHelp {
         configIntent.invoke(intent)
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
+
+    inline fun <reified T> broadcastPendingIntent(
+        context: Context,
+        action: String,
+        configIntent: Intent.() -> Unit = {}
+    ): PendingIntent? {
+        val intent = Intent(context, T::class.java)
+        intent.action = action
+        configIntent.invoke(intent)
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+    }
 }

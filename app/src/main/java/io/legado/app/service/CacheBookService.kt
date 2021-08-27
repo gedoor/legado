@@ -1,8 +1,6 @@
 package io.legado.app.service
 
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import androidx.core.app.NotificationCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -22,7 +20,9 @@ import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
@@ -34,8 +34,6 @@ class CacheBookService : BaseService() {
     private var cachePool =
         Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
-    private val handler = Handler(Looper.getMainLooper())
-    private var runnable: Runnable = Runnable { upDownload() }
     private val bookMap = ConcurrentHashMap<String, Book>()
     private val webBookMap = ConcurrentHashMap<String, WebBook>()
     private val downloadMap = ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>()
@@ -63,7 +61,13 @@ class CacheBookService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         upNotification()
-        handler.postDelayed(runnable, 1000)
+        launch {
+            while (isActive) {
+                delay(1000)
+                upNotification()
+                postEvent(EventBus.UP_DOWNLOAD, downloadMap)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -84,7 +88,6 @@ class CacheBookService : BaseService() {
     override fun onDestroy() {
         tasks.clear()
         cachePool.close()
-        handler.removeCallbacks(runnable)
         downloadMap.clear()
         finalMap.clear()
         super.onDestroy()
@@ -250,13 +253,6 @@ class CacheBookService : BaseService() {
     private fun stopDownload() {
         tasks.clear()
         stopSelf()
-    }
-
-    private fun upDownload() {
-        upNotification()
-        postEvent(EventBus.UP_DOWNLOAD, downloadMap)
-        handler.removeCallbacks(runnable)
-        handler.postDelayed(runnable, 1000)
     }
 
     private fun upNotification(
