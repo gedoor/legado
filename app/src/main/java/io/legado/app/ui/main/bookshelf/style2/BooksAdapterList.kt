@@ -51,7 +51,11 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
         }
     }
 
-    private fun onBindGroup(binding: ItemBookshelfListGroupBinding, position: Int, bundle: Bundle) {
+    private fun onBindGroup(
+        binding: ItemBookshelfListGroupBinding,
+        position: Int,
+        @Suppress("UNUSED_PARAMETER") bundle: Bundle
+    ) {
         binding.run {
             val item = callBack.getItem(position) as BookGroup
             tvName.text = item.groupName

@@ -129,7 +129,7 @@ class UmdFile(var book: Book) {
         return chapterList
     }
 
-    private fun getImage(href: String): InputStream? {
+    private fun getImage(@Suppress("UNUSED_PARAMETER") href: String): InputStream? {
         return null
     }
 
