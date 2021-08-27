@@ -23,10 +23,8 @@ class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         CrashHandler(this)
-        if (AppConfig.isCronet && !AppConfig.isGooglePlay) {
-            //预下载Cronet so
-            CronetLoader.preDownload()
-        }
+        //预下载Cronet so
+        CronetLoader.preDownload()
         LanguageUtils.setConfiguration(this)
         createNotificationChannels()
         applyDayNight(this)
