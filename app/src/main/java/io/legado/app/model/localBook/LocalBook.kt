@@ -70,23 +70,24 @@ object LocalBook {
             path = uri.path!!
             File(path).name
         })
-
-        val nameAuthor = analyzeNameAuthor(fileName)
-
-        val book = Book(
-            bookUrl = path,
-            name = nameAuthor.first,
-            author = nameAuthor.second,
-            originName = fileName,
-            coverUrl = FileUtils.getPath(
-                appCtx.externalFiles,
-                "covers",
-                "${MD5Utils.md5Encode16(path)}.jpg"
+        var book = appDb.bookDao.getBook(path)
+        if (book == null) {
+            val nameAuthor = analyzeNameAuthor(fileName)
+            book = Book(
+                bookUrl = path,
+                name = nameAuthor.first,
+                author = nameAuthor.second,
+                originName = fileName,
+                coverUrl = FileUtils.getPath(
+                    appCtx.externalFiles,
+                    "covers",
+                    "${MD5Utils.md5Encode16(path)}.jpg"
+                )
             )
-        )
-        if (book.isEpub()) EpubFile.upBookInfo(book)
-        if (book.isUmd()) UmdFile.upBookInfo(book)
-        appDb.bookDao.insert(book)
+            if (book.isEpub()) EpubFile.upBookInfo(book)
+            if (book.isUmd()) UmdFile.upBookInfo(book)
+            appDb.bookDao.insert(book)
+        }
         return book
     }
 

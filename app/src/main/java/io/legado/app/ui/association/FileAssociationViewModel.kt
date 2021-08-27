@@ -1,13 +1,11 @@
 package io.legado.app.ui.association
 
 import android.app.Application
-import android.content.Intent
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.isJson
 import io.legado.app.utils.readText
 import java.io.File
@@ -17,7 +15,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
     val importBookSourceLive = MutableLiveData<String>()
     val importRssSourceLive = MutableLiveData<String>()
     val importReplaceRuleLive = MutableLiveData<String>()
-    val successLiveData = MutableLiveData<Intent>()
+    val openBookLiveData = MutableLiveData<String>()
     val errorLiveData = MutableLiveData<String>()
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -48,14 +46,8 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                             }
                         }
                     }
-                    val book = if (uri.scheme == "content") {
-                        LocalBook.importFile(uri)
-                    } else {
-                        LocalBook.importFile(uri)
-                    }
-                    val intent = Intent(context, ReadBookActivity::class.java)
-                    intent.putExtra("bookUrl", book.bookUrl)
-                    successLiveData.postValue(intent)
+                    val book = LocalBook.importFile(uri)
+                    openBookLiveData.postValue(book.bookUrl)
                 } ?: throw Exception("文件不存在")
             } else {
                 onLineImportLive.postValue(uri)
