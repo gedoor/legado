@@ -140,6 +140,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     bottom.toFloat(),
                     autoPagePint
                 )
+                it.recycle()
             }
         }
     }
