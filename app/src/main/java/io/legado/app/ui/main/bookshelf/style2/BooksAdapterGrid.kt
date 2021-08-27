@@ -52,7 +52,12 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
         }
     }
 
-    private fun onBindGroup(binding: ItemBookshelfGridGroupBinding, position: Int, bundle: Bundle) {
+
+    private fun onBindGroup(
+        binding: ItemBookshelfGridGroupBinding,
+        position: Int,
+        @Suppress("UNUSED_PARAMETER") bundle: Bundle
+    ) {
         binding.run {
             val item = callBack.getItem(position) as BookGroup
             tvName.text = item.groupName
