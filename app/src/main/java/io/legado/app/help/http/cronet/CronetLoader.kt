@@ -50,7 +50,8 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
 
     fun install(): Boolean {
         if (AppConfig.isGooglePlay) {
-            return true
+            //检查GMS的Cronet服务是否安装
+            return CronetProviderInstaller.isInstalled()
         }
         if (md5.length != 32 || !soFile.exists() || md5 != getFileMD5(soFile)) {
             return false
