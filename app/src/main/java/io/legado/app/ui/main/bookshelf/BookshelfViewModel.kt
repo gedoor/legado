@@ -10,7 +10,6 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
-import io.legado.app.model.webBook.PreciseSearch
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -114,8 +113,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 val name = it["name"] ?: ""
                 val author = it["author"] ?: ""
                 if (name.isNotEmpty() && appDb.bookDao.getBook(name, author) == null) {
-                    val book = PreciseSearch
-                        .searchFirstBook(this, bookSources, name, author)
+                    val book = WebBook.preciseSearch(this, bookSources, name, author)
                     book?.let {
                         if (groupId > 0) {
                             book.group = groupId

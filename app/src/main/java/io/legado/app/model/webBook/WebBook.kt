@@ -10,10 +10,37 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("MemberVisibilityCanBePrivate")
 object WebBook {
+    /**
+     * 精准搜索
+     */
+    suspend fun preciseSearch(
+        scope: CoroutineScope,
+        bookSources: List<BookSource>,
+        name: String,
+        author: String
+    ): Book? {
+        bookSources.forEach { bookSource ->
+            kotlin.runCatching {
+                if (!scope.isActive) return null
+                searchBookAwait(scope, bookSource, name).firstOrNull {
+                    it.name == name && it.author == author
+                }?.let {
+                    return if (it.tocUrl.isBlank()) {
+                        if (!scope.isActive) return null
+                        getBookInfoAwait(scope, bookSource, it.toBook())
+                    } else {
+                        it.toBook()
+                    }
+                }
+            }
+        }
+        return null
+    }
 
     /**
      * 搜索

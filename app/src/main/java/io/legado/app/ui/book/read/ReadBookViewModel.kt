@@ -16,7 +16,6 @@ import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.model.webBook.PreciseSearch
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
@@ -221,7 +220,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (!AppConfig.autoChangeSource) return
         execute {
             val sources = appDb.bookSourceDao.allTextEnabled
-            val book = PreciseSearch.searchFirstBook(this, sources, name, author)
+            val book = WebBook.preciseSearch(this, sources, name, author)
             if (book != null) {
                 book.upInfoFromOld(ReadBook.book)
                 changeTo(book)
