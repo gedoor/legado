@@ -13,6 +13,7 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.read.ReadBookBaseActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -99,7 +100,9 @@ class AutoReadDialog : BaseDialogFragment() {
             dismissAllowingStateLoss()
         }
         binding.llSetting.setOnClickListener {
-            ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
+            (activity as ReadBookBaseActivity).showPageAnimConfig {
+                (activity as ReadBookActivity).upPageAnim()
+            }
         }
         binding.llCatalog.setOnClickListener { callBack?.openChapterList() }
         binding.llAutoPageStop.setOnClickListener {
