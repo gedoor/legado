@@ -54,4 +54,20 @@ interface BookGroupDao {
 
     @Delete
     fun delete(vararg bookGroup: BookGroup)
+
+    fun isInRules(id: Long): Boolean {
+        if (id < 0) {
+            return true
+        }
+        return id and (id - 1) == 0L
+    }
+
+    fun getUnusedId(): Long {
+        var id = 1L
+        val idsSum = idsSum
+        while (id and idsSum != 0L) {
+            id = id.shl(1)
+        }
+        return id
+    }
 }

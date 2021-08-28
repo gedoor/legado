@@ -79,7 +79,6 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     private fun initBookGroupData() {
         launch {
             appDb.bookGroupDao.flowShow().collect {
-                viewModel.checkGroup(it)
                 upGroup(it)
             }
         }

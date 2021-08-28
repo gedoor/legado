@@ -17,13 +17,8 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
 
     fun addGroup(groupName: String, cover: String?, finally: () -> Unit) {
         execute {
-            var id = 1L
-            val idsSum = appDb.bookGroupDao.idsSum
-            while (id and idsSum != 0L) {
-                id = id.shl(1)
-            }
             val bookGroup = BookGroup(
-                groupId = id,
+                groupId = appDb.bookGroupDao.getUnusedId(),
                 groupName = groupName,
                 cover = cover,
                 order = appDb.bookGroupDao.maxOrder.plus(1)
