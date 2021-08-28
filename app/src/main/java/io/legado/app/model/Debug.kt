@@ -102,7 +102,7 @@ object Debug {
         val sort = rssSource.sortUrls().first()
         Rss.getArticles(scope, sort.first, sort.second, rssSource, 1)
             .onSuccess {
-                if (it.articles.isEmpty()) {
+                if (it.first.isEmpty()) {
                     log(debugSource, "⇒列表页解析成功，为空")
                     log(debugSource, "︽解析完成", state = 1000)
                 } else {
@@ -113,7 +113,7 @@ object Debug {
                         if (ruleContent.isNullOrEmpty()) {
                             log(debugSource, "⇒内容规则为空，默认获取整个网页", state = 1000)
                         } else {
-                            rssContentDebug(scope, it.articles[0], ruleContent, rssSource)
+                            rssContentDebug(scope, it.first[0], ruleContent, rssSource)
                         }
                     } else {
                         log(debugSource, "⇒存在描述规则，不解析内容页")

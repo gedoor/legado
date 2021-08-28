@@ -34,8 +34,8 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         page = 1
         Rss.getArticles(viewModelScope, sortName, sortUrl, rssSource, page)
             .onSuccess(Dispatchers.IO) {
-                nextPageUrl = it.nextPageUrl
-                it.articles.let { list ->
+                nextPageUrl = it.second
+                it.first.let { list ->
                     list.forEach { rssArticle ->
                         rssArticle.order = order--
                     }
@@ -64,8 +64,8 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         if (!pageUrl.isNullOrEmpty()) {
             Rss.getArticles(viewModelScope, sortName, pageUrl, rssSource, page)
                 .onSuccess(Dispatchers.IO) {
-                    nextPageUrl = it.nextPageUrl
-                    loadMoreSuccess(it.articles)
+                    nextPageUrl = it.second
+                    loadMoreSuccess(it.first)
                 }
                 .onError {
                     it.printStackTrace()

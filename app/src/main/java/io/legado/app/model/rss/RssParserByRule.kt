@@ -22,7 +22,7 @@ object RssParserByRule {
         body: String?,
         rssSource: RssSource,
         ruleData: RuleDataInterface
-    ): RssResult {
+    ): Pair<MutableList<RssArticle>, String?> {
         val sourceUrl = rssSource.sourceUrl
         var nextUrl: String? = null
         if (body.isNullOrBlank()) {
@@ -79,7 +79,7 @@ object RssParserByRule {
             if (reverse) {
                 articleList.reverse()
             }
-            return RssResult(articleList, nextUrl)
+            return Pair(articleList, nextUrl)
         }
     }
 
