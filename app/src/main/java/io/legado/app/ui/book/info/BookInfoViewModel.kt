@@ -201,6 +201,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let { book ->
                 val minOrder = appDb.bookDao.minOrder
                 book.order = minOrder - 1
+                book.durChapterTime = System.currentTimeMillis()
                 appDb.bookDao.update(book)
             }
         }
