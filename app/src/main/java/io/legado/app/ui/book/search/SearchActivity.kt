@@ -334,13 +334,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 显示书籍详情
      */
     override fun showBookInfo(name: String, author: String) {
-        viewModel.getSearchBook(name, author) { searchBook ->
-            searchBook?.let {
-                startActivity<BookInfoActivity> {
-                    putExtra("name", it.name)
-                    putExtra("author", it.author)
-                }
-            }
+        startActivity<BookInfoActivity> {
+            putExtra("name", name)
+            putExtra("author", author)
         }
     }
 
@@ -348,10 +344,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 显示书籍详情
      */
     override fun showBookInfo(book: Book) {
-        startActivity<BookInfoActivity> {
-            putExtra("name", book.name)
-            putExtra("author", book.author)
-        }
+        showBookInfo(book.name, book.author)
     }
 
     /**
