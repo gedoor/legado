@@ -277,7 +277,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
                     restoreFromLocal()
                 }
                 cancelButton()
-            }
+            }.show()
         }
     }
 

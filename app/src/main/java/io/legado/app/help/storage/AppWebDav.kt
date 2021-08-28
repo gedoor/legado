@@ -63,6 +63,8 @@ object AppWebDav {
                     names.add(name)
                 }
             }
+        } else {
+            error("webDav没有配置")
         }
         return names
     }
