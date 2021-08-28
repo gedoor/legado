@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,5 +34,169 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_bar"
         app:loading_width="2dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="@color/background"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondaryText"
+                android:text="调试搜索>>输入关键字，如："
+                tools:ignore="HardcodedText" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_my"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/selector_fillet_btn_bg"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:maxLines="1"
+                    android:textColor="@color/primaryText"
+                    android:textSize="14sp"
+                    android:text="我的"
+                    tools:ignore="HardcodedText,UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/text_xt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/selector_fillet_btn_bg"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:maxLines="1"
+                    android:textColor="@color/primaryText"
+                    android:textSize="14sp"
+                    android:text="系统"
+                    tools:ignore="HardcodedText,UnusedAttribute" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_fx_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondaryText"
+                android:text="调试发现>>输入发现URL，如："
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/text_fx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/selector_fillet_btn_bg"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:maxLines="1"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:text="系统::http://xxx"
+                tools:ignore="HardcodedText,UnusedAttribute" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondaryText"
+                android:text="调试详情页>>输入详情页URL，如："
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/selector_fillet_btn_bg"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:maxLines="1"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:text="https://m.qidian.com/book/1015609210"
+                tools:ignore="HardcodedText,UnusedAttribute" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondaryText"
+                android:text="调试目录页>>输入目录页URL，如："
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/selector_fillet_btn_bg"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:maxLines="1"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:text="++https://www.zhaishuyuan.com/read/30394"
+                tools:ignore="HardcodedText,UnusedAttribute" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondaryText"
+                android:text="调试详情页>>输入详情页URL，如："
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/selector_fillet_btn_bg"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:maxLines="1"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:text="--https://www.zhaishuyuan.com/chapter/30394/20940996"
+                tools:ignore="HardcodedText,UnusedAttribute" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

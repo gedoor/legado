@@ -9,18 +9,20 @@ import io.legado.app.model.Debug
 class BookSourceDebugModel(application: Application) : BaseViewModel(application),
     Debug.Callback {
 
-    private var bookSource: BookSource? = null
+    var bookSource: BookSource? = null
     private var callback: ((Int, String) -> Unit)? = null
     var searchSrc: String? = null
     var bookSrc: String? = null
     var tocSrc: String? = null
     var contentSrc: String? = null
 
-    fun init(sourceUrl: String?) {
+    fun init(sourceUrl: String?, finally: () -> Unit) {
         sourceUrl?.let {
             //优先使用这个，不会抛出异常
             execute {
                 bookSource = appDb.bookSourceDao.getBookSource(sourceUrl)
+            }.onFinally {
+                finally.invoke()
             }
         }
     }

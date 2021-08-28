@@ -69,8 +69,7 @@ class AnalyzeRule(val ruleData: RuleDataInterface, private val source: BaseSourc
 
     fun setRedirectUrl(url: String): URL? {
         kotlin.runCatching {
-            val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
-            redirectUrl = URL(if (urlMatcher.find()) url.substring(0, urlMatcher.start()) else url)
+            redirectUrl = URL(url)
         }
         return redirectUrl
     }
