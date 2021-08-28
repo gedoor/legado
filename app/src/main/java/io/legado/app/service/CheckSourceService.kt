@@ -24,7 +24,8 @@ import kotlin.math.min
 
 class CheckSourceService : BaseService() {
     private var threadCount = AppConfig.threadCount
-    private var searchCoroutine = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
+    private var searchCoroutine =
+        Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val allIds = ArrayList<String>()
     private val checkedIds = ArrayList<String>()
@@ -109,8 +110,7 @@ class CheckSourceService : BaseService() {
     fun check(source: BookSource) {
         execute(context = searchCoroutine) {
             Debug.startChecking(source)
-            val webBook = WebBook(source)
-            var books = webBook.searchBookAwait(this, CheckSource.keyword)
+            var books = WebBook.searchBookAwait(this, source, CheckSource.keyword)
             if (books.isEmpty()) {
                 val exs = source.exploreKinds
                 var url: String? = null
@@ -123,11 +123,12 @@ class CheckSourceService : BaseService() {
                 if (url.isNullOrBlank()) {
                     throw Exception("搜索内容为空并且没有发现")
                 }
-                books = webBook.exploreBookAwait(this, url)
+                books = WebBook.exploreBookAwait(this, source, url)
             }
-            val book = webBook.getBookInfoAwait(this, books.first().toBook())
-            val toc = webBook.getChapterListAwait(this, book)
-            val content = webBook.getContentAwait(this, book, toc.first(), toc.getOrNull(2)?.url)
+            val book = WebBook.getBookInfoAwait(this, source, books.first().toBook())
+            val toc = WebBook.getChapterListAwait(this, source, book)
+            val content =
+                WebBook.getContentAwait(this, source, book, toc.first(), toc.getOrNull(1)?.url)
             if (content.isBlank()) {
                 throw Exception("正文内容为空")
             }

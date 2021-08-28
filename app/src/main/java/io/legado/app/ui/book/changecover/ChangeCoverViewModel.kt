@@ -100,8 +100,8 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             searchNext()
             return
         }
-        val task = WebBook(source)
-            .searchBook(viewModelScope, name, context = searchPool!!)
+        val task = WebBook
+            .searchBook(viewModelScope, source, name, context = searchPool!!)
             .timeout(60000L)
             .onSuccess(searchPool) {
                 if (it.isNotEmpty()) {

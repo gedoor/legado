@@ -10,6 +10,7 @@ import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentHelp
@@ -35,7 +36,7 @@ class CacheBookService : BaseService() {
         Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val bookMap = ConcurrentHashMap<String, Book>()
-    private val webBookMap = ConcurrentHashMap<String, WebBook>()
+    private val bookSourceMap = ConcurrentHashMap<String, BookSource>()
     private val downloadMap = ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>()
     private val downloadCount = ConcurrentHashMap<String, DownloadCount>()
     private val finalMap = ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>()
@@ -110,22 +111,20 @@ class CacheBookService : BaseService() {
         return book
     }
 
-    private fun getWebBook(bookUrl: String, origin: String): WebBook? {
-        var webBook = webBookMap[origin]
-        if (webBook == null) {
+    private fun getBookSource(bookUrl: String, origin: String): BookSource? {
+        var bookSource = bookSourceMap[origin]
+        if (bookSource == null) {
             synchronized(this) {
-                webBook = webBookMap[origin]
-                if (webBook == null) {
-                    appDb.bookSourceDao.getBookSource(origin)?.let {
-                        webBook = WebBook(it)
-                    }
-                    if (webBook == null) {
+                bookSource = bookSourceMap[origin]
+                if (bookSource == null) {
+                    bookSource = appDb.bookSourceDao.getBookSource(origin)
+                    if (bookSource == null) {
                         removeDownload(bookUrl)
                     }
                 }
             }
         }
-        return webBook
+        return bookSource
     }
 
     private fun addDownloadData(bookUrl: String?, start: Int, end: Int) {
@@ -183,13 +182,13 @@ class CacheBookService : BaseService() {
                     postDownloading(true)
                     return@async
                 }
-                val webBook = getWebBook(bookChapter.bookUrl, book.origin)
-                if (webBook == null) {
+                val bookSource = getBookSource(bookChapter.bookUrl, book.origin)
+                if (bookSource == null) {
                     postDownloading(true)
                     return@async
                 }
                 if (!BookHelp.hasImageContent(book, bookChapter)) {
-                    webBook.getContent(this, book, bookChapter, context = cachePool)
+                    WebBook.getContent(this, bookSource, book, bookChapter, context = cachePool)
                         .timeout(60000L)
                         .onError(cachePool) {
                             synchronized(this) {

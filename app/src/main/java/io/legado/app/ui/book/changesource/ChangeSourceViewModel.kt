@@ -128,9 +128,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             searchIndex++
         }
         val source = bookSourceList[searchIndex]
-        val webBook = WebBook(source)
-        val task = webBook
-            .searchBook(viewModelScope, name, context = searchPool!!)
+        val task = WebBook
+            .searchBook(viewModelScope, source, name, context = searchPool!!)
             .timeout(60000L)
             .onSuccess(searchPool) {
                 it.forEach { searchBook ->
@@ -140,7 +139,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                         ) {
                             if (searchBook.latestChapterTitle.isNullOrEmpty()) {
                                 if (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) {
-                                    loadBookInfo(webBook, searchBook.toBook())
+                                    loadBookInfo(source, searchBook.toBook())
                                 } else {
                                     searchFinish(searchBook)
                                 }
@@ -171,11 +170,11 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
     }
 
-    private fun loadBookInfo(webBook: WebBook, book: Book) {
-        webBook.getBookInfo(viewModelScope, book)
+    private fun loadBookInfo(source: BookSource, book: Book) {
+        WebBook.getBookInfo(viewModelScope, source, book)
             .onSuccess {
                 if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
-                    loadBookToc(webBook, book)
+                    loadBookToc(source, book)
                 } else {
                     //从详情页里获取最新章节
                     book.latestChapterTitle = it.latestChapterTitle
@@ -187,8 +186,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             }
     }
 
-    private fun loadBookToc(webBook: WebBook, book: Book) {
-        webBook.getChapterList(viewModelScope, book)
+    private fun loadBookToc(source: BookSource, book: Book) {
+        WebBook.getChapterList(viewModelScope, source, book)
             .onSuccess(IO) { chapters ->
                 if (chapters.isNotEmpty()) {
                     book.latestChapterTitle = chapters.last().title

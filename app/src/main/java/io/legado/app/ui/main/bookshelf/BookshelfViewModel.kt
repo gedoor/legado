@@ -46,7 +46,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                         origin = bookSource.bookSourceUrl,
                         originName = bookSource.bookSourceName
                     )
-                    WebBook(bookSource).getBookInfo(this, book)
+                    WebBook.getBookInfo(this, bookSource, book)
                         .onSuccess(IO) {
                             it.order = appDb.bookDao.maxOrder + 1
                             it.save()

@@ -6,7 +6,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
-import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -16,20 +15,18 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-import java.net.URLDecoder
 
 @Suppress("BlockingMethodInNonBlockingContext")
 object BookChapterList {
 
     suspend fun analyzeChapterList(
         scope: CoroutineScope,
-        strResponse: StrResponse,
         bookSource: BookSource,
         book: Book,
-        redirectUrl: String
+        redirectUrl: String,
+        baseUrl: String,
+        body: String?
     ): List<BookChapter> {
-        val baseUrl = URLDecoder.decode(strResponse.url, "utf-8")
-        val body = strResponse.body
         body ?: throw Exception(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )

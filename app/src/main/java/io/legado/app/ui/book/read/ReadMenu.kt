@@ -284,7 +284,7 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     fun upBookView() {
-        binding.tvLogin.isGone = ReadBook.webBook?.bookSource?.loginUrl.isNullOrEmpty()
+        binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
         ReadBook.curTextChapter?.let {
             binding.tvChapterName.text = it.title
             binding.tvChapterName.visible()

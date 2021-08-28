@@ -727,9 +727,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     override fun openSourceEditActivity() {
-        ReadBook.webBook?.let {
+        ReadBook.bookSource?.let {
             sourceEditActivity.launch(Intent(this, BookSourceEditActivity::class.java).apply {
-                putExtra("data", it.bookSource.bookSourceUrl)
+                putExtra("data", it.bookSourceUrl)
             })
         }
     }
@@ -785,7 +785,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     override fun showLogin() {
-        ReadBook.webBook?.bookSource?.let {
+        ReadBook.bookSource?.let {
             startActivity<SourceLoginActivity> {
                 putExtra("sourceUrl", it.bookSourceUrl)
             }

@@ -6,6 +6,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
@@ -75,15 +76,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 }
                 appDb.bookSourceDao.getBookSource(book.origin)?.let { bookSource ->
                     execute(context = upTocPool) {
-                        val webBook = WebBook(bookSource)
                         if (book.tocUrl.isBlank()) {
-                            webBook.getBookInfoAwait(this, book)
+                            WebBook.getBookInfoAwait(this, bookSource, book)
                         }
-                        val toc = webBook.getChapterListAwait(this, book)
+                        val toc = WebBook.getChapterListAwait(this, bookSource, book)
                         appDb.bookDao.update(book)
                         appDb.bookChapterDao.delByBook(book.bookUrl)
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
-                        cacheBook(webBook, book)
+                        cacheBook(bookSource, book)
                     }.onError(upTocPool) {
                         it.printStackTrace()
                     }.onFinally(upTocPool) {
@@ -108,7 +108,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun cacheBook(webBook: WebBook, book: Book) {
+    private fun cacheBook(bookSource: BookSource, book: Book) {
         execute {
             if (book.totalChapterNum > book.durChapterIndex) {
                 val downloadToIndex =
@@ -119,7 +119,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                             var addToCache = false
                             while (!addToCache) {
                                 if (CacheBook.downloadCount() < 10) {
-                                    CacheBook.download(this, webBook, book, chapter)
+                                    CacheBook.download(this, bookSource, book, chapter)
                                     addToCache = true
                                 } else {
                                     delay(100)

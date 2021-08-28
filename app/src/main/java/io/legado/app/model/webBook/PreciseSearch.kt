@@ -17,15 +17,14 @@ object PreciseSearch {
         author: String
     ): Book? {
         bookSources.forEach { bookSource ->
-            val webBook = WebBook(bookSource)
             kotlin.runCatching {
                 if (!scope.isActive) return null
-                webBook.searchBookAwait(scope, name).firstOrNull {
+                WebBook.searchBookAwait(scope, bookSource, name).firstOrNull {
                     it.name == name && it.author == author
                 }?.let {
                     return if (it.tocUrl.isBlank()) {
                         if (!scope.isActive) return null
-                        webBook.getBookInfoAwait(scope, it.toBook())
+                        WebBook.getBookInfoAwait(scope, bookSource, it.toBook())
                     } else {
                         it.toBook()
                     }

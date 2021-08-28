@@ -81,12 +81,11 @@ object BookController {
             } else {
                 val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
                     ?: return returnData.setErrorMsg("未找到对应书源,请换源")
-                val webBook = WebBook(bookSource)
                 val toc = runBlocking {
                     if (book.tocUrl.isBlank()) {
-                        webBook.getBookInfoAwait(this, book)
+                        WebBook.getBookInfoAwait(this, bookSource, book)
                     }
-                    webBook.getChapterListAwait(this, book)
+                    WebBook.getChapterListAwait(this, bookSource, book)
                 }
                 appDb.bookChapterDao.delByBook(book.bookUrl)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())
@@ -149,13 +148,12 @@ object BookController {
             ?: return returnData.setErrorMsg("未找到书源")
         try {
             content = runBlocking {
-                WebBook(bookSource).getContentAwait(this, book, chapter)
+                WebBook.getContentAwait(this, bookSource, book, chapter)
             }
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             saveBookReadIndex(book, index)
             returnData.setData(
-                contentProcessor.getContent(book, chapter.title, content)
-                    .joinToString("\n")
+                contentProcessor.getContent(book, chapter.title, content).joinToString("\n")
             )
         } catch (e: Exception) {
             returnData.setErrorMsg(e.msg)

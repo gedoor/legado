@@ -81,7 +81,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 loadChapter(book, changeDruChapterIndex)
             } else {
                 bookSource?.let { bookSource ->
-                    WebBook(bookSource).getBookInfo(this, book, canReName = canReName)
+                    WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
                             bookData.postValue(book)
                             if (inBookshelf) {
@@ -112,7 +112,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 }
             } else {
                 bookSource?.let { bookSource ->
-                    WebBook(bookSource).getChapterList(this, book)
+                    WebBook.getChapterList(this, bookSource, book)
                         .onSuccess(IO) {
                             if (it.isNotEmpty()) {
                                 if (inBookshelf) {

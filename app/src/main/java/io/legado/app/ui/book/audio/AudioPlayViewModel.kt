@@ -31,9 +31,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                     durChapterPos = book.durChapterPos
                     durChapter = appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
                     upDurChapter(book)
-                    appDb.bookSourceDao.getBookSource(book.origin)?.let {
-                        webBook = WebBook(it)
-                    }
+                    bookSource = appDb.bookSourceDao.getBookSource(book.origin)
                     if (durChapter == null) {
                         if (book.tocUrl.isEmpty()) {
                             loadBookInfo(book)
@@ -52,10 +50,12 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            AudioPlay.webBook?.getBookInfo(this, book)
-                ?.onSuccess {
-                    loadChapterList(book, changeDruChapterIndex)
-                }
+            AudioPlay.bookSource?.let {
+                WebBook.getBookInfo(this, it, book)
+                    .onSuccess {
+                        loadChapterList(book, changeDruChapterIndex)
+                    }
+            }
         }
     }
 
@@ -64,21 +64,23 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
     ) {
         execute {
-            AudioPlay.webBook?.getChapterList(this, book)
-                ?.onSuccess(Dispatchers.IO) { cList ->
-                    if (cList.isNotEmpty()) {
-                        if (changeDruChapterIndex == null) {
-                            appDb.bookChapterDao.insert(*cList.toTypedArray())
+            AudioPlay.bookSource?.let {
+                WebBook.getChapterList(this, it, book)
+                    .onSuccess(Dispatchers.IO) { cList ->
+                        if (cList.isNotEmpty()) {
+                            if (changeDruChapterIndex == null) {
+                                appDb.bookChapterDao.insert(*cList.toTypedArray())
+                            } else {
+                                changeDruChapterIndex(cList)
+                            }
+                            AudioPlay.upDurChapter(book)
                         } else {
-                            changeDruChapterIndex(cList)
+                            context.toastOnUi(R.string.error_load_toc)
                         }
-                        AudioPlay.upDurChapter(book)
-                    } else {
+                    }.onError {
                         context.toastOnUi(R.string.error_load_toc)
                     }
-                }?.onError {
-                    context.toastOnUi(R.string.error_load_toc)
-                }
+            }
         }
     }
 
@@ -92,9 +94,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             }
             appDb.bookDao.insert(book1)
             AudioPlay.book = book1
-            appDb.bookSourceDao.getBookSource(book1.origin)?.let {
-                AudioPlay.webBook = WebBook(it)
-            }
+            AudioPlay.bookSource = appDb.bookSourceDao.getBookSource(book1.origin)
             if (book1.tocUrl.isEmpty()) {
                 loadBookInfo(book1) { upChangeDurChapterIndex(book1, oldTocSize, it) }
             } else {

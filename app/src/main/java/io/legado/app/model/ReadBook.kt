@@ -38,7 +38,6 @@ object ReadBook : CoroutineScope by MainScope() {
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
     var bookSource: BookSource? = null
-    var webBook: WebBook? = null
     var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
     private val readRecord = ReadRecord()
@@ -65,17 +64,14 @@ object ReadBook : CoroutineScope by MainScope() {
     fun upWebBook(book: Book) {
         if (book.origin == BookType.local) {
             bookSource = null
-            webBook = null
         } else {
             appDb.bookSourceDao.getBookSource(book.origin)?.let {
                 bookSource = it
-                webBook = WebBook(it)
                 if (book.getImageStyle().isNullOrBlank()) {
                     book.setImageStyle(it.getContentRule().imageStyle)
                 }
             } ?: let {
                 bookSource = null
-                webBook = null
             }
         }
     }
@@ -314,9 +310,9 @@ object ReadBook : CoroutineScope by MainScope() {
         success: (() -> Unit)? = null
     ) {
         val book = book
-        val webBook = webBook
-        if (book != null && webBook != null) {
-            CacheBook.download(scope, webBook, book, chapter)
+        val bookSource = bookSource
+        if (book != null && bookSource != null) {
+            CacheBook.download(scope, bookSource, book, chapter)
         } else if (book != null) {
             contentLoadFinish(
                 book, chapter, "没有书源", resetPageOffset = resetPageOffset
@@ -394,11 +390,11 @@ object ReadBook : CoroutineScope by MainScope() {
 
     @Synchronized
     fun upToc() {
-        val webBook = webBook ?: return
+        val bookSource = bookSource ?: return
         val book = book ?: return
         if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
         book.lastCheckTime = System.currentTimeMillis()
-        webBook.getChapterList(this, book).onSuccess(IO) { cList ->
+        WebBook.getChapterList(this, bookSource, book).onSuccess(IO) { cList ->
             if (book.bookUrl == ReadBook.book?.bookUrl
                 && cList.size > chapterSize
             ) {

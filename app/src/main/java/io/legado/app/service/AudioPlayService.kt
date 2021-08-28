@@ -26,6 +26,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.service.help.ReadAloud
@@ -288,9 +289,9 @@ class AudioPlayService : BaseService(),
         durChapter?.let { chapter ->
             if (addLoading(durChapterIndex)) {
                 val book = AudioPlay.book
-                val webBook = AudioPlay.webBook
-                if (book != null && webBook != null) {
-                    webBook.getContent(this@AudioPlayService, book, chapter)
+                val bookSource = AudioPlay.bookSource
+                if (book != null && bookSource != null) {
+                    WebBook.getContent(this@AudioPlayService, bookSource, book, chapter)
                         .onSuccess { content ->
                             if (content.isEmpty()) {
                                 withContext(Main) {

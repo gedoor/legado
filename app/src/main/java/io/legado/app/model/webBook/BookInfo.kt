@@ -4,7 +4,6 @@ import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
-import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.HtmlFormatter
@@ -13,21 +12,19 @@ import io.legado.app.utils.StringUtils.wordCountFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ensureActive
 import splitties.init.appCtx
-import java.net.URLDecoder
 
 object BookInfo {
 
     @Throws(Exception::class)
     fun analyzeBookInfo(
         scope: CoroutineScope,
-        strResponse: StrResponse,
         bookSource: BookSource,
         book: Book,
         redirectUrl: String,
+        baseUrl: String,
+        body: String?,
         canReName: Boolean,
     ) {
-        val baseUrl = URLDecoder.decode(strResponse.url, "utf-8")
-        val body = strResponse.body
         body ?: throw Exception(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )

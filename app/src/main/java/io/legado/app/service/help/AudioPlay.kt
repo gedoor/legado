@@ -9,8 +9,8 @@ import io.legado.app.constant.Status
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.AudioPlayService
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.startService
@@ -24,11 +24,11 @@ object AudioPlay {
     var inBookshelf = false
     var durChapterIndex = 0
     var durChapterPos = 0
-    var webBook: WebBook? = null
+    var bookSource: BookSource? = null
     val loadingChapters = arrayListOf<Int>()
 
     fun headers(): Map<String, String>? {
-        return webBook?.bookSource?.getHeaderMap()
+        return bookSource?.getHeaderMap()
     }
 
     fun play(context: Context) {

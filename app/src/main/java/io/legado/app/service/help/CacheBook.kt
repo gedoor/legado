@@ -5,6 +5,7 @@ import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
@@ -61,7 +62,7 @@ object CacheBook {
 
     fun download(
         scope: CoroutineScope,
-        webBook: WebBook,
+        bookSource: BookSource,
         book: Book,
         chapter: BookChapter,
         resetPageOffset: Boolean = false
@@ -73,7 +74,7 @@ object CacheBook {
             downloadMap[book.bookUrl] = CopyOnWriteArraySet()
         }
         downloadMap[book.bookUrl]?.add(chapter.index)
-        webBook.getContent(scope, book, chapter)
+        WebBook.getContent(scope, bookSource, book, chapter)
             .onSuccess { content ->
                 if (ReadBook.book?.bookUrl == book.bookUrl) {
                     ReadBook.contentLoadFinish(

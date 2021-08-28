@@ -3,13 +3,13 @@ package io.legado.app.ui.book.source.debug
 import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.BookSource
 import io.legado.app.model.Debug
-import io.legado.app.model.webBook.WebBook
 
 class BookSourceDebugModel(application: Application) : BaseViewModel(application),
     Debug.Callback {
 
-    private var webBook: WebBook? = null
+    private var bookSource: BookSource? = null
     private var callback: ((Int, String) -> Unit)? = null
     var searchSrc: String? = null
     var bookSrc: String? = null
@@ -20,8 +20,7 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
         sourceUrl?.let {
             //优先使用这个，不会抛出异常
             execute {
-                val bookSource = appDb.bookSourceDao.getBookSource(sourceUrl)
-                bookSource?.let { webBook = WebBook(it) }
+                bookSource = appDb.bookSourceDao.getBookSource(sourceUrl)
             }
         }
     }
@@ -33,7 +32,7 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
     fun startDebug(key: String, start: (() -> Unit)? = null, error: (() -> Unit)? = null) {
         execute {
             Debug.callback = this@BookSourceDebugModel
-            Debug.startDebug(this, webBook!!, key)
+            Debug.startDebug(this, bookSource!!, key)
         }.onStart {
             start?.invoke()
         }.onError {
