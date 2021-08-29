@@ -300,7 +300,7 @@ object DatabaseMigrations {
 
     private val migration_37_38 = object : Migration(37, 38) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE book_sources ADD respondTime INTEGER NOT NULL")
+            database.execSQL("ALTER TABLE `book_sources` ADD `respondTime` INTEGER")
         }
     }
 }

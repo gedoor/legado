@@ -33,7 +33,7 @@ data class BookSource(
     var loginCheckJs: String? = null,               //登录检测js
     var bookSourceComment: String? = null,          // 注释
     var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
-    var respondTime: Long = 180000L,         // 响应时间，用于排序
+    var respondTime: Long? = 180000L,         // 响应时间，用于排序
     var weight: Int = 0,                            // 智能排序的权重
     var exploreUrl: String? = null,                 // 发现url
     var ruleExplore: ExploreRule? = null,           // 发现规则
