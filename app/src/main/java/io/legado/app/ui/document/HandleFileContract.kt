@@ -15,10 +15,12 @@ class HandleFileContract :
         const val FILE = 1
     }
 
-    override fun createIntent(context: Context, input: HandleFileParam.() -> Unit): Intent {
+    override fun createIntent(context: Context, input: (HandleFileParam.() -> Unit)?): Intent {
         val intent = Intent(context, HandleFileActivity::class.java)
         val handleFileParam = HandleFileParam()
-        handleFileParam.apply(input)
+        input?.let {
+            handleFileParam.apply(input)
+        }
         handleFileParam.let {
             intent.putExtra("mode", it.mode)
             intent.putExtra("title", it.title)
