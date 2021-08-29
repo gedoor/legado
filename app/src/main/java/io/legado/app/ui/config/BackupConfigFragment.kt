@@ -28,7 +28,7 @@ import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.Main
@@ -38,7 +38,7 @@ import splitties.init.appCtx
 class BackupConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val selectBackupPath = registerForActivityResult(FilePicker()) { uri ->
+    private val selectBackupPath = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
             AppConfig.backupPath = uri.toString()
@@ -46,7 +46,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
             AppConfig.backupPath = uri.path
         }
     }
-    private val backupDir = registerForActivityResult(FilePicker()) { uri ->
+    private val backupDir = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
             AppConfig.backupPath = uri.toString()
@@ -70,7 +70,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
             }
         }
     }
-    private val restoreDir = registerForActivityResult(FilePicker()) { uri ->
+    private val restoreDir = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
             AppConfig.backupPath = uri.toString()
@@ -86,7 +86,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
             }
         }
     }
-    private val restoreOld = registerForActivityResult(FilePicker()) { uri ->
+    private val restoreOld = registerForActivityResult(HandleFileContract()) { uri ->
         uri?.let {
             ImportOldData.importUri(appCtx, uri)
         }

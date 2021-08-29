@@ -7,7 +7,7 @@ import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
 
 @Suppress("unused")
-class FilePicker : ActivityResultContract<FilePickerParam, Uri?>() {
+class HandleFileContract : ActivityResultContract<FilePickerParam, Uri?>() {
 
     companion object {
         const val DIRECTORY = 0

@@ -295,7 +295,8 @@
         <activity
             android:name="io.legado.app.ui.login.SourceLoginActivity"
             android:configChanges="orientation|screenSize"
-            android:hardwareAccelerated="true" />
+            android:hardwareAccelerated="true"
+            android:theme="@style/AppTheme.Transparent" />
         <!-- 阅读记录 -->
         <activity
             android:name=".ui.about.ReadRecordActivity"
@@ -399,10 +400,10 @@
         <service android:name=".service.WebService" />
         <service
             android:name=".service.WebTileService"
-            android:label="legado Web Service"
+            android:exported="true"
             android:icon="@drawable/ic_web_service_noti"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
-            android:exported="true">
+            android:label="legado Web Service"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>

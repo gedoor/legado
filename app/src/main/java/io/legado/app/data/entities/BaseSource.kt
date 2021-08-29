@@ -107,6 +107,10 @@ interface BaseSource : JsExtensions {
         CacheManager.put("userInfo_${getStoreUrl()}", data)
     }
 
+    fun removeLoginInfo() {
+        CacheManager.delete("userInfo_${getStoreUrl()}")
+    }
+
     /**
      * 执行JS
      */

@@ -25,7 +25,10 @@ import kotlin.collections.HashMap
  */
 @Keep
 @Suppress("unused", "RegExpRedundantEscape", "MemberVisibilityCanBePrivate")
-class AnalyzeRule(val ruleData: RuleDataInterface, private val source: BaseSource) : JsExtensions {
+class AnalyzeRule(
+    val ruleData: RuleDataInterface,
+    private val source: BaseSource? = null
+) : JsExtensions {
 
     var book = if (ruleData is BaseBook) ruleData else null
 

@@ -25,8 +25,8 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -41,12 +41,12 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     lateinit var adapter: Adapter
     private val viewModel: SpeakEngineViewModel by viewModels()
     private var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
-    private val importDocResult = registerForActivityResult(FilePicker()) {
+    private val importDocResult = registerForActivityResult(HandleFileContract()) {
         it?.let {
             viewModel.importLocal(it)
         }
     }
-    private val exportDirResult = registerForActivityResult(FilePicker()) {
+    private val exportDirResult = registerForActivityResult(HandleFileContract()) {
         it?.let {
             viewModel.export(it)
         }
@@ -116,7 +116,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             R.id.menu_default -> viewModel.importDefault()
             R.id.menu_import_local -> importDocResult.launch(
                 FilePickerParam(
-                    mode = FilePicker.FILE,
+                    mode = HandleFileContract.FILE,
                     allowExtensions = arrayOf("txt", "json")
                 )
             )

@@ -24,8 +24,8 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
@@ -48,11 +48,11 @@ class BgTextConfigDialog : BaseDialogFragment() {
             setBgFromUri(uri)
         }
     }
-    private val selectExportDir = registerForActivityResult(FilePicker()) {
+    private val selectExportDir = registerForActivityResult(HandleFileContract()) {
         it ?: return@registerForActivityResult
         exportConfig(it)
     }
-    private val selectImportDoc = registerForActivityResult(FilePicker()) {
+    private val selectImportDoc = registerForActivityResult(HandleFileContract()) {
         it ?: return@registerForActivityResult
         if (it.toString() == importFormNet) {
             importNetConfigAlert()
@@ -190,7 +190,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         binding.ivImport.setOnClickListener {
             selectImportDoc.launch(
                 FilePickerParam(
-                    mode = FilePicker.FILE,
+                    mode = HandleFileContract.FILE,
                     title = getString(R.string.import_str),
                     allowExtensions = arrayOf("zip"),
                     otherActions = arrayOf(importFormNet)

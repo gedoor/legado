@@ -46,7 +46,7 @@ class FilePickerActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val mode = intent.getIntExtra("mode", 0)
         val allowExtensions = intent.getStringArrayExtra("allowExtensions")
-        val selectList = if (mode == FilePicker.DIRECTORY) {
+        val selectList = if (mode == HandleFileContract.DIRECTORY) {
             arrayListOf(getString(R.string.sys_folder_picker))
         } else {
             arrayListOf(getString(R.string.sys_file_picker))
@@ -58,7 +58,7 @@ class FilePickerActivity :
             selectList.addAll(it)
         }
         val title = intent.getStringExtra("title") ?: let {
-            if (mode == FilePicker.DIRECTORY) {
+            if (mode == HandleFileContract.DIRECTORY) {
                 return@let getString(R.string.select_folder)
             } else {
                 return@let getString(R.string.select_file)
@@ -67,23 +67,23 @@ class FilePickerActivity :
         alert(title) {
             items(selectList) { _, index ->
                 when (index) {
-                    0 -> if (mode == FilePicker.DIRECTORY) {
+                    0 -> if (mode == HandleFileContract.DIRECTORY) {
                         selectDocTree.launch(null)
                     } else {
                         selectDoc.launch(typesOfExtensions(allowExtensions))
                     }
-                    1 -> if (mode == FilePicker.DIRECTORY) {
+                    1 -> if (mode == HandleFileContract.DIRECTORY) {
                         checkPermissions {
                             FilePickerDialog.show(
                                 supportFragmentManager,
-                                mode = FilePicker.DIRECTORY
+                                mode = HandleFileContract.DIRECTORY
                             )
                         }
                     } else {
                         checkPermissions {
                             FilePickerDialog.show(
                                 supportFragmentManager,
-                                mode = FilePicker.FILE,
+                                mode = HandleFileContract.FILE,
                                 allowExtensions = allowExtensions
                             )
                         }

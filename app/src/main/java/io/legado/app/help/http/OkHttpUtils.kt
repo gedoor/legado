@@ -114,6 +114,24 @@ fun Request.Builder.postForm(form: Map<String, String>, encoded: Boolean = false
     post(formBody.build())
 }
 
+fun Request.Builder.postMultipart(form: Map<String, Any>) {
+    val multipartBody = MultipartBody.Builder()
+    form.forEach {
+        when (it.value) {
+            is Triple<*, *, *> -> {
+                val triple = it.value as Triple<*, *, *>
+                val fileName = triple.first!!.toString()
+                val file = triple.second as ByteArray
+                val mediaType = triple.third?.toString()?.toMediaType()
+                val requestBody = file.toRequestBody(mediaType)
+                multipartBody.addFormDataPart(it.key, fileName, requestBody)
+            }
+            else -> multipartBody.addFormDataPart(it.key, it.value.toString())
+        }
+    }
+    post(multipartBody.build())
+}
+
 fun Request.Builder.postJson(json: String?) {
     json?.let {
         val requestBody = json.toRequestBody("application/json; charset=UTF-8".toMediaType())

@@ -31,8 +31,8 @@ import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.document.FilePicker
 import io.legado.app.ui.document.FilePickerParam
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -66,7 +66,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         it ?: return@registerForActivityResult
         ImportBookSourceDialog.start(supportFragmentManager, it)
     }
-    private val importDoc = registerForActivityResult(FilePicker()) { uri ->
+    private val importDoc = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         try {
             uri.readText(this)?.let {
@@ -76,7 +76,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             toastOnUi("readTextError:${e.localizedMessage}")
         }
     }
-    private val exportDir = registerForActivityResult(FilePicker()) { uri ->
+    private val exportDir = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
             DocumentFile.fromTreeUri(this, uri)?.let {
@@ -125,7 +125,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
             R.id.menu_import_local -> importDoc.launch(
                 FilePickerParam(
-                    mode = FilePicker.FILE,
+                    mode = HandleFileContract.FILE,
                     allowExtensions = arrayOf("txt", "json")
                 )
             )

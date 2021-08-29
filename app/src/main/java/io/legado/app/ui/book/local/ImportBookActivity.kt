@@ -21,7 +21,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.ui.document.FilePicker
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -49,7 +49,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private lateinit var adapter: ImportBookAdapter
     private var sdPath = FileUtils.getSdCardPath()
     private var path = sdPath
-    private val selectFolder = registerForActivityResult(FilePicker()) { uri ->
+    private val selectFolder = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.isContentScheme()) {
             AppConfig.importBookPath = uri.toString()

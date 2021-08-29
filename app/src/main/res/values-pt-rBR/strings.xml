@@ -864,5 +864,7 @@
     <string name="background_image_hint">Desativado quando 0, Ativado entre 1 e 25\n Quanto maior o raio, mais forte o efeito de desfocagem</string>
     <string name="need_login">Login necessário</string>
     <string name="pref_cronet_summary">Usando componentes de rede Cronet</string>
+    <string name="upload_url">上传URL</string>
+    <string name="download_url_rule">下载URL规则</string>
 
 </resources>

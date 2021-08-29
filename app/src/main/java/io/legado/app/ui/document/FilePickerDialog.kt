@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.databinding.DialogFileChooserBinding
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.ui.document.FilePicker.Companion.DIRECTORY
-import io.legado.app.ui.document.FilePicker.Companion.FILE
+import io.legado.app.ui.document.HandleFileContract.Companion.DIRECTORY
+import io.legado.app.ui.document.HandleFileContract.Companion.FILE
 import io.legado.app.ui.document.adapter.FileAdapter
 import io.legado.app.ui.document.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider

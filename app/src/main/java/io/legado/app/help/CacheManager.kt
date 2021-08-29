@@ -59,4 +59,9 @@ object CacheManager {
         }
         return null
     }
+
+    fun delete(key: String) {
+        appDb.cacheDao.delete(key)
+        ACache.get(appCtx).remove(key)
+    }
 }

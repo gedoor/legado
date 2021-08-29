@@ -74,15 +74,21 @@ class RuleUiLoginDialog : BaseDialogFragment() {
         binding.toolBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.menu_ok -> {
-                    val loginData = hashMapOf<String, String?>()
+                    val loginData = hashMapOf<String, String>()
                     loginUi?.forEachIndexed { index, rowUi ->
                         when (rowUi.type) {
                             "text", "password" -> {
                                 val value = binding.root.findViewById<TextInputLayout>(index)
                                     .findViewById<EditText>(R.id.editText).text?.toString()
-                                loginData[rowUi.name] = value
+                                if (!value.isNullOrBlank()) {
+                                    loginData[rowUi.name] = value
+                                }
                             }
                         }
+                    }
+                    if (loginData.isEmpty()) {
+                        bookSource.removeLoginInfo()
+                        return@setOnMenuItemClickListener true
                     }
                     bookSource.putLoginInfo(GSON.toJson(loginData))
                     bookSource.getLoginJs()?.let {
