@@ -24,7 +24,6 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -188,21 +187,17 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 .show(requireActivity())
         }
         binding.ivImport.setOnClickListener {
-            selectImportDoc.launch(
-                FilePickerParam(
-                    mode = HandleFileContract.FILE,
-                    title = getString(R.string.import_str),
-                    allowExtensions = arrayOf("zip"),
-                    otherActions = arrayOf(importFormNet)
-                )
-            )
+            selectImportDoc.launch {
+                mode = HandleFileContract.FILE
+                title = getString(R.string.import_str)
+                allowExtensions = arrayOf("zip")
+                otherActions = arrayOf(importFormNet)
+            }
         }
         binding.ivExport.setOnClickListener {
-            selectExportDir.launch(
-                FilePickerParam(
-                    title = getString(R.string.export_str)
-                )
-            )
+            selectExportDir.launch {
+                title = getString(R.string.export_str)
+            }
         }
         binding.ivDelete.setOnClickListener {
             if (ReadBookConfig.deleteDur()) {

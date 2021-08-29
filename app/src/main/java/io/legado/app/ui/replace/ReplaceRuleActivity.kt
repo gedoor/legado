@@ -26,7 +26,6 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.association.ImportReplaceRuleDialog
-import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
@@ -213,12 +212,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
             R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
             R.id.menu_import_onLine -> showImportDialog()
-            R.id.menu_import_local -> importDoc.launch(
-                FilePickerParam(
-                    mode = HandleFileContract.FILE,
-                    allowExtensions = arrayOf("txt", "json")
-                )
-            )
+            R.id.menu_import_local -> importDoc.launch {
+                mode = HandleFileContract.FILE
+                allowExtensions = arrayOf("txt", "json")
+            }
             R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_help -> showHelp()
             else -> if (item.groupId == R.id.replace_group) {

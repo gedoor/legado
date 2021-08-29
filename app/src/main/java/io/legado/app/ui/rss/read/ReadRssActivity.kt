@@ -22,7 +22,6 @@ import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.Download
 import io.legado.app.ui.association.OnLineImportActivity
-import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -170,11 +169,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         if (!path.isNullOrEmpty()) {
             default.add(path)
         }
-        saveImage.launch(
-            FilePickerParam(
-                otherActions = default.toTypedArray()
-            )
-        )
+        saveImage.launch {
+            otherActions = default.toTypedArray()
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")

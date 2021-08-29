@@ -22,7 +22,6 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.association.ImportRssSourceDialog
-import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
@@ -101,12 +100,10 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> startActivity<RssSourceEditActivity>()
-            R.id.menu_import_local -> importDoc.launch(
-                FilePickerParam(
-                    mode = HandleFileContract.FILE,
-                    allowExtensions = arrayOf("txt", "json")
-                )
-            )
+            R.id.menu_import_local -> importDoc.launch {
+                mode = HandleFileContract.FILE
+                allowExtensions = arrayOf("txt", "json")
+            }
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_group_manage -> GroupManageDialog()

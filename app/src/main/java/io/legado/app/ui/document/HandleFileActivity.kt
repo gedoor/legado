@@ -17,7 +17,7 @@ import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
-class FilePickerActivity :
+class HandleFileActivity :
     BaseActivity<ActivityTranslucenceBinding>(
         theme = Theme.Transparent
     ), FilePickerDialog.CallBack {

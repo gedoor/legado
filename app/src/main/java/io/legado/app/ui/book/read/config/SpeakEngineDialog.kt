@@ -25,7 +25,6 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.help.ReadAloud
-import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
@@ -114,12 +113,10 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         when (item?.itemId) {
             R.id.menu_add -> editHttpTTS()
             R.id.menu_default -> viewModel.importDefault()
-            R.id.menu_import_local -> importDocResult.launch(
-                FilePickerParam(
-                    mode = HandleFileContract.FILE,
-                    allowExtensions = arrayOf("txt", "json")
-                )
-            )
+            R.id.menu_import_local -> importDocResult.launch {
+                mode = HandleFileContract.FILE
+                allowExtensions = arrayOf("txt", "json")
+            }
             R.id.menu_import_onLine -> importAlert()
             R.id.menu_export -> exportDirResult.launch(null)
         }

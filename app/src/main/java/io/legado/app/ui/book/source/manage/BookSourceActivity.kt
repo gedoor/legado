@@ -31,7 +31,6 @@ import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.SelectActionBar
@@ -123,12 +122,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
             R.id.menu_group_manage ->
                 GroupManageDialog().show(supportFragmentManager, "groupManage")
-            R.id.menu_import_local -> importDoc.launch(
-                FilePickerParam(
-                    mode = HandleFileContract.FILE,
-                    allowExtensions = arrayOf("txt", "json")
-                )
-            )
+            R.id.menu_import_local -> importDoc.launch {
+                mode = HandleFileContract.FILE
+                allowExtensions = arrayOf("txt", "json")
+            }
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_sort_manual -> {
                 item.isChecked = true

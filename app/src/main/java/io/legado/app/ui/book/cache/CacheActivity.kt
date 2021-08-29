@@ -24,7 +24,6 @@ import io.legado.app.help.BookHelp
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.service.help.CacheBook
-import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextListDialog
 import io.legado.app.utils.*
@@ -254,11 +253,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         if (!path.isNullOrEmpty()) {
             default.add(path)
         }
-        exportDir.launch(
-            FilePickerParam(
-                otherActions = default.toTypedArray()
-            )
-        )
+        exportDir.launch {
+            otherActions = default.toTypedArray()
+        }
     }
 
     private fun startExport(path: String) {

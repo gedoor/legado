@@ -7,16 +7,19 @@ import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
 
 @Suppress("unused")
-class HandleFileContract : ActivityResultContract<FilePickerParam, Uri?>() {
+class HandleFileContract :
+    ActivityResultContract<HandleFileContract.HandleFileParam.() -> Unit, Uri?>() {
 
     companion object {
         const val DIRECTORY = 0
         const val FILE = 1
     }
 
-    override fun createIntent(context: Context, input: FilePickerParam?): Intent {
-        val intent = Intent(context, FilePickerActivity::class.java)
-        input?.let {
+    override fun createIntent(context: Context, input: HandleFileParam.() -> Unit): Intent {
+        val intent = Intent(context, HandleFileActivity::class.java)
+        val handleFileParam = HandleFileParam()
+        handleFileParam.apply(input)
+        handleFileParam.let {
             intent.putExtra("mode", it.mode)
             intent.putExtra("title", it.title)
             intent.putExtra("allowExtensions", it.allowExtensions)
@@ -32,12 +35,12 @@ class HandleFileContract : ActivityResultContract<FilePickerParam, Uri?>() {
         return null
     }
 
-}
+    @Suppress("ArrayInDataClass")
+    data class HandleFileParam(
+        var mode: Int = DIRECTORY,
+        var title: String? = null,
+        var allowExtensions: Array<String> = arrayOf(),
+        var otherActions: Array<String>? = null,
+    )
 
-@Suppress("ArrayInDataClass")
-data class FilePickerParam(
-    var mode: Int = 0,
-    var title: String? = null,
-    var allowExtensions: Array<String> = arrayOf(),
-    var otherActions: Array<String>? = null,
-)
+}

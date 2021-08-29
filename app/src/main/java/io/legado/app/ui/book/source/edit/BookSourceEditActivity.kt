@@ -25,7 +25,6 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
-import io.legado.app.ui.document.FilePickerParam
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
@@ -416,11 +415,9 @@ class BookSourceEditActivity :
                 0 -> insertText(AppConst.urlOption)
                 1 -> showRuleHelp()
                 2 -> showRegexHelp()
-                3 -> selectDoc.launch(
-                    FilePickerParam(
-                        mode = HandleFileContract.FILE
-                    )
-                )
+                3 -> selectDoc.launch {
+                    mode = HandleFileContract.FILE
+                }
             }
         }
     }
