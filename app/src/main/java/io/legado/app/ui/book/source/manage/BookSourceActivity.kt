@@ -155,6 +155,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 sortCheck(Sort.Update)
                 upBookSource(searchView.query?.toString())
             }
+            R.id.menu_sort_respondTime -> {
+                item.isChecked = true
+                sortCheck(Sort.Respond)
+                upBookSource(searchView.query?.toString())
+            }
             R.id.menu_sort_enable -> {
                 item.isChecked = true
                 sortCheck(Sort.Enable)
@@ -232,7 +237,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                             o1.bookSourceName.cnCompare(o2.bookSourceName)
                         }
                         Sort.Url -> data.sortedBy { it.bookSourceUrl }
-                        Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
+                        Sort.Update -> data.sortedByDescending { it.respondTime }
+                        Sort.Respond -> data.sortedByDescending { it.respondTime }
                         Sort.Enable -> data.sortedWith { o1, o2 ->
                             var sort = -o1.enabled.compareTo(o2.enabled)
                             if (sort == 0) {
@@ -248,7 +254,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                             o2.bookSourceName.cnCompare(o1.bookSourceName)
                         }
                         Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
-                        Sort.Update -> data.sortedBy { it.lastUpdateTime }
+                        Sort.Respond -> data.sortedBy { it.respondTime }
                         Sort.Enable -> data.sortedWith { o1, o2 ->
                             var sort = o1.enabled.compareTo(o2.enabled)
                             if (sort == 0) {
@@ -547,6 +553,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     enum class Sort {
-        Default, Name, Url, Weight, Update, Enable
+        Default, Name, Url, Weight, Update, Enable, Respond
     }
 }

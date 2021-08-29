@@ -33,7 +33,8 @@ object DatabaseMigrations {
             migration_33_34,
             migration_34_35,
             migration_35_36,
-            migration_36_37
+            migration_36_37,
+            migration_37_38
         )
     }
 
@@ -294,6 +295,12 @@ object DatabaseMigrations {
             database.execSQL("ALTER TABLE `rssSources` ADD `loginUrl` TEXT")
             database.execSQL("ALTER TABLE `rssSources` ADD `loginUi` TEXT")
             database.execSQL("ALTER TABLE `rssSources` ADD`loginCheckJs` TEXT")
+        }
+    }
+
+    private val migration_37_38 = object : Migration(37, 38) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE book_sources ADD respondTime INTEGER NOT NULL")
         }
     }
 }

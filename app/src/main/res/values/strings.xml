@@ -773,6 +773,7 @@
     <string name="theme_list_summary">Save, Import, Share theme</string>
     <string name="select_theme">Switch default theme</string>
     <string name="sort_by_lastUpdateTime">Sort by update time</string>
+    <string name="sort_by_respondTime">Sort by respond time</string>
     <string name="search_content">Search content</string>
     <string name="rss_source_empty">Follow Wechat official account [开源阅读] to get Subscription source</string>
     <string name="explore_empty">Empty now,Follow Wechat official account [开源阅读] to get Discovery source</string>

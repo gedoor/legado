@@ -87,11 +87,17 @@ object Debug {
         isChecking = false
     }
 
+    fun getRespondTime(sourceUrl: String): Long {
+        return debugTimeMap[sourceUrl] ?: 180000L
+    }
+
     fun updateFinalMessage(sourceUrl: String, state: String) {
         if (debugTimeMap[sourceUrl] != null && debugMessageMap[sourceUrl] != null) {
-            val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
+            val spendingTime = System.currentTimeMillis() - debugTimeMap[sourceUrl]!!
+            debugTimeMap[sourceUrl] = if(state == "成功") spendingTime else 180000L
+            val printTime = DEBUG_TIME_FORMAT.format(Date(spendingTime))
             val originalMessage = debugMessageMap[sourceUrl]!!.substringAfter("] ")
-            debugMessageMap[sourceUrl] = "$time $originalMessage $state"
+            debugMessageMap[sourceUrl] = "$printTime $originalMessage $state"
         }
     }
 
