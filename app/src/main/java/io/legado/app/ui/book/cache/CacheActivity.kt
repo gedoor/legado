@@ -21,6 +21,7 @@ import io.legado.app.databinding.ActivityCacheBookBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.service.help.CacheBook
@@ -248,13 +249,13 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     private fun selectExportFolder() {
-        val default = arrayListOf<String>()
+        val default = arrayListOf<SelectItem>()
         val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
         if (!path.isNullOrEmpty()) {
-            default.add(path)
+            default.add(SelectItem(path, -1))
         }
         exportDir.launch {
-            otherActions = default.toTypedArray()
+            otherActions = default
         }
     }
 

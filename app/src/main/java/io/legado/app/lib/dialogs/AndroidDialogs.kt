@@ -123,3 +123,63 @@ private fun Context.progressDialog(
     if (init != null) init()
     show()
 }
+
+typealias AlertBuilderFactory<D> = (Context) -> AlertBuilder<D>
+
+inline fun <D : DialogInterface> Fragment.alert(
+    noinline factory: AlertBuilderFactory<D>,
+    title: String? = null,
+    message: String? = null,
+    noinline init: (AlertBuilder<D>.() -> Unit)? = null
+) = activity?.alert(factory, title, message, init)
+
+fun <D : DialogInterface> Context.alert(
+    factory: AlertBuilderFactory<D>,
+    title: String? = null,
+    message: String? = null,
+    init: (AlertBuilder<D>.() -> Unit)? = null
+): AlertBuilder<D> {
+    return factory(this).apply {
+        if (title != null) {
+            this.setTitle(title)
+        }
+        if (message != null) {
+            this.setMessage(message)
+        }
+        if (init != null) init()
+    }
+}
+
+inline fun <D : DialogInterface> Fragment.alert(
+    noinline factory: AlertBuilderFactory<D>,
+    titleResource: Int? = null,
+    messageResource: Int? = null,
+    noinline init: (AlertBuilder<D>.() -> Unit)? = null
+) = requireActivity().alert(factory, titleResource, messageResource, init)
+
+fun <D : DialogInterface> Context.alert(
+    factory: AlertBuilderFactory<D>,
+    titleResource: Int? = null,
+    messageResource: Int? = null,
+    init: (AlertBuilder<D>.() -> Unit)? = null
+): AlertBuilder<D> {
+    return factory(this).apply {
+        if (titleResource != null) {
+            this.setTitle(titleResource)
+        }
+        if (messageResource != null) {
+            this.setMessage(messageResource)
+        }
+        if (init != null) init()
+    }
+}
+
+inline fun <D : DialogInterface> Fragment.alert(
+    noinline factory: AlertBuilderFactory<D>,
+    noinline init: AlertBuilder<D>.() -> Unit
+) = requireActivity().alert(factory, init)
+
+fun <D : DialogInterface> Context.alert(
+    factory: AlertBuilderFactory<D>,
+    init: AlertBuilder<D>.() -> Unit
+): AlertBuilder<D> = factory(this).apply { init() }

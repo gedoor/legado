@@ -18,6 +18,7 @@ import io.legado.app.help.DefaultData
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.bottomBackground
@@ -191,7 +192,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 mode = HandleFileContract.FILE
                 title = getString(R.string.import_str)
                 allowExtensions = arrayOf("zip")
-                otherActions = arrayOf(importFormNet)
+                otherActions = arrayListOf(SelectItem(importFormNet, -1))
             }
         }
         binding.ivExport.setOnClickListener {

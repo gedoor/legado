@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
@@ -46,50 +47,60 @@ class HandleFileActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val mode = intent.getIntExtra("mode", 0)
         val allowExtensions = intent.getStringArrayExtra("allowExtensions")
-        val selectList = if (mode == HandleFileContract.DIRECTORY) {
-            arrayListOf(getString(R.string.sys_folder_picker))
-        } else {
-            arrayListOf(getString(R.string.sys_file_picker))
+        val selectList = when (mode) {
+            HandleFileContract.DIR -> arrayListOf(
+                SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR)
+            ).apply {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                    add(SelectItem(getString(R.string.app_folder_picker), 10))
+                }
+            }
+            HandleFileContract.FILE -> arrayListOf(
+                SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE)
+            ).apply {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                    add(SelectItem(getString(R.string.app_folder_picker), 11))
+                }
+            }
+            HandleFileContract.EXPORT -> arrayListOf(
+                SelectItem(getString(R.string.upload_url), 111),
+                SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR)
+            )
+            else -> arrayListOf()
         }
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            selectList.add(getString(R.string.app_folder_picker))
-        }
-        intent.getStringArrayListExtra("otherActions")?.let {
+        intent.getParcelableArrayListExtra<SelectItem>("otherActions")?.let {
             selectList.addAll(it)
         }
         val title = intent.getStringExtra("title") ?: let {
-            if (mode == HandleFileContract.DIRECTORY) {
-                return@let getString(R.string.select_folder)
-            } else {
-                return@let getString(R.string.select_file)
+            when (mode) {
+                HandleFileContract.DIR -> {
+                    return@let getString(R.string.select_folder)
+                }
+                else -> {
+                    return@let getString(R.string.select_file)
+                }
             }
         }
         alert(title) {
-            items(selectList) { _, index ->
-                when (index) {
-                    0 -> if (mode == HandleFileContract.DIRECTORY) {
-                        selectDocTree.launch(null)
-                    } else {
-                        selectDoc.launch(typesOfExtensions(allowExtensions))
+            items(selectList) { _, item, _ ->
+                when (item.id) {
+                    HandleFileContract.DIR -> selectDocTree.launch(null)
+                    HandleFileContract.FILE -> selectDoc.launch(typesOfExtensions(allowExtensions))
+                    10 -> checkPermissions {
+                        FilePickerDialog.show(
+                            supportFragmentManager,
+                            mode = HandleFileContract.DIR
+                        )
                     }
-                    1 -> if (mode == HandleFileContract.DIRECTORY) {
-                        checkPermissions {
-                            FilePickerDialog.show(
-                                supportFragmentManager,
-                                mode = HandleFileContract.DIRECTORY
-                            )
-                        }
-                    } else {
-                        checkPermissions {
-                            FilePickerDialog.show(
-                                supportFragmentManager,
-                                mode = HandleFileContract.FILE,
-                                allowExtensions = allowExtensions
-                            )
-                        }
+                    11 -> checkPermissions {
+                        FilePickerDialog.show(
+                            supportFragmentManager,
+                            mode = HandleFileContract.FILE,
+                            allowExtensions = allowExtensions
+                        )
                     }
                     else -> {
-                        val path = selectList[index]
+                        val path = item.title
                         val uri = if (path.isContentScheme()) {
                             Uri.fromFile(File(path))
                         } else {

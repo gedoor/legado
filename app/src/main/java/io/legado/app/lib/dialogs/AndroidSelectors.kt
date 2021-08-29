@@ -55,3 +55,25 @@ fun Context.selector(
         show()
     }
 }
+
+inline fun <D : DialogInterface> Fragment.selector(
+    noinline factory: AlertBuilderFactory<D>,
+    title: CharSequence? = null,
+    items: List<CharSequence>,
+    noinline onClick: (DialogInterface, CharSequence, Int) -> Unit
+) = requireActivity().selector(factory, title, items, onClick)
+
+fun <D : DialogInterface> Context.selector(
+    factory: AlertBuilderFactory<D>,
+    title: CharSequence? = null,
+    items: List<CharSequence>,
+    onClick: (DialogInterface, CharSequence, Int) -> Unit
+) {
+    with(factory(this)) {
+        if (title != null) {
+            this.setTitle(title)
+        }
+        items(items, onClick)
+        show()
+    }
+}

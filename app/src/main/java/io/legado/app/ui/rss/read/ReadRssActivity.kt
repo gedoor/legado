@@ -18,6 +18,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.AppConfig
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.service.help.Download
@@ -164,13 +165,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     private fun selectSaveFolder() {
-        val default = arrayListOf<String>()
+        val default = arrayListOf<SelectItem>()
         val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
         if (!path.isNullOrEmpty()) {
-            default.add(path)
+            default.add(SelectItem(path, -1))
         }
         saveImage.launch {
-            otherActions = default.toTypedArray()
+            otherActions = default
         }
     }
 

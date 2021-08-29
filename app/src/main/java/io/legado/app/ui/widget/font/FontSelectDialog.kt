@@ -15,6 +15,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogFontSelectBinding
 import io.legado.app.help.AppConfig
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
@@ -128,7 +129,7 @@ class FontSelectDialog : BaseDialogFragment(),
         launch(Main) {
             val defaultPath = "SD${File.separator}Fonts"
             selectFontDir.launch {
-                otherActions = arrayOf(defaultPath)
+                otherActions = arrayListOf(SelectItem(defaultPath, -1))
             }
         }
     }

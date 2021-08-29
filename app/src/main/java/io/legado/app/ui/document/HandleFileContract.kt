@@ -5,14 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
+import io.legado.app.lib.dialogs.SelectItem
 
 @Suppress("unused")
 class HandleFileContract :
     ActivityResultContract<HandleFileContract.HandleFileParam.() -> Unit, Uri?>() {
 
     companion object {
-        const val DIRECTORY = 0
+        const val DIR = 0
         const val FILE = 1
+        const val EXPORT = 3
     }
 
     override fun createIntent(context: Context, input: (HandleFileParam.() -> Unit)?): Intent {
@@ -39,10 +41,10 @@ class HandleFileContract :
 
     @Suppress("ArrayInDataClass")
     data class HandleFileParam(
-        var mode: Int = DIRECTORY,
+        var mode: Int = DIR,
         var title: String? = null,
         var allowExtensions: Array<String> = arrayOf(),
-        var otherActions: Array<String>? = null,
+        var otherActions: ArrayList<SelectItem>? = null,
     )
 
 }
