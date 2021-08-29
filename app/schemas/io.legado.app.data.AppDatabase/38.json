@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 38,
-    "identityHash": "5211699415b40f58b06d4136d14173d1",
+    "identityHash": "5f9007af3ac118c8c2dc587723475405",
     "entities": [
       {
         "tableName": "books",
@@ -254,7 +254,7 @@
       },
       {
         "tableName": "book_sources",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookSourceName` TEXT NOT NULL, `bookSourceGroup` TEXT, `bookSourceUrl` TEXT NOT NULL, `bookSourceType` INTEGER NOT NULL, `bookUrlPattern` TEXT, `concurrentRate` TEXT, `customOrder` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `enabledExplore` INTEGER NOT NULL, `header` TEXT, `loginUrl` TEXT, `loginUi` TEXT, `loginCheckJs` TEXT, `bookSourceComment` TEXT, `lastUpdateTime` INTEGER NOT NULL, `respondTime` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `exploreUrl` TEXT, `ruleExplore` TEXT, `searchUrl` TEXT, `ruleSearch` TEXT, `ruleBookInfo` TEXT, `ruleToc` TEXT, `ruleContent` TEXT, PRIMARY KEY(`bookSourceUrl`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookSourceName` TEXT NOT NULL, `bookSourceGroup` TEXT, `bookSourceUrl` TEXT NOT NULL, `bookSourceType` INTEGER NOT NULL, `bookUrlPattern` TEXT, `concurrentRate` TEXT, `customOrder` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `enabledExplore` INTEGER NOT NULL, `header` TEXT, `loginUrl` TEXT, `loginUi` TEXT, `loginCheckJs` TEXT, `bookSourceComment` TEXT, `lastUpdateTime` INTEGER NOT NULL, `respondTime` INTEGER, `weight` INTEGER NOT NULL, `exploreUrl` TEXT, `ruleExplore` TEXT, `searchUrl` TEXT, `ruleSearch` TEXT, `ruleBookInfo` TEXT, `ruleToc` TEXT, `ruleContent` TEXT, PRIMARY KEY(`bookSourceUrl`))",
         "fields": [
           {
             "fieldPath": "bookSourceName",
@@ -350,7 +350,7 @@
             "fieldPath": "respondTime",
             "columnName": "respondTime",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "weight",
@@ -1459,7 +1459,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5211699415b40f58b06d4136d14173d1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5f9007af3ac118c8c2dc587723475405')"
     ]
   }
 }
