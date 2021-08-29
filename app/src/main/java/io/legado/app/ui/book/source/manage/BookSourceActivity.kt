@@ -237,8 +237,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                             o1.bookSourceName.cnCompare(o2.bookSourceName)
                         }
                         Sort.Url -> data.sortedBy { it.bookSourceUrl }
-                        Sort.Update -> data.sortedByDescending { it.respondTime }
-                        Sort.Respond -> data.sortedByDescending { it.respondTime }
+                        Sort.Update -> data.sortedBy { it.lastUpdateTime }
+                        Sort.Respond -> data.sortedBy { it.respondTime }
                         Sort.Enable -> data.sortedWith { o1, o2 ->
                             var sort = -o1.enabled.compareTo(o2.enabled)
                             if (sort == 0) {
@@ -254,7 +254,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                             o2.bookSourceName.cnCompare(o1.bookSourceName)
                         }
                         Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
-                        Sort.Respond -> data.sortedBy { it.respondTime }
+                        Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
+                        Sort.Respond -> data.sortedByDescending { it.respondTime }
                         Sort.Enable -> data.sortedWith { o1, o2 ->
                             var sort = o1.enabled.compareTo(o2.enabled)
                             if (sort == 0) {
