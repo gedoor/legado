@@ -52,6 +52,11 @@
                             android:title="@string/sort_by_lastUpdateTime" />
 
                         <item
+                            android:id="@+id/menu_sort_respondTime"
+                            android:checkable="true"
+                            android:title="@string/sort_by_respondTime" />
+
+                        <item
                             android:id="@+id/menu_sort_enable"
                             android:checkable="true"
                             android:title="@string/is_enabled" />
