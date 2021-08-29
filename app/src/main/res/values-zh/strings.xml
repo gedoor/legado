@@ -771,7 +771,7 @@
     <string name="theme_list">主题列表</string>
     <string name="theme_list_summary">使用保存主题,导入,分享主题</string>
     <string name="select_theme">切换默认主题</string>
-    <string name="sort_by_lastUpdateTime">时间排序</string>
+    <string name="sort_by_lastUpdateTime">更新时间排序</string>
     <string name="search_content">全文搜索</string>
     <string name="rss_source_empty">关注公众号[开源阅读]获取订阅源!</string>
     <string name="explore_empty">当前没有发现源,关注公众号[开源阅读]添加带发现的书源!</string>
@@ -865,5 +865,6 @@
     <string name="pref_cronet_summary">使用Cronet网络组件</string>
     <string name="upload_url">上传URL</string>
     <string name="download_url_rule">下载URL规则</string>
+    <string name="sort_by_respondTime">响应时间排序</string>
 
 </resources>

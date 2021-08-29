@@ -140,6 +140,7 @@ class CheckSourceService : BaseService() {
                     ${source.bookSourceComment}"
                 """.trimIndent()
                 Debug.updateFinalMessage(source.bookSourceUrl, "失败:${it.localizedMessage}")
+                source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
                 source.removeGroup("失效")
@@ -149,6 +150,7 @@ class CheckSourceService : BaseService() {
                         it.startsWith("error:")
                     }?.joinToString("\n")
                 Debug.updateFinalMessage(source.bookSourceUrl, "成功")
+                source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
             }.onFinally(searchCoroutine) {
                 onNext(source.bookSourceUrl, source.bookSourceName)
