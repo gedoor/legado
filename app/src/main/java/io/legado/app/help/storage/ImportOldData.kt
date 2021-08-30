@@ -92,7 +92,7 @@ object ImportOldData {
         return books.size
     }
 
-    private fun importOldSource(json: String): Int {
+    fun importOldSource(json: String): Int {
         val bookSources = mutableListOf<BookSource>()
         val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
         for (item in items) {
