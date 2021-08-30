@@ -86,6 +86,10 @@ fun ResponseBody.text(encode: String? = null): String {
 
 fun Request.Builder.addHeaders(headers: Map<String, String>) {
     headers.forEach {
+        if (it.key == AppConst.UA_NAME) {
+            //防止userAgent重复
+            removeHeader(AppConst.UA_NAME)
+        }
         addHeader(it.key, it.value)
     }
 }

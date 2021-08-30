@@ -48,8 +48,6 @@ val okHttpClient: OkHttpClient by lazy {
         //提供CookieJar 用于同步Cookie
         builder.addInterceptor(CronetInterceptor(null))
     }
-
-
     builder.build()
 }
 

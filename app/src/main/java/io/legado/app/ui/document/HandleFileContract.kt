@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
+import io.legado.app.help.IntentDataHelp
 import io.legado.app.lib.dialogs.SelectItem
 
 @Suppress("unused")
@@ -28,6 +29,12 @@ class HandleFileContract :
             intent.putExtra("title", it.title)
             intent.putExtra("allowExtensions", it.allowExtensions)
             intent.putExtra("otherActions", it.otherActions)
+            it.fileName?.let { fileName ->
+                intent.putExtra("fileName", fileName)
+            }
+            it.file?.let { file ->
+                intent.putExtra("fileKey", IntentDataHelp.putData(file))
+            }
         }
         return intent
     }
@@ -45,6 +52,8 @@ class HandleFileContract :
         var title: String? = null,
         var allowExtensions: Array<String> = arrayOf(),
         var otherActions: ArrayList<SelectItem>? = null,
+        var fileName: String? = null,
+        var file: ByteArray? = null
     )
 
 }

@@ -280,7 +280,6 @@ class AnalyzeUrl(
             return getWebViewSrc(params)
         }
         return getProxyClient(proxy).newCallStrResponse(retry) {
-            removeHeader(UA_NAME)
             addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {
@@ -300,7 +299,6 @@ class AnalyzeUrl(
         setCookie(tag)
         @Suppress("BlockingMethodInNonBlockingContext")
         return getProxyClient(proxy).newCall(retry) {
-            removeHeader(UA_NAME)
             addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {
