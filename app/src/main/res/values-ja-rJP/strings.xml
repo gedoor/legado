@@ -867,4 +867,6 @@
     <string name="upload_url">上传URL</string>
     <string name="download_url_rule">下载URL规则</string>
     <string name="sort_by_respondTime">Sort by respond time</string>
+    <string name="export_success">导出成功</string>
+    <string name="path">路径</string>
 </resources>

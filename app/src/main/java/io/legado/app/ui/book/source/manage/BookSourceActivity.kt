@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
-import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
@@ -42,7 +41,6 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.io.File
 import kotlin.math.min
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
@@ -77,15 +75,16 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
     private val exportDir = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
-        if (uri.isContentScheme()) {
-            DocumentFile.fromTreeUri(this, uri)?.let {
-                viewModel.exportSelection(adapter.selection, it)
+        alert(R.string.export_success) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = getString(R.string.path)
+                editView.setText(uri.toString())
             }
-        } else {
-            uri.path?.let {
-                viewModel.exportSelection(adapter.selection, File(it))
+            customView { alertBinding.root }
+            okButton {
+                sendToClip(uri.toString())
             }
-        }
+        }.show()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -331,7 +330,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
             R.id.menu_add_group -> selectionAddToGroups()
             R.id.menu_remove_group -> selectionRemoveFromGroups()
-            R.id.menu_export_selection -> exportDir.launch(null)
+            R.id.menu_export_selection -> exportDir.launch {
+                mode = HandleFileContract.EXPORT
+                fileName = "bookSource.json"
+                file = GSON.toJson(adapter.selection).toByteArray()
+            }
         }
         return true
     }

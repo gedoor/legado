@@ -4,14 +4,12 @@ import android.app.Application
 import android.content.Intent
 import android.text.TextUtils
 import androidx.core.content.FileProvider
-import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.*
-import java.io.File
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -134,31 +132,6 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     fun delSelection(sources: List<BookSource>) {
         execute {
             appDb.bookSourceDao.delete(*sources.toTypedArray())
-        }
-    }
-
-    fun exportSelection(sources: List<BookSource>, file: File) {
-        execute {
-            val json = GSON.toJson(sources)
-            FileUtils.createFileIfNotExist(file, "exportBookSource.json")
-                .writeText(json)
-        }.onSuccess {
-            context.longToastOnUi("成功导出至\n${file.absolutePath}")
-        }.onError {
-            context.longToastOnUi("导出失败\n${it.localizedMessage}")
-        }
-    }
-
-    fun exportSelection(sources: List<BookSource>, doc: DocumentFile) {
-        execute {
-            val json = GSON.toJson(sources)
-            doc.findFile("exportBookSource.json")?.delete()
-            doc.createFile("", "exportBookSource.json")
-                ?.writeText(context, json)
-        }.onSuccess {
-            context.longToastOnUi("成功导出至\n${doc.uri.path}")
-        }.onError {
-            context.longToastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 

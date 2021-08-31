@@ -867,5 +867,7 @@
     <string name="pref_cronet_summary">使用Cronet网络组件</string>
     <string name="upload_url">上传URL</string>
     <string name="download_url_rule">下载URL规则</string>
+    <string name="export_success">导出成功</string>
+    <string name="path">路径</string>
 
 </resources>

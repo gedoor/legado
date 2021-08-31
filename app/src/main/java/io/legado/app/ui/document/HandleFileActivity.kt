@@ -100,7 +100,8 @@ class HandleFileActivity :
                     111 -> getFileData()?.let {
                         viewModel.upload(it.first, it.second) { url ->
                             val uri = Uri.parse(url)
-                            onResult(Intent().setData(uri))
+                            setResult(RESULT_OK, Intent().setData(uri))
+                            finish()
                         }
                     }
                     else -> {

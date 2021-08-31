@@ -34,9 +34,9 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     }
     private val exportBookshelf = registerForActivityResult(HandleFileContract()) {
         it?.let { uri ->
-            alert("导出成功") {
+            alert(R.string.export_success) {
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = "路径"
+                    editView.hint = getString(R.string.path)
                     editView.setText(uri.toString())
                 }
                 customView { alertBinding.root }
