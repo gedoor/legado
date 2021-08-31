@@ -45,10 +45,18 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             viewModel.importLocal(it)
         }
     }
-    private val exportDirResult = registerForActivityResult(HandleFileContract()) {
-        it?.let {
-            viewModel.export(it)
-        }
+    private val exportDirResult = registerForActivityResult(HandleFileContract()) { uri ->
+        uri ?: return@registerForActivityResult
+        alert(R.string.export_success) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = getString(R.string.path)
+                editView.setText(uri.toString())
+            }
+            customView { alertBinding.root }
+            okButton {
+                requireContext().sendToClip(uri.toString())
+            }
+        }.show()
     }
 
     override fun onStart() {
@@ -118,7 +126,11 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 allowExtensions = arrayOf("txt", "json")
             }
             R.id.menu_import_onLine -> importAlert()
-            R.id.menu_export -> exportDirResult.launch(null)
+            R.id.menu_export -> exportDirResult.launch {
+                mode = HandleFileContract.EXPORT
+                fileName = "httpTts.json"
+                file = GSON.toJson(adapter.getItems()).toByteArray()
+            }
         }
         return true
     }
