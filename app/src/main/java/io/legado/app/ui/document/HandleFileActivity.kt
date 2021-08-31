@@ -71,12 +71,9 @@ class HandleFileActivity :
         }
         val title = intent.getStringExtra("title") ?: let {
             when (mode) {
-                HandleFileContract.DIR -> {
-                    return@let getString(R.string.select_folder)
-                }
-                else -> {
-                    return@let getString(R.string.select_file)
-                }
+                HandleFileContract.EXPORT -> return@let getString(R.string.export)
+                HandleFileContract.DIR -> return@let getString(R.string.select_folder)
+                else -> return@let getString(R.string.select_file)
             }
         }
         alert(title) {
