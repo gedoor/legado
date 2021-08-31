@@ -14,9 +14,14 @@ object DirectLinkUpload {
     suspend fun upLoad(fileName: String, byteArray: ByteArray): String {
         val res = okHttpClient.newCallStrResponse {
             url("https://shuyuan.miaogongzi.site/upload.php")
+            val fileRequest = mapOf(
+                Pair("fileName", fileName),
+                Pair("file", byteArray),
+                Pair("contentType", "application/json")
+            )
             postMultipart(
                 "multipart/form-data",
-                mapOf("file" to Triple(fileName, byteArray, "application/json"))
+                mapOf(Pair("file", fileRequest))
             )
         }
         val analyzeRule = AnalyzeRule(RuleData()).setContent(res.body, res.url)

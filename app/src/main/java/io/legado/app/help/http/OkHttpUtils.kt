@@ -121,12 +121,11 @@ fun Request.Builder.postForm(form: Map<String, String>, encoded: Boolean = false
 fun Request.Builder.postMultipart(type: String, form: Map<String, Any>) {
     val multipartBody = MultipartBody.Builder().setType(type.toMediaType())
     form.forEach {
-        when (it.value) {
-            is Triple<*, *, *> -> {
-                val triple = it.value as Triple<*, *, *>
-                val fileName = triple.first!!.toString()
-                val file = triple.second as ByteArray
-                val mediaType = triple.third?.toString()?.toMediaType()
+        when (val value = it.value) {
+            is Map<*, *> -> {
+                val fileName = value["fileName"] as String
+                val file = value["file"] as ByteArray
+                val mediaType = (value["contentType"] as? String)?.toMediaType()
                 val requestBody = file.toRequestBody(mediaType)
                 multipartBody.addFormDataPart(it.key, fileName, requestBody)
             }
