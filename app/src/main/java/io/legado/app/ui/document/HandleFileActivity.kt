@@ -31,17 +31,17 @@ class HandleFileActivity :
     private var mode = 0
 
     private val selectDocTree =
-        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
-            it ?: let {
+        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+            uri ?: let {
                 finish()
                 return@registerForActivityResult
             }
-            if (it.isContentScheme()) {
+            if (uri.isContentScheme()) {
                 val modeFlags =
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                contentResolver.takePersistableUriPermission(it, modeFlags)
+                contentResolver.takePersistableUriPermission(uri, modeFlags)
             }
-            onResult(Intent().setData(it))
+            onResult(Intent().setData(uri))
         }
 
     private val selectDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
@@ -185,10 +185,22 @@ class HandleFileActivity :
     }
 
     override fun onResult(data: Intent) {
-        if (data.data != null) {
-            setResult(RESULT_OK, data)
+        val uri = data.data
+        uri ?: let {
+            finish()
+            return
         }
-        finish()
+        if (mode == HandleFileContract.EXPORT) {
+            getFileData()?.let { fileData ->
+                viewModel.saveToLocal(uri, fileData.first, fileData.second) { savedUri ->
+                    setResult(RESULT_OK, Intent().setData(savedUri))
+                    finish()
+                }
+            }
+        } else {
+            setResult(RESULT_OK, data)
+            finish()
+        }
     }
 
 }
