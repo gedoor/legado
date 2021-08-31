@@ -2,12 +2,10 @@ package io.legado.app.ui.replace
 
 import android.app.Application
 import android.text.TextUtils
-import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.utils.*
-import java.io.File
+import io.legado.app.utils.splitNotBlank
 
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
 
@@ -90,31 +88,6 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
     fun delSelection(rules: LinkedHashSet<ReplaceRule>) {
         execute {
             appDb.replaceRuleDao.delete(*rules.toTypedArray())
-        }
-    }
-
-    fun exportSelection(sources: LinkedHashSet<ReplaceRule>, file: File) {
-        execute {
-            val json = GSON.toJson(sources)
-            FileUtils.createFileIfNotExist(file, "exportReplaceRule.json")
-                .writeText(json)
-        }.onSuccess {
-            context.toastOnUi("成功导出至\n${file.absolutePath}")
-        }.onError {
-            context.toastOnUi("导出失败\n${it.localizedMessage}")
-        }
-    }
-
-    fun exportSelection(sources: LinkedHashSet<ReplaceRule>, doc: DocumentFile) {
-        execute {
-            val json = GSON.toJson(sources)
-            doc.findFile("exportReplaceRule.json")?.delete()
-            doc.createFile("", "exportReplaceRule.json")
-                ?.writeText(context, json)
-        }.onSuccess {
-            context.toastOnUi("成功导出至\n${doc.uri.path}")
-        }.onError {
-            context.toastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 

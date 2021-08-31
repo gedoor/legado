@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
-import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -39,7 +38,6 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.io.File
 
 /**
  * 替换规则管理
@@ -79,15 +77,16 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
     private val exportDir = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
-        if (uri.isContentScheme()) {
-            DocumentFile.fromTreeUri(this, uri)?.let {
-                viewModel.exportSelection(adapter.selection, it)
+        alert(R.string.export_success) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = getString(R.string.path)
+                editView.setText(uri.toString())
             }
-        } else {
-            uri.path?.let {
-                viewModel.exportSelection(adapter.selection, File(it))
+            customView { alertBinding.root }
+            okButton {
+                sendToClip(uri.toString())
             }
-        }
+        }.show()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -231,7 +230,11 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
             R.id.menu_top_sel -> viewModel.topSelect(adapter.selection)
             R.id.menu_bottom_sel -> viewModel.bottomSelect(adapter.selection)
-            R.id.menu_export_selection -> exportDir.launch(null)
+            R.id.menu_export_selection -> exportDir.launch {
+                mode = HandleFileContract.EXPORT
+                fileName = "exportReplaceRule.json"
+                file = GSON.toJson(adapter.selection).toByteArray()
+            }
         }
         return false
     }

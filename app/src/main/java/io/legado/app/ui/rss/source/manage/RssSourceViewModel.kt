@@ -4,14 +4,12 @@ import android.app.Application
 import android.content.Intent
 import android.text.TextUtils
 import androidx.core.content.FileProvider
-import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.*
-import java.io.File
 
 class RssSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -76,31 +74,6 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
     fun delSelection(sources: List<RssSource>) {
         execute {
             appDb.rssSourceDao.delete(*sources.toTypedArray())
-        }
-    }
-
-    fun exportSelection(sources: List<RssSource>, file: File) {
-        execute {
-            val json = GSON.toJson(sources)
-            FileUtils.createFileIfNotExist(file, "exportRssSource.json")
-                .writeText(json)
-        }.onSuccess {
-            context.toastOnUi("成功导出至\n${file.absolutePath}")
-        }.onError {
-            context.toastOnUi("导出失败\n${it.localizedMessage}")
-        }
-    }
-
-    fun exportSelection(sources: List<RssSource>, doc: DocumentFile) {
-        execute {
-            val json = GSON.toJson(sources)
-            doc.findFile("exportRssSource.json")?.delete()
-            doc.createFile("", "exportRssSource.json")
-                ?.writeText(context, json)
-        }.onSuccess {
-            context.toastOnUi("成功导出至\n${doc.uri.path}")
-        }.onError {
-            context.toastOnUi("导出失败\n${it.localizedMessage}")
         }
     }
 
