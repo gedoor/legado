@@ -13,8 +13,11 @@ object DirectLinkUpload {
 
     suspend fun upLoad(fileName: String, byteArray: ByteArray): String {
         val res = okHttpClient.newCallStrResponse {
-            url("https://shuyuan.miaogongzi.site/index.html")
-            postMultipart(mapOf("file" to Triple(fileName, byteArray, null)))
+            url("https://shuyuan.miaogongzi.site/upload.php")
+            postMultipart(
+                "multipart/form-data",
+                mapOf("file" to Triple(fileName, byteArray, "application/json"))
+            )
         }
         val analyzeRule = AnalyzeRule(RuleData()).setContent(res.body, res.url)
         return analyzeRule.getString("tag.b@text")

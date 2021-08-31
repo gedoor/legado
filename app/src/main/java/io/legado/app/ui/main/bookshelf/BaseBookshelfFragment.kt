@@ -33,8 +33,17 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
         }
     }
     private val exportBookshelf = registerForActivityResult(HandleFileContract()) {
-        it?.let {
-
+        it?.let { uri ->
+            alert("导出成功") {
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "路径"
+                    editView.setText(uri.toString())
+                }
+                customView { alertBinding.root }
+                okButton {
+                    requireContext().sendToClip(uri.toString())
+                }
+            }.show()
         }
     }
     abstract val groupId: Long
