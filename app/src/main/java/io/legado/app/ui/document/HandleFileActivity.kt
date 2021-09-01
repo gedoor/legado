@@ -143,11 +143,11 @@ class HandleFileActivity :
     private fun getFileActions(): ArrayList<SelectItem> {
         return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             arrayListOf(
-                SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.FILE),
-                SelectItem(getString(R.string.app_folder_picker), 11)
+                SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE),
+                SelectItem(getString(R.string.app_file_picker), 11)
             )
         } else {
-            arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.FILE))
+            arrayListOf(SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE))
         }
     }
 
