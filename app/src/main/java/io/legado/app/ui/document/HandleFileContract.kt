@@ -29,11 +29,10 @@ class HandleFileContract :
             intent.putExtra("title", it.title)
             intent.putExtra("allowExtensions", it.allowExtensions)
             intent.putExtra("otherActions", it.otherActions)
-            it.fileName?.let { fileName ->
-                intent.putExtra("fileName", fileName)
-            }
-            it.file?.let { file ->
-                intent.putExtra("fileKey", IntentDataHelp.putData(file))
+            it.fileData?.let { fileData ->
+                intent.putExtra("fileName", fileData.first)
+                intent.putExtra("fileKey", IntentDataHelp.putData(fileData.second))
+                intent.putExtra("contentType", fileData.third)
             }
         }
         return intent
@@ -52,8 +51,7 @@ class HandleFileContract :
         var title: String? = null,
         var allowExtensions: Array<String> = arrayOf(),
         var otherActions: ArrayList<SelectItem>? = null,
-        var fileName: String? = null,
-        var file: ByteArray? = null
+        var fileData: Triple<String, ByteArray, String>? = null
     )
 
 }

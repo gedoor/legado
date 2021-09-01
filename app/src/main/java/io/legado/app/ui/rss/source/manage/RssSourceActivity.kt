@@ -127,8 +127,11 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
             R.id.menu_export_selection -> exportDir.launch {
                 mode = HandleFileContract.EXPORT
-                fileName = "exportRssSource.json"
-                file = GSON.toJson(adapter.selection).toByteArray()
+                fileData = Triple(
+                    "exportRssSource.json",
+                    GSON.toJson(adapter.selection).toByteArray(),
+                    "application/json"
+                )
             }
             R.id.menu_top_sel -> viewModel.topSource(*adapter.selection.toTypedArray())
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())

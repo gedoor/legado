@@ -332,8 +332,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_remove_group -> selectionRemoveFromGroups()
             R.id.menu_export_selection -> exportDir.launch {
                 mode = HandleFileContract.EXPORT
-                fileName = "bookSource.json"
-                file = GSON.toJson(adapter.selection).toByteArray()
+                fileData = Triple(
+                    "bookSource.json",
+                    GSON.toJson(adapter.selection).toByteArray(),
+                    "application/json"
+                )
             }
         }
         return true

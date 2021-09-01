@@ -15,9 +15,14 @@ class HandleFileViewModel(application: Application) : BaseViewModel(application)
 
     val errorLiveData = MutableLiveData<String>()
 
-    fun upload(fileName: String, byteArray: ByteArray, success: (url: String) -> Unit) {
+    fun upload(
+        fileName: String,
+        file: ByteArray,
+        contentType: String,
+        success: (url: String) -> Unit
+    ) {
         execute {
-            DirectLinkUpload.upLoad(fileName, byteArray)
+            DirectLinkUpload.upLoad(fileName, file, contentType)
         }.onSuccess {
             success.invoke(it)
         }.onError {

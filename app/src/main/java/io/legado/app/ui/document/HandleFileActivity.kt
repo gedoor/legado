@@ -95,7 +95,7 @@ class HandleFileActivity :
                         )
                     }
                     111 -> getFileData()?.let {
-                        viewModel.upload(it.first, it.second) { url ->
+                        viewModel.upload(it.first, it.second, it.third) { url ->
                             val uri = Uri.parse(url)
                             setResult(RESULT_OK, Intent().setData(uri))
                             finish()
@@ -118,13 +118,14 @@ class HandleFileActivity :
         }.show()
     }
 
-    private fun getFileData(): Pair<String, ByteArray>? {
+    private fun getFileData(): Triple<String, ByteArray, String>? {
         val fileName = intent.getStringExtra("fileName")
         val file = intent.getStringExtra("fileKey")?.let {
             IntentDataHelp.getData<ByteArray>(it)
         }
-        if (fileName != null && file != null) {
-            return Pair(fileName, file)
+        val contentType = intent.getStringExtra("contentType")
+        if (fileName != null && file != null && contentType != null) {
+            return Triple(fileName, file, contentType)
         }
         return null
     }

@@ -9,7 +9,7 @@ object DirectLinkUpload {
     private const val uploadUrlKey = "directLinkUploadUrl"
     private const val downloadUrlRuleKey = "directLinkDownloadUrlRule"
 
-    suspend fun upLoad(fileName: String, byteArray: ByteArray): String {
+    suspend fun upLoad(fileName: String, file: ByteArray, contentType: String): String {
         val url = getUploadUrl()
         if (url.isNullOrBlank()) {
             error("上传url未配置")
@@ -19,7 +19,7 @@ object DirectLinkUpload {
             error("下载地址规则未配置")
         }
         val analyzeUrl = AnalyzeUrl(url)
-        val res = analyzeUrl.upload(fileName, byteArray, "application/json")
+        val res = analyzeUrl.upload(fileName, file, contentType)
         val analyzeRule = AnalyzeRule(RuleData()).setContent(res.body, res.url)
         val downloadUrl = analyzeRule.getString(downloadUrlRule)
         if (downloadUrl.isBlank()) {

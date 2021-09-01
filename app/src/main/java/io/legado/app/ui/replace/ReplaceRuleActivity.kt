@@ -232,8 +232,11 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_bottom_sel -> viewModel.bottomSelect(adapter.selection)
             R.id.menu_export_selection -> exportDir.launch {
                 mode = HandleFileContract.EXPORT
-                fileName = "exportReplaceRule.json"
-                file = GSON.toJson(adapter.selection).toByteArray()
+                fileData = Triple(
+                    "exportReplaceRule.json",
+                    GSON.toJson(adapter.selection).toByteArray(),
+                    "application/json"
+                )
             }
         }
         return false

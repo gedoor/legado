@@ -128,8 +128,11 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             R.id.menu_import_onLine -> importAlert()
             R.id.menu_export -> exportDirResult.launch {
                 mode = HandleFileContract.EXPORT
-                fileName = "httpTts.json"
-                file = GSON.toJson(adapter.getItems()).toByteArray()
+                fileData = Triple(
+                    "httpTts.json",
+                    GSON.toJson(adapter.getItems()).toByteArray(),
+                    "application/json"
+                )
             }
         }
         return true
