@@ -56,6 +56,11 @@
             android:key="userAgent"
             android:title="UserAgent" />
 
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="uploadRule"
+            android:title="@string/direct_link_upload_rule"
+            android:summary="@string/direct_link_upload_rule_summary" />
+
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:key="Cronet"
             android:defaultValue="false"

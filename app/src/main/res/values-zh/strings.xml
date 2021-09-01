@@ -868,5 +868,7 @@
     <string name="sort_by_respondTime">响应时间排序</string>
     <string name="export_success">导出成功</string>
     <string name="path">路径</string>
+    <string name="direct_link_upload_rule">直链上传规则</string>
+    <string name="direct_link_upload_rule_summary">用于导出书源书单时生成直链url</string>
 
 </resources>

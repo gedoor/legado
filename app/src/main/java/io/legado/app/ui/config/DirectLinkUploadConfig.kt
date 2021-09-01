@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogDirectLinkUploadConfigBinding
 import io.legado.app.help.DirectLinkUpload
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
@@ -35,6 +36,7 @@ class DirectLinkUploadConfig : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        binding.toolBar.setBackgroundColor(primaryColor)
         binding.editUploadUrl.setText(DirectLinkUpload.getUploadUrl())
         binding.editDownloadUrlRule.setText(DirectLinkUpload.getDownloadUrlRule())
         binding.tvCancel.onClick {

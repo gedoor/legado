@@ -118,8 +118,11 @@ fun Request.Builder.postForm(form: Map<String, String>, encoded: Boolean = false
     post(formBody.build())
 }
 
-fun Request.Builder.postMultipart(type: String, form: Map<String, Any>) {
-    val multipartBody = MultipartBody.Builder().setType(type.toMediaType())
+fun Request.Builder.postMultipart(type: String?, form: Map<String, Any>) {
+    val multipartBody = MultipartBody.Builder()
+    type?.let {
+        multipartBody.setType(type.toMediaType())
+    }
     form.forEach {
         when (val value = it.value) {
             is Map<*, *> -> {

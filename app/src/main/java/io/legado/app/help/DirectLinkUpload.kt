@@ -1,9 +1,7 @@
 package io.legado.app.help
 
-import io.legado.app.help.http.newCallStrResponse
-import io.legado.app.help.http.okHttpClient
-import io.legado.app.help.http.postMultipart
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleData
 
 object DirectLinkUpload {
@@ -12,24 +10,33 @@ object DirectLinkUpload {
     private const val downloadUrlRuleKey = "directLinkDownloadUrlRule"
 
     suspend fun upLoad(fileName: String, byteArray: ByteArray): String {
-        val res = okHttpClient.newCallStrResponse {
-            url("https://shuyuan.miaogongzi.site/upload.php")
-            val fileRequest = mapOf(
-                Pair("fileName", fileName),
-                Pair("file", byteArray),
-                Pair("contentType", "application/json")
-            )
-            postMultipart(
-                "multipart/form-data",
-                mapOf(Pair("file", fileRequest))
-            )
+        val url = getUploadUrl()
+        if (url.isNullOrBlank()) {
+            error("上传url未配置")
         }
+        val downloadUrlRule = getDownloadUrlRule()
+        if (downloadUrlRule.isNullOrBlank()) {
+            error("下载地址规则未配置")
+        }
+        val analyzeUrl = AnalyzeUrl(url)
+        val res = analyzeUrl.upload(fileName, byteArray, "application/json")
         val analyzeRule = AnalyzeRule(RuleData()).setContent(res.body, res.url)
-        return analyzeRule.getString("tag.b@text")
+        val downloadUrl = analyzeRule.getString(downloadUrlRule)
+        if (downloadUrl.isBlank()) {
+            error("上传失败")
+        }
+        return downloadUrl
     }
 
     fun getUploadUrl(): String? {
         return CacheManager.get(uploadUrlKey)
+            ?: """http://lk1.wancient.com/shuyuan,{
+            "method":"POST",
+            "body": {
+                "file": "fileRequest"
+            },
+            "type": "multipart/form-data"
+          }""".trimMargin()
     }
 
     fun putUploadUrl(url: String) {
@@ -38,6 +45,7 @@ object DirectLinkUpload {
 
     fun getDownloadUrlRule(): String? {
         return CacheManager.get(uploadUrlKey)
+            ?: "http://lk1.wancient.com/shuyuan/{{$.data}}"
     }
 
     fun putDownloadUrlRule(rule: String) {

@@ -85,7 +85,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
                     putPrefInt(PreferKey.webPort, it)
                 }
             PreferKey.cleanCache -> clearCache()
-
+            "uploadRule" -> DirectLinkUploadConfig().show(childFragmentManager, "uploadRuleConfig")
         }
         return super.onPreferenceTreeClick(preference)
     }
