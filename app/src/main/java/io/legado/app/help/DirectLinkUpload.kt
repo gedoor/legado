@@ -30,7 +30,7 @@ object DirectLinkUpload {
 
     fun getUploadUrl(): String? {
         return CacheManager.get(uploadUrlKey)
-            ?: """http://lk1.wancient.com/shuyuan,{
+            ?: """http://shuyuan.miaogongzi.site:6564/shuyuan,{
             "method":"POST",
             "body": {
                 "file": "fileRequest"
@@ -45,7 +45,10 @@ object DirectLinkUpload {
 
     fun getDownloadUrlRule(): String? {
         return CacheManager.get(uploadUrlKey)
-            ?: "http://lk1.wancient.com/shuyuan/{{$.data}}"
+            ?: """
+                ${'$'}.data@js:if (result == '') '' 
+                else 'https://shuyuan.miaogongzi.site/shuyuan/'+result
+            """.trimIndent()
     }
 
     fun putDownloadUrlRule(rule: String) {

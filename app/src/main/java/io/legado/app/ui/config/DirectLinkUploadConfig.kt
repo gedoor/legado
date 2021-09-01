@@ -44,6 +44,7 @@ class DirectLinkUploadConfig : BaseDialogFragment() {
         }
         binding.tvFooterLeft.onClick {
             DirectLinkUpload.delete()
+            dismiss()
         }
         binding.tvOk.onClick {
             val uploadUrl = binding.editUploadUrl.text?.toString()
