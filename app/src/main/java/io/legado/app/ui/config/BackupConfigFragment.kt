@@ -236,9 +236,9 @@ class BackupConfigFragment : BasePreferenceFragment(),
                     Coroutine.async {
                         Backup.backup(requireContext(), backupPath)
                     }.onSuccess {
-                        toastOnUi(R.string.backup_success)
+                        activity?.toastOnUi(R.string.backup_success)
                     }.onError {
-                        toastOnUi(R.string.backup_fail)
+                        activity?.toastOnUi(R.string.backup_fail)
                     }
                 } else {
                     backupDir.launch(null)
@@ -258,9 +258,9 @@ class BackupConfigFragment : BasePreferenceFragment(),
                     AppConfig.backupPath = path
                     Backup.backup(requireContext(), path)
                 }.onSuccess {
-                    toastOnUi(R.string.backup_success)
+                    activity?.toastOnUi(R.string.backup_success)
                 }.onError {
-                    toastOnUi(R.string.backup_fail)
+                    activity?.toastOnUi(R.string.backup_fail)
                 }
             }
             .request()
