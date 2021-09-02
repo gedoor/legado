@@ -34,7 +34,7 @@ class ContentProcessor private constructor(
 
     }
 
-    private var replaceRules = arrayListOf<ReplaceRule>()
+    private val replaceRules = arrayListOf<ReplaceRule>()
 
     init {
         upReplaceRules()
@@ -47,6 +47,10 @@ class ContentProcessor private constructor(
     }
 
     @Synchronized
+    fun getReplaceRules(): Array<ReplaceRule> {
+        return replaceRules.toTypedArray()
+    }
+
     fun getContent(
         book: Book,
         title: String, //已经经过简繁转换
@@ -56,7 +60,7 @@ class ContentProcessor private constructor(
     ): List<String> {
         var content1 = content
         if (useReplace) {
-            replaceRules.forEach { item ->
+            getReplaceRules().forEach { item ->
                 if (item.pattern.isNotEmpty()) {
                     try {
                         content1 = if (item.isRegex) {
