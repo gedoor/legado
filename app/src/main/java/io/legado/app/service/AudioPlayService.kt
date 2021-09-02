@@ -8,13 +8,16 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.AudioFocusRequestCompat
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -23,6 +26,7 @@ import io.legado.app.constant.IntentAction
 import io.legado.app.constant.Status
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.ExoPlayerHelper
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -39,9 +43,7 @@ import kotlinx.coroutines.Dispatchers.Main
 
 class AudioPlayService : BaseService(),
     AudioManager.OnAudioFocusChangeListener,
-    MediaPlayer.OnPreparedListener,
-    MediaPlayer.OnErrorListener,
-    MediaPlayer.OnCompletionListener {
+    Player.Listener {
 
     companion object {
         var isRun = false
@@ -50,10 +52,10 @@ class AudioPlayService : BaseService(),
     }
 
     private lateinit var audioManager: AudioManager
-    private var mFocusRequest: AudioFocusRequestCompat? = null
+    private lateinit var mFocusRequest: AudioFocusRequestCompat
+    private lateinit var exoPlayer: ExoPlayer
     private var title: String = ""
     private var subtitle: String = ""
-    private val mediaPlayer = MediaPlayer()
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
     private var url: String = ""
@@ -68,9 +70,8 @@ class AudioPlayService : BaseService(),
         upNotification()
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         mFocusRequest = MediaHelp.getFocusRequest(this)
-        mediaPlayer.setOnErrorListener(this)
-        mediaPlayer.setOnPreparedListener(this)
-        mediaPlayer.setOnCompletionListener(this)
+        exoPlayer = SimpleExoPlayer.Builder(this).build()
+        exoPlayer.addListener(this)
         initMediaSession()
         initBroadcastReceiver()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
@@ -106,7 +107,7 @@ class AudioPlayService : BaseService(),
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
-        mediaPlayer.release()
+        exoPlayer.release()
         mediaSessionCompat?.release()
         unregisterReceiver(broadcastReceiver)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
@@ -120,19 +121,19 @@ class AudioPlayService : BaseService(),
             kotlin.runCatching {
                 AudioPlay.status = Status.STOP
                 postEvent(EventBus.AUDIO_STATE, Status.STOP)
-                mediaPlayer.reset()
+                upPlayProgressJob?.cancel()
+                exoPlayer.clearMediaItems()
                 val analyzeUrl =
                     AnalyzeUrl(url, headerMapF = AudioPlay.headers(), useWebView = true)
                 val uri = Uri.parse(analyzeUrl.url)
-                mediaPlayer.setDataSource(this, uri, analyzeUrl.headerMap)
-                mediaPlayer.prepareAsync()
-                upPlayProgressJob?.cancel()
+                val mediaSource = ExoPlayerHelper.createMediaSource(uri)
+                exoPlayer.setMediaSource(mediaSource)
+                exoPlayer.playWhenReady = true
+                exoPlayer.prepare()
             }.onFailure {
                 it.printStackTrace()
-                launch {
-                    toastOnUi("$url ${it.localizedMessage}")
-                    stopSelf()
-                }
+                toastOnUi("$url ${it.localizedMessage}")
+                stopSelf()
             }
         }
     }
@@ -144,8 +145,8 @@ class AudioPlayService : BaseService(),
             try {
                 AudioPlayService.pause = pause
                 upPlayProgressJob?.cancel()
-                position = mediaPlayer.currentPosition
-                if (mediaPlayer.isPlaying) mediaPlayer.pause()
+                position = exoPlayer.currentPosition.toInt()
+                if (exoPlayer.isPlaying) exoPlayer.pause()
                 upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
                 AudioPlay.status = Status.PAUSE
                 postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
@@ -159,9 +160,9 @@ class AudioPlayService : BaseService(),
     private fun resume() {
         try {
             pause = false
-            if (!mediaPlayer.isPlaying) {
-                mediaPlayer.start()
-                mediaPlayer.seekTo(position)
+            if (!exoPlayer.isPlaying) {
+                exoPlayer.play()
+                exoPlayer.seekTo(position.toLong())
             }
             upPlayProgress()
             upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
@@ -175,8 +176,8 @@ class AudioPlayService : BaseService(),
     }
 
     private fun adjustProgress(position: Int) {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.seekTo(position)
+        if (exoPlayer.isPlaying) {
+            exoPlayer.seekTo(position.toLong())
         } else {
             this.position = position
         }
@@ -186,50 +187,42 @@ class AudioPlayService : BaseService(),
         kotlin.runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 playSpeed += adjust
-                if (mediaPlayer.isPlaying) {
-                    mediaPlayer.playbackParams =
-                        mediaPlayer.playbackParams.apply { speed = playSpeed }
-                }
+                exoPlayer.setPlaybackSpeed(playSpeed)
                 postEvent(EventBus.AUDIO_SPEED, playSpeed)
             }
         }
     }
 
-    /**
-     * 加载完成
-     */
-    override fun onPrepared(mp: MediaPlayer) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mediaPlayer.playbackParams = mediaPlayer.playbackParams.apply { speed = playSpeed }
-        } else {
-            mediaPlayer.start()
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        super.onPlaybackStateChanged(playbackState)
+        when (playbackState) {
+            Player.STATE_IDLE -> {
+                // 空闲
+            }
+            Player.STATE_BUFFERING -> {
+                // 缓冲中
+            }
+            Player.STATE_READY -> {
+                // 准备好
+                AudioPlay.status = Status.PLAY
+                postEvent(EventBus.AUDIO_STATE, Status.PLAY)
+                postEvent(EventBus.AUDIO_SIZE, exoPlayer.duration)
+                upPlayProgress()
+                AudioPlay.saveDurChapter(exoPlayer.duration)
+            }
+            Player.STATE_ENDED -> {
+                // 结束
+                upPlayProgressJob?.cancel()
+                AudioPlay.next(this)
+            }
         }
-        mediaPlayer.seekTo(position)
-        AudioPlay.status = Status.PLAY
-        postEvent(EventBus.AUDIO_STATE, Status.PLAY)
-        postEvent(EventBus.AUDIO_SIZE, mediaPlayer.duration)
-        upPlayProgress()
-        AudioPlay.saveDurChapter(mediaPlayer.duration.toLong())
     }
 
-    /**
-     * 播放出错
-     */
-    override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
-        if (!mediaPlayer.isPlaying) {
-            AudioPlay.status = Status.STOP
-            postEvent(EventBus.AUDIO_STATE, Status.STOP)
-            launch { toastOnUi("error: $what $extra $url") }
-        }
-        return true
-    }
-
-    /**
-     * 播放结束
-     */
-    override fun onCompletion(mp: MediaPlayer) {
-        upPlayProgressJob?.cancel()
-        AudioPlay.next(this)
+    override fun onPlayerError(error: PlaybackException) {
+        super.onPlayerError(error)
+        AudioPlay.status = Status.STOP
+        postEvent(EventBus.AUDIO_STATE, Status.STOP)
+        toastOnUi("error: ${error.errorCode} ${error.errorCodeName} $url")
     }
 
     private fun setTimer(minute: Int) {
@@ -279,7 +272,7 @@ class AudioPlayService : BaseService(),
         upPlayProgressJob = launch {
             while (isActive) {
                 saveProgress()
-                postEvent(EventBus.AUDIO_PROGRESS, mediaPlayer.currentPosition)
+                postEvent(EventBus.AUDIO_PROGRESS, exoPlayer.currentPosition)
                 delay(1000)
             }
         }
@@ -341,7 +334,7 @@ class AudioPlayService : BaseService(),
     private fun saveProgress() {
         execute {
             AudioPlay.book?.let {
-                AudioPlay.durChapterPos = mediaPlayer.currentPosition
+                AudioPlay.durChapterPos = exoPlayer.currentPosition.toInt()
                 appDb.bookDao.upProgress(it.bookUrl, AudioPlay.durChapterPos)
             }
         }

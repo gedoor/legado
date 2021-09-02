@@ -32,7 +32,7 @@ object MediaHelp {
             or PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE
             or PlaybackStateCompat.ACTION_SET_CAPTIONING_ENABLED)
 
-    fun getFocusRequest(audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener): AudioFocusRequestCompat? {
+    fun getFocusRequest(audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener): AudioFocusRequestCompat {
         val mPlaybackAttributes = AudioAttributesCompat.Builder()
             .setUsage(AudioAttributesCompat.USAGE_MEDIA)
             .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
