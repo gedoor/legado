@@ -17,6 +17,7 @@ object EventBus {
     const val AUDIO_PROGRESS = "audioProgress"
     const val AUDIO_SIZE = "audioSize"
     const val AUDIO_SPEED = "audioSpeed"
+    const val AUDIO_ERROR = "audioError"
     const val NOTIFY_MAIN = "notifyMain"
     const val WEB_SERVICE = "webService"
     const val UP_DOWNLOAD = "upDownload"

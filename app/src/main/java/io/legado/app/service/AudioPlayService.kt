@@ -222,7 +222,12 @@ class AudioPlayService : BaseService(),
         super.onPlayerError(error)
         AudioPlay.status = Status.STOP
         postEvent(EventBus.AUDIO_STATE, Status.STOP)
-        toastOnUi("error: ${error.errorCode} ${error.errorCodeName} $url")
+        error.printStackTrace()
+    }
+
+    override fun onPlayerErrorChanged(error: PlaybackException?) {
+        super.onPlayerErrorChanged(error)
+        postEvent(EventBus.AUDIO_ERROR, error?.localizedMessage)
     }
 
     private fun setTimer(minute: Int) {

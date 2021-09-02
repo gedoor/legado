@@ -193,6 +193,9 @@ class AudioPlayActivity :
                 playButton()
             }
         }
+        observeEventSticky<String>(EventBus.AUDIO_ERROR) {
+            binding.tvErrorMessage.text = it
+        }
         observeEventSticky<Int>(EventBus.AUDIO_STATE) {
             AudioPlay.status = it
             if (it == Status.PLAY) {

@@ -84,6 +84,20 @@ interface JsExtensions {
         }
     }
 
+    fun connect(urlStr: String, header: String?): StrResponse {
+        return runBlocking {
+            val headerMap = GSON.fromJsonObject<Map<String, String>>(header)
+            val analyzeUrl = AnalyzeUrl(urlStr, headerMapF = headerMap)
+            kotlin.runCatching {
+                analyzeUrl.getStrResponse(urlStr)
+            }.onFailure {
+                it.printStackTrace()
+            }.getOrElse {
+                StrResponse(analyzeUrl.url, it.localizedMessage)
+            }
+        }
+    }
+
     /**
      * 实现16进制字符串转文件
      * @param content 需要转成文件的16进制字符串

@@ -1,4 +1,4 @@
-package io.legado.app.data.entities
+package io.legado.app.data.entities.rule
 
 data class ExploreKind(
     val title: String,
