@@ -6,9 +6,9 @@ import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive

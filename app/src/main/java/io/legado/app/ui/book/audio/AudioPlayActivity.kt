@@ -22,8 +22,8 @@ import io.legado.app.databinding.ActivityAudioPlayBinding
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.model.AudioPlay
 import io.legado.app.service.AudioPlayService
-import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.login.SourceLoginActivity

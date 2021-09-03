@@ -9,7 +9,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemDownloadBinding
-import io.legado.app.service.help.CacheBook
+import io.legado.app.model.CacheBook
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet

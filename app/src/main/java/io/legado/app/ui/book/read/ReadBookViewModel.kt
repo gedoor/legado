@@ -14,11 +14,11 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.AppWebDav
+import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.msg
 import io.legado.app.utils.postEvent

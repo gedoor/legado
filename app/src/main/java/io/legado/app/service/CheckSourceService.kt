@@ -12,9 +12,9 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.CompositeCoroutine
+import io.legado.app.model.CheckSource
 import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.service.help.CheckSource
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi

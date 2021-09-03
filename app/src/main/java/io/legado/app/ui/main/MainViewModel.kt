@@ -11,8 +11,8 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
 import io.legado.app.help.LocalConfig
+import io.legado.app.model.CacheBook
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.service.help.CacheBook
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay

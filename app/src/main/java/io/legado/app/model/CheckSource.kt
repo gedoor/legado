@@ -1,4 +1,4 @@
-package io.legado.app.service.help
+package io.legado.app.model
 
 import android.content.Context
 import io.legado.app.R

@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
-import io.legado.app.service.help.ReadAloud
+import io.legado.app.model.ReadAloud
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.msg

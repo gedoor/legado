@@ -24,7 +24,7 @@ import io.legado.app.databinding.ItemHttpTtsBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.service.help.ReadAloud
+import io.legado.app.model.ReadAloud
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*

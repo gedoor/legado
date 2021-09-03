@@ -29,11 +29,11 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ExoPlayerHelper
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
+import io.legado.app.model.AudioPlay
+import io.legado.app.model.ReadAloud
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.receiver.MediaButtonReceiver
-import io.legado.app.service.help.AudioPlay
-import io.legado.app.service.help.ReadAloud
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi

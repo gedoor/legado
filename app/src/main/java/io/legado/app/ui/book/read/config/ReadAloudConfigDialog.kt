@@ -16,8 +16,8 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.model.ReadAloud
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.service.help.ReadAloud
 import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.windowSize

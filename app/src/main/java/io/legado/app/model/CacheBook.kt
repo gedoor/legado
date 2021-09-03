@@ -1,4 +1,4 @@
-package io.legado.app.service.help
+package io.legado.app.model
 
 import android.content.Context
 import io.legado.app.R
@@ -6,7 +6,6 @@ import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
-import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.msg
