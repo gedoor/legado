@@ -27,9 +27,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 book?.let { book ->
                     titleData.postValue(book.name)
                     coverData.postValue(book.getDisplayCover())
-                    durChapterIndex = book.durChapterIndex
-                    durChapterPos = book.durChapterPos
-                    durChapter = appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
+                    durChapter = appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)
                     upDurChapter(book)
                     bookSource = appDb.bookSourceDao.getBookSource(book.origin)
                     if (durChapter == null) {
@@ -111,14 +109,13 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         chapters: List<BookChapter>
     ) {
         execute {
-            AudioPlay.durChapterIndex = BookHelp.getDurChapter(
+            book.durChapterIndex = BookHelp.getDurChapter(
                 book.durChapterIndex,
                 oldTocSize,
                 book.durChapterTitle,
                 chapters
             )
-            book.durChapterIndex = AudioPlay.durChapterIndex
-            book.durChapterTitle = chapters[AudioPlay.durChapterIndex].title
+            book.durChapterTitle = chapters[book.durChapterIndex].title
             appDb.bookDao.update(book)
             appDb.bookChapterDao.insert(*chapters.toTypedArray())
         }

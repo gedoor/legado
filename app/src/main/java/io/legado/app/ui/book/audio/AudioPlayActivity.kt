@@ -54,7 +54,7 @@ class AudioPlayActivity :
     }
     private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
         it?.let {
-            if (it.first != AudioPlay.durChapterIndex) {
+            if (it.first != AudioPlay.book?.durChapterIndex) {
                 AudioPlay.skipTo(this, it.first)
             }
         }
@@ -233,7 +233,6 @@ class AudioPlayActivity :
             binding.tvAllTime.text = progressTimeFormat.format(it.toLong())
         }
         observeEventSticky<Int>(EventBus.AUDIO_PROGRESS) {
-            AudioPlay.durChapterPos = it
             if (!adjustProgress) binding.playerProgress.progress = it
             binding.tvDurTime.text = progressTimeFormat.format(it.toLong())
         }
