@@ -453,6 +453,18 @@ class AnalyzeRule(
                 }
                 else -> ruleStr
             }
+            if (mode != Mode.Js) {
+                //非js规则才需要继续处理
+                initNonJsRule()
+            }
+        }
+
+        /**
+         * 处理非js规则,js不做处理
+         * js里面的{{}}规则可以留到下次处理
+         * 一些url需要实时更新参数可以再<js></js>内嵌套{{}},{{}}会访问时才处理
+         */
+        private fun initNonJsRule() {
             //分离put
             rule = splitPutRule(rule, putMap)
             //@get,{{ }}, 拆分

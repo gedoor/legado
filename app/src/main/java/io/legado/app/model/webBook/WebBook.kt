@@ -128,7 +128,7 @@ object WebBook {
         //检测书源是否已登录
         bookSource.loginCheckJs?.let { checkJs ->
             if (checkJs.isNotBlank()) {
-                res = analyzeUrl.evalJS(checkJs) as StrResponse
+                res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
             }
         }
         return BookList.analyzeBookList(
@@ -186,7 +186,7 @@ object WebBook {
             //检测书源是否已登录
             bookSource.loginCheckJs?.let { checkJs ->
                 if (checkJs.isNotBlank()) {
-                    res = analyzeUrl.evalJS(checkJs) as StrResponse
+                    res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
                 }
             }
             BookInfo.analyzeBookInfo(
@@ -243,7 +243,7 @@ object WebBook {
             //检测书源是否已登录
             bookSource.loginCheckJs?.let { checkJs ->
                 if (checkJs.isNotBlank()) {
-                    res = analyzeUrl.evalJS(checkJs) as StrResponse
+                    res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
                 }
             }
             BookChapterList.analyzeChapterList(
@@ -312,7 +312,7 @@ object WebBook {
             //检测书源是否已登录
             bookSource.loginCheckJs?.let { checkJs ->
                 if (checkJs.isNotBlank()) {
-                    res = analyzeUrl.evalJS(checkJs) as StrResponse
+                    res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
                 }
             }
             BookContent.analyzeContent(
