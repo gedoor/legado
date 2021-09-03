@@ -135,7 +135,6 @@ class AudioPlayService : BaseService(),
                 exoPlayer.setMediaSource(mediaSource)
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
-                exoPlayer.seekTo(position.toLong())
             }.onFailure {
                 it.printStackTrace()
                 toastOnUi("$url ${it.localizedMessage}")
@@ -177,6 +176,7 @@ class AudioPlayService : BaseService(),
     }
 
     private fun adjustProgress(position: Int) {
+        this.position = position
         exoPlayer.seekTo(position.toLong())
     }
 
@@ -201,6 +201,9 @@ class AudioPlayService : BaseService(),
             }
             Player.STATE_READY -> {
                 // 准备好
+                if (exoPlayer.currentPosition != position.toLong()) {
+                    exoPlayer.seekTo(position.toLong())
+                }
                 if (exoPlayer.playWhenReady) {
                     AudioPlay.status = Status.PLAY
                     postEvent(EventBus.AUDIO_STATE, Status.PLAY)
