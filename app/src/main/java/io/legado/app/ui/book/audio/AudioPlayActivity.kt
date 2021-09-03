@@ -22,9 +22,11 @@ import io.legado.app.databinding.ActivityAudioPlayBinding
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.service.AudioPlayService
 import io.legado.app.service.help.AudioPlay
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.toc.TocActivityResult
+import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
@@ -41,7 +43,7 @@ class AudioPlayActivity :
 
     override val binding by viewBinding(ActivityAudioPlayBinding::inflate)
     override val viewModel by viewModels<AudioPlayViewModel>()
-
+    private var menu: Menu? = null
     private var adjustProgress = false
     private val progressTimeFormat by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -75,11 +77,23 @@ class AudioPlayActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        this.menu = menu
+        upMenu()
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> AudioPlay.book?.let {
                 ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
             }
+            R.id.menu_login -> AudioPlay.bookSource?.let {
+                startActivity<SourceLoginActivity> {
+                    putExtra("sourceUrl", it.bookSourceUrl)
+                }
+            }
+            R.id.menu_copy_audio_url -> sendToClip(AudioPlayService.url)
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -128,6 +142,13 @@ class AudioPlayActivity :
         }
         binding.ivTimer.setOnClickListener {
             AudioPlay.addTimer(this@AudioPlayActivity)
+        }
+    }
+
+    private fun upMenu() {
+        menu?.let { menu ->
+            menu.findItem(R.id.menu_login)?.isVisible =
+                !AudioPlay.bookSource?.loginUrl.isNullOrBlank()
         }
     }
 

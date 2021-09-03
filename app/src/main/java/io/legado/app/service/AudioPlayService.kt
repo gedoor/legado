@@ -49,6 +49,7 @@ class AudioPlayService : BaseService(),
         var isRun = false
         var pause = false
         var timeMinute: Int = 0
+        var url: String = ""
     }
 
     private lateinit var audioManager: AudioManager
@@ -58,7 +59,6 @@ class AudioPlayService : BaseService(),
     private var subtitle: String = ""
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var url: String = ""
     private var position = 0
     private var dsJob: Job? = null
     private var upPlayProgressJob: Job? = null
@@ -144,21 +144,17 @@ class AudioPlayService : BaseService(),
     }
 
     private fun pause(pause: Boolean) {
-        if (url.contains(".m3u8", false)) {
-            stopSelf()
-        } else {
-            try {
-                AudioPlayService.pause = pause
-                upPlayProgressJob?.cancel()
-                position = exoPlayer.currentPosition.toInt()
-                if (exoPlayer.isPlaying) exoPlayer.pause()
-                upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
-                AudioPlay.status = Status.PAUSE
-                postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
-                upNotification()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        try {
+            AudioPlayService.pause = pause
+            upPlayProgressJob?.cancel()
+            position = exoPlayer.currentPosition.toInt()
+            if (exoPlayer.isPlaying) exoPlayer.pause()
+            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+            AudioPlay.status = Status.PAUSE
+            postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
+            upNotification()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
