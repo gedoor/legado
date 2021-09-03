@@ -51,11 +51,8 @@ import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 class ReadBookActivity : ReadBookBaseActivity(),
     View.OnTouchListener,
@@ -209,6 +206,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
                         R.id.menu_reverse_content -> item.isVisible = onLine
                     }
                 }
+            }
+            launch {
+                menu.findItem(R.id.menu_get_progress)?.isVisible =
+                    withContext(IO) { AppWebDav.initWebDav() }
             }
         }
     }

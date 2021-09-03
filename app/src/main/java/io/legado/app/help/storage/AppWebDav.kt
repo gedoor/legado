@@ -38,7 +38,7 @@ object AppWebDav {
             return url
         }
 
-    private suspend fun initWebDav(): Boolean {
+    suspend fun initWebDav(): Boolean {
         val account = appCtx.getPrefString(PreferKey.webDavAccount)
         val password = appCtx.getPrefString(PreferKey.webDavPassword)
         if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
