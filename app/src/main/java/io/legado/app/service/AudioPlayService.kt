@@ -124,7 +124,12 @@ class AudioPlayService : BaseService(),
                 upPlayProgressJob?.cancel()
                 exoPlayer.clearMediaItems()
                 val analyzeUrl =
-                    AnalyzeUrl(url, headerMapF = AudioPlay.headers(), useWebView = true)
+                    AnalyzeUrl(
+                        url,
+                        headerMapF = AudioPlay.headers(),
+                        source = AudioPlay.bookSource,
+                        useWebView = true
+                    )
                 val uri = Uri.parse(analyzeUrl.url)
                 val mediaSource = ExoPlayerHelper.createMediaSource(uri)
                 exoPlayer.setMediaSource(mediaSource)
