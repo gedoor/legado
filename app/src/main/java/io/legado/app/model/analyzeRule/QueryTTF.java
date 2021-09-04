@@ -455,12 +455,11 @@ public class QueryTTF {
                                 g.yCoordinates[n] = same == 1 ? (short) 0 : fontReader.ReadInt16();
                             }
                         }
-                        // 相对坐标转绝对坐标
-//                        for (int n = 1; n < flagLength; ++n) {
-//                            xCoordinates[n] += xCoordinates[n - 1];
-//                            yCoordinates[n] += yCoordinates[n - 1];
-//                        }
-
+                        /* 相对坐标转绝对坐标
+                        for (int n = 1; n < flagLength; ++n) {
+                            xCoordinates[n] += xCoordinates[n - 1];
+                            yCoordinates[n] += yCoordinates[n - 1];
+                        }*/
                         glyf.add(g);
                     } else {
                         // 复合字体暂未使用
