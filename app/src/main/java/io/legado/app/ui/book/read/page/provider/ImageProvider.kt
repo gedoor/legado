@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Bitmap
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
@@ -29,7 +30,13 @@ object ImageProvider {
         indexCache[src] = bitmap
     }
 
-    fun getImage(book: Book, chapterIndex: Int, src: String, onUi: Boolean = false): Bitmap? {
+    fun getImage(
+        book: Book,
+        chapterIndex: Int,
+        src: String,
+        bookSource: BookSource?,
+        onUi: Boolean = false,
+    ): Bitmap? {
         getCache(chapterIndex, src)?.let {
             return it
         }
@@ -44,7 +51,7 @@ object ImageProvider {
                 }
             } else if (!onUi) {
                 runBlocking {
-                    BookHelp.saveImage(book, src)
+                    BookHelp.saveImage(bookSource, book, src)
                 }
             }
         }

@@ -167,7 +167,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         isImageLine: Boolean
     ) {
         val book = ReadBook.book ?: return
-        ImageProvider.getImage(book, textPage.chapterIndex, textChar.charData, true)?.let {
+        ImageProvider.getImage(
+            book,
+            textPage.chapterIndex,
+            textChar.charData,
+            ReadBook.bookSource,
+            true
+        )?.let {
             val rectF = if (isImageLine) {
                 RectF(textChar.start, lineTop, textChar.end, lineBottom)
             } else {

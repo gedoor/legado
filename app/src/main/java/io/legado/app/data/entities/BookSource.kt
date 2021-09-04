@@ -48,6 +48,10 @@ data class BookSource(
         return bookSourceUrl
     }
 
+    override fun getSource(): BaseSource {
+        return this
+    }
+
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel

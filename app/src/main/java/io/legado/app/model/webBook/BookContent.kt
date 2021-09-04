@@ -115,7 +115,7 @@ object BookContent {
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")
         Debug.log(bookSource.bookSourceUrl, "└\n$contentStr")
         if (contentStr.isNotBlank()) {
-            BookHelp.saveContent(book, bookChapter, contentStr)
+            BookHelp.saveContent(bookSource, book, bookChapter, contentStr)
         }
         return contentStr
     }

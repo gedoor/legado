@@ -6,6 +6,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
@@ -77,7 +78,12 @@ object BookHelp {
         return file
     }
 
-    suspend fun saveContent(book: Book, bookChapter: BookChapter, content: String) {
+    suspend fun saveContent(
+        bookSource: BookSource,
+        book: Book,
+        bookChapter: BookChapter,
+        content: String
+    ) {
         if (content.isEmpty()) return
         //保存文本
         FileUtils.createFileIfNotExist(
@@ -92,14 +98,14 @@ object BookHelp {
             if (matcher.find()) {
                 matcher.group(1)?.let { src ->
                     val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                    saveImage(book, mSrc)
+                    saveImage(bookSource, book, mSrc)
                 }
             }
         }
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
-    suspend fun saveImage(book: Book, src: String) {
+    suspend fun saveImage(bookSource: BookSource?, book: Book, src: String) {
         while (downloadImages.contains(src)) {
             delay(100)
         }
@@ -107,9 +113,9 @@ object BookHelp {
             return
         }
         downloadImages.add(src)
-        val analyzeUrl = AnalyzeUrl(src)
+        val analyzeUrl = AnalyzeUrl(src, source = bookSource)
         try {
-            analyzeUrl.getByteArray(book.origin).let {
+            analyzeUrl.getByteArray().let {
                 FileUtils.createFileIfNotExist(
                     downloadDir,
                     cacheFolderName,

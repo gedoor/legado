@@ -356,6 +356,10 @@ class AnalyzeUrl(
         return GlideUrl(urlHasQuery, headers.build())
     }
 
+    override fun getSource(): BaseSource? {
+        return source
+    }
+
     data class UrlOption(
         val method: String?,
         val charset: String?,

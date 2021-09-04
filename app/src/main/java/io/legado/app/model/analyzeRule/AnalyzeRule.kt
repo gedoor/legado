@@ -652,6 +652,10 @@ class AnalyzeRule(
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
+    override fun getSource(): BaseSource? {
+        return source
+    }
+
     /**
      * js实现跨域访问,不能删
      */

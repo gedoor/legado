@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.dateFormat
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.help.http.*
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -33,13 +34,15 @@ import java.util.zip.ZipInputStream
 @Suppress("unused")
 interface JsExtensions {
 
+    fun getSource(): BaseSource?
+
     /**
      * 访问网络,返回String
      */
     fun ajax(urlStr: String): String? {
         return runBlocking {
             kotlin.runCatching {
-                val analyzeUrl = AnalyzeUrl(urlStr)
+                val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
                 analyzeUrl.getStrResponse().body
             }.onFailure {
                 it.printStackTrace()
@@ -57,7 +60,7 @@ interface JsExtensions {
             val asyncArray = Array(urlList.size) {
                 async(IO) {
                     val url = urlList[it]
-                    val analyzeUrl = AnalyzeUrl(url)
+                    val analyzeUrl = AnalyzeUrl(url, source = getSource())
                     analyzeUrl.getStrResponse()
                 }
             }
@@ -73,7 +76,7 @@ interface JsExtensions {
      */
     fun connect(urlStr: String): StrResponse {
         return runBlocking {
-            val analyzeUrl = AnalyzeUrl(urlStr)
+            val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
             kotlin.runCatching {
                 analyzeUrl.getStrResponse()
             }.onFailure {
@@ -87,7 +90,7 @@ interface JsExtensions {
     fun connect(urlStr: String, header: String?): StrResponse {
         return runBlocking {
             val headerMap = GSON.fromJsonObject<Map<String, String>>(header)
-            val analyzeUrl = AnalyzeUrl(urlStr, headerMapF = headerMap)
+            val analyzeUrl = AnalyzeUrl(urlStr, headerMapF = headerMap, source = getSource())
             kotlin.runCatching {
                 analyzeUrl.getStrResponse()
             }.onFailure {
@@ -105,7 +108,7 @@ interface JsExtensions {
      * @return 相对路径
      */
     fun downloadFile(content: String, url: String): String {
-        val type = AnalyzeUrl(url).type ?: return ""
+        val type = AnalyzeUrl(url, source = getSource()).type ?: return ""
         val zipPath = FileUtils.getPath(
             FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
             "${MD5Utils.md5Encode16(url)}.${type}"

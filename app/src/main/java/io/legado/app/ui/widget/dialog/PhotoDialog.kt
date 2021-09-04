@@ -57,7 +57,7 @@ class PhotoDialog : BaseDialogFragment() {
             ReadBook.book?.let { book ->
                 src?.let {
                     execute {
-                        ImageProvider.getImage(book, chapterIndex, src)
+                        ImageProvider.getImage(book, chapterIndex, src, ReadBook.bookSource)
                     }.onSuccess { bitmap ->
                         if (bitmap != null) {
                             binding.photoView.setImageBitmap(bitmap)
