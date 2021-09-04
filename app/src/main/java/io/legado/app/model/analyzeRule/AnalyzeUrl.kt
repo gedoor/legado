@@ -15,6 +15,7 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.utils.*
+import kotlinx.coroutines.delay
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -44,6 +45,7 @@ class AnalyzeUrl(
     companion object {
         val paramPattern: Pattern = Pattern.compile("\\s*,\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
+        private val accessTime = hashMapOf<String, FetchRecord>()
     }
 
     var url: String = ""
@@ -263,6 +265,49 @@ class AnalyzeUrl(
             ?: ""
     }
 
+    private suspend fun concurrentWait() {
+        source ?: return
+        val concurrentRate = source.concurrentRate
+        if (concurrentRate.isNullOrEmpty()) {
+            return
+        }
+        val fetchRecord = accessTime[source.getStoreUrl()]
+        if (fetchRecord == null) {
+            accessTime[source.getStoreUrl()] = FetchRecord(System.currentTimeMillis(), 1)
+            return
+        }
+        val waitTime = synchronized(fetchRecord) {
+            val rateIndex = concurrentRate.indexOf("/")
+            if (rateIndex == -1) {
+                val nextTime = fetchRecord.time + concurrentRate.toInt()
+                if (System.currentTimeMillis() >= nextTime) {
+                    fetchRecord.time = System.currentTimeMillis()
+                    fetchRecord.frequency = 1
+                    return@synchronized 0
+                }
+                return@synchronized nextTime - System.currentTimeMillis()
+            } else {
+                val sj = concurrentRate.substring(rateIndex + 1)
+                val nextTime = fetchRecord.time + sj.toInt()
+                if (System.currentTimeMillis() >= nextTime) {
+                    fetchRecord.time = System.currentTimeMillis()
+                    fetchRecord.frequency = 1
+                    return@synchronized 0
+                }
+                val cs = concurrentRate.substring(0, rateIndex)
+                if (fetchRecord.frequency > cs.toInt()) {
+                    return@synchronized nextTime - System.currentTimeMillis()
+                } else {
+                    fetchRecord.frequency = fetchRecord.frequency + 1
+                    return@synchronized 0
+                }
+            }
+        }
+        if (waitTime > 0) {
+            delay(waitTime)
+        }
+    }
+
     suspend fun getStrResponse(
         jsStr: String? = null,
         sourceRegex: String? = null,
@@ -270,7 +315,7 @@ class AnalyzeUrl(
         if (type != null) {
             return StrResponse(url, StringUtils.byteToHexString(getByteArray()))
         }
-
+        concurrentWait()
         setCookie(source?.getStoreUrl())
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
@@ -299,6 +344,7 @@ class AnalyzeUrl(
     }
 
     suspend fun getByteArray(): ByteArray {
+        concurrentWait()
         setCookie(source?.getStoreUrl())
         @Suppress("BlockingMethodInNonBlockingContext")
         return getProxyClient(proxy).newCall(retry) {
@@ -370,6 +416,11 @@ class AnalyzeUrl(
         val type: String?,
         val js: String?,
         val retry: Int = 0
+    )
+
+    data class FetchRecord(
+        var time: Long,
+        var frequency: Int
     )
 
 }
