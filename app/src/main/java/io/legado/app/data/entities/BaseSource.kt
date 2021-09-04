@@ -17,8 +17,9 @@ import javax.script.SimpleBindings
 @Suppress("unused")
 interface BaseSource : JsExtensions {
 
-    var loginUrl: String?
-    var header: String?
+    var concurrentRate: String? // 并发率
+    var loginUrl: String?       // 登录地址
+    var header: String?         // 请求头
 
     fun getStoreUrl(): String
 

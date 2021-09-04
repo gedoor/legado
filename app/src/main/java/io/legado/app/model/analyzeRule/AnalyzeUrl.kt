@@ -270,6 +270,7 @@ class AnalyzeUrl(
         if (type != null) {
             return StrResponse(url, StringUtils.byteToHexString(getByteArray()))
         }
+
         setCookie(source?.getStoreUrl())
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
