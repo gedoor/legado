@@ -39,9 +39,10 @@ object Rss {
             sortUrl,
             page = page,
             ruleData = ruleData,
+            source = rssSource,
             headerMapF = rssSource.getHeaderMap()
         )
-        val body = analyzeUrl.getStrResponse(rssSource.sourceUrl).body
+        val body = analyzeUrl.getStrResponse().body
         return RssParserByRule.parseXML(sortName, sortUrl, body, rssSource, ruleData)
     }
 
@@ -66,9 +67,10 @@ object Rss {
             rssArticle.link,
             baseUrl = rssArticle.origin,
             ruleData = rssArticle,
+            source = rssSource,
             headerMapF = rssSource.getHeaderMap()
         )
-        val body = analyzeUrl.getStrResponse(rssArticle.origin).body
+        val body = analyzeUrl.getStrResponse().body
         Debug.log(rssSource.sourceUrl, "≡获取成功:${rssSource.sourceUrl}")
         Debug.log(rssSource.sourceUrl, body, state = 20)
         val analyzeRule = AnalyzeRule(rssArticle, rssSource)

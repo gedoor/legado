@@ -136,14 +136,6 @@ object ReadBook : CoroutineScope by MainScope() {
             saveRead()
             callBack?.upView()
             curPageChanged()
-            Coroutine.async {
-                //预下载
-                val maxChapterIndex = durChapterIndex + AppConfig.preDownloadNum
-                for (i in durChapterIndex.plus(2)..maxChapterIndex) {
-                    delay(1000)
-                    download(i)
-                }
-            }
             return true
         } else {
             return false
@@ -169,14 +161,6 @@ object ReadBook : CoroutineScope by MainScope() {
             saveRead()
             callBack?.upView()
             curPageChanged()
-            Coroutine.async {
-                //预下载
-                val minChapterIndex = durChapterIndex - 5
-                for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
-                    delay(1000)
-                    download(i)
-                }
-            }
             return true
         } else {
             return false
@@ -207,6 +191,7 @@ object ReadBook : CoroutineScope by MainScope() {
             readAloud(!BaseReadAloudService.pause)
         }
         upReadStartTime()
+        preDownload()
     }
 
     /**
@@ -432,6 +417,25 @@ object ReadBook : CoroutineScope by MainScope() {
                     book.durChapterTitle = it.title
                 }
                 appDb.bookDao.update(book)
+            }
+        }
+    }
+
+    /**
+     * 预下载
+     */
+    private fun preDownload() {
+        Coroutine.async {
+            //预下载
+            val maxChapterIndex = durChapterIndex + AppConfig.preDownloadNum
+            for (i in durChapterIndex.plus(2)..maxChapterIndex) {
+                delay(1000)
+                download(i)
+            }
+            val minChapterIndex = durChapterIndex - 5
+            for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
+                delay(1000)
+                download(i)
             }
         }
     }

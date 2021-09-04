@@ -659,7 +659,7 @@ class AnalyzeRule(
         return runBlocking {
             kotlin.runCatching {
                 val analyzeUrl = AnalyzeUrl(urlStr, book = book, source = source)
-                analyzeUrl.getStrResponse(urlStr).body
+                analyzeUrl.getStrResponse().body
             }.onFailure {
                 it.printStackTrace()
             }.getOrElse {

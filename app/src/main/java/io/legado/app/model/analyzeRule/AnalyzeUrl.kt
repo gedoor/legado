@@ -68,13 +68,17 @@ class AnalyzeUrl(
                 headerMap.remove("proxy")
             }
         }
-        //替换参数
+        //执行@js,<js></js>
         analyzeJs()
+        //替换参数
         replaceKeyPageJs()
         //处理URL
         initUrl()
     }
 
+    /**
+     * 执行@js,<js></js>
+     */
     private fun analyzeJs() {
         var start = 0
         var tmp: String
@@ -104,9 +108,7 @@ class AnalyzeUrl(
     private fun replaceKeyPageJs() { //先替换内嵌规则再替换页数规则，避免内嵌规则中存在大于小于号时，规则被切错
         //js
         if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
-
             val analyze = RuleAnalyzer(ruleUrl) //创建解析
-
             //替换所有内嵌{{js}}
             val url = analyze.innerRule("{{", "}}") {
                 val jsEval = evalJS(it) ?: ""
@@ -262,14 +264,13 @@ class AnalyzeUrl(
     }
 
     suspend fun getStrResponse(
-        tag: String,
         jsStr: String? = null,
         sourceRegex: String? = null,
     ): StrResponse {
         if (type != null) {
-            return StrResponse(url, StringUtils.byteToHexString(getByteArray(tag)))
+            return StrResponse(url, StringUtils.byteToHexString(getByteArray()))
         }
-        setCookie(tag)
+        setCookie(source?.getStoreUrl())
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
             params.headerMap = headerMap
@@ -277,7 +278,7 @@ class AnalyzeUrl(
             params.javaScript = jsStr
             params.sourceRegex = sourceRegex
             params.postData = body?.toByteArray()
-            params.tag = tag
+            params.tag = source?.getStoreUrl()
             return getWebViewSrc(params)
         }
         return getProxyClient(proxy).newCallStrResponse(retry) {
@@ -296,8 +297,8 @@ class AnalyzeUrl(
         }
     }
 
-    suspend fun getByteArray(tag: String? = null): ByteArray {
-        setCookie(tag)
+    suspend fun getByteArray(): ByteArray {
+        setCookie(source?.getStoreUrl())
         @Suppress("BlockingMethodInNonBlockingContext")
         return getProxyClient(proxy).newCall(retry) {
             addHeaders(headerMap)
