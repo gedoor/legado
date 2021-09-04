@@ -444,7 +444,9 @@ interface JsExtensions {
      * 输出调试日志
      */
     fun log(msg: String): String {
-        Debug.log(msg)
+        getSource()?.let {
+            Debug.log(it.getStoreUrl(), msg)
+        } ?: Debug.log(msg)
         return msg
     }
 
