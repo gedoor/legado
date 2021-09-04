@@ -131,7 +131,8 @@ class AudioPlayService : BaseService(),
                         useWebView = true
                     )
                 val uri = Uri.parse(analyzeUrl.url)
-                val mediaSource = ExoPlayerHelper.createMediaSource(uri)
+                val mediaSource = ExoPlayerHelper
+                    .createMediaSource(uri, userAgent = analyzeUrl.getUserAgent())
                 exoPlayer.setMediaSource(mediaSource)
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()

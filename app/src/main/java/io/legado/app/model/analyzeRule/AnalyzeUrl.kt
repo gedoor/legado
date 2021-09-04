@@ -410,6 +410,10 @@ class AnalyzeUrl(
         return GlideUrl(urlHasQuery, headers.build())
     }
 
+    fun getUserAgent(): String {
+        return headerMap[UA_NAME] ?: AppConfig.userAgent
+    }
+
     override fun getSource(): BaseSource? {
         return source
     }
