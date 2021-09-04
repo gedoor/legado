@@ -277,30 +277,34 @@ class AnalyzeUrl(
             return
         }
         val waitTime = synchronized(fetchRecord) {
-            val rateIndex = concurrentRate.indexOf("/")
-            if (rateIndex == -1) {
-                val nextTime = fetchRecord.time + concurrentRate.toInt()
-                if (System.currentTimeMillis() >= nextTime) {
-                    fetchRecord.time = System.currentTimeMillis()
-                    fetchRecord.frequency = 1
-                    return@synchronized 0
-                }
-                return@synchronized nextTime - System.currentTimeMillis()
-            } else {
-                val sj = concurrentRate.substring(rateIndex + 1)
-                val nextTime = fetchRecord.time + sj.toInt()
-                if (System.currentTimeMillis() >= nextTime) {
-                    fetchRecord.time = System.currentTimeMillis()
-                    fetchRecord.frequency = 1
-                    return@synchronized 0
-                }
-                val cs = concurrentRate.substring(0, rateIndex)
-                if (fetchRecord.frequency > cs.toInt()) {
+            try {
+                val rateIndex = concurrentRate.indexOf("/")
+                if (rateIndex == -1) {
+                    val nextTime = fetchRecord.time + concurrentRate.toInt()
+                    if (System.currentTimeMillis() >= nextTime) {
+                        fetchRecord.time = System.currentTimeMillis()
+                        fetchRecord.frequency = 1
+                        return@synchronized 0
+                    }
                     return@synchronized nextTime - System.currentTimeMillis()
                 } else {
-                    fetchRecord.frequency = fetchRecord.frequency + 1
-                    return@synchronized 0
+                    val sj = concurrentRate.substring(rateIndex + 1)
+                    val nextTime = fetchRecord.time + sj.toInt()
+                    if (System.currentTimeMillis() >= nextTime) {
+                        fetchRecord.time = System.currentTimeMillis()
+                        fetchRecord.frequency = 1
+                        return@synchronized 0
+                    }
+                    val cs = concurrentRate.substring(0, rateIndex)
+                    if (fetchRecord.frequency > cs.toInt()) {
+                        return@synchronized nextTime - System.currentTimeMillis()
+                    } else {
+                        fetchRecord.frequency = fetchRecord.frequency + 1
+                        return@synchronized 0
+                    }
                 }
+            } catch (e: Exception) {
+                return@synchronized 0
             }
         }
         if (waitTime > 0) {
