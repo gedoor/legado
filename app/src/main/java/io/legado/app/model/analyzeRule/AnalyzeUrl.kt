@@ -265,6 +265,9 @@ class AnalyzeUrl(
             ?: ""
     }
 
+    /**
+     * 根据书源并发率等待
+     */
     private suspend fun concurrentWait() {
         source ?: return
         val concurrentRate = source.concurrentRate
