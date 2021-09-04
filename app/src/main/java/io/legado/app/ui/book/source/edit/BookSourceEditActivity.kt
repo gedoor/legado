@@ -203,9 +203,7 @@ class BookSourceEditActivity :
             add(EditEntity("header", source?.header, R.string.source_http_header))
             add(
                 EditEntity(
-                    "concurrentRate",
-                    source?.concurrentRate,
-                    R.string.source_concurrent_rate
+                    "concurrentRate", source?.concurrentRate, R.string.source_concurrent_rate
                 )
             )
         }

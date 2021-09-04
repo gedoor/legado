@@ -129,31 +129,36 @@ class RssSourceEditActivity :
         binding.recyclerView.adapter = adapter
     }
 
-    private fun upRecyclerView(rssSource: RssSource? = viewModel.rssSource) {
-        rssSource?.let {
-            binding.cbIsEnable.isChecked = rssSource.enabled
-            binding.cbSingleUrl.isChecked = rssSource.singleUrl
-            binding.cbEnableJs.isChecked = rssSource.enableJs
-            binding.cbEnableBaseUrl.isChecked = rssSource.loadWithBaseUrl
+    private fun upRecyclerView(source: RssSource? = viewModel.rssSource) {
+        source?.let {
+            binding.cbIsEnable.isChecked = source.enabled
+            binding.cbSingleUrl.isChecked = source.singleUrl
+            binding.cbEnableJs.isChecked = source.enableJs
+            binding.cbEnableBaseUrl.isChecked = source.loadWithBaseUrl
         }
         sourceEntities.clear()
         sourceEntities.apply {
-            add(EditEntity("sourceName", rssSource?.sourceName, R.string.source_name))
-            add(EditEntity("sourceUrl", rssSource?.sourceUrl, R.string.source_url))
-            add(EditEntity("sourceIcon", rssSource?.sourceIcon, R.string.source_icon))
-            add(EditEntity("sourceGroup", rssSource?.sourceGroup, R.string.source_group))
-            add(EditEntity("sourceComment", rssSource?.sourceComment, R.string.comment))
-            add(EditEntity("sortUrl", rssSource?.sortUrl, R.string.sort_url))
-            add(EditEntity("ruleArticles", rssSource?.ruleArticles, R.string.r_articles))
-            add(EditEntity("ruleNextPage", rssSource?.ruleNextPage, R.string.r_next))
-            add(EditEntity("ruleTitle", rssSource?.ruleTitle, R.string.r_title))
-            add(EditEntity("rulePubDate", rssSource?.rulePubDate, R.string.r_date))
-            add(EditEntity("ruleDescription", rssSource?.ruleDescription, R.string.r_description))
-            add(EditEntity("ruleImage", rssSource?.ruleImage, R.string.r_image))
-            add(EditEntity("ruleLink", rssSource?.ruleLink, R.string.r_link))
-            add(EditEntity("ruleContent", rssSource?.ruleContent, R.string.r_content))
-            add(EditEntity("style", rssSource?.style, R.string.r_style))
-            add(EditEntity("header", rssSource?.header, R.string.source_http_header))
+            add(EditEntity("sourceName", source?.sourceName, R.string.source_name))
+            add(EditEntity("sourceUrl", source?.sourceUrl, R.string.source_url))
+            add(EditEntity("sourceIcon", source?.sourceIcon, R.string.source_icon))
+            add(EditEntity("sourceGroup", source?.sourceGroup, R.string.source_group))
+            add(EditEntity("sourceComment", source?.sourceComment, R.string.comment))
+            add(EditEntity("header", source?.header, R.string.source_http_header))
+            add(
+                EditEntity(
+                    "concurrentRate", source?.concurrentRate, R.string.source_concurrent_rate
+                )
+            )
+            add(EditEntity("sortUrl", source?.sortUrl, R.string.sort_url))
+            add(EditEntity("ruleArticles", source?.ruleArticles, R.string.r_articles))
+            add(EditEntity("ruleNextPage", source?.ruleNextPage, R.string.r_next))
+            add(EditEntity("ruleTitle", source?.ruleTitle, R.string.r_title))
+            add(EditEntity("rulePubDate", source?.rulePubDate, R.string.r_date))
+            add(EditEntity("ruleDescription", source?.ruleDescription, R.string.r_description))
+            add(EditEntity("ruleImage", source?.ruleImage, R.string.r_image))
+            add(EditEntity("ruleLink", source?.ruleLink, R.string.r_link))
+            add(EditEntity("ruleContent", source?.ruleContent, R.string.r_content))
+            add(EditEntity("style", source?.style, R.string.r_style))
         }
         adapter.editEntities = sourceEntities
     }
@@ -171,6 +176,8 @@ class RssSourceEditActivity :
                 "sourceIcon" -> source.sourceIcon = it.value ?: ""
                 "sourceGroup" -> source.sourceGroup = it.value
                 "sourceComment" -> source.sourceComment = it.value
+                "header" -> source.header = it.value
+                "concurrentRate" -> source.concurrentRate = it.value
                 "sortUrl" -> source.sortUrl = it.value
                 "ruleArticles" -> source.ruleArticles = it.value
                 "ruleNextPage" -> source.ruleNextPage = it.value
@@ -181,7 +188,6 @@ class RssSourceEditActivity :
                 "ruleLink" -> source.ruleLink = it.value
                 "ruleContent" -> source.ruleContent = it.value
                 "style" -> source.style = it.value
-                "header" -> source.header = it.value
             }
         }
         return source
