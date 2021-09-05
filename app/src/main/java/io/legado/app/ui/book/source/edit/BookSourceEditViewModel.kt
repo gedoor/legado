@@ -54,7 +54,10 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
 
     fun pasteSource(onSuccess: (source: BookSource) -> Unit) {
         execute(context = Dispatchers.Main) {
-            context.getClipText()?.let { text ->
+            val text = context.getClipText()
+            if (text.isNullOrBlank()) {
+                error("剪贴板为空")
+            } else {
                 importSource(text, onSuccess)
             }
         }.onError {

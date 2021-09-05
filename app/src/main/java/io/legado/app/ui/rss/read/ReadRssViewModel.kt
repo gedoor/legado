@@ -84,7 +84,6 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         val analyzeUrl = AnalyzeUrl(
             ruleUrl = url,
             baseUrl = baseUrl,
-            useWebView = true,
             headerMapF = rssSource?.getHeaderMap()
         )
         urlLiveData.postValue(analyzeUrl)
