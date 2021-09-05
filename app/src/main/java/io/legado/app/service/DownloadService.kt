@@ -13,9 +13,9 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
-import io.legado.app.help.IntentHelp
 import io.legado.app.utils.RealPathUtil
 import io.legado.app.utils.msg
+import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -153,19 +153,19 @@ class DownloadService : BaseService() {
             .setOngoing(true)
             .setContentTitle(getString(R.string.action_download))
         notificationBuilder.setContentIntent(
-            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.play) {
+            servicePendingIntent<DownloadService>(IntentAction.play) {
                 putExtra("downloadId", downloadId)
             }
         )
         notificationBuilder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.stop) {
+            servicePendingIntent<DownloadService>(IntentAction.stop) {
                 putExtra("downloadId", downloadId)
             }
         )
         notificationBuilder.setDeleteIntent(
-            IntentHelp.servicePendingIntent<DownloadService>(this, IntentAction.stop) {
+            servicePendingIntent<DownloadService>(IntentAction.stop) {
                 putExtra("downloadId", downloadId)
             }
         )

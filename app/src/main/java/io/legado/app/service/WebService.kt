@@ -118,7 +118,7 @@ class WebService : BaseService() {
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
-            IntentHelp.servicePendingIntent<WebService>(this, IntentAction.stop)
+            servicePendingIntent<WebService>(IntentAction.stop)
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()

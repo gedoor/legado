@@ -4,6 +4,7 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PendingIntent
 import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
@@ -40,6 +41,16 @@ inline fun <reified T : Service> Context.startService(configIntent: Intent.() ->
 
 inline fun <reified T : Service> Context.stopService() {
     stopService(Intent(this, T::class.java))
+}
+
+inline fun <reified T : Service> Context.servicePendingIntent(
+    action: String,
+    configIntent: Intent.() -> Unit = {}
+): PendingIntent? {
+    val intent = Intent(this, T::class.java)
+    intent.action = action
+    configIntent.invoke(intent)
+    return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 }
 
 fun Context.toastOnUi(message: Int) {

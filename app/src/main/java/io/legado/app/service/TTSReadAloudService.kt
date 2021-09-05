@@ -7,11 +7,11 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
-import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.model.ReadBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import java.util.*
 
@@ -151,7 +151,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     }
 
     override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {
-        return IntentHelp.servicePendingIntent<TTSReadAloudService>(this, actionStr)
+        return servicePendingIntent<TTSReadAloudService>(actionStr)
     }
 
 }

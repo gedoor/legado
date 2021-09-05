@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.media.MediaPlayer
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
-import io.legado.app.help.IntentHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
@@ -264,6 +263,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {
-        return IntentHelp.servicePendingIntent<HttpReadAloudService>(this, actionStr)
+        return servicePendingIntent<HttpReadAloudService>(actionStr)
     }
 }

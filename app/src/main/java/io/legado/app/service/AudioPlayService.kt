@@ -1,7 +1,6 @@
 package io.legado.app.service
 
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -36,6 +35,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
@@ -476,24 +476,24 @@ class AudioPlayService : BaseService(),
             builder.addAction(
                 R.drawable.ic_play_24dp,
                 getString(R.string.resume),
-                thisPendingIntent(IntentAction.resume)
+                servicePendingIntent<AudioPlayService>(IntentAction.resume)
             )
         } else {
             builder.addAction(
                 R.drawable.ic_pause_24dp,
                 getString(R.string.pause),
-                thisPendingIntent(IntentAction.pause)
+                servicePendingIntent<AudioPlayService>(IntentAction.pause)
             )
         }
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.stop),
-            thisPendingIntent(IntentAction.stop)
+            servicePendingIntent<AudioPlayService>(IntentAction.stop)
         )
         builder.addAction(
             R.drawable.ic_time_add_24dp,
             getString(R.string.set_timer),
-            thisPendingIntent(IntentAction.addTimer)
+            servicePendingIntent<AudioPlayService>(IntentAction.addTimer)
         )
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
@@ -511,7 +511,4 @@ class AudioPlayService : BaseService(),
         return MediaHelp.requestFocus(audioManager, mFocusRequest)
     }
 
-    private fun thisPendingIntent(action: String): PendingIntent? {
-        return IntentHelp.servicePendingIntent<AudioPlayService>(this, action)
-    }
 }

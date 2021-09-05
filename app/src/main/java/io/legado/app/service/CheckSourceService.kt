@@ -17,6 +17,7 @@ import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
@@ -42,7 +43,7 @@ class CheckSourceService : BaseService() {
             .addAction(
                 R.drawable.ic_stop_black_24dp,
                 getString(R.string.cancel),
-                IntentHelp.servicePendingIntent<CheckSourceService>(this, IntentAction.stop)
+                servicePendingIntent<CheckSourceService>(IntentAction.stop)
             )
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
     }
