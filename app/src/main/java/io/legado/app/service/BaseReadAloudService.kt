@@ -17,16 +17,13 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.*
 import io.legado.app.help.IntentDataHelp
-import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -256,10 +253,7 @@ abstract class BaseReadAloudService : BaseService(),
             }
         })
         mediaSessionCompat.setMediaButtonReceiver(
-            IntentHelp.broadcastPendingIntent<MediaButtonReceiver>(
-                this,
-                Intent.ACTION_MEDIA_BUTTON
-            )
+            broadcastPendingIntent<MediaButtonReceiver>(Intent.ACTION_MEDIA_BUTTON)
         )
         mediaSessionCompat.isActive = true
     }
@@ -324,7 +318,7 @@ abstract class BaseReadAloudService : BaseService(),
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
             .setContentIntent(
-                IntentHelp.activityPendingIntent<ReadBookActivity>(this, "activity")
+                activityPendingIntent<ReadBookActivity>("activity")
             )
         if (pause) {
             builder.addAction(

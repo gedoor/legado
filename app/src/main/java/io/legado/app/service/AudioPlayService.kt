@@ -26,7 +26,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ExoPlayerHelper
-import io.legado.app.help.IntentHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.ReadAloud
@@ -34,9 +33,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.audio.AudioPlayActivity
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.servicePendingIntent
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 
@@ -401,10 +398,7 @@ class AudioPlayService : BaseService(),
             }
         })
         mediaSessionCompat?.setMediaButtonReceiver(
-            IntentHelp.broadcastPendingIntent<MediaButtonReceiver>(
-                this,
-                Intent.ACTION_MEDIA_BUTTON
-            )
+            broadcastPendingIntent<MediaButtonReceiver>(Intent.ACTION_MEDIA_BUTTON)
         )
         mediaSessionCompat?.isActive = true
     }
@@ -470,7 +464,7 @@ class AudioPlayService : BaseService(),
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
             .setContentIntent(
-                IntentHelp.activityPendingIntent<AudioPlayActivity>(this, "activity")
+                activityPendingIntent<AudioPlayActivity>("activity")
             )
         if (pause) {
             builder.addAction(

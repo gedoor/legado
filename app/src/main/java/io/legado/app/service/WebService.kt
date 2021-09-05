@@ -9,7 +9,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.IntentHelp
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.*
 import io.legado.app.web.HttpServer
@@ -113,7 +112,7 @@ class WebService : BaseService() {
             .setContentTitle(getString(R.string.web_service))
             .setContentText(notificationContent)
             .setContentIntent(
-                IntentHelp.activityPendingIntent<MainActivity>(this, "webService")
+                activityPendingIntent<MainActivity>("webService")
             )
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
