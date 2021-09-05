@@ -170,6 +170,13 @@ public final class OkhttpCacheDataSource implements DataSource {
             return this;
         }
 
+        public Factory setDefaultRequestProperties(Map<String, String> defaultRequestProperties){
+            if (this.upstreamDataSourceFactory != null) {
+                this.upstreamDataSourceFactory.setDefaultRequestProperties(defaultRequestProperties);
+            }
+            return this;
+        }
+
         /**
          * Sets an optional {@link PriorityTaskManager} to use when requesting data from upstream.
          *
