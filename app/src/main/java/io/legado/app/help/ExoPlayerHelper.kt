@@ -10,18 +10,16 @@ import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.util.Util.inferContentType
-import io.legado.app.help.http.okHttpClient
 
 
 object ExoPlayerHelper {
 
     fun createMediaSource(
         uri: Uri,
-        overrideExtension: String? = null,
-        userAgent: String
+        dataSourceFactory: OkHttpDataSource.Factory,
+        overrideExtension: String? = null
     ): MediaSource {
         val mediaItem = MediaItem.fromUri(uri)
-        val dataSourceFactory = OkHttpDataSource.Factory(okHttpClient).setUserAgent(userAgent)
         val mediaSourceFactory = when (inferContentType(uri, overrideExtension)) {
             C.TYPE_SS -> SsMediaSource.Factory(dataSourceFactory)
             C.TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory)
