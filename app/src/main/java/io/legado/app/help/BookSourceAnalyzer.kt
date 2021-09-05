@@ -156,22 +156,22 @@ object BookSourceAnalyzer {
         var customOrder: Int = 0,                       // 手动排序编号
         var enabled: Boolean = true,                    // 是否启用
         var enabledExplore: Boolean = true,             // 启用发现
-        var concurrentRate: String?,
+        var concurrentRate: String? = null,             // 并发率
         var header: String? = null,                     // 请求头
-        var loginUrl: Any? = null,                   // 登录规则
-        var loginUi: List<RowUi>? = null,             //登录UI
+        var loginUrl: Any? = null,                      // 登录规则
+        var loginUi: List<RowUi>? = null,               // 登录UI
         var loginCheckJs: String? = null,               //登录检测js
-        var bookSourceComment: String? = "",             //书源注释
+        var bookSourceComment: String? = "",            //书源注释
         var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
         var respondTime: Long = 180000L,                // 响应时间，用于排序
         var weight: Int = 0,                            // 智能排序的权重
         var exploreUrl: String? = null,                 // 发现url
-        var ruleExplore: Any? = null,           // 发现规则
+        var ruleExplore: Any? = null,                   // 发现规则
         var searchUrl: String? = null,                  // 搜索url
-        var ruleSearch: Any? = null,             // 搜索规则
-        var ruleBookInfo: Any? = null,         // 书籍信息页规则
-        var ruleToc: Any? = null,                   // 目录页规则
-        var ruleContent: Any? = null            // 正文页规则
+        var ruleSearch: Any? = null,                    // 搜索规则
+        var ruleBookInfo: Any? = null,                  // 书籍信息页规则
+        var ruleToc: Any? = null,                       // 目录页规则
+        var ruleContent: Any? = null                    // 正文页规则
     )
 
     // default规则适配
