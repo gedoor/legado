@@ -125,12 +125,11 @@ class AudioPlayService : BaseService(),
                 AudioPlay.status = Status.STOP
                 postEvent(EventBus.AUDIO_STATE, Status.STOP)
                 upPlayProgressJob?.cancel()
-                val analyzeUrl =
-                    AnalyzeUrl(
-                        url,
-                        headerMapF = AudioPlay.headers(),
-                        source = AudioPlay.bookSource
-                    )
+                val analyzeUrl = AnalyzeUrl(
+                    url,
+                    headerMapF = AudioPlay.headers(true),
+                    source = AudioPlay.bookSource
+                )
                 val uri = Uri.parse(analyzeUrl.getDirectUrl())
                 val mediaSource = ExoPlayerHelper
                     .createMediaSource(uri, analyzeUrl.headerMap)

@@ -25,8 +25,8 @@ object AudioPlay {
     var bookSource: BookSource? = null
     val loadingChapters = arrayListOf<Int>()
 
-    fun headers(): Map<String, String>? {
-        return bookSource?.getHeaderMap()
+    fun headers(hasLoginHeader: Boolean): Map<String, String>? {
+        return bookSource?.getHeaderMap(hasLoginHeader)
     }
 
     /**
