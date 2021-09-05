@@ -25,6 +25,7 @@ import kotlin.collections.HashMap
  * Created by GKF on 2018/1/24.
  * 搜索URL规则解析
  */
+@Suppress("unused")
 @Keep
 @SuppressLint("DefaultLocale")
 class AnalyzeUrl(
