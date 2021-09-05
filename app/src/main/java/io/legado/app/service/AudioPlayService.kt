@@ -115,6 +115,9 @@ class AudioPlayService : BaseService(),
         postEvent(EventBus.AUDIO_STATE, Status.STOP)
     }
 
+    /**
+     * 播放音频
+     */
     private fun play() {
         upNotification()
         if (requestFocus()) {
@@ -122,7 +125,6 @@ class AudioPlayService : BaseService(),
                 AudioPlay.status = Status.STOP
                 postEvent(EventBus.AUDIO_STATE, Status.STOP)
                 upPlayProgressJob?.cancel()
-                exoPlayer.clearMediaItems()
                 val analyzeUrl =
                     AnalyzeUrl(
                         url,

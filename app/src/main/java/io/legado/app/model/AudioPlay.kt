@@ -37,7 +37,6 @@ object AudioPlay {
             durChapter?.let {
                 context.startService<AudioPlayService> {
                     action = IntentAction.play
-
                 }
             }
         }

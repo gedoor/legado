@@ -314,6 +314,9 @@ class AnalyzeUrl(
         }
     }
 
+    /**
+     * 访问网站,返回StrResponse
+     */
     suspend fun getStrResponse(
         jsStr: String? = null,
         sourceRegex: String? = null,
@@ -349,6 +352,9 @@ class AnalyzeUrl(
         }
     }
 
+    /**
+     * 访问网站,返回ByteArray
+     */
     suspend fun getByteArray(): ByteArray {
         judgmentConcurrent()
         setCookie(source?.getStoreUrl())
@@ -369,6 +375,9 @@ class AnalyzeUrl(
         }.bytes()
     }
 
+    /**
+     * 上传文件
+     */
     suspend fun upload(fileName: String, file: ByteArray, contentType: String): StrResponse {
         return getProxyClient(proxy).newCallStrResponse(retry) {
             url(url)
