@@ -146,6 +146,9 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    /**
+     * 暂停播放
+     */
     private fun pause(pause: Boolean) {
         try {
             AudioPlayService.pause = pause
@@ -161,6 +164,9 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    /**
+     * 恢复播放
+     */
     private fun resume() {
         try {
             pause = false
@@ -178,11 +184,17 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    /**
+     * 调节进度
+     */
     private fun adjustProgress(position: Int) {
         this.position = position
         exoPlayer.seekTo(position.toLong())
     }
 
+    /**
+     * 调节速度
+     */
     private fun upSpeed(adjust: Float) {
         kotlin.runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -193,6 +205,9 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    /**
+     * 播放状态监控
+     */
     override fun onPlaybackStateChanged(playbackState: Int) {
         super.onPlaybackStateChanged(playbackState)
         when (playbackState) {
@@ -226,6 +241,9 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    /**
+     * 播放错误事件
+     */
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
         AudioPlay.status = Status.STOP
@@ -278,7 +296,7 @@ class AudioPlayService : BaseService(),
     }
 
     /**
-     * 更新播放进度
+     * 每隔1秒发送播放进度
      */
     private fun upPlayProgress() {
         upPlayProgressJob?.cancel()
@@ -294,6 +312,9 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    /**
+     * 加载播放URL
+     */
     private fun loadContent() = with(AudioPlay) {
         durChapter?.let { chapter ->
             if (addLoading(chapter.index)) {
@@ -347,6 +368,9 @@ class AudioPlayService : BaseService(),
         }
     }
 
+    /**
+     * 保存播放进度
+     */
     private fun saveProgress(book: Book) {
         execute {
             appDb.bookDao.upProgress(book.bookUrl, book.durChapterPos)
