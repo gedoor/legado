@@ -1,4 +1,4 @@
-package io.legado.app.help;
+package io.legado.app.help.exoplayer;
 
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static com.google.android.exoplayer2.util.Util.castNonNull;
@@ -7,6 +7,7 @@ import static java.lang.Math.min;
 import android.net.Uri;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
@@ -45,11 +46,13 @@ import java.util.Map;
  * when possible. When data is not cached it is requested from an upstream {@link DataSource} and
  * written into the cache.
  */
+@SuppressWarnings("unused")
 public final class OkhttpCacheDataSource implements DataSource {
 
     /**
      * {@link DataSource.Factory} for {@link OkhttpCacheDataSource} instances.
      */
+    @SuppressWarnings("unused")
     public static final class Factory implements DataSource.Factory {
 
         private Cache cache;
@@ -587,14 +590,14 @@ public final class OkhttpCacheDataSource implements DataSource {
     }
 
     @Override
-    public void addTransferListener(TransferListener transferListener) {
+    public void addTransferListener(@NonNull TransferListener transferListener) {
         checkNotNull(transferListener);
         cacheReadDataSource.addTransferListener(transferListener);
         upstreamDataSource.addTransferListener(transferListener);
     }
 
     @Override
-    public long open(DataSpec dataSpec) throws IOException {
+    public long open(@NonNull DataSpec dataSpec) throws IOException {
         try {
             String key = cacheKeyFactory.buildCacheKey(dataSpec);
             DataSpec requestDataSpec = dataSpec.buildUpon().setKey(key).build();
@@ -637,7 +640,7 @@ public final class OkhttpCacheDataSource implements DataSource {
     }
 
     @Override
-    public int read(byte[] buffer, int offset, int length) throws IOException {
+    public int read(@NonNull byte[] buffer, int offset, int length) throws IOException {
         DataSpec requestDataSpec = checkNotNull(this.requestDataSpec);
         DataSpec currentDataSpec = checkNotNull(this.currentDataSpec);
         if (length == 0) {
@@ -679,12 +682,15 @@ public final class OkhttpCacheDataSource implements DataSource {
         }
     }
 
-    @Override
+
+    @SuppressWarnings("NullableProblems")
     @Nullable
+    @Override
     public Uri getUri() {
         return actualUri;
     }
 
+    @NonNull
     @Override
     public Map<String, List<String>> getResponseHeaders() {
         // TODO: Implement.

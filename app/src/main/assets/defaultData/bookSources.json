@@ -40,7 +40,7 @@
     "ruleToc": {
       "chapterList": "$.content.content",
       "chapterName": "$.chapterTitle",
-      "chapterUrl": "@js:\"https://www.shuidi.online:9021/fileMgt/getAudioByChapterId?bookId=\"\n    + java.getString(\"$.bookId\") + \"&chapterId=\" + java.getString(\"$.id\")\n    + \"&pageNum=1&pageSize=50&{{var header = JSON.parse(source.getLoginHeader());'Authorization=' + header.Authorization}}\""
+      "chapterUrl": "@js:\"https://www.shuidi.online:9021/fileMgt/getAudioByChapterId?bookId=\"\n    + java.getString(\"$.bookId\") + \"&chapterId=\" + java.getString(\"$.id\")\n    + \"&pageNum=1&pageSize=50\""
     },
     "weight": 0
   }

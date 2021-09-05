@@ -25,8 +25,8 @@ import io.legado.app.constant.Status
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.ExoPlayerHelper
 import io.legado.app.help.MediaHelp
+import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.analyzeRule.AnalyzeUrl
