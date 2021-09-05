@@ -15,7 +15,6 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.utils.*
-import kotlinx.coroutines.delay
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -268,7 +267,7 @@ class AnalyzeUrl(
     /**
      * 根据书源并发率等待
      */
-    private suspend fun concurrentWait() {
+    private fun judgmentConcurrent() {
         source ?: return
         val concurrentRate = source.concurrentRate
         if (concurrentRate.isNullOrEmpty()) {
@@ -311,7 +310,7 @@ class AnalyzeUrl(
             }
         }
         if (waitTime > 0) {
-            delay(waitTime)
+            error("根据并发率还需等待${waitTime}毫秒才可以访问")
         }
     }
 
@@ -322,7 +321,7 @@ class AnalyzeUrl(
         if (type != null) {
             return StrResponse(url, StringUtils.byteToHexString(getByteArray()))
         }
-        concurrentWait()
+        judgmentConcurrent()
         setCookie(source?.getStoreUrl())
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
@@ -351,7 +350,7 @@ class AnalyzeUrl(
     }
 
     suspend fun getByteArray(): ByteArray {
-        concurrentWait()
+        judgmentConcurrent()
         setCookie(source?.getStoreUrl())
         @Suppress("BlockingMethodInNonBlockingContext")
         return getProxyClient(proxy).newCall(retry) {
