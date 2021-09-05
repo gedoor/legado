@@ -131,10 +131,9 @@ class AudioPlayService : BaseService(),
                     AnalyzeUrl(
                         url,
                         headerMapF = AudioPlay.headers(),
-                        source = AudioPlay.bookSource,
-                        useWebView = true
+                        source = AudioPlay.bookSource
                     )
-                val uri = Uri.parse(analyzeUrl.url)
+                val uri = Uri.parse(analyzeUrl.getDirectUrl())
                 val dataSourceFactory = OkHttpDataSource.Factory(okHttpClient)
                     .setDefaultRequestProperties(analyzeUrl.headerMap)
                 val mediaSource = ExoPlayerHelper
