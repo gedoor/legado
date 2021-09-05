@@ -131,7 +131,7 @@ class AudioPlayService : BaseService(),
                         headerMapF = AudioPlay.headers(),
                         source = AudioPlay.bookSource
                     )
-                val uri = Uri.parse(analyzeUrl.url)
+                val uri = Uri.parse(analyzeUrl.getDirectUrl())
                 val mediaSource = ExoPlayerHelper
                     .createMediaSource(uri, analyzeUrl.headerMap)
                 exoPlayer.setMediaSource(mediaSource)
