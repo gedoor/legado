@@ -333,7 +333,7 @@ class AnalyzeUrl(
             val params = AjaxWebView.AjaxParams(url)
             params.headerMap = headerMap
             params.requestMethod = method
-            params.javaScript = jsStr
+            params.javaScript = webJs ?: jsStr
             params.sourceRegex = sourceRegex
             params.postData = body?.toByteArray()
             params.tag = source?.getStoreUrl()
