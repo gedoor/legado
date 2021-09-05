@@ -153,10 +153,10 @@ dependencies {
     def exoplayer_version = '2.15.0'
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
     implementation "com.google.android.exoplayer:extension-okhttp:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-dash:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-rtsp:$exoplayer_version"
+//    implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer_version"
+//    implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoplayer_version"
+//    implementation "com.google.android.exoplayer:exoplayer-dash:$exoplayer_version"
+//    implementation "com.google.android.exoplayer:exoplayer-rtsp:$exoplayer_version"
 
     //Splitties
     def splitties_version = '2.1.1'

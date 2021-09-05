@@ -16,7 +16,6 @@ import androidx.media.AudioFocusRequestCompat
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -28,7 +27,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.ExoPlayerHelper
 import io.legado.app.help.MediaHelp
-import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -133,11 +131,9 @@ class AudioPlayService : BaseService(),
                         headerMapF = AudioPlay.headers(),
                         source = AudioPlay.bookSource
                     )
-                val uri = Uri.parse(analyzeUrl.getDirectUrl())
-                val dataSourceFactory = OkHttpDataSource.Factory(okHttpClient)
-                    .setDefaultRequestProperties(analyzeUrl.headerMap)
+                val uri = Uri.parse(analyzeUrl.url)
                 val mediaSource = ExoPlayerHelper
-                    .createMediaSource(uri, dataSourceFactory)
+                    .createMediaSource(uri, analyzeUrl.headerMap)
                 exoPlayer.setMediaSource(mediaSource)
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
