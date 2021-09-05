@@ -49,9 +49,15 @@ class AudioPlayService : BaseService(),
         var url: String = ""
     }
 
-    private lateinit var audioManager: AudioManager
-    private lateinit var mFocusRequest: AudioFocusRequestCompat
-    private lateinit var exoPlayer: SimpleExoPlayer
+    private val audioManager: AudioManager by lazy {
+        getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    }
+    private val mFocusRequest: AudioFocusRequestCompat by lazy {
+        MediaHelp.getFocusRequest(this)
+    }
+    private val exoPlayer: SimpleExoPlayer by lazy {
+        SimpleExoPlayer.Builder(this).build()
+    }
     private var title: String = ""
     private var subtitle: String = ""
     private var mediaSessionCompat: MediaSessionCompat? = null
@@ -65,9 +71,6 @@ class AudioPlayService : BaseService(),
         super.onCreate()
         isRun = true
         upNotification()
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        mFocusRequest = MediaHelp.getFocusRequest(this)
-        exoPlayer = SimpleExoPlayer.Builder(this).build()
         exoPlayer.addListener(this)
         initMediaSession()
         initBroadcastReceiver()
