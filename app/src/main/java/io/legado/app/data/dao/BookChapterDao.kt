@@ -1,9 +1,6 @@
 package io.legado.app.data.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.legado.app.data.entities.BookChapter
 import kotlinx.coroutines.flow.Flow
 
@@ -33,6 +30,9 @@ interface BookChapterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookChapter: BookChapter)
+
+    @Update
+    fun upDate(vararg bookChapter: BookChapter)
 
     @Query("delete from chapters where bookUrl = :bookUrl")
     fun delByBook(bookUrl: String)
