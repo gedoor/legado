@@ -1,18 +1,16 @@
 package io.legado.app.help
 
 import android.net.Uri
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.cache.Cache
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.exoplayer2.source.dash.DashMediaSource
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.util.Util.inferContentType
 import io.legado.app.help.http.okHttpClient
-import splitties.init.appCtx
-import java.io.File
 
 
 object ExoPlayerHelper {
@@ -23,48 +21,15 @@ object ExoPlayerHelper {
         userAgent: String
     ): MediaSource {
         val mediaItem = MediaItem.fromUri(uri)
+        val dataSourceFactory = OkHttpDataSource.Factory(okHttpClient).setUserAgent(userAgent)
         val mediaSourceFactory = when (inferContentType(uri, overrideExtension)) {
-            else -> ProgressiveMediaSource.Factory(cacheDataSourceFactory.setUserAgent(userAgent))
+            C.TYPE_SS -> SsMediaSource.Factory(dataSourceFactory)
+            C.TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory)
+            C.TYPE_HLS -> HlsMediaSource.Factory(dataSourceFactory)
+            else -> ProgressiveMediaSource.Factory(dataSourceFactory)
         }
         return mediaSourceFactory.createMediaSource(mediaItem)
 
     }
-
-
-    /**
-     * 支持缓存的DataSource.Factory
-     */
-    private val cacheDataSourceFactory by lazy {
-        //使用自定义的CacheDataSource以支持设置UA
-        return@lazy OkhttpCacheDataSource.Factory()
-            .setCache(cache)
-            .setUpstreamDataSourceFactory(okhttpDataFactory)
-
-    }
-
-    /**
-     * Okhttp DataSource.Factory
-     */
-    private val okhttpDataFactory by lazy {
-        OkHttpDataSource.Factory(okHttpClient)
-
-    }
-
-    /**
-     * Exoplayer 内置的缓存
-     */
-    private val cache: Cache by lazy {
-        val databaseProvider = ExoDatabaseProvider(appCtx)
-        return@lazy SimpleCache(
-            //Exoplayer的缓存路径
-            File(appCtx.externalCacheDir, "exoplayer"),
-            //100M的缓存
-            LeastRecentlyUsedCacheEvictor((100 * 1024 * 1024).toLong()),
-            //记录缓存的数据库
-            databaseProvider
-        );
-
-    }
-
 
 }
