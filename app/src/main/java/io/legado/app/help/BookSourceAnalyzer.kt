@@ -99,6 +99,7 @@ object BookSourceAnalyzer {
                 source.customOrder = sourceAny.customOrder
                 source.enabled = sourceAny.enabled
                 source.enabledExplore = sourceAny.enabledExplore
+                source.concurrentRate = sourceAny.concurrentRate
                 source.header = sourceAny.header
                 source.loginUrl = when (sourceAny.loginUrl) {
                     null -> null
@@ -155,6 +156,7 @@ object BookSourceAnalyzer {
         var customOrder: Int = 0,                       // 手动排序编号
         var enabled: Boolean = true,                    // 是否启用
         var enabledExplore: Boolean = true,             // 启用发现
+        var concurrentRate: String?,
         var header: String? = null,                     // 请求头
         var loginUrl: Any? = null,                   // 登录规则
         var loginUi: List<RowUi>? = null,             //登录UI
