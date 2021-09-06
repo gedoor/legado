@@ -349,7 +349,7 @@ class AnalyzeUrl(
                         postJson(body)
                     }
                 }
-                else -> get(url, fieldMap, true)
+                else -> get(urlNoQuery, fieldMap, true)
             }
         }
     }
@@ -372,7 +372,7 @@ class AnalyzeUrl(
                         postJson(body)
                     }
                 }
-                else -> get(url, fieldMap, true)
+                else -> get(urlNoQuery, fieldMap, true)
             }
         }.bytes()
     }
