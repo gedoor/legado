@@ -82,7 +82,7 @@ interface JsExtensions {
             }.onFailure {
                 it.printStackTrace()
             }.getOrElse {
-                StrResponse(analyzeUrl.getDirectUrl(), it.localizedMessage)
+                StrResponse(analyzeUrl.url, it.localizedMessage)
             }
         }
     }
@@ -96,7 +96,7 @@ interface JsExtensions {
             }.onFailure {
                 it.printStackTrace()
             }.getOrElse {
-                StrResponse(analyzeUrl.getDirectUrl(), it.localizedMessage)
+                StrResponse(analyzeUrl.url, it.localizedMessage)
             }
         }
     }

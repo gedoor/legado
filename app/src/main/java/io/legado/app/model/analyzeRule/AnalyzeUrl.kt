@@ -48,9 +48,13 @@ class AnalyzeUrl(
     }
 
     val headerMap = HashMap<String, String>()
+    var url: String = ""
+        private set
     var body: String? = null
+        private set
     var type: String? = null
-    private var url: String = ""
+        private set
+    private var urlNoQuery: String = ""
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
     private var charset: String? = null
@@ -139,7 +143,8 @@ class AnalyzeUrl(
     /**
      * 处理URL
      */
-    private fun initUrl() { //replaceKeyPageJs已经替换掉额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串。
+    private fun initUrl() {
+        //replaceKeyPageJs已经替换掉额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串。
         val urlMatcher = paramPattern.matcher(ruleUrl)
         val urlNoOption =
             if (urlMatcher.find()) ruleUrl.substring(0, urlMatcher.start()) else ruleUrl
@@ -179,16 +184,16 @@ class AnalyzeUrl(
                 retry = option.retry
             }
         }
-
         headerMap[UA_NAME] ?: let {
             headerMap[UA_NAME] = AppConfig.userAgent
         }
+        urlNoQuery = url
         when (method) {
             RequestMethod.GET -> {
                 val pos = url.indexOf('?')
                 if (pos != -1) {
                     analyzeFields(url.substring(pos + 1))
-                    url = url.substring(0, pos)
+                    urlNoQuery = url.substring(0, pos)
                 } else body?.let {
                     if (!it.isJson()) {
                         analyzeFields(it)
@@ -343,7 +348,7 @@ class AnalyzeUrl(
             addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {
-                    url(url)
+                    url(urlNoQuery)
                     if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                         postForm(fieldMap, true)
                     } else {
@@ -366,7 +371,7 @@ class AnalyzeUrl(
             addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {
-                    url(url)
+                    url(urlNoQuery)
                     if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                         postForm(fieldMap, true)
                     } else {
@@ -383,7 +388,7 @@ class AnalyzeUrl(
      */
     suspend fun upload(fileName: String, file: ByteArray, contentType: String): StrResponse {
         return getProxyClient(proxy).newCallStrResponse(retry) {
-            url(url)
+            url(urlNoQuery)
             val bodyMap = GSON.fromJsonObject<HashMap<String, Any>>(body)!!
             bodyMap.forEach { entry ->
                 if (entry.value.toString() == "fileRequest") {
@@ -418,14 +423,7 @@ class AnalyzeUrl(
         headerMap.forEach { (key, value) ->
             headers.addHeader(key, value)
         }
-        return GlideUrl(getDirectUrl(), headers.build())
-    }
-
-    fun getDirectUrl(): String {
-        val qs = fieldMap.map {
-            "${it.key}=${it.value}"
-        }
-        return "$url?${qs.joinToString("&")}"
+        return GlideUrl(url, headers.build())
     }
 
     fun getUserAgent(): String {
