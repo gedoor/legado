@@ -192,6 +192,7 @@ object ReadBook : CoroutineScope by MainScope() {
         }
         upReadStartTime()
         preDownload()
+        ImageProvider.clearOut(durChapterIndex)
     }
 
     /**
@@ -334,7 +335,6 @@ object ReadBook : CoroutineScope by MainScope() {
         success: (() -> Unit)? = null
     ) {
         Coroutine.async {
-            ImageProvider.clearOut(durChapterIndex)
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
                 chapter.title = when (AppConfig.chineseConverterType) {
                     1 -> ChineseUtils.t2s(chapter.title)

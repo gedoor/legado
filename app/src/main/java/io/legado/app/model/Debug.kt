@@ -22,7 +22,7 @@ object Debug {
     var isChecking: Boolean = false
 
     @SuppressLint("ConstantLocale")
-    private val DEBUG_TIME_FORMAT = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
+    private val debugTimeFormat = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
     private var startTime: Long = System.currentTimeMillis()
 
     @Synchronized
@@ -42,7 +42,7 @@ object Debug {
                 printMsg = HtmlFormatter.format(msg)
             }
             if (showTime) {
-                val time = DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - startTime))
+                val time = debugTimeFormat.format(Date(System.currentTimeMillis() - startTime))
                 printMsg = "$time $printMsg"
             }
             it.printLog(state, printMsg)
@@ -55,7 +55,7 @@ object Debug {
                 }
                 if (showTime && debugTimeMap[sourceUrl] != null) {
                     val time =
-                        DEBUG_TIME_FORMAT.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
+                        debugTimeFormat.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
                     printMsg = "$time $printMsg"
                     debugMessageMap[sourceUrl] = printMsg
                 }
@@ -80,7 +80,7 @@ object Debug {
     fun startChecking(source: BookSource) {
         isChecking = true
         debugTimeMap[source.bookSourceUrl] = System.currentTimeMillis()
-        debugMessageMap[source.bookSourceUrl] = "${DEBUG_TIME_FORMAT.format(Date(0))} 开始校验"
+        debugMessageMap[source.bookSourceUrl] = "${debugTimeFormat.format(Date(0))} 开始校验"
     }
 
     fun finishChecking() {
@@ -95,7 +95,7 @@ object Debug {
         if (debugTimeMap[sourceUrl] != null && debugMessageMap[sourceUrl] != null) {
             val spendingTime = System.currentTimeMillis() - debugTimeMap[sourceUrl]!!
             debugTimeMap[sourceUrl] = if(state == "成功") spendingTime else 180000L
-            val printTime = DEBUG_TIME_FORMAT.format(Date(spendingTime))
+            val printTime = debugTimeFormat.format(Date(spendingTime))
             val originalMessage = debugMessageMap[sourceUrl]!!.substringAfter("] ")
             debugMessageMap[sourceUrl] = "$printTime $originalMessage $state"
         }

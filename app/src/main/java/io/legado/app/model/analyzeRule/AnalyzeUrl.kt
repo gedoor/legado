@@ -267,7 +267,7 @@ class AnalyzeUrl(
     }
 
     /**
-     * 根据书源并发率等待
+     * 并发判断
      */
     private fun judgmentConcurrent() {
         source ?: return
@@ -321,7 +321,7 @@ class AnalyzeUrl(
      */
     suspend fun getStrResponse(
         jsStr: String? = null,
-        sourceRegex: String? = null,
+        sourceRegex: String? = null
     ): StrResponse {
         if (type != null) {
             return StrResponse(url, StringUtils.byteToHexString(getByteArray()))

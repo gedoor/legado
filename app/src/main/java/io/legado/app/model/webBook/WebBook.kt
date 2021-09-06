@@ -278,7 +278,7 @@ object WebBook {
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
-        nextChapterUrl: String? = null,
+        nextChapterUrl: String? = null
     ): String {
         if (bookSource.getContentRule().content.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
