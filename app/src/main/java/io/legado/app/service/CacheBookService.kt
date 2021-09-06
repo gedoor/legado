@@ -66,6 +66,7 @@ class CacheBookService : BaseService() {
 
     override fun onDestroy() {
         cachePool.close()
+        CacheBook.cacheBookMap.clear()
         super.onDestroy()
         postEvent(EventBus.UP_DOWNLOAD, "")
     }

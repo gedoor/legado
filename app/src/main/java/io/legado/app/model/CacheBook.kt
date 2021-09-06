@@ -2,6 +2,7 @@ package io.legado.app.model
 
 import android.annotation.SuppressLint
 import android.content.Context
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -10,10 +11,12 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
+import io.legado.app.utils.postEvent
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.coroutines.CoroutineContext
 
@@ -22,7 +25,7 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
     companion object {
 
         val logs = arrayListOf<String>()
-        val cacheBookMap = hashMapOf<String, CacheBook>()
+        val cacheBookMap = ConcurrentHashMap<String, CacheBook>()
 
         @SuppressLint("ConstantLocale")
         private val logTimeFormat = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
@@ -83,6 +86,8 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
             }
         }
 
+        val isRun: Boolean get() = waitDownloadCount > 0 || onDownloadCount > 0
+
         val waitDownloadCount: Int
             get() {
                 var count = 0
@@ -113,13 +118,17 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
     }
 
     val waitDownloadSet = CopyOnWriteArraySet<Int>()
-    val successDownloadSet = CopyOnWriteArraySet<Int>()
     val onDownloadSet = CopyOnWriteArraySet<Int>()
+    val successDownloadSet = CopyOnWriteArraySet<Int>()
 
     fun addDownload(start: Int, end: Int) {
         for (i in start..end) {
             waitDownloadSet.add(i)
         }
+    }
+
+    fun isRun(): Boolean {
+        return waitDownloadSet.size > 0 || onDownloadSet.size > 0
     }
 
     @Synchronized
@@ -158,6 +167,10 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
         }.onCancel {
             onDownloadSet.remove(chapterIndex)
             waitDownloadSet.add(chapterIndex)
+        }.onFinally {
+            if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
+                postEvent(EventBus.UP_DOWNLOAD, "")
+            }
         }
         return true
     }

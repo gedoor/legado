@@ -7,19 +7,13 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemDownloadBinding
 import io.legado.app.model.CacheBook
-
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArraySet
-
 
 class CacheAdapter(context: Context, private val callBack: CallBack) :
     RecyclerAdapter<Book, ItemDownloadBinding>(context) {
 
     val cacheChapters = hashMapOf<String, HashSet<String>>()
-    var downloadMap: ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>? = null
 
     override fun getViewBinding(parent: ViewGroup): ItemDownloadBinding {
         return ItemDownloadBinding.inflate(inflater, parent, false)
@@ -55,11 +49,15 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemDownloadBinding) {
         binding.run {
             ivDownload.setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
-                    if (downloadMap?.containsKey(it.bookUrl) == true) {
-                        CacheBook.remove(context, it.bookUrl)
-                    } else {
-                        CacheBook.start(context, it.bookUrl, 0, it.totalChapterNum)
+                getItem(holder.layoutPosition)?.let { book ->
+                    CacheBook.get(book.bookUrl)?.let {
+                        if (it.isRun()) {
+                            CacheBook.remove(context, book.bookUrl)
+                        } else {
+                            CacheBook.start(context, book.bookUrl, 0, book.totalChapterNum)
+                        }
+                    } ?: let {
+                        CacheBook.start(context, book.bookUrl, 0, book.totalChapterNum)
                     }
                 }
             }
@@ -70,8 +68,8 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
     }
 
     private fun upDownloadIv(iv: ImageView, book: Book) {
-        downloadMap?.let {
-            if (it.containsKey(book.bookUrl)) {
+        CacheBook.get(book.bookUrl)?.let {
+            if (it.isRun()) {
                 iv.setImageResource(R.drawable.ic_stop_black_24dp)
             } else {
                 iv.setImageResource(R.drawable.ic_play_24dp)

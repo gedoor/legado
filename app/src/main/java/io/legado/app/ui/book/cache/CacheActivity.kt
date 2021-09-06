@@ -35,8 +35,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArraySet
 
 class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>(),
     CacheAdapter.CallBack {
@@ -113,7 +111,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_download -> {
-                if (adapter.downloadMap.isNullOrEmpty()) {
+                if (!CacheBook.isRun) {
                     adapter.getItems().forEach { book ->
                         CacheBook.start(
                             this@CacheActivity,
@@ -212,15 +210,14 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     override fun observeLiveBus() {
-        observeEvent<ConcurrentHashMap<String, CopyOnWriteArraySet<BookChapter>>>(EventBus.UP_DOWNLOAD) {
-            if (it.isEmpty()) {
+        observeEvent<String>(EventBus.UP_DOWNLOAD) {
+            if (!CacheBook.isRun) {
                 menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_play_24dp)
                 menu?.applyTint(this)
             } else {
                 menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_stop_black_24dp)
                 menu?.applyTint(this)
             }
-            adapter.downloadMap = it
             adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
         }
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
