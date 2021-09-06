@@ -25,7 +25,6 @@ object ExoPlayerHelper {
             cacheDataSourceFactory.setDefaultRequestProperties(defaultRequestProperties)
         )
         return mediaSourceFactory.createMediaSource(mediaItem)
-
     }
 
 
@@ -37,7 +36,6 @@ object ExoPlayerHelper {
         return@lazy OkhttpCacheDataSource.Factory()
             .setCache(cache)
             .setUpstreamDataSourceFactory(okhttpDataFactory)
-
     }
 
     /**
@@ -60,7 +58,6 @@ object ExoPlayerHelper {
             //记录缓存的数据库
             databaseProvider
         )
-
     }
 
 }
