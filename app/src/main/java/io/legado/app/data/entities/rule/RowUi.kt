@@ -7,4 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class RowUi(
     var name: String,
     var type: String,
+    var action: String?
 ) : Parcelable

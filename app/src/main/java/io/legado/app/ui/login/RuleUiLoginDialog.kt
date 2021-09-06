@@ -6,6 +6,8 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -13,10 +15,9 @@ import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.EditText
 import io.legado.app.ui.widget.text.TextInputLayout
-import io.legado.app.utils.GSON
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.views.onClick
 
 class RuleUiLoginDialog : BaseDialogFragment() {
 
@@ -65,6 +66,20 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                             inputType =
                                 InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
                             setText(loginInfo?.get(rowUi.name))
+                        }
+                    }
+                "button" -> layoutInflater.inflate(R.layout.item_fillet_text, binding.root, false)
+                    .let {
+                        binding.listView.addView(it)
+                        it.id = index
+                        (it as TextView).let { textView ->
+                            textView.text = rowUi.name
+                            textView.setPadding(16.dp)
+                        }
+                        it.onClick {
+                            if (rowUi.action.isAbsUrl()) {
+                                context?.openUrl(rowUi.action!!)
+                            }
                         }
                     }
             }
