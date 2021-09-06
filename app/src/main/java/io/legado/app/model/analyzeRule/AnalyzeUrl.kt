@@ -157,7 +157,6 @@ class AnalyzeUrl(
                 option.method?.let {
                     if (it.equals("POST", true)) method = RequestMethod.POST
                 }
-                option.type?.let { type = it }
                 option.headers?.let { headers ->
                     if (headers is Map<*, *>) {
                         headers.forEach { entry ->
@@ -168,20 +167,19 @@ class AnalyzeUrl(
                             ?.let { headerMap.putAll(it) }
                     }
                 }
-                option.charset?.let { charset = it }
                 option.body?.let {
                     body = if (it is String) it else GSON.toJson(it)
                 }
-                option.webView?.let {
-                    if (it.toString().isNotEmpty()) {
-                        useWebView = true
+                type = option.type
+                charset = option.charset
+                retry = option.retry
+                useWebView = option.webView?.toString()?.isNotBlank() == true
+                webJs = option.webJs
+                option.js?.let { jsStr ->
+                    evalJS(jsStr, url)?.toString()?.let {
+                        url = it
                     }
                 }
-                webJs = option.webJs
-                option.js?.let {
-                    evalJS(it)
-                }
-                retry = option.retry
             }
         }
         headerMap[UA_NAME] ?: let {
@@ -194,10 +192,6 @@ class AnalyzeUrl(
                 if (pos != -1) {
                     analyzeFields(url.substring(pos + 1))
                     urlNoQuery = url.substring(0, pos)
-                } else body?.let {
-                    if (!it.isJson()) {
-                        analyzeFields(it)
-                    }
                 }
             }
             RequestMethod.POST -> body?.let {
@@ -437,13 +431,13 @@ class AnalyzeUrl(
     data class UrlOption(
         val method: String?,
         val charset: String?,
-        val webView: Any?,
-        val webJs: String?,
         val headers: Any?,
         val body: Any?,
         val type: String?,
         val js: String?,
-        val retry: Int = 0
+        val retry: Int = 0,
+        val webView: Any?,
+        val webJs: String?,
     )
 
     data class FetchRecord(
