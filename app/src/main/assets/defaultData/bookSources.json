@@ -19,6 +19,11 @@
       {
         "name": "password",
         "type": "password"
+      },
+      {
+        "name": "注册",
+        "type": "button",
+        "action": "http://www.yooike.com/xiaoshuo/#/register?title=%E6%B3%A8%E5%86%8C"
       }
     ],
     "loginUrl": "var loginInfo = source.getLoginInfo()\nvar json = java.connect('https://www.kaixin7days.com/login,{\"method\":\"POST\",\"body\":' + loginInfo + '}').body()\nvar loginRes = JSON.parse(json)\nvar header = null\nif (loginRes.statusCode == 200) {\n    var accessToken = {\n        Authorization: \"Bearer \" + loginRes.content.accessToken\n    }\n    header = JSON.stringify(accessToken)\n    source.putLoginHeader(header)\n}\nheader",
