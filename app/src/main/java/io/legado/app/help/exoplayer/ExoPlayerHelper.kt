@@ -18,8 +18,7 @@ object ExoPlayerHelper {
 
     fun createMediaSource(
         uri: Uri,
-        defaultRequestProperties: Map<String, String>,
-        overrideExtension: String? = null
+        defaultRequestProperties: Map<String, String>
     ): MediaSource {
         val mediaItem = MediaItem.fromUri(uri)
         val mediaSourceFactory = ProgressiveMediaSource.Factory(
