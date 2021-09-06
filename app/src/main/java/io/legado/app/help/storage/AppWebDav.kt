@@ -38,6 +38,7 @@ object AppWebDav {
             return url
         }
 
+    @Throws(Exception::class)
     suspend fun initWebDav(): Boolean {
         val account = appCtx.getPrefString(PreferKey.webDavAccount)
         val password = appCtx.getPrefString(PreferKey.webDavPassword)
