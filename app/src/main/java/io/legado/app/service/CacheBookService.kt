@@ -73,10 +73,12 @@ class CacheBookService : BaseService() {
 
     private fun addDownloadData(bookUrl: String?, start: Int, end: Int) {
         bookUrl ?: return
-        val cacheBook = CacheBook.get(bookUrl) ?: return
-        cacheBook.addDownload(start, end)
-        if (downloadJob == null) {
-            download()
+        execute {
+            val cacheBook = CacheBook.getOrCreate(bookUrl) ?: return@execute
+            cacheBook.addDownload(start, end)
+            if (downloadJob == null) {
+                download()
+            }
         }
     }
 
@@ -90,6 +92,10 @@ class CacheBookService : BaseService() {
     private fun download() {
         downloadJob = launch(cachePool) {
             while (isActive) {
+                if (CacheBook.cacheBookMap.isEmpty()) {
+                    CacheBook.stop(this@CacheBookService)
+                    return@launch
+                }
                 CacheBook.cacheBookMap.forEach {
                     while (CacheBook.onDownloadCount > threadCount) {
                         delay(100)

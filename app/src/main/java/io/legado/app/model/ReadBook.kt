@@ -296,7 +296,7 @@ object ReadBook : CoroutineScope by MainScope() {
         val book = book
         val bookSource = bookSource
         if (book != null && bookSource != null) {
-            CacheBook.get(bookSource, book).download(scope, chapter)
+            CacheBook.getOrCreate(bookSource, book).download(scope, chapter)
         } else if (book != null) {
             contentLoadFinish(
                 book, chapter, "没有书源", resetPageOffset = resetPageOffset

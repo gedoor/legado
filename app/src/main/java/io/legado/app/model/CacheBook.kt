@@ -20,7 +20,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
-class CacheBook(val bookSource: BookSource, val book: Book) {
+class CacheBook(var bookSource: BookSource, var book: Book) {
 
     companion object {
 
@@ -31,22 +31,28 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
         private val logTimeFormat = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
 
         @Synchronized
-        fun get(bookUrl: String): CacheBook? {
-            var cacheBook = cacheBookMap[bookUrl]
-            if (cacheBook != null) {
-                return cacheBook
-            }
+        fun getOrCreate(bookUrl: String): CacheBook? {
             val book = appDb.bookDao.getBook(bookUrl) ?: return null
             val bookSource = appDb.bookSourceDao.getBookSource(book.origin) ?: return null
+            var cacheBook = cacheBookMap[bookUrl]
+            if (cacheBook != null) {
+                //存在时更新,书源可能会变化,必须更新
+                cacheBook.bookSource = bookSource
+                cacheBook.book = book
+                return cacheBook
+            }
             cacheBook = CacheBook(bookSource, book)
             cacheBookMap[bookUrl] = cacheBook
             return cacheBook
         }
 
         @Synchronized
-        fun get(bookSource: BookSource, book: Book): CacheBook {
+        fun getOrCreate(bookSource: BookSource, book: Book): CacheBook {
             var cacheBook = cacheBookMap[book.bookUrl]
             if (cacheBook != null) {
+                //存在时更新,书源可能会变化,必须更新
+                cacheBook.bookSource = bookSource
+                cacheBook.book = book
                 return cacheBook
             }
             cacheBook = CacheBook(bookSource, book)
@@ -191,6 +197,7 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
             }.onFinally {
                 if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
                     postEvent(EventBus.UP_DOWNLOAD, "")
+                    cacheBookMap.remove(book.bookUrl)
                 }
             }
             return true

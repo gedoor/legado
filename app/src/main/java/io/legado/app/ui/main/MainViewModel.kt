@@ -118,7 +118,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         if (!BookHelp.hasContent(book, chapter)) {
                             var addToCache = false
                             while (!addToCache) {
-                                val cacheBook = CacheBook.get(bookSource, book)
+                                val cacheBook = CacheBook.getOrCreate(bookSource, book)
                                 if (CacheBook.onDownloadCount < 10) {
                                     cacheBook.download(this, chapter)
                                     addToCache = true
