@@ -6,16 +6,13 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
-import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
 import io.legado.app.help.LocalConfig
 import io.legado.app.model.CacheBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.delay
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
@@ -23,7 +20,8 @@ import kotlin.math.min
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
     private var threadCount = AppConfig.threadCount
-    private var upTocPool = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
+    private var upTocPool =
+        Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
     val updateList = CopyOnWriteArraySet<String>()
     private val bookMap = ConcurrentHashMap<String, Book>()
 
@@ -38,7 +36,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun upPool() {
         threadCount = AppConfig.threadCount
         upTocPool.close()
-        upTocPool = Executors.newFixedThreadPool(min(threadCount,8)).asCoroutineDispatcher()
+        upTocPool = Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
     }
 
     fun upAllBookToc() {
@@ -83,7 +81,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         appDb.bookDao.update(book)
                         appDb.bookChapterDao.delByBook(book.bookUrl)
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
-                        cacheBook(bookSource, book)
+                        val endIndex = min(
+                            book.totalChapterNum,
+                            book.durChapterIndex.plus(AppConfig.preDownloadNum)
+                        )
+                        CacheBook.start(context, book.bookUrl, book.durChapterIndex, endIndex)
                     }.onError(upTocPool) {
                         it.printStackTrace()
                     }.onFinally(upTocPool) {
@@ -105,31 +107,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
         if (!update) {
             usePoolCount--
-        }
-    }
-
-    private fun cacheBook(bookSource: BookSource, book: Book) {
-        execute {
-            if (book.totalChapterNum > book.durChapterIndex) {
-                val downloadToIndex =
-                    min(book.totalChapterNum, book.durChapterIndex.plus(AppConfig.preDownloadNum))
-                for (i in book.durChapterIndex until downloadToIndex) {
-                    appDb.bookChapterDao.getChapter(book.bookUrl, i)?.let { chapter ->
-                        if (!BookHelp.hasContent(book, chapter)) {
-                            var addToCache = false
-                            while (!addToCache) {
-                                val cacheBook = CacheBook.getOrCreate(bookSource, book)
-                                if (CacheBook.onDownloadCount < 10) {
-                                    cacheBook.download(this, chapter)
-                                    addToCache = true
-                                } else {
-                                    delay(100)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 

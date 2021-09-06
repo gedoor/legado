@@ -160,7 +160,11 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
      */
     fun download(scope: CoroutineScope, context: CoroutineContext): Boolean {
         synchronized(this) {
-            val chapterIndex = waitDownloadSet.firstOrNull() ?: return false
+            val chapterIndex = waitDownloadSet.firstOrNull()
+            if (chapterIndex == null) {
+                cacheBookMap.remove(book.bookUrl)
+                return false
+            }
             if (onDownloadSet.contains(chapterIndex)) {
                 waitDownloadSet.remove(chapterIndex)
                 return download(scope, context)
