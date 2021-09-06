@@ -58,7 +58,7 @@ class CacheBookService : BaseService() {
                     intent.getIntExtra("end", 0)
                 )
                 IntentAction.remove -> removeDownload(intent.getStringExtra("bookUrl"))
-                IntentAction.stop -> stopDownload()
+                IntentAction.stop -> stopSelf()
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -95,13 +95,6 @@ class CacheBookService : BaseService() {
                 }
             }
         }
-    }
-
-    private fun stopDownload() {
-        CacheBook.cacheBookMap.forEach {
-            it.value.waitDownloadSet.clear()
-        }
-        stopSelf()
     }
 
     private fun upNotificationContent() {
