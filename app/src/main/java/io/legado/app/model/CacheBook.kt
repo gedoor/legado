@@ -14,6 +14,7 @@ import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -148,6 +149,9 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
         }
     }
 
+    /**
+     * 从待下载列表内取第一条下载
+     */
     fun download(scope: CoroutineScope, context: CoroutineContext): Boolean {
         synchronized(this) {
             val chapterIndex = waitDownloadSet.firstOrNull() ?: return false
@@ -176,6 +180,8 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
                 addLog("${book.name}-${chapter.title} getContentSuccess")
                 downloadFinish(chapter, content.ifBlank { "No content" })
             }.onError {
+                //出现错误等待1秒后重新加入待下载列表
+                delay(1000)
                 onErrorOrCancel(chapterIndex)
                 print(it.localizedMessage)
                 addLog("${book.name}-${chapter.title} getContentError${it.localizedMessage}")
@@ -216,6 +222,9 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
                         onDownloadSet.remove(chapter.index)
                     }
                     ReadBook.removeLoading(chapter.index)
+                    if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
+                        postEvent(EventBus.UP_DOWNLOAD, "")
+                    }
                 }
         }
     }
