@@ -144,7 +144,6 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
             bookSource,
             book,
             chapter,
-            waitConcurrent = true,
             context = context
         ).onSuccess { content ->
             onDownloadSet.remove(chapterIndex)
