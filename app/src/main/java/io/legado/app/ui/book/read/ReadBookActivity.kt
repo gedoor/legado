@@ -209,7 +209,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
             launch {
                 menu.findItem(R.id.menu_get_progress)?.isVisible =
-                    withContext(IO) { AppWebDav.initWebDav() }
+                    withContext(IO) {
+                        runCatching { AppWebDav.initWebDav() }
+                            .getOrElse { false }
+                    }
             }
         }
     }
