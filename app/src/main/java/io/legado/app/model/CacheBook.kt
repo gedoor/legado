@@ -162,6 +162,7 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
         }.onError {
             onDownloadSet.remove(chapterIndex)
             waitDownloadSet.add(chapterIndex)
+            print(it.localizedMessage)
             addLog("${book.name}-${chapter.title} getContentError${it.localizedMessage}")
             downloadFinish(chapter, it.localizedMessage ?: "download error")
         }.onCancel {

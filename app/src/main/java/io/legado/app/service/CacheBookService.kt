@@ -82,6 +82,9 @@ class CacheBookService : BaseService() {
 
     private fun removeDownload(bookUrl: String?) {
         CacheBook.cacheBookMap.remove(bookUrl)
+        if (CacheBook.cacheBookMap.isEmpty()) {
+            stopSelf()
+        }
     }
 
     private fun download() {
