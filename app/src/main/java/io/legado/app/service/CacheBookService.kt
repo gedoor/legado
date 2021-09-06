@@ -92,7 +92,7 @@ class CacheBookService : BaseService() {
             while (isActive) {
                 CacheBook.cacheBookMap.forEach {
                     while (CacheBook.onDownloadCount > threadCount) {
-                        delay(50)
+                        delay(100)
                     }
                     it.value.download(this, cachePool)
                 }

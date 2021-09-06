@@ -17,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.coroutines.CoroutineContext
 
 class CacheBook(val bookSource: BookSource, val book: Book) {
@@ -117,63 +116,79 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
 
     }
 
-    val waitDownloadSet = CopyOnWriteArraySet<Int>()
-    val onDownloadSet = CopyOnWriteArraySet<Int>()
-    val successDownloadSet = CopyOnWriteArraySet<Int>()
+    val waitDownloadSet = hashSetOf<Int>()
+    val onDownloadSet = hashSetOf<Int>()
+    val successDownloadSet = hashSetOf<Int>()
 
     fun addDownload(start: Int, end: Int) {
-        for (i in start..end) {
-            waitDownloadSet.add(i)
+        synchronized(this) {
+            for (i in start..end) {
+                waitDownloadSet.add(i)
+            }
         }
     }
 
     fun isRun(): Boolean {
-        return waitDownloadSet.size > 0 || onDownloadSet.size > 0
+        return synchronized(this) {
+            waitDownloadSet.size > 0 || onDownloadSet.size > 0
+        }
     }
 
-    @Synchronized
+    private fun onSuccess(index: Int) {
+        synchronized(this) {
+            onDownloadSet.remove(index)
+            successDownloadSet.add(index)
+        }
+    }
+
+    private fun onErrorOrCancel(index: Int) {
+        synchronized(this) {
+            onDownloadSet.remove(index)
+            waitDownloadSet.add(index)
+        }
+    }
+
     fun download(scope: CoroutineScope, context: CoroutineContext): Boolean {
-        val chapterIndex = waitDownloadSet.firstOrNull() ?: return false
-        if (onDownloadSet.contains(chapterIndex)) {
-            waitDownloadSet.remove(chapterIndex)
-            return download(scope, context)
-        }
-        val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, chapterIndex) ?: let {
-            waitDownloadSet.remove(chapterIndex)
-            return download(scope, context)
-        }
-        if (BookHelp.hasContent(book, chapter)) {
-            waitDownloadSet.remove(chapterIndex)
-            return download(scope, context)
-        }
-        waitDownloadSet.remove(chapterIndex)
-        onDownloadSet.add(chapterIndex)
-        WebBook.getContent(
-            scope,
-            bookSource,
-            book,
-            chapter,
-            context = context
-        ).onSuccess { content ->
-            onDownloadSet.remove(chapterIndex)
-            successDownloadSet.add(chapterIndex)
-            addLog("${book.name}-${chapter.title} getContentSuccess")
-            downloadFinish(chapter, content.ifBlank { "No content" })
-        }.onError {
-            onDownloadSet.remove(chapterIndex)
-            waitDownloadSet.add(chapterIndex)
-            print(it.localizedMessage)
-            addLog("${book.name}-${chapter.title} getContentError${it.localizedMessage}")
-            downloadFinish(chapter, it.localizedMessage ?: "download error")
-        }.onCancel {
-            onDownloadSet.remove(chapterIndex)
-            waitDownloadSet.add(chapterIndex)
-        }.onFinally {
-            if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
-                postEvent(EventBus.UP_DOWNLOAD, "")
+        synchronized(this) {
+            val chapterIndex = waitDownloadSet.firstOrNull() ?: return false
+            if (onDownloadSet.contains(chapterIndex)) {
+                waitDownloadSet.remove(chapterIndex)
+                return download(scope, context)
             }
+            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, chapterIndex) ?: let {
+                waitDownloadSet.remove(chapterIndex)
+                return download(scope, context)
+            }
+            if (BookHelp.hasContent(book, chapter)) {
+                waitDownloadSet.remove(chapterIndex)
+                return download(scope, context)
+            }
+            waitDownloadSet.remove(chapterIndex)
+            onDownloadSet.add(chapterIndex)
+            WebBook.getContent(
+                scope,
+                bookSource,
+                book,
+                chapter,
+                context = context
+            ).onSuccess { content ->
+                onSuccess(chapterIndex)
+                addLog("${book.name}-${chapter.title} getContentSuccess")
+                downloadFinish(chapter, content.ifBlank { "No content" })
+            }.onError {
+                onErrorOrCancel(chapterIndex)
+                print(it.localizedMessage)
+                addLog("${book.name}-${chapter.title} getContentError${it.localizedMessage}")
+                downloadFinish(chapter, it.localizedMessage ?: "download error")
+            }.onCancel {
+                onErrorOrCancel(chapterIndex)
+            }.onFinally {
+                if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
+                    postEvent(EventBus.UP_DOWNLOAD, "")
+                }
+            }
+            return true
         }
-        return true
     }
 
     @Synchronized
@@ -182,19 +197,27 @@ class CacheBook(val bookSource: BookSource, val book: Book) {
         chapter: BookChapter,
         resetPageOffset: Boolean = false
     ) {
-        if (onDownloadSet.contains(chapter.index)) {
-            return
-        }
-        onDownloadSet.add(chapter.index)
-        WebBook.getContent(scope, bookSource, book, chapter)
-            .onSuccess { content ->
-                downloadFinish(chapter, content.ifBlank { "No content" }, resetPageOffset)
-            }.onError {
-                downloadFinish(chapter, it.localizedMessage ?: "download error", resetPageOffset)
-            }.onFinally {
-                onDownloadSet.remove(chapter.index)
-                ReadBook.removeLoading(chapter.index)
+        synchronized(this) {
+            if (onDownloadSet.contains(chapter.index)) {
+                return
             }
+            onDownloadSet.add(chapter.index)
+            WebBook.getContent(scope, bookSource, book, chapter)
+                .onSuccess { content ->
+                    downloadFinish(chapter, content.ifBlank { "No content" }, resetPageOffset)
+                }.onError {
+                    downloadFinish(
+                        chapter,
+                        it.localizedMessage ?: "download error",
+                        resetPageOffset
+                    )
+                }.onFinally {
+                    synchronized(this) {
+                        onDownloadSet.remove(chapter.index)
+                    }
+                    ReadBook.removeLoading(chapter.index)
+                }
+        }
     }
 
     private fun downloadFinish(
