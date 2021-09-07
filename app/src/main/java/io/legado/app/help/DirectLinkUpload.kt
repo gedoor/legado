@@ -23,7 +23,7 @@ object DirectLinkUpload {
         val analyzeRule = AnalyzeRule(RuleData()).setContent(res.body, res.url)
         val downloadUrl = analyzeRule.getString(downloadUrlRule)
         if (downloadUrl.isBlank()) {
-            error("上传失败")
+            error("上传失败,${res.body}")
         }
         return downloadUrl
     }
