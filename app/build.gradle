@@ -129,6 +129,8 @@ dependencies {
     implementation('androidx.multidex:multidex:2.0.1')
     //kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    //Kotlin反射
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     //协程
     def coroutines_version = '1.5.1'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
@@ -137,19 +139,19 @@ dependencies {
     //androidX
     implementation('androidx.appcompat:appcompat:1.3.1')
     implementation('androidx.core:core-ktx:1.6.0')
-    implementation("androidx.activity:activity-ktx:1.3.0")
+    implementation("androidx.activity:activity-ktx:1.3.1")
     implementation("androidx.fragment:fragment-ktx:1.3.6")
     implementation('androidx.preference:preference-ktx:1.1.1')
-    implementation('androidx.constraintlayout:constraintlayout:2.0.4')
+    implementation('androidx.constraintlayout:constraintlayout:2.1.0')
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
     implementation('androidx.viewpager2:viewpager2:1.0.0')
     implementation('com.google.android.material:material:1.4.0')
     implementation('com.google.android.flexbox:flexbox:3.0.0')
-    implementation('com.google.code.gson:gson:2.8.7')
+    implementation('com.google.code.gson:gson:2.8.8')
     implementation('androidx.webkit:webkit:1.4.0')
 
     //media
-    implementation("androidx.media:media:1.4.0")
+    implementation("androidx.media:media:1.4.1")
     def exoplayer_version = '2.15.0'
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
     implementation "com.google.android.exoplayer:extension-okhttp:$exoplayer_version"

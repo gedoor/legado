@@ -140,8 +140,6 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
         mResponseCondition.open()
 
         this.eventListener?.callFailed(mCall, e)
-
-
         responseCallback?.onFailure(mCall, e)
     }
 
