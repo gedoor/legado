@@ -197,9 +197,17 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
                 chapter,
                 context = context
             ).onSuccess { content ->
-                onSuccess(chapterIndex)
-                addLog("${book.name}-${chapter.title} getContentSuccess")
-                downloadFinish(chapter, content.ifBlank { "No content" })
+                if (content.isNotBlank()) {
+                    onSuccess(chapterIndex)
+                    addLog("${book.name}-${chapter.title} getContentSuccess")
+                    downloadFinish(chapter, content.ifBlank { "No content" })
+                } else {
+                    //出现错误等待1秒后重新加入待下载列表
+                    delay(1000)
+                    onErrorOrCancel(chapterIndex)
+                    addLog("${book.name}-${chapter.title} getContentError 内容为空")
+                    downloadFinish(chapter, "download error 内容为空")
+                }
             }.onError {
                 //出现错误等待1秒后重新加入待下载列表
                 delay(1000)
