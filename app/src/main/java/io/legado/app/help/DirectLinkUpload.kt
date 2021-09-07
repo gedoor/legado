@@ -28,7 +28,7 @@ object DirectLinkUpload {
         return downloadUrl
     }
 
-    fun getUploadUrl(): String? {
+    fun getUploadUrl(): String {
         return CacheManager.get(uploadUrlKey)
             ?: """http://shuyuan.miaogongzi.site:6564/shuyuan,{
             "method":"POST",
@@ -43,8 +43,8 @@ object DirectLinkUpload {
         CacheManager.put(uploadUrlKey, url)
     }
 
-    fun getDownloadUrlRule(): String? {
-        return CacheManager.get(uploadUrlKey)
+    fun getDownloadUrlRule(): String {
+        return CacheManager.get(downloadUrlRuleKey)
             ?: """
                 ${'$'}.data@js:if (result == '') '' 
                 else 'https://shuyuan.miaogongzi.site/shuyuan/'+result
