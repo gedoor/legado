@@ -1,4 +1,4 @@
 {
-  "UploadUrl": "http://shuyuan.miaogongzi.cc:6564/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
+  "UploadUrl": "http://sy.miaogongzi.cc/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
   "DownloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.miaogongzi.cc/shuyuan/' + result"
 }
