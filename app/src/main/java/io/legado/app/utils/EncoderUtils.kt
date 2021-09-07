@@ -120,7 +120,7 @@ object EncoderUtils {
     fun decryptAES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String = "AES/ECB/PKCS5Padding",
+        transformation: String = "DES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return symmetricTemplate(data, key, "AES", transformation, iv, false)
@@ -154,15 +154,12 @@ object EncoderUtils {
         else {
             val keySpec = SecretKeySpec(key, algorithm)
             val cipher = Cipher.getInstance(transformation)
+            val mode = if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE
             if (iv == null || iv.isEmpty()) {
-                cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, keySpec)
+                cipher.init(mode, keySpec)
             } else {
                 val params: AlgorithmParameterSpec = IvParameterSpec(iv)
-                cipher.init(
-                    if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE,
-                    keySpec,
-                    params
-                )
+                cipher.init(mode, keySpec, params)
             }
             cipher.doFinal(data)
         }

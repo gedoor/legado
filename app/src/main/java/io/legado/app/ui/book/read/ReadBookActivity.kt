@@ -74,7 +74,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
         }
     private val sourceEditActivity =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        registerForActivityResult(StartActivityForResult(BookSourceEditActivity::class.java)) {
             it ?: return@registerForActivityResult
             if (it.resultCode == RESULT_OK) {
                 viewModel.upBookSource {
@@ -732,9 +732,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun openSourceEditActivity() {
         ReadBook.bookSource?.let {
-            sourceEditActivity.launch(Intent(this, BookSourceEditActivity::class.java).apply {
+            sourceEditActivity.launch {
                 putExtra("data", it.bookSourceUrl)
-            })
+            }
         }
     }
 

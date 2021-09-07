@@ -105,14 +105,15 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                         bookSource.removeLoginInfo()
                         return@setOnMenuItemClickListener true
                     }
-                    bookSource.putLoginInfo(GSON.toJson(loginData))
-                    bookSource.getLoginJs()?.let {
-                        try {
-                            bookSource.evalJS(it)
-                            toastOnUi(R.string.success)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            toastOnUi(e.localizedMessage ?: "ERROR")
+                    if (bookSource.putLoginInfo(GSON.toJson(loginData))) {
+                        bookSource.getLoginJs()?.let {
+                            try {
+                                bookSource.evalJS(it)
+                                toastOnUi(R.string.success)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                toastOnUi(e.localizedMessage ?: "ERROR")
+                            }
                         }
                     }
                 }

@@ -25,6 +25,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.AudioPlay
 import io.legado.app.service.AudioPlayService
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.image.CoverImageView
@@ -59,6 +60,13 @@ class AudioPlayActivity :
             }
         }
     }
+    private val sourceEditResult =
+        registerForActivityResult(StartActivityForResult(BookSourceEditActivity::class.java)) {
+            it ?: return@registerForActivityResult
+            if (it.resultCode == RESULT_OK) {
+                viewModel.upSource()
+            }
+        }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.transparent()
@@ -94,6 +102,11 @@ class AudioPlayActivity :
                 }
             }
             R.id.menu_copy_audio_url -> sendToClip(AudioPlayService.url)
+            R.id.menu_edit_source -> AudioPlay.bookSource?.let {
+                sourceEditResult.launch {
+                    putExtra("data", it.bookSourceUrl)
+                }
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }

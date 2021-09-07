@@ -82,6 +82,14 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+    fun upSource() {
+        execute {
+            AudioPlay.book?.let { book ->
+                AudioPlay.bookSource = appDb.bookSourceDao.getBookSource(book.origin)
+            }
+        }
+    }
+
     fun changeTo(book1: Book) {
         execute {
             var oldTocSize: Int = book1.totalChapterNum

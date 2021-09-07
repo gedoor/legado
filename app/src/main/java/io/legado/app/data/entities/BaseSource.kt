@@ -84,11 +84,12 @@ interface BaseSource : JsExtensions {
      */
     fun getLoginInfo(): String? {
         try {
+            val key = AppConst.androidId.encodeToByteArray(0, 8)
             val cache = CacheManager.get("userInfo_${getStoreUrl()}") ?: return null
-            val byteArrayB = Base64.decode(cache, Base64.DEFAULT)
-            val byteArrayA = EncoderUtils.decryptAES(byteArrayB, AppConst.androidId.toByteArray())
+            val encodeBytes = Base64.decode(cache, Base64.DEFAULT)
+            val decodeBytes = EncoderUtils.decryptAES(encodeBytes, key)
                 ?: return null
-            return String(byteArrayA)
+            return String(decodeBytes)
         } catch (e: Exception) {
             e.printStackTrace()
             return null
@@ -102,18 +103,16 @@ interface BaseSource : JsExtensions {
     /**
      * 保存用户信息,aes加密
      */
-    fun putLoginInfo(info: String) {
-        try {
-            val data = Base64.encodeToString(
-                EncoderUtils.decryptAES(
-                    info.toByteArray(),
-                    AppConst.androidId.toByteArray()
-                ),
-                Base64.DEFAULT
-            )
-            CacheManager.put("userInfo_${getStoreUrl()}", data)
+    fun putLoginInfo(info: String): Boolean {
+        return try {
+            val key = (AppConst.androidId).encodeToByteArray(0, 8)
+            val encodeBytes = EncoderUtils.encryptAES(info.toByteArray(), key)
+            val encodeStr = Base64.encodeToString(encodeBytes, Base64.DEFAULT)
+            CacheManager.put("userInfo_${getStoreUrl()}", encodeStr)
+            true
         } catch (e: Exception) {
             e.printStackTrace()
+            false
         }
     }
 

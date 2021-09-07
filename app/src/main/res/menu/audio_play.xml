@@ -20,4 +20,9 @@
         android:title="@string/copy_play_url"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_edit_source"
+        android:title="@string/edit_book_source"
+        app:showAsAction="never" />
+
 </menu>
