@@ -155,6 +155,15 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
         }
     }
 
+    private fun onFinally() {
+        synchronized(this) {
+            if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
+                postEvent(EventBus.UP_DOWNLOAD, "")
+                cacheBookMap.remove(book.bookUrl)
+            }
+        }
+    }
+
     /**
      * 从待下载列表内取第一条下载
      */
@@ -201,10 +210,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             }.onCancel {
                 onErrorOrCancel(chapterIndex)
             }.onFinally {
-                if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
-                    postEvent(EventBus.UP_DOWNLOAD, "")
-                    cacheBookMap.remove(book.bookUrl)
-                }
+                onFinally()
             }
             return true
         }
@@ -223,18 +229,18 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             onDownloadSet.add(chapter.index)
             WebBook.getContent(scope, bookSource, book, chapter)
                 .onSuccess { content ->
+                    onSuccess(chapter.index)
                     downloadFinish(chapter, content.ifBlank { "No content" }, resetPageOffset)
                 }.onError {
+                    onErrorOrCancel(chapter.index)
                     downloadFinish(
                         chapter,
                         it.localizedMessage ?: "download error",
                         resetPageOffset
                     )
+                }.onCancel {
+                    onErrorOrCancel(chapter.index)
                 }.onFinally {
-                    synchronized(this) {
-                        onDownloadSet.remove(chapter.index)
-                    }
-                    ReadBook.removeLoading(chapter.index)
                     if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
                         postEvent(EventBus.UP_DOWNLOAD, "")
                     }
