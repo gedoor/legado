@@ -20,7 +20,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
@@ -41,7 +40,6 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlin.math.min
 
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
     PopupMenu.OnMenuItemClickListener,
@@ -484,8 +482,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     delay(300L)
                 }
             }.collect {
-                adapter.notifyItemRangeChanged(firstIndex, lastIndex + 1, bundleOf(Pair("checkSourceMessage", null)))
-                if (!Debug.isChecking || (refreshCount > (600 * (lastIndex + 1 - firstIndex) / min(AppConfig.threadCount,8)))) {
+                adapter.notifyItemRangeChanged(
+                    firstIndex,
+                    lastIndex + 1,
+                    bundleOf(Pair("checkSourceMessage", null))
+                )
+                if (!Debug.isChecking) {
                     Debug.finishChecking()
                     this.cancel()
                 }

@@ -26,7 +26,7 @@ import kotlin.math.min
 class CheckSourceService : BaseService() {
     private var threadCount = AppConfig.threadCount
     private var searchCoroutine =
-        Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
+        Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
     private var tasks = CompositeCoroutine()
     private val allIds = ArrayList<String>()
     private val checkedIds = ArrayList<String>()

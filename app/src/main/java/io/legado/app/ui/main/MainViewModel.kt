@@ -2,6 +2,7 @@ package io.legado.app.ui.main
 
 import android.app.Application
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
@@ -21,7 +22,7 @@ import kotlin.math.min
 class MainViewModel(application: Application) : BaseViewModel(application) {
     private var threadCount = AppConfig.threadCount
     private var upTocPool =
-        Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
+        Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
     val updateList = CopyOnWriteArraySet<String>()
     private val bookMap = ConcurrentHashMap<String, Book>()
 
@@ -36,7 +37,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun upPool() {
         threadCount = AppConfig.threadCount
         upTocPool.close()
-        upTocPool = Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
+        upTocPool = Executors
+            .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
     }
 
     fun upAllBookToc() {

@@ -1,5 +1,6 @@
 package io.legado.app.model.webBook
 
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
@@ -31,7 +32,8 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
 
     private fun initSearchPool() {
         searchPool?.close()
-        searchPool = Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
+        searchPool = Executors
+            .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
     }
 
     fun search(searchId: Long, key: String) {

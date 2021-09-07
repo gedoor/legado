@@ -21,7 +21,7 @@ import kotlin.math.min
 class CacheBookService : BaseService() {
     private val threadCount = AppConfig.threadCount
     private var cachePool =
-        Executors.newFixedThreadPool(min(threadCount, 8)).asCoroutineDispatcher()
+        Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
     private var downloadJob: Job? = null
 
     private var notificationContent = appCtx.getString(R.string.starting_download)
