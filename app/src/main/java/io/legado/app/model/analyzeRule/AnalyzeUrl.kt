@@ -14,6 +14,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
+import io.legado.app.model.ConcurrentException
 import io.legado.app.utils.*
 import java.net.URLEncoder
 import java.util.*
@@ -312,7 +313,7 @@ class AnalyzeUrl(
             }
         }
         if (waitTime > 0) {
-            error("根据并发率还需等待${waitTime}毫秒才可以访问")
+            throw ConcurrentException("根据并发率还需等待${waitTime}毫秒才可以访问", waitTime = waitTime)
         }
     }
 

@@ -197,20 +197,15 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
                 chapter,
                 context = context
             ).onSuccess { content ->
-                if (content.isNotBlank()) {
-                    onSuccess(chapterIndex)
-                    addLog("${book.name}-${chapter.title} getContentSuccess")
-                    downloadFinish(chapter, content.ifBlank { "No content" })
-                } else {
-                    //出现错误等待1秒后重新加入待下载列表
-                    delay(1000)
-                    onErrorOrCancel(chapterIndex)
-                    addLog("${book.name}-${chapter.title} getContentError 内容为空")
-                    downloadFinish(chapter, "download error 内容为空")
-                }
+                onSuccess(chapterIndex)
+                addLog("${book.name}-${chapter.title} getContentSuccess")
+                downloadFinish(chapter, content)
             }.onError {
-                //出现错误等待1秒后重新加入待下载列表
-                delay(1000)
+                //出现错误等待后重新加入待下载列表
+                when (it) {
+                    is ConcurrentException -> delay(it.waitTime)
+                    else -> delay(1000)
+                }
                 onErrorOrCancel(chapterIndex)
                 print(it.localizedMessage)
                 addLog("${book.name}-${chapter.title} getContentError${it.localizedMessage}")
@@ -238,7 +233,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             WebBook.getContent(scope, bookSource, book, chapter)
                 .onSuccess { content ->
                     onSuccess(chapter.index)
-                    downloadFinish(chapter, content.ifBlank { "No content" }, resetPageOffset)
+                    downloadFinish(chapter, content, resetPageOffset)
                 }.onError {
                     onErrorOrCancel(chapter.index)
                     downloadFinish(

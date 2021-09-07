@@ -7,6 +7,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ContentRule
 import io.legado.app.help.BookHelp
+import io.legado.app.model.ContentEmptyException
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -114,9 +115,10 @@ object BookContent {
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")
         Debug.log(bookSource.bookSourceUrl, "└\n$contentStr")
-        if (contentStr.isNotBlank()) {
-            BookHelp.saveContent(bookSource, book, bookChapter, contentStr)
+        if (contentStr.isBlank()) {
+            throw ContentEmptyException("${bookChapter.title}内容为空")
         }
+        BookHelp.saveContent(bookSource, book, bookChapter, contentStr)
         return contentStr
     }
 
