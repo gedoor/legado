@@ -22,8 +22,8 @@ import java.util.*
 
 
 object CronetLoader : CronetEngine.Builder.LibraryLoader() {
-    //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.127/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so
-    //https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@92.0.4515.127/cronet/92.0.4515.127/arm64-v8a/libcronet.92.0.4515.159.so.js
+    //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.159/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so
+    //https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@92.0.4515.159/cronet/92.0.4515.127/arm64-v8a/libcronet.92.0.4515.159.so.js
     private const val TAG = "CronetLoader"
     private const val soVersion = BuildConfig.Cronet_Version
     private const val soName = "libcronet.$soVersion.so"
@@ -161,7 +161,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             val appInfo = context.applicationInfo
             val abiField = ApplicationInfo::class.java.getDeclaredField("primaryCpuAbi")
             abiField.isAccessible = true
-            cpuAbi = abiField[appInfo] as String
+            cpuAbi = abiField.get(appInfo) as String?
         } catch (e: Exception) {
             e.printStackTrace()
         }
