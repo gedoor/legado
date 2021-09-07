@@ -50,7 +50,7 @@ class RuleUiLoginDialog : BaseDialogFragment() {
             when (rowUi.type) {
                 "text" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root, false)
                     .let {
-                        binding.listView.addView(it)
+                        binding.flexbox.addView(it)
                         it.id = index
                         (it as TextInputLayout).hint = rowUi.name
                         it.findViewById<EditText>(R.id.editText).apply {
@@ -59,7 +59,7 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                     }
                 "password" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root, false)
                     .let {
-                        binding.listView.addView(it)
+                        binding.flexbox.addView(it)
                         it.id = index
                         (it as TextInputLayout).hint = rowUi.name
                         it.findViewById<EditText>(R.id.editText).apply {
@@ -70,7 +70,7 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                     }
                 "button" -> layoutInflater.inflate(R.layout.item_fillet_text, binding.root, false)
                     .let {
-                        binding.listView.addView(it)
+                        binding.flexbox.addView(it)
                         it.id = index
                         (it as TextView).let { textView ->
                             textView.text = rowUi.name
