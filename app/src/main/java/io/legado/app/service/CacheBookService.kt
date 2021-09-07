@@ -108,7 +108,7 @@ class CacheBookService : BaseService() {
 
     private fun upNotificationContent() {
         notificationContent =
-            "正在下载:${CacheBook.onDownloadCount}/等待中:${CacheBook.waitDownloadCount}/成功:${CacheBook.successDownloadCount}"
+            "正在下载:${CacheBook.onDownloadCount}|等待中:${CacheBook.waitDownloadCount}|失败:${CacheBook.errorCount}|成功:${CacheBook.successDownloadCount}"
         upNotification()
     }
 

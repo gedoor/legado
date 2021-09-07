@@ -98,7 +98,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             get() {
                 var count = 0
                 cacheBookMap.forEach {
-                    count += it.value.waitDownloadSet.size
+                    count += it.value.waitCount
                 }
                 return count
             }
@@ -107,7 +107,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             get() {
                 var count = 0
                 cacheBookMap.forEach {
-                    count += it.value.successDownloadSet.size
+                    count += it.value.successCount
                 }
                 return count
             }
@@ -116,107 +116,127 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             get() {
                 var count = 0
                 cacheBookMap.forEach {
-                    count += it.value.onDownloadSet.size
+                    count += it.value.onDownloadCount
                 }
                 return count
             }
 
-    }
-
-    val waitDownloadSet = hashSetOf<Int>()
-    val onDownloadSet = hashSetOf<Int>()
-    val successDownloadSet = hashSetOf<Int>()
-
-    fun addDownload(start: Int, end: Int) {
-        synchronized(this) {
-            for (i in start..end) {
-                waitDownloadSet.add(i)
+        val errorCount: Int
+            get() {
+                var count = 0
+                cacheBookMap.forEach {
+                    count += it.value.errorCount
+                }
+                return count
             }
-        }
     }
 
+    private val waitDownloadSet = hashSetOf<Int>()
+    private val onDownloadSet = hashSetOf<Int>()
+    private val successDownloadSet = hashSetOf<Int>()
+    private val errorDownloadMap = hashMapOf<Int, Int>()
+
+    val waitCount get() = waitDownloadSet.size
+    val onDownloadCount get() = onDownloadSet.size
+    val successCount get() = successDownloadSet.size
+    val errorCount get() = errorDownloadMap.size
+
+    @Synchronized
     fun isRun(): Boolean {
-        return synchronized(this) {
-            waitDownloadSet.size > 0 || onDownloadSet.size > 0
+        return waitDownloadSet.size > 0 || onDownloadSet.size > 0
+    }
+
+    @Synchronized
+    fun addDownload(start: Int, end: Int) {
+        for (i in start..end) {
+            waitDownloadSet.add(i)
         }
     }
 
+    @Synchronized
     private fun onSuccess(index: Int) {
-        synchronized(this) {
-            onDownloadSet.remove(index)
-            successDownloadSet.add(index)
-        }
+        onDownloadSet.remove(index)
+        successDownloadSet.add(index)
+        errorDownloadMap.remove(index)
     }
 
-    private fun onErrorOrCancel(index: Int) {
-        synchronized(this) {
-            onDownloadSet.remove(index)
+    @Synchronized
+    private fun onError(index: Int, error: Throwable, chapterTitle: String) {
+        if (error !is ConcurrentException) {
+            errorDownloadMap[index] = (errorDownloadMap[index] ?: 0) + 1
+        }
+        onDownloadSet.remove(index)
+        //重试3次
+        if (errorDownloadMap[index] ?: 0 < 3) {
             waitDownloadSet.add(index)
+        } else {
+            addLog("${book.name}-${chapterTitle} ${error.localizedMessage}")
         }
     }
 
+    @Synchronized
+    private fun onCancel(index: Int) {
+        onDownloadSet.remove(index)
+        waitDownloadSet.add(index)
+    }
+
+    @Synchronized
     private fun onFinally() {
-        synchronized(this) {
-            if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
-                postEvent(EventBus.UP_DOWNLOAD, "")
-                cacheBookMap.remove(book.bookUrl)
-            }
+        if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
+            postEvent(EventBus.UP_DOWNLOAD, "")
+            cacheBookMap.remove(book.bookUrl)
         }
     }
 
     /**
      * 从待下载列表内取第一条下载
      */
+    @Synchronized
     fun download(scope: CoroutineScope, context: CoroutineContext): Boolean {
-        synchronized(this) {
-            val chapterIndex = waitDownloadSet.firstOrNull()
-            if (chapterIndex == null) {
-                if (onDownloadSet.isEmpty()) {
-                    cacheBookMap.remove(book.bookUrl)
-                }
-                return false
+        val chapterIndex = waitDownloadSet.firstOrNull()
+        if (chapterIndex == null) {
+            if (onDownloadSet.isEmpty()) {
+                cacheBookMap.remove(book.bookUrl)
             }
-            if (onDownloadSet.contains(chapterIndex)) {
-                waitDownloadSet.remove(chapterIndex)
-                return download(scope, context)
-            }
-            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, chapterIndex) ?: let {
-                waitDownloadSet.remove(chapterIndex)
-                return download(scope, context)
-            }
-            if (BookHelp.hasContent(book, chapter)) {
-                waitDownloadSet.remove(chapterIndex)
-                return download(scope, context)
-            }
-            waitDownloadSet.remove(chapterIndex)
-            onDownloadSet.add(chapterIndex)
-            WebBook.getContent(
-                scope,
-                bookSource,
-                book,
-                chapter,
-                context = context
-            ).onSuccess { content ->
-                onSuccess(chapterIndex)
-                addLog("${book.name}-${chapter.title} getContentSuccess")
-                downloadFinish(chapter, content)
-            }.onError {
-                //出现错误等待后重新加入待下载列表
-                when (it) {
-                    is ConcurrentException -> delay(it.waitTime)
-                    else -> delay(1000)
-                }
-                onErrorOrCancel(chapterIndex)
-                print(it.localizedMessage)
-                addLog("${book.name}-${chapter.title} getContentError${it.localizedMessage}")
-                downloadFinish(chapter, it.localizedMessage ?: "download error")
-            }.onCancel {
-                onErrorOrCancel(chapterIndex)
-            }.onFinally {
-                onFinally()
-            }
-            return true
+            return false
         }
+        if (onDownloadSet.contains(chapterIndex)) {
+            waitDownloadSet.remove(chapterIndex)
+            return download(scope, context)
+        }
+        val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, chapterIndex) ?: let {
+            waitDownloadSet.remove(chapterIndex)
+            return download(scope, context)
+        }
+        if (BookHelp.hasContent(book, chapter)) {
+            waitDownloadSet.remove(chapterIndex)
+            return download(scope, context)
+        }
+        waitDownloadSet.remove(chapterIndex)
+        onDownloadSet.add(chapterIndex)
+        WebBook.getContent(
+            scope,
+            bookSource,
+            book,
+            chapter,
+            context = context
+        ).onSuccess { content ->
+            onSuccess(chapterIndex)
+            downloadFinish(chapter, content)
+        }.onError {
+            //出现错误等待后重新加入待下载列表
+            when (it) {
+                is ConcurrentException -> delay(it.waitTime)
+                else -> delay(1000)
+            }
+            onError(chapterIndex, it, chapter.title)
+            downloadFinish(chapter, "error:${it.localizedMessage}")
+        }.onCancel {
+            onCancel(chapterIndex)
+        }.onFinally {
+            onFinally()
+        }
+        return true
     }
 
     @Synchronized
@@ -225,30 +245,24 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
         chapter: BookChapter,
         resetPageOffset: Boolean = false
     ) {
-        synchronized(this) {
-            if (onDownloadSet.contains(chapter.index)) {
-                return
-            }
-            onDownloadSet.add(chapter.index)
-            WebBook.getContent(scope, bookSource, book, chapter)
-                .onSuccess { content ->
-                    onSuccess(chapter.index)
-                    downloadFinish(chapter, content, resetPageOffset)
-                }.onError {
-                    onErrorOrCancel(chapter.index)
-                    downloadFinish(
-                        chapter,
-                        it.localizedMessage ?: "download error",
-                        resetPageOffset
-                    )
-                }.onCancel {
-                    onErrorOrCancel(chapter.index)
-                }.onFinally {
-                    if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
-                        postEvent(EventBus.UP_DOWNLOAD, "")
-                    }
-                }
+        if (onDownloadSet.contains(chapter.index)) {
+            return
         }
+        onDownloadSet.add(chapter.index)
+        WebBook.getContent(scope, bookSource, book, chapter)
+            .onSuccess { content ->
+                onSuccess(chapter.index)
+                downloadFinish(chapter, content, resetPageOffset)
+            }.onError {
+                onError(chapter.index, it, chapter.title)
+                downloadFinish(chapter, "error:${it.localizedMessage}", resetPageOffset)
+            }.onCancel {
+                onCancel(chapter.index)
+            }.onFinally {
+                if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
+                    postEvent(EventBus.UP_DOWNLOAD, "")
+                }
+            }
     }
 
     private fun downloadFinish(
