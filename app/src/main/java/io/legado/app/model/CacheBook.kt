@@ -62,11 +62,11 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
 
         fun addLog(log: String?) {
             log ?: return
-            synchronized(this) {
+            synchronized(logs) {
                 if (logs.size > 1000) {
-                    logs.removeAt(0)
+                    logs.removeLastOrNull()
                 }
-                logs.add(logTimeFormat.format(Date()) + " " + log)
+                logs.add(0, logTimeFormat.format(Date()) + " " + log)
             }
         }
 
