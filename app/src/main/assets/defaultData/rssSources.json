@@ -4,7 +4,7 @@
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
-    "sourceIcon": "http:\/\/ku.mumuceo.com\/static\/images\/applogo\/yuedu.png",
+    "sourceIcon": "https:\/\/cdn.jsdelivr.net\/gh\/gedoor\/legado@master\/app\/src\/main\/res\/mipmap-hdpi\/ic_launcher.png",
     "sourceName": "使用说明",
     "sourceUrl": "https://www.yuque.com/legado"
   },
