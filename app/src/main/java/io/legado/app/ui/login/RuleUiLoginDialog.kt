@@ -11,6 +11,7 @@ import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.EditText
@@ -105,33 +106,34 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                             }
                         }
                     }
-                    launch(IO) {
-                        if (loginData.isEmpty()) {
-                            bookSource.removeLoginInfo()
-                            withContext(Main) {
-                                dismiss()
-                            }
-                        } else if (bookSource.putLoginInfo(GSON.toJson(loginData))) {
-                            bookSource.getLoginJs()?.let {
-                                try {
-                                    bookSource.evalJS(it)
-                                    toastOnUi(R.string.success)
-                                    withContext(Main) {
-                                        dismiss()
-                                    }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                    toastOnUi("error:${e.localizedMessage}")
-                                }
-                            }
-                        }
-
-                    }
-
-
+                    login(bookSource, loginData)
                 }
             }
             return@setOnMenuItemClickListener true
+        }
+    }
+
+    private fun login(bookSource: BookSource, loginData: HashMap<String, String>) {
+        launch(IO) {
+            if (loginData.isEmpty()) {
+                bookSource.removeLoginInfo()
+                withContext(Main) {
+                    dismiss()
+                }
+            } else if (bookSource.putLoginInfo(GSON.toJson(loginData))) {
+                bookSource.getLoginJs()?.let {
+                    try {
+                        bookSource.evalJS(it)
+                        toastOnUi(R.string.success)
+                        withContext(Main) {
+                            dismiss()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        toastOnUi("error:${e.localizedMessage}")
+                    }
+                }
+            }
         }
     }
 
