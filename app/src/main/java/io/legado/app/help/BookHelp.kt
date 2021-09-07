@@ -21,6 +21,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+@Suppress("unused")
 object BookHelp {
     private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
