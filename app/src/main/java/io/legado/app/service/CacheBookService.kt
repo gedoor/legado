@@ -9,6 +9,8 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.help.AppConfig
 import io.legado.app.model.CacheBook
+import io.legado.app.ui.book.cache.CacheActivity
+import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.servicePendingIntent
 import kotlinx.coroutines.*
@@ -29,6 +31,7 @@ class CacheBookService : BaseService() {
             .setSmallIcon(R.drawable.ic_download)
             .setOngoing(true)
             .setContentTitle(getString(R.string.offline_cache))
+            .setContentIntent(activityPendingIntent<CacheActivity>("cacheActivity"))
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
             getString(R.string.cancel),
