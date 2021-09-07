@@ -162,7 +162,9 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
         synchronized(this) {
             val chapterIndex = waitDownloadSet.firstOrNull()
             if (chapterIndex == null) {
-                cacheBookMap.remove(book.bookUrl)
+                if (onDownloadSet.isEmpty()) {
+                    cacheBookMap.remove(book.bookUrl)
+                }
                 return false
             }
             if (onDownloadSet.contains(chapterIndex)) {
