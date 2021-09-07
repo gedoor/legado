@@ -22,9 +22,6 @@ object LocalConfig {
     val bookSourcesHelpVersionIsLast: Boolean
         get() = isLastVersion(1, "bookSourceHelpVersion", "firstOpenBookSources")
 
-    val debugHelpVersionIsLast: Boolean
-        get() = isLastVersion(1, "debugHelpVersion")
-
     val ruleHelpVersionIsLast: Boolean
         get() = isLastVersion(1, "ruleHelpVersion")
 

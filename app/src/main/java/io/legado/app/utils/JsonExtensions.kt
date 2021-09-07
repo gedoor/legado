@@ -1,6 +1,14 @@
 package io.legado.app.utils
 
-import com.jayway.jsonpath.ReadContext
+import com.jayway.jsonpath.*
+
+val jsonPath: ParseContext by lazy {
+    JsonPath.using(
+        Configuration.builder()
+            .options(Option.SUPPRESS_EXCEPTIONS)
+            .build()
+    )
+}
 
 fun ReadContext.readString(path: String): String? = this.read(path, String::class.java)
 

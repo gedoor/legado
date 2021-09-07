@@ -4,19 +4,16 @@ import android.util.Log
 import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
-import io.legado.app.utils.readBool
-import io.legado.app.utils.readInt
-import io.legado.app.utils.readLong
-import io.legado.app.utils.readString
+import io.legado.app.utils.*
 
 object OldBook {
 
     fun toNewBook(json: String): List<Book> {
         val books = mutableListOf<Book>()
-        val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
+        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
         val existingBooks = appDb.bookDao.allBookUrls.toSet()
         for (item in items) {
-            val jsonItem = Restore.jsonPath.parse(item)
+            val jsonItem = jsonPath.parse(item)
             val book = Book()
             book.bookUrl = jsonItem.readString("$.noteUrl") ?: ""
             if (book.bookUrl.isBlank()) continue

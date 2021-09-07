@@ -6,10 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookSourceAnalyzer
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isContentScheme
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import java.io.File
 
 object ImportOldData {
@@ -94,9 +91,9 @@ object ImportOldData {
 
     fun importOldSource(json: String): Int {
         val bookSources = mutableListOf<BookSource>()
-        val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
+        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
         for (item in items) {
-            val jsonItem = Restore.jsonPath.parse(item)
+            val jsonItem = jsonPath.parse(item)
             BookSourceAnalyzer.jsonToBookSource(jsonItem.jsonString())?.let {
                 bookSources.add(it)
             }

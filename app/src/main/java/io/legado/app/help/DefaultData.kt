@@ -68,4 +68,5 @@ object DefaultData {
     fun importDefaultRssSources() {
         appDb.rssSourceDao.insert(*rssSources.toTypedArray())
     }
+
 }

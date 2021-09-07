@@ -3,6 +3,10 @@ package io.legado.app.help
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleData
+import io.legado.app.utils.jsonPath
+import io.legado.app.utils.readString
+import splitties.init.appCtx
+import java.io.File
 
 object DirectLinkUpload {
 
@@ -28,27 +32,26 @@ object DirectLinkUpload {
         return downloadUrl
     }
 
-    fun getUploadUrl(): String {
+    private val ruleDoc by lazy {
+        val json = String(
+            appCtx.assets.open("defaultData${File.separator}directLinkUpload.json")
+                .readBytes()
+        )
+        jsonPath.parse(json)
+    }
+
+    fun getUploadUrl(): String? {
         return CacheManager.get(uploadUrlKey)
-            ?: """http://shuyuan.miaogongzi.site:6564/shuyuan,{
-            "method":"POST",
-            "body": {
-                "file": "fileRequest"
-            },
-            "type": "multipart/form-data"
-          }""".trimMargin()
+            ?: ruleDoc.readString("$.UploadUrl")
     }
 
     fun putUploadUrl(url: String) {
         CacheManager.put(uploadUrlKey, url)
     }
 
-    fun getDownloadUrlRule(): String {
+    fun getDownloadUrlRule(): String? {
         return CacheManager.get(downloadUrlRuleKey)
-            ?: """
-                ${'$'}.data@js:if (result == '') '' 
-                else 'https://shuyuan.miaogongzi.site/shuyuan/'+result
-            """.trimIndent()
+            ?: ruleDoc.readString("$.DownloadUrlRule")
     }
 
     fun putDownloadUrlRule(rule: String) {

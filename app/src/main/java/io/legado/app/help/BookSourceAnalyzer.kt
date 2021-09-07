@@ -6,7 +6,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
-import io.legado.app.help.storage.Restore.jsonPath
 import io.legado.app.utils.*
 import java.util.regex.Pattern
 

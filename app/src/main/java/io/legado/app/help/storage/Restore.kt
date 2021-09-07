@@ -5,10 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import com.jayway.jsonpath.Configuration
-import com.jayway.jsonpath.JsonPath
-import com.jayway.jsonpath.Option
-import com.jayway.jsonpath.ParseContext
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.constant.AppConst.androidId
@@ -61,6 +57,8 @@ object Restore {
         PreferKey.defaultCover,
         PreferKey.defaultCoverDark
     )
+
+    //阅读配置
     private val readPrefKeys = arrayOf(
         PreferKey.readStyleSelect,
         PreferKey.shareLayout,
@@ -68,14 +66,6 @@ object Restore {
         PreferKey.hideNavigationBar,
         PreferKey.autoReadSpeed
     )
-
-    val jsonPath: ParseContext by lazy {
-        JsonPath.using(
-            Configuration.builder()
-                .options(Option.SUPPRESS_EXCEPTIONS)
-                .build()
-        )
-    }
 
     suspend fun restore(context: Context, path: String) {
         withContext(IO) {

@@ -7,9 +7,9 @@ object OldReplace {
 
     fun jsonToReplaceRules(json: String): List<ReplaceRule> {
         val replaceRules = mutableListOf<ReplaceRule>()
-        val items: List<Map<String, Any>> = Restore.jsonPath.parse(json).read("$")
+        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
         for (item in items) {
-            val jsonItem = Restore.jsonPath.parse(item)
+            val jsonItem = jsonPath.parse(item)
             jsonToReplaceRule(jsonItem.jsonString())?.let {
                 if (it.isValid()) {
                     replaceRules.add(it)
@@ -26,7 +26,7 @@ object OldReplace {
         }
         runCatching {
             if (replaceRule == null || replaceRule?.pattern.isNullOrBlank()) {
-                val jsonItem = Restore.jsonPath.parse(json.trim())
+                val jsonItem = jsonPath.parse(json.trim())
                 val rule = ReplaceRule()
                 rule.id = jsonItem.readLong("$.id") ?: System.currentTimeMillis()
                 rule.pattern = jsonItem.readString("$.regex") ?: ""
