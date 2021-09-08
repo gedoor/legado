@@ -122,6 +122,8 @@ class BookInfoActivity :
             !viewModel.bookSource?.loginUrl.isNullOrBlank()
         menu.findItem(R.id.menu_set_source_variable)?.isVisible =
             viewModel.bookSource != null
+        menu.findItem(R.id.menu_set_book_variable)?.isVisible =
+            viewModel.bookSource != null
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -161,6 +163,7 @@ class BookInfoActivity :
             }
             R.id.menu_top -> viewModel.topBook()
             R.id.menu_set_source_variable -> setSourceVariable()
+            R.id.menu_set_book_variable -> setBookVariable()
             R.id.menu_copy_book_url -> viewModel.bookData.value?.bookUrl?.let {
                 sendToClip(it)
             } ?: toastOnUi(R.string.no_book)
@@ -336,7 +339,31 @@ class BookInfoActivity :
                 }
             }.show()
         }
+    }
 
+    private fun setBookVariable() {
+        launch {
+            val variable = withContext(IO) { viewModel.bookData.value?.getVariable("custom") }
+            alert(R.string.set_source_variable) {
+                setMessage("""书籍变量可在js中通过book.getVariable("custom")获取""")
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "book variable"
+                    editView.setText(variable)
+                }
+                customView { alertBinding.root }
+                okButton {
+                    viewModel.bookData.value
+                        ?.putVariable("custom", alertBinding.editView.text?.toString())
+                    viewModel.saveBook()
+                }
+                cancelButton()
+                neutralButton(R.string.delete) {
+                    viewModel.bookData.value
+                        ?.putVariable("custom", null)
+                    viewModel.saveBook()
+                }
+            }.show()
+        }
     }
 
     @SuppressLint("InflateParams")

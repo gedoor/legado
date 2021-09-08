@@ -6,8 +6,12 @@ class RuleData : RuleDataInterface {
         hashMapOf<String, String>()
     }
 
-    override fun putVariable(key: String, value: String) {
-        variableMap[key] = value
+    override fun putVariable(key: String, value: String?) {
+        if (value != null) {
+            variableMap[key] = value
+        } else {
+            variableMap.remove(key)
+        }
     }
 
 }

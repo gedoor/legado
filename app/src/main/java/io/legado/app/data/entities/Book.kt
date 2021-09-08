@@ -94,8 +94,12 @@ data class Book(
         GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
     }
 
-    override fun putVariable(key: String, value: String) {
-        variableMap[key] = value
+    override fun putVariable(key: String, value: String?) {
+        if (value != null) {
+            variableMap[key] = value
+        } else {
+            variableMap.remove(key)
+        }
         variable = GSON.toJson(variableMap)
     }
 

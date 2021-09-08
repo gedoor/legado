@@ -35,6 +35,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_set_book_variable"
+        android:title="@string/set_book_variable"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_copy_book_url"
         android:title="@string/copy_book_url"
         app:showAsAction="never" />
