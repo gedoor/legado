@@ -185,7 +185,9 @@ class SearchContentActivity :
                             viewModel.contentProcessor!!.getContent(
                                 book,
                                 chapter.title,
-                                bookContent
+                                bookContent,
+                                chineseConvert = false,
+                                reSegment = false
                             )
                     }
                     totalContents = replaceContents?.joinToString("") ?: bookContent

@@ -55,12 +55,13 @@ class ContentProcessor private constructor(
         book: Book,
         title: String, //已经经过简繁转换
         content: String,
-        isRead: Boolean = true,
         includeTitle: Boolean = true,
-        useReplace: Boolean = book.getUseReplaceRule()
+        useReplace: Boolean = true,
+        chineseConvert: Boolean = true,
+        reSegment: Boolean = true
     ): List<String> {
         var content1 = content
-        if (useReplace) {
+        if (useReplace && book.getUseReplaceRule()) {
             getReplaceRules().forEach { item ->
                 if (item.pattern.isNotEmpty()) {
                     try {
@@ -75,10 +76,10 @@ class ContentProcessor private constructor(
                 }
             }
         }
-        if (isRead) {
-            if (book.getReSegment()) {
-                content1 = ContentHelp.reSegment(content1, title)
-            }
+        if (reSegment && book.getReSegment()) {
+            content1 = ContentHelp.reSegment(content1, title)
+        }
+        if (chineseConvert) {
             try {
                 when (AppConfig.chineseConverterType) {
                     1 -> content1 = ChineseUtils.t2s(content1)
