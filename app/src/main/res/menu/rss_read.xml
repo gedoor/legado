@@ -25,4 +25,9 @@
         android:icon="@drawable/ic_volume_up"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/menu_login"
+        android:title="@string/login"
+        app:showAsAction="never" />
+
 </menu>

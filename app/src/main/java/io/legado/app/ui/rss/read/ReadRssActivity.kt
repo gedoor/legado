@@ -24,6 +24,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
@@ -84,6 +85,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         return super.onPrepareOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_login)?.isVisible = !viewModel.rssSource?.loginUrl.isNullOrBlank()
+        return super.onMenuOpened(featureId, menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_rss_refresh -> viewModel.refresh()
@@ -92,6 +98,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 share(it.link)
             } ?: toastOnUi(R.string.null_url)
             R.id.menu_aloud -> readAloud()
+            R.id.menu_login -> startActivity<SourceLoginActivity> {
+                putExtra("sourceUrl", viewModel.rssSource?.loginUrl)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
