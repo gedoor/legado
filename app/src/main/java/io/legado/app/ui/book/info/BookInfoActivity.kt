@@ -84,7 +84,7 @@ class BookInfoActivity :
         }
     }
     private val infoEditResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+        StartActivityForResult(BookInfoEditActivity::class.java)
     ) {
         if (it.resultCode == RESULT_OK) {
             viewModel.upEditBook()
@@ -127,10 +127,9 @@ class BookInfoActivity :
             R.id.menu_edit -> {
                 if (viewModel.inBookshelf) {
                     viewModel.bookData.value?.let {
-                        infoEditResult.launch(
-                            Intent(this, BookInfoEditActivity::class.java)
-                                .putExtra("bookUrl", it.bookUrl)
-                        )
+                        infoEditResult.launch {
+                            putExtra("bookUrl", it.bookUrl)
+                        }
                     }
                 } else {
                     toastOnUi(R.string.after_add_bookshelf)

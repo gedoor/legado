@@ -2,12 +2,10 @@
 
 package io.legado.app.ui.rss.article
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -15,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssArtivlesBinding
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
+import io.legado.app.utils.StartActivityForResult
 import io.legado.app.utils.gone
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
@@ -26,8 +25,8 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     private lateinit var adapter: TabFragmentPageAdapter
     private val sortList = mutableListOf<Pair<String, String>>()
     private val fragmentMap = hashMapOf<String, Fragment>()
-    private val upSourceResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+    private val editSourceResult = registerForActivityResult(
+        StartActivityForResult(RssSourceEditActivity::class.java)
     ) {
         if (it.resultCode == RESULT_OK) {
             viewModel.initData(intent) {
@@ -56,10 +55,9 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
-                upSourceResult.launch(
-                    Intent(this, RssSourceEditActivity::class.java)
-                        .putExtra("data", it)
-                )
+                editSourceResult.launch {
+                    putExtra("data", it)
+                }
             }
             R.id.menu_clear -> {
                 viewModel.url?.let {
