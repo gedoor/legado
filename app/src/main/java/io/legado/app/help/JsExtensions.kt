@@ -102,6 +102,18 @@ interface JsExtensions {
     }
 
     /**
+     * 使用webView访问网络
+     * @param html 直接用webView载入的html, 如果html为空直接访问url
+     * @param url html内如果有相对路径的资源不传入url访问不了
+     * @param js 用来取返回值的js语句, 没有就返回整个源代码
+     * @return 返回js获取的内容
+     */
+    fun webView(html: String?, url: String?, js: String?): String {
+        //TODO
+        return ""
+    }
+
+    /**
      * 实现16进制字符串转文件
      * @param content 需要转成文件的16进制字符串
      * @param url 通过url里的参数来判断文件类型
