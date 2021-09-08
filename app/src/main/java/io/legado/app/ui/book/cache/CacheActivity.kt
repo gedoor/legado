@@ -302,10 +302,10 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     @SuppressLint("SetTextI18n")
     private fun alertExportFileName() {
         alert(R.string.export_file_name) {
+            setMessage("js内有name和author变量,返回书名")
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "file name js"
                 editView.setText(AppConfig.bookExportFileName)
-                tvSummary.text = """使用js返回一个json结构,{"name":"xxx", "author":"yyy"}"""
             }
             customView { alertBinding.root }
             okButton {

@@ -120,6 +120,18 @@ interface BaseSource : JsExtensions {
         CacheManager.delete("userInfo_${getStoreUrl()}")
     }
 
+    fun setVariable(variable: String?) {
+        if (variable != null) {
+            CacheManager.put("sourceVariable_${getStoreUrl()}", variable)
+        } else {
+            CacheManager.delete("sourceVariable_${getStoreUrl()}")
+        }
+    }
+
+    fun getVariable(): String? {
+        return CacheManager.get("sourceVariable_${getStoreUrl()}")
+    }
+
     /**
      * 执行JS
      */

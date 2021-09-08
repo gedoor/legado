@@ -869,5 +869,6 @@
     <string name="direct_link_upload_rule">直链上传规则</string>
     <string name="direct_link_upload_rule_summary">用于导出书源书单时生成直链url</string>
     <string name="copy_play_url">拷贝播放Url</string>
+    <string name="set_source_variable">设置源变量</string>
 
 </resources>

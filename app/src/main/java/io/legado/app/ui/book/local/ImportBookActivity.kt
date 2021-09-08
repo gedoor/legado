@@ -281,6 +281,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     private fun alertImportFileName() {
         alert(R.string.import_file_name) {
+            setMessage("""使用js返回一个json结构,{"name":"xxx", "author":"yyy"}""")
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "js"
                 editView.setText(AppConfig.bookImportFileName)
