@@ -18,13 +18,13 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_clear"
-        android:title="@string/clear"
+        android:id="@+id/menu_switch_layout"
+        android:title="@string/switchLayout"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_switch_layout"
-        android:title="@string/switchLayout"
+        android:id="@+id/menu_clear"
+        android:title="@string/clear"
         app:showAsAction="never" />
 
 </menu>
