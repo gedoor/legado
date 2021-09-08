@@ -56,6 +56,7 @@ class ContentProcessor private constructor(
         title: String, //已经经过简繁转换
         content: String,
         isRead: Boolean = true,
+        includeTitle: Boolean = true,
         useReplace: Boolean = book.getUseReplaceRule()
     ): List<String> {
         var content1 = content
@@ -91,7 +92,9 @@ class ContentProcessor private constructor(
         content1.split("\n").forEach { str ->
             val paragraph = str.replace("^[\\n\\r]+".toRegex(), "").trim()
             if (contents.isEmpty()) {
-                contents.add(title)
+                if (includeTitle) {
+                    contents.add(title)
+                }
                 if (paragraph != title && paragraph.isNotEmpty()) {
                     contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
                 }

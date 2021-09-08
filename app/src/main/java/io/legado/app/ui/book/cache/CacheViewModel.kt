@@ -139,18 +139,15 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         )
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
             BookHelp.getContent(book, chapter).let { content ->
-                var content1 = contentProcessor
+                val content1 = contentProcessor
                     .getContent(
                         book,
                         chapter.title.replace("\\r?\\n".toRegex(), " "),
                         content ?: "null",
                         false,
+                        !AppConfig.exportNoChapterName,
                         useReplace
-                    )
-                    .joinToString("\n")
-                if(AppConfig.exportNoChapterName){
-                    content1 = content.toString()
-                }
+                    ).joinToString("\n")
                 append.invoke("\n\n$content1")
             }
         }
