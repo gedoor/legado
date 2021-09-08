@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.ActivitySourceLoginBinding
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -16,14 +16,14 @@ class SourceLoginActivity : VMBaseActivity<ActivitySourceLoginBinding, SourceLog
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         intent.getStringExtra("sourceUrl")?.let {
-            viewModel.initData(it) { bookSource ->
-                initView(bookSource)
+            viewModel.initData(it) { source ->
+                initView(source)
             }
         }
     }
 
-    private fun initView(bookSource: BookSource) {
-        if (bookSource.loginUi.isNullOrEmpty()) {
+    private fun initView(source: BaseSource) {
+        if (source.loginUi.isNullOrEmpty()) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fl_fragment, WebViewLoginFragment())
                 .commit()

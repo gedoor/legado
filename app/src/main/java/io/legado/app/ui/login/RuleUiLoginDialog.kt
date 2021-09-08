@@ -11,7 +11,7 @@ import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.EditText
@@ -47,10 +47,10 @@ class RuleUiLoginDialog : BaseDialogFragment() {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        val bookSource = viewModel.bookSource ?: return
-        binding.toolBar.title = getString(R.string.login_source, bookSource.bookSourceName)
-        val loginInfo = bookSource.getLoginInfoMap()
-        val loginUi = bookSource.loginUi
+        val source = viewModel.source ?: return
+        binding.toolBar.title = getString(R.string.login_source, source.getName())
+        val loginInfo = source.getLoginInfoMap()
+        val loginUi = source.loginUi
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 "text" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root, false)
@@ -106,24 +106,24 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                             }
                         }
                     }
-                    login(bookSource, loginData)
+                    login(source, loginData)
                 }
             }
             return@setOnMenuItemClickListener true
         }
     }
 
-    private fun login(bookSource: BookSource, loginData: HashMap<String, String>) {
+    private fun login(source: BaseSource, loginData: HashMap<String, String>) {
         launch(IO) {
             if (loginData.isEmpty()) {
-                bookSource.removeLoginInfo()
+                source.removeLoginInfo()
                 withContext(Main) {
                     dismiss()
                 }
-            } else if (bookSource.putLoginInfo(GSON.toJson(loginData))) {
-                bookSource.getLoginJs()?.let {
+            } else if (source.putLoginInfo(GSON.toJson(loginData))) {
+                source.getLoginJs()?.let {
                     try {
-                        bookSource.evalJS(it)
+                        source.evalJS(it)
                         toastOnUi(R.string.success)
                         withContext(Main) {
                             dismiss()

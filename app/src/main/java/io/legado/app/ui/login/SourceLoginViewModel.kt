@@ -3,17 +3,20 @@ package io.legado.app.ui.login
 import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.utils.toastOnUi
 
 class SourceLoginViewModel(application: Application) : BaseViewModel(application) {
 
-    var bookSource: BookSource? = null
+    var source: BaseSource? = null
 
-    fun initData(sourceUrl: String, success: (bookSource: BookSource) -> Unit) {
+    fun initData(sourceUrl: String, success: (bookSource: BaseSource) -> Unit) {
         execute {
-            bookSource = appDb.bookSourceDao.getBookSource(sourceUrl)
-            bookSource
+            source = appDb.bookSourceDao.getBookSource(sourceUrl)
+            if (source == null) {
+                source = appDb.rssSourceDao.getByKey(sourceUrl)
+            }
+            source
         }.onSuccess {
             if (it != null) {
                 success.invoke(it)

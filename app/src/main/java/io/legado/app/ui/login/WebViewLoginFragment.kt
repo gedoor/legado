@@ -27,7 +27,7 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
     private var checking = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.bookSource?.let {
+        viewModel.source?.let {
             binding.titleBar.title = getString(R.string.login_source, it.bookSourceName)
             initWebView(it)
         }
@@ -43,7 +43,7 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
                 if (!checking) {
                     checking = true
                     binding.titleBar.snackbar(R.string.check_host_cookie)
-                    viewModel.bookSource?.loginUrl?.let {
+                    viewModel.source?.loginUrl?.let {
                         binding.webView.loadUrl(it)
                     }
                 }
