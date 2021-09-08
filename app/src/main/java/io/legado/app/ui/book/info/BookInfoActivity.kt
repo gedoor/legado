@@ -327,15 +327,11 @@ class BookInfoActivity :
                 }
                 customView { alertBinding.root }
                 okButton {
-                    launch(IO) {
-                        viewModel.bookSource?.setVariable(alertBinding.editView.text?.toString())
-                    }
+                    viewModel.bookSource?.setVariable(alertBinding.editView.text?.toString())
                 }
                 cancelButton()
                 neutralButton(R.string.delete) {
-                    launch(IO) {
-                        viewModel.bookSource?.setVariable(null)
-                    }
+                    viewModel.bookSource?.setVariable(null)
                 }
             }.show()
         }
