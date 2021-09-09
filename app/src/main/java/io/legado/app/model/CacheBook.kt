@@ -70,10 +70,10 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             }
         }
 
-        fun start(context: Context, book: Book, start: Int, end: Int) {
+        fun start(context: Context, bookUrl: String, start: Int, end: Int) {
             context.startService<CacheBookService> {
                 action = IntentAction.start
-                putExtra("bookUrl", book.bookUrl)
+                putExtra("bookUrl", bookUrl)
                 putExtra("start", start)
                 putExtra("end", end)
             }
