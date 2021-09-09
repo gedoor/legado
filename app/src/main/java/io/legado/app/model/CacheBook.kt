@@ -1,7 +1,7 @@
 package io.legado.app.model
 
-import android.annotation.SuppressLint
 import android.content.Context
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
@@ -15,8 +15,6 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
@@ -24,11 +22,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
 
     companion object {
 
-        val logs = arrayListOf<String>()
         val cacheBookMap = ConcurrentHashMap<String, CacheBook>()
-
-        @SuppressLint("ConstantLocale")
-        private val logTimeFormat = SimpleDateFormat("[mm:ss.SSS]", Locale.getDefault())
 
         @Synchronized
         fun getOrCreate(bookUrl: String): CacheBook? {
@@ -58,16 +52,6 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             cacheBook = CacheBook(bookSource, book)
             cacheBookMap[book.bookUrl] = cacheBook
             return cacheBook
-        }
-
-        fun addLog(log: String?) {
-            log ?: return
-            synchronized(logs) {
-                if (logs.size > 1000) {
-                    logs.removeLastOrNull()
-                }
-                logs.add(0, logTimeFormat.format(Date()) + " " + log)
-            }
         }
 
         fun start(context: Context, bookUrl: String, start: Int, end: Int) {
@@ -185,7 +169,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
         if (errorDownloadMap[index] ?: 0 < 3) {
             waitDownloadSet.add(index)
         } else {
-            addLog("${book.name}-${chapterTitle} ${error.localizedMessage}")
+            AppLog.addLog("${book.name}-${chapterTitle} ${error.localizedMessage}")
         }
     }
 
