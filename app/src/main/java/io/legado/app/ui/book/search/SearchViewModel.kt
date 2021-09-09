@@ -59,6 +59,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application), Se
         isLoading = true
     }
 
+    @Synchronized
     override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
         this.searchBooks = searchBooks
         upAdapter()

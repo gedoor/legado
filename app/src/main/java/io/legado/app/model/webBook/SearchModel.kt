@@ -91,11 +91,11 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     }
 
     @Synchronized
-    private fun onSuccess(searchId: Long, searchBooks: ArrayList<SearchBook>) {
+    private fun onSuccess(searchId: Long, items: ArrayList<SearchBook>) {
         if (searchId == mSearchId) {
+            appDb.searchBookDao.insert(*items.toTypedArray())
             val precision = appCtx.getPrefBoolean(PreferKey.precisionSearch)
-            appDb.searchBookDao.insert(*searchBooks.toTypedArray())
-            mergeItems(scope, searchBooks, precision)
+            mergeItems(scope, items, precision)
             callBack.onSearchSuccess(searchBooks)
         }
     }
