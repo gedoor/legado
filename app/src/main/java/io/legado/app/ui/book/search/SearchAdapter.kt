@@ -81,7 +81,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
             upLasted(binding, searchBook.latestChapterTitle)
             tvIntroduce.text = searchBook.trimIntro(context)
             upKind(binding, searchBook.getKindList())
-            ivCover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
+            ivCover.load(searchBook.coverUrl)
 
         }
     }
@@ -94,11 +94,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                     "last" -> upLasted(binding, searchBook.latestChapterTitle)
                     "intro" -> tvIntroduce.text = searchBook.trimIntro(context)
                     "kind" -> upKind(binding, searchBook.getKindList())
-                    "cover" -> ivCover.load(
-                        searchBook.coverUrl,
-                        searchBook.name,
-                        searchBook.author
-                    )
+                    "cover" -> ivCover.load(searchBook.coverUrl)
                 }
             }
         }

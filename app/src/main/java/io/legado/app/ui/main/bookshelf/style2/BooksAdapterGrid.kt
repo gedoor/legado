@@ -71,11 +71,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
             bundle.keySet().forEach {
                 when (it) {
                     "name" -> tvName.text = item.name
-                    "cover" -> ivCover.load(
-                        item.getDisplayCover(),
-                        item.name,
-                        item.author
-                    )
+                    "cover" -> ivCover.load(item.getDisplayCover())
                     "refresh" -> upRefresh(this, item)
                 }
             }
@@ -110,7 +106,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
             val item = callBack.getItem(position)
             if (item is Book) {
                 tvName.text = item.name
-                ivCover.load(item.getDisplayCover(), item.name, item.author)
+                ivCover.load(item.getDisplayCover())
                 upRefresh(this, item)
             }
             root.setOnClickListener {

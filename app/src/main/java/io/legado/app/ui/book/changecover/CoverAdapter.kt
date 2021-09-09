@@ -35,7 +35,7 @@ class CoverAdapter(context: Context, val callBack: CallBack) :
         item: SearchBook,
         payloads: MutableList<Any>
     ) = binding.run {
-        ivCover.load(item.coverUrl, item.name, item.author)
+        ivCover.load(item.coverUrl)
         tvSource.text = item.originName
     }
 
