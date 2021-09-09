@@ -92,9 +92,19 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             }
         }
 
-        val isRun: Boolean get() = waitDownloadCount > 0 || onDownloadCount > 0
+        val downloadSummary =
+            "正在下载:${onDownloadCount}|等待中:${waitDownloadCount}|失败:${errorCount}|成功:${successDownloadCount}"
 
-        val waitDownloadCount: Int
+        val isRun: Boolean
+            get() {
+                var isRun = false
+                cacheBookMap.forEach {
+                    isRun = isRun || it.value.isRun()
+                }
+                return isRun
+            }
+
+        private val waitDownloadCount: Int
             get() {
                 var count = 0
                 cacheBookMap.forEach {
@@ -103,7 +113,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
                 return count
             }
 
-        val successDownloadCount: Int
+        private val successDownloadCount: Int
             get() {
                 var count = 0
                 cacheBookMap.forEach {
@@ -121,7 +131,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
                 return count
             }
 
-        val errorCount: Int
+        private val errorCount: Int
             get() {
                 var count = 0
                 cacheBookMap.forEach {
@@ -144,6 +154,11 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
     @Synchronized
     fun isRun(): Boolean {
         return waitDownloadSet.size > 0 || onDownloadSet.size > 0
+    }
+
+    @Synchronized
+    fun stop() {
+        waitDownloadSet.clear()
     }
 
     @Synchronized
@@ -224,11 +239,8 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             onSuccess(chapterIndex)
             downloadFinish(chapter, content)
         }.onError {
-            //出现错误等待后重新加入待下载列表
-            when (it) {
-                is ConcurrentException -> delay(it.waitTime)
-                else -> delay(1000)
-            }
+            //出现错误等待一秒后重新加入待下载列表
+            delay(1000)
             onError(chapterIndex, it, chapter.title)
             downloadFinish(chapter, "error:${it.localizedMessage}")
         }.onCancel {
