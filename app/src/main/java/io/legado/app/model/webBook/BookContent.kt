@@ -116,7 +116,7 @@ object BookContent {
         Debug.log(bookSource.bookSourceUrl, "┌获取正文内容")
         Debug.log(bookSource.bookSourceUrl, "└\n$contentStr")
         if (contentStr.isBlank()) {
-            throw ContentEmptyException("${bookChapter.title}内容为空")
+            throw ContentEmptyException("内容为空")
         }
         BookHelp.saveContent(bookSource, book, bookChapter, contentStr)
         return contentStr
