@@ -7,7 +7,7 @@ object AppLog {
     @Synchronized
     fun addLog(message: String?, throwable: Throwable?) {
         message ?: return
-        if (logs.size > 1000) {
+        if (logs.size > 100) {
             logs.removeLastOrNull()
         }
         logs.add(0, Triple(System.currentTimeMillis(), message, throwable))
