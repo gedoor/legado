@@ -29,7 +29,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
     override val viewModel by viewModels<RssSortViewModel>()
-    private lateinit var adapter: TabFragmentPageAdapter
+    private val adapter by lazy { TabFragmentPageAdapter() }
     private val sortList = mutableListOf<Pair<String, String>>()
     private val fragmentMap = hashMapOf<String, Fragment>()
     private val editSourceResult = registerForActivityResult(
@@ -43,7 +43,6 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        adapter = TabFragmentPageAdapter()
         binding.viewPager.adapter = adapter
         binding.tabLayout.setupWithViewPager(binding.viewPager)
         viewModel.titleLiveData.observe(this, {

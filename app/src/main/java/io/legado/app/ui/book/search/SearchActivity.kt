@@ -42,11 +42,13 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override val binding by viewBinding(ActivityBookSearchBinding::inflate)
     override val viewModel by viewModels<SearchViewModel>()
 
-    lateinit var adapter: SearchAdapter
-    private lateinit var bookAdapter: BookAdapter
-    private lateinit var historyKeyAdapter: HistoryKeyAdapter
-    private lateinit var loadMoreView: LoadMoreView
-    private lateinit var searchView: SearchView
+    private val adapter by lazy { SearchAdapter(this, this) }
+    private val bookAdapter by lazy { BookAdapter(this, this) }
+    private val historyKeyAdapter by lazy { HistoryKeyAdapter(this, this) }
+    private val loadMoreView by lazy { LoadMoreView(this) }
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
     private var historyFlowJob: Job? = null
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
@@ -55,7 +57,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.llHistory.setBackgroundColor(backgroundColor)
-        searchView = binding.titleBar.findViewById(R.id.search_view)
         initRecyclerView()
         initSearchView()
         initOtherView()
@@ -142,13 +143,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         ATH.applyEdgeEffectColor(binding.recyclerView)
         ATH.applyEdgeEffectColor(binding.rvBookshelfSearch)
         ATH.applyEdgeEffectColor(binding.rvHistoryKey)
-        bookAdapter = BookAdapter(this, this)
         binding.rvBookshelfSearch.layoutManager = FlexboxLayoutManager(this)
         binding.rvBookshelfSearch.adapter = bookAdapter
-        historyKeyAdapter = HistoryKeyAdapter(this, this)
         binding.rvHistoryKey.layoutManager = FlexboxLayoutManager(this)
         binding.rvHistoryKey.adapter = historyKeyAdapter
-        adapter = SearchAdapter(this, this)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -166,7 +164,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 }
             }
         })
-        loadMoreView = LoadMoreView(this)
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

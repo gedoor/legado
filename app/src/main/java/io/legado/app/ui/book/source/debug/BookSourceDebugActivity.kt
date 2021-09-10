@@ -24,7 +24,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     override val binding by viewBinding(ActivitySourceDebugBinding::inflate)
     override val viewModel by viewModels<BookSourceDebugModel>()
 
-    private lateinit var adapter: BookSourceDebugAdapter
+    private val adapter by lazy { BookSourceDebugAdapter(this) }
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
@@ -52,7 +52,6 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(binding.recyclerView)
-        adapter = BookSourceDebugAdapter(this)
         binding.recyclerView.adapter = adapter
         binding.rotateLoading.loadingColor = accentColor
     }

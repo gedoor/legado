@@ -50,8 +50,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     override val binding by viewBinding(ActivityReplaceRuleBinding::inflate)
     override val viewModel by viewModels<ReplaceRuleViewModel>()
     private val importRecordKey = "replaceRuleRecordKey"
-    private lateinit var adapter: ReplaceRuleAdapter
-    private lateinit var searchView: SearchView
+    private val adapter by lazy { ReplaceRuleAdapter(this, this) }
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var replaceRuleFlowJob: Job? = null
@@ -90,7 +92,6 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        searchView = binding.titleBar.findViewById(R.id.search_view)
         initRecyclerView()
         initSearchView()
         initSelectActionView()
@@ -112,7 +113,6 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(binding.recyclerView)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = ReplaceRuleAdapter(this, this)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         val itemTouchCallback = ItemTouchCallback(adapter)

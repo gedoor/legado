@@ -38,15 +38,16 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     ExploreAdapter.CallBack {
     override val viewModel by viewModels<ExploreViewModel>()
     private val binding by viewBinding(FragmentExploreBinding::bind)
-    private lateinit var adapter: ExploreAdapter
-    private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var searchView: SearchView
+    private val adapter by lazy { ExploreAdapter(requireContext(), lifecycleScope, this) }
+    private val linearLayoutManager by lazy { LinearLayoutManager(context) }
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
     private val groups = linkedSetOf<String>()
     private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        searchView = binding.titleBar.findViewById(R.id.search_view)
         setSupportToolbar(binding.titleBar.toolbar)
         initSearchView()
         initRecyclerView()
@@ -86,9 +87,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(binding.rvFind)
-        linearLayoutManager = LinearLayoutManager(context)
         binding.rvFind.layoutManager = linearLayoutManager
-        adapter = ExploreAdapter(requireContext(), lifecycleScope, this)
         binding.rvFind.adapter = adapter
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
 

@@ -39,7 +39,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
 
     private val binding by viewBinding(DialogReadBgTextBinding::bind)
     private val configFileName = "readConfig.zip"
-    private lateinit var adapter: BgAdapter
+    private val adapter by lazy { BgAdapter(requireContext(), secondaryTextColor) }
     private var primaryTextColor = 0
     private var secondaryTextColor = 0
     private val importFormNet = "网络导入"
@@ -111,7 +111,6 @@ class BgTextConfigDialog : BaseDialogFragment() {
         ivExport.setColorFilter(primaryTextColor)
         ivDelete.setColorFilter(primaryTextColor)
         tvBgImage.setTextColor(primaryTextColor)
-        adapter = BgAdapter(requireContext(), secondaryTextColor)
         recyclerView.adapter = adapter
         adapter.addHeaderView {
             ItemBgImageBinding.inflate(layoutInflater, it, false).apply {

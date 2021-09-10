@@ -27,7 +27,7 @@ import java.util.*
 
 class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
-    lateinit var adapter: RecordAdapter
+    private val adapter by lazy { RecordAdapter(this) }
     private var sortMode = 0
 
     override val binding by viewBinding(ActivityReadRecordBinding::inflate)
@@ -58,7 +58,6 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     private fun initView() = binding.run {
         readRecord.tvBookName.setText(R.string.all_read_time)
-        adapter = RecordAdapter(this@ReadRecordActivity)
         recyclerView.adapter = adapter
         readRecord.tvRemove.setOnClickListener {
             alert(R.string.delete, R.string.sure_del) {

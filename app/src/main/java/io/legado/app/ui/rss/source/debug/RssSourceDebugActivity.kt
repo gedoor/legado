@@ -22,7 +22,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
     override val binding by viewBinding(ActivitySourceDebugBinding::inflate)
     override val viewModel by viewModels<RssSourceDebugModel>()
 
-    private lateinit var adapter: RssSourceDebugAdapter
+    private val adapter by lazy { RssSourceDebugAdapter(this) }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -57,7 +57,6 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(binding.recyclerView)
-        adapter = RssSourceDebugAdapter(this)
         binding.recyclerView.adapter = adapter
         binding.rotateLoading.loadingColor = accentColor
     }

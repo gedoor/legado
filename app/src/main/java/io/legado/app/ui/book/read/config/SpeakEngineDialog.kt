@@ -35,10 +35,11 @@ import splitties.init.appCtx
 
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
-    private val ttsUrlKey = "ttsUrlKey"
-    lateinit var adapter: Adapter
     private val viewModel: SpeakEngineViewModel by viewModels()
+    private val ttsUrlKey = "ttsUrlKey"
+    private val adapter by lazy { Adapter(requireContext()) }
     private var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
     private val importDocResult = registerForActivityResult(HandleFileContract()) {
         it?.let {
@@ -84,7 +85,6 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         toolBar.setTitle(R.string.speak_engine)
         ATH.applyEdgeEffectColor(recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = Adapter(requireContext())
         recyclerView.adapter = adapter
         tvFooterLeft.setText(R.string.system_tts)
         tvFooterLeft.visible()

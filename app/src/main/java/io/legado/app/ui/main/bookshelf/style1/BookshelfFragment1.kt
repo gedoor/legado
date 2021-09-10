@@ -37,8 +37,10 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     SearchView.OnQueryTextListener {
 
     private val binding by viewBinding(FragmentBookshelfBinding::bind)
-    private lateinit var adapter: FragmentStatePagerAdapter
-    private lateinit var tabLayout: TabLayout
+    private val adapter by lazy { TabFragmentPageAdapter(childFragmentManager) }
+    private val tabLayout: TabLayout by lazy {
+        binding.titleBar.findViewById(R.id.tab_layout)
+    }
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Long, BooksFragment>()
 
@@ -51,7 +53,6 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
         }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        tabLayout = binding.titleBar.findViewById(R.id.tab_layout)
         setSupportToolbar(binding.titleBar.toolbar)
         initView()
         initBookGroupData()
@@ -67,7 +68,6 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
         tabLayout.setSelectedTabIndicatorColor(requireContext().accentColor)
         tabLayout.setupWithViewPager(binding.viewPagerBookshelf)
         binding.viewPagerBookshelf.offscreenPageLimit = 1
-        adapter = TabFragmentPageAdapter(childFragmentManager)
         binding.viewPagerBookshelf.adapter = adapter
     }
 

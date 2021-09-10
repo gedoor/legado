@@ -43,8 +43,16 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
     private val binding by viewBinding(FragmentRssArticlesBinding::bind)
     private val activityViewModel by activityViewModels<RssSortViewModel>()
     override val viewModel by viewModels<RssArticlesViewModel>()
-    lateinit var adapter: BaseRssArticlesAdapter<*>
-    private lateinit var loadMoreView: LoadMoreView
+    private val adapter: BaseRssArticlesAdapter<*> by lazy {
+        when (activityViewModel.rssSource?.articleStyle) {
+            1 -> RssArticlesAdapter1(requireContext(), this@RssArticlesFragment)
+            2 -> RssArticlesAdapter2(requireContext(), this@RssArticlesFragment)
+            else -> RssArticlesAdapter(requireContext(), this@RssArticlesFragment)
+        }
+    }
+    private val loadMoreView: LoadMoreView by lazy {
+        LoadMoreView(requireContext())
+    }
     private var articlesFlowJob: Job? = null
     override val isGridLayout: Boolean
         get() = activityViewModel.isGridLayout
@@ -64,15 +72,8 @@ class RssArticlesFragment : VMBaseFragment<RssArticlesViewModel>(R.layout.fragme
         } else {
             recyclerView.addItemDecoration(VerticalDivider(requireContext()))
             LinearLayoutManager(requireContext())
-
-        }
-        adapter = when (activityViewModel.rssSource?.articleStyle) {
-            1 -> RssArticlesAdapter1(requireContext(), this@RssArticlesFragment)
-            2 -> RssArticlesAdapter2(requireContext(), this@RssArticlesFragment)
-            else -> RssArticlesAdapter(requireContext(), this@RssArticlesFragment)
         }
         recyclerView.adapter = adapter
-        loadMoreView = LoadMoreView(requireContext())
         adapter.addFooterView {
             ViewLoadMoreBinding.bind(loadMoreView)
         }

@@ -46,7 +46,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     override val binding by viewBinding(ActivityRssSourceBinding::inflate)
     override val viewModel by viewModels<RssSourceViewModel>()
     private val importRecordKey = "rssSourceRecordKey"
-    private lateinit var adapter: RssSourceAdapter
+    private val adapter by lazy { RssSourceAdapter(this, this) }
     private var sourceFlowJob: Job? = null
     private var groups = hashSetOf<String>()
     private var groupMenu: SubMenu? = null
@@ -142,7 +142,6 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(binding.recyclerView)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
-        adapter = RssSourceAdapter(this, this)
         binding.recyclerView.adapter = adapter
         // When this page is opened, it is in selection mode
         val dragSelectTouchHelper: DragSelectTouchHelper =

@@ -51,7 +51,7 @@ class ImportReplaceRuleDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickLis
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val viewModel by viewModels<ImportReplaceRuleViewModel>()
-    lateinit var adapter: SourcesAdapter
+    private val adapter by lazy { SourcesAdapter(requireContext()) }
 
     override fun onStart() {
         super.onStart()
@@ -82,7 +82,6 @@ class ImportReplaceRuleDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickLis
         binding.toolBar.setTitle(R.string.import_replace_rule)
         binding.rotateLoading.show()
         initMenu()
-        adapter = SourcesAdapter(requireContext())
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
         binding.tvCancel.visible()

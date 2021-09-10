@@ -58,7 +58,7 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val viewModel by viewModels<ImportBookSourceViewModel>()
-    private lateinit var adapter: SourcesAdapter
+    private val adapter by lazy { SourcesAdapter(requireContext()) }
 
     override fun onStart() {
         super.onStart()
@@ -89,7 +89,6 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
         binding.toolBar.setTitle(R.string.import_book_source)
         binding.rotateLoading.show()
         initMenu()
-        adapter = SourcesAdapter(requireContext())
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
         binding.tvCancel.visible()

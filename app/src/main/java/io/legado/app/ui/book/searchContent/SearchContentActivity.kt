@@ -35,15 +35,16 @@ class SearchContentActivity :
 
     override val binding by viewBinding(ActivitySearchContentBinding::inflate)
     override val viewModel by viewModels<SearchContentViewModel>()
-    lateinit var adapter: SearchContentAdapter
-    private lateinit var mLayoutManager: UpLinearLayoutManager
-    private lateinit var searchView: SearchView
+    private val adapter by lazy { SearchContentAdapter(this, this) }
+    private val mLayoutManager by lazy { UpLinearLayoutManager(this) }
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
     private var searchResultCounts = 0
     private var durChapterIndex = 0
     private var searchResultList: MutableList<SearchResult> = mutableListOf()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        searchView = binding.titleBar.findViewById(R.id.search_view)
         val bbg = bottomBackground
         val btc = getPrimaryTextColor(ColorUtils.isColorLight(bbg))
         binding.llSearchBaseInfo.setBackgroundColor(bbg)
@@ -81,8 +82,6 @@ class SearchContentActivity :
     }
 
     private fun initRecyclerView() {
-        adapter = SearchContentAdapter(this, this)
-        mLayoutManager = UpLinearLayoutManager(this)
         binding.recyclerView.layoutManager = mLayoutManager
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter

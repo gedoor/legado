@@ -40,14 +40,15 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     RssAdapter.CallBack {
     private val binding by viewBinding(FragmentRssBinding::bind)
     override val viewModel by viewModels<RssSourceViewModel>()
-    private lateinit var adapter: RssAdapter
-    private lateinit var searchView: SearchView
+    private val adapter by lazy { RssAdapter(requireContext(), this) }
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
     private var rssFlowJob: Job? = null
     private val groups = linkedSetOf<String>()
     private var groupsMenu: SubMenu? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        searchView = binding.titleBar.findViewById(R.id.search_view)
         setSupportToolbar(binding.titleBar.toolbar)
         initSearchView()
         initRecyclerView()
@@ -106,7 +107,6 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(binding.recyclerView)
-        adapter = RssAdapter(requireContext(), this)
         binding.recyclerView.adapter = adapter
         adapter.addHeaderView {
             ItemRssBinding.inflate(layoutInflater, it, false).apply {

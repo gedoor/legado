@@ -40,7 +40,7 @@ class ChangeCoverDialog : BaseDialogFragment(),
     private val binding by viewBinding(DialogChangeCoverBinding::bind)
     private var callBack: CallBack? = null
     private val viewModel: ChangeCoverViewModel by viewModels()
-    lateinit var adapter: CoverAdapter
+    private val adapter by lazy { CoverAdapter(requireContext(), this) }
 
     override fun onStart() {
         super.onStart()
@@ -73,7 +73,6 @@ class ChangeCoverDialog : BaseDialogFragment(),
 
     private fun initView() {
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-        adapter = CoverAdapter(requireContext(), this)
         binding.recyclerView.adapter = adapter
         viewModel.loadDbSearchBook()
     }

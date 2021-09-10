@@ -37,8 +37,8 @@ class FontSelectDialog : BaseDialogFragment(),
     private val fontFolder by lazy {
         FileUtils.createFolderIfNotExist(appCtx.filesDir, "Fonts")
     }
-    private var adapter: FontAdapter? = null
     private val binding by viewBinding(DialogFontSelectBinding::bind)
+    private val adapter by lazy { FontAdapter(requireContext(), this) }
     private val selectFontDir = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.toString().isContentScheme()) {
@@ -83,7 +83,6 @@ class FontSelectDialog : BaseDialogFragment(),
         binding.toolBar.inflateMenu(R.menu.font_select)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
-        adapter = FontAdapter(requireContext(), this)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
 
@@ -165,7 +164,7 @@ class FontSelectDialog : BaseDialogFragment(),
             }
             mergeFontItems(fontItems, getLocalFonts())
         }.onSuccess {
-            adapter?.setItems(it)
+            adapter.setItems(it)
         }.onError {
             toastOnUi("getFontFiles:${it.localizedMessage}")
         }
@@ -200,7 +199,7 @@ class FontSelectDialog : BaseDialogFragment(),
             }
             mergeFontItems(fontItems, getLocalFonts())
         }.onSuccess {
-            adapter?.setItems(it)
+            adapter.setItems(it)
         }.onError {
             toastOnUi("getFontFiles:${it.localizedMessage}")
         }

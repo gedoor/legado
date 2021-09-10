@@ -20,8 +20,8 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
     override val binding by viewBinding(ActivityExploreShowBinding::inflate)
     override val viewModel by viewModels<ExploreShowViewModel>()
 
-    private lateinit var adapter: ExploreShowAdapter
-    private lateinit var loadMoreView: LoadMoreView
+    private val adapter by lazy { ExploreShowAdapter(this, this) }
+    private val loadMoreView by lazy { LoadMoreView(this) }
     private var isLoading = true
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -35,10 +35,8 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
     }
 
     private fun initRecyclerView() {
-        adapter = ExploreShowAdapter(this, this)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
-        loadMoreView = LoadMoreView(this)
         adapter.addFooterView {
             ViewLoadMoreBinding.bind(loadMoreView)
         }

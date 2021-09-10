@@ -49,8 +49,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     override val binding by viewBinding(ActivityBookSourceBinding::inflate)
     override val viewModel by viewModels<BookSourceViewModel>()
     private val importRecordKey = "bookSourceRecordKey"
-    private lateinit var adapter: BookSourceAdapter
-    private lateinit var searchView: SearchView
+    private val adapter by lazy { BookSourceAdapter(this, this) }
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
     private var sourceFlowJob: Job? = null
     private val groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
@@ -86,7 +88,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        searchView = binding.titleBar.findViewById(R.id.search_view)
         initRecyclerView()
         initSearchView()
         upBookSource()
@@ -179,7 +180,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun initRecyclerView() {
         ATH.applyEdgeEffectColor(binding.recyclerView)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
-        adapter = BookSourceAdapter(this, this)
         binding.recyclerView.adapter = adapter
         // When this page is opened, it is in selection mode
         val dragSelectTouchHelper =

@@ -30,7 +30,7 @@ class TextListDialog : BaseDialogFragment() {
     }
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
-    lateinit var adapter: TextAdapter
+    private val adapter by lazy { TextAdapter(requireContext()) }
     private var values: ArrayList<String>? = null
 
     override fun onStart() {
@@ -53,7 +53,6 @@ class TextListDialog : BaseDialogFragment() {
             values = it.getStringArrayList("values")
         }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = TextAdapter(requireContext())
         recyclerView.adapter = adapter
         adapter.setItems(values)
     }

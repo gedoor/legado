@@ -36,12 +36,13 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+
     private val importTocRuleKey = "tocRuleUrl"
-    private lateinit var adapter: TocRegexAdapter
-    var selectedName: String? = null
-    private var durRegex: String? = null
     private val viewModel: TocRegexViewModel by viewModels()
     private val binding by viewBinding(DialogTocRegexBinding::bind)
+    private val adapter by lazy { TocRegexAdapter(requireContext()) }
+    var selectedName: String? = null
+    private var durRegex: String? = null
 
     override fun onStart() {
         super.onStart()
@@ -69,7 +70,6 @@ class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private fun initView() = binding.run {
-        adapter = TocRegexAdapter(requireContext())
         recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)

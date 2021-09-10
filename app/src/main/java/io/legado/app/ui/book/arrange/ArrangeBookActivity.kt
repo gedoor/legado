@@ -45,7 +45,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     override val groupList: ArrayList<BookGroup> = arrayListOf()
     private val groupRequestCode = 22
     private val addToGroupRequestCode = 34
-    private lateinit var adapter: ArrangeBookAdapter
+    private val adapter by lazy { ArrangeBookAdapter(this, this) }
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var groupId: Long = -1
@@ -90,7 +90,6 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         ATH.applyEdgeEffectColor(binding.recyclerView)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
-        adapter = ArrangeBookAdapter(this, this)
         binding.recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = getPrefInt(PreferKey.bookshelfSort) == 3

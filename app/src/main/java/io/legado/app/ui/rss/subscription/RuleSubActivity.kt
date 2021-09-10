@@ -30,7 +30,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     RuleSubAdapter.Callback {
 
     override val binding by viewBinding(ActivityRuleSubBinding::inflate)
-    private lateinit var adapter: RuleSubAdapter
+    private val adapter by lazy { RuleSubAdapter(this, this) }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -53,7 +53,6 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     }
 
     private fun initView() {
-        adapter = RuleSubAdapter(this, this)
         binding.recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true

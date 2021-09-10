@@ -51,7 +51,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
     private val groups = linkedSetOf<String>()
     private var callBack: CallBack? = null
     private val viewModel: ChangeSourceViewModel by viewModels()
-    lateinit var adapter: ChangeSourceAdapter
+    private val adapter by lazy { ChangeSourceAdapter(requireContext(), viewModel, this) }
 
     override fun onStart() {
         super.onStart()
@@ -97,7 +97,6 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     private fun initRecyclerView() {
-        adapter = ChangeSourceAdapter(requireContext(), viewModel, this)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter

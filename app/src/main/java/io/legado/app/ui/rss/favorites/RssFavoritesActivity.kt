@@ -18,7 +18,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
     RssFavoritesAdapter.CallBack {
 
     override val binding by viewBinding(ActivityRssFavoritesBinding::inflate)
-    private lateinit var adapter: RssFavoritesAdapter
+    private val adapter by lazy { RssFavoritesAdapter(this, this) }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -29,7 +29,6 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
         binding.recyclerView.let {
             it.layoutManager = LinearLayoutManager(this)
             it.addItemDecoration(VerticalDivider(this))
-            adapter = RssFavoritesAdapter(this, this)
             it.adapter = adapter
         }
     }

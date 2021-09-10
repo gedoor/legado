@@ -34,8 +34,8 @@ import kotlinx.coroutines.launch
 
 class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val viewModel: BookSourceViewModel by activityViewModels()
-    private lateinit var adapter: GroupAdapter
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
+    private val adapter by lazy { GroupAdapter(requireContext()) }
 
     override fun onStart() {
         super.onStart()
@@ -58,7 +58,6 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         binding.toolBar.inflateMenu(R.menu.group_manage)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
-        adapter = GroupAdapter(requireContext())
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter

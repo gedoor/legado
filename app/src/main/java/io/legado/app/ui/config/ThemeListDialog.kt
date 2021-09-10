@@ -1,5 +1,6 @@
 package io.legado.app.ui.config
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -22,7 +23,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
-    private lateinit var adapter: Adapter
+    private val adapter by lazy { Adapter(requireContext()) }
 
     override fun onStart() {
         super.onStart()
@@ -47,7 +48,6 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     }
 
     private fun initView() = binding.run {
-        adapter = Adapter()
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         recyclerView.adapter = adapter
@@ -93,8 +93,8 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
         requireContext().share(json, "主题分享")
     }
 
-    inner class Adapter :
-        RecyclerAdapter<ThemeConfig.Config, ItemThemeConfigBinding>(requireContext()) {
+    inner class Adapter(context: Context) :
+        RecyclerAdapter<ThemeConfig.Config, ItemThemeConfigBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemThemeConfigBinding {
             return ItemThemeConfigBinding.inflate(inflater, parent, false)

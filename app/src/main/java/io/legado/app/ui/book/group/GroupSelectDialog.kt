@@ -51,7 +51,7 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private val binding by viewBinding(DialogBookGroupPickerBinding::bind)
     private var requestCode: Int = -1
     private val viewModel: GroupViewModel by viewModels()
-    private lateinit var adapter: GroupAdapter
+    private val adapter by lazy { GroupAdapter(requireContext()) }
     private var callBack: CallBack? = null
     private var groupId: Long = 0
 
@@ -85,7 +85,6 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         binding.toolBar.inflateMenu(R.menu.book_group_manage)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
-        adapter = GroupAdapter(requireContext())
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
