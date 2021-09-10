@@ -2,7 +2,6 @@ package io.legado.app.ui.main.bookshelf.style2
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
@@ -56,10 +55,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         initRecyclerView()
         initGroupData()
         initBooksData()
-    }
-
-    override fun onCompatCreateOptionsMenu(menu: Menu) {
-        menuInflater.inflate(R.menu.main_bookshelf, menu)
     }
 
     private fun initRecyclerView() {

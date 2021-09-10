@@ -1,6 +1,7 @@
 package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
+import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -13,6 +14,7 @@ import io.legado.app.databinding.DialogBookshelfConfigBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.arrange.ArrangeBookActivity
 import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.ui.book.group.GroupManageDialog
@@ -51,6 +53,10 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
 
     abstract fun gotoTop()
 
+    override fun onCompatCreateOptionsMenu(menu: Menu) {
+        menuInflater.inflate(R.menu.main_bookshelf, menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
@@ -78,6 +84,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                 }
             }
             R.id.menu_import_bookshelf -> importBookshelfAlert(groupId)
+            R.id.menu_log -> AppLogDialog.show(childFragmentManager)
         }
     }
 

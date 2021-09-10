@@ -3,6 +3,7 @@ package io.legado.app.ui.main
 import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
@@ -90,6 +91,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         )
                         CacheBook.start(context, book.bookUrl, book.durChapterIndex, endIndex)
                     }.onError(upTocPool) {
+                        AppLog.addLog("${book.name} 更新目录失败 error: ${it.localizedMessage}", it)
                         it.printOnDebug()
                     }.onFinally(upTocPool) {
                         synchronized(this) {

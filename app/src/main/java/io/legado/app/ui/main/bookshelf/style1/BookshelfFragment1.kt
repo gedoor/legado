@@ -3,7 +3,6 @@
 package io.legado.app.ui.main.bookshelf.style1
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
@@ -56,10 +55,6 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
         setSupportToolbar(binding.titleBar.toolbar)
         initView()
         initBookGroupData()
-    }
-
-    override fun onCompatCreateOptionsMenu(menu: Menu) {
-        menuInflater.inflate(R.menu.main_bookshelf, menu)
     }
 
     private val selectedGroup: BookGroup
