@@ -15,6 +15,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemAppLogBinding
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
@@ -80,7 +81,9 @@ class AppLogDialog : BaseDialogFragment() {
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemAppLogBinding) {
             binding.root.onClick {
-
+                getItem(holder.layoutPosition)?.let {
+                    TextDialog.show(childFragmentManager, it.third?.stackTraceToString())
+                }
             }
         }
 
