@@ -171,7 +171,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             waitDownloadSet.add(index)
         } else {
             AppLog.addLog(
-                "download ${book.name}-${chapterTitle} error:${error.localizedMessage}",
+                "下载${book.name}-${chapterTitle}失败\n${error.localizedMessage}",
                 error
             )
             error.printOnDebug()

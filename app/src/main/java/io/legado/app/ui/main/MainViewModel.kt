@@ -91,7 +91,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         )
                         CacheBook.start(context, book.bookUrl, book.durChapterIndex, endIndex)
                     }.onError(upTocPool) {
-                        AppLog.addLog("${book.name} 更新目录失败 error: ${it.localizedMessage}", it)
+                        AppLog.addLog("${book.name} 更新目录失败\n${it.localizedMessage}", it)
                         it.printOnDebug()
                     }.onFinally(upTocPool) {
                         synchronized(this) {
