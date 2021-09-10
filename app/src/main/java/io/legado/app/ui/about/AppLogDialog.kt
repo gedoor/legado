@@ -54,6 +54,7 @@ class AppLogDialog : BaseDialogFragment() {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.run {
             toolBar.setBackgroundColor(primaryColor)
+            toolBar.setTitle(R.string.log)
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             recyclerView.adapter = adapter
         }
