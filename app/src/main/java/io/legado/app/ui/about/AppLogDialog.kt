@@ -81,8 +81,10 @@ class AppLogDialog : BaseDialogFragment() {
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemAppLogBinding) {
             binding.root.onClick {
-                getItem(holder.layoutPosition)?.let {
-                    TextDialog.show(childFragmentManager, it.third?.stackTraceToString())
+                getItem(holder.layoutPosition)?.let { item ->
+                    item.third?.let {
+                        TextDialog.show(childFragmentManager, it.stackTraceToString())
+                    }
                 }
             }
         }
