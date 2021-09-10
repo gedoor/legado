@@ -78,7 +78,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
         }
 
         val downloadSummary =
-            "正在下载:${onDownloadCount}|等待中:${waitDownloadCount}|失败:${errorCount}|成功:${successDownloadCount}"
+            "正在下载:${onDownloadCount}|等待中:${waitCount}|失败:${errorCount}|成功:${successCount}"
 
         val isRun: Boolean
             get() {
@@ -89,7 +89,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
                 return isRun
             }
 
-        private val waitDownloadCount: Int
+        private val waitCount: Int
             get() {
                 var count = 0
                 cacheBookMap.forEach {
@@ -98,7 +98,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
                 return count
             }
 
-        private val successDownloadCount: Int
+        private val successCount: Int
             get() {
                 var count = 0
                 cacheBookMap.forEach {
