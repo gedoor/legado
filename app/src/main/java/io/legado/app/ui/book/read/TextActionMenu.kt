@@ -149,7 +149,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                     }
                     context.startActivity(intent)
                 }.onFailure {
-                    it.printStackTrace()
+                    it.printOnDebug()
                     context.toastOnUi(it.localizedMessage ?: "ERROR")
                 }
             }

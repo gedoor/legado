@@ -47,7 +47,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             success?.invoke()
         }.onError {
             context.toastOnUi(it.localizedMessage)
-            it.printStackTrace()
+            it.printOnDebug()
         }
     }
 
@@ -61,7 +61,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             }
         }.onError {
             context.toastOnUi(it.localizedMessage ?: "Error")
-            it.printStackTrace()
+            it.printOnDebug()
         }
     }
 

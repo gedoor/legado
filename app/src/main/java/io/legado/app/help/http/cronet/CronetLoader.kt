@@ -10,6 +10,7 @@ import com.google.android.gms.net.CronetProviderInstaller
 import io.legado.app.BuildConfig
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.utils.printOnDebug
 import org.chromium.net.CronetEngine
 import org.json.JSONObject
 import splitties.init.appCtx
@@ -163,7 +164,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             abiField.isAccessible = true
             cpuAbi = abiField.get(appInfo) as String?
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         if (TextUtils.isEmpty(cpuAbi)) {
             cpuAbi = Build.SUPPORTED_ABIS[0]
@@ -214,7 +215,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             }
             return true
         } catch (e: Throwable) {
-            e.printStackTrace()
+            e.printOnDebug()
             if (destFile.exists() && !destFile.delete()) {
                 destFile.deleteOnExit()
             }
@@ -223,14 +224,14 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
                 try {
                     inputStream.close()
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
             }
             if (outputStream != null) {
                 try {
                     outputStream.close()
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
             }
         }
@@ -303,20 +304,20 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             }
             return true
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         } finally {
             if (fileInputStream != null) {
                 try {
                     fileInputStream.close()
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
             }
             if (os != null) {
                 try {
                     os.close()
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
             }
         }
@@ -338,15 +339,15 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             }
             return String.format("%032x", BigInteger(1, md5.digest())).lowercase()
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         } catch (e: OutOfMemoryError) {
-            e.printStackTrace()
+            e.printOnDebug()
         } finally {
             if (fileInputStream != null) {
                 try {
                     fileInputStream.close()
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
             }
         }

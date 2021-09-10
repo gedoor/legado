@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
+import io.legado.app.utils.printOnDebug
 import java.io.File
 
 object Preferences {
@@ -36,11 +37,11 @@ object Preferences {
             // 返回修改路径以后的 SharedPreferences :%FILE_PATH%/%fileName%.xml
             return context.getSharedPreferences(fileName, Activity.MODE_PRIVATE)
         } catch (e: NoSuchFieldException) {
-            e.printStackTrace()
+            e.printOnDebug()
         } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
+            e.printOnDebug()
         } catch (e: IllegalAccessException) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return null
     }

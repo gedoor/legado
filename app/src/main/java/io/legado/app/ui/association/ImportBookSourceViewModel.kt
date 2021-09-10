@@ -117,7 +117,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                 else -> throw Exception(context.getString(R.string.wrong_format))
             }
         }.onError {
-            it.printStackTrace()
+            it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage ?: "")
         }.onSuccess {
             comparisonSource()

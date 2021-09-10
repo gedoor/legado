@@ -9,6 +9,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.rss.Rss
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -52,7 +53,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 }
             }.onError {
                 loadFinally.postValue(false)
-                it.printStackTrace()
+                it.printOnDebug()
                 context.toastOnUi(it.localizedMessage)
             }
     }
@@ -68,7 +69,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                     loadMoreSuccess(it.first)
                 }
                 .onError {
-                    it.printStackTrace()
+                    it.printOnDebug()
                     loadFinally.postValue(false)
                 }
         } else {

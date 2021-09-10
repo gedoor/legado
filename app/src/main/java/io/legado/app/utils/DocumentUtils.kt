@@ -130,7 +130,7 @@ object DocumentUtils {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         } finally {
             c?.close()
         }

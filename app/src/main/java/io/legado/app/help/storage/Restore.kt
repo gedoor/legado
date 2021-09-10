@@ -94,7 +94,7 @@ object Restore {
                         }
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
             }
         }
@@ -169,7 +169,7 @@ object Restore {
                     ThemeConfig.upConfig()
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.printOnDebug()
             }
             if (!ignoreReadConfig) {
                 try {
@@ -181,7 +181,7 @@ object Restore {
                         ReadBookConfig.initConfigs()
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
                 try {
                     val file =
@@ -192,7 +192,7 @@ object Restore {
                         ReadBookConfig.initShareConfig()
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
             }
             Preferences.getSharedPreferences(appCtx, path, "config")?.all?.let { map ->
@@ -267,7 +267,7 @@ object Restore {
             val json = file.readText()
             return GSON.fromJsonArray(json)
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return null
     }

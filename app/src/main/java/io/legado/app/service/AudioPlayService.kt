@@ -137,7 +137,7 @@ class AudioPlayService : BaseService(),
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
             }.onFailure {
-                it.printStackTrace()
+                it.printOnDebug()
                 toastOnUi("$url ${it.localizedMessage}")
                 stopSelf()
             }
@@ -158,7 +158,7 @@ class AudioPlayService : BaseService(),
             postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
             upNotification()
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
     }
 
@@ -177,7 +177,7 @@ class AudioPlayService : BaseService(),
             postEvent(EventBus.AUDIO_STATE, Status.PLAY)
             upNotification()
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             stopSelf()
         }
     }
@@ -246,7 +246,7 @@ class AudioPlayService : BaseService(),
         super.onPlayerError(error)
         AudioPlay.status = Status.STOP
         postEvent(EventBus.AUDIO_STATE, Status.STOP)
-        error.printStackTrace()
+        error.printOnDebug()
     }
 
     override fun onPlayerErrorChanged(error: PlaybackException?) {

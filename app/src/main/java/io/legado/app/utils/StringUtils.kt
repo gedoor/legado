@@ -95,7 +95,7 @@ object StringUtils {
                 }
             }
         }.onFailure {
-            it.printStackTrace()
+            it.printOnDebug()
         }
 
         return ""

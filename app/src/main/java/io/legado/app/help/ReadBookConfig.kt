@@ -61,7 +61,7 @@ object ReadBookConfig {
                 val json = configFile.readText()
                 configs = GSON.fromJsonArray(json)
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.printOnDebug()
             }
         }
         (configs ?: DefaultData.readConfigs).let {
@@ -78,7 +78,7 @@ object ReadBookConfig {
                 val json = configFile.readText()
                 c = GSON.fromJsonObject(json)
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.printOnDebug()
             }
         }
         shareConfig = c ?: configList.getOrNull(5) ?: Config()
@@ -570,7 +570,7 @@ object ReadBookConfig {
                     )
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.printOnDebug()
             }
             return bgDrawable ?: ColorDrawable(appCtx.getCompatColor(R.color.background))
         }

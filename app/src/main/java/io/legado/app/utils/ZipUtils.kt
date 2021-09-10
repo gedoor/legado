@@ -369,7 +369,7 @@ object ZipUtils {
         return try {
             file.createNewFile()
         } catch (e: IOException) {
-            e.printStackTrace()
+            e.printOnDebug()
             false
         }
     }

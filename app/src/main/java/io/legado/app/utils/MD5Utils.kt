@@ -25,7 +25,7 @@ object MD5Utils {
             }
             reStr = stringBuffer.toString()
         } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
 
         return reStr

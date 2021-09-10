@@ -126,7 +126,7 @@ object BookHelp {
                 ).writeBytes(it)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         } finally {
             downloadImages.remove(src)
         }

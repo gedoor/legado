@@ -108,7 +108,7 @@ object ThemeConfig {
                 val json = configFile.readText()
                 return GSON.fromJsonArray(json)
             }.onFailure {
-                it.printStackTrace()
+                it.printOnDebug()
             }
         }
         return null

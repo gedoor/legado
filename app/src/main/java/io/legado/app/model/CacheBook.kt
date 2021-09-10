@@ -12,6 +12,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -169,7 +170,11 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
         if (errorDownloadMap[index] ?: 0 < 3) {
             waitDownloadSet.add(index)
         } else {
-            AppLog.addLog("${book.name}-${chapterTitle} ${error.localizedMessage}")
+            AppLog.addLog(
+                "download ${book.name}-${chapterTitle} error:${error.localizedMessage}",
+                error
+            )
+            error.printOnDebug()
         }
     }
 

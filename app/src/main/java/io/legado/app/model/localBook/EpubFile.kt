@@ -6,10 +6,7 @@ import android.text.TextUtils
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.HtmlFormatter
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFiles
+import io.legado.app.utils.*
 import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.epub.EpubReader
 import org.jsoup.Jsoup
@@ -97,7 +94,7 @@ class EpubFile(var book: Book) {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
     }
 
@@ -111,7 +108,7 @@ class EpubFile(var book: Book) {
 
 
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return null
     }
@@ -208,7 +205,7 @@ class EpubFile(var book: Book) {
                         title = elements[0].text()
                     }
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
             }
             val chapter = BookChapter()

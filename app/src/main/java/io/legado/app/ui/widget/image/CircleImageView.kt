@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.sp
 import kotlin.math.min
 import kotlin.math.pow
@@ -316,7 +317,7 @@ class CircleImageView @JvmOverloads constructor(
             drawable.draw(canvas)
             bitmap
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             null
         }
 

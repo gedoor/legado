@@ -86,7 +86,7 @@ class WebService : BaseService() {
                 upNotification()
             } catch (e: IOException) {
                 toastOnUi(e.localizedMessage ?: "")
-                e.printStackTrace()
+                e.printOnDebug()
                 stopSelf()
             }
         } else {

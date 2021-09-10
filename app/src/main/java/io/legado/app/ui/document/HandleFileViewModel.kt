@@ -8,6 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.writeBytes
 import java.io.File
 
@@ -26,7 +27,7 @@ class HandleFileViewModel(application: Application) : BaseViewModel(application)
         }.onSuccess {
             success.invoke(it)
         }.onError {
-            it.printStackTrace()
+            it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage)
         }
     }
@@ -46,7 +47,7 @@ class HandleFileViewModel(application: Application) : BaseViewModel(application)
                 Uri.fromFile(newFile)
             }
         }.onError {
-            it.printStackTrace()
+            it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage)
         }.onSuccess {
             success.invoke(it)

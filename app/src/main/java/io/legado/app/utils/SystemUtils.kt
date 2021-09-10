@@ -21,7 +21,7 @@ object SystemUtils {
                 Settings.System.SCREEN_OFF_TIMEOUT
             )
         }.onFailure {
-            it.printStackTrace()
+            it.printOnDebug()
         }
 
         return screenOffTime

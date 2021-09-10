@@ -1,6 +1,7 @@
 package io.legado.app.help.coroutine
 
 import io.legado.app.BuildConfig
+import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -143,7 +144,7 @@ class Coroutine<T>(
                 }
             } catch (e: Throwable) {
                 if (BuildConfig.DEBUG) {
-                    e.printStackTrace()
+                    e.printOnDebug()
                 }
                 val consume: Boolean = errorReturn?.value?.let { value ->
                     if (isActive) {

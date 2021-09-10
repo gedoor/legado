@@ -216,7 +216,7 @@ object BookController {
             if (book.isUmd()) UmdFile.upBookInfo(book)
             appDb.bookDao.insert(book)
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             return returnData.setErrorMsg(
                 e.localizedMessage ?: appCtx.getString(R.string.unknown_error)
             )

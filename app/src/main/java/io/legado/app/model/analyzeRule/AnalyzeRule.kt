@@ -653,7 +653,7 @@ class AnalyzeRule(
                 val analyzeUrl = AnalyzeUrl(urlStr, book = book, source = source)
                 analyzeUrl.getStrResponse().body
             }.onFailure {
-                it.printStackTrace()
+                it.printOnDebug()
             }.getOrElse {
                 it.msg
             }

@@ -13,6 +13,7 @@ import io.legado.app.help.LocalConfig
 import io.legado.app.model.CacheBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
@@ -89,7 +90,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         )
                         CacheBook.start(context, book.bookUrl, book.durChapterIndex, endIndex)
                     }.onError(upTocPool) {
-                        it.printStackTrace()
+                        it.printOnDebug()
                     }.onFinally(upTocPool) {
                         synchronized(this) {
                             bookMap.remove(bookEntry.key)

@@ -15,6 +15,7 @@ import android.view.Gravity
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import io.legado.app.R
+import io.legado.app.utils.printOnDebug
 
 class SearchView @JvmOverloads constructor(
     context: Context,
@@ -42,7 +43,7 @@ class SearchView @JvmOverloads constructor(
             textView!!.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             textView!!.gravity = Gravity.CENTER_VERTICAL
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
     }
 

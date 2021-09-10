@@ -1,6 +1,7 @@
 package io.legado.app.model.analyzeRule
 
 import androidx.annotation.Keep
+import io.legado.app.utils.printOnDebug
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Collector
@@ -254,7 +255,7 @@ class AnalyzeByJSoup(doc: Any) {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
 
         return textS

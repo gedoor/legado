@@ -56,7 +56,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             }
         }.onError {
             finally(it.localizedMessage ?: "ERROR")
-            it.printStackTrace()
+            it.printOnDebug()
         }.onSuccess {
             finally(context.getString(R.string.success))
         }
@@ -187,7 +187,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             }
         }.onError {
             finally(it.localizedMessage ?: "ERROR")
-            it.printStackTrace()
+            it.printOnDebug()
         }.onSuccess {
             finally(context.getString(R.string.success))
         }

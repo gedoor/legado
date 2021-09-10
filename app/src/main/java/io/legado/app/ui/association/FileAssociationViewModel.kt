@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.readText
 import java.io.File
 
@@ -53,7 +54,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                 onLineImportLive.postValue(uri)
             }
         }.onError {
-            it.printStackTrace()
+            it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage)
         }
     }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import me.ag2s.epublib.BuildConfig;
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Guide;
@@ -51,7 +52,9 @@ public class PackageDocumentWriter extends PackageDocumentBase {
             serializer.endDocument();
             serializer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            if (BuildConfig.DEBUG) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -50,7 +50,7 @@ object FileUtils {
                 file.createNewFile()
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return file
     }
@@ -113,7 +113,7 @@ object FileUtils {
         try {
             sdCardDirectory = File(sdCardDirectory).canonicalPath
         } catch (ioe: IOException) {
-            ioe.printStackTrace()
+            ioe.printOnDebug()
         }
         return sdCardDirectory
     }

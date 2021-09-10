@@ -110,6 +110,6 @@ fun PopupMenu.show(x: Int, y: Int) {
         field.isAccessible = true
         (field.get(this) as MenuPopupHelper).show(x, y)
     }.onFailure {
-        it.printStackTrace()
+        it.printOnDebug()
     }
 }

@@ -41,7 +41,7 @@ fun AppCompatActivity.readUri(uri: Uri?, success: (name: String, bytes: ByteArra
                 .request()
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        e.printOnDebug()
         toastOnUi(e.localizedMessage ?: "read uri error")
     }
 }
@@ -75,7 +75,7 @@ fun Fragment.readUri(uri: Uri?, success: (name: String, bytes: ByteArray) -> Uni
                 .request()
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        e.printOnDebug()
         toastOnUi(e.localizedMessage ?: "read uri error")
     }
 }

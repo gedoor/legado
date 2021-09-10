@@ -7,6 +7,7 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import androidx.annotation.RequiresApi
 import io.legado.app.constant.IntentAction
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.startService
 
 /**
@@ -44,7 +45,7 @@ class WebTileService : TileService() {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return super.onStartCommand(intent, flags, startId)
     }

@@ -45,7 +45,7 @@ interface JsExtensions {
                 val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
                 analyzeUrl.getStrResponse().body
             }.onFailure {
-                it.printStackTrace()
+                it.printOnDebug()
             }.getOrElse {
                 it.msg
             }
@@ -80,7 +80,7 @@ interface JsExtensions {
             kotlin.runCatching {
                 analyzeUrl.getStrResponse()
             }.onFailure {
-                it.printStackTrace()
+                it.printOnDebug()
             }.getOrElse {
                 StrResponse(analyzeUrl.url, it.localizedMessage)
             }
@@ -94,7 +94,7 @@ interface JsExtensions {
             kotlin.runCatching {
                 analyzeUrl.getStrResponse()
             }.onFailure {
-                it.printStackTrace()
+                it.printOnDebug()
             }.getOrElse {
                 StrResponse(analyzeUrl.url, it.localizedMessage)
             }
@@ -480,7 +480,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: java.lang.Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             log(e.localizedMessage ?: "aesDecodeToByteArrayERROR")
             null
         }
@@ -519,7 +519,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             log(e.localizedMessage ?: "aesDecodeToByteArrayERROR")
             null
         }
@@ -557,7 +557,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             log(e.localizedMessage ?: "aesEncodeToByteArrayERROR")
             null
         }
@@ -594,7 +594,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             log(e.localizedMessage ?: "aesEncodeToBase64ByteArrayERROR")
             null
         }

@@ -157,7 +157,7 @@ val Context.sysScreenOffTime: Int
             screenOffTime =
                 Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return screenOffTime
     }
@@ -299,7 +299,7 @@ val Context.channel: String
             val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
             return appInfo.metaData.getString("channel") ?: ""
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return ""
     }

@@ -129,7 +129,7 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                             dismiss()
                         }
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        e.printOnDebug()
                         toastOnUi("error:${e.localizedMessage}")
                     }
                 }

@@ -111,7 +111,7 @@ object RealPathUtil {
                 return cursor.getString(index)
             }
         } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
+            e.printOnDebug()
             val file = File(context.cacheDir, "tmp")
             val filePath = file.absolutePath
             var input: FileInputStream? = null
@@ -130,7 +130,7 @@ object RealPathUtil {
                 }
                 return File(filePath).absolutePath
             } catch (ignored: IOException) {
-                ignored.printStackTrace()
+                ignored.printOnDebug()
             } finally {
                 input?.close()
                 output?.close()

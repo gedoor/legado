@@ -148,7 +148,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 playingIndex = nowSpeak
                 postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.printOnDebug()
             }
         }
     }

@@ -3,6 +3,7 @@ package io.legado.app.lib.webdav
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
+import io.legado.app.utils.printOnDebug
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -101,7 +102,7 @@ class WebDav(urlStr: String) {
                     method("PROPFIND", requestBody)
                 }.text()
             }.onFailure {
-                it.printStackTrace()
+                it.printOnDebug()
             }.getOrNull()
         }
         return null
@@ -133,7 +134,7 @@ class WebDav(urlStr: String) {
                         }
                         list.add(webDavFile)
                     } catch (e: MalformedURLException) {
-                        e.printStackTrace()
+                        e.printOnDebug()
                     }
                 }
             }

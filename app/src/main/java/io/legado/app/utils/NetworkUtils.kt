@@ -114,7 +114,7 @@ object NetworkUtils {
             relativeUrl = parseUrl.toString()
             return relativeUrl
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return relativeUrl
     }
@@ -130,7 +130,7 @@ object NetworkUtils {
             relativeUrl = parseUrl.toString()
             return relativeUrl
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return relativeUrl
     }
@@ -158,7 +158,7 @@ object NetworkUtils {
         try {
             enumeration = NetworkInterface.getNetworkInterfaces()
         } catch (e: SocketException) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
 
         if (enumeration != null) {

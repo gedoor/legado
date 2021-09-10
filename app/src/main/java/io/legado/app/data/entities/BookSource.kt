@@ -91,7 +91,7 @@ data class BookSource(
                     }
                 }
             }.onFailure {
-                it.printStackTrace()
+                it.printOnDebug()
                 kinds.add(ExploreKind(it.localizedMessage ?: ""))
             }
         }

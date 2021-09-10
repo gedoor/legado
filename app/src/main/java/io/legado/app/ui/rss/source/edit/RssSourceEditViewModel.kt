@@ -38,7 +38,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             success()
         }.onError {
             context.toastOnUi(it.localizedMessage)
-            it.printStackTrace()
+            it.printOnDebug()
         }
     }
 

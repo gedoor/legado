@@ -140,7 +140,7 @@ object BookSourceAnalyzer {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
         return source
     }

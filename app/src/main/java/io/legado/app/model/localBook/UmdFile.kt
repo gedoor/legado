@@ -4,10 +4,7 @@ import android.net.Uri
 import android.util.Log
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFiles
-import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.*
 import me.ag2s.umdlib.domain.UmdBook
 import me.ag2s.umdlib.umd.UmdReader
 import splitties.init.appCtx
@@ -82,7 +79,7 @@ class UmdFile(var book: Book) {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
         }
     }
 

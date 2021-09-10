@@ -10,6 +10,7 @@ import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.printOnDebug
 import javax.script.SimpleBindings
 
 /**
@@ -95,7 +96,7 @@ interface BaseSource : JsExtensions {
                 ?: return null
             return String(decodeBytes)
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             return null
         }
     }
@@ -115,7 +116,7 @@ interface BaseSource : JsExtensions {
             CacheManager.put("userInfo_${getStoreUrl()}", encodeStr)
             true
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printOnDebug()
             false
         }
     }
