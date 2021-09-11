@@ -18,6 +18,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.startActivity
 
 
 /**
@@ -66,34 +67,36 @@ class MediaButtonReceiver : BroadcastReceiver() {
 
         fun readAloud(context: Context, isMediaKey: Boolean = true) {
             when {
-                BaseReadAloudService.isRun -> if (BaseReadAloudService.isPlay()) {
-                    ReadAloud.pause(context)
-                    AudioPlay.pause(context)
-                } else {
-                    ReadAloud.resume(context)
-                    AudioPlay.resume(context)
+                BaseReadAloudService.isRun -> {
+                    if (BaseReadAloudService.isPlay()) {
+                        ReadAloud.pause(context)
+                        AudioPlay.pause(context)
+                    } else {
+                        ReadAloud.resume(context)
+                        AudioPlay.resume(context)
+                    }
                 }
-                AudioPlayService.isRun -> if (AudioPlayService.pause) {
-                    AudioPlay.resume(context)
-                } else {
-                    AudioPlay.pause(context)
+                AudioPlayService.isRun -> {
+                    if (AudioPlayService.pause) {
+                        AudioPlay.resume(context)
+                    } else {
+                        AudioPlay.pause(context)
+                    }
                 }
                 LifecycleHelp.isExistActivity(ReadBookActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
                 LifecycleHelp.isExistActivity(AudioPlayActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
-                else -> if (AppConfig.mediaButtonOnExit || !isMediaKey) {
+                else -> if (AppConfig.mediaButtonOnExit || !isMediaKey || LifecycleHelp.activitySize() > 0) {
                     appDb.bookDao.lastReadBook?.let {
                         if (!LifecycleHelp.isExistActivity(MainActivity::class.java)) {
-                            Intent(context, MainActivity::class.java).let {
-                                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                context.startActivity(it)
+                            context.startActivity<MainActivity> {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             }
                         }
-                        Intent(context, ReadBookActivity::class.java).let {
-                            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            it.putExtra("readAloud", true)
-                            context.startActivity(it)
+                        context.startActivity<ReadBookActivity> {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            putExtra("readAloud", true)
                         }
                     }
                 }
