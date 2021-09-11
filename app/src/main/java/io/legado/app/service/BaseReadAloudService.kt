@@ -81,9 +81,9 @@ abstract class BaseReadAloudService : BaseService(),
         intent?.action?.let { action ->
             when (action) {
                 IntentAction.play -> {
+                    textChapter = ReadBook.curTextChapter
                     pageIndex = ReadBook.durPageIndex()
                     newReadAloud(
-                        ReadBook.curTextChapter,
                         intent.getBooleanExtra("play", true)
                     )
                 }
@@ -101,8 +101,8 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     @CallSuper
-    open fun newReadAloud(textChapter: TextChapter?, play: Boolean) {
-        textChapter?.let {
+    open fun newReadAloud(play: Boolean) {
+        textChapter?.let { textChapter ->
             nowSpeak = 0
             readAloudNumber = textChapter.getReadLength(pageIndex)
             contentList.clear()
