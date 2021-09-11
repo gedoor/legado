@@ -248,7 +248,7 @@ class ReadMenu @JvmOverloads constructor(
                 binding.vwMenuBg.setOnClickListener { runMenuOut() }
                 binding.vwNavigationBar.run {
                     layoutParams = layoutParams.apply {
-                        height = activity!!.navigationBarHeight
+                        height = activity?.navigationBarHeight ?: 0
                     }
                 }
                 if (!LocalConfig.readMenuHelpVersionIsLast) {
