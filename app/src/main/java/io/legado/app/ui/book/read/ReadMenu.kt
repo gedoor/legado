@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.zackratos.ultimatebarx.ultimatebarx.navigationBarHeight
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
@@ -246,8 +247,10 @@ class ReadMenu @JvmOverloads constructor(
 
             override fun onAnimationEnd(animation: Animation) {
                 binding.vwMenuBg.setOnClickListener { runMenuOut() }
-                binding.vwNavigationBar.layoutParams = binding.vwNavigationBar.layoutParams.apply {
-                    height = activity!!.navigationBarHeight
+                binding.vwNavigationBar.run {
+                    layoutParams = layoutParams.apply {
+                        height = navigationBarHeight
+                    }
                 }
                 if (!LocalConfig.readMenuHelpVersionIsLast) {
                     callBack.showReadMenuHelp()
