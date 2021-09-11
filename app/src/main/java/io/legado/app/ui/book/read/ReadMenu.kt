@@ -246,8 +246,10 @@ class ReadMenu @JvmOverloads constructor(
 
             override fun onAnimationEnd(animation: Animation) {
                 binding.vwMenuBg.setOnClickListener { runMenuOut() }
-                binding.vwNavigationBar.layoutParams = binding.vwNavigationBar.layoutParams.apply {
-                    height = activity!!.navigationBarHeight
+                binding.vwNavigationBar.run {
+                    layoutParams = layoutParams.apply {
+                        height = activity!!.navigationBarHeight
+                    }
                 }
                 if (!LocalConfig.readMenuHelpVersionIsLast) {
                     callBack.showReadMenuHelp()
