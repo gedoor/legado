@@ -15,10 +15,8 @@ import io.legado.app.service.AudioPlayService
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.startActivity
 
 
 /**
@@ -87,16 +85,14 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     postEvent(EventBus.MEDIA_BUTTON, true)
                 LifecycleHelp.isExistActivity(AudioPlayActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
-                else -> if (AppConfig.mediaButtonOnExit || !isMediaKey || LifecycleHelp.activitySize() > 0) {
-                    appDb.bookDao.lastReadBook?.let {
-                        if (!LifecycleHelp.isExistActivity(MainActivity::class.java)) {
-                            context.startActivity<MainActivity> {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                        }
-                        context.startActivity<ReadBookActivity> {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            putExtra("readAloud", true)
+                else -> if (AppConfig.mediaButtonOnExit || LifecycleHelp.activitySize() > 0 || !isMediaKey) {
+                    if (ReadBook.book != null) {
+                        ReadBook.readAloud()
+                    } else {
+                        appDb.bookDao.lastReadBook?.let {
+                            ReadBook.resetData(it)
+                            ReadBook.curTextChapter ?: ReadBook.loadContent(false)
+                            ReadBook.readAloud()
                         }
                     }
                 }

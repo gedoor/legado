@@ -8,6 +8,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
@@ -45,10 +46,10 @@ class HttpReadAloudService : BaseReadAloudService(),
         player.release()
     }
 
-    override fun newReadAloud(dataKey: String?, play: Boolean) {
+    override fun newReadAloud(textChapter: TextChapter?, play: Boolean) {
         player.reset()
         playingIndex = -1
-        super.newReadAloud(dataKey, play)
+        super.newReadAloud(textChapter, play)
     }
 
     override fun play() {

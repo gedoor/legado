@@ -16,7 +16,6 @@ import androidx.media.AudioFocusRequestCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.*
-import io.legado.app.help.IntentDataHelp
 import io.legado.app.help.MediaHelp
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
@@ -46,8 +45,6 @@ abstract class BaseReadAloudService : BaseService(),
     private var mFocusRequest: AudioFocusRequestCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
     private lateinit var mediaSessionCompat: MediaSessionCompat
-    private var title: String = ""
-    private var subtitle: String = ""
     internal val contentList = arrayListOf<String>()
     internal var nowSpeak: Int = 0
     internal var readAloudNumber: Int = 0
@@ -84,11 +81,9 @@ abstract class BaseReadAloudService : BaseService(),
         intent?.action?.let { action ->
             when (action) {
                 IntentAction.play -> {
-                    title = intent.getStringExtra("title") ?: ""
-                    subtitle = intent.getStringExtra("subtitle") ?: ""
-                    pageIndex = intent.getIntExtra("pageIndex", 0)
+                    pageIndex = ReadBook.durPageIndex()
                     newReadAloud(
-                        intent.getStringExtra("dataKey"),
+                        ReadBook.curTextChapter,
                         intent.getBooleanExtra("play", true)
                     )
                 }
@@ -106,29 +101,26 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     @CallSuper
-    open fun newReadAloud(dataKey: String?, play: Boolean) {
-        dataKey?.let {
-            textChapter = IntentDataHelp.getData<TextChapter>(dataKey)
-            textChapter?.let { textChapter ->
-                nowSpeak = 0
-                readAloudNumber = textChapter.getReadLength(pageIndex)
-                contentList.clear()
-                if (getPrefBoolean(PreferKey.readAloudByPage)) {
-                    for (index in pageIndex..textChapter.lastIndex) {
-                        textChapter.page(index)?.text?.split("\n")?.let {
-                            contentList.addAll(it)
-                        }
-                    }
-                } else {
-                    textChapter.getUnRead(pageIndex).split("\n").forEach {
-                        if (it.isNotEmpty()) {
-                            contentList.add(it)
-                        }
+    open fun newReadAloud(textChapter: TextChapter?, play: Boolean) {
+        textChapter?.let {
+            nowSpeak = 0
+            readAloudNumber = textChapter.getReadLength(pageIndex)
+            contentList.clear()
+            if (getPrefBoolean(PreferKey.readAloudByPage)) {
+                for (index in pageIndex..textChapter.lastIndex) {
+                    textChapter.page(index)?.text?.split("\n")?.let {
+                        contentList.addAll(it)
                     }
                 }
-                if (play) play()
-            } ?: stopSelf()
-        } ?: stopSelf()
+            } else {
+                textChapter.getUnRead(pageIndex).split("\n").forEach {
+                    if (it.isNotEmpty()) {
+                        contentList.add(it)
+                    }
+                }
+            }
+            if (play) play()
+        }
     }
 
     open fun play() {
@@ -307,9 +299,9 @@ abstract class BaseReadAloudService : BaseService(),
             )
             else -> getString(R.string.read_aloud_t)
         }
-        nTitle += ": $title"
-        var nSubtitle = subtitle
-        if (subtitle.isEmpty())
+        nTitle += ": ${ReadBook.book?.name}"
+        var nSubtitle = ReadBook.curTextChapter?.title
+        if (nSubtitle.isNullOrBlank())
             nSubtitle = getString(R.string.read_aloud_s)
         val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_volume_up)

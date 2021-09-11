@@ -5,7 +5,10 @@ import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
-import io.legado.app.help.*
+import io.legado.app.help.AppConfig
+import io.legado.app.help.BookHelp
+import io.legado.app.help.ContentProcessor
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.webBook.WebBook
@@ -46,6 +49,7 @@ object ReadBook : CoroutineScope by MainScope() {
         ReadBook.book = book
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
+        chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
         isLocalBook = book.origin == BookType.local
@@ -200,13 +204,8 @@ object ReadBook : CoroutineScope by MainScope() {
      * 朗读
      */
     fun readAloud(play: Boolean = true) {
-        val book = book
-        val textChapter = curTextChapter
-        if (book != null && textChapter != null) {
-            val key = IntentDataHelp.putData(textChapter)
-            ReadAloud.play(
-                appCtx, book.name, textChapter.title, durPageIndex(), key, play
-            )
+        book?.let {
+            ReadAloud.play(appCtx, play)
         }
     }
 

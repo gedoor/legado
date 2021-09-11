@@ -33,18 +33,10 @@ object ReadAloud {
 
     fun play(
         context: Context,
-        title: String,
-        subtitle: String,
-        pageIndex: Int,
-        dataKey: String,
         play: Boolean = true
     ) {
         val intent = Intent(context, aloudClass)
         intent.action = IntentAction.play
-        intent.putExtra("title", title)
-        intent.putExtra("subtitle", subtitle)
-        intent.putExtra("pageIndex", pageIndex)
-        intent.putExtra("dataKey", dataKey)
         intent.putExtra("play", play)
         context.startService(intent)
     }

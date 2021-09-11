@@ -51,12 +51,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
             ReadBook.resetData(book)
-            isInitFinish = true
             if (!book.isLocalBook() && ReadBook.bookSource == null) {
                 autoChangeSource(book.name, book.author)
                 return
             }
-            ReadBook.chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
+            isInitFinish = true
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {
                     loadBookInfo(book)
@@ -194,11 +193,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 oldTocSize = it.totalChapterNum
                 it.changeTo(newBook)
             }
-            ReadBook.book = newBook
-            ReadBook.bookSource = appDb.bookSourceDao.getBookSource(newBook.origin)
-            ReadBook.prevTextChapter = null
-            ReadBook.curTextChapter = null
-            ReadBook.nextTextChapter = null
+            ReadBook.resetData(newBook)
             withContext(Main) {
                 ReadBook.callBack?.upContent()
             }
