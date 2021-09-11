@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
-import com.zackratos.ultimatebarx.ultimatebarx.navigationBarHeight
+import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppConst.timeFormat
@@ -87,7 +87,7 @@ class PageView(context: Context) : FrameLayout(context) {
             pageNvBar.layoutParams = pageNvBar.layoutParams.apply {
                 height =
                     if (it.hideNavigationBar) 0
-                    else navigationBarHeight
+                    else App.navigationBarHeight
             }
         }
         contentTextView.upVisibleRect()

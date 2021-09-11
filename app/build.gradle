@@ -150,9 +150,6 @@ dependencies {
     implementation('com.google.code.gson:gson:2.8.8')
     implementation('androidx.webkit:webkit:1.4.0')
 
-    //状态栏和导航栏
-    implementation('com.gitee.zackratos:UltimateBarX:0.7.1')
-
     //media
     implementation("androidx.media:media:1.4.1")
     def exoplayer_version = '2.15.0'
