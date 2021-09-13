@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.media.MediaPlayer
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -71,6 +72,16 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun playStop() {
         player.stop()
+    }
+
+    private fun playNext() {
+        readAloudNumber += contentList[nowSpeak].length + 1
+        if (nowSpeak < contentList.lastIndex) {
+            nowSpeak++
+            play()
+        } else {
+            nextChapter()
+        }
     }
 
     private fun downloadAudio() {
@@ -234,32 +245,28 @@ class HttpReadAloudService : BaseReadAloudService(),
         postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
     }
 
+    private var errorNo = 0
+
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         LogUtils.d("mp", "what:$what extra:$extra")
         if (what == -38 && extra == 0) {
             return true
         }
-        launch {
-            delay(100)
-            readAloudNumber += contentList[nowSpeak].length + 1
-            if (nowSpeak < contentList.lastIndex) {
-                nowSpeak++
-                play()
-            } else {
-                nextChapter()
-            }
+        AppLog.addLog("朗读错误,($what, $extra)")
+        errorNo++
+        if (errorNo >= 3) {
+            toastOnUi("朗读连续3次错误, 最后一次错误代码($what, $extra)")
         }
-        return true
+        launch {
+            delay(500)
+            playNext()
+        }
+        return false
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
-        readAloudNumber += contentList[nowSpeak].length + 1
-        if (nowSpeak < contentList.lastIndex) {
-            nowSpeak++
-            play()
-        } else {
-            nextChapter()
-        }
+        errorNo = 0
+        playNext()
     }
 
     override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {
