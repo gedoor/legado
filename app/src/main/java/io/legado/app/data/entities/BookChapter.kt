@@ -30,9 +30,11 @@ import kotlinx.parcelize.Parcelize
 data class BookChapter(
     var url: String = "",               // 章节地址
     var title: String = "",             // 章节标题
-    var baseUrl: String = "",           //用来拼接相对url
+    var baseUrl: String = "",           // 用来拼接相对url
     var bookUrl: String = "",           // 书籍地址
     var index: Int = 0,                 // 章节序号
+    var isVip: Boolean = false,         // 是否VIP
+    var isPay: Boolean = false,         // 是否已购买
     var resourceUrl: String? = null,    // 音频真实URL
     var tag: String? = null,            //
     var start: Long? = null,            // 章节起始位置

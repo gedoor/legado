@@ -166,8 +166,10 @@ object BookChapterList {
             val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName)
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl)
             val vipRule = analyzeRule.splitSourceRule(tocRule.isVip)
+            val payRule = analyzeRule.splitSourceRule(tocRule.isPay)
             val update = analyzeRule.splitSourceRule(tocRule.updateTime)
             var isVip: String?
+            var isPay: String?
             for (item in elements) {
                 scope.ensureActive()
                 analyzeRule.setContent(item)
@@ -177,12 +179,16 @@ object BookChapterList {
                 bookChapter.url = analyzeRule.getString(urlRule)
                 bookChapter.tag = analyzeRule.getString(update)
                 isVip = analyzeRule.getString(vipRule)
+                isPay = analyzeRule.getString(payRule)
                 if (bookChapter.url.isEmpty()) {
                     bookChapter.url = baseUrl
                 }
                 if (bookChapter.title.isNotEmpty()) {
                     if (isVip.isNotEmpty() && isVip != "null" && isVip != "false" && isVip != "0") {
-                        bookChapter.title = "\uD83D\uDD12" + bookChapter.title
+                        bookChapter.isVip = true
+                    }
+                    if (isPay.isNotEmpty() && isPay != "null" && isPay != "false" && isPay != "0") {
+                        bookChapter.isPay = true
                     }
                     chapterList.add(bookChapter)
                 }
