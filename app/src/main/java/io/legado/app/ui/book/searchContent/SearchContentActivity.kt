@@ -183,7 +183,7 @@ class SearchContentActivity :
                         replaceContents =
                             viewModel.contentProcessor!!.getContent(
                                 book,
-                                chapter.title,
+                                chapter,
                                 bookContent,
                                 chineseConvert = false,
                                 reSegment = false

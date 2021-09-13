@@ -3,6 +3,7 @@ package io.legado.app.help
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
@@ -53,22 +54,51 @@ class ContentProcessor private constructor(
 
     fun getContent(
         book: Book,
-        title: String, //已经经过简繁转换
+        chapter: BookChapter, //已经经过简繁转换
         content: String,
         includeTitle: Boolean = true,
         useReplace: Boolean = true,
         chineseConvert: Boolean = true,
         reSegment: Boolean = true
     ): List<String> {
-        var content1 = content
+        //去除无效内容
+        var mContent = content.trimStart {
+            it.code <= 0x20 || it == '　' || it == ',' || it == ',' || it == '，'
+        }
+        //去除书名
+        if (mContent.startsWith(book.name)) {
+            mContent = mContent.substring(book.name.length)
+        }
+        //去除带书名号的书名
+        val cName = "《${book.name}》"
+        if (mContent.startsWith(cName)) {
+            mContent = mContent.substring(cName.length)
+        }
+        //去除无效内容
+        mContent = mContent.trimStart {
+            it.code <= 0x20 || it == '　' || it == ',' || it == ',' || it == '，'
+        }
+        //去除标题
+        if (mContent.startsWith(chapter.title)) {
+            mContent = mContent.substring(chapter.title.length)
+        }
+        //去除无效内容
+        mContent = mContent.trimStart {
+            it.code <= 0x20 || it == '　' || it == ',' || it == ',' || it == '，'
+        }
+        if (includeTitle) {
+            //重新添加标题
+            mContent = chapter.getDisplayTitle() + "\n" + mContent
+        }
         if (useReplace && book.getUseReplaceRule()) {
+            //替换
             getReplaceRules().forEach { item ->
                 if (item.pattern.isNotEmpty()) {
                     try {
-                        content1 = if (item.isRegex) {
-                            content1.replace(item.pattern.toRegex(), item.replacement)
+                        mContent = if (item.isRegex) {
+                            mContent.replace(item.pattern.toRegex(), item.replacement)
                         } else {
-                            content1.replace(item.pattern, item.replacement)
+                            mContent.replace(item.pattern, item.replacement)
                         }
                     } catch (e: Exception) {
                         appCtx.toastOnUi("${item.name}替换出错")
@@ -77,29 +107,26 @@ class ContentProcessor private constructor(
             }
         }
         if (reSegment && book.getReSegment()) {
-            content1 = ContentHelp.reSegment(content1, title)
+            //重新分段
+            mContent = ContentHelp.reSegment(mContent, chapter.title)
         }
         if (chineseConvert) {
+            //简繁转换
             try {
                 when (AppConfig.chineseConverterType) {
-                    1 -> content1 = ChineseUtils.t2s(content1)
-                    2 -> content1 = ChineseUtils.s2t(content1)
+                    1 -> mContent = ChineseUtils.t2s(mContent)
+                    2 -> mContent = ChineseUtils.s2t(mContent)
                 }
             } catch (e: Exception) {
                 appCtx.toastOnUi("简繁转换出错")
             }
         }
         val contents = arrayListOf<String>()
-        content1.split("\n").forEach { str ->
-            val paragraph = str.replace("^[\\n\\r]+".toRegex(), "").trim()
-            if (contents.isEmpty()) {
-                if (includeTitle) {
-                    contents.add(title)
-                }
-                if (paragraph != title && paragraph.isNotEmpty()) {
-                    contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
-                }
-            } else if (paragraph.isNotEmpty()) {
+        mContent.split("\n").forEach { str ->
+            val paragraph = str.trim {
+                it.code <= 0x20 || it == '　'
+            }
+            if (contents.isNotEmpty()) {
                 contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
             }
         }

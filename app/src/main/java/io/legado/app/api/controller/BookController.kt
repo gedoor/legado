@@ -140,7 +140,7 @@ object BookController {
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             saveBookReadIndex(book, index)
             return returnData.setData(
-                contentProcessor.getContent(book, chapter.title, content)
+                contentProcessor.getContent(book, chapter, content)
                     .joinToString("\n")
             )
         }
@@ -153,7 +153,7 @@ object BookController {
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             saveBookReadIndex(book, index)
             returnData.setData(
-                contentProcessor.getContent(book, chapter.title, content).joinToString("\n")
+                contentProcessor.getContent(book, chapter, content).joinToString("\n")
             )
         } catch (e: Exception) {
             returnData.setErrorMsg(e.msg)

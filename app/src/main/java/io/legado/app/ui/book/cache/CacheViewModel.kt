@@ -142,7 +142,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 val content1 = contentProcessor
                     .getContent(
                         book,
-                        chapter.title.replace("\\r?\\n".toRegex(), " "),
+                        chapter,
                         content ?: "null",
                         includeTitle = !AppConfig.exportNoChapterName,
                         useReplace = useReplace,
@@ -396,7 +396,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 content1 = contentProcessor
                     .getContent(
                         book,
-                        chapter.title,
+                        chapter,
                         content1,
                         includeTitle = false,
                         useReplace = useReplace,

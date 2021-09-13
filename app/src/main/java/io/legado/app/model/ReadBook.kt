@@ -343,7 +343,7 @@ object ReadBook : CoroutineScope by MainScope() {
                     else -> chapter.title
                 }
                 val contents = ContentProcessor.get(book.name, book.origin)
-                    .getContent(book, chapter.title, content)
+                    .getContent(book, chapter, content)
                 val textChapter = ChapterProvider
                     .getTextChapter(book, chapter, contents, chapterSize)
                 when (val offset = chapter.index - durChapterIndex) {
