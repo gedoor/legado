@@ -126,7 +126,7 @@ class ContentProcessor private constructor(
             val paragraph = str.trim {
                 it.code <= 0x20 || it == '　'
             }
-            if (contents.isNotEmpty()) {
+            if (paragraph.isNotEmpty()) {
                 contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
             }
         }
