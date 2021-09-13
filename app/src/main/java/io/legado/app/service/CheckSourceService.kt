@@ -111,7 +111,13 @@ class CheckSourceService : BaseService() {
     fun check(source: BookSource) {
         execute(context = searchCoroutine) {
             Debug.startChecking(source)
-            var books = WebBook.searchBookAwait(this, source, CheckSource.keyword)
+            var searchWord = CheckSource.keyword
+            source.ruleSearch?.checkKeyWord?.let {
+                if (it.isNotBlank()) {
+                    searchWord = it
+                }
+            }
+            var books = WebBook.searchBookAwait(this, source, searchWord)
             if (books.isEmpty()) {
                 val exs = source.exploreKinds
                 var url: String? = null
