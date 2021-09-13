@@ -212,6 +212,7 @@ class BookSourceEditActivity :
         searchEntities.clear()
         searchEntities.apply {
             add(EditEntity("searchUrl", source?.searchUrl, R.string.r_search_url))
+            add(EditEntity("checkKeyWord", sr?.checkKeyWord, R.string.check_key_word))
             add(EditEntity("bookList", sr?.bookList, R.string.r_book_list))
             add(EditEntity("name", sr?.name, R.string.r_book_name))
             add(EditEntity("author", sr?.author, R.string.r_author))
@@ -221,6 +222,21 @@ class BookSourceEditActivity :
             add(EditEntity("intro", sr?.intro, R.string.rule_book_intro))
             add(EditEntity("coverUrl", sr?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("bookUrl", sr?.bookUrl, R.string.r_book_url))
+        }
+        //发现
+        val er = source?.getExploreRule()
+        findEntities.clear()
+        findEntities.apply {
+            add(EditEntity("exploreUrl", source?.exploreUrl, R.string.r_find_url))
+            add(EditEntity("bookList", er?.bookList, R.string.r_book_list))
+            add(EditEntity("name", er?.name, R.string.r_book_name))
+            add(EditEntity("author", er?.author, R.string.r_author))
+            add(EditEntity("kind", er?.kind, R.string.rule_book_kind))
+            add(EditEntity("wordCount", er?.wordCount, R.string.rule_word_count))
+            add(EditEntity("lastChapter", er?.lastChapter, R.string.rule_last_chapter))
+            add(EditEntity("intro", er?.intro, R.string.rule_book_intro))
+            add(EditEntity("coverUrl", er?.coverUrl, R.string.rule_cover_url))
+            add(EditEntity("bookUrl", er?.bookUrl, R.string.r_book_url))
         }
         //详情页
         val ir = source?.getBookInfoRule()
@@ -258,21 +274,7 @@ class BookSourceEditActivity :
             add(EditEntity("sourceRegex", cr?.sourceRegex, R.string.rule_source_regex))
             add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.rule_replace_regex))
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
-        }
-        //发现
-        val er = source?.getExploreRule()
-        findEntities.clear()
-        findEntities.apply {
-            add(EditEntity("exploreUrl", source?.exploreUrl, R.string.r_find_url))
-            add(EditEntity("bookList", er?.bookList, R.string.r_book_list))
-            add(EditEntity("name", er?.name, R.string.r_book_name))
-            add(EditEntity("author", er?.author, R.string.r_author))
-            add(EditEntity("kind", er?.kind, R.string.rule_book_kind))
-            add(EditEntity("wordCount", er?.wordCount, R.string.rule_word_count))
-            add(EditEntity("lastChapter", er?.lastChapter, R.string.rule_last_chapter))
-            add(EditEntity("intro", er?.intro, R.string.rule_book_intro))
-            add(EditEntity("coverUrl", er?.coverUrl, R.string.rule_cover_url))
-            add(EditEntity("bookUrl", er?.bookUrl, R.string.r_book_url))
+            add(EditEntity("actions", cr?.actions, R.string.rule_actions))
         }
         binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         setEditEntities(0)
@@ -305,6 +307,7 @@ class BookSourceEditActivity :
         searchEntities.forEach {
             when (it.key) {
                 "searchUrl" -> source.searchUrl = it.value
+                "checkKeyWord" -> searchRule.checkKeyWord = it.value
                 "bookList" -> searchRule.bookList = it.value
                 "name" -> searchRule.name = it.value
                 "author" -> searchRule.author = it.value
@@ -365,6 +368,7 @@ class BookSourceEditActivity :
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value
                 "imageStyle" -> contentRule.imageStyle = it.value
+                "actions" -> contentRule.actions = it.value
             }
         }
         source.ruleSearch = searchRule

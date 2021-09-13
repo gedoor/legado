@@ -26,11 +26,11 @@ data class BookSource(
     var customOrder: Int = 0,                       // 手动排序编号
     var enabled: Boolean = true,                    // 是否启用
     var enabledExplore: Boolean = true,             // 启用发现
-    override var concurrentRate: String? = null,    //并发率
+    override var concurrentRate: String? = null,    // 并发率
     override var header: String? = null,            // 请求头
     override var loginUrl: String? = null,          // 登录地址
-    override var loginUi: List<RowUi>? = null,      //登录UI
-    var loginCheckJs: String? = null,               //登录检测js
+    override var loginUi: List<RowUi>? = null,      // 登录UI
+    var loginCheckJs: String? = null,               // 登录检测js
     var bookSourceComment: String? = null,          // 注释
     var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
     var respondTime: Long = 180000L,                // 响应时间，用于排序

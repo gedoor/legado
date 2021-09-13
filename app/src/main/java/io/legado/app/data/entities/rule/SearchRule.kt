@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class SearchRule(
+    var checkKeyWord: String? = null,               // 校验关键字
     override var bookList: String? = null,
     override var name: String? = null,
     override var author: String? = null,
