@@ -438,6 +438,8 @@
     <string name="r_content">內容規則(ruleContent)</string>
     <string name="r_style">樣式(style)</string>
     <string name="r_link">連結規則(ruleLink)</string>
+    <string name="check_key_word">校验关键字(checkKeyWord)</string>
+    <string name="rule_actions">操作(actions)</string>
     <!-- source end-->
 
     <!--error string start-->
@@ -873,7 +875,5 @@
     <string name="copy_play_url">複製播放Url</string>
     <string name="set_source_variable">設定源變數</string>
     <string name="set_book_variable">設定書籍變數</string>
-    <string name="check_key_word">校验关键字</string>
-    <string name="rule_actions">操作(actions)</string>
 
 </resources>
