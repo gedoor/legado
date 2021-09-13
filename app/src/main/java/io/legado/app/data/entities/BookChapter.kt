@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
+import io.legado.app.R
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.GSON
@@ -13,6 +14,7 @@ import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import splitties.init.appCtx
 
 @Parcelize
 @Entity(
@@ -69,11 +71,21 @@ data class BookChapter(
         return false
     }
 
-    fun getAbsoluteURL():String{
+    fun getDisplayTitle(): String {
+        return when {
+            !isVip -> title
+            isPay -> appCtx.getString(R.string.payed_title, title)
+            else -> appCtx.getString(R.string.vip_title, title)
+        }
+    }
+
+    fun getAbsoluteURL(): String {
         val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
-        val urlBefore = if(urlMatcher.find())url.substring(0,urlMatcher.start()) else url
-        val urlAbsoluteBefore = NetworkUtils.getAbsoluteURL(baseUrl,urlBefore)
-        return if(urlBefore.length == url.length) urlAbsoluteBefore else urlAbsoluteBefore + ',' + url.substring(urlMatcher.end())
+        val urlBefore = if (urlMatcher.find()) url.substring(0, urlMatcher.start()) else url
+        val urlAbsoluteBefore = NetworkUtils.getAbsoluteURL(baseUrl, urlBefore)
+        return if (urlBefore.length == url.length) urlAbsoluteBefore else urlAbsoluteBefore + ',' + url.substring(
+            urlMatcher.end()
+        )
     }
 
     fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))

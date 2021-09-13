@@ -36,7 +36,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 } else {
                     tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                tvChapterName.text = item.title
+                tvChapterName.text = item.getDisplayTitle()
                 if (!item.tag.isNullOrEmpty()) {
                     tvTag.text = item.tag
                     tvTag.visible()
