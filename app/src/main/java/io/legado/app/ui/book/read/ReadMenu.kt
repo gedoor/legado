@@ -143,9 +143,11 @@ class ReadMenu @JvmOverloads constructor(
         tvChapterUrl.setOnClickListener {
             context.openUrl(binding.tvChapterUrl.text.toString())
         }
+        //登录
         tvLogin.setOnClickListener {
             callBack.showLogin()
         }
+        //亮度跟随
         ivBrightnessAuto.setOnClickListener {
             context.putPrefBoolean("brightnessAuto", !brightnessAuto())
             upBrightnessState()

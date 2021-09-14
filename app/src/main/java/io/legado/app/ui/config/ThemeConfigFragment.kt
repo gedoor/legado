@@ -163,17 +163,19 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             "saveDayTheme", "saveNightTheme" -> alertSaveTheme(key)
             PreferKey.bgImage -> selectBgAction(false)
             PreferKey.bgImageN -> selectBgAction(true)
-            PreferKey.defaultCover -> if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
-                selectImage.launch(requestCodeCover)
-            } else {
-                selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
-                    if (i == 0) {
-                        removePref(PreferKey.defaultCover)
-                    } else {
-                        selectImage.launch(requestCodeCover)
+            PreferKey.defaultCover ->
+                if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
+                    selectImage.launch(requestCodeCover)
+                } else {
+                    selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
+                        if (i == 0) {
+                            removePref(PreferKey.defaultCover)
+                            CoverImageView.upDefaultCover()
+                        } else {
+                            selectImage.launch(requestCodeCover)
+                        }
                     }
                 }
-            }
             PreferKey.defaultCoverDark ->
                 if (getPrefString(PreferKey.defaultCoverDark).isNullOrEmpty()) {
                     selectImage.launch(requestCodeCoverDark)
@@ -181,6 +183,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                         if (i == 0) {
                             removePref(PreferKey.defaultCoverDark)
+                            CoverImageView.upDefaultCover()
                         } else {
                             selectImage.launch(requestCodeCoverDark)
                         }
