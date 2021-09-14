@@ -260,8 +260,9 @@ class BookSourceEditActivity :
             add(EditEntity("chapterList", tr?.chapterList, R.string.rule_chapter_list))
             add(EditEntity("chapterName", tr?.chapterName, R.string.rule_chapter_name))
             add(EditEntity("chapterUrl", tr?.chapterUrl, R.string.rule_chapter_url))
-            add(EditEntity("isVip", tr?.isVip, R.string.rule_is_vip))
             add(EditEntity("updateTime", tr?.updateTime, R.string.rule_update_time))
+            add(EditEntity("isVip", tr?.isVip, R.string.rule_is_vip))
+            add(EditEntity("isPay", tr?.isPay, R.string.rule_is_pay))
             add(EditEntity("nextTocUrl", tr?.nextTocUrl, R.string.rule_next_toc_url))
         }
         //正文页
@@ -355,9 +356,10 @@ class BookSourceEditActivity :
                 "chapterList" -> tocRule.chapterList = it.value
                 "chapterName" -> tocRule.chapterName = it.value
                 "chapterUrl" -> tocRule.chapterUrl = it.value
-                "nextTocUrl" -> tocRule.nextTocUrl = it.value
-                "isVip" -> tocRule.isVip = it.value
                 "updateTime" -> tocRule.updateTime = it.value
+                "isVip" -> tocRule.isVip = it.value
+                "isPay" -> tocRule.isPay = it.value
+                "nextTocUrl" -> tocRule.nextTocUrl = it.value
             }
         }
         contentEntities.forEach {
