@@ -12,6 +12,7 @@ object DirectLinkUpload {
 
     private const val uploadUrlKey = "directLinkUploadUrl"
     private const val downloadUrlRuleKey = "directLinkDownloadUrlRule"
+    private const val summaryKey = "directSummary"
 
     suspend fun upLoad(fileName: String, file: ByteArray, contentType: String): String {
         val url = getUploadUrl()
@@ -58,9 +59,23 @@ object DirectLinkUpload {
         CacheManager.put(downloadUrlRuleKey, rule)
     }
 
+    fun getSummary(): String? {
+        return CacheManager.get(summaryKey)
+            ?: ruleDoc.readString("summary")
+    }
+
+    fun putSummary(summary: String?) {
+        if (summary != null) {
+            CacheManager.put(summaryKey, summary)
+        } else {
+            CacheManager.delete(summaryKey)
+        }
+    }
+
     fun delete() {
         CacheManager.delete(uploadUrlKey)
         CacheManager.delete(downloadUrlRuleKey)
+        CacheManager.delete(summaryKey)
     }
 
 }

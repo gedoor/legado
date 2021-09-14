@@ -876,5 +876,6 @@
     <string name="copy_play_url">複製播放Url</string>
     <string name="set_source_variable">設定源變數</string>
     <string name="set_book_variable">設定書籍變數</string>
+    <string name="summary">注释</string>
 
 </resources>

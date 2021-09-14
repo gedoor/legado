@@ -54,6 +54,20 @@
 
             </io.legado.app.ui.widget.text.TextInputLayout>
 
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="3dp">
+
+                <io.legado.app.ui.widget.text.EditText
+                    android:id="@+id/edit_summary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/summary"
+                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

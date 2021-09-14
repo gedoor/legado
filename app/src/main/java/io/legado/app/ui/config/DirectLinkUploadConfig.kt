@@ -39,6 +39,7 @@ class DirectLinkUploadConfig : BaseDialogFragment() {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.editUploadUrl.setText(DirectLinkUpload.getUploadUrl())
         binding.editDownloadUrlRule.setText(DirectLinkUpload.getDownloadUrlRule())
+        binding.editSummary.setText(DirectLinkUpload.getSummary())
         binding.tvCancel.onClick {
             dismiss()
         }
@@ -49,6 +50,7 @@ class DirectLinkUploadConfig : BaseDialogFragment() {
         binding.tvOk.onClick {
             val uploadUrl = binding.editUploadUrl.text?.toString()
             val downloadUrlRule = binding.editDownloadUrlRule.text?.toString()
+            val summary = binding.editSummary.text?.toString()
             uploadUrl ?: let {
                 toastOnUi("上传Url不能为空")
                 return@onClick
@@ -59,6 +61,7 @@ class DirectLinkUploadConfig : BaseDialogFragment() {
             }
             DirectLinkUpload.putUploadUrl(uploadUrl)
             DirectLinkUpload.putDownloadUrlRule(downloadUrlRule)
+            DirectLinkUpload.putSummary(summary)
             dismiss()
         }
     }
