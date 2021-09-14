@@ -163,7 +163,7 @@ class BooksFragment : BaseFragment(R.layout.fragment_books),
     }
 
     override fun isUpdate(bookUrl: String): Boolean {
-        return bookUrl in activityViewModel.updateList
+        return bookUrl in activityViewModel.onUpTocBooks
     }
 
     @SuppressLint("NotifyDataSetChanged")
