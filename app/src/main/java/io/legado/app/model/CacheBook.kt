@@ -77,8 +77,10 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             }
         }
 
-        val downloadSummary =
-            "正在下载:${onDownloadCount}|等待中:${waitCount}|失败:${errorCount}|成功:${successCount}"
+        val downloadSummary: String
+            get() {
+                return "正在下载:${onDownloadCount}|等待中:${waitCount}|失败:${errorCount}|成功:${successCount}"
+            }
 
         val isRun: Boolean
             get() {
