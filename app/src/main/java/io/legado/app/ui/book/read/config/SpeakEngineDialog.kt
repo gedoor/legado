@@ -21,6 +21,7 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
+import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
@@ -49,6 +50,11 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private val exportDirResult = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         alert(R.string.export_success) {
+            if (uri.toString().isAbsUrl()) {
+                DirectLinkUpload.getSummary()?.let { summary ->
+                    setMessage(summary)
+                }
+            }
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = getString(R.string.path)
                 editView.setText(uri.toString())

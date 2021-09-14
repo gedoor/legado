@@ -17,6 +17,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryTextColor
@@ -63,9 +64,14 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             toastOnUi("readTextError:${it.localizedMessage}")
         }
     }
-    private val exportDir = registerForActivityResult(HandleFileContract()) { uri ->
+    private val exportResult = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         alert(R.string.export_success) {
+            if (uri.toString().isAbsUrl()) {
+                DirectLinkUpload.getSummary()?.let { summary ->
+                    setMessage(summary)
+                }
+            }
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = getString(R.string.path)
                 editView.setText(uri.toString())
@@ -125,7 +131,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.selection)
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
             R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
-            R.id.menu_export_selection -> exportDir.launch {
+            R.id.menu_export_selection -> exportResult.launch {
                 mode = HandleFileContract.EXPORT
                 fileData = Triple(
                     "exportRssSource.json",

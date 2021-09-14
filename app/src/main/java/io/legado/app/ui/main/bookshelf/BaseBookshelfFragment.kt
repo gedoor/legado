@@ -13,6 +13,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.databinding.DialogBookshelfConfigBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
+import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.arrange.ArrangeBookActivity
@@ -34,9 +35,14 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             viewModel.importBookshelf(text, groupId)
         }
     }
-    private val exportBookshelf = registerForActivityResult(HandleFileContract()) {
+    private val exportResult = registerForActivityResult(HandleFileContract()) {
         it?.let { uri ->
             alert(R.string.export_success) {
+                if (uri.toString().isAbsUrl()) {
+                    DirectLinkUpload.getSummary()?.let { summary ->
+                        setMessage(summary)
+                    }
+                }
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                     editView.hint = getString(R.string.path)
                     editView.setText(uri.toString())
@@ -74,7 +80,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                 putExtra("groupId", groupId)
             }
             R.id.menu_export_bookshelf -> viewModel.exportBookshelf(books) {
-                exportBookshelf.launch {
+                exportResult.launch {
                     mode = HandleFileContract.EXPORT
                     fileData = Triple(
                         "bookshelf.json",

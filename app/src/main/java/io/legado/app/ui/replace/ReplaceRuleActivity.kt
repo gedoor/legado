@@ -20,6 +20,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.ContentProcessor
+import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
@@ -77,9 +78,14 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             toastOnUi("readTextError:${it.localizedMessage}")
         }
     }
-    private val exportDir = registerForActivityResult(HandleFileContract()) { uri ->
+    private val exportResult = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         alert(R.string.export_success) {
+            if (uri.toString().isAbsUrl()) {
+                DirectLinkUpload.getSummary()?.let { summary ->
+                    setMessage(summary)
+                }
+            }
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = getString(R.string.path)
                 editView.setText(uri.toString())
@@ -230,7 +236,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
             R.id.menu_top_sel -> viewModel.topSelect(adapter.selection)
             R.id.menu_bottom_sel -> viewModel.bottomSelect(adapter.selection)
-            R.id.menu_export_selection -> exportDir.launch {
+            R.id.menu_export_selection -> exportResult.launch {
                 mode = HandleFileContract.EXPORT
                 fileData = Triple(
                     "exportReplaceRule.json",
