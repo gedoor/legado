@@ -26,8 +26,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private var threadCount = AppConfig.threadCount
     private var upTocPool =
         Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-    val onUpTocBooks = CopyOnWriteArraySet<String>()
     private val waitUpTocBooks = arrayListOf<String>()
+    private val onUpTocBooks = CopyOnWriteArraySet<String>()
     private var upTocJob: Job? = null
 
     override fun onCleared() {
@@ -40,6 +40,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         upTocPool.close()
         upTocPool = Executors
             .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
+    }
+
+    fun isUpdate(bookUrl: String): Boolean {
+        return onUpTocBooks.contains(bookUrl)
     }
 
     fun upAllBookToc() {

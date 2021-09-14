@@ -200,7 +200,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun isUpdate(bookUrl: String): Boolean {
-        return bookUrl in activityViewModel.onUpTocBooks
+        return activityViewModel.isUpdate(bookUrl)
     }
 
     override fun getItemCount(): Int {
