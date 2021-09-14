@@ -2,6 +2,7 @@ package io.legado.app.model
 
 import androidx.lifecycle.MutableLiveData
 import com.github.liuyueyi.quick.transfer.ChineseUtils
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
@@ -245,20 +246,20 @@ object ReadBook : CoroutineScope by MainScope() {
         resetPageOffset: Boolean = false,
         success: (() -> Unit)? = null
     ) {
-        book?.let { book ->
-            if (addLoading(index)) {
-                Coroutine.async {
-                    appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
-                        BookHelp.getContent(book, chapter)?.let {
-                            contentLoadFinish(book, chapter, it, upContent, resetPageOffset) {
-                                success?.invoke()
-                            }
-                            removeLoading(chapter.index)
-                        } ?: download(this, chapter, resetPageOffset = resetPageOffset)
-                    } ?: removeLoading(index)
-                }.onError {
-                    removeLoading(index)
-                }
+        if (addLoading(index)) {
+            Coroutine.async {
+                val book = book!!
+                appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
+                    BookHelp.getContent(book, chapter)?.let {
+                        contentLoadFinish(book, chapter, it, upContent, resetPageOffset) {
+                            success?.invoke()
+                        }
+                        removeLoading(chapter.index)
+                    } ?: download(this, chapter, resetPageOffset = resetPageOffset)
+                } ?: removeLoading(index)
+            }.onError {
+                removeLoading(index)
+                AppLog.addLog("加载正文出错\n${it.localizedMessage}")
             }
         }
     }
