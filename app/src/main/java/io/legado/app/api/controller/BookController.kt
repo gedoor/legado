@@ -73,11 +73,7 @@ object BookController {
                 appDb.bookChapterDao.delByBook(book.bookUrl)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())
                 appDb.bookDao.update(book)
-                return if (toc.isEmpty()) {
-                    returnData.setErrorMsg(appCtx.getString(R.string.error_load_toc))
-                } else {
-                    returnData.setData(toc)
-                }
+                return returnData.setData(toc)
             } else {
                 val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
                     ?: return returnData.setErrorMsg("未找到对应书源,请换源")
@@ -90,11 +86,7 @@ object BookController {
                 appDb.bookChapterDao.delByBook(book.bookUrl)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())
                 appDb.bookDao.update(book)
-                return if (toc.isEmpty()) {
-                    returnData.setErrorMsg(appCtx.getString(R.string.error_load_toc))
-                } else {
-                    returnData.setData(toc)
-                }
+                return returnData.setData(toc)
             }
         } catch (e: Exception) {
             return returnData.setErrorMsg(e.localizedMessage ?: "refresh toc error")

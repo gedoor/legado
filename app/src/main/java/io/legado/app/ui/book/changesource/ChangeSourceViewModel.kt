@@ -192,11 +192,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private fun loadBookToc(source: BookSource, book: Book) {
         WebBook.getChapterList(viewModelScope, source, book)
             .onSuccess(IO) { chapters ->
-                if (chapters.isNotEmpty()) {
-                    book.latestChapterTitle = chapters.last().title
-                    val searchBook: SearchBook = book.toSearchBook()
-                    searchFinish(searchBook)
-                }
+                book.latestChapterTitle = chapters.last().title
+                val searchBook: SearchBook = book.toSearchBook()
+                searchFinish(searchBook)
             }.onError {
                 it.printOnDebug()
             }

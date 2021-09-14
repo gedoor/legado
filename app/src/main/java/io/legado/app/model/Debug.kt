@@ -251,14 +251,10 @@ object Debug {
         log(debugSource, "︾开始解析目录页")
         val chapterList = WebBook.getChapterList(scope, bookSource, book)
             .onSuccess {
-                if (it.isNotEmpty()) {
-                    log(debugSource, "︽目录页解析完成")
-                    log(debugSource, showTime = false)
-                    val nextChapterUrl = it.getOrNull(1)?.url
-                    contentDebug(scope, bookSource, book, it[0], nextChapterUrl)
-                } else {
-                    log(debugSource, "︽目录列表为空", state = -1)
-                }
+                log(debugSource, "︽目录页解析完成")
+                log(debugSource, showTime = false)
+                val nextChapterUrl = it.getOrNull(1)?.url
+                contentDebug(scope, bookSource, book, it[0], nextChapterUrl)
             }
             .onError {
                 log(debugSource, it.msg, state = -1)

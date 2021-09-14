@@ -99,7 +99,7 @@ object BookChapterList {
             }
         }
         if (chapterList.isEmpty()) {
-            throw AppException("目录为空")
+            throw AppException(appCtx.getString(R.string.chapter_list_empty))
         }
         //去重
         if (!reverse) {

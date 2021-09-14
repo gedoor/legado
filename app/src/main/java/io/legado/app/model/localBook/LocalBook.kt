@@ -2,6 +2,7 @@ package io.legado.app.model.localBook
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
@@ -37,7 +38,7 @@ object LocalBook {
             }
         }
         if (chapters.isEmpty()) {
-            throw AppException("目录为空")
+            throw AppException(appCtx.getString(R.string.chapter_list_empty))
         }
         return chapters
     }

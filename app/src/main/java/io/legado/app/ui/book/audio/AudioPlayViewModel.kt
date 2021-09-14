@@ -66,16 +66,12 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             AudioPlay.bookSource?.let {
                 WebBook.getChapterList(this, it, book)
                     .onSuccess(Dispatchers.IO) { cList ->
-                        if (cList.isNotEmpty()) {
-                            if (changeDruChapterIndex == null) {
-                                appDb.bookChapterDao.insert(*cList.toTypedArray())
-                            } else {
-                                changeDruChapterIndex(cList)
-                            }
-                            AudioPlay.upDurChapter(book)
+                        if (changeDruChapterIndex == null) {
+                            appDb.bookChapterDao.insert(*cList.toTypedArray())
                         } else {
-                            context.toastOnUi(R.string.error_load_toc)
+                            changeDruChapterIndex(cList)
                         }
+                        AudioPlay.upDurChapter(book)
                     }.onError {
                         context.toastOnUi(R.string.error_load_toc)
                     }

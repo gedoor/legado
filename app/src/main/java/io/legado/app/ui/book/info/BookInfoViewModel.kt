@@ -110,18 +110,14 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 bookSource?.let { bookSource ->
                     WebBook.getChapterList(this, bookSource, book)
                         .onSuccess(IO) {
-                            if (it.isNotEmpty()) {
-                                if (inBookshelf) {
-                                    appDb.bookDao.update(book)
-                                    appDb.bookChapterDao.insert(*it.toTypedArray())
-                                }
-                                if (changeDruChapterIndex == null) {
-                                    chapterListData.postValue(it)
-                                } else {
-                                    changeDruChapterIndex(it)
-                                }
+                            if (inBookshelf) {
+                                appDb.bookDao.update(book)
+                                appDb.bookChapterDao.insert(*it.toTypedArray())
+                            }
+                            if (changeDruChapterIndex == null) {
+                                chapterListData.postValue(it)
                             } else {
-                                context.toastOnUi(R.string.chapter_list_empty)
+                                changeDruChapterIndex(it)
                             }
                         }.onError {
                             chapterListData.postValue(emptyList())
