@@ -8,6 +8,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.webBook.WebBook
@@ -90,24 +91,24 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun changeTo(book1: Book) {
+    fun changeTo(source: BookSource, book: Book) {
         execute {
-            var oldTocSize: Int = book1.totalChapterNum
+            var oldTocSize: Int = book.totalChapterNum
             AudioPlay.book?.let {
                 oldTocSize = it.totalChapterNum
-                book1.order = it.order
+                book.order = it.order
                 appDb.bookDao.delete(it)
             }
-            appDb.bookDao.insert(book1)
-            AudioPlay.book = book1
-            AudioPlay.bookSource = appDb.bookSourceDao.getBookSource(book1.origin)
-            if (book1.tocUrl.isEmpty()) {
-                loadBookInfo(book1) { upChangeDurChapterIndex(book1, oldTocSize, it) }
+            appDb.bookDao.insert(book)
+            AudioPlay.book = book
+            AudioPlay.bookSource = source
+            if (book.tocUrl.isEmpty()) {
+                loadBookInfo(book) { upChangeDurChapterIndex(book, oldTocSize, it) }
             } else {
-                loadChapterList(book1) { upChangeDurChapterIndex(book1, oldTocSize, it) }
+                loadChapterList(book) { upChangeDurChapterIndex(book, oldTocSize, it) }
             }
         }.onFinally {
-            postEvent(EventBus.SOURCE_CHANGED, book1.bookUrl)
+            postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
         }
     }
 

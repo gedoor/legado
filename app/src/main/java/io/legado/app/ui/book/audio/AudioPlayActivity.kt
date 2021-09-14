@@ -18,6 +18,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.Status
 import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityAudioPlayBinding
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.glide.ImageLoader
@@ -193,8 +194,8 @@ class AudioPlayActivity :
     override val oldBook: Book?
         get() = AudioPlay.book
 
-    override fun changeTo(book: Book) {
-        viewModel.changeTo(book)
+    override fun changeTo(source: BookSource, book: Book) {
+        viewModel.changeTo(source, book)
     }
 
     override fun finish() {

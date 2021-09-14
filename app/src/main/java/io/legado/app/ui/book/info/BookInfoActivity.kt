@@ -20,6 +20,7 @@ import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookInfoBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.BlurTransformation
@@ -435,9 +436,9 @@ class BookInfoActivity :
     override val oldBook: Book?
         get() = viewModel.bookData.value
 
-    override fun changeTo(book: Book) {
+    override fun changeTo(source: BookSource, book: Book) {
         upLoading(true)
-        viewModel.changeTo(book)
+        viewModel.changeTo(source, book)
     }
 
     override fun coverChangeTo(coverUrl: String) {

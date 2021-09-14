@@ -112,7 +112,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 val name = it["name"] ?: ""
                 val author = it["author"] ?: ""
                 if (name.isNotEmpty() && appDb.bookDao.getBook(name, author) == null) {
-                    val book = WebBook.preciseSearch(this, bookSources, name, author)
+                    val book = WebBook.preciseSearch(this, bookSources, name, author)?.second
                     book?.let {
                         if (groupId > 0) {
                             book.group = groupId

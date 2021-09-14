@@ -16,6 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.DialogChangeSourceBinding
 import io.legado.app.help.AppConfig
@@ -228,11 +229,16 @@ class ChangeSourceDialog : BaseDialogFragment(),
     }
 
     private fun changeSource(searchBook: SearchBook) {
-        val book = searchBook.toBook()
-        book.upInfoFromOld(callBack?.oldBook)
-        callBack?.changeTo(book)
-        searchBook.time = System.currentTimeMillis()
-        viewModel.updateSource(searchBook)
+        try {
+            val book = searchBook.toBook()
+            book.upInfoFromOld(callBack?.oldBook)
+            val source = appDb.bookSourceDao.getBookSource(book.origin)
+            callBack?.changeTo(source!!, book)
+            searchBook.time = System.currentTimeMillis()
+            viewModel.updateSource(searchBook)
+        } catch (e: Exception) {
+            toastOnUi("换源失败\n${e.localizedMessage}")
+        }
     }
 
     /**
@@ -272,7 +278,7 @@ class ChangeSourceDialog : BaseDialogFragment(),
 
     interface CallBack {
         val oldBook: Book?
-        fun changeTo(book: Book)
+        fun changeTo(source: BookSource, book: Book)
     }
 
 }

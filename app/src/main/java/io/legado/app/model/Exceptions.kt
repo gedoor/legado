@@ -1,5 +1,7 @@
 package io.legado.app.model
 
+class AppException(msg: String) : Exception(msg)
+
 /**
  * 内容为空
  */

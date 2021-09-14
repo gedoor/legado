@@ -6,6 +6,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
+import io.legado.app.model.AppException
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -96,6 +97,9 @@ object BookChapterList {
                     }
                 }
             }
+        }
+        if (chapterList.isEmpty()) {
+            throw AppException("目录为空")
         }
         //去重
         if (!reverse) {

@@ -51,7 +51,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     private fun setBook(book: Book) {
         durChapterIndex = book.durChapterIndex
         bookData.postValue(book)
-        initBookSource(book)
+        bookSource = if (book.isLocalBook()) {
+            null
+        } else {
+            appDb.bookSourceDao.getBookSource(book.origin)
+        }
         if (book.tocUrl.isEmpty()) {
             loadBookInfo(book)
         } else {
@@ -61,14 +65,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 loadChapter(book)
             }
-        }
-    }
-
-    private fun initBookSource(book: Book) {
-        bookSource = if (book.isLocalBook()) {
-            null
-        } else {
-            appDb.bookSourceDao.getBookSource(book.origin)
         }
     }
 
@@ -149,7 +145,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun changeTo(newBook: Book) {
+    fun changeTo(source: BookSource, newBook: Book) {
         execute {
             var oldTocSize: Int = newBook.totalChapterNum
             if (inBookshelf) {
@@ -159,7 +155,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
             bookData.postValue(newBook)
-            initBookSource(newBook)
+            bookSource = source
             if (newBook.tocUrl.isEmpty()) {
                 loadBookInfo(newBook, false) {
                     upChangeDurChapterIndex(newBook, oldTocSize, it)

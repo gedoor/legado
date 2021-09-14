@@ -9,6 +9,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
+import io.legado.app.model.AppException
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
@@ -22,8 +23,9 @@ object LocalBook {
         FileUtils.createFolderIfNotExist(appCtx.externalFiles, folderName)
     }
 
+    @Throws(Exception::class)
     fun getChapterList(book: Book): ArrayList<BookChapter> {
-        return when {
+        val chapters = when {
             book.isEpub() -> {
                 EpubFile.getChapterList(book)
             }
@@ -34,6 +36,10 @@ object LocalBook {
                 TextFile().analyze(book)
             }
         }
+        if (chapters.isEmpty()) {
+            throw AppException("目录为空")
+        }
+        return chapters
     }
 
     fun getContext(book: Book, chapter: BookChapter): String? {

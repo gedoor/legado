@@ -8,8 +8,8 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
@@ -101,26 +101,22 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun loadBookInfo(
-        book: Book,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
-    ) {
+    private fun loadBookInfo(book: Book) {
         if (book.isLocalBook()) {
-            loadChapterList(book, changeDruChapterIndex)
+            loadChapterList(book)
         } else {
-            ReadBook.bookSource?.let {
-                WebBook.getBookInfo(viewModelScope, it, book, canReName = false)
+            ReadBook.bookSource?.let { source ->
+                WebBook.getBookInfo(viewModelScope, source, book, canReName = false)
                     .onSuccess {
-                        loadChapterList(book, changeDruChapterIndex)
+                        loadChapterList(book)
+                    }.onError {
+                        ReadBook.upMsg("详情页出错: ${it.localizedMessage}")
                     }
             }
         }
     }
 
-    fun loadChapterList(
-        book: Book,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
-    ) {
+    fun loadChapterList(book: Book) {
         if (book.isLocalBook()) {
             execute {
                 LocalBook.getChapterList(book).let {
@@ -128,12 +124,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     appDb.bookDao.update(book)
                     ReadBook.chapterSize = it.size
-                    if (it.isEmpty()) {
-                        ReadBook.upMsg(context.getString(R.string.error_load_toc))
-                    } else {
-                        ReadBook.upMsg(null)
-                        ReadBook.loadContent(resetPageOffset = true)
-                    }
+                    ReadBook.upMsg(null)
+                    ReadBook.loadContent(resetPageOffset = true)
                 }
             }.onError {
                 ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
@@ -142,19 +134,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.bookSource?.let {
                 WebBook.getChapterList(viewModelScope, it, book)
                     .onSuccess(IO) { cList ->
-                        if (cList.isNotEmpty()) {
-                            if (changeDruChapterIndex == null) {
-                                appDb.bookChapterDao.insert(*cList.toTypedArray())
-                                appDb.bookDao.update(book)
-                                ReadBook.chapterSize = cList.size
-                                ReadBook.upMsg(null)
-                                ReadBook.loadContent(resetPageOffset = true)
-                            } else {
-                                changeDruChapterIndex(cList)
-                            }
-                        } else {
-                            ReadBook.upMsg(context.getString(R.string.error_load_toc))
-                        }
+                        appDb.bookChapterDao.insert(*cList.toTypedArray())
+                        appDb.bookDao.update(book)
+                        ReadBook.chapterSize = cList.size
+                        ReadBook.upMsg(null)
+                        ReadBook.loadContent(resetPageOffset = true)
                     }.onError {
                         ReadBook.upMsg(context.getString(R.string.error_load_toc))
                     }
@@ -183,23 +167,32 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
     }
 
-    fun changeTo(newBook: Book) {
+    fun changeTo(source: BookSource, book: Book) {
         execute {
-            val oldTocSize: Int = ReadBook.book?.totalChapterNum ?: newBook.totalChapterNum
-            ReadBook.upMsg(null)
-            ReadBook.resetData(newBook)
-            ReadBook.callBack?.upContent()
-            if (newBook.tocUrl.isEmpty()) {
-                loadBookInfo(newBook) {
-                    upChangeDurChapterIndex(newBook, oldTocSize, it)
-                }
-            } else {
-                loadChapterList(newBook) {
-                    upChangeDurChapterIndex(newBook, oldTocSize, it)
-                }
+            ReadBook.upMsg(context.getString(R.string.loading))
+            if (book.tocUrl.isEmpty()) {
+                WebBook.getBookInfoAwait(this, source, book)
             }
+            val chapters = WebBook.getChapterListAwait(this, source, book)
+            ReadBook.book!!.let { oldBook ->
+                book.durChapterIndex = BookHelp.getDurChapter(
+                    oldBook.durChapterIndex,
+                    oldBook.totalChapterNum,
+                    oldBook.durChapterTitle,
+                    chapters
+                )
+                book.durChapterTitle = chapters[ReadBook.durChapterIndex].title
+                oldBook.changeTo(book)
+            }
+            appDb.bookChapterDao.insert(*chapters.toTypedArray())
+            ReadBook.resetData(book)
+            ReadBook.upMsg(null)
+            ReadBook.loadContent(resetPageOffset = true)
+        }.onError {
+            context.toastOnUi("换源失败\n${it.localizedMessage}")
+            ReadBook.upMsg(null)
         }.onFinally {
-            postEvent(EventBus.SOURCE_CHANGED, newBook.bookUrl)
+            postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
         }
     }
 
@@ -207,37 +200,16 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (!AppConfig.autoChangeSource) return
         execute {
             val sources = appDb.bookSourceDao.allTextEnabled
-            val book = WebBook.preciseSearch(this, sources, name, author)
-            if (book != null) {
-                book.upInfoFromOld(ReadBook.book)
-                changeTo(book)
-            } else {
-                throw Exception("自动换源失败")
-            }
+            WebBook.preciseSearch(this, sources, name, author)?.let {
+                it.second.upInfoFromOld(ReadBook.book)
+                changeTo(it.first, it.second)
+            } ?: throw Exception("自动换源失败")
         }.onStart {
             ReadBook.upMsg(context.getString(R.string.source_auto_changing))
         }.onError {
             context.toastOnUi(it.msg)
         }.onFinally {
             ReadBook.upMsg(null)
-        }
-    }
-
-    private fun upChangeDurChapterIndex(book: Book, oldTocSize: Int, chapters: List<BookChapter>) {
-        execute {
-            ReadBook.durChapterIndex = BookHelp.getDurChapter(
-                book.durChapterIndex,
-                oldTocSize,
-                book.durChapterTitle,
-                chapters
-            )
-            book.durChapterIndex = ReadBook.durChapterIndex
-            book.durChapterTitle = chapters[ReadBook.durChapterIndex].title
-            appDb.bookDao.update(book)
-            appDb.bookChapterDao.insert(*chapters.toTypedArray())
-            ReadBook.chapterSize = chapters.size
-            ReadBook.upMsg(null)
-            ReadBook.loadContent(resetPageOffset = true)
         }
     }
 

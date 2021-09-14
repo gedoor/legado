@@ -23,19 +23,19 @@ object WebBook {
         bookSources: List<BookSource>,
         name: String,
         author: String
-    ): Book? {
-        bookSources.forEach { bookSource ->
+    ): Pair<BookSource, Book>? {
+        bookSources.forEach { source ->
             kotlin.runCatching {
                 if (!scope.isActive) return null
-                searchBookAwait(scope, bookSource, name).firstOrNull {
+                searchBookAwait(scope, source, name).firstOrNull {
                     it.name == name && it.author == author
-                }?.let {
-                    return if (it.tocUrl.isBlank()) {
-                        if (!scope.isActive) return null
-                        getBookInfoAwait(scope, bookSource, it.toBook())
-                    } else {
-                        it.toBook()
+                }?.let { searchBook ->
+                    if (!scope.isActive) return null
+                    var book = searchBook.toBook()
+                    if (book.tocUrl.isBlank()) {
+                        book = getBookInfoAwait(scope, source, book)
                     }
+                    return Pair(source, book)
                 }
             }
         }

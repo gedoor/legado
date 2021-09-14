@@ -20,6 +20,7 @@ import io.legado.app.constant.Status
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
 import io.legado.app.help.storage.AppWebDav
@@ -642,8 +643,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override val oldBook: Book?
         get() = ReadBook.book
 
-    override fun changeTo(book: Book) {
-        viewModel.changeTo(book)
+    override fun changeTo(source: BookSource, book: Book) {
+        viewModel.changeTo(source, book)
     }
 
     override fun showActionMenu() {
