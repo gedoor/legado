@@ -49,10 +49,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun initBook(book: Book) {
         if (ReadBook.book?.bookUrl != book.bookUrl) {
             ReadBook.resetData(book)
-            if (!book.isLocalBook() && ReadBook.bookSource == null) {
-                autoChangeSource(book.name, book.author)
-                return
-            }
             isInitFinish = true
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {
@@ -77,10 +73,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.titleDate.postValue(book.name)
             ReadBook.upWebBook(book)
             isInitFinish = true
-            if (!book.isLocalBook() && ReadBook.bookSource == null) {
-                autoChangeSource(book.name, book.author)
-                return
-            }
             ReadBook.chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {
@@ -98,6 +90,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             if (!BaseReadAloudService.isRun) {
                 syncBookProgress(book)
             }
+        }
+        if (!book.isLocalBook() && ReadBook.bookSource == null) {
+            autoChangeSource(book.name, book.author)
+            return
         }
     }
 
