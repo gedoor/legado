@@ -9,6 +9,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.AppConfig
+import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
 import io.legado.app.help.LocalConfig
 import io.legado.app.model.CacheBook
@@ -85,11 +86,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         appDb.bookDao.update(book)
                         appDb.bookChapterDao.delByBook(book.bookUrl)
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
-                        val endIndex = min(
-                            book.totalChapterNum,
-                            book.durChapterIndex.plus(AppConfig.preDownloadNum)
-                        )
-                        CacheBook.start(context, book.bookUrl, book.durChapterIndex, endIndex)
+                        cacheBook(book)
                     }.onError(upTocPool) {
                         AppLog.addLog("${book.name} 更新目录失败\n${it.localizedMessage}", it)
                         it.printOnDebug()
@@ -113,6 +110,22 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         if (!update) {
             usePoolCount--
         }
+    }
+
+    private fun cacheBook(book: Book) {
+        val endIndex = min(
+            book.totalChapterNum - 1,
+            book.durChapterIndex.plus(AppConfig.preDownloadNum)
+        )
+        for (i in book.durChapterIndex..endIndex) {
+            appDb.bookChapterDao.getChapter(book.bookUrl, i)?.let { chapter ->
+                if (!BookHelp.hasContent(book, chapter)) {
+                    CacheBook.start(context, book.bookUrl, i, endIndex)
+                    return
+                }
+            }
+        }
+
     }
 
     private fun upNext() {
