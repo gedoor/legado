@@ -24,8 +24,6 @@ import io.legado.app.utils.msg
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.withContext
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var isInitFinish = false
@@ -187,16 +185,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeTo(newBook: Book) {
         execute {
-            var oldTocSize: Int = newBook.totalChapterNum
+            val oldTocSize: Int = ReadBook.book?.totalChapterNum ?: newBook.totalChapterNum
             ReadBook.upMsg(null)
-            ReadBook.book?.let {
-                oldTocSize = it.totalChapterNum
-                it.changeTo(newBook)
-            }
             ReadBook.resetData(newBook)
-            withContext(Main) {
-                ReadBook.callBack?.upContent()
-            }
+            ReadBook.callBack?.upContent()
             if (newBook.tocUrl.isEmpty()) {
                 loadBookInfo(newBook) {
                     upChangeDurChapterIndex(newBook, oldTocSize, it)
