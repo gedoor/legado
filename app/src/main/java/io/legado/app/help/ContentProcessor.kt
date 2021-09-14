@@ -63,7 +63,7 @@ class ContentProcessor private constructor(
     ): List<String> {
         //去除无效内容
         var mContent = content.trimStart {
-            it.code <= 0x20 || it == '　' || it == ',' || it == ',' || it == '，'
+            it.code <= 0x20 || it == '　' || it == ',' || it == '，'
         }
         //去除书名
         if (mContent.startsWith(book.name)) {
@@ -76,7 +76,7 @@ class ContentProcessor private constructor(
         }
         //去除无效内容
         mContent = mContent.trimStart {
-            it.code <= 0x20 || it == '　' || it == ',' || it == ',' || it == '，'
+            it.code <= 0x20 || it == '　' || it == ',' || it == '，'
         }
         //去除标题
         if (mContent.startsWith(chapter.title)) {
@@ -84,7 +84,7 @@ class ContentProcessor private constructor(
         }
         //去除无效内容
         mContent = mContent.trimStart {
-            it.code <= 0x20 || it == '　' || it == ',' || it == ',' || it == '，'
+            it.code <= 0x20 || it == '　' || it == ',' || it == '，'
         }
         if (includeTitle) {
             //重新添加标题
