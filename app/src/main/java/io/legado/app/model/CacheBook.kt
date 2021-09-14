@@ -149,7 +149,9 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
     @Synchronized
     fun addDownload(start: Int, end: Int) {
         for (i in start..end) {
-            waitDownloadSet.add(i)
+            if (!onDownloadSet.contains(i)) {
+                waitDownloadSet.add(i)
+            }
         }
     }
 
