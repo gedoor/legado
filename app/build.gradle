@@ -219,6 +219,6 @@ dependencies {
     implementation("io.noties.markwon:html:$markwonVersion")
 
     //转换繁体
-    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.1')
+    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
 
 }
