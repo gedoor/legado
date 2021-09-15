@@ -24,6 +24,10 @@ inline fun <reified T : DialogFragment> FragmentManager.showDialog(
     dialog.show(this, T::class.simpleName)
 }
 
+fun FragmentManager.showDialog(dialogFragment: DialogFragment) {
+    dialogFragment.show(this, dialogFragment::class.simpleName)
+}
+
 fun Fragment.getPrefBoolean(key: String, defValue: Boolean = false) =
     requireContext().defaultSharedPreferences.getBoolean(key, defValue)
 

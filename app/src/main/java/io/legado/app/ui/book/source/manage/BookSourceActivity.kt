@@ -62,13 +62,13 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var snackBar: Snackbar? = null
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
-        ImportBookSourceDialog.start(supportFragmentManager, it)
+        supportFragmentManager.showDialog(ImportBookSourceDialog(it))
     }
     private val importDoc = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         try {
             uri.readText(this)?.let {
-                ImportBookSourceDialog.start(supportFragmentManager, it)
+                supportFragmentManager.showDialog(ImportBookSourceDialog(it))
             }
         } catch (e: Exception) {
             toastOnUi("readTextError:${e.localizedMessage}")
@@ -440,7 +440,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    ImportBookSourceDialog.start(supportFragmentManager, it)
+                    supportFragmentManager.showDialog(ImportBookSourceDialog(it))
                 }
             }
             cancelButton()

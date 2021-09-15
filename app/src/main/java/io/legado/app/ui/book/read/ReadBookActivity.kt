@@ -226,7 +226,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             R.id.menu_change_source -> {
                 binding.readMenu.runMenuOut()
                 ReadBook.book?.let {
-                    ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
+                    supportFragmentManager.showDialog(ChangeSourceDialog(it.name, it.author))
                 }
             }
             R.id.menu_refresh -> {

@@ -288,7 +288,7 @@ class BookInfoActivity :
         }
         tvChangeSource.setOnClickListener {
             viewModel.bookData.value?.let {
-                ChangeSourceDialog.show(supportFragmentManager, it.name, it.author)
+                supportFragmentManager.showDialog(ChangeSourceDialog(it.name, it.author))
             }
         }
         tvTocView.setOnClickListener {

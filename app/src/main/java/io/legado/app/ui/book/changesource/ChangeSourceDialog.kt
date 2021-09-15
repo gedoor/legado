@@ -5,7 +5,6 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,18 +28,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class ChangeSourceDialog : BaseDialogFragment(),
+class ChangeSourceDialog() : BaseDialogFragment(),
     Toolbar.OnMenuItemClickListener,
     ChangeSourceAdapter.CallBack {
 
-    companion object {
-        const val tag = "changeSourceDialog"
-
-        fun show(manager: FragmentManager, name: String, author: String) {
-            manager.showDialog<ChangeSourceDialog> {
-                putString("name", name)
-                putString("author", author)
-            }
+    constructor(name: String, author: String) : this() {
+        arguments = Bundle().apply {
+            putString("name", name)
+            putString("author", author)
         }
     }
 

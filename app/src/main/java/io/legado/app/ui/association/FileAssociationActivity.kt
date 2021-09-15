@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.utils.showDialog
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -26,7 +27,7 @@ class FileAssociationActivity :
         }
         viewModel.importBookSourceLive.observe(this) {
             binding.rotateLoading.hide()
-            ImportBookSourceDialog.start(supportFragmentManager, it, true)
+            supportFragmentManager.showDialog(ImportBookSourceDialog(it, true))
         }
         viewModel.importRssSourceLive.observe(this) {
             binding.rotateLoading.hide()

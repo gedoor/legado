@@ -30,10 +30,10 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
     BaseRssArticlesAdapter.CallBack {
 
     constructor(sortName: String, sortUrl: String) : this() {
-        val bundle = Bundle()
-        bundle.putString("sortName", sortName)
-        bundle.putString("sortUrl", sortUrl)
-        arguments = bundle
+        arguments = Bundle().apply {
+            putString("sortName", sortName)
+            putString("sortUrl", sortUrl)
+        }
     }
 
     private val binding by viewBinding(FragmentRssArticlesBinding::bind)

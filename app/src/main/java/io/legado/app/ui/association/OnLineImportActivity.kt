@@ -6,6 +6,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.utils.showDialog
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -22,8 +23,9 @@ class OnLineImportActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.successLive.observe(this) {
             when (it.first) {
-                "bookSource" -> ImportBookSourceDialog
-                    .start(supportFragmentManager, it.second, true)
+                "bookSource" -> supportFragmentManager.showDialog(
+                    ImportBookSourceDialog(it.second, true)
+                )
                 "rssSource" -> ImportRssSourceDialog
                     .start(supportFragmentManager, it.second, true)
                 "replaceRule" -> ImportReplaceRuleDialog
@@ -40,7 +42,9 @@ class OnLineImportActivity :
                 return
             }
             when (it.path) {
-                "/bookSource" -> ImportBookSourceDialog.start(supportFragmentManager, url, true)
+                "/bookSource" -> supportFragmentManager.showDialog(
+                    ImportBookSourceDialog(url, true)
+                )
                 "/rssSource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
                 "/replaceRule" -> ImportReplaceRuleDialog.start(supportFragmentManager, url, true)
                 "/textTocRule" -> viewModel.getText(url) { json ->
@@ -56,7 +60,9 @@ class OnLineImportActivity :
                     viewModel.importReadConfig(bytes, this::finallyDialog)
                 }
                 "/importonline" -> when (it.host) {
-                    "booksource" -> ImportBookSourceDialog.start(supportFragmentManager, url, true)
+                    "booksource" -> supportFragmentManager.showDialog(
+                        ImportBookSourceDialog(url, true)
+                    )
                     "rsssource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
                     "replace" -> ImportReplaceRuleDialog.start(supportFragmentManager, url, true)
                     else -> {
