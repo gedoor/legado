@@ -66,8 +66,8 @@ class ContentProcessor private constructor(
             it.code <= 0x20 || it == '　' || it == ',' || it == '，'
         }
         //去除重复标题
-        val titleRegex = "^(\\s|\\pP|${book.name})*${chapter.title}(\\s|\\pP)+".toRegex()
-        mContent = mContent.replace(titleRegex, "")
+//        val titleRegex = "^(\\s|\\pP|${book.name})*${chapter.title}(\\s|\\pP)+".toRegex()
+//        mContent = mContent.replace(titleRegex, "")
         if (includeTitle) {
             //重新添加标题
             mContent = chapter.getDisplayTitle() + "\n" + mContent
