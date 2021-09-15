@@ -235,7 +235,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             //出现错误等待一秒后重新加入待下载列表
             delay(1000)
             onError(chapterIndex, it, chapter.title)
-            downloadFinish(chapter, "error:${it.localizedMessage}")
+            downloadFinish(chapter, "获取正文失败\n${it.localizedMessage}")
         }.onCancel {
             onCancel(chapterIndex)
         }.onFinally {
@@ -260,7 +260,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
                 downloadFinish(chapter, content, resetPageOffset)
             }.onError {
                 onError(chapter.index, it, chapter.title)
-                downloadFinish(chapter, "error:${it.localizedMessage}", resetPageOffset)
+                downloadFinish(chapter, "获取正文失败\n${it.localizedMessage}", resetPageOffset)
             }.onCancel {
                 onCancel(chapter.index)
             }.onFinally {
