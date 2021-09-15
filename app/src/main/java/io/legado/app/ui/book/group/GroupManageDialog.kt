@@ -25,6 +25,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.showDialog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import io.legado.app.utils.windowSize
@@ -89,7 +90,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> GroupEditDialog.start(childFragmentManager)
+            R.id.menu_add -> childFragmentManager.showDialog(GroupEditDialog())
         }
         return true
     }
@@ -121,7 +122,9 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             binding.run {
                 tvEdit.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { bookGroup ->
-                        GroupEditDialog.start(childFragmentManager, bookGroup)
+                        childFragmentManager.showDialog(
+                            GroupEditDialog(bookGroup)
+                        )
                     }
                 }
                 swShow.setOnCheckedChangeListener { buttonView, isChecked ->

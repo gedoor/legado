@@ -6,7 +6,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
@@ -14,24 +13,19 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogChangeCoverBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.showDialog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
 
 
-class ChangeCoverDialog : BaseDialogFragment(),
+class ChangeCoverDialog() : BaseDialogFragment(),
     Toolbar.OnMenuItemClickListener,
     CoverAdapter.CallBack {
 
-    companion object {
-
-        fun show(fragmentManager: FragmentManager, name: String, author: String) {
-            fragmentManager.showDialog<ChangeCoverDialog> {
-                putString("name", name)
-                putString("author", author)
-            }
+    constructor(name: String, author: String) : this() {
+        arguments = Bundle().apply {
+            putString("name", name)
+            putString("author", author)
         }
-
     }
 
     private val binding by viewBinding(DialogChangeCoverBinding::bind)

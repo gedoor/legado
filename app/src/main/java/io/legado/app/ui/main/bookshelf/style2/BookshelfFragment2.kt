@@ -26,10 +26,7 @@ import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
-import io.legado.app.utils.cnCompare
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.observeEvent
-import io.legado.app.utils.startActivity
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -195,7 +192,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 putExtra("name", item.name)
                 putExtra("author", item.author)
             }
-            is BookGroup -> GroupEditDialog.start(childFragmentManager, item)
+            is BookGroup -> childFragmentManager.showDialog(GroupEditDialog(item))
         }
     }
 

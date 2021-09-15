@@ -110,7 +110,9 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> GroupEditDialog.start(childFragmentManager)
+            R.id.menu_add -> childFragmentManager.showDialog(
+                GroupEditDialog()
+            )
         }
         return true
     }
@@ -152,7 +154,9 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                     }
                 }
                 tvEdit.setOnClickListener {
-                    GroupEditDialog.start(childFragmentManager, getItem(holder.layoutPosition))
+                    childFragmentManager.showDialog(
+                        GroupEditDialog(getItem(holder.layoutPosition))
+                    )
                 }
             }
         }

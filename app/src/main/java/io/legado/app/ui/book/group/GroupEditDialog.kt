@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -16,16 +15,12 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
-class GroupEditDialog : BaseDialogFragment() {
+class GroupEditDialog() : BaseDialogFragment() {
 
-    companion object {
-
-        fun start(fragmentManager: FragmentManager, bookGroup: BookGroup? = null) {
-            fragmentManager.showDialog<GroupEditDialog> {
-                putParcelable("group", bookGroup)
-            }
+    constructor(bookGroup: BookGroup? = null) : this() {
+        arguments = Bundle().apply {
+            putParcelable("group", bookGroup)
         }
-
     }
 
     private val binding by viewBinding(DialogBookGroupEditBinding::bind)

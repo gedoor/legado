@@ -11,10 +11,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityBookInfoEditBinding
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.SelectImageContract
-import io.legado.app.utils.externalFiles
-import io.legado.app.utils.readUri
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class BookInfoEditActivity :
@@ -55,7 +52,9 @@ class BookInfoEditActivity :
     private fun initEvent() = binding.run {
         tvChangeCover.setOnClickListener {
             viewModel.bookData.value?.let {
-                ChangeCoverDialog.show(supportFragmentManager, it.name, it.author)
+                supportFragmentManager.showDialog(
+                    ChangeCoverDialog(it.name, it.author)
+                )
             }
         }
         tvSelectCover.setOnClickListener {
