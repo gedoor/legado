@@ -64,7 +64,6 @@ class ContentProcessor private constructor(
         chineseConvert: Boolean = true,
         reSegment: Boolean = true
     ): List<String> {
-        //去除无效内容
         var mContent = content
         if (includeTitle) {
             //去除重复标题
