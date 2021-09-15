@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,18 +39,6 @@ class GroupSelectDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListene
             putLong("groupId", groupId)
             putInt("requestCode", requestCode)
         }
-    }
-
-    companion object {
-        const val tag = "groupSelectDialog"
-
-        fun show(manager: FragmentManager, groupId: Long, requestCode: Int = -1) {
-            manager.showDialog<GroupSelectDialog> {
-                putLong("groupId", groupId)
-                putInt("requestCode", requestCode)
-            }
-        }
-
     }
 
     private val binding by viewBinding(DialogBookGroupPickerBinding::bind)
