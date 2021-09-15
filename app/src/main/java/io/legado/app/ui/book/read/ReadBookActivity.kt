@@ -251,7 +251,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                         chapterName = page.title
                         bookText = page.text.trim()
                     }
-                    BookmarkDialog.start(supportFragmentManager, bookmark)
+                    supportFragmentManager.showDialog(BookmarkDialog(bookmark))
                 }
             }
             R.id.menu_copy_text ->
@@ -512,7 +512,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 if (bookmark == null) {
                     toastOnUi(R.string.create_bookmark_error)
                 } else {
-                    BookmarkDialog.start(supportFragmentManager, bookmark)
+                    supportFragmentManager.showDialog(BookmarkDialog(bookmark))
                 }
                 return true
             }

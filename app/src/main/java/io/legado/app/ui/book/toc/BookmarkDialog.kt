@@ -4,29 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.DialogBookmarkBinding
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.showDialog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BookmarkDialog : BaseDialogFragment() {
+class BookmarkDialog() : BaseDialogFragment() {
 
-    companion object {
-
-        fun start(fragmentManager: FragmentManager, bookmark: Bookmark) {
-            fragmentManager.showDialog<BookmarkDialog> {
-                putParcelable("bookmark", bookmark)
-            }
+    constructor(bookmark: Bookmark) : this() {
+        arguments = Bundle().apply {
+            putParcelable("bookmark", bookmark)
         }
-
     }
 
     private val binding by viewBinding(DialogBookmarkBinding::bind)
