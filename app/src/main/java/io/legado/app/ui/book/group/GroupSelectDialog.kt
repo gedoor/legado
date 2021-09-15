@@ -33,7 +33,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class GroupSelectDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+
+    constructor(groupId: Long, requestCode: Int = -1) : this() {
+        arguments = Bundle().apply {
+            putLong("groupId", groupId)
+            putInt("requestCode", requestCode)
+        }
+    }
 
     companion object {
         const val tag = "groupSelectDialog"

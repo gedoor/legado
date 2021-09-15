@@ -180,7 +180,9 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     }
 
     override fun selectGroup(requestCode: Int, groupId: Long) {
-        GroupSelectDialog.show(supportFragmentManager, groupId, requestCode)
+        supportFragmentManager.showDialog(
+            GroupSelectDialog(groupId, requestCode)
+        )
     }
 
     override fun upGroup(requestCode: Int, groupId: Long) {

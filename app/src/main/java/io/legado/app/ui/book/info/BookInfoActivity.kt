@@ -306,7 +306,9 @@ class BookInfoActivity :
         }
         tvChangeGroup.setOnClickListener {
             viewModel.bookData.value?.let {
-                GroupSelectDialog.show(supportFragmentManager, it.group)
+                supportFragmentManager.showDialog(
+                    GroupSelectDialog(it.group)
+                )
             }
         }
         tvAuthor.setOnClickListener {
