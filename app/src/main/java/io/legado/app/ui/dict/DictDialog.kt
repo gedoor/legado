@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogDictBinding
 import io.legado.app.utils.invisible
+import io.legado.app.utils.showDialog
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -23,12 +24,10 @@ class DictDialog : BaseDialogFragment() {
 
     companion object {
 
-        fun dict(manager: FragmentManager, word: String) {
-            DictDialog().apply {
-                val bundle = Bundle()
-                bundle.putString("word", word)
-                arguments = bundle
-            }.show(manager, word)
+        fun show(manager: FragmentManager, word: String) {
+            manager.showDialog<DictDialog> {
+                putString("word", word)
+            }
         }
 
     }

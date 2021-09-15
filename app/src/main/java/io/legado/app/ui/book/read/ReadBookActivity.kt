@@ -539,7 +539,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 return true
             }
             R.id.menu_dict -> {
-                DictDialog.dict(supportFragmentManager, selectedText)
+                DictDialog.show(supportFragmentManager, selectedText)
                 return true
             }
         }

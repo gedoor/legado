@@ -21,11 +21,9 @@ class GroupEditDialog : BaseDialogFragment() {
     companion object {
 
         fun start(fragmentManager: FragmentManager, bookGroup: BookGroup? = null) {
-            GroupEditDialog().apply {
-                arguments = Bundle().apply {
-                    putParcelable("group", bookGroup)
-                }
-            }.show(fragmentManager, "bookGroupEdit")
+            fragmentManager.showDialog<GroupEditDialog> {
+                putParcelable("group", bookGroup)
+            }
         }
 
     }

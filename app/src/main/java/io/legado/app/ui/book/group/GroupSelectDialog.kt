@@ -26,6 +26,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.showDialog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
 import kotlinx.coroutines.flow.collect
@@ -38,14 +39,12 @@ class GroupSelectDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         const val tag = "groupSelectDialog"
 
         fun show(manager: FragmentManager, groupId: Long, requestCode: Int = -1) {
-            val fragment = GroupSelectDialog().apply {
-                val bundle = Bundle()
-                bundle.putLong("groupId", groupId)
-                bundle.putInt("requestCode", requestCode)
-                arguments = bundle
+            manager.showDialog<GroupSelectDialog> {
+                putLong("groupId", groupId)
+                putInt("requestCode", requestCode)
             }
-            fragment.show(manager, tag)
         }
+
     }
 
     private val binding by viewBinding(DialogBookGroupPickerBinding::bind)

@@ -14,6 +14,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogChangeCoverBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.showDialog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
 
@@ -23,17 +24,14 @@ class ChangeCoverDialog : BaseDialogFragment(),
     CoverAdapter.CallBack {
 
     companion object {
-        const val tag = "changeCoverDialog"
 
-        fun show(manager: FragmentManager, name: String, author: String) {
-            val fragment = ChangeCoverDialog().apply {
-                val bundle = Bundle()
-                bundle.putString("name", name)
-                bundle.putString("author", author)
-                arguments = bundle
+        fun show(fragmentManager: FragmentManager, name: String, author: String) {
+            fragmentManager.showDialog<ChangeCoverDialog> {
+                putString("name", name)
+                putString("author", author)
             }
-            fragment.show(manager, tag)
         }
+
     }
 
     private val binding by viewBinding(DialogChangeCoverBinding::bind)

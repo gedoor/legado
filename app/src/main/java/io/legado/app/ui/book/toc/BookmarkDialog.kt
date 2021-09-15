@@ -11,6 +11,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.DialogBookmarkBinding
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.utils.showDialog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -21,11 +22,9 @@ class BookmarkDialog : BaseDialogFragment() {
     companion object {
 
         fun start(fragmentManager: FragmentManager, bookmark: Bookmark) {
-            BookmarkDialog().apply {
-                arguments = Bundle().apply {
-                    putParcelable("bookmark", bookmark)
-                }
-            }.show(fragmentManager, "bookMarkDialog")
+            fragmentManager.showDialog<BookmarkDialog> {
+                putParcelable("bookmark", bookmark)
+            }
         }
 
     }

@@ -135,7 +135,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
         override fun getItem(position: Int): Fragment {
             val sort = sortList[position]
-            return RssArticlesFragment.create(sort.first, sort.second)
+            return RssArticlesFragment(sort.first, sort.second)
         }
 
         override fun getCount(): Int {

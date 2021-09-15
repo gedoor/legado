@@ -9,11 +9,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogFileChooserBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.document.HandleFileContract.Companion.DIR
@@ -26,7 +26,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
 
-class FilePickerDialog : DialogFragment(),
+class FilePickerDialog : BaseDialogFragment(),
     Toolbar.OnMenuItemClickListener,
     FileAdapter.CallBack,
     PathAdapter.CallBack {
@@ -88,8 +88,7 @@ class FilePickerDialog : DialogFragment(),
         return inflater.inflate(R.layout.dialog_file_chooser, container, true)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         view.setBackgroundResource(R.color.background_card)
         arguments?.let {

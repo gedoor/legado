@@ -138,7 +138,7 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
 
         override fun getItem(position: Int): Fragment {
             val group = bookGroups[position]
-            return BooksFragment.newInstance(position, group.groupId)
+            return BooksFragment(position, group.groupId)
         }
 
         override fun getCount(): Int {

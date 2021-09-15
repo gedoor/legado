@@ -37,13 +37,10 @@ class ChangeSourceDialog : BaseDialogFragment(),
         const val tag = "changeSourceDialog"
 
         fun show(manager: FragmentManager, name: String, author: String) {
-            val fragment = ChangeSourceDialog().apply {
-                val bundle = Bundle()
-                bundle.putString("name", name)
-                bundle.putString("author", author)
-                arguments = bundle
+            manager.showDialog<ChangeSourceDialog> {
+                putString("name", name)
+                putString("author", author)
             }
-            fragment.show(manager, tag)
         }
     }
 

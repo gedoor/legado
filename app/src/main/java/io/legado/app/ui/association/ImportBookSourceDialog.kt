@@ -27,11 +27,8 @@ import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.dp
-import io.legado.app.utils.putPrefBoolean
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.legado.app.utils.visible
 
 
 /**
@@ -46,12 +43,10 @@ class ImportBookSourceDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickList
             source: String,
             finishOnDismiss: Boolean = false
         ) {
-            ImportBookSourceDialog().apply {
-                arguments = Bundle().apply {
-                    putString("source", source)
-                    putBoolean("finishOnDismiss", finishOnDismiss)
-                }
-            }.show(fragmentManager, "importBookSource")
+            fragmentManager.showDialog<ImportBookSourceDialog> {
+                putString("source", source)
+                putBoolean("finishOnDismiss", finishOnDismiss)
+            }
         }
 
     }

@@ -26,27 +26,24 @@ import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.dp
-import io.legado.app.utils.putPrefBoolean
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.legado.app.utils.visible
 
 class ImportReplaceRuleDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     companion object {
+
         fun start(
             fragmentManager: FragmentManager,
             source: String,
             finishOnDismiss: Boolean = false
         ) {
-            ImportReplaceRuleDialog().apply {
-                arguments = Bundle().apply {
-                    putString("source", source)
-                    putBoolean("finishOnDismiss", finishOnDismiss)
-                }
-            }.show(fragmentManager, "importReplaceRule")
+            fragmentManager.showDialog<ImportReplaceRuleDialog> {
+                putString("source", source)
+                putBoolean("finishOnDismiss", finishOnDismiss)
+            }
         }
+
     }
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
