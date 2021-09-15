@@ -65,27 +65,10 @@ class ContentProcessor private constructor(
         var mContent = content.trimStart {
             it.code <= 0x20 || it == '　' || it == ',' || it == '，'
         }
-        //去除书名
-        if (mContent.startsWith(book.name)) {
-            mContent = mContent.substring(book.name.length)
-        }
-        //去除带书名号的书名
-        val cName = "《${book.name}》"
-        if (mContent.startsWith(cName)) {
-            mContent = mContent.substring(cName.length)
-        }
-        //去除无效内容
-        mContent = mContent.trimStart {
-            it.code <= 0x20 || it == '　' || it == ',' || it == '，'
-        }
-        //去除标题
-        if (mContent.startsWith(chapter.title)) {
-            mContent = mContent.substring(chapter.title.length)
-        }
-        //去除无效内容
-        mContent = mContent.trimStart {
-            it.code <= 0x20 || it == '　' || it == ',' || it == '，'
-        }
+        //去除重复标题
+        val titleRegex =
+            "^(\\s|\\pP)*《*(${book.name})*》*(\\s|\\pP)*${chapter.title}(\\s|\\pP)+".toRegex()
+        mContent = mContent.replace(titleRegex, "")
         if (includeTitle) {
             //重新添加标题
             mContent = chapter.getDisplayTitle() + "\n" + mContent
