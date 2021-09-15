@@ -34,7 +34,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 
-class TocRegexDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class TocRegexDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+
+    constructor(tocRegex: String?) : this() {
+        arguments = Bundle().apply {
+            putString("tocRegex", tocRegex)
+        }
+    }
 
     private val importTocRuleKey = "tocRuleUrl"
     private val viewModel: TocRegexViewModel by viewModels()

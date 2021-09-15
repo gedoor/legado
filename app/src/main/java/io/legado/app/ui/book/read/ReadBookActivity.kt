@@ -278,9 +278,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     putExtra("author", it.author)
                 }
             }
-            R.id.menu_toc_regex -> supportFragmentManager.showDialog<TocRegexDialog> {
-                putString("tocRegex", ReadBook.book?.tocUrl)
-            }
+            R.id.menu_toc_regex -> supportFragmentManager.showDialog(
+                TocRegexDialog(ReadBook.book?.tocUrl)
+            )
             R.id.menu_reverse_content -> ReadBook.book?.let {
                 viewModel.reverseContent(it)
             }
