@@ -649,15 +649,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun showActionMenu() {
         when {
-            BaseReadAloudService.isRun -> {
-                showReadAloudDialog()
-            }
-            isAutoPage -> {
-                AutoReadDialog().show(supportFragmentManager, "autoRead")
-            }
-            else -> {
-                binding.readMenu.runMenuIn()
-            }
+            BaseReadAloudService.isRun -> showReadAloudDialog()
+            isAutoPage -> supportFragmentManager.showDialog<AutoReadDialog>()
+            else -> binding.readMenu.runMenuIn()
         }
     }
 
@@ -670,7 +664,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 显示朗读菜单
      */
     override fun showReadAloudDialog() {
-        ReadAloudDialog().show(supportFragmentManager, "readAloud")
+        supportFragmentManager.showDialog<ReadAloudDialog>()
     }
 
     /**
@@ -771,14 +765,14 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 显示阅读样式配置
      */
     override fun showReadStyle() {
-        ReadStyleDialog().show(supportFragmentManager, "readStyle")
+        supportFragmentManager.showDialog<ReadStyleDialog>()
     }
 
     /**
      * 显示更多设置
      */
     override fun showMoreSetting() {
-        MoreConfigDialog().show(supportFragmentManager, "moreConfig")
+        supportFragmentManager.showDialog<MoreConfigDialog>()
     }
 
     /**
