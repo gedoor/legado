@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import com.github.liuyueyi.quick.transfer.ChineseUtils
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -64,19 +65,21 @@ class ContentProcessor private constructor(
         reSegment: Boolean = true
     ): List<String> {
         //去除无效内容
-        var mContent = content.trimStart {
-            it.code <= 0x20 || it == '　' || it == ',' || it == '，'
-        }
-        //去除重复标题
-        var name = book.name
-        var title = chapter.title
-        fbsArr.forEach {
-            name = name.replace(it, "\\" + name)
-            title = title.replace(it, "\\" + name)
-        }
-        val titleRegex = "^(\\s|\\pP|${name})*${title}(\\s|\\pP)+".toRegex()
-        mContent = mContent.replace(titleRegex, "")
+        var mContent = content
         if (includeTitle) {
+            //去除重复标题
+            var name = book.name
+            var title = chapter.title
+            try {
+                fbsArr.forEach {
+                    name = name.replace(it, "\\" + it)
+                    title = title.replace(it, "\\" + it)
+                }
+                val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s|\\p{P})+".toRegex()
+                mContent = mContent.replace(titleRegex, "")
+            } catch (e: Exception) {
+                AppLog.addLog("去除重复标题出错\n${e.localizedMessage}", e)
+            }
             //重新添加标题
             mContent = chapter.getDisplayTitle() + "\n" + mContent
         }
@@ -117,7 +120,7 @@ class ContentProcessor private constructor(
                 it.code <= 0x20 || it == '　'
             }
             if (paragraph.isNotEmpty()) {
-                if (contents.isEmpty() && includeTitle) {
+                if (contents.isEmpty()) {
                     contents.add(paragraph)
                 } else {
                     contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
