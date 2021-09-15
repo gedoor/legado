@@ -35,7 +35,7 @@ class FileAssociationActivity :
         }
         viewModel.importReplaceRuleLive.observe(this) {
             binding.rotateLoading.hide()
-            ImportReplaceRuleDialog.start(supportFragmentManager, it, true)
+            supportFragmentManager.showDialog(ImportReplaceRuleDialog(it, true))
         }
         viewModel.errorLiveData.observe(this, {
             binding.rotateLoading.hide()

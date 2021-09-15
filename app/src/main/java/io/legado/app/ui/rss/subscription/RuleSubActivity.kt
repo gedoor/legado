@@ -75,9 +75,9 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
             1 -> {
                 ImportRssSourceDialog.start(supportFragmentManager, ruleSub.url)
             }
-            2 -> {
-                ImportReplaceRuleDialog.start(supportFragmentManager, ruleSub.url)
-            }
+            2 -> supportFragmentManager.showDialog(
+                ImportReplaceRuleDialog(ruleSub.url)
+            )
         }
     }
 

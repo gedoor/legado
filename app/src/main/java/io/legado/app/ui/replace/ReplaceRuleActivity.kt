@@ -61,7 +61,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private var dataInit = false
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
-        ImportReplaceRuleDialog.start(supportFragmentManager, it)
+        supportFragmentManager.showDialog(
+            ImportReplaceRuleDialog(it)
+        )
     }
     private val editActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -72,7 +74,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private val importDoc = registerForActivityResult(HandleFileContract()) { uri ->
         kotlin.runCatching {
             uri?.readText(this)?.let {
-                ImportReplaceRuleDialog.start(supportFragmentManager, it)
+                supportFragmentManager.showDialog(
+                    ImportReplaceRuleDialog(it)
+                )
             }
         }.onFailure {
             toastOnUi("readTextError:${it.localizedMessage}")
@@ -279,7 +283,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    ImportReplaceRuleDialog.start(supportFragmentManager, it)
+                    supportFragmentManager.showDialog(
+                        ImportReplaceRuleDialog(it)
+                    )
                 }
             }
             cancelButton()

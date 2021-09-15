@@ -28,8 +28,9 @@ class OnLineImportActivity :
                 )
                 "rssSource" -> ImportRssSourceDialog
                     .start(supportFragmentManager, it.second, true)
-                "replaceRule" -> ImportReplaceRuleDialog
-                    .start(supportFragmentManager, it.second, true)
+                "replaceRule" -> supportFragmentManager.showDialog(
+                    ImportReplaceRuleDialog(it.second, true)
+                )
             }
         }
         viewModel.errorLive.observe(this) {
@@ -46,7 +47,9 @@ class OnLineImportActivity :
                     ImportBookSourceDialog(url, true)
                 )
                 "/rssSource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
-                "/replaceRule" -> ImportReplaceRuleDialog.start(supportFragmentManager, url, true)
+                "/replaceRule" -> supportFragmentManager.showDialog(
+                    ImportReplaceRuleDialog(url, true)
+                )
                 "/textTocRule" -> viewModel.getText(url) { json ->
                     viewModel.importTextTocRule(json, this::finallyDialog)
                 }
@@ -64,7 +67,9 @@ class OnLineImportActivity :
                         ImportBookSourceDialog(url, true)
                     )
                     "rsssource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
-                    "replace" -> ImportReplaceRuleDialog.start(supportFragmentManager, url, true)
+                    "replace" -> supportFragmentManager.showDialog(
+                        ImportReplaceRuleDialog(url, true)
+                    )
                     else -> {
                         toastOnUi("url error")
                         finish()
