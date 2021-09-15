@@ -71,10 +71,12 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     override fun openSubscription(ruleSub: RuleSub) {
         when (ruleSub.type) {
-            0 -> supportFragmentManager.showDialog(ImportBookSourceDialog(ruleSub.url))
-            1 -> {
-                ImportRssSourceDialog.start(supportFragmentManager, ruleSub.url)
-            }
+            0 -> supportFragmentManager.showDialog(
+                ImportBookSourceDialog(ruleSub.url)
+            )
+            1 -> supportFragmentManager.showDialog(
+                ImportRssSourceDialog(ruleSub.url)
+            )
             2 -> supportFragmentManager.showDialog(
                 ImportReplaceRuleDialog(ruleSub.url)
             )

@@ -26,8 +26,9 @@ class OnLineImportActivity :
                 "bookSource" -> supportFragmentManager.showDialog(
                     ImportBookSourceDialog(it.second, true)
                 )
-                "rssSource" -> ImportRssSourceDialog
-                    .start(supportFragmentManager, it.second, true)
+                "rssSource" -> supportFragmentManager.showDialog(
+                    ImportRssSourceDialog(it.second, true)
+                )
                 "replaceRule" -> supportFragmentManager.showDialog(
                     ImportReplaceRuleDialog(it.second, true)
                 )
@@ -46,7 +47,9 @@ class OnLineImportActivity :
                 "/bookSource" -> supportFragmentManager.showDialog(
                     ImportBookSourceDialog(url, true)
                 )
-                "/rssSource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
+                "/rssSource" -> supportFragmentManager.showDialog(
+                    ImportRssSourceDialog(url, true)
+                )
                 "/replaceRule" -> supportFragmentManager.showDialog(
                     ImportReplaceRuleDialog(url, true)
                 )
@@ -66,7 +69,9 @@ class OnLineImportActivity :
                     "booksource" -> supportFragmentManager.showDialog(
                         ImportBookSourceDialog(url, true)
                     )
-                    "rsssource" -> ImportRssSourceDialog.start(supportFragmentManager, url, true)
+                    "rsssource" -> supportFragmentManager.showDialog(
+                        ImportRssSourceDialog(url, true)
+                    )
                     "replace" -> supportFragmentManager.showDialog(
                         ImportReplaceRuleDialog(url, true)
                     )

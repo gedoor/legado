@@ -53,12 +53,16 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     private var groupMenu: SubMenu? = null
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
-        ImportRssSourceDialog.start(supportFragmentManager, it)
+        supportFragmentManager.showDialog(
+            ImportRssSourceDialog(it)
+        )
     }
     private val importDoc = registerForActivityResult(HandleFileContract()) { uri ->
         kotlin.runCatching {
             uri?.readText(this)?.let {
-                ImportRssSourceDialog.start(supportFragmentManager, it)
+                supportFragmentManager.showDialog(
+                    ImportRssSourceDialog(it)
+                )
             }
         }.onFailure {
             toastOnUi("readTextError:${it.localizedMessage}")
@@ -286,7 +290,9 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    ImportRssSourceDialog.start(supportFragmentManager, it)
+                    supportFragmentManager.showDialog(
+                        ImportRssSourceDialog(it)
+                    )
                 }
             }
             cancelButton()
