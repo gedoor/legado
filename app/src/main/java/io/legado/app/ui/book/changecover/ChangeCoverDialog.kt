@@ -26,13 +26,12 @@ class ChangeCoverDialog : BaseDialogFragment(),
         const val tag = "changeCoverDialog"
 
         fun show(manager: FragmentManager, name: String, author: String) {
-            val fragment = (manager.findFragmentByTag(tag) as? ChangeCoverDialog)
-                ?: ChangeCoverDialog().apply {
-                    val bundle = Bundle()
-                    bundle.putString("name", name)
-                    bundle.putString("author", author)
-                    arguments = bundle
-                }
+            val fragment = ChangeCoverDialog().apply {
+                val bundle = Bundle()
+                bundle.putString("name", name)
+                bundle.putString("author", author)
+                arguments = bundle
+            }
             fragment.show(manager, tag)
         }
     }
