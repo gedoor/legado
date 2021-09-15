@@ -7,29 +7,23 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogDictBinding
 import io.legado.app.utils.invisible
-import io.legado.app.utils.showDialog
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
  * 词典
  */
-class DictDialog : BaseDialogFragment() {
+class DictDialog() : BaseDialogFragment() {
 
-    companion object {
-
-        fun show(manager: FragmentManager, word: String) {
-            manager.showDialog<DictDialog> {
-                putString("word", word)
-            }
+    constructor(word: String) : this() {
+        arguments = Bundle().apply {
+            putString("word", word)
         }
-
     }
 
     private val viewModel by viewModels<DictViewModel>()
