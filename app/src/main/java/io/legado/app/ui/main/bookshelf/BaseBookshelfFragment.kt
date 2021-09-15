@@ -90,7 +90,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                 }
             }
             R.id.menu_import_bookshelf -> importBookshelfAlert(groupId)
-            R.id.menu_log -> AppLogDialog.show(childFragmentManager)
+            R.id.menu_log -> childFragmentManager.showDialog<AppLogDialog>()
         }
     }
 

@@ -6,10 +6,23 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.edit
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+
+inline fun <reified T : DialogFragment> FragmentManager.showDialog(
+    arguments: Bundle.() -> Unit = {}
+) {
+    val dialog = T::class.java.newInstance()
+    val bundle = Bundle()
+    bundle.apply(arguments)
+    dialog.arguments = bundle
+    dialog.show(this, T::class.simpleName)
+}
 
 fun Fragment.getPrefBoolean(key: String, defValue: Boolean = false) =
     requireContext().defaultSharedPreferences.getBoolean(key, defValue)

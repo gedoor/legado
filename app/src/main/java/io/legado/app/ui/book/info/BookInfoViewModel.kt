@@ -270,7 +270,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }.onSuccess {
             context.toastOnUi(R.string.clear_cache_success)
         }.onError {
-            context.toastOnUi(it.stackTraceToString())
+            context.toastOnUi("清理缓存出错\n${it.localizedMessage}")
         }
     }
 

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -23,12 +22,6 @@ import splitties.views.onClick
 import java.util.*
 
 class AppLogDialog : BaseDialogFragment() {
-
-    companion object {
-        fun show(fragmentManager: FragmentManager) {
-            AppLogDialog().show(fragmentManager, "appLogDialog")
-        }
-    }
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val adapter by lazy {
