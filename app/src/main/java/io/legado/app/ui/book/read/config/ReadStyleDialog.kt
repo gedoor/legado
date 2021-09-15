@@ -19,10 +19,7 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
-import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.dp
-import io.legado.app.utils.getIndexById
-import io.legado.app.utils.postEvent
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onLongClick
 
@@ -113,7 +110,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             postEvent(EventBus.UP_CONFIG, true)
         }
         tvTextFont.setOnClickListener {
-            FontSelectDialog().show(childFragmentManager, "fontSelectDialog")
+            childFragmentManager.showDialog<FontSelectDialog>()
         }
         tvTextIndent.setOnClickListener {
             selector(
