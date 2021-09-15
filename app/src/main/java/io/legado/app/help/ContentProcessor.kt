@@ -15,6 +15,8 @@ class ContentProcessor private constructor(
 ) {
 
     companion object {
+        private val fbsArr =
+            arrayOf("\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|")
         private val processors = hashMapOf<String, WeakReference<ContentProcessor>>()
 
         fun get(bookName: String, bookOrigin: String): ContentProcessor {
@@ -66,8 +68,14 @@ class ContentProcessor private constructor(
             it.code <= 0x20 || it == '　' || it == ',' || it == '，'
         }
         //去除重复标题
-//        val titleRegex = "^(\\s|\\pP|${book.name})*${chapter.title}(\\s|\\pP)+".toRegex()
-//        mContent = mContent.replace(titleRegex, "")
+        var name = book.name
+        var title = chapter.title
+        fbsArr.forEach {
+            name = name.replace(it, "\\" + name)
+            title = title.replace(it, "\\" + name)
+        }
+        val titleRegex = "^(\\s|\\pP|${name})*${title}(\\s|\\pP)+".toRegex()
+        mContent = mContent.replace(titleRegex, "")
         if (includeTitle) {
             //重新添加标题
             mContent = chapter.getDisplayTitle() + "\n" + mContent
