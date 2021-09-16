@@ -146,7 +146,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickL
         alert(R.string.diy_edit_source_group) {
             val alertBinding = DialogCustomGroupBinding.inflate(layoutInflater).apply {
                 val groups = linkedSetOf<String>()
-                appDb.bookSourceDao.allGroup.forEach { group ->
+                appDb.replaceRuleDao.allGroup.forEach { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                 }
                 textInputLayout.setHint(R.string.group_name)

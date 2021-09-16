@@ -29,6 +29,9 @@ interface ReplaceRuleDao {
     @get:Query("SELECT * FROM replace_rules ORDER BY sortOrder ASC")
     val all: List<ReplaceRule>
 
+    @get:Query("select distinct `group` from replace_rules where trim(`group`) <> ''")
+    val allGroup: List<String>
+
     @get:Query("SELECT * FROM replace_rules WHERE isEnabled = 1 ORDER BY sortOrder ASC")
     val allEnabled: List<ReplaceRule>
 
