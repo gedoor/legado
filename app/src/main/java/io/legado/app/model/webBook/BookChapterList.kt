@@ -20,6 +20,8 @@ import splitties.init.appCtx
 @Suppress("BlockingMethodInNonBlockingContext")
 object BookChapterList {
 
+    private val falseRegex = "\\w*(?i)(null|false|0)\\w*".toRegex()
+
     suspend fun analyzeChapterList(
         scope: CoroutineScope,
         bookSource: BookSource,
@@ -188,10 +190,10 @@ object BookChapterList {
                     bookChapter.url = baseUrl
                 }
                 if (bookChapter.title.isNotEmpty()) {
-                    if (isVip.isNotEmpty() && isVip != "null" && isVip != "false" && isVip != "0") {
+                    if (isVip.isNotEmpty() && !isVip.matches(falseRegex)) {
                         bookChapter.isVip = true
                     }
-                    if (isPay.isNotEmpty() && isPay != "null" && isPay != "false" && isPay != "0") {
+                    if (isPay.isNotEmpty() && !isPay.matches(falseRegex)) {
                         bookChapter.isPay = true
                     }
                     chapterList.add(bookChapter)
