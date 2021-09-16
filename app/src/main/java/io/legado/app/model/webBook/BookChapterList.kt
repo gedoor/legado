@@ -20,7 +20,7 @@ import splitties.init.appCtx
 @Suppress("BlockingMethodInNonBlockingContext")
 object BookChapterList {
 
-    private val falseRegex = "\\w*(?i)(null|false|0)\\w*".toRegex()
+    private val falseRegex = "\\s*(?i)(null|false|0)\\s*".toRegex()
 
     suspend fun analyzeChapterList(
         scope: CoroutineScope,
