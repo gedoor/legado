@@ -6,10 +6,10 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.utils.StringUtils
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
+import java.util.regex.Pattern
 
 class ContentProcessor private constructor(
     private val bookName: String,
@@ -67,8 +67,8 @@ class ContentProcessor private constructor(
         if (includeTitle) {
             //去除重复标题
             try {
-                val name = StringUtils.escapeToRegex(book.name)
-                val title = StringUtils.escapeToRegex(chapter.title)
+                val name = Pattern.quote(book.name)
+                val title = Pattern.quote(chapter.title)
                 val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s|\\p{P})+".toRegex()
                 mContent = mContent.replace(titleRegex, "")
             } catch (e: Exception) {

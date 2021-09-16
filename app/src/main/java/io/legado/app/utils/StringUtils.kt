@@ -313,17 +313,6 @@ object StringUtils {
         return buf.toString()
     }
 
-    private val regexNeedEscaped =
-        arrayOf("\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|")
-
-    fun escapeToRegex(text: String): String {
-        var str = text
-        regexNeedEscaped.forEach {
-            str = str.replace(it, "\\" + it)
-        }
-        return str
-    }
-
     fun byteToHexString(bytes: ByteArray?): String {
         if (bytes == null) return ""
         val sb = StringBuilder(bytes.size * 2)
