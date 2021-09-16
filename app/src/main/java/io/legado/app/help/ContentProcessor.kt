@@ -6,6 +6,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.utils.StringUtils
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
@@ -16,8 +17,6 @@ class ContentProcessor private constructor(
 ) {
 
     companion object {
-        private val fbsArr =
-            arrayOf("\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|")
         private val processors = hashMapOf<String, WeakReference<ContentProcessor>>()
 
         fun get(bookName: String, bookOrigin: String): ContentProcessor {
@@ -67,13 +66,9 @@ class ContentProcessor private constructor(
         var mContent = content
         if (includeTitle) {
             //去除重复标题
-            var name = book.name
-            var title = chapter.title
             try {
-                fbsArr.forEach {
-                    name = name.replace(it, "\\" + it)
-                    title = title.replace(it, "\\" + it)
-                }
+                val name = StringUtils.escapeToRegex(book.name)
+                val title = StringUtils.escapeToRegex(chapter.title)
                 val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s|\\p{P})+".toRegex()
                 mContent = mContent.replace(titleRegex, "")
             } catch (e: Exception) {
