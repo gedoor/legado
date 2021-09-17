@@ -142,19 +142,18 @@ class CheckSourceService : BaseService() {
         }.timeout(180000L)
             .onError(searchCoroutine) {
                 source.addGroup("失效")
-                source.bookSourceComment = """
-                    "error:${it.localizedMessage}
-                    ${source.bookSourceComment}"
-                """.trimIndent()
+                if (source.bookSourceComment?.contains("Error: ") == false) {
+                    source.bookSourceComment = "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
+                }
                 Debug.updateFinalMessage(source.bookSourceUrl, "失败:${it.localizedMessage}")
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
                 source.removeGroup("失效")
                 source.bookSourceComment = source.bookSourceComment
-                    ?.split("\n")
+                    ?.split("\n\n")
                     ?.filterNot {
-                        it.startsWith("error:")
+                        it.startsWith("Error: ")
                     }?.joinToString("\n")
                 Debug.updateFinalMessage(source.bookSourceUrl, "成功")
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
