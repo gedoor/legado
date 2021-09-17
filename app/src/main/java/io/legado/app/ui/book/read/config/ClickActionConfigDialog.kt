@@ -122,7 +122,7 @@ class ClickActionConfigDialog : BaseDialogFragment() {
     }
 
     private fun selectAction(success: (action: Int) -> Unit) {
-        selector(
+        context?.selector(
             getString(R.string.select_action),
             actions.values.toList()
         ) { _, index ->

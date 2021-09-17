@@ -146,7 +146,12 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
 
     private fun selectSysTts() {
         val ttsItems = viewModel.tts.engines.map {
-            SelectItem(it.label, 0)
+            SelectItem(it.label, it.name)
+        }
+        alert(R.string.system_tts) {
+            items(ttsItems) { _, item, index ->
+
+            }
         }
         removePref(PreferKey.speakEngine)
         dismissAllowingStateLoss()

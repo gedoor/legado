@@ -155,7 +155,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
         binding.tvRestore.setOnClickListener {
             val defaultConfigs = DefaultData.readConfigs
             val layoutNames = defaultConfigs.map { it.name }
-            selector("选择预设布局", layoutNames) { _, i ->
+            context?.selector("选择预设布局", layoutNames) { _, i ->
                 if (i >= 0) {
                     ReadBookConfig.durConfig = defaultConfigs[i]
                     initData()

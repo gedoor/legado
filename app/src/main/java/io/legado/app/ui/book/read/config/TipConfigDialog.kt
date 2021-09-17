@@ -93,7 +93,7 @@ class TipConfigDialog : BaseDialogFragment() {
         }
         llHeaderShow.setOnClickListener {
             val headerModes = ReadTipConfig.getHeaderModes(requireContext())
-            selector(items = headerModes.values.toList()) { _, i ->
+            context?.selector(items = headerModes.values.toList()) { _, i ->
                 ReadTipConfig.headerMode = headerModes.keys.toList()[i]
                 tvHeaderShow.text = headerModes[ReadTipConfig.headerMode]
                 postEvent(EventBus.UP_CONFIG, true)
@@ -101,14 +101,14 @@ class TipConfigDialog : BaseDialogFragment() {
         }
         llFooterShow.setOnClickListener {
             val footerModes = ReadTipConfig.getFooterModes(requireContext())
-            selector(items = footerModes.values.toList()) { _, i ->
+            context?.selector(items = footerModes.values.toList()) { _, i ->
                 ReadTipConfig.footerMode = footerModes.keys.toList()[i]
                 tvFooterShow.text = footerModes[ReadTipConfig.footerMode]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llHeaderLeft.setOnClickListener {
-            selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderLeft = i
                 tvHeaderLeft.text = ReadTipConfig.tips[i]
@@ -116,7 +116,7 @@ class TipConfigDialog : BaseDialogFragment() {
             }
         }
         llHeaderMiddle.setOnClickListener {
-            selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderMiddle = i
                 tvHeaderMiddle.text = ReadTipConfig.tips[i]
@@ -124,7 +124,7 @@ class TipConfigDialog : BaseDialogFragment() {
             }
         }
         llHeaderRight.setOnClickListener {
-            selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipHeaderRight = i
                 tvHeaderRight.text = ReadTipConfig.tips[i]
@@ -132,7 +132,7 @@ class TipConfigDialog : BaseDialogFragment() {
             }
         }
         llFooterLeft.setOnClickListener {
-            selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterLeft = i
                 tvFooterLeft.text = ReadTipConfig.tips[i]
@@ -140,7 +140,7 @@ class TipConfigDialog : BaseDialogFragment() {
             }
         }
         llFooterMiddle.setOnClickListener {
-            selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterMiddle = i
                 tvFooterMiddle.text = ReadTipConfig.tips[i]
@@ -148,7 +148,7 @@ class TipConfigDialog : BaseDialogFragment() {
             }
         }
         llFooterRight.setOnClickListener {
-            selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tips) { _, i ->
                 clearRepeat(i)
                 ReadTipConfig.tipFooterRight = i
                 tvFooterRight.text = ReadTipConfig.tips[i]
@@ -156,7 +156,7 @@ class TipConfigDialog : BaseDialogFragment() {
             }
         }
         llTipColor.setOnClickListener {
-            selector(items = arrayListOf("跟随正文", "自定义")) { _, i ->
+            context?.selector(items = arrayListOf("跟随正文", "自定义")) { _, i ->
                 when (i) {
                     0 -> {
                         ReadTipConfig.tipColor = 0

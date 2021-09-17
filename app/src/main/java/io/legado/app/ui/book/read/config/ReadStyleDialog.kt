@@ -113,7 +113,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             childFragmentManager.showDialog<FontSelectDialog>()
         }
         tvTextIndent.setOnClickListener {
-            selector(
+            context?.selector(
                 title = getString(R.string.text_indent),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
