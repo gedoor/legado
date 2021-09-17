@@ -24,6 +24,7 @@ import io.legado.app.databinding.ItemHttpTtsBinding
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
@@ -148,13 +149,11 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         val ttsItems = viewModel.tts.engines.map {
             SelectItem(it.label, it.name)
         }
-        alert(R.string.system_tts) {
-            items(ttsItems) { _, item, index ->
-
-            }
+        context?.selector(R.string.system_tts, ttsItems) { _, item, _ ->
+            item.value
+            removePref(PreferKey.speakEngine)
+            dismissAllowingStateLoss()
         }
-        removePref(PreferKey.speakEngine)
-        dismissAllowingStateLoss()
     }
 
     private fun importAlert() {

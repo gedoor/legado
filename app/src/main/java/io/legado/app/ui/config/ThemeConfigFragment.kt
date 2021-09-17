@@ -167,7 +167,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
                     selectImage.launch(requestCodeCover)
                 } else {
-                    selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
+                    context?.selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                         if (i == 0) {
                             removePref(PreferKey.defaultCover)
                             CoverImageView.upDefaultCover()
@@ -180,7 +180,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 if (getPrefString(PreferKey.defaultCoverDark).isNullOrEmpty()) {
                     selectImage.launch(requestCodeCoverDark)
                 } else {
-                    selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
+                    context?.selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                         if (i == 0) {
                             removePref(PreferKey.defaultCoverDark)
                             CoverImageView.upDefaultCover()
@@ -226,7 +226,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         if (!getPrefString(bgKey).isNullOrEmpty()) {
             actions.add(getString(R.string.delete))
         }
-        selector(items = actions) { _, i ->
+        context?.selector(items = actions) { _, i ->
             when (i) {
                 0 -> alertImageBlurring(blurringKey) {
                     upTheme(isNight)
