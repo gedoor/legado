@@ -467,7 +467,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             snackBar?.dismiss()
             snackBar = null
             groups.map { group ->
-                if (group.contains("失效")) {
+                if (group.contains("失效") && searchView.query.isEmpty()) {
                     searchView.setQuery("失效", true)
                     toastOnUi("发现有失效书源，已为您自动筛选！")
                 }
