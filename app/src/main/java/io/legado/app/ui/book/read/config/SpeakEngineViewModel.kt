@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.config
 
 import android.app.Application
 import android.net.Uri
+import android.speech.tts.TextToSpeech
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
@@ -12,6 +13,8 @@ import io.legado.app.help.http.text
 import io.legado.app.utils.*
 
 class SpeakEngineViewModel(application: Application) : BaseViewModel(application) {
+
+    val tts = TextToSpeech(context, null)
 
     fun importDefault() {
         execute {

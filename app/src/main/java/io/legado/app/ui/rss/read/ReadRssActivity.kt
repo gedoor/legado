@@ -174,7 +174,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     private fun selectSaveFolder() {
-        val default = arrayListOf<SelectItem>()
+        val default = arrayListOf<SelectItem<Int>>()
         val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
         if (!path.isNullOrEmpty()) {
             default.add(SelectItem(path, -1))

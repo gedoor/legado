@@ -16,6 +16,7 @@ import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
+import io.legado.app.utils.getJsonArray
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -56,7 +57,7 @@ class HandleFileActivity :
             finish()
         }
         val allowExtensions = intent.getStringArrayExtra("allowExtensions")
-        val selectList = when (mode) {
+        val selectList: ArrayList<SelectItem<Int>> = when (mode) {
             HandleFileContract.DIR -> getDirActions()
             HandleFileContract.FILE -> getFileActions()
             HandleFileContract.EXPORT -> arrayListOf(
@@ -66,7 +67,7 @@ class HandleFileActivity :
             }
             else -> arrayListOf()
         }
-        intent.getParcelableArrayListExtra<SelectItem>("otherActions")?.let {
+        intent.getJsonArray<SelectItem<Int>>("otherActions")?.let {
             selectList.addAll(it)
         }
         val title = intent.getStringExtra("title") ?: let {
@@ -78,7 +79,7 @@ class HandleFileActivity :
         }
         alert(title) {
             items(selectList) { _, item, _ ->
-                when (item.id) {
+                when (item.value) {
                     HandleFileContract.DIR -> selectDocTree.launch(null)
                     HandleFileContract.FILE -> selectDoc.launch(typesOfExtensions(allowExtensions))
                     10 -> checkPermissions {
@@ -104,9 +105,9 @@ class HandleFileActivity :
                     else -> {
                         val path = item.title
                         val uri = if (path.isContentScheme()) {
-                            Uri.fromFile(File(path))
-                        } else {
                             Uri.parse(path)
+                        } else {
+                            Uri.fromFile(File(path))
                         }
                         onResult(Intent().setData(uri))
                     }
@@ -130,7 +131,7 @@ class HandleFileActivity :
         return null
     }
 
-    private fun getDirActions(): ArrayList<SelectItem> {
+    private fun getDirActions(): ArrayList<SelectItem<Int>> {
         return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             arrayListOf(
                 SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
@@ -141,7 +142,7 @@ class HandleFileActivity :
         }
     }
 
-    private fun getFileActions(): ArrayList<SelectItem> {
+    private fun getFileActions(): ArrayList<SelectItem<Int>> {
         return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             arrayListOf(
                 SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE),

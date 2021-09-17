@@ -1,14 +1,10 @@
 package io.legado.app.lib.dialogs
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
 @Suppress("unused")
-@Parcelize
-data class SelectItem(
+data class SelectItem<T>(
     val title: String,
-    val id: Int
-) : Parcelable {
+    val value: T
+) {
 
     override fun toString(): String {
         return title

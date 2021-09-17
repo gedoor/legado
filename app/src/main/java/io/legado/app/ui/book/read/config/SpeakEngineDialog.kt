@@ -22,6 +22,7 @@ import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
 import io.legado.app.help.DirectLinkUpload
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
@@ -95,8 +96,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         tvFooterLeft.setText(R.string.system_tts)
         tvFooterLeft.visible()
         tvFooterLeft.setOnClickListener {
-            removePref(PreferKey.speakEngine)
-            dismissAllowingStateLoss()
+            selectSysTts()
         }
         tvOk.visible()
         tvOk.setOnClickListener {
@@ -142,6 +142,14 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             }
         }
         return true
+    }
+
+    private fun selectSysTts() {
+        val ttsItems = viewModel.tts.engines.map {
+            SelectItem(it.label, 0)
+        }
+        removePref(PreferKey.speakEngine)
+        dismissAllowingStateLoss()
     }
 
     private fun importAlert() {
@@ -218,18 +226,18 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemHttpTtsBinding) {
-            binding.apply {
+            binding.run {
                 cbName.setOnClickListener {
-                    getItem(holder.layoutPosition)?.let { httpTTS ->
+                    getItemByLayoutPosition(holder.layoutPosition)?.let { httpTTS ->
                         engineId = httpTTS.id
-                        notifyItemRangeChanged(0, itemCount)
+                        notifyItemRangeChanged(getHeaderCount(), itemCount)
                     }
                 }
                 ivEdit.setOnClickListener {
-                    editHttpTTS(getItem(holder.layoutPosition))
+                    editHttpTTS(getItemByLayoutPosition(holder.layoutPosition))
                 }
                 ivMenuDelete.setOnClickListener {
-                    getItem(holder.layoutPosition)?.let { httpTTS ->
+                    getItemByLayoutPosition(holder.layoutPosition)?.let { httpTTS ->
                         appDb.httpTTSDao.delete(httpTTS)
                     }
                 }
