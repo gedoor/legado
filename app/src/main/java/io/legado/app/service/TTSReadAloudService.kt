@@ -8,11 +8,9 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.MediaHelp
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.model.ReadBook
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.servicePendingIntent
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import java.util.*
 
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
@@ -35,7 +33,12 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     @Synchronized
     private fun initTts() {
         ttsInitFinish = false
-        textToSpeech = TextToSpeech(this, this)
+        val engine = GSON.fromJsonObject<SelectItem<String>>(AppConfig.ttsEngine)?.value
+        textToSpeech = if (engine.isNullOrBlank()) {
+            TextToSpeech(this, this)
+        } else {
+            TextToSpeech(this, this, engine)
+        }
     }
 
     @Synchronized

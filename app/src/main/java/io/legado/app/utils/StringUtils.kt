@@ -245,7 +245,7 @@ object StringUtils {
      * 是否数字
      */
     fun isNumeric(str: String): Boolean {
-        val pattern = Pattern.compile("[0-9]+")
+        val pattern = Pattern.compile("-?[0-9]+")
         val isNum = pattern.matcher(str)
         return isNum.matches()
     }
