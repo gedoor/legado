@@ -14,13 +14,13 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
@@ -34,7 +34,6 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import splitties.init.appCtx
 
 
 class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
@@ -43,7 +42,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private val viewModel: SpeakEngineViewModel by viewModels()
     private val ttsUrlKey = "ttsUrlKey"
     private val adapter by lazy { Adapter(requireContext()) }
-    private var engineId = appCtx.getPrefLong(PreferKey.speakEngine)
+    private var ttsEngine: String? = AppConfig.ttsEngine
     private val importDocResult = registerForActivityResult(HandleFileContract()) {
         it?.let {
             viewModel.importLocal(it)
@@ -101,7 +100,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         }
         tvOk.visible()
         tvOk.setOnClickListener {
-            putPrefLong(PreferKey.speakEngine, engineId)
+            AppConfig.ttsEngine = ttsEngine
             dismissAllowingStateLoss()
         }
         tvCancel.visible()
@@ -150,8 +149,9 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             SelectItem(it.label, it.name)
         }
         context?.selector(R.string.system_tts, ttsItems) { _, item, _ ->
-            item.value
-            removePref(PreferKey.speakEngine)
+            AppConfig.ttsEngine = GSON.toJson(item)
+            ttsEngine = null
+            adapter.notifyItemRangeChanged(0, adapter.itemCount)
             dismissAllowingStateLoss()
         }
     }
@@ -225,7 +225,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
         ) {
             binding.apply {
                 cbName.text = item.name
-                cbName.isChecked = item.id == engineId
+                cbName.isChecked = item.id.toString() == ttsEngine
             }
         }
 
@@ -233,7 +233,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             binding.run {
                 cbName.setOnClickListener {
                     getItemByLayoutPosition(holder.layoutPosition)?.let { httpTTS ->
-                        engineId = httpTTS.id
+                        ttsEngine = httpTTS.id.toString()
                         notifyItemRangeChanged(getHeaderCount(), itemCount)
                     }
                 }

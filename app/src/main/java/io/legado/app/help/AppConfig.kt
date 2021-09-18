@@ -222,6 +222,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.changeSourceCheckAuthor, value)
         }
 
+    var ttsEngine: String?
+        get() = appCtx.getPrefString(PreferKey.ttsEngine)
+        set(value) {
+            appCtx.putPrefString(PreferKey.ttsEngine, value)
+        }
+
     val autoChangeSource: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.autoChangeSource, true)
 

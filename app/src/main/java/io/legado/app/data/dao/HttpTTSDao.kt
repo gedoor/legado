@@ -19,6 +19,9 @@ interface HttpTTSDao {
     @Query("select * from httpTTS where id = :id")
     fun get(id: Long): HttpTTS?
 
+    @Query("select name from httpTTS where id = :id")
+    fun getName(id: Long): String?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg httpTTS: HttpTTS)
 

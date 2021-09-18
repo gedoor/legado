@@ -14,14 +14,13 @@ import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.help.AppConfig
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.utils.getPrefLong
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.windowSize
-import splitties.init.appCtx
+import io.legado.app.utils.*
 
 class ReadAloudConfigDialog : DialogFragment() {
     private val readAloudPreferTag = "readAloudPreferTag"
@@ -61,15 +60,20 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         private val speakEngineSummary: String
             get() {
-                val eid = appCtx.getPrefLong(PreferKey.speakEngine)
-                val ht = appDb.httpTTSDao.get(eid)
-                return ht?.name ?: getString(R.string.system_tts)
+                val ttsEngine = AppConfig.ttsEngine
+                    ?: return getString(R.string.system_tts)
+                if (StringUtils.isNumeric(ttsEngine)) {
+                    return appDb.httpTTSDao.getName(ttsEngine.toLong())
+                        ?: getString(R.string.system_tts)
+                }
+                return GSON.fromJsonObject<SelectItem<String>>(ttsEngine)?.title
+                    ?: getString(R.string.system_tts)
             }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
             upPreferenceSummary(
-                findPreference(PreferKey.speakEngine),
+                findPreference(PreferKey.ttsEngine),
                 speakEngineSummary
             )
         }
@@ -91,8 +95,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
             when (preference?.key) {
-                PreferKey.speakEngine ->
-                    SpeakEngineDialog().show(childFragmentManager, "speakEngine")
+                PreferKey.ttsEngine -> childFragmentManager.showDialog(SpeakEngineDialog())
             }
             return super.onPreferenceTreeClick(preference)
         }
@@ -107,7 +110,7 @@ class ReadAloudConfigDialog : DialogFragment() {
                         postEvent(EventBus.MEDIA_BUTTON, false)
                     }
                 }
-                PreferKey.speakEngine -> {
+                PreferKey.ttsEngine -> {
                     upPreferenceSummary(findPreference(key), speakEngineSummary)
                     ReadAloud.upReadAloudClass()
                 }

@@ -3,13 +3,13 @@ package io.legado.app.model
 import android.content.Context
 import android.content.Intent
 import io.legado.app.constant.IntentAction
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
+import io.legado.app.help.AppConfig
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
-import io.legado.app.utils.getPrefLong
+import io.legado.app.utils.StringUtils
 import splitties.init.appCtx
 
 object ReadAloud {
@@ -17,13 +17,17 @@ object ReadAloud {
     var httpTTS: HttpTTS? = null
 
     private fun getReadAloudClass(): Class<*> {
-        val spId = appCtx.getPrefLong(PreferKey.speakEngine)
-        httpTTS = appDb.httpTTSDao.get(spId)
-        return if (httpTTS != null) {
-            HttpReadAloudService::class.java
-        } else {
-            TTSReadAloudService::class.java
+        val ttsEngine = AppConfig.ttsEngine
+        if (ttsEngine.isNullOrBlank()) {
+            return TTSReadAloudService::class.java
         }
+        if (StringUtils.isNumeric(ttsEngine)) {
+            httpTTS = appDb.httpTTSDao.get(ttsEngine.toLong())
+            if (httpTTS != null) {
+                return HttpReadAloudService::class.java
+            }
+        }
+        return TTSReadAloudService::class.java
     }
 
     fun upReadAloudClass() {
