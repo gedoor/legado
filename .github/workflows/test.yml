@@ -95,6 +95,7 @@ jobs:
       # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
       LANZOU_FOLDER_ID: '2670621'
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           path: $GITHUB_WORKSPACE/apk
