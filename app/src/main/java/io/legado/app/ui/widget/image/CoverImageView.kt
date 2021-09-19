@@ -6,10 +6,15 @@ import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import splitties.init.appCtx
 
@@ -28,7 +33,7 @@ class CoverImageView @JvmOverloads constructor(
     internal var height: Float = 0.toFloat()
     var path: String? = null
         private set
-
+    private var defaultCover = true
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -70,6 +75,33 @@ class CoverImageView @JvmOverloads constructor(
         minimumWidth = width
     }
 
+    private val glideListener by lazy {
+        object : RequestListener<Drawable> {
+
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Drawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                defaultCover = true
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                defaultCover = false
+                return false
+            }
+
+        }
+    }
+
     fun load(path: String? = null) {
         this.path = path
         if (AppConfig.useDefaultCover) {
@@ -80,13 +112,14 @@ class CoverImageView @JvmOverloads constructor(
             ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
                 .placeholder(defaultDrawable)
                 .error(defaultDrawable)
+                .listener(glideListener)
                 .centerCrop()
                 .into(this)
         }
     }
 
     companion object {
-        private var showBookName = false
+        private var showBookName = true
         lateinit var defaultDrawable: Drawable
 
         init {
@@ -95,18 +128,18 @@ class CoverImageView @JvmOverloads constructor(
 
         @SuppressLint("UseCompatLoadingForDrawables")
         fun upDefaultCover() {
-            val preferKey =
-                if (AppConfig.isNightTheme) PreferKey.defaultCoverDark
-                else PreferKey.defaultCover
-            val path = appCtx.getPrefString(preferKey)
-            var dw = Drawable.createFromPath(path)
-            if (dw == null) {
+            val isNightTheme = AppConfig.isNightTheme
+            val key = if (isNightTheme) PreferKey.defaultCoverDark else PreferKey.defaultCover
+            val path = appCtx.getPrefString(key)
+            defaultDrawable = Drawable.createFromPath(path)?.let {
+                val showNameKey = if (isNightTheme) PreferKey.defaultCoverDarkShowName
+                else PreferKey.defaultCoverShowName
+                showBookName = appCtx.getPrefBoolean(showNameKey)
+                return@let it
+            } ?: let {
                 showBookName = true
-                dw = appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
-            } else {
-                showBookName = false
+                return@let appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
             }
-            defaultDrawable = dw!!
         }
 
     }
