@@ -42,7 +42,7 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
     @Throws(IOException::class)
     private fun proceedWithCronet(request: Request, call: Call): Response {
 
-        val callback = CronetUrlRequestCallback(request, call)
+        val callback = CronetRequestCallback(request, call)
         val urlRequest = buildRequest(request, callback)
         urlRequest.start()
         return callback.waitForDone(urlRequest)
@@ -50,7 +50,7 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
 
     private fun getCookie(url: HttpUrl): String {
         val sb = StringBuilder()
-        //处理从 Cookjar 获取到的Cookies
+        //处理从 Cookiejar 获取到的Cookies
         if (cookieJar != null) {
             val cookies = cookieJar.loadForRequest(url)
             for (cookie in cookies) {

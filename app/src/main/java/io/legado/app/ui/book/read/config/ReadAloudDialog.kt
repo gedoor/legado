@@ -118,6 +118,8 @@ class ReadAloudDialog : BaseDialogFragment() {
             seekTtsSpeechRate.isEnabled = !isChecked
             upTtsSpeechRate()
         }
+        //设置保存的默认值
+        seekTtsSpeechRate.progress=AppConfig.ttsSpeechRate
         seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 AppConfig.ttsSpeechRate = seekBar.progress

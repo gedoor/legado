@@ -12,11 +12,11 @@ import org.chromium.net.ExperimentalCronetEngine
 import org.chromium.net.UploadDataProviders
 import org.chromium.net.UrlRequest
 import splitties.init.appCtx
-import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-val executor: Executor by lazy { Executors.newCachedThreadPool() }
+val executor: ExecutorService by lazy { Executors.newCachedThreadPool() }
 
 val cronetEngine: ExperimentalCronetEngine by lazy {
     if (AppConfig.isGooglePlay) {
@@ -27,16 +27,17 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
 
 
     val builder = ExperimentalCronetEngine.Builder(appCtx).apply {
-        if (!AppConfig.isGooglePlay&&CronetLoader.install()) {
+        if (!AppConfig.isGooglePlay && CronetLoader.install()) {
             setLibraryLoader(CronetLoader)//设置自定义so库加载
         }
         setStoragePath(appCtx.externalCacheDir?.absolutePath)//设置缓存路径
-        enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50).toLong())//设置缓存模式
+        enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50).toLong())//设置50M的磁盘缓存
         enableQuic(true)//设置支持http/3
         enableHttp2(true)  //设置支持http/2
         enablePublicKeyPinningBypassForLocalTrustAnchors(true)
 
         enableBrotli(true)//Brotli压缩
+
     }
     val engine = builder.build()
     Log.d("Cronet", "Cronet Version:" + engine.versionString)
@@ -49,31 +50,32 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
 
 fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
     val url = request.url.toString()
-    val requestBuilder = cronetEngine.newUrlRequestBuilder(url, callback, executor)
-    requestBuilder.setHttpMethod(request.method)
-
     val headers: Headers = request.headers
-    headers.forEachIndexed { index, _ ->
-        requestBuilder.addHeader(headers.name(index), headers.value(index))
-    }
-
     val requestBody = request.body
-    if (requestBody != null) {
-        val contentType: MediaType? = requestBody.contentType()
-        if (contentType != null) {
-            requestBuilder.addHeader("Content-Type", contentType.toString())
-        } else {
-            requestBuilder.addHeader("Content-Type", "text/plain")
+    return cronetEngine.newUrlRequestBuilder(url, callback, executor).apply {
+        setHttpMethod(request.method)//设置
+        allowDirectExecutor()
+        headers.forEachIndexed { index, _ ->
+            addHeader(headers.name(index), headers.value(index))
         }
-        val buffer = Buffer()
-        requestBody.writeTo(buffer)
-        requestBuilder.setUploadDataProvider(
-            UploadDataProviders.create(buffer.readByteArray()),
-            executor
-        )
+        if (requestBody != null) {
+            val contentType: MediaType? = requestBody.contentType()
+            if (contentType != null) {
+                addHeader("Content-Type", contentType.toString())
+            } else {
+                addHeader("Content-Type", "text/plain")
+            }
+            val buffer = Buffer()
+            requestBody.writeTo(buffer)
+            setUploadDataProvider(
+                UploadDataProviders.create(buffer.readByteArray()),
+                executor
+            )
 
-    }
+        }
 
-    return requestBuilder.build()
+    }.build()
+
+
 }
 
