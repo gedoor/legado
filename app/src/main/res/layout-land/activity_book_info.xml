@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="68dp">
 
-                <io.legado.app.ui.widget.ArcView
+                <io.legado.app.ui.widget.image.ArcView
                     android:id="@+id/arc_view"
                     android:layout_width="match_parent"
                     android:layout_height="78dp"

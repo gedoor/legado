@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget
+package io.legado.app.ui.widget.image
 
 import android.content.Context
 import android.graphics.*
@@ -6,6 +6,9 @@ import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
 
+/**
+ * 弧形View
+ */
 class ArcView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
@@ -18,7 +21,9 @@ class ArcView @JvmOverloads constructor(
 
     //背景颜色
     private var mBgColor: Int
-    private val mPaint: Paint = Paint()
+    private val mPaint: Paint = Paint().apply {
+        isAntiAlias = true
+    }
     private val mDirectionTop: Boolean
     val rect = Rect()
     val path = Path()
