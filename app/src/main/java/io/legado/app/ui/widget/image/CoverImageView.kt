@@ -16,6 +16,8 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.textHeight
+import io.legado.app.utils.toStringArray
 import splitties.init.appCtx
 
 /**
@@ -44,7 +46,6 @@ class CoverImageView @JvmOverloads constructor(
         textPaint.typeface = Typeface.DEFAULT_BOLD
         textPaint.isAntiAlias = true
         textPaint.textAlign = Paint.Align.CENTER
-        textPaint.textSkewX = -0.2f
         textPaint
     }
     private val authorPaint by lazy {
@@ -52,7 +53,6 @@ class CoverImageView @JvmOverloads constructor(
         textPaint.typeface = Typeface.DEFAULT
         textPaint.isAntiAlias = true
         textPaint.textAlign = Paint.Align.CENTER
-        textPaint.textSkewX = -0.1f
         textPaint
     }
 
@@ -86,11 +86,8 @@ class CoverImageView @JvmOverloads constructor(
         }
         namePaint.textSize = width / 6
         namePaint.strokeWidth = namePaint.textSize / 10
-        authorPaint.textSize = width / 9
+        authorPaint.textSize = width / 8
         authorPaint.strokeWidth = authorPaint.textSize / 10
-        val fm = namePaint.fontMetrics
-        nameHeight = height * 0.5f + (fm.bottom - fm.top) * 0.5f
-        authorHeight = nameHeight + (fm.bottom - fm.top) * 0.6f
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -104,21 +101,37 @@ class CoverImageView @JvmOverloads constructor(
     }
 
     private fun drawName(canvas: Canvas) {
-        name?.let {
-            namePaint.color = Color.WHITE
-            namePaint.style = Paint.Style.STROKE
-            canvas.drawText(it, width / 2, nameHeight, namePaint)
-            namePaint.color = Color.RED
-            namePaint.style = Paint.Style.FILL
-            canvas.drawText(it, width / 2, nameHeight, namePaint)
+        var startX = width * 0.2f
+        var startY = height * 0.2f
+        name?.toStringArray()?.let { name ->
+            name.forEach {
+                namePaint.color = Color.WHITE
+                namePaint.style = Paint.Style.STROKE
+                canvas.drawText(it, startX, startY, namePaint)
+                namePaint.color = Color.DKGRAY
+                namePaint.style = Paint.Style.FILL
+                canvas.drawText(it, startX, startY, namePaint)
+                startY += namePaint.textHeight
+                if (startY > height * 0.9) {
+                    return@let
+                }
+            }
         }
-        author?.let {
-            authorPaint.color = Color.WHITE
-            authorPaint.style = Paint.Style.STROKE
-            canvas.drawText(it, width / 2, authorHeight, authorPaint)
-            authorPaint.color = Color.RED
-            authorPaint.style = Paint.Style.FILL
-            canvas.drawText(it, width / 2, authorHeight, authorPaint)
+        startX = width * 0.8f
+        startY = height * 0.7f
+        author?.toStringArray()?.let { author ->
+            author.forEach {
+                authorPaint.color = Color.WHITE
+                authorPaint.style = Paint.Style.STROKE
+                canvas.drawText(it, startX, startY, authorPaint)
+                authorPaint.color = Color.DKGRAY
+                authorPaint.style = Paint.Style.FILL
+                canvas.drawText(it, startX, startY, authorPaint)
+                startY += authorPaint.textHeight
+                if (startY > height * 0.95) {
+                    return@let
+                }
+            }
         }
     }
 
