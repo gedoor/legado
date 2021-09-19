@@ -24,8 +24,8 @@ import java.util.*
 
 object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.159/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so
-    //https://cdn.jsdelivr.net/gh/ag2s20150909/cronet-repo@92.0.4515.159/cronet/92.0.4515.127/arm64-v8a/libcronet.92.0.4515.159.so.js
     private const val TAG = "CronetLoader"
+
     private const val soVersion = BuildConfig.Cronet_Version
     private const val soName = "libcronet.$soVersion.so"
     private val soUrl: String
@@ -34,6 +34,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     private var cpuAbi: String? = null
     private var md5: String
     var download = false
+    private var cacheInstall = false
 
     init {
         soUrl = ("https://storage.googleapis.com/chromium-cronet/android/"
@@ -49,18 +50,33 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
         Log.e(TAG, "soUrl:$soUrl")
     }
 
+
+    /**
+     * 判断Cronet是否安装完成
+     * @return
+     */
+
     fun install(): Boolean {
+        if (cacheInstall) {
+            return true
+        }
         if (AppConfig.isGooglePlay) {
             //检查GMS的Cronet服务是否安装
-            return CronetProviderInstaller.isInstalled()
+            cacheInstall = CronetProviderInstaller.isInstalled()
+            return cacheInstall
         }
         if (md5.length != 32 || !soFile.exists() || md5 != getFileMD5(soFile)) {
-            return false
+            cacheInstall =  false
+            return cacheInstall
         }
-        return soFile.exists()
+        cacheInstall = soFile.exists()
+        return cacheInstall
     }
 
 
+    /**
+     * 预加载Cronet
+     */
     fun preDownload() {
         if (AppConfig.isGooglePlay) {
             CronetProviderInstaller.installProvider(appCtx)
@@ -269,6 +285,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             Log.e(TAG, "download success, copy to $destSuccessFile")
             //下载成功拷贝文件
             copyFile(downloadTempFile, destSuccessFile)
+            cacheInstall=false
             val parentFile = downloadTempFile.parentFile
             @Suppress("SameParameterValue")
             deleteHistoryFile(parentFile!!, null)

@@ -15,7 +15,7 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
 
-class CronetUrlRequestCallback @JvmOverloads internal constructor(
+class CronetRequestCallback @JvmOverloads internal constructor(
     private val originalRequest: Request,
     private val mCall: Call,
     eventListener: EventListener? = null,
@@ -100,6 +100,8 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
         info: UrlResponseInfo,
         byteBuffer: ByteBuffer
     ) {
+
+
         byteBuffer.flip()
 
         try {
@@ -143,9 +145,8 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
         responseCallback?.onFailure(mCall, e)
     }
 
-    override fun onCanceled(request: UrlRequest, info: UrlResponseInfo) {
+    override fun onCanceled(request: UrlRequest, info: UrlResponseInfo?) {
         mResponseCondition.open()
-
         this.eventListener?.callEnd(mCall)
 
 
@@ -184,20 +185,23 @@ class CronetUrlRequestCallback @JvmOverloads internal constructor(
 
         private fun headersFromResponse(responseInfo: UrlResponseInfo): Headers {
             val headers = responseInfo.allHeadersAsList
-            val headerBuilder = Headers.Builder()
-            for ((key, value) in headers) {
-                try {
-                    if (key.equals("content-encoding", ignoreCase = true)) {
-                        // Strip all content encoding headers as decoding is done handled by cronet
-                        continue
+            return Headers.Builder().apply {
+                for ((key, value) in headers) {
+                    try {
+
+                        if (key.equals("content-encoding", ignoreCase = true)) {
+                            // Strip all content encoding headers as decoding is done handled by cronet
+                            continue
+                        }
+                        add(key, value)
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Invalid HTTP header/value: $key$value")
+                        // Ignore that header
                     }
-                    headerBuilder.add(key, value)
-                } catch (e: Exception) {
-                    Log.w(TAG, "Invalid HTTP header/value: $key$value")
-                    // Ignore that header
                 }
-            }
-            return headerBuilder.build()
+
+            }.build()
+
         }
 
         private fun responseFromResponse(
