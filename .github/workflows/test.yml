@@ -4,22 +4,33 @@ on:
   push:
     branches:
       - master
-#  watch:
-#    types: [started]
-#  schedule:
-#    - cron: '0 4 * * *'
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set-ver.outputs.version }}
+      versionL: ${{ steps.set-ver.outputs.versionL }}
+    steps:
+    - id: set-ver
+      run: |
+        echo "::set-output name=version::$(date -d "8 hour" -u +3.%y.%m%d%H)"
+        echo "::set-output name=versionL::$(date -d "8 hour" -u +3.%y.%m%d%H%M)"
+      
   build:
+    needs: prepare
+    strategy:
+      matrix:
+        product: [App, Google]
+        type: [release, releaseA]
+      fail-fast: false
+
     runs-on: ubuntu-latest
     env:
-      # 登录蓝奏云后在控制台运行document.cookie
-      ylogin: ${{ secrets.LANZOU_ID }}
-      phpdisk_info: ${{ secrets.LANZOU_PSD }}
-      # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
-      LANZOU_FOLDER_ID: '2670621'
-      # 是否上传到artifact
-      UPLOAD_ARTIFACT: 'true'
+      product: ${{ matrix.product }}
+      type: ${{ matrix.type }}
+      VERSION: ${{ needs.prepare.outputs.version }}
+      VERSIONL: ${{ needs.prepare.outputs.versionL }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -44,46 +55,52 @@ jobs:
           sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
-      - name: Unify Version Name
-        run: |
-          echo "统一版本号"
-          VERSION=$(date -d "8 hour" -u +3.%y.%m%d%H)
-          VERSIONL=$(date -d "8 hour" -u +3.%y.%m%d%H%M)
-          echo "VERSION=$VERSIONL" >> $GITHUB_ENV
-          sed "/def version/c def version = \"$VERSION\"" $GITHUB_WORKSPACE/app/build.gradle  -i
       - name: Build With Gradle
         run: |
-          echo "开始进行release构建"
+          if [ ${{ env.type }} == 'release' ]; then
+            typeName="原包名"
+            VERSION=${{ env.VERSION }}
+          else
+            typeName="共存"
+            VERSION=${{ env.VERSIONL }}
+            echo "设置apk共存"
+            sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
+            sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
+          fi
+          echo "统一版本号"
+          sed "/def version/c def version = \"$VERSION\"" $GITHUB_WORKSPACE/app/build.gradle  -i
+          
+          echo "开始进行${{ env.product }}$typeName构建"
           chmod +x gradlew
-          ./gradlew assembleRelease --build-cache --parallel
+          ./gradlew assemble${{ env.product }}release --build-cache --parallel
+          
           echo "修改文件名"
           mkdir -p ${{ github.workspace }}/apk/
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
-            mv "$file" ${{ github.workspace }}/apk/`echo "$file"|sed 's/.*\/\(.*\)\(\.apk\)$/\1_原包名\2/'`
-          done
-      - name: Apk Live Together
-        run: |
-          echo "设置apk共存"
-          sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
-          sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
-          echo "统一版本号"
-          sed "/def version/c def version = \"${{ env.VERSION }}\"" $GITHUB_WORKSPACE/app/build.gradle  -i
-      - name: Build With Gradle
-        run: |
-          echo "开始进行release构建"
-          chmod +x gradlew
-          ./gradlew assembleRelease --build-cache --parallel
-          echo "修改文件名"
-          for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
-            mv "$file" ${{ github.workspace }}/apk/`echo "$file"|sed 's/.*\/\(.*\)\(\.apk\)$/\1_共存\2/'`
+            mv "$file" ${{ github.workspace }}/apk/`echo "$file"|sed "s/.*\/\(.*\)\(\.apk\)$/\1_$typeName\2/"`
           done
       - name: Upload App To Artifact
-        if: ${{ env.UPLOAD_ARTIFACT != 'false' }}
         uses: actions/upload-artifact@v2
         with:
-          name: legado apk
+          name: legado.${{ env.product }}.${{ env.type }}
           path: ${{ github.workspace }}/apk/*.apk
-      - name: Upload App To Lanzou
+
+  lanzou:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      # 登录蓝奏云后在控制台运行document.cookie
+      ylogin: ${{ secrets.LANZOU_ID }}
+      phpdisk_info: ${{ secrets.LANZOU_PSD }}
+      # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
+      LANZOU_FOLDER_ID: '2670621'
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          path: $GITHUB_WORKSPACE/apk
+      - working-directory: $GITHUB_WORKSPACE/apk
+        run: mv */*.apk . ;rm -rf */
+      - name: Upload To Lanzou
         if: ${{ env.ylogin }}
         run: |
           path="$GITHUB_WORKSPACE/apk/"
