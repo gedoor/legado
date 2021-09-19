@@ -24,7 +24,6 @@ import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
-import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
@@ -34,15 +33,12 @@ import io.legado.app.utils.*
 @Suppress("SameParameterValue")
 class ThemeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
-    private val requestCodeCover = 111
-    private val requestCodeCoverDark = 112
+
     private val requestCodeBgLight = 121
     private val requestCodeBgDark = 122
     private val selectImage = registerForActivityResult(SelectImageContract()) {
         val uri = it?.second ?: return@registerForActivityResult
         when (it.first) {
-            requestCodeCover -> setCoverFromUri(PreferKey.defaultCover, uri)
-            requestCodeCoverDark -> setCoverFromUri(PreferKey.defaultCoverDark, uri)
             requestCodeBgLight -> setBgFromUri(uri, PreferKey.bgImage) {
                 upTheme(false)
             }
@@ -60,8 +56,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.bgImage, getPrefString(PreferKey.bgImage))
         upPreferenceSummary(PreferKey.bgImageN, getPrefString(PreferKey.bgImageN))
         upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
-        upPreferenceSummary(PreferKey.defaultCover, getPrefString(PreferKey.defaultCover))
-        upPreferenceSummary(PreferKey.defaultCoverDark, getPrefString(PreferKey.defaultCoverDark))
         findPreference<ColorPreference>(PreferKey.cBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
@@ -86,6 +80,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.setTitle(R.string.theme_setting)
         ATH.applyEdgeEffectColor(listView)
         setHasOptionsMenu(true)
     }
@@ -134,9 +129,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 upTheme(true)
             }
             PreferKey.bgImage,
-            PreferKey.bgImageN,
-            PreferKey.defaultCover,
-            PreferKey.defaultCoverDark -> {
+            PreferKey.bgImageN -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
         }
@@ -159,36 +152,13 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                     AppConfig.elevation = it
                     recreateActivities()
                 }
-            "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
-            "saveDayTheme", "saveNightTheme" -> alertSaveTheme(key)
             PreferKey.bgImage -> selectBgAction(false)
             PreferKey.bgImageN -> selectBgAction(true)
-            PreferKey.defaultCover ->
-                if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
-                    selectImage.launch(requestCodeCover)
-                } else {
-                    context?.selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
-                        if (i == 0) {
-                            removePref(PreferKey.defaultCover)
-                            CoverImageView.upDefaultCover()
-                        } else {
-                            selectImage.launch(requestCodeCover)
-                        }
-                    }
-                }
-            PreferKey.defaultCoverDark ->
-                if (getPrefString(PreferKey.defaultCoverDark).isNullOrEmpty()) {
-                    selectImage.launch(requestCodeCoverDark)
-                } else {
-                    context?.selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
-                        if (i == 0) {
-                            removePref(PreferKey.defaultCoverDark)
-                            CoverImageView.upDefaultCover()
-                        } else {
-                            selectImage.launch(requestCodeCoverDark)
-                        }
-                    }
-                }
+            "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
+            "saveDayTheme",
+            "saveNightTheme" -> alertSaveTheme(key)
+            "coverConfig" -> (activity as? ConfigActivity)
+                ?.replaceFragment<CoverConfigFragment>(ConfigTag.COVER_CONFIG)
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -293,9 +263,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             PreferKey.barElevation -> preference.summary =
                 getString(R.string.bar_elevation_s, value)
             PreferKey.bgImage,
-            PreferKey.bgImageN,
-            PreferKey.defaultCover,
-            PreferKey.defaultCoverDark -> preference.summary = if (value.isNullOrBlank()) {
+            PreferKey.bgImageN -> preference.summary = if (value.isNullOrBlank()) {
                 getString(R.string.select_image)
             } else {
                 value
@@ -311,16 +279,6 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             file.writeBytes(bytes)
             putPrefString(preferenceKey, file.absolutePath)
             success()
-        }
-    }
-
-    private fun setCoverFromUri(preferenceKey: String, uri: Uri) {
-        readUri(uri) { name, bytes ->
-            var file = requireContext().externalFiles
-            file = FileUtils.createFileIfNotExist(file, "covers", name)
-            file.writeBytes(bytes)
-            putPrefString(preferenceKey, file.absolutePath)
-            CoverImageView.upDefaultCover()
         }
     }
 

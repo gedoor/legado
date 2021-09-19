@@ -877,5 +877,7 @@
     <string name="set_source_variable">设置源变量</string>
     <string name="set_book_variable">设置书籍变量</string>
     <string name="summary">注释</string>
+    <string name="cover_config">封面设置</string>
+    <string name="cover_config_summary">设置默认封面样式</string>
 
 </resources>

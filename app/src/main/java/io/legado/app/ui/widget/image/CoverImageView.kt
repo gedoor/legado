@@ -14,6 +14,7 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.textHeight
@@ -91,7 +92,7 @@ class CoverImageView @JvmOverloads constructor(
             canvas.clipPath(filletPath)
         }
         super.onDraw(canvas)
-        if (defaultCover && drawBookName) {
+        if (defaultCover && drawBookName && !isInEditMode) {
             drawName(canvas)
         }
     }
@@ -101,12 +102,12 @@ class CoverImageView @JvmOverloads constructor(
         var startY = height * 0.2f
         name?.toStringArray()?.let { name ->
             namePaint.textSize = width / 7
-            namePaint.strokeWidth = namePaint.textSize / 10
+            namePaint.strokeWidth = namePaint.textSize / 5
             name.forEach {
                 namePaint.color = Color.WHITE
                 namePaint.style = Paint.Style.STROKE
                 canvas.drawText(it, startX, startY, namePaint)
-                namePaint.color = Color.DKGRAY
+                namePaint.color = context.accentColor
                 namePaint.style = Paint.Style.FILL
                 canvas.drawText(it, startX, startY, namePaint)
                 startY += namePaint.textHeight
@@ -119,12 +120,12 @@ class CoverImageView @JvmOverloads constructor(
             startX = width * 0.8f
             startY = height * 0.7f
             authorPaint.textSize = width / 9
-            authorPaint.strokeWidth = authorPaint.textSize / 10
+            authorPaint.strokeWidth = authorPaint.textSize / 5
             author.forEach {
                 authorPaint.color = Color.WHITE
                 authorPaint.style = Paint.Style.STROKE
                 canvas.drawText(it, startX, startY, authorPaint)
-                authorPaint.color = Color.DKGRAY
+                authorPaint.color = context.accentColor
                 authorPaint.style = Paint.Style.FILL
                 canvas.drawText(it, startX, startY, authorPaint)
                 startY += authorPaint.textHeight
