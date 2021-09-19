@@ -21,7 +21,7 @@ jobs:
     needs: prepare
     strategy:
       matrix:
-        product: [App, Google]
+        product: [app, google]
         type: [release, releaseA]
       fail-fast: false
 
@@ -59,25 +59,20 @@ jobs:
         run: |
           if [ ${{ env.type }} == 'release' ]; then
             typeName="原包名"
-            VERSION=${{ env.VERSION }}
           else
             typeName="共存"
-            VERSION=${{ env.VERSIONL }}
-            echo "设置apk共存"
             sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
             sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
           fi
           echo "统一版本号"
-          sed "/def version/c def version = \"$VERSION\"" $GITHUB_WORKSPACE/app/build.gradle  -i
-          
-          echo "开始进行${{ env.product }}$typeName构建"
+          sed "/def version/c def version = \"${{ env.VERSION }}\"" $GITHUB_WORKSPACE/app/build.gradle  -i
+          echo "开始${{ env.product }}$typeName构建"
           chmod +x gradlew
           ./gradlew assemble${{ env.product }}release --build-cache --parallel
-          
           echo "修改文件名"
           mkdir -p ${{ github.workspace }}/apk/
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
-            mv "$file" ${{ github.workspace }}/apk/`echo "$file"|sed "s/.*\/\(.*\)\(\.apk\)$/\1_$typeName\2/"`
+            mv "$file" ${{ github.workspace }}/apk/legado_${{ env.product }}_${{ env.VERSIONL }}_$typeName.apk
           done
       - name: Upload App To Artifact
         uses: actions/upload-artifact@v2
@@ -107,3 +102,33 @@ jobs:
           path="$GITHUB_WORKSPACE/apk/"
           python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path" "$LANZOU_FOLDER_ID"
           echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f810h4b"
+
+  jsdelivr:
+    needs: [prepare,build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          path: apk/
+      - working-directory: apk/
+        run: mv */*.apk . ;rm -rf */
+      - name: Push To "test" Branch
+        run: |
+          cd $GITHUB_WORKSPACE/apk || exit 1
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b test
+          git add *.apk
+          git commit -m "${{ needs.prepare.outputs.versionL }}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git push -f -u origin test
+      - name: Purge jsdelivr cache
+        run: |
+          result=$(curl -s https://purge.jsdelivr.net/gh/${{ github.repository }}@test/)
+          if echo $result |grep -q 'success.*true'; then
+            echo "jsdelivr缓存更新成功"
+          else
+            echo $result
+          fi
