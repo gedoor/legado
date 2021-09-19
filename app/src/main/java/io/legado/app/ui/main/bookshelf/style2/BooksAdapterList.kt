@@ -72,7 +72,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
                 when (it) {
                     "name" -> tvName.text = item.name
                     "author" -> tvAuthor.text = item.author
-                    "cover" -> ivCover.load(item.getDisplayCover())
+                    "cover" -> ivCover.load(item.getDisplayCover(), item.name, item.author)
                     "refresh" -> upRefresh(this, item)
                 }
             }
@@ -117,7 +117,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
                 tvAuthor.text = item.author
                 tvRead.text = item.durChapterTitle
                 tvLast.text = item.latestChapterTitle
-                ivCover.load(item.getDisplayCover())
+                ivCover.load(item.getDisplayCover(), item.name, item.author)
                 flHasNew.visible()
                 ivAuthor.visible()
                 ivLast.visible()

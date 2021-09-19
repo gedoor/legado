@@ -77,12 +77,12 @@ class GroupEditDialog() : BaseDialogFragment() {
                 } else {
                     bookGroup?.let {
                         it.groupName = groupName
-                        it.cover = binding.ivCover.path
+                        it.cover = binding.ivCover.bitmapPath
                         viewModel.upGroup(it) {
                             dismiss()
                         }
                     } ?: let {
-                        viewModel.addGroup(groupName, binding.ivCover.path) {
+                        viewModel.addGroup(groupName, binding.ivCover.bitmapPath) {
                             dismiss()
                         }
                     }

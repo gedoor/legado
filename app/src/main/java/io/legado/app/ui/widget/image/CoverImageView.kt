@@ -2,9 +2,9 @@ package io.legado.app.ui.widget.image
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Path
+import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.text.TextPaint
 import android.util.AttributeSet
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -29,11 +29,32 @@ class CoverImageView @JvmOverloads constructor(
     context,
     attrs
 ) {
-    internal var width: Float = 0.toFloat()
-    internal var height: Float = 0.toFloat()
-    var path: String? = null
-        private set
+    private var filletPath = Path()
+    private var width: Float = 0.toFloat()
+    private var height: Float = 0.toFloat()
     private var defaultCover = true
+    var bitmapPath: String? = null
+        private set
+    private var name: String? = null
+    private var author: String? = null
+    private var nameHeight = 0f
+    private var authorHeight = 0f
+    private val namePaint by lazy {
+        val textPaint = TextPaint()
+        textPaint.typeface = Typeface.DEFAULT_BOLD
+        textPaint.isAntiAlias = true
+        textPaint.textAlign = Paint.Align.CENTER
+        textPaint.textSkewX = -0.2f
+        textPaint
+    }
+    private val authorPaint by lazy {
+        val textPaint = TextPaint()
+        textPaint.typeface = Typeface.DEFAULT
+        textPaint.isAntiAlias = true
+        textPaint.textAlign = Paint.Align.CENTER
+        textPaint.textSkewX = -0.1f
+        textPaint
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -48,26 +69,57 @@ class CoverImageView @JvmOverloads constructor(
         super.onLayout(changed, left, top, right, bottom)
         width = getWidth().toFloat()
         height = getHeight().toFloat()
+        filletPath.reset()
+        if (width > 10 && height > 10) {
+            filletPath.apply {
+                moveTo(10f, 0f)
+                lineTo(width - 10, 0f)
+                quadTo(width, 0f, width, 10f)
+                lineTo(width, height - 10)
+                quadTo(width, height, width - 10, height)
+                lineTo(10f, height)
+                quadTo(0f, height, 0f, height - 10)
+                lineTo(0f, 10f)
+                quadTo(0f, 0f, 10f, 0f)
+                close()
+            }
+        }
+        namePaint.textSize = width / 6
+        namePaint.strokeWidth = namePaint.textSize / 10
+        authorPaint.textSize = width / 9
+        authorPaint.strokeWidth = authorPaint.textSize / 10
+        val fm = namePaint.fontMetrics
+        nameHeight = height * 0.5f + (fm.bottom - fm.top) * 0.5f
+        authorHeight = nameHeight + (fm.bottom - fm.top) * 0.6f
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (width >= 10 && height > 10) {
-            @SuppressLint("DrawAllocation")
-            val path = Path()
-            //四个圆角
-            path.moveTo(10f, 0f)
-            path.lineTo(width - 10, 0f)
-            path.quadTo(width, 0f, width, 10f)
-            path.lineTo(width, height - 10)
-            path.quadTo(width, height, width - 10, height)
-            path.lineTo(10f, height)
-            path.quadTo(0f, height, 0f, height - 10)
-            path.lineTo(0f, 10f)
-            path.quadTo(0f, 0f, 10f, 0f)
-
-            canvas.clipPath(path)
+        if (!filletPath.isEmpty) {
+            canvas.clipPath(filletPath)
         }
         super.onDraw(canvas)
+        if (defaultCover && drawBookName) {
+            drawName(canvas)
+        }
+    }
+
+    private fun drawName(canvas: Canvas) {
+        name?.let {
+            namePaint.color = Color.WHITE
+            namePaint.style = Paint.Style.STROKE
+            canvas.drawText(it, width / 2, nameHeight, namePaint)
+            namePaint.color = Color.RED
+            namePaint.style = Paint.Style.FILL
+            canvas.drawText(it, width / 2, nameHeight, namePaint)
+        }
+        author?.let {
+            authorPaint.color = Color.WHITE
+            authorPaint.style = Paint.Style.STROKE
+            canvas.drawText(it, width / 2, authorHeight, authorPaint)
+            authorPaint.color = Color.RED
+            authorPaint.style = Paint.Style.FILL
+            canvas.drawText(it, width / 2, authorHeight, authorPaint)
+        }
     }
 
     fun setHeight(height: Int) {
@@ -102,8 +154,10 @@ class CoverImageView @JvmOverloads constructor(
         }
     }
 
-    fun load(path: String? = null) {
-        this.path = path
+    fun load(path: String? = null, name: String? = null, author: String? = null) {
+        this.bitmapPath = path
+        this.name = name
+        this.author = author
         if (AppConfig.useDefaultCover) {
             ImageLoader.load(context, defaultDrawable)
                 .centerCrop()
@@ -119,7 +173,7 @@ class CoverImageView @JvmOverloads constructor(
     }
 
     companion object {
-        private var showBookName = true
+        private var drawBookName = true
         lateinit var defaultDrawable: Drawable
 
         init {
@@ -134,10 +188,10 @@ class CoverImageView @JvmOverloads constructor(
             defaultDrawable = Drawable.createFromPath(path)?.let {
                 val showNameKey = if (isNightTheme) PreferKey.defaultCoverDarkShowName
                 else PreferKey.defaultCoverShowName
-                showBookName = appCtx.getPrefBoolean(showNameKey)
+                drawBookName = appCtx.getPrefBoolean(showNameKey)
                 return@let it
             } ?: let {
-                showBookName = true
+                drawBookName = true
                 return@let appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
             }
         }

@@ -30,7 +30,7 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
             tvLast.text = item.latestChapterTitle
-            ivCover.load(item.getDisplayCover())
+            ivCover.load(item.getDisplayCover(), item.name, item.author)
             upRefresh(binding, item)
         } else {
             tvRead.text = item.durChapterTitle
