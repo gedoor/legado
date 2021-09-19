@@ -84,10 +84,6 @@ class CoverImageView @JvmOverloads constructor(
                 close()
             }
         }
-        namePaint.textSize = width / 6
-        namePaint.strokeWidth = namePaint.textSize / 10
-        authorPaint.textSize = width / 8
-        authorPaint.strokeWidth = authorPaint.textSize / 10
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -104,6 +100,8 @@ class CoverImageView @JvmOverloads constructor(
         var startX = width * 0.2f
         var startY = height * 0.2f
         name?.toStringArray()?.let { name ->
+            namePaint.textSize = width / 7
+            namePaint.strokeWidth = namePaint.textSize / 10
             name.forEach {
                 namePaint.color = Color.WHITE
                 namePaint.style = Paint.Style.STROKE
@@ -112,14 +110,16 @@ class CoverImageView @JvmOverloads constructor(
                 namePaint.style = Paint.Style.FILL
                 canvas.drawText(it, startX, startY, namePaint)
                 startY += namePaint.textHeight
-                if (startY > height * 0.9) {
+                if (startY > height * 0.8) {
                     return@let
                 }
             }
         }
-        startX = width * 0.8f
-        startY = height * 0.7f
         author?.toStringArray()?.let { author ->
+            startX = width * 0.8f
+            startY = height * 0.7f
+            authorPaint.textSize = width / 9
+            authorPaint.strokeWidth = authorPaint.textSize / 10
             author.forEach {
                 authorPaint.color = Color.WHITE
                 authorPaint.style = Paint.Style.STROKE
