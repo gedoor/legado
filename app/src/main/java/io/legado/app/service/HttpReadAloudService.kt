@@ -250,7 +250,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     private var errorNo = 0
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
-        LogUtils.d("mp", "what:$what extra:$extra")
         if (what == -38 && extra == 0) {
             return true
         }
