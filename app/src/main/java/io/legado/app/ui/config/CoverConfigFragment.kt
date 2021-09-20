@@ -32,6 +32,10 @@ class CoverConfigFragment : BasePreferenceFragment(),
         addPreferencesFromResource(R.xml.pref_config_cover)
         upPreferenceSummary(PreferKey.defaultCover, getPrefString(PreferKey.defaultCover))
         upPreferenceSummary(PreferKey.defaultCoverDark, getPrefString(PreferKey.defaultCoverDark))
+        findPreference<SwitchPreference>(PreferKey.coverShowAuthor)
+            ?.isEnabled = getPrefBoolean(PreferKey.coverShowName)
+        findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
+            ?.isEnabled = getPrefBoolean(PreferKey.coverShowNameN)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
