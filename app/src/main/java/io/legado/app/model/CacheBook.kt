@@ -254,6 +254,7 @@ class CacheBook(var bookSource: BookSource, var book: Book) {
             return
         }
         onDownloadSet.add(chapter.index)
+        waitDownloadSet.remove(chapter.index)
         WebBook.getContent(scope, bookSource, book, chapter)
             .onSuccess { content ->
                 onSuccess(chapter.index)
