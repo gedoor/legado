@@ -28,7 +28,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.model.AudioPlay
-import io.legado.app.model.ReadAloud
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.receiver.MediaButtonReceiver
@@ -288,7 +287,7 @@ class AudioPlayService : BaseService(),
                         timeMinute--
                     }
                     if (timeMinute == 0) {
-                        ReadAloud.stop(this@AudioPlayService)
+                        AudioPlay.stop(this@AudioPlayService)
                     }
                 }
                 postEvent(EventBus.TTS_DS, timeMinute)
