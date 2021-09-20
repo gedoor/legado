@@ -9,6 +9,7 @@ import io.legado.app.data.entities.rule.ContentRule
 import io.legado.app.help.BookHelp
 import io.legado.app.model.ContentEmptyException
 import io.legado.app.model.Debug
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.HtmlFormatter
@@ -34,7 +35,7 @@ object BookContent {
         body: String?,
         nextChapterUrl: String? = null
     ): String {
-        body ?: throw Exception(
+        body ?: throw NoStackTraceException(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")

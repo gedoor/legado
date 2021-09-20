@@ -13,6 +13,7 @@ import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.*
 
 class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
@@ -111,7 +112,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                 mText.isAbsUrl() -> {
                     importSourceUrl(mText)
                 }
-                else -> throw Exception(context.getString(R.string.wrong_format))
+                else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
             }
         }.onError {
             errorLiveData.postValue("ImportError:${it.localizedMessage}")

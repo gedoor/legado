@@ -14,6 +14,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.storage.AppWebDav
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
@@ -199,7 +200,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             WebBook.preciseSearch(this, sources, name, author)?.let {
                 it.second.upInfoFromOld(ReadBook.book)
                 changeTo(it.first, it.second)
-            } ?: throw Exception("自动换源失败")
+            } ?: throw NoStackTraceException("自动换源失败")
         }.onStart {
             ReadBook.upMsg(context.getString(R.string.source_auto_changing))
         }.onError {

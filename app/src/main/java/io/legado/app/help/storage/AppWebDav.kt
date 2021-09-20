@@ -89,7 +89,7 @@ object AppWebDav {
                 }
             }
         } else {
-            throw Exception("Web dav no back up file")
+            throw NoStackTraceException("Web dav no back up file")
         }
     }
 

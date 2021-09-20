@@ -5,6 +5,7 @@ import io.legado.app.R
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.Debug
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.GSON
@@ -26,7 +27,7 @@ object RssParserByRule {
         val sourceUrl = rssSource.sourceUrl
         var nextUrl: String? = null
         if (body.isNullOrBlank()) {
-            throw Exception(
+            throw NoStackTraceException(
                 appCtx.getString(R.string.error_get_web_content, rssSource.sourceUrl)
             )
         }

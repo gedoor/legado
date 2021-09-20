@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
@@ -49,7 +50,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                     }
                     val book = LocalBook.importFile(uri)
                     openBookLiveData.postValue(book.bookUrl)
-                } ?: throw Exception("文件不存在")
+                } ?: throw NoStackTraceException("文件不存在")
             } else {
                 onLineImportLive.postValue(uri)
             }

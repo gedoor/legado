@@ -10,6 +10,7 @@ import io.legado.app.help.DefaultData
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.*
 
 class SpeakEngineViewModel(application: Application) : BaseViewModel(application) {
@@ -61,7 +62,7 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
                 }
             }
             else -> {
-                throw Exception("格式不对")
+                throw NoStackTraceException("格式不对")
             }
         }
     }

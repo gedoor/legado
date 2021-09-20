@@ -7,6 +7,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.model.Debug
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.TocEmptyException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -30,7 +31,7 @@ object BookChapterList {
         baseUrl: String,
         body: String?
     ): List<BookChapter> {
-        body ?: throw Exception(
+        body ?: throw NoStackTraceException(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
         )
         val chapterList = ArrayList<BookChapter>()

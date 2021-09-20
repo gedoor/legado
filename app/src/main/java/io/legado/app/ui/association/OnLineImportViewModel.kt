@@ -12,6 +12,7 @@ import io.legado.app.help.ThemeConfig
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
@@ -56,11 +57,11 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
             if (json.isJsonArray()) {
                 GSON.fromJsonArray<TxtTocRule>(json)?.let {
                     appDb.txtTocRuleDao.insert(*it.toTypedArray())
-                } ?: throw Exception("格式不对")
+                } ?: throw NoStackTraceException("格式不对")
             } else {
                 GSON.fromJsonObject<TxtTocRule>(json)?.let {
                     appDb.txtTocRuleDao.insert(it)
-                } ?: throw Exception("格式不对")
+                } ?: throw NoStackTraceException("格式不对")
             }
         }.onSuccess {
             finally.invoke(context.getString(R.string.success), "导入Txt规则成功")
@@ -78,12 +79,12 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
                 GSON.fromJsonArray<HttpTTS>(json)?.let {
                     appDb.httpTTSDao.insert(*it.toTypedArray())
                     return@execute it.size
-                } ?: throw Exception("格式不对")
+                } ?: throw NoStackTraceException("格式不对")
             } else {
                 GSON.fromJsonObject<HttpTTS>(json)?.let {
                     appDb.httpTTSDao.insert(it)
                     return@execute 1
-                } ?: throw Exception("格式不对")
+                } ?: throw NoStackTraceException("格式不对")
             }
         }.onSuccess {
             finally.invoke(context.getString(R.string.success), "导入${it}朗读引擎")
@@ -100,11 +101,11 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
             if (json.isJsonArray()) {
                 GSON.fromJsonArray<ThemeConfig.Config>(json)?.forEach {
                     ThemeConfig.addConfig(it)
-                } ?: throw Exception("格式不对")
+                } ?: throw NoStackTraceException("格式不对")
             } else {
                 GSON.fromJsonObject<ThemeConfig.Config>(json)?.let {
                     ThemeConfig.addConfig(it)
-                } ?: throw Exception("格式不对")
+                } ?: throw NoStackTraceException("格式不对")
             }
         }.onSuccess {
             finally.invoke(context.getString(R.string.success), "导入主题成功")

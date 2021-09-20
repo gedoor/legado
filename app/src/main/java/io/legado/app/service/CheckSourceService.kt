@@ -13,6 +13,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.CheckSource
 import io.legado.app.model.Debug
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.activityPendingIntent
@@ -128,7 +129,7 @@ class CheckSourceService : BaseService() {
                     }
                 }
                 if (url.isNullOrBlank()) {
-                    throw Exception("搜索内容为空并且没有发现")
+                    throw NoStackTraceException("搜索内容为空并且没有发现")
                 }
                 books = WebBook.exploreBookAwait(this, source, url)
             }
@@ -137,7 +138,7 @@ class CheckSourceService : BaseService() {
             val content =
                 WebBook.getContentAwait(this, source, book, toc.first(), toc.getOrNull(1)?.url)
             if (content.isBlank()) {
-                throw Exception("正文内容为空")
+                throw NoStackTraceException("正文内容为空")
             }
         }.timeout(180000L)
             .onError(searchCoroutine) {

@@ -9,6 +9,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.http.newCall
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -50,7 +51,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                             it.save()
                             successCount++
                         }.onError {
-                            throw Exception(it.localizedMessage)
+                            throw it
                         }
                 }
             }
@@ -96,7 +97,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                     importBookshelfByJson(text, groupId)
                 }
                 else -> {
-                    throw Exception("格式不对")
+                    throw NoStackTraceException("格式不对")
                 }
             }
         }.onError {
