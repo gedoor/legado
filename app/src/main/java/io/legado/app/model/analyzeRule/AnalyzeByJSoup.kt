@@ -277,7 +277,7 @@ class AnalyzeByJSoup(doc: Any) {
         var split: Char = '.',
         var beforeRule: String = "",
         val indexDefault: MutableList<Int> = mutableListOf(),
-        val indexs: MutableList<Any> = mutableListOf()
+        val indexes: MutableList<Any> = mutableListOf()
     ) {
         /**
          * 获取Elements按照一个规则
@@ -304,13 +304,13 @@ class AnalyzeByJSoup(doc: Any) {
                 }
 
             val len = elements.size
-            val lastIndexs = (indexDefault.size - 1).takeIf { it != -1 } ?: indexs.size - 1
+            val lastIndexs = (indexDefault.size - 1).takeIf { it != -1 } ?: indexes.size - 1
             val indexSet = mutableSetOf<Int>()
 
             /**
              * 获取无重且不越界的索引集合
              * */
-            if (indexs.isEmpty()) for (ix in lastIndexs downTo 0) { //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
+            if (indexes.isEmpty()) for (ix in lastIndexs downTo 0) { //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
                 val it = indexDefault[ix]
                 if (it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
@@ -318,8 +318,8 @@ class AnalyzeByJSoup(doc: Any) {
 
             } else for (ix in lastIndexs downTo 0) { //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
-                if (indexs[ix] is Triple<*, *, *>) { //区间
-                    val (startx, endx, stepx) = indexs[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
+                if (indexes[ix] is Triple<*, *, *>) { //区间
+                    val (startx, endx, stepx) = indexes[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
 
                     val start = if (startx == null) 0 //左端省略表示0
                     else if (startx >= 0) if (startx < len) startx else len - 1 //右端越界，设置为最大索引
@@ -344,7 +344,7 @@ class AnalyzeByJSoup(doc: Any) {
 
                 } else {//单个索引
 
-                    val it = indexs[ix] as Int //还原储存时的类型
+                    val it = indexes[ix] as Int //还原储存时的类型
 
                     if (it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
                     else if (it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
@@ -415,11 +415,11 @@ class AnalyzeByJSoup(doc: Any) {
 
                                     if (curInt == null) break //是jsoup选择器而非索引列表，跳出
 
-                                    indexs.add(curInt)
+                                    indexes.add(curInt)
                                 } else {
 
                                     //列表最后压入的是区间右端，若列表有两位则最先压入的是间隔
-                                    indexs.add(
+                                    indexes.add(
                                         Triple(
                                             curInt,
                                             curList.last(),

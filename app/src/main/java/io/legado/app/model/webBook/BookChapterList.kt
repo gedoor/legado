@@ -173,7 +173,7 @@ object BookChapterList {
             val urlRule = analyzeRule.splitSourceRule(tocRule.chapterUrl)
             val vipRule = analyzeRule.splitSourceRule(tocRule.isVip)
             val payRule = analyzeRule.splitSourceRule(tocRule.isPay)
-            val update = analyzeRule.splitSourceRule(tocRule.updateTime)
+            val upTimeRule = analyzeRule.splitSourceRule(tocRule.updateTime)
             var isVip: String?
             var isPay: String?
             for (item in elements) {
@@ -183,7 +183,7 @@ object BookChapterList {
                 analyzeRule.chapter = bookChapter
                 bookChapter.title = analyzeRule.getString(nameRule)
                 bookChapter.url = analyzeRule.getString(urlRule)
-                bookChapter.tag = analyzeRule.getString(update)
+                bookChapter.tag = analyzeRule.getString(upTimeRule)
                 isVip = analyzeRule.getString(vipRule)
                 isPay = analyzeRule.getString(payRule)
                 if (bookChapter.url.isEmpty()) {

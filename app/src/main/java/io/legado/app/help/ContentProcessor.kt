@@ -77,6 +77,10 @@ class ContentProcessor private constructor(
             //重新添加标题
             mContent = chapter.getDisplayTitle() + "\n" + mContent
         }
+        if (reSegment && book.getReSegment()) {
+            //重新分段
+            mContent = ContentHelp.reSegment(mContent, chapter.title)
+        }
         if (useReplace && book.getUseReplaceRule()) {
             //替换
             getReplaceRules().forEach { item ->
@@ -92,10 +96,6 @@ class ContentProcessor private constructor(
                     }
                 }
             }
-        }
-        if (reSegment && book.getReSegment()) {
-            //重新分段
-            mContent = ContentHelp.reSegment(mContent, chapter.title)
         }
         if (chineseConvert) {
             //简繁转换

@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.media.MediaPlayer
+import android.util.Log
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
@@ -76,6 +77,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun playNext() {
         readAloudNumber += contentList[nowSpeak].length + 1
+        Log.e("playNext", "$readAloudNumber")
         if (nowSpeak < contentList.lastIndex) {
             nowSpeak++
             play()
