@@ -26,6 +26,24 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="coverShowName"
+            android:title="@string/cover_show_name"
+            android:summary="@string/cover_show_name_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="coverShowAuthor"
+            android:title="@string/cover_show_author"
+            android:summary="@string/cover_show_author_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
@@ -43,6 +61,23 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="coverShowNameN"
+            android:title="@string/cover_show_name"
+            android:summary="@string/cover_show_name_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="coverShowAuthorN"
+            android:title="@string/cover_show_author"
+            android:summary="@string/cover_show_author_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 

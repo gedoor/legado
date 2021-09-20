@@ -876,5 +876,9 @@
     <string name="summary">注释</string>
     <string name="cover_config">封面设置</string>
     <string name="cover_config_summary">设置默认封面样式</string>
+    <string name="cover_show_name">显示书名</string>
+    <string name="cover_show_name_summary">封面上显示书名</string>
+    <string name="cover_show_author">显示作者</string>
+    <string name="cover_show_author_summary">封面上显示作者</string>
 
 </resources>

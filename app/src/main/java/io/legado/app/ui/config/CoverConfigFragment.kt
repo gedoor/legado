@@ -57,6 +57,12 @@ class CoverConfigFragment : BasePreferenceFragment(),
             PreferKey.defaultCoverDark -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
+            PreferKey.coverShowName,
+            PreferKey.coverShowAuthor,
+            PreferKey.coverShowNameN,
+            PreferKey.coverShowAuthorN -> listView.post {
+                CoverImageView.upDefaultCover()
+            }
         }
     }
 
