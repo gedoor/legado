@@ -18,6 +18,12 @@ import java.util.concurrent.Executors
 import kotlin.math.min
 
 class CacheBookService : BaseService() {
+
+    companion object {
+        var isRun = false
+            private set
+    }
+
     private val threadCount = AppConfig.threadCount
     private var cachePool =
         Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
@@ -39,6 +45,7 @@ class CacheBookService : BaseService() {
 
     override fun onCreate() {
         super.onCreate()
+        isRun = true
         upNotification(getString(R.string.starting_download))
         launch {
             while (isActive) {
@@ -65,6 +72,7 @@ class CacheBookService : BaseService() {
     }
 
     override fun onDestroy() {
+        isRun = false
         cachePool.close()
         CacheBook.cacheBookMap.clear()
         super.onDestroy()

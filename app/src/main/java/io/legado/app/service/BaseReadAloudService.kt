@@ -33,8 +33,11 @@ abstract class BaseReadAloudService : BaseService(),
 
     companion object {
         var isRun = false
+            private set
         var timeMinute: Int = 0
+            private set
         var pause = true
+            private set
 
         fun isPlay(): Boolean {
             return isRun && !pause

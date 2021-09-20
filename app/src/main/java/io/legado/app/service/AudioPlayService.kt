@@ -44,9 +44,13 @@ class AudioPlayService : BaseService(),
 
     companion object {
         var isRun = false
+            private set
         var pause = false
+            private set
         var timeMinute: Int = 0
+            private set
         var url: String = ""
+            private set
     }
 
     private val audioManager: AudioManager by lazy {
