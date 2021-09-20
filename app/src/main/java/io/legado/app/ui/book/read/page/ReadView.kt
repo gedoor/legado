@@ -15,6 +15,7 @@ import android.widget.FrameLayout
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.api.DataSource
 import io.legado.app.ui.book.read.page.delegate.*
@@ -410,6 +411,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
             2 -> pageDelegate?.prevPageByAnim(defaultAnimationSpeed)
             3 -> ReadBook.moveToNextChapter(true)
             4 -> ReadBook.moveToPrevChapter(upContent = true, toLast = false)
+            5 -> ReadAloud.prevParagraph(context)
+            6 -> ReadAloud.nextParagraph(context)
         }
     }
 

@@ -20,7 +20,18 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ClickActionConfigDialog : BaseDialogFragment() {
     private val binding by viewBinding(DialogClickActionConfigBinding::bind)
-    private val actions = linkedMapOf<Int, String>()
+    private val actions by lazy {
+        linkedMapOf<Int, String>().apply {
+            this[-1] = getString(R.string.non_action)
+            this[0] = getString(R.string.menu)
+            this[1] = getString(R.string.next_page)
+            this[2] = getString(R.string.prev_page)
+            this[3] = getString(R.string.next_chapter)
+            this[4] = getString(R.string.previous_chapter)
+            this[5] = getString(R.string.read_aloud_prev_paragraph)
+            this[6] = getString(R.string.read_aloud_next_paragraph)
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -46,12 +57,6 @@ class ClickActionConfigDialog : BaseDialogFragment() {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         view.setBackgroundColor(getCompatColor(R.color.translucent))
-        actions[-1] = getString(R.string.non_action)
-        actions[0] = getString(R.string.menu)
-        actions[1] = getString(R.string.next_page)
-        actions[2] = getString(R.string.prev_page)
-        actions[3] = getString(R.string.next_chapter)
-        actions[4] = getString(R.string.previous_chapter)
         initData()
         initViewEvent()
     }

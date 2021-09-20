@@ -883,5 +883,7 @@
     <string name="cover_show_name_summary">封面上显示书名</string>
     <string name="cover_show_author">显示作者</string>
     <string name="cover_show_author_summary">封面上显示作者</string>
+    <string name="read_aloud_prev_paragraph">朗读上一段</string>
+    <string name="read_aloud_next_paragraph">朗读下一段</string>
 
 </resources>
