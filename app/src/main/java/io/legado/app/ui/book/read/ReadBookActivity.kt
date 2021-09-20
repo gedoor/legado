@@ -954,9 +954,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
             launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->
-                        val pageStart = chapterStart - ReadBook.durChapterPos
+                        val aloudSpanStart = chapterStart - ReadBook.durChapterPos
                         textChapter.getPageByReadPos(ReadBook.durChapterPos)
-                            ?.upPageAloudSpan(pageStart)
+                            ?.upPageAloudSpan(aloudSpanStart)
                         upContent()
                     }
                 }

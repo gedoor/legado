@@ -10,10 +10,7 @@ import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -31,6 +28,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private lateinit var ttsFolder: String
     private var task: Coroutine<*>? = null
     private var playingIndex = -1
+    private var playIndexJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -96,6 +94,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                         if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
                             if (index == nowSpeak) {
                                 val file = getSpeakFileAsMd5(fileName)
+
                                 @Suppress("BlockingMethodInNonBlockingContext")
                                 val fis = FileInputStream(file)
                                 playAudio(fis.fd)
@@ -209,6 +208,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun pauseReadAloud(pause: Boolean) {
         super.pauseReadAloud(pause)
         mediaPlayer.pause()
+        playIndexJob?.cancel()
     }
 
     override fun resumeReadAloud() {
@@ -217,6 +217,26 @@ class HttpReadAloudService : BaseReadAloudService(),
             play()
         } else {
             mediaPlayer.start()
+            upPlayPos()
+        }
+    }
+
+    private fun upPlayPos() {
+        textChapter?.let {
+            playIndexJob = launch {
+                val speakTextLength = contentList[nowSpeak].length
+                val sleep = mediaPlayer.duration / speakTextLength
+                val start = speakTextLength * mediaPlayer.currentPosition / mediaPlayer.duration
+                postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
+                for (i in start..contentList[nowSpeak].length) {
+                    if (readAloudNumber + i > it.getReadLength(pageIndex + 1)) {
+                        pageIndex++
+                        ReadBook.moveToNextPage()
+                        postEvent(EventBus.TTS_PROGRESS, readAloudNumber + i)
+                    }
+                    delay(sleep.toLong())
+                }
+            }
         }
     }
 
@@ -234,13 +254,8 @@ class HttpReadAloudService : BaseReadAloudService(),
         super.play()
         if (pause) return
         mediaPlayer.start()
-        textChapter?.let {
-            if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
-                pageIndex++
-                ReadBook.moveToNextPage()
-            }
-        }
-        postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
+        playIndexJob?.cancel()
+        upPlayPos()
     }
 
     private var errorNo = 0

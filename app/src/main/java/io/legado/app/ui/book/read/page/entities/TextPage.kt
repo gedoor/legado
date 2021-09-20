@@ -93,11 +93,11 @@ data class TextPage(
         return this
     }
 
-    fun upPageAloudSpan(pageStart: Int) {
+    fun upPageAloudSpan(aloudSpanStart: Int) {
         removePageAloudSpan()
         var lineStart = 0
         for ((index, textLine) in textLines.withIndex()) {
-            if (pageStart > lineStart && pageStart < lineStart + textLine.text.length) {
+            if (aloudSpanStart > lineStart && aloudSpanStart < lineStart + textLine.text.length) {
                 for (i in index - 1 downTo 0) {
                     if (textLines[i].text.endsWith("\n")) {
                         break
