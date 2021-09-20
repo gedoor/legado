@@ -92,12 +92,13 @@ class CoverImageView @JvmOverloads constructor(
             canvas.clipPath(filletPath)
         }
         super.onDraw(canvas)
-        if (defaultCover && drawBookName && !isInEditMode) {
-            drawName(canvas)
+        if (defaultCover && !isInEditMode) {
+            drawNameAuthor(canvas)
         }
     }
 
-    private fun drawName(canvas: Canvas) {
+    private fun drawNameAuthor(canvas: Canvas) {
+        if (!drawBookName) return
         var startX = width * 0.2f
         var startY = height * 0.2f
         name?.toStringArray()?.let { name ->
@@ -116,6 +117,7 @@ class CoverImageView @JvmOverloads constructor(
                 }
             }
         }
+        if (!drawBookAuthor) return
         author?.toStringArray()?.let { author ->
             startX = width * 0.8f
             startY = height * 0.7f
@@ -188,6 +190,7 @@ class CoverImageView @JvmOverloads constructor(
 
     companion object {
         private var drawBookName = true
+        private var drawBookAuthor = true
         lateinit var defaultDrawable: Drawable
 
         init {
@@ -197,17 +200,20 @@ class CoverImageView @JvmOverloads constructor(
         @SuppressLint("UseCompatLoadingForDrawables")
         fun upDefaultCover() {
             val isNightTheme = AppConfig.isNightTheme
+            drawBookName = if (isNightTheme) {
+                appCtx.getPrefBoolean(PreferKey.coverShowNameN, true)
+            } else {
+                appCtx.getPrefBoolean(PreferKey.coverShowName, true)
+            }
+            drawBookAuthor = if (isNightTheme) {
+                appCtx.getPrefBoolean(PreferKey.coverShowAuthorN, true)
+            } else {
+                appCtx.getPrefBoolean(PreferKey.coverShowAuthor, true)
+            }
             val key = if (isNightTheme) PreferKey.defaultCoverDark else PreferKey.defaultCover
             val path = appCtx.getPrefString(key)
-            defaultDrawable = Drawable.createFromPath(path)?.let {
-                val showNameKey = if (isNightTheme) PreferKey.defaultCoverDarkShowName
-                else PreferKey.defaultCoverShowName
-                drawBookName = appCtx.getPrefBoolean(showNameKey)
-                return@let it
-            } ?: let {
-                drawBookName = true
-                return@let appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
-            }
+            defaultDrawable = Drawable.createFromPath(path)
+                ?: appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
         }
 
     }

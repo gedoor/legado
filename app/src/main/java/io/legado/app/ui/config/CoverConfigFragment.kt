@@ -12,6 +12,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.image.CoverImageView
+import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 
 class CoverConfigFragment : BasePreferenceFragment(),
@@ -57,10 +58,18 @@ class CoverConfigFragment : BasePreferenceFragment(),
             PreferKey.defaultCoverDark -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
-            PreferKey.coverShowName,
+            PreferKey.coverShowName -> {
+                findPreference<SwitchPreference>(PreferKey.coverShowAuthor)
+                    ?.isEnabled = getPrefBoolean(key)
+                CoverImageView.upDefaultCover()
+            }
+            PreferKey.coverShowNameN -> {
+                findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
+                    ?.isEnabled = getPrefBoolean(key)
+                CoverImageView.upDefaultCover()
+            }
             PreferKey.coverShowAuthor,
-            PreferKey.coverShowNameN,
-            PreferKey.coverShowAuthorN -> listView.post {
+            PreferKey.coverShowAuthorN -> {
                 CoverImageView.upDefaultCover()
             }
         }

@@ -27,7 +27,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="coverShowName"
             android:title="@string/cover_show_name"
             android:summary="@string/cover_show_name_summary"
@@ -36,7 +36,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="coverShowAuthor"
             android:title="@string/cover_show_author"
             android:summary="@string/cover_show_author_summary"
@@ -62,7 +62,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="coverShowNameN"
             android:title="@string/cover_show_name"
             android:summary="@string/cover_show_name_summary"
@@ -71,7 +71,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="coverShowAuthorN"
             android:title="@string/cover_show_author"
             android:summary="@string/cover_show_author_summary"
