@@ -222,6 +222,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun upPlayPos() {
+        playIndexJob?.cancel()
         textChapter?.let {
             playIndexJob = launch {
                 val speakTextLength = contentList[nowSpeak].length
@@ -254,7 +255,6 @@ class HttpReadAloudService : BaseReadAloudService(),
         super.play()
         if (pause) return
         mediaPlayer.start()
-        playIndexJob?.cancel()
         upPlayPos()
     }
 
