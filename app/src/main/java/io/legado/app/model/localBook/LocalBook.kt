@@ -10,7 +10,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.model.AppException
+import io.legado.app.model.TocEmptyException
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
@@ -38,7 +38,7 @@ object LocalBook {
             }
         }
         if (chapters.isEmpty()) {
-            throw AppException(appCtx.getString(R.string.chapter_list_empty))
+            throw TocEmptyException(appCtx.getString(R.string.chapter_list_empty))
         }
         return chapters
     }

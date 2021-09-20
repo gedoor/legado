@@ -11,6 +11,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.webdav.HttpAuth
 import io.legado.app.lib.webdav.WebDav
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -65,7 +66,7 @@ object AppWebDav {
                 }
             }
         } else {
-            error("webDav没有配置")
+            throw NoStackTraceException("webDav没有配置")
         }
         return names
     }

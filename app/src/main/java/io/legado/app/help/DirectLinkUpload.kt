@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleData
@@ -17,18 +18,18 @@ object DirectLinkUpload {
     suspend fun upLoad(fileName: String, file: ByteArray, contentType: String): String {
         val url = getUploadUrl()
         if (url.isNullOrBlank()) {
-            error("上传url未配置")
+            throw NoStackTraceException("上传url未配置")
         }
         val downloadUrlRule = getDownloadUrlRule()
         if (downloadUrlRule.isNullOrBlank()) {
-            error("下载地址规则未配置")
+            throw NoStackTraceException("下载地址规则未配置")
         }
         val analyzeUrl = AnalyzeUrl(url)
         val res = analyzeUrl.upload(fileName, file, contentType)
         val analyzeRule = AnalyzeRule(RuleData()).setContent(res.body, res.url)
         val downloadUrl = analyzeRule.getString(downloadUrlRule)
         if (downloadUrl.isBlank()) {
-            error("上传失败,${res.body}")
+            throw NoStackTraceException("上传失败,${res.body}")
         }
         return downloadUrl
     }

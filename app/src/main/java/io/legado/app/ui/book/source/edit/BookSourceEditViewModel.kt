@@ -8,6 +8,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookSourceAnalyzer
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
 
@@ -55,7 +56,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         execute(context = Dispatchers.Main) {
             val text = context.getClipText()
             if (text.isNullOrBlank()) {
-                error("剪贴板为空")
+                throw NoStackTraceException("剪贴板为空")
             } else {
                 importSource(text, onSuccess)
             }

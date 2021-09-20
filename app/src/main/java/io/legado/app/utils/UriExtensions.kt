@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import io.legado.app.R
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
+import io.legado.app.model.NoStackTraceException
 import java.io.File
 
 fun Uri.isContentScheme() = this.scheme == "content"
@@ -20,10 +21,10 @@ fun AppCompatActivity.readUri(uri: Uri?, success: (name: String, bytes: ByteArra
     try {
         if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(this, uri)
-            doc ?: error("未获取到文件")
-            val name = doc.name ?: error("未获取到文件名")
+            doc ?: throw NoStackTraceException("未获取到文件")
+            val name = doc.name ?: throw NoStackTraceException("未获取到文件名")
             val fileBytes = DocumentUtils.readBytes(this, doc.uri)
-            fileBytes ?: error("读取文件出错")
+            fileBytes ?: throw NoStackTraceException("读取文件出错")
             success.invoke(name, fileBytes)
         } else {
             PermissionsCompat.Builder(this)
@@ -54,10 +55,10 @@ fun Fragment.readUri(uri: Uri?, success: (name: String, bytes: ByteArray) -> Uni
     try {
         if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
-            doc ?: error("未获取到文件")
-            val name = doc.name ?: error("未获取到文件名")
+            doc ?: throw NoStackTraceException("未获取到文件")
+            val name = doc.name ?: throw NoStackTraceException("未获取到文件名")
             val fileBytes = DocumentUtils.readBytes(requireContext(), doc.uri)
-            fileBytes ?: error("读取文件出错")
+            fileBytes ?: throw NoStackTraceException("读取文件出错")
             success.invoke(name, fileBytes)
         } else {
             PermissionsCompat.Builder(this)
