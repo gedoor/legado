@@ -9,12 +9,13 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
-import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
 import io.legado.app.help.LocalConfig
 import io.legado.app.model.CacheBook
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.*
@@ -29,6 +30,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private val waitUpTocBooks = arrayListOf<String>()
     private val onUpTocBooks = CopyOnWriteArraySet<String>()
     private var upTocJob: Job? = null
+    private var cacheBookJob: Job? = null
 
     override fun onCleared() {
         super.onCleared()
@@ -121,7 +123,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookDao.update(book)
             appDb.bookChapterDao.delByBook(book.bookUrl)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
-            cacheBook(book)
+            addDownload(source, book)
         }.onError(upTocPool) {
             AppLog.addLog("${book.name} 更新目录失败\n${it.localizedMessage}", it)
             it.printOnDebug()
@@ -145,23 +147,44 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         postEvent(EventBus.UP_BOOKSHELF, bookUrl)
     }
 
-    /**
-     * 缓存书籍
-     */
-    private fun cacheBook(book: Book) {
+    @Synchronized
+    private fun addDownload(source: BookSource, book: Book) {
         val endIndex = min(
             book.totalChapterNum - 1,
             book.durChapterIndex.plus(AppConfig.preDownloadNum)
         )
-        for (i in book.durChapterIndex..endIndex) {
-            appDb.bookChapterDao.getChapter(book.bookUrl, i)?.let { chapter ->
-                if (!BookHelp.hasContent(book, chapter)) {
-                    CacheBook.start(context, book.bookUrl, i, endIndex)
-                    return
+        val cacheBook = CacheBook.getOrCreate(source, book)
+        cacheBook.addDownload(book.durChapterIndex, endIndex)
+        if (cacheBookJob == null && !CacheBookService.isRun) {
+            cacheBook()
+        }
+    }
+
+    /**
+     * 缓存书籍
+     */
+    private fun cacheBook() {
+        cacheBookJob?.cancel()
+        cacheBookJob = viewModelScope.launch(upTocPool) {
+            while (isActive) {
+                if (CacheBookService.isRun) {
+                    cacheBookJob?.cancel()
+                    cacheBookJob = null
+                    return@launch
+                }
+                if (!CacheBook.isRun) {
+                    cacheBookJob?.cancel()
+                    cacheBookJob = null
+                    return@launch
+                }
+                CacheBook.cacheBookMap.forEach {
+                    while (CacheBook.onDownloadCount > threadCount) {
+                        delay(100)
+                    }
+                    it.value.download(this, upTocPool)
                 }
             }
         }
-
     }
 
     fun postLoad() {

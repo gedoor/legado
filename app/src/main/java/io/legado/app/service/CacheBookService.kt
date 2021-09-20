@@ -99,6 +99,7 @@ class CacheBookService : BaseService() {
     }
 
     private fun download() {
+        downloadJob?.cancel()
         downloadJob = launch(cachePool) {
             while (isActive) {
                 if (!CacheBook.isRun) {
