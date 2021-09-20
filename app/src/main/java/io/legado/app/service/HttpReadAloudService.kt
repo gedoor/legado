@@ -27,7 +27,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnErrorListener,
     MediaPlayer.OnCompletionListener {
 
-    private val player by lazy { MediaPlayer() }
+    private val mediaPlayer by lazy { MediaPlayer() }
     private lateinit var ttsFolder: String
     private var task: Coroutine<*>? = null
     private var playingIndex = -1
@@ -35,19 +35,19 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun onCreate() {
         super.onCreate()
         ttsFolder = externalCacheDir!!.absolutePath + File.separator + "httpTTS"
-        player.setOnErrorListener(this)
-        player.setOnPreparedListener(this)
-        player.setOnCompletionListener(this)
+        mediaPlayer.setOnErrorListener(this)
+        mediaPlayer.setOnPreparedListener(this)
+        mediaPlayer.setOnCompletionListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         task?.cancel()
-        player.release()
+        mediaPlayer.release()
     }
 
     override fun newReadAloud(play: Boolean) {
-        player.reset()
+        mediaPlayer.reset()
         playingIndex = -1
         super.newReadAloud(play)
     }
@@ -71,7 +71,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun playStop() {
-        player.stop()
+        mediaPlayer.stop()
     }
 
     private fun playNext() {
@@ -151,9 +151,9 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun playAudio(fd: FileDescriptor) {
         if (playingIndex != nowSpeak && requestFocus()) {
             try {
-                player.reset()
-                player.setDataSource(fd)
-                player.prepareAsync()
+                mediaPlayer.reset()
+                mediaPlayer.setDataSource(fd)
+                mediaPlayer.prepareAsync()
                 playingIndex = nowSpeak
                 postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             } catch (e: Exception) {
@@ -208,7 +208,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun pauseReadAloud(pause: Boolean) {
         super.pauseReadAloud(pause)
-        player.pause()
+        mediaPlayer.pause()
     }
 
     override fun resumeReadAloud() {
@@ -216,7 +216,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         if (playingIndex == -1) {
             play()
         } else {
-            player.start()
+            mediaPlayer.start()
         }
     }
 
@@ -225,7 +225,7 @@ class HttpReadAloudService : BaseReadAloudService(),
      */
     override fun upSpeechRate(reset: Boolean) {
         task?.cancel()
-        player.stop()
+        mediaPlayer.stop()
         playingIndex = -1
         downloadAudio()
     }
@@ -233,7 +233,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun onPrepared(mp: MediaPlayer?) {
         super.play()
         if (pause) return
-        mp?.start()
+        mediaPlayer.start()
         textChapter?.let {
             if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
                 pageIndex++
