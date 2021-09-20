@@ -93,11 +93,9 @@ class HttpReadAloudService : BaseReadAloudService(),
                     if (isActive) {
                         val fileName =
                             md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), item)
-
                         if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
                             if (index == nowSpeak) {
                                 val file = getSpeakFileAsMd5(fileName)
-
                                 @Suppress("BlockingMethodInNonBlockingContext")
                                 val fis = FileInputStream(file)
                                 playAudio(fis.fd)
@@ -249,6 +247,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         if (what == -38 && extra == 0) {
+            play()
             return true
         }
         AppLog.addLog("朗读错误,($what, $extra)")
