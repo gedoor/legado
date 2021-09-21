@@ -210,10 +210,16 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     override fun observeLiveBus() {
         observeEvent<String>(EventBus.UP_DOWNLOAD) {
             if (!CacheBook.isRun) {
-                menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_play_24dp)
+                menu?.findItem(R.id.menu_download)?.let { item ->
+                    item.setIcon(R.drawable.ic_play_24dp)
+                    item.setTitle(R.string.download_start)
+                }
                 menu?.applyTint(this)
             } else {
-                menu?.findItem(R.id.menu_download)?.setIcon(R.drawable.ic_stop_black_24dp)
+                menu?.findItem(R.id.menu_download)?.let { item ->
+                    item.setIcon(R.drawable.ic_stop_black_24dp)
+                    item.setTitle(R.string.stop)
+                }
                 menu?.applyTint(this)
             }
             adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
