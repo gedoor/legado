@@ -86,16 +86,14 @@ class HttpReadAloudService : BaseReadAloudService(),
         task?.cancel()
         task = execute {
             removeCacheFile()
-            ReadAloud.httpTTS?.let {
+            ReadAloud.httpTTS?.let { httpTts ->
                 contentList.forEachIndexed { index, item ->
                     if (isActive) {
                         val fileName =
-                            md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), item)
+                            md5SpeakFileName(httpTts.url, AppConfig.ttsSpeechRate.toString(), item)
                         if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
                             if (index == nowSpeak) {
                                 val file = getSpeakFileAsMd5(fileName)
-
-                                @Suppress("BlockingMethodInNonBlockingContext")
                                 val fis = FileInputStream(file)
                                 playAudio(fis.fd)
                             }
@@ -105,19 +103,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                             try {
                                 createSpeakCacheFile(fileName)
                                 AnalyzeUrl(
-                                    it.url,
+                                    httpTts.url,
                                     speakText = item,
-                                    speakSpeed = AppConfig.ttsSpeechRate
+                                    speakSpeed = AppConfig.ttsSpeechRate,
+                                    source = httpTts,
+                                    headerMapF = httpTts.getHeaderMap(true)
                                 ).getByteArray().let { bytes ->
                                     ensureActive()
-
                                     val file = getSpeakFileAsMd5IfNotExist(fileName)
-                                    //val file = getSpeakFile(index)
                                     file.writeBytes(bytes)
                                     removeSpeakCacheFile(fileName)
-
                                     val fis = FileInputStream(file)
-
                                     if (index == nowSpeak) {
                                         @Suppress("BlockingMethodInNonBlockingContext")
                                         playAudio(fis.fd)
