@@ -140,8 +140,10 @@ class ReadAloudDialog : BaseDialogFragment() {
     private fun upPlayState() {
         if (!BaseReadAloudService.pause) {
             binding.ivPlayPause.setImageResource(R.drawable.ic_pause_24dp)
+            binding.ivPlayPause.contentDescription = getString(R.string.pause)
         } else {
             binding.ivPlayPause.setImageResource(R.drawable.ic_play_24dp)
+            binding.ivPlayPause.contentDescription = getString(R.string.audio_play)
         }
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)

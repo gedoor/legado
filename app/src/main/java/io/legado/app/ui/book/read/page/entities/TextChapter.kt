@@ -61,6 +61,9 @@ data class TextChapter(
         return stringBuilder.toString()
     }
 
+    /**
+     * 根据索引位置获取所在页
+     */
     fun getPageIndexByCharIndex(charIndex: Int): Int {
         var length = 0
         pages.forEach {

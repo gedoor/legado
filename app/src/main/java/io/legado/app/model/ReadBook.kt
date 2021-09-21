@@ -209,6 +209,9 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
+    /**
+     * 当前页数
+     */
     fun durPageIndex(): Int {
         curTextChapter?.let {
             return it.getPageIndexByCharIndex(durChapterPos)
