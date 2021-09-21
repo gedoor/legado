@@ -8,14 +8,12 @@ import androidx.room.Index
 import io.legado.app.R
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
-import io.legado.app.utils.GSON
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.*
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 
+@Suppress("unused")
 @Parcelize
 @Entity(
     tableName = "chapters",
@@ -71,11 +69,31 @@ data class BookChapter(
         return false
     }
 
-    fun getDisplayTitle(): String {
+    @Suppress("unused")
+    fun getDisplayTitle(
+        replaceRules: List<ReplaceRule>? = null,
+        useReplace: Boolean = true
+    ): String {
+        var displayTitle = title
+        if (useReplace && replaceRules != null) {
+            replaceRules.forEach { item ->
+                if (item.pattern.isNotEmpty()) {
+                    try {
+                        displayTitle = if (item.isRegex) {
+                            displayTitle.replace(item.pattern.toRegex(), item.replacement)
+                        } else {
+                            displayTitle.replace(item.pattern, item.replacement)
+                        }
+                    } catch (e: Exception) {
+                        appCtx.toastOnUi("${item.name}替换出错")
+                    }
+                }
+            }
+        }
         return when {
-            !isVip -> title
-            isPay -> appCtx.getString(R.string.payed_title, title)
-            else -> appCtx.getString(R.string.vip_title, title)
+            !isVip -> displayTitle
+            isPay -> appCtx.getString(R.string.payed_title, displayTitle)
+            else -> appCtx.getString(R.string.vip_title, displayTitle)
         }
     }
 
@@ -83,9 +101,11 @@ data class BookChapter(
         val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
         val urlBefore = if (urlMatcher.find()) url.substring(0, urlMatcher.start()) else url
         val urlAbsoluteBefore = NetworkUtils.getAbsoluteURL(baseUrl, urlBefore)
-        return if (urlBefore.length == url.length) urlAbsoluteBefore else urlAbsoluteBefore + ',' + url.substring(
-            urlMatcher.end()
-        )
+        return if (urlBefore.length == url.length) {
+            urlAbsoluteBefore
+        } else {
+            "$urlAbsoluteBefore," + url.substring(urlMatcher.end())
+        }
     }
 
     fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))

@@ -154,12 +154,12 @@ object ChapterProvider {
             item.pageSize = textPages.size
             item.chapterIndex = bookChapter.index
             item.chapterSize = chapterSize
-            item.title = bookChapter.title
+            item.title = bookChapter.getDisplayTitle()
             item.upLinesPosition()
         }
 
         return TextChapter(
-            bookChapter.index, bookChapter.title,
+            bookChapter.index, bookChapter.getDisplayTitle(),
             bookChapter.getAbsoluteURL().substringBefore(",{"), //getAbsoluteURL已经格式过
             textPages, chapterSize
         )
