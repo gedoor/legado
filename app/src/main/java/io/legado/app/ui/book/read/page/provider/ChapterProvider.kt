@@ -21,7 +21,9 @@ import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.util.*
 
-
+/**
+ * 解析内容生成章节和页面
+ */
 @Suppress("DEPRECATION")
 object ChapterProvider {
     @JvmStatic
@@ -81,6 +83,7 @@ object ChapterProvider {
     fun getTextChapter(
         book: Book,
         bookChapter: BookChapter,
+        displayTitle: String,
         contents: List<String>,
         chapterSize: Int,
     ): TextChapter {
@@ -154,12 +157,12 @@ object ChapterProvider {
             item.pageSize = textPages.size
             item.chapterIndex = bookChapter.index
             item.chapterSize = chapterSize
-            item.title = bookChapter.getDisplayTitle()
+            item.title = displayTitle
             item.upLinesPosition()
         }
 
         return TextChapter(
-            bookChapter.index, bookChapter.getDisplayTitle(),
+            bookChapter.index, displayTitle,
             bookChapter.getAbsoluteURL().substringBefore(",{"), //getAbsoluteURL已经格式过
             textPages, chapterSize
         )

@@ -5,7 +5,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
+import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
+import io.legado.app.help.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.*
@@ -71,8 +73,9 @@ data class BookChapter(
 
     @Suppress("unused")
     fun getDisplayTitle(
-        replaceRules: List<ReplaceRule>? = null,
-        useReplace: Boolean = true
+        replaceRules: Array<ReplaceRule>? = null,
+        useReplace: Boolean = true,
+        chineseConvert: Boolean = true,
     ): String {
         var displayTitle = title
         if (useReplace && replaceRules != null) {
@@ -88,6 +91,12 @@ data class BookChapter(
                         appCtx.toastOnUi("${item.name}替换出错")
                     }
                 }
+            }
+        }
+        if (chineseConvert) {
+            when (AppConfig.chineseConverterType) {
+                1 -> displayTitle = ChineseUtils.t2s(displayTitle)
+                2 -> displayTitle = ChineseUtils.s2t(displayTitle)
             }
         }
         return when {

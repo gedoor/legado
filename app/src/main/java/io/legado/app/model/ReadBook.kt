@@ -1,7 +1,6 @@
 package io.legado.app.model
 
 import androidx.lifecycle.MutableLiveData
-import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
@@ -338,15 +337,14 @@ object ReadBook : CoroutineScope by MainScope() {
         Coroutine.async {
             removeLoading(chapter.index)
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
-                chapter.title = when (AppConfig.chineseConverterType) {
-                    1 -> ChineseUtils.t2s(chapter.title)
-                    2 -> ChineseUtils.s2t(chapter.title)
-                    else -> chapter.title
-                }
-                val contents = ContentProcessor.get(book.name, book.origin)
-                    .getContent(book, chapter, content)
+                val contentProcessor = ContentProcessor.get(book.name, book.origin)
+                val displayTitle = chapter.getDisplayTitle(
+                    contentProcessor.getReplaceRules(),
+                    book.getUseReplaceRule()
+                )
+                val contents = contentProcessor.getContent(book, chapter, content)
                 val textChapter = ChapterProvider
-                    .getTextChapter(book, chapter, contents, chapterSize)
+                    .getTextChapter(book, chapter, displayTitle, contents, chapterSize)
                 when (val offset = chapter.index - durChapterIndex) {
                     0 -> {
                         curTextChapter = textChapter
