@@ -203,17 +203,21 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun pauseReadAloud(pause: Boolean) {
         super.pauseReadAloud(pause)
-        mediaPlayer.pause()
-        playIndexJob?.cancel()
+        kotlin.runCatching {
+            playIndexJob?.cancel()
+            mediaPlayer.pause()
+        }
     }
 
     override fun resumeReadAloud() {
         super.resumeReadAloud()
-        if (playingIndex == -1) {
-            play()
-        } else {
-            mediaPlayer.start()
-            upPlayPos()
+        kotlin.runCatching {
+            if (playingIndex == -1) {
+                play()
+            } else {
+                mediaPlayer.start()
+                upPlayPos()
+            }
         }
     }
 
