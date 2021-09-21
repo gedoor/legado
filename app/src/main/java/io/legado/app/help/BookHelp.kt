@@ -164,7 +164,9 @@ object BookHelp {
         return fileNameList
     }
 
-    // 检测该章节是否下载
+    /**
+     * 检测该章节是否下载
+     */
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
         return if (book.isLocalTxt()) {
             true
@@ -178,6 +180,9 @@ object BookHelp {
         }
     }
 
+    /**
+     * 检测图片是否下载
+     */
     fun hasImageContent(book: Book, bookChapter: BookChapter): Boolean {
         if (!hasContent(book, bookChapter)) {
             return false
@@ -196,6 +201,9 @@ object BookHelp {
         return true
     }
 
+    /**
+     * 读取章节内容
+     */
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (book.isLocalTxt() || book.isUmd()) {
             return LocalBook.getContext(book, bookChapter)
@@ -224,6 +232,9 @@ object BookHelp {
         return null
     }
 
+    /**
+     * 反转章节内容
+     */
     fun reverseContent(book: Book, bookChapter: BookChapter) {
         if (!book.isLocalBook()) {
             val file = FileUtils.getFile(
@@ -243,6 +254,9 @@ object BookHelp {
         }
     }
 
+    /**
+     * 删除章节内容
+     */
     fun delContent(book: Book, bookChapter: BookChapter) {
         if (book.isLocalTxt()) {
             return
@@ -256,12 +270,18 @@ object BookHelp {
         }
     }
 
+    /**
+     * 格式化书名
+     */
     fun formatBookName(name: String): String {
         return name
             .replace(AppPattern.nameRegex, "")
             .trim { it <= ' ' }
     }
 
+    /**
+     * 格式化作者
+     */
     fun formatBookAuthor(author: String): String {
         return author
             .replace(AppPattern.authorRegex, "")
