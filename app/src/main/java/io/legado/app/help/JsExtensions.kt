@@ -457,7 +457,7 @@ interface JsExtensions {
      */
     fun log(msg: String): String {
         getSource()?.let {
-            Debug.log(it.getStoreUrl(), msg)
+            Debug.log(it.getKey(), msg)
         } ?: Debug.log(msg)
         return msg
     }

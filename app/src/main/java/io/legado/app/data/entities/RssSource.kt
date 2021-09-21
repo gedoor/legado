@@ -45,11 +45,11 @@ data class RssSource(
     var customOrder: Int = 0
 ) : Parcelable, BaseSource {
 
-    override fun getName(): String {
+    override fun getTag(): String {
         return sourceName
     }
 
-    override fun getStoreUrl(): String {
+    override fun getKey(): String {
         return sourceUrl
     }
 

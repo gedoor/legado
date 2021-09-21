@@ -28,7 +28,7 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.source?.let {
-            binding.titleBar.title = getString(R.string.login_source, it.getName())
+            binding.titleBar.title = getString(R.string.login_source, it.getTag())
             initWebView(it)
         }
     }
@@ -64,13 +64,13 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
         binding.webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 val cookie = cookieManager.getCookie(url)
-                CookieStore.setCookie(source.getStoreUrl(), cookie)
+                CookieStore.setCookie(source.getKey(), cookie)
                 super.onPageStarted(view, url, favicon)
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 val cookie = cookieManager.getCookie(url)
-                CookieStore.setCookie(source.getStoreUrl(), cookie)
+                CookieStore.setCookie(source.getKey(), cookie)
                 if (checking) {
                     activity?.finish()
                 }

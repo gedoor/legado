@@ -44,11 +44,11 @@ data class BookSource(
     var ruleContent: ContentRule? = null            // 正文页规则
 ) : Parcelable, BaseSource {
 
-    override fun getName(): String {
+    override fun getTag(): String {
         return bookSourceName
     }
 
-    override fun getStoreUrl(): String {
+    override fun getKey(): String {
         return bookSourceUrl
     }
 

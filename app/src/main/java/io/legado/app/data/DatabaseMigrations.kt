@@ -36,7 +36,8 @@ object DatabaseMigrations {
             migration_36_37,
             migration_37_38,
             migration_38_39,
-            migration_39_40
+            migration_39_40,
+            migration_40_41
         )
     }
 
@@ -316,6 +317,16 @@ object DatabaseMigrations {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE `chapters` ADD `isVip` INTEGER NOT NULL DEFAULT 0")
             database.execSQL("ALTER TABLE `chapters` ADD `isPay` INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
+    private val migration_40_41 = object : Migration(40, 41) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE `httpTTS` ADD `loginUrl` TEXT")
+            database.execSQL("ALTER TABLE `httpTTS` ADD `loginUi` TEXT")
+            database.execSQL("ALTER TABLE `httpTTS` ADD `loginCheckJs` TEXT")
+            database.execSQL("ALTER TABLE `httpTTS` ADD `header` TEXT")
+            database.execSQL("ALTER TABLE `httpTTS` ADD `concurrentRate` TEXT")
         }
     }
 }

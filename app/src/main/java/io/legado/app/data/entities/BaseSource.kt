@@ -24,9 +24,9 @@ interface BaseSource : JsExtensions {
     var loginUi: List<RowUi>?   // 登录UI
     var header: String?         // 请求头
 
-    fun getName(): String
+    fun getTag(): String
 
-    fun getStoreUrl(): String
+    fun getKey(): String
 
     fun getLoginJs(): String? {
         val loginJs = loginUrl
@@ -68,7 +68,7 @@ interface BaseSource : JsExtensions {
      * 获取用于登录的头部信息
      */
     fun getLoginHeader(): String? {
-        return CacheManager.get("loginHeader_${getStoreUrl()}")
+        return CacheManager.get("loginHeader_${getKey()}")
     }
 
     fun getLoginHeaderMap(): Map<String, String>? {
@@ -80,7 +80,7 @@ interface BaseSource : JsExtensions {
      * 保存登录头部信息,map格式,访问时自动添加
      */
     fun putLoginHeader(header: String) {
-        CacheManager.put("loginHeader_${getStoreUrl()}", header)
+        CacheManager.put("loginHeader_${getKey()}", header)
     }
 
     /**
@@ -90,7 +90,7 @@ interface BaseSource : JsExtensions {
     fun getLoginInfo(): String? {
         try {
             val key = AppConst.androidId.encodeToByteArray(0, 8)
-            val cache = CacheManager.get("userInfo_${getStoreUrl()}") ?: return null
+            val cache = CacheManager.get("userInfo_${getKey()}") ?: return null
             val encodeBytes = Base64.decode(cache, Base64.DEFAULT)
             val decodeBytes = EncoderUtils.decryptAES(encodeBytes, key)
                 ?: return null
@@ -113,7 +113,7 @@ interface BaseSource : JsExtensions {
             val key = (AppConst.androidId).encodeToByteArray(0, 8)
             val encodeBytes = EncoderUtils.encryptAES(info.toByteArray(), key)
             val encodeStr = Base64.encodeToString(encodeBytes, Base64.DEFAULT)
-            CacheManager.put("userInfo_${getStoreUrl()}", encodeStr)
+            CacheManager.put("userInfo_${getKey()}", encodeStr)
             true
         } catch (e: Exception) {
             e.printOnDebug()
@@ -122,19 +122,19 @@ interface BaseSource : JsExtensions {
     }
 
     fun removeLoginInfo() {
-        CacheManager.delete("userInfo_${getStoreUrl()}")
+        CacheManager.delete("userInfo_${getKey()}")
     }
 
     fun setVariable(variable: String?) {
         if (variable != null) {
-            CacheManager.put("sourceVariable_${getStoreUrl()}", variable)
+            CacheManager.put("sourceVariable_${getKey()}", variable)
         } else {
-            CacheManager.delete("sourceVariable_${getStoreUrl()}")
+            CacheManager.delete("sourceVariable_${getKey()}")
         }
     }
 
     fun getVariable(): String? {
-        return CacheManager.get("sourceVariable_${getStoreUrl()}")
+        return CacheManager.get("sourceVariable_${getKey()}")
     }
 
     /**
@@ -145,7 +145,7 @@ interface BaseSource : JsExtensions {
         val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["source"] = this
-        bindings["baseUrl"] = getStoreUrl()
+        bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
         return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)

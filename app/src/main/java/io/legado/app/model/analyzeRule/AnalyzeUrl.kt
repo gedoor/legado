@@ -276,9 +276,9 @@ class AnalyzeUrl(
         if (concurrentRate.isNullOrEmpty()) {
             return
         }
-        val fetchRecord = accessTime[source.getStoreUrl()]
+        val fetchRecord = accessTime[source.getKey()]
         if (fetchRecord == null) {
-            accessTime[source.getStoreUrl()] = FetchRecord(System.currentTimeMillis(), 1)
+            accessTime[source.getKey()] = FetchRecord(System.currentTimeMillis(), 1)
             return
         }
         val waitTime = synchronized(fetchRecord) {
@@ -328,7 +328,7 @@ class AnalyzeUrl(
             return StrResponse(url, StringUtils.byteToHexString(getByteArray()))
         }
         judgmentConcurrent()
-        setCookie(source?.getStoreUrl())
+        setCookie(source?.getKey())
         if (useWebView) {
             val params = AjaxWebView.AjaxParams(url)
             params.headerMap = headerMap
@@ -336,7 +336,7 @@ class AnalyzeUrl(
             params.javaScript = webJs ?: jsStr
             params.sourceRegex = sourceRegex
             params.postData = body?.toByteArray()
-            params.tag = source?.getStoreUrl()
+            params.tag = source?.getKey()
             return getWebViewSrc(params)
         }
         return getProxyClient(proxy).newCallStrResponse(retry) {
@@ -360,7 +360,7 @@ class AnalyzeUrl(
      */
     suspend fun getByteArray(): ByteArray {
         judgmentConcurrent()
-        setCookie(source?.getStoreUrl())
+        setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
         return getProxyClient(proxy).newCall(retry) {
             addHeaders(headerMap)
