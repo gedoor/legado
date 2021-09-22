@@ -46,8 +46,8 @@ class RuleUiLoginDialog : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
         val source = viewModel.source ?: return
+        binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.title = getString(R.string.login_source, source.getTag())
         val loginInfo = source.getLoginInfoMap()
         val loginUi = source.loginUi
