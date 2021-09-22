@@ -63,11 +63,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            if (WebService.isRun) {
-                putPrefBoolean(PreferKey.webService, true)
-            } else {
-                putPrefBoolean(PreferKey.webService, false)
-            }
+            putPrefBoolean(PreferKey.webService, WebService.isRun)
             addPreferencesFromResource(R.xml.pref_main)
             val webServicePre = findPreference<SwitchPreference>(PreferKey.webService)
             observeEventSticky<String>(EventBus.WEB_SERVICE) {
