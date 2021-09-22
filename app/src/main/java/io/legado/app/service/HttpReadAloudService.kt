@@ -223,20 +223,22 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun upPlayPos() {
         playIndexJob?.cancel()
-        textChapter?.let {
-            playIndexJob = launch {
-                val speakTextLength = contentList[nowSpeak].length
-                val sleep = mediaPlayer.duration / speakTextLength
-                val start = speakTextLength * mediaPlayer.currentPosition / mediaPlayer.duration
-                postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
-                for (i in start..contentList[nowSpeak].length) {
-                    if (readAloudNumber + i > it.getReadLength(pageIndex + 1)) {
-                        pageIndex++
-                        ReadBook.moveToNextPage()
-                        postEvent(EventBus.TTS_PROGRESS, readAloudNumber + i)
-                    }
-                    delay(sleep.toLong())
+        val textChapter = textChapter ?: return
+        playIndexJob = launch {
+            postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
+            if (mediaPlayer.duration <= 0) {
+                return@launch
+            }
+            val speakTextLength = contentList[nowSpeak].length
+            val sleep = mediaPlayer.duration / speakTextLength
+            val start = speakTextLength * mediaPlayer.currentPosition / mediaPlayer.duration
+            for (i in start..contentList[nowSpeak].length) {
+                if (readAloudNumber + i > textChapter.getReadLength(pageIndex + 1)) {
+                    pageIndex++
+                    ReadBook.moveToNextPage()
+                    postEvent(EventBus.TTS_PROGRESS, readAloudNumber + i)
                 }
+                delay(sleep.toLong())
             }
         }
     }
