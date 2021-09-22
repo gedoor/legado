@@ -57,6 +57,9 @@ object MediaHelp {
         return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
     }
 
+    /**
+     * 播放静音音频,用来获取音频焦点
+     */
     fun playSilentSound(mContext: Context) {
         kotlin.runCatching {
             // Stupid Android 8 "Oreo" hack to make media buttons work
