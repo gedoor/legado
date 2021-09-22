@@ -9,6 +9,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import io.legado.app.constant.AppPattern
 import io.legado.app.help.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.lib.theme.accentColor
@@ -167,9 +168,10 @@ class CoverImageView @JvmOverloads constructor(
 
     fun load(path: String? = null, name: String? = null, author: String? = null) {
         this.bitmapPath = path
-        this.name = name
-        this.author = author
+        this.name = name?.replace(AppPattern.bdRegex, "")
+        this.author = author?.replace(AppPattern.bdRegex, "")
         if (AppConfig.useDefaultCover) {
+            defaultCover = true
             ImageLoader.load(context, BookCover.defaultDrawable)
                 .centerCrop()
                 .into(this)

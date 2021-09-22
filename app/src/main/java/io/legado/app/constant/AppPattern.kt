@@ -15,4 +15,6 @@ object AppPattern {
     val authorRegex = Regex("^.*?作\\s*者[:：\\s]*|\\s+著")
     val fileNameRegex = Regex("[\\\\/:*?\"<>|.]")
     val splitGroupRegex = Regex("[,;，；]")
+
+    val bdRegex = Regex("(\\p{P})+")
 }
