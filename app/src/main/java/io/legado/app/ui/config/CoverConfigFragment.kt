@@ -11,7 +11,7 @@ import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
-import io.legado.app.ui.widget.image.CoverImageView
+import io.legado.app.model.BookCover
 import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 
@@ -65,16 +65,16 @@ class CoverConfigFragment : BasePreferenceFragment(),
             PreferKey.coverShowName -> {
                 findPreference<SwitchPreference>(PreferKey.coverShowAuthor)
                     ?.isEnabled = getPrefBoolean(key)
-                CoverImageView.upDefaultCover()
+                BookCover.upDefaultCover()
             }
             PreferKey.coverShowNameN -> {
                 findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
                     ?.isEnabled = getPrefBoolean(key)
-                CoverImageView.upDefaultCover()
+                BookCover.upDefaultCover()
             }
             PreferKey.coverShowAuthor,
             PreferKey.coverShowAuthorN -> {
-                CoverImageView.upDefaultCover()
+                BookCover.upDefaultCover()
             }
         }
     }
@@ -89,7 +89,7 @@ class CoverConfigFragment : BasePreferenceFragment(),
                     context?.selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                         if (i == 0) {
                             removePref(PreferKey.defaultCover)
-                            CoverImageView.upDefaultCover()
+                            BookCover.upDefaultCover()
                         } else {
                             selectImage.launch(requestCodeCover)
                         }
@@ -102,7 +102,7 @@ class CoverConfigFragment : BasePreferenceFragment(),
                     context?.selector(items = arrayListOf("删除图片", "选择图片")) { _, i ->
                         if (i == 0) {
                             removePref(PreferKey.defaultCoverDark)
-                            CoverImageView.upDefaultCover()
+                            BookCover.upDefaultCover()
                         } else {
                             selectImage.launch(requestCodeCoverDark)
                         }
@@ -131,7 +131,7 @@ class CoverConfigFragment : BasePreferenceFragment(),
             file = FileUtils.createFileIfNotExist(file, "covers", name)
             file.writeBytes(bytes)
             putPrefString(preferenceKey, file.absolutePath)
-            CoverImageView.upDefaultCover()
+            BookCover.upDefaultCover()
         }
     }
 

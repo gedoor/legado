@@ -1,6 +1,5 @@
 package io.legado.app.ui.widget.image
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
@@ -10,16 +9,12 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import io.legado.app.R
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getPrefString
+import io.legado.app.model.BookCover
 import io.legado.app.utils.textHeight
 import io.legado.app.utils.toStringArray
-import splitties.init.appCtx
 
 /**
  * 封面
@@ -98,7 +93,7 @@ class CoverImageView @JvmOverloads constructor(
     }
 
     private fun drawNameAuthor(canvas: Canvas) {
-        if (!drawBookName) return
+        if (!BookCover.drawBookName) return
         var startX = width * 0.2f
         var startY = height * 0.2f
         name?.toStringArray()?.let { name ->
@@ -117,7 +112,7 @@ class CoverImageView @JvmOverloads constructor(
                 }
             }
         }
-        if (!drawBookAuthor) return
+        if (!BookCover.drawBookAuthor) return
         author?.toStringArray()?.let { author ->
             startX = width * 0.8f
             startY = height * 0.7f
@@ -175,46 +170,17 @@ class CoverImageView @JvmOverloads constructor(
         this.name = name
         this.author = author
         if (AppConfig.useDefaultCover) {
-            ImageLoader.load(context, defaultDrawable)
+            ImageLoader.load(context, BookCover.defaultDrawable)
                 .centerCrop()
                 .into(this)
         } else {
             ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
-                .placeholder(defaultDrawable)
-                .error(defaultDrawable)
+                .placeholder(BookCover.defaultDrawable)
+                .error(BookCover.defaultDrawable)
                 .listener(glideListener)
                 .centerCrop()
                 .into(this)
         }
     }
 
-    companion object {
-        private var drawBookName = true
-        private var drawBookAuthor = true
-        lateinit var defaultDrawable: Drawable
-
-        init {
-            upDefaultCover()
-        }
-
-        @SuppressLint("UseCompatLoadingForDrawables")
-        fun upDefaultCover() {
-            val isNightTheme = AppConfig.isNightTheme
-            drawBookName = if (isNightTheme) {
-                appCtx.getPrefBoolean(PreferKey.coverShowNameN, true)
-            } else {
-                appCtx.getPrefBoolean(PreferKey.coverShowName, true)
-            }
-            drawBookAuthor = if (isNightTheme) {
-                appCtx.getPrefBoolean(PreferKey.coverShowAuthorN, true)
-            } else {
-                appCtx.getPrefBoolean(PreferKey.coverShowAuthor, true)
-            }
-            val key = if (isNightTheme) PreferKey.defaultCoverDark else PreferKey.defaultCover
-            val path = appCtx.getPrefString(key)
-            defaultDrawable = Drawable.createFromPath(path)
-                ?: appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
-        }
-
-    }
 }

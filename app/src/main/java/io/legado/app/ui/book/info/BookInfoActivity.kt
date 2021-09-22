@@ -2,7 +2,6 @@ package io.legado.app.ui.book.info
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,7 +9,6 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
@@ -29,6 +27,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.model.BookCover
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
@@ -40,7 +39,6 @@ import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.login.SourceLoginActivity
-import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -210,14 +208,9 @@ class BookInfoActivity :
         binding.ivCover.load(book.getDisplayCover(), book.name, book.author)
         ImageLoader.load(this, book.getDisplayCover())
             .transition(DrawableTransitionOptions.withCrossFade(1500))
-            .thumbnail(defaultCover())
+            .thumbnail(BookCover.getBlurDefaultCover(this))
             .apply(bitmapTransform(BlurTransformation(this, 25)))
             .into(binding.bgBook)  //模糊、渐变、缩小效果
-    }
-
-    private fun defaultCover(): RequestBuilder<Drawable> {
-        return ImageLoader.load(this, CoverImageView.defaultDrawable)
-            .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 
     private fun upLoading(isLoading: Boolean, chapterList: List<BookChapter>? = null) {

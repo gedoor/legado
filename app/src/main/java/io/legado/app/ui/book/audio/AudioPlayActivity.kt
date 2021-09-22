@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.audio
 
 import android.app.Activity
-import android.graphics.drawable.Drawable
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
@@ -9,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.activity.viewModels
-import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
@@ -24,12 +22,12 @@ import io.legado.app.help.BlurTransformation
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.AudioPlay
+import io.legado.app.model.BookCover
 import io.legado.app.service.AudioPlayService
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.login.SourceLoginActivity
-import io.legado.app.ui.widget.image.CoverImageView
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -168,19 +166,14 @@ class AudioPlayActivity :
 
     private fun upCover(path: String?) {
         ImageLoader.load(this, path)
-            .placeholder(CoverImageView.defaultDrawable)
-            .error(CoverImageView.defaultDrawable)
+            .placeholder(BookCover.defaultDrawable)
+            .error(BookCover.defaultDrawable)
             .into(binding.ivCover)
         ImageLoader.load(this, path)
             .transition(DrawableTransitionOptions.withCrossFade(1500))
-            .thumbnail(defaultCover())
+            .thumbnail(BookCover.getBlurDefaultCover(this))
             .apply(bitmapTransform(BlurTransformation(this, 25)))
             .into(binding.ivBg)
-    }
-
-    private fun defaultCover(): RequestBuilder<Drawable> {
-        return ImageLoader.load(this, CoverImageView.defaultDrawable)
-            .apply(bitmapTransform(BlurTransformation(this, 25)))
     }
 
     private fun playButton() {
