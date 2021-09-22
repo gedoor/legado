@@ -401,8 +401,7 @@ object ReadBookConfig {
             }
             if (config.bgTypeEInk == 2) {
                 val bgName = FileUtils.getName(config.bgStrEInk)
-                @Suppress("BlockingMethodInNonBlockingContext") val bgPath =
-                    FileUtils.getPath(appCtx.externalFiles, "bg", bgName)
+                val bgPath = FileUtils.getPath(appCtx.externalFiles, "bg", bgName)
                 if (!FileUtils.exist(bgPath)) {
                     val bgFile = FileUtils.getFile(configDir, bgName)
                     if (bgFile.exists()) {

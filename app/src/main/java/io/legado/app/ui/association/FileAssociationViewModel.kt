@@ -20,7 +20,6 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
     val openBookLiveData = MutableLiveData<String>()
     val errorLiveData = MutableLiveData<String>()
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     fun dispatchIndent(uri: Uri) {
         execute {
             //如果是普通的url，需要根据返回的内容判断是什么

@@ -21,7 +21,9 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 
-@Suppress("BlockingMethodInNonBlockingContext")
+/**
+ * 获取正文
+ */
 object BookContent {
 
     @Throws(Exception::class)

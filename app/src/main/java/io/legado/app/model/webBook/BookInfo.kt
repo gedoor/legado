@@ -14,6 +14,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ensureActive
 import splitties.init.appCtx
 
+/**
+ * 获取详情
+ */
 object BookInfo {
 
     @Throws(Exception::class)

@@ -18,7 +18,9 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 
-@Suppress("BlockingMethodInNonBlockingContext")
+/**
+ * 获取目录
+ */
 object BookChapterList {
 
     private val falseRegex = "\\s*(?i)(null|false|0)\\s*".toRegex()
