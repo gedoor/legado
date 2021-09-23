@@ -59,8 +59,12 @@ class DownloadService : BaseService() {
             )
             IntentAction.play -> {
                 val id = intent.getLongExtra("downloadId", 0)
-                if (downloads[id]?.endsWith(".apk") == true) {
+                if (completeDownloads.contains(id)
+                    && downloads[id]?.endsWith(".apk") == true
+                ) {
                     installApk(id)
+                } else {
+                    toastOnUi("下载的文件在Download文件夹")
                 }
             }
             IntentAction.stop -> {
@@ -160,14 +164,7 @@ class DownloadService : BaseService() {
             .setSmallIcon(R.drawable.ic_download)
             .setOngoing(true)
             .setContentTitle(getString(R.string.action_download))
-        notificationBuilder.addAction(
-            R.drawable.ic_stop_black_24dp,
-            getString(R.string.cancel),
-            servicePendingIntent<DownloadService>(IntentAction.stop) {
-                putExtra("downloadId", -1)
-            }
-        )
-        notificationBuilder.setGroup(groupKey)
+            .setGroup(groupKey)
             .setGroupSummary(true)
         val notification = notificationBuilder.build()
         startForeground(summaryId, notification)
@@ -179,29 +176,28 @@ class DownloadService : BaseService() {
     private fun updateNotification(downloadId: Long, content: String, max: Int, progress: Int) {
         val notificationBuilder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
-            .setOngoing(true)
             .setContentTitle(getString(R.string.action_download))
-        notificationBuilder.setContentIntent(
-            servicePendingIntent<DownloadService>(IntentAction.play) {
-                putExtra("downloadId", downloadId)
-            }
-        )
-        notificationBuilder.addAction(
-            R.drawable.ic_stop_black_24dp,
-            getString(R.string.cancel),
-            servicePendingIntent<DownloadService>(IntentAction.stop) {
-                putExtra("downloadId", downloadId)
-            }
-        )
-        notificationBuilder.setDeleteIntent(
-            servicePendingIntent<DownloadService>(IntentAction.stop) {
-                putExtra("downloadId", downloadId)
-            }
-        )
-        notificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        notificationBuilder.setContentText(content)
-        notificationBuilder.setProgress(max, progress, false)
-        notificationBuilder.setGroup(groupKey)
+            .setContentIntent(
+                servicePendingIntent<DownloadService>(IntentAction.play) {
+                    putExtra("downloadId", downloadId)
+                }
+            )
+            .addAction(
+                R.drawable.ic_stop_black_24dp,
+                getString(R.string.cancel),
+                servicePendingIntent<DownloadService>(IntentAction.stop) {
+                    putExtra("downloadId", downloadId)
+                }
+            )
+            .setDeleteIntent(
+                servicePendingIntent<DownloadService>(IntentAction.stop) {
+                    putExtra("downloadId", downloadId)
+                }
+            )
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setContentText(content)
+            .setProgress(max, progress, false)
+            .setGroup(groupKey)
         val notification = notificationBuilder.build()
         NotificationManagerCompat.from(this).apply {
             notify(downloadId.toInt(), notification)
