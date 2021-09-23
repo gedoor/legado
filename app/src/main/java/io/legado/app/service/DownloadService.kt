@@ -76,7 +76,9 @@ class DownloadService : BaseService() {
         if (downloadId > 0) {
             downloads[downloadId] = fileName
             queryState()
-            checkDownloadState()
+            if (upStateJob == null) {
+                checkDownloadState()
+            }
         }
     }
 
