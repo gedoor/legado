@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -30,7 +29,6 @@ import java.io.File
 
 class DownloadService : BaseService() {
     private val groupKey = "${appCtx.packageName}.download"
-    private val summaryId = 745893
     private val downloads = hashMapOf<Long, String>()
     private val completeDownloads = hashSetOf<Long>()
     private var upStateJob: Job? = null
@@ -167,7 +165,7 @@ class DownloadService : BaseService() {
             .setGroup(groupKey)
             .setGroupSummary(true)
         val notification = notificationBuilder.build()
-        startForeground(summaryId, notification)
+        startForeground(AppConst.notificationIdDownload, notification)
     }
 
     /**
@@ -199,9 +197,7 @@ class DownloadService : BaseService() {
             .setProgress(max, progress, false)
             .setGroup(groupKey)
         val notification = notificationBuilder.build()
-        NotificationManagerCompat.from(this).apply {
-            notify(downloadId.toInt(), notification)
-        }
+        notificationManager.notify(downloadId.toInt(), notification)
     }
 
 }
