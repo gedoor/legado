@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -21,12 +22,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import splitties.init.appCtx
 import splitties.systemservices.downloadManager
+import splitties.systemservices.notificationManager
 import java.io.File
 
 
 class DownloadService : BaseService() {
-
+    private val groupKey = "${appCtx.packageName}.download"
+    private val summaryId = 745893
     private val downloads = hashMapOf<Long, String>()
     private val completeDownloads = hashSetOf<Long>()
     private var upStateJob: Job? = null
@@ -38,6 +42,7 @@ class DownloadService : BaseService() {
 
     override fun onCreate() {
         super.onCreate()
+        upSummaryNotification()
         registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
@@ -61,7 +66,7 @@ class DownloadService : BaseService() {
             IntentAction.stop -> {
                 val downloadId = intent.getLongExtra("downloadId", 0)
                 downloads.remove(downloadId)
-                stopSelf()
+                notificationManager.cancel(downloadId.toInt())
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -87,6 +92,10 @@ class DownloadService : BaseService() {
 
     //查询下载进度
     private fun queryState() {
+        if (downloads.isEmpty()) {
+            stopSelf()
+            return
+        }
         val ids = downloads.keys
         val query = DownloadManager.Query()
         query.setFilterById(*ids.toLongArray())
@@ -144,6 +153,24 @@ class DownloadService : BaseService() {
         }
     }
 
+    private fun upSummaryNotification() {
+        val notificationBuilder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
+            .setSmallIcon(R.drawable.ic_download)
+            .setOngoing(true)
+            .setContentTitle(getString(R.string.action_download))
+        notificationBuilder.addAction(
+            R.drawable.ic_stop_black_24dp,
+            getString(R.string.cancel),
+            servicePendingIntent<DownloadService>(IntentAction.stop) {
+                putExtra("downloadId", -1)
+            }
+        )
+        notificationBuilder.setGroup(groupKey)
+            .setGroupSummary(true)
+        val notification = notificationBuilder.build()
+        startForeground(summaryId, notification)
+    }
+
     /**
      * 更新通知
      */
@@ -172,9 +199,11 @@ class DownloadService : BaseService() {
         notificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         notificationBuilder.setContentText(content)
         notificationBuilder.setProgress(max, progress, false)
-        notificationBuilder.setAutoCancel(true)
+        notificationBuilder.setGroup(groupKey)
         val notification = notificationBuilder.build()
-        startForeground(downloadId.toInt(), notification)
+        NotificationManagerCompat.from(this).apply {
+            notify(downloadId.toInt(), notification)
+        }
     }
 
 }
