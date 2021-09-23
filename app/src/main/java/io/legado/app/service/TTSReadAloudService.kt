@@ -147,11 +147,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             }
         }
 
-        override fun onAudioAvailable(utteranceId: String?, audio: ByteArray?) {
-            super.onAudioAvailable(utteranceId, audio)
-
-        }
-
         override fun onError(s: String) {
             //nothing
         }

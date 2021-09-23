@@ -24,15 +24,16 @@ class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnErrorListener,
     MediaPlayer.OnCompletionListener {
 
-    private val mediaPlayer by lazy { MediaPlayer() }
-    private lateinit var ttsFolder: String
+    private val mediaPlayer = MediaPlayer()
+    private val ttsFolder: String by lazy {
+        externalCacheDir!!.absolutePath + File.separator + "httpTTS"
+    }
     private var task: Coroutine<*>? = null
     private var playingIndex = -1
     private var playIndexJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
-        ttsFolder = externalCacheDir!!.absolutePath + File.separator + "httpTTS"
         mediaPlayer.setOnErrorListener(this)
         mediaPlayer.setOnPreparedListener(this)
         mediaPlayer.setOnCompletionListener(this)
