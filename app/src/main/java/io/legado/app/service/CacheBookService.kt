@@ -122,7 +122,7 @@ class CacheBookService : BaseService() {
     private fun upNotification(notificationContent: String) {
         notificationBuilder.setContentText(notificationContent)
         val notification = notificationBuilder.build()
-        startForeground(AppConst.notificationIdDownload, notification)
+        startForeground(AppConst.notificationIdCache, notification)
     }
 
 }

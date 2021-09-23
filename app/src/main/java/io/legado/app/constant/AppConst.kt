@@ -51,10 +51,12 @@ object AppConst {
     const val bookGroupAudioId = -3L
     const val bookGroupNoneId = -4L
 
-    const val notificationIdRead = -1144771
-    const val notificationIdAudio = -1144772
-    const val notificationIdWeb = -1144773
-    const val notificationIdDownload = -1144774
+    const val notificationIdRead = -1122391
+    const val notificationIdAudio = -1122392
+    const val notificationIdCache = -1122393
+    const val notificationIdWeb = -1122394
+    const val notificationIdDownload = -1122395
+    const val notificationIdCheckSource = -1122395
 
     val urlOption: String by lazy {
         """

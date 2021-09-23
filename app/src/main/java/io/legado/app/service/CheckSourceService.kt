@@ -184,7 +184,7 @@ class CheckSourceService : BaseService() {
         notificationBuilder.setContentText(notificationMsg)
         notificationBuilder.setProgress(allIds.size, checkedIds.size, false)
         postEvent(EventBus.CHECK_SOURCE, notificationMsg)
-        startForeground(112202, notificationBuilder.build())
+        startForeground(AppConst.notificationIdCheckSource, notificationBuilder.build())
     }
 
 }
