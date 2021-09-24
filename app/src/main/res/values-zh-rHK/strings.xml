@@ -883,5 +883,10 @@
     <string name="cover_show_author_summary">封面上显示作者</string>
     <string name="read_aloud_prev_paragraph">朗读上一段</string>
     <string name="read_aloud_next_paragraph">朗读下一段</string>
+    <string name="wait_download">待下载</string>
+    <string name="download_success">下载完成</string>
+    <string name="download_error">下载失败</string>
+    <string name="downloading">下载中</string>
+    <string name="unknown_state">未知状态</string>
 
 </resources>

@@ -97,11 +97,11 @@ object DocumentUtils {
 
     fun listFiles(context: Context, uri: Uri): ArrayList<DocItem> {
         val docList = arrayListOf<DocItem>()
-        var c: Cursor? = null
+        var cursor: Cursor? = null
         try {
             val childrenUri = DocumentsContract
                 .buildChildDocumentsUriUsingTree(uri, DocumentsContract.getDocumentId(uri))
-            c = context.contentResolver.query(
+            cursor = context.contentResolver.query(
                 childrenUri, arrayOf(
                     DocumentsContract.Document.COLUMN_DOCUMENT_ID,
                     DocumentsContract.Document.COLUMN_DISPLAY_NAME,
@@ -110,29 +110,30 @@ object DocumentUtils {
                     DocumentsContract.Document.COLUMN_MIME_TYPE
                 ), null, null, DocumentsContract.Document.COLUMN_DISPLAY_NAME
             )
-            c?.let {
-                val ici = c.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
-                val nci = c.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
-                val sci = c.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE)
-                val mci = c.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE)
-                val dci = c.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
-                if (c.moveToFirst()) {
+            cursor?.let {
+                val ici = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
+                val nci = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
+                val sci = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE)
+                val mci = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE)
+                val dci = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
+                if (cursor.moveToFirst()) {
                     do {
                         val item = DocItem(
-                            name = c.getString(nci),
-                            attr = c.getString(mci),
-                            size = c.getLong(sci),
-                            date = Date(c.getLong(dci)),
-                            uri = DocumentsContract.buildDocumentUriUsingTree(uri, c.getString(ici))
+                            name = cursor.getString(nci),
+                            attr = cursor.getString(mci),
+                            size = cursor.getLong(sci),
+                            date = Date(cursor.getLong(dci)),
+                            uri = DocumentsContract
+                                .buildDocumentUriUsingTree(uri, cursor.getString(ici))
                         )
                         docList.add(item)
-                    } while (c.moveToNext())
+                    } while (cursor.moveToNext())
                 }
             }
         } catch (e: Exception) {
             e.printOnDebug()
         } finally {
-            c?.close()
+            cursor?.close()
         }
         return docList
     }

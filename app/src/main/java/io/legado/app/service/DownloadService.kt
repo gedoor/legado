@@ -120,7 +120,7 @@ class DownloadService : BaseService() {
             if (downloadNames[downloadId]?.endsWith(".apk") == true) {
                 installApk(downloadId)
             } else {
-                toastOnUi("${downloadNames[downloadId]} 下载完成")
+                toastOnUi("${downloadNames[downloadId]} ${getString(R.string.download_success)}")
             }
         }
     }
@@ -146,25 +146,28 @@ class DownloadService : BaseService() {
         val query = DownloadManager.Query()
         query.setFilterById(*ids.toLongArray())
         downloadManager.query(query).use { cursor ->
-            if (!cursor.moveToFirst()) return
-            val id = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID))
-            val progress: Int = cursor
-                .getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-            val max: Int = cursor
-                .getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-            val status =
-                when (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
-                    DownloadManager.STATUS_PAUSED -> "暂停"
-                    DownloadManager.STATUS_PENDING -> "待下载"
-                    DownloadManager.STATUS_RUNNING -> "下载中"
-                    DownloadManager.STATUS_SUCCESSFUL -> {
-                        successDownload(id)
-                        "下载完成"
-                    }
-                    DownloadManager.STATUS_FAILED -> "下载失败"
-                    else -> "未知状态"
-                }
-            upDownloadNotification(id, "${downloadNames[id]} $status", max, progress)
+            if (cursor.moveToFirst()) {
+                do {
+                    val id = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID))
+                    val progress = cursor
+                        .getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val max = cursor
+                        .getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+                    val status =
+                        when (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+                            DownloadManager.STATUS_PAUSED -> getString(R.string.pause)
+                            DownloadManager.STATUS_PENDING -> getString(R.string.wait_download)
+                            DownloadManager.STATUS_RUNNING -> getString(R.string.downloading)
+                            DownloadManager.STATUS_SUCCESSFUL -> {
+                                successDownload(id)
+                                getString(R.string.download_success)
+                            }
+                            DownloadManager.STATUS_FAILED -> getString(R.string.download_error)
+                            else -> getString(R.string.unknown_state)
+                        }
+                    upDownloadNotification(id, "${downloadNames[id]} $status", max, progress)
+                } while (cursor.moveToNext())
+            }
         }
     }
 
