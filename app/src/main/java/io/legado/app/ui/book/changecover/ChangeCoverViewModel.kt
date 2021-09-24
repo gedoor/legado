@@ -81,6 +81,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
 
     private fun startSearch() {
         execute {
+            stopSearch()
             bookSourceList.clear()
             bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             searchStateData.postValue(true)
@@ -142,13 +143,18 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun stopSearch() {
+    fun startOrStopSearch() {
         if (tasks.isEmpty) {
             startSearch()
         } else {
-            tasks.clear()
-            searchStateData.postValue(false)
+            stopSearch()
         }
+    }
+
+    fun stopSearch() {
+        tasks.clear()
+        searchPool?.close()
+        searchStateData.postValue(false)
     }
 
     override fun onCleared() {

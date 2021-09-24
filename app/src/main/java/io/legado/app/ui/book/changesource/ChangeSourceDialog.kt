@@ -140,9 +140,15 @@ class ChangeSourceDialog() : BaseDialogFragment(),
         viewModel.searchStateData.observe(viewLifecycleOwner, {
             binding.refreshProgressBar.isAutoLoading = it
             if (it) {
-                stopMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
+                startStopMenuItem?.let { item ->
+                    item.setIcon(R.drawable.ic_stop_black_24dp)
+                    item.setTitle(R.string.stop)
+                }
             } else {
-                stopMenuItem?.setIcon(R.drawable.ic_refresh_black_24dp)
+                startStopMenuItem?.let { item ->
+                    item.setIcon(R.drawable.ic_refresh_black_24dp)
+                    item.setTitle(R.string.refresh)
+                }
             }
             binding.toolBar.menu.applyTint(requireContext())
         })
@@ -160,8 +166,8 @@ class ChangeSourceDialog() : BaseDialogFragment(),
         }
     }
 
-    private val stopMenuItem: MenuItem?
-        get() = binding.toolBar.menu.findItem(R.id.menu_stop)
+    private val startStopMenuItem: MenuItem?
+        get() = binding.toolBar.menu.findItem(R.id.menu_start_stop)
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
@@ -178,7 +184,7 @@ class ChangeSourceDialog() : BaseDialogFragment(),
                 putPrefBoolean(PreferKey.changeSourceLoadInfo, !item.isChecked)
                 item.isChecked = !item.isChecked
             }
-            R.id.menu_stop -> viewModel.startOrStopSearch()
+            R.id.menu_start_stop -> viewModel.startOrStopSearch()
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
             else -> if (item?.groupId == R.id.source_group) {
                 if (!item.isChecked) {

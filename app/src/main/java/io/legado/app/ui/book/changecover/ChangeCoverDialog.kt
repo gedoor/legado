@@ -33,6 +33,9 @@ class ChangeCoverDialog() : BaseDialogFragment(),
     private val viewModel: ChangeCoverViewModel by viewModels()
     private val adapter by lazy { CoverAdapter(requireContext(), this) }
 
+    private val startStopMenuItem: MenuItem?
+        get() = binding.toolBar.menu.findItem(R.id.menu_start_stop)
+
     override fun onStart() {
         super.onStart()
         val dm = requireActivity().windowSize
@@ -73,9 +76,15 @@ class ChangeCoverDialog() : BaseDialogFragment(),
         viewModel.searchStateData.observe(viewLifecycleOwner, {
             binding.refreshProgressBar.isAutoLoading = it
             if (it) {
-                stopMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
+                startStopMenuItem?.let { item ->
+                    item.setIcon(R.drawable.ic_stop_black_24dp)
+                    item.setTitle(R.string.stop)
+                }
             } else {
-                stopMenuItem?.setIcon(R.drawable.ic_refresh_black_24dp)
+                startStopMenuItem?.let { item ->
+                    item.setIcon(R.drawable.ic_refresh_black_24dp)
+                    item.setTitle(R.string.refresh)
+                }
             }
             binding.toolBar.menu.applyTint(requireContext())
         })
@@ -86,13 +95,10 @@ class ChangeCoverDialog() : BaseDialogFragment(),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_stop -> viewModel.stopSearch()
+            R.id.menu_start_stop -> viewModel.startOrStopSearch()
         }
         return false
     }
-
-    private val stopMenuItem: MenuItem?
-        get() = binding.toolBar.menu.findItem(R.id.menu_stop)
 
     override fun changeTo(coverUrl: String) {
         callBack?.coverChangeTo(coverUrl)
