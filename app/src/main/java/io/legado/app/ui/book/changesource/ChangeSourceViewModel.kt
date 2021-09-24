@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 import kotlin.math.min
 
+@Suppress("MemberVisibilityCanBePrivate")
 class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
@@ -104,8 +105,9 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         upAdapter()
     }
 
-    private fun startSearch() {
+    fun startSearch() {
         execute {
+            stopSearch()
             appDb.searchBookDao.clear(name, author)
             searchBooks.clear()
             upAdapter()
@@ -218,14 +220,18 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
-    fun stopSearch() {
+    fun startOrStopSearch() {
         if (tasks.isEmpty) {
             startSearch()
         } else {
-            tasks.clear()
-            searchPool?.close()
-            searchStateData.postValue(false)
+            stopSearch()
         }
+    }
+
+    fun stopSearch() {
+        tasks.clear()
+        searchPool?.close()
+        searchStateData.postValue(false)
     }
 
     override fun onCleared() {

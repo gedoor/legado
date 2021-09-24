@@ -47,7 +47,7 @@ class ChangeSourceDialog() : BaseDialogFragment(),
     private val adapter by lazy { ChangeSourceAdapter(requireContext(), viewModel, this) }
     private val editSourceResult =
         registerForActivityResult(StartActivityForResult(BookSourceEditActivity::class.java)) {
-
+            viewModel.startSearch()
         }
 
 
@@ -178,7 +178,7 @@ class ChangeSourceDialog() : BaseDialogFragment(),
                 putPrefBoolean(PreferKey.changeSourceLoadInfo, !item.isChecked)
                 item.isChecked = !item.isChecked
             }
-            R.id.menu_stop -> viewModel.stopSearch()
+            R.id.menu_stop -> viewModel.startOrStopSearch()
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
             else -> if (item?.groupId == R.id.source_group) {
                 if (!item.isChecked) {
@@ -188,7 +188,7 @@ class ChangeSourceDialog() : BaseDialogFragment(),
                     } else {
                         putPrefString("searchGroup", item.title.toString())
                     }
-                    viewModel.stopSearch()
+                    viewModel.startOrStopSearch()
                     viewModel.loadDbSearchBook()
                 }
             }
