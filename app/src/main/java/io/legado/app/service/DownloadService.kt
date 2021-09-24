@@ -67,6 +67,7 @@ class DownloadService : BaseService() {
             }
             IntentAction.stop -> {
                 val downloadId = intent.getLongExtra("downloadId", 0)
+                downloadManager.remove(downloadId)
                 downloads.remove(downloadId)
                 notificationManager.cancel(downloadId.toInt())
             }
