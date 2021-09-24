@@ -1,12 +1,10 @@
 package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
-import android.app.DownloadManager
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.*
 import android.webkit.*
 import androidx.activity.viewModels
@@ -30,7 +28,6 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
-import splitties.systemservices.downloadManager
 
 
 class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(false),
@@ -137,15 +134,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         binding.webView.setDownloadListener { url, _, contentDisposition, _, _ ->
             val fileName = URLUtil.guessFileName(url, contentDisposition, null)
             binding.llView.longSnackbar(fileName, getString(R.string.action_download)) {
-                // 指定下载地址
-                val request = DownloadManager.Request(Uri.parse(url))
-                // 设置通知
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
-                // 设置下载文件保存的路径和文件名
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-                // 添加一个下载任务
-                val downloadId = downloadManager.enqueue(request)
-                Download.start(this, downloadId, fileName)
+                Download.start(this, url, fileName)
             }
         }
 
