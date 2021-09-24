@@ -7,6 +7,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
+import io.legado.app.constant.AppPattern
 import io.legado.app.help.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
@@ -77,7 +78,7 @@ data class BookChapter(
         useReplace: Boolean = true,
         chineseConvert: Boolean = true,
     ): String {
-        var displayTitle = title
+        var displayTitle = title.replace(AppPattern.rnRegex, "")
         if (useReplace && replaceRules != null) {
             replaceRules.forEach { item ->
                 if (item.pattern.isNotEmpty()) {

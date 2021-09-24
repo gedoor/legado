@@ -17,4 +17,5 @@ object AppPattern {
     val splitGroupRegex = Regex("[,;，；]")
 
     val bdRegex = Regex("(\\p{P})+")
+    val rnRegex = Regex("[\\r\\n]")
 }

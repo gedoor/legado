@@ -269,7 +269,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
         AppLog.addLog("朗读错误,($what, $extra)")
         errorNo++
-        if (errorNo >= 3) {
+        if (errorNo >= 5) {
             toastOnUi("朗读连续3次错误, 最后一次错误代码($what, $extra)")
             ReadAloud.pause(this)
         } else {
