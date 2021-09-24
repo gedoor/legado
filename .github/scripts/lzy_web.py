@@ -56,15 +56,14 @@ def upload_file(file_dir, folder_id):
         "name": file_name,
     }
     files = {'upload_file': (file_name, open(file_dir, "rb"), 'application/octet-stream')}
-    res = requests.post(url_upload, data=post_data, files=files, headers=headers, cookies=cookie, timeout=120,
-                        verify=True).json()
+    res = requests.post(url_upload, data=post_data, files=files, headers=headers, cookies=cookie, timeout=120).json()
     log(f"{file_dir} -> {res['info']}")
     return res['zt'] == 1
 
 
 # 上传文件夹内的文件
 def upload_folder(folder_dir, folder_id):
-    file_list = os.listdir(folder_dir)
+    file_list = sorted(os.listdir(folder_dir), reverse=True)
     for file in file_list:
         path = os.path.join(folder_dir, file)
         if os.path.isfile(path):
