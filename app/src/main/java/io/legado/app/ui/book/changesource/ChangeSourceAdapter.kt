@@ -90,16 +90,19 @@ class ChangeSourceAdapter(
         popupMenu.inflate(R.menu.change_source_item)
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.menu_disable_book_source -> {
-                    callBack.disableSource(searchBook)
-                }
                 R.id.menu_top_source -> {
                     callBack.topSource(searchBook)
                 }
                 R.id.menu_bottom_source -> {
                     callBack.bottomSource(searchBook)
                 }
-                R.id.menu_delete_book_source -> {
+                R.id.menu_edit_source -> {
+                    callBack.editSource(searchBook)
+                }
+                R.id.menu_disable_source -> {
+                    callBack.disableSource(searchBook)
+                }
+                R.id.menu_delete_source -> {
                     callBack.deleteSource(searchBook)
                     updateItems(0, itemCount, listOf<Int>())
                 }
@@ -112,9 +115,10 @@ class ChangeSourceAdapter(
     interface CallBack {
         val bookUrl: String?
         fun changeTo(searchBook: SearchBook)
-        fun disableSource(searchBook: SearchBook)
         fun topSource(searchBook: SearchBook)
         fun bottomSource(searchBook: SearchBook)
+        fun editSource(searchBook: SearchBook)
+        fun disableSource(searchBook: SearchBook)
         fun deleteSource(searchBook: SearchBook)
     }
 }

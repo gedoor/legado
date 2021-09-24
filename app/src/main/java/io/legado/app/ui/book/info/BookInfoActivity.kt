@@ -277,7 +277,7 @@ class BookInfoActivity :
         tvOrigin.setOnClickListener {
             viewModel.bookData.value?.let {
                 startActivity<BookSourceEditActivity> {
-                    putExtra("data", it.origin)
+                    putExtra("sourceUrl", it.origin)
                 }
             }
         }

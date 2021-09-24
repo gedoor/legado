@@ -173,7 +173,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     override fun editSource(sourceUrl: String) {
         startActivity<BookSourceEditActivity> {
-            putExtra("data", sourceUrl)
+            putExtra("sourceUrl", sourceUrl)
         }
     }
 

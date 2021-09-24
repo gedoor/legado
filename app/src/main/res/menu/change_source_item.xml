@@ -10,11 +10,15 @@
         android:title="@string/to_bottom" />
 
     <item
-        android:id="@+id/menu_disable_book_source"
-        android:title="@string/disable_book_source" />
+        android:id="@+id/menu_edit_source"
+        android:title="@string/edit_source" />
 
     <item
-        android:id="@+id/menu_delete_book_source"
-        android:title="@string/delete" />
+        android:id="@+id/menu_disable_source"
+        android:title="@string/disable_source" />
+
+    <item
+        android:id="@+id/menu_delete_source"
+        android:title="@string/delete_source" />
 
 </menu>

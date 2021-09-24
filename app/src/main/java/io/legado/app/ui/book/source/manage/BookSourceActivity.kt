@@ -527,7 +527,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun edit(bookSource: BookSource) {
         startActivity<BookSourceEditActivity> {
-            putExtra("data", bookSource.bookSourceUrl)
+            putExtra("sourceUrl", bookSource.bookSourceUrl)
         }
     }
 

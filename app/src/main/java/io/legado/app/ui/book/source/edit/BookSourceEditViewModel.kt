@@ -19,10 +19,10 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
 
     fun initData(intent: Intent, onFinally: () -> Unit) {
         execute {
-            val key = intent.getStringExtra("data")
+            val sourceUrl = intent.getStringExtra("sourceUrl")
             var source: BookSource? = null
-            if (key != null) {
-                source = appDb.bookSourceDao.getBookSource(key)
+            if (sourceUrl != null) {
+                source = appDb.bookSourceDao.getBookSource(sourceUrl)
             }
             source?.let {
                 oldSourceUrl = it.bookSourceUrl

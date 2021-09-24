@@ -20,6 +20,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.DialogChangeSourceBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
@@ -44,6 +45,11 @@ class ChangeSourceDialog() : BaseDialogFragment(),
     private var callBack: CallBack? = null
     private val viewModel: ChangeSourceViewModel by viewModels()
     private val adapter by lazy { ChangeSourceAdapter(requireContext(), viewModel, this) }
+    private val editSourceResult =
+        registerForActivityResult(StartActivityForResult(BookSourceEditActivity::class.java)) {
+
+        }
+
 
     override fun onStart() {
         super.onStart()
@@ -198,16 +204,22 @@ class ChangeSourceDialog() : BaseDialogFragment(),
     override val bookUrl: String?
         get() = callBack?.oldBook?.bookUrl
 
-    override fun disableSource(searchBook: SearchBook) {
-        viewModel.disableSource(searchBook)
-    }
-
     override fun topSource(searchBook: SearchBook) {
         viewModel.topSource(searchBook)
     }
 
     override fun bottomSource(searchBook: SearchBook) {
         viewModel.bottomSource(searchBook)
+    }
+
+    override fun editSource(searchBook: SearchBook) {
+        editSourceResult.launch {
+            putExtra("sourceUrl", searchBook.origin)
+        }
+    }
+
+    override fun disableSource(searchBook: SearchBook) {
+        viewModel.disableSource(searchBook)
     }
 
     override fun deleteSource(searchBook: SearchBook) {

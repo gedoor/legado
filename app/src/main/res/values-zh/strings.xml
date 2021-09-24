@@ -890,5 +890,7 @@
     <string name="download_error">下载失败</string>
     <string name="downloading">下载中</string>
     <string name="unknown_state">未知状态</string>
+    <string name="disable_source">禁用源</string>
+    <string name="delete_source">删除源</string>
 
 </resources>
