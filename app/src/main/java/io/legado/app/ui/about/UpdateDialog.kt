@@ -9,6 +9,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogUpdateBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.model.Download
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
@@ -19,11 +20,12 @@ import io.noties.markwon.image.glide.GlideImagesPlugin
 
 class UpdateDialog() : BaseDialogFragment() {
 
-    constructor(newVersion: String, updateBody: String, url: String) : this() {
+    constructor(newVersion: String, updateBody: String, url: String, name: String) : this() {
         arguments = Bundle().apply {
             putString("newVersion", newVersion)
             putString("updateBody", updateBody)
             putString("url", url)
+            putString("name", name)
         }
     }
 
@@ -65,6 +67,18 @@ class UpdateDialog() : BaseDialogFragment() {
         }
         if (!AppConfig.isGooglePlay) {
             binding.toolBar.inflateMenu(R.menu.app_update)
+            binding.toolBar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_download -> {
+                        val url = arguments?.getString("url")
+                        val name = arguments?.getString("name")
+                        if (url != null && name != null) {
+                            Download.start(requireContext(), url, name)
+                        }
+                    }
+                }
+                return@setOnMenuItemClickListener true
+            }
         }
     }
 
