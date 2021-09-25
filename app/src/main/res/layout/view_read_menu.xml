@@ -56,9 +56,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:gravity="center"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:text="@string/login"
+                android:layout_margin="1dp"
+                app:radius="1dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_chapter_url"
+                app:layout_constraintRight_toLeftOf="@+id/tv_pay"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <io.legado.app.ui.widget.text.AccentBgTextView
+                android:id="@+id/tv_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/chapter_pay"
+                android:layout_margin="1dp"
+                app:radius="1dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_chapter_url"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -86,7 +102,8 @@
             android:layout_height="24dp"
             android:layout_margin="8dp"
             android:contentDescription="@string/brightness_auto"
-            android:src="@drawable/ic_brightness_auto" />
+            android:src="@drawable/ic_brightness_auto"
+            tools:ignore="ImageContrastCheck" />
 
         <io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper
             android:layout_width="wrap_content"
@@ -240,7 +257,8 @@
                         android:paddingBottom="10dp"
                         android:text="@string/previous_chapter"
                         android:textColor="@color/primaryText"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:ignore="TouchTargetSizeCheck" />
 
                     <io.legado.app.lib.theme.view.ATESeekBar
                         android:id="@+id/seek_read_page"
@@ -263,7 +281,8 @@
                         android:paddingBottom="10dp"
                         android:text="@string/next_chapter"
                         android:textColor="@color/primaryText"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:ignore="TouchTargetSizeCheck" />
                 </LinearLayout>
 
                 <LinearLayout

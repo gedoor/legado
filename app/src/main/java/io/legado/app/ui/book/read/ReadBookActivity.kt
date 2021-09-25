@@ -79,7 +79,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             it ?: return@registerForActivityResult
             if (it.resultCode == RESULT_OK) {
                 viewModel.upBookSource {
-                    upView()
+                    upMenuView()
                 }
             }
         }
@@ -129,11 +129,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
         binding.cursorRight.setOnTouchListener(this)
         upScreenTimeOut()
         ReadBook.callBack = this
-        ReadBook.titleDate.observe(this) {
-            binding.readMenu.setTitle(it)
-            upMenu()
-            upView()
-        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -573,6 +568,13 @@ class ReadBookActivity : ReadBookBaseActivity(),
         return false
     }
 
+    override fun upMenuView() {
+        launch {
+            upMenu()
+            binding.readMenu.upBookView()
+        }
+    }
+
     override fun loadChapterList(book: Book) {
         ReadBook.upMsg(getString(R.string.toc_updateing))
         viewModel.loadChapterList(book)
@@ -603,15 +605,6 @@ class ReadBookActivity : ReadBookBaseActivity(),
             binding.readMenu.setSeekPage(ReadBook.durPageIndex())
             loadStates = false
             success?.invoke()
-        }
-    }
-
-    /**
-     * 更新视图
-     */
-    override fun upView() {
-        launch {
-            binding.readMenu.upBookView()
         }
     }
 

@@ -71,7 +71,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.durChapterPos = book.durChapterPos
                 ReadBook.clearTextChapter()
             }
-            ReadBook.titleDate.postValue(book.name)
+            ReadBook.callBack?.upMenuView()
             ReadBook.upWebBook(book)
             isInitFinish = true
             ReadBook.chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)

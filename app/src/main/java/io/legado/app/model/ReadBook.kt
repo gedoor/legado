@@ -1,6 +1,5 @@
 package io.legado.app.model
 
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
@@ -28,7 +27,6 @@ import splitties.init.appCtx
 
 @Suppress("MemberVisibilityCanBePrivate")
 object ReadBook : CoroutineScope by MainScope() {
-    var titleDate = MutableLiveData<String>()
     var book: Book? = null
     var inBookshelf = false
     var chapterSize = 0
@@ -55,7 +53,7 @@ object ReadBook : CoroutineScope by MainScope() {
         isLocalBook = book.origin == BookType.local
         chapterSize = book.totalChapterNum
         clearTextChapter()
-        titleDate.postValue(book.name)
+        callBack?.upMenuView()
         callBack?.upPageAnim()
         upWebBook(book)
         ImageProvider.clearAllCache()
@@ -139,7 +137,7 @@ object ReadBook : CoroutineScope by MainScope() {
             }
             loadContent(durChapterIndex.plus(1), upContent, false)
             saveRead()
-            callBack?.upView()
+            callBack?.upMenuView()
             curPageChanged()
             return true
         } else {
@@ -164,7 +162,7 @@ object ReadBook : CoroutineScope by MainScope() {
             }
             loadContent(durChapterIndex.minus(1), upContent, false)
             saveRead()
-            callBack?.upView()
+            callBack?.upMenuView()
             curPageChanged()
             return true
         } else {
@@ -352,7 +350,7 @@ object ReadBook : CoroutineScope by MainScope() {
                     0 -> {
                         curTextChapter = textChapter
                         if (upContent) callBack?.upContent(offset, resetPageOffset)
-                        callBack?.upView()
+                        callBack?.upMenuView()
                         curPageChanged()
                         callBack?.contentLoadFinish()
                     }
@@ -444,6 +442,8 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     interface CallBack {
+        fun upMenuView()
+
         fun loadChapterList(book: Book)
 
         fun upContent(
@@ -451,8 +451,6 @@ object ReadBook : CoroutineScope by MainScope() {
             resetPageOffset: Boolean = true,
             success: (() -> Unit)? = null
         )
-
-        fun upView()
 
         fun pageChanged()
 

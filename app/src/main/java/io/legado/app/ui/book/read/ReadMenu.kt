@@ -242,6 +242,8 @@ class ReadMenu @JvmOverloads constructor(
         menuBottomIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
+                binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+                binding.tvPay.isGone = true
                 callBack.upSystemUiVisibility()
                 binding.llBrightness.visible(showBrightnessView)
             }
@@ -283,12 +285,8 @@ class ReadMenu @JvmOverloads constructor(
         })
     }
 
-    fun setTitle(title: String) {
-        binding.titleBar.title = title
-    }
-
     fun upBookView() {
-        binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+        binding.titleBar.title = ReadBook.book?.name
         ReadBook.curTextChapter?.let {
             binding.tvChapterName.text = it.title
             binding.tvChapterName.visible()
