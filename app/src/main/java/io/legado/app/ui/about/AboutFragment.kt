@@ -5,11 +5,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.StringRes
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.help.AppConfig
+import io.legado.app.help.AppUpdate
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -56,7 +58,7 @@ class AboutFragment : PreferenceFragmentCompat() {
         when (preference?.key) {
             "contributors" -> openUrl(R.string.contributors_url)
             "update_log" -> showUpdateLog()
-            "check_update" -> openUrl(R.string.latest_release_url)
+            "check_update" -> checkUpdate()
             "mail" -> requireContext().sendMail("kunfei.ge@gmail.com")
             "sourceRuleSummary" -> openUrl(R.string.source_rule_url)
             "git" -> openUrl(R.string.this_github_url)
@@ -80,6 +82,14 @@ class AboutFragment : PreferenceFragmentCompat() {
     private fun showUpdateLog() {
         val log = String(requireContext().assets.open("updateLog.md").readBytes())
         TextDialog.show(childFragmentManager, log, TextDialog.MD)
+    }
+
+    private fun checkUpdate() {
+        AppUpdate.checkUpdate(lifecycleScope) { newVersion, updateBody, url ->
+            childFragmentManager.showDialog(
+                UpdateDialog(newVersion, updateBody, url)
+            )
+        }
     }
 
     private fun showQqGroups() {
