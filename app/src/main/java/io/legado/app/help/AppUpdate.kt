@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import io.legado.app.constant.AppConst
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
@@ -28,7 +29,7 @@ object AppUpdate {
             val rootDoc = jsonPath.parse(body)
             val tagName = rootDoc.readString("$.tag_name")
                 ?: throw NoStackTraceException("获取新版本出错")
-            if (tagName > "3.20.092208") {
+            if (tagName > AppConst.appInfo.versionName) {
                 val updateBody = rootDoc.readString("$.body")
                     ?: throw NoStackTraceException("获取新版本出错")
                 val downloadUrl = rootDoc.readString("$.assets[0].browser_download_url")
@@ -42,7 +43,9 @@ object AppUpdate {
         }.onSuccess {
             callback.invoke(it[0], it[1], it[2], it[3])
         }.onError {
-            appCtx.toastOnUi("检测更新\n${it.localizedMessage}")
+            if (showErrorMsg) {
+                appCtx.toastOnUi("检测更新\n${it.localizedMessage}")
+            }
         }
     }
 
