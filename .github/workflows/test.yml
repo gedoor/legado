@@ -66,7 +66,6 @@ jobs:
           sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
       - name: Build With Gradle
-        continue-on-error: true
         run: |
           if [ ${{ env.type }} == 'release' ]; then
             typeName="原包名"
@@ -79,7 +78,7 @@ jobs:
           sed "/def version/c def version = \"${{ env.VERSION }}\"" $GITHUB_WORKSPACE/app/build.gradle  -i
           echo "开始${{ env.product }}$typeName构建"
           chmod +x gradlew
-          ./gradlew assemble${{ env.product }}release --build-cache --parallel
+          ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
           echo "修改文件名"
           mkdir -p ${{ github.workspace }}/apk/
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
@@ -150,7 +149,11 @@ jobs:
         with:
           path: apk/
       - working-directory: apk/
-        run: mv */*.apk . ;rm -rf */
+        run: |
+          for file in `ls */*.apk`; do
+            mv "$file" "$(echo "$file"|sed -e 's#.*\/##g' -e "s/_/ /g" -e 's/legado/阅读/')"
+          done
+          rm -rf */
       - name: Post to channel
         run: |
           pip install pyTelegramBotAPI
