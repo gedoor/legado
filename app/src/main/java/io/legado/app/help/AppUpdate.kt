@@ -40,13 +40,14 @@ object AppUpdate {
             } else {
                 throw NoStackTraceException("已是最新版本")
             }
-        }.onSuccess {
-            callback.invoke(it[0], it[1], it[2], it[3])
-        }.onError {
-            if (showErrorMsg) {
-                appCtx.toastOnUi("检测更新\n${it.localizedMessage}")
+        }.timeout(10000)
+            .onSuccess {
+                callback.invoke(it[0], it[1], it[2], it[3])
+            }.onError {
+                if (showErrorMsg) {
+                    appCtx.toastOnUi("检测更新\n${it.localizedMessage}")
+                }
             }
-        }
     }
 
 }
