@@ -7,7 +7,7 @@ def upload_file(tb, chat_id, file_dir):
 
 # 上传文件夹内的文件
 def upload_folder(tb, chat_id, folder_dir):
-    file_list = os.listdir(folder_dir)
+    file_list = sorted(os.listdir(folder_dir))
     for file in file_list:
         path = os.path.join(folder_dir, file)
         if os.path.isfile(path):
