@@ -14,10 +14,11 @@ import kotlinx.coroutines.*
 import org.apache.commons.text.StringEscapeUtils
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
-import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 
-
+/**
+ * 后台webView
+ */
 class BackstageWebView(
     private val url: String? = null,
     private val html: String? = null,
@@ -26,17 +27,13 @@ class BackstageWebView(
     private val headerMap: Map<String, String>? = null,
     private val sourceRegex: String? = null,
     private val javaScript: String? = null,
-) : CoroutineScope {
+) {
     private lateinit var job: Job
     private val mHandler = Handler(Looper.getMainLooper())
     private var callback: Callback? = null
     private var mWebView: WebView? = null
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
     suspend fun getStrResponse(): StrResponse = suspendCancellableCoroutine { block ->
-        job = Job()
         block.invokeOnCancellation {
             destroy()
         }
@@ -95,10 +92,8 @@ class BackstageWebView(
     }
 
     private fun destroy() {
-        launch {
-            mWebView?.destroy()
-            mWebView = null
-        }
+        mWebView?.destroy()
+        mWebView = null
         job.cancel()
     }
 
