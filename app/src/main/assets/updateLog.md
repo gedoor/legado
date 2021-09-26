@@ -14,7 +14,7 @@
 
 **2021/09/25**
 
-1. 内置更新检测和下载,目前从github检测和下载
+1. 内置更新检测和下载,目前从github检测并下载, 不会自动提醒需手动检测, 可以关注公众号,比较重要的更新会在公众号发布然后可以在软件内更新
 2. js添加java.webView(html: String?, url: String?, js: String?): String?
 3. 修复一些bug
 
