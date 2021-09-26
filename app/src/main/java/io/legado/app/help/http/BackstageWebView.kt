@@ -145,11 +145,13 @@ class BackstageWebView(
                         callback?.onError(e)
                     }
                     mHandler.removeCallbacks(this)
+                    destroy()
                     return@evaluateJavascript
                 }
                 if (retry > 30) {
                     callback?.onError(NoStackTraceException("js执行超时"))
                     mHandler.removeCallbacks(this)
+                    destroy()
                     return@evaluateJavascript
                 }
                 retry++
@@ -170,6 +172,7 @@ class BackstageWebView(
                     } catch (e: Exception) {
                         callback?.onError(e)
                     }
+                    destroy()
                 }
             }
         }
