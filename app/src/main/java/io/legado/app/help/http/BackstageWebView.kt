@@ -58,19 +58,23 @@ class BackstageWebView(
     }
 
     private fun load() {
-        mWebView = createWebView().apply {
+        val webView = createWebView()
+        mWebView = webView
+        try {
             when {
                 !html.isNullOrEmpty() -> if (url.isNullOrEmpty()) {
-                    loadData(html, "text/html", getEncoding())
+                    webView.loadData(html, "text/html", getEncoding())
                 } else {
-                    loadDataWithBaseURL(url, html, "text/html", getEncoding(), url)
+                    webView.loadDataWithBaseURL(url, html, "text/html", getEncoding(), url)
                 }
                 else -> if (headerMap == null) {
-                    loadUrl(url!!)
+                    webView.loadUrl(url!!)
                 } else {
-                    loadUrl(url!!, headerMap)
+                    webView.loadUrl(url!!, headerMap)
                 }
             }
+        } catch (e: Exception) {
+            callback?.onError(e)
         }
     }
 
