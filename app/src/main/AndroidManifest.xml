@@ -291,6 +291,10 @@
         <activity
             android:name=".ui.book.cache.CacheActivity"
             android:launchMode="singleTop" />
+        <!-- WebView界面 -->
+        <activity
+            android:name=".ui.web.WebViewActivity"
+            android:launchMode="standard" />
         <!-- 书源登录 -->
         <activity
             android:name="io.legado.app.ui.login.SourceLoginActivity"
