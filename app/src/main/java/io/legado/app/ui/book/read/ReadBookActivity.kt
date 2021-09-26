@@ -17,17 +17,20 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.receiver.TimeBatteryReceiver
@@ -780,6 +783,23 @@ class ReadBookActivity : ReadBookBaseActivity(),
             startActivity<SourceLoginActivity> {
                 putExtra("sourceUrl", it.bookSourceUrl)
             }
+        }
+    }
+
+    override fun payAction() {
+        Coroutine.async(this) {
+            val book = ReadBook.book ?: throw NoStackTraceException("no book")
+            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+                ?: throw NoStackTraceException("no chapter")
+            val source = ReadBook.bookSource ?: throw NoStackTraceException("no book source")
+            val payAction = source.getContentRule().payAction
+            if (payAction.isNullOrEmpty()) {
+                throw NoStackTraceException("no pay action")
+            }
+        }.onSuccess {
+
+        }.onError {
+            toastOnUi(it.localizedMessage)
         }
     }
 

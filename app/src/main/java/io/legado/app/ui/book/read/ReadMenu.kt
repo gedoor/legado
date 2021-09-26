@@ -147,6 +147,9 @@ class ReadMenu @JvmOverloads constructor(
         tvLogin.setOnClickListener {
             callBack.showLogin()
         }
+        tvPay.setOnClickListener {
+            callBack.payAction()
+        }
         //亮度跟随
         ivBrightnessAuto.setOnClickListener {
             context.putPrefBoolean("brightnessAuto", !brightnessAuto())
@@ -336,6 +339,7 @@ class ReadMenu @JvmOverloads constructor(
         fun onClickReadAloud()
         fun showReadMenuHelp()
         fun showLogin()
+        fun payAction()
     }
 
 }
