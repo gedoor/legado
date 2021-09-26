@@ -109,8 +109,8 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
-        binding.webView.webChromeClient = RssWebChromeClient()
-        binding.webView.webViewClient = RssWebViewClient()
+        binding.webView.webChromeClient = CustomWebChromeClient()
+        binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
@@ -124,8 +124,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 hitTestResult.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
             ) {
                 hitTestResult.extra?.let {
-                    webPic = it
-                    saveImage()
+                    saveImage(it)
                     return@setOnLongClickListener true
                 }
             }
@@ -140,7 +139,8 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     }
 
-    private fun saveImage() {
+    private fun saveImage(webPic: String) {
+        this.webPic = webPic
         val path = ACache.get(this@ReadRssActivity).getAsString(imagePathKey)
         if (path.isNullOrEmpty()) {
             selectSaveFolder()
@@ -281,7 +281,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         binding.webView.destroy()
     }
 
-    inner class RssWebChromeClient : WebChromeClient() {
+    inner class CustomWebChromeClient : WebChromeClient() {
         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
             binding.llView.invisible()
@@ -296,7 +296,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
     }
 
-    inner class RssWebViewClient : WebViewClient() {
+    inner class CustomWebViewClient : WebViewClient() {
         override fun shouldOverrideUrlLoading(
             view: WebView?,
             request: WebResourceRequest?
