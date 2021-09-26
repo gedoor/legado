@@ -28,7 +28,7 @@ class BackstageWebView(
     private val sourceRegex: String? = null,
     private val javaScript: String? = null,
 ) {
-    private lateinit var job: Job
+
     private val mHandler = Handler(Looper.getMainLooper())
     private var callback: Callback? = null
     private var mWebView: WebView? = null
@@ -98,7 +98,6 @@ class BackstageWebView(
     private fun destroy() {
         mWebView?.destroy()
         mWebView = null
-        job.cancel()
     }
 
     private fun getJs(): String {
