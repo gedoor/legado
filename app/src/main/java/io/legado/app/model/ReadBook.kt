@@ -28,12 +28,12 @@ import splitties.init.appCtx
 @Suppress("MemberVisibilityCanBePrivate")
 object ReadBook : CoroutineScope by MainScope() {
     var book: Book? = null
+    var callBack: CallBack? = null
     var inBookshelf = false
     var chapterSize = 0
     var durChapterIndex = 0
     var durChapterPos = 0
     var isLocalBook = true
-    var callBack: CallBack? = null
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null

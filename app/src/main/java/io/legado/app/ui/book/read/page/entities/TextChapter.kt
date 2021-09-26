@@ -7,7 +7,9 @@ data class TextChapter(
     val title: String,
     val url: String,
     val pages: List<TextPage>,
-    val chaptersSize: Int
+    val chaptersSize: Int,
+    val isVip: Boolean,
+    val isPay: Boolean,
 ) {
 
     fun page(index: Int): TextPage? {

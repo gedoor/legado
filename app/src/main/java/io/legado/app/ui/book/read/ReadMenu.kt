@@ -243,7 +243,9 @@ class ReadMenu @JvmOverloads constructor(
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
-                binding.tvPay.isGone = true
+                binding.tvPay.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+                        || ReadBook.curTextChapter?.isVip != true
+                        || ReadBook.curTextChapter?.isPay == true
                 callBack.upSystemUiVisibility()
                 binding.llBrightness.visible(showBrightnessView)
             }

@@ -164,7 +164,8 @@ object ChapterProvider {
         return TextChapter(
             bookChapter.index, displayTitle,
             bookChapter.getAbsoluteURL().substringBefore(",{"), //getAbsoluteURL已经格式过
-            textPages, chapterSize
+            textPages, chapterSize,
+            bookChapter.isVip, bookChapter.isPay
         )
     }
 
