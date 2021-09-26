@@ -35,7 +35,9 @@ class BackstageWebView(
 
     suspend fun getStrResponse(): StrResponse = suspendCancellableCoroutine { block ->
         block.invokeOnCancellation {
-            destroy()
+            runOnUI {
+                destroy()
+            }
         }
         callback = object : BackstageWebView.Callback() {
             override fun onResult(response: StrResponse) {
