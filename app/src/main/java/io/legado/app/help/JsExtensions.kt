@@ -108,9 +108,14 @@ interface JsExtensions {
      * @param js 用来取返回值的js语句, 没有就返回整个源代码
      * @return 返回js获取的内容
      */
-    fun webView(html: String?, url: String?, js: String?): String {
-        //TODO
-        return ""
+    fun webView(html: String?, url: String?, js: String?): String? {
+        return runBlocking {
+            BackstageWebView(
+                url = url,
+                html = html,
+                javaScript = js
+            ).getStrResponse().body
+        }
     }
 
     /**

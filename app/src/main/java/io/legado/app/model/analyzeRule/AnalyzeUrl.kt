@@ -330,14 +330,32 @@ class AnalyzeUrl(
         judgmentConcurrent()
         setCookie(source?.getKey())
         if (useWebView) {
-            val params = AjaxWebView.AjaxParams(url)
-            params.headerMap = headerMap
-            params.requestMethod = method
-            params.javaScript = webJs ?: jsStr
-            params.sourceRegex = sourceRegex
-            params.postData = body?.toByteArray()
-            params.tag = source?.getKey()
-            return getWebViewSrc(params)
+            return when (method) {
+                RequestMethod.POST -> {
+                    val body = getProxyClient(proxy).newCallStrResponse(retry) {
+                        addHeaders(headerMap)
+                        url(urlNoQuery)
+                        if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
+                            postForm(fieldMap, true)
+                        } else {
+                            postJson(body)
+                        }
+                    }.body
+                    BackstageWebView(
+                        url = url,
+                        html = body,
+                        tag = source?.getKey(),
+                        javaScript = webJs ?: jsStr,
+                        sourceRegex = sourceRegex
+                    ).getStrResponse()
+                }
+                else -> BackstageWebView(
+                    url = url,
+                    tag = source?.getKey(),
+                    javaScript = webJs ?: jsStr,
+                    sourceRegex = sourceRegex
+                ).getStrResponse()
+            }
         }
         return getProxyClient(proxy).newCallStrResponse(retry) {
             addHeaders(headerMap)
