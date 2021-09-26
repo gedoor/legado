@@ -15,7 +15,8 @@
 **2021/09/25**
 
 1. 内置更新检测和下载,目前从github检测和下载
-2. 修复一些bug
+2. js添加java.webView(html: String?, url: String?, js: String?): String?
+3. 修复一些bug
 
 **2021/09/22**
 
