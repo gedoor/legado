@@ -723,7 +723,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun openSourceEditActivity() {
         ReadBook.bookSource?.let {
             sourceEditActivity.launch {
-                putExtra("source", it.bookSourceUrl)
+                putExtra("sourceUrl", it.bookSourceUrl)
             }
         }
     }
