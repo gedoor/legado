@@ -30,8 +30,7 @@ import java.io.File
 
 class DownloadService : BaseService() {
     private val groupKey = "${appCtx.packageName}.download"
-    private val downloadUrls = hashMapOf<Long, String>()
-    private val downloadNames = hashMapOf<Long, String>()
+    private val downloads = hashMapOf<Long, Pair<String, String>>()
     private val completeDownloads = hashSetOf<Long>()
     private var upStateJob: Job? = null
     private val downloadReceiver = object : BroadcastReceiver() {
@@ -60,7 +59,7 @@ class DownloadService : BaseService() {
             IntentAction.play -> {
                 val id = intent.getLongExtra("downloadId", 0)
                 if (completeDownloads.contains(id)
-                    && downloadNames[id]?.endsWith(".apk") == true
+                    && downloads[id]?.second?.endsWith(".apk") == true
                 ) {
                     installApk(id)
                 } else {
@@ -78,12 +77,12 @@ class DownloadService : BaseService() {
     @Synchronized
     private fun startDownload(url: String?, fileName: String?) {
         if (url == null || fileName == null) {
-            if (downloadNames.isEmpty()) {
+            if (downloads.isEmpty()) {
                 stopSelf()
             }
             return
         }
-        if (downloadUrls.values.contains(url)) {
+        if (downloads.values.any { it.first == url }) {
             toastOnUi("已在下载列表")
             return
         }
@@ -95,8 +94,7 @@ class DownloadService : BaseService() {
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
         // 添加一个下载任务
         val downloadId = downloadManager.enqueue(request)
-        downloadUrls[downloadId] = url
-        downloadNames[downloadId] = fileName
+        downloads[downloadId] = Pair(url, fileName)
         queryState()
         if (upStateJob == null) {
             checkDownloadState()
@@ -108,8 +106,8 @@ class DownloadService : BaseService() {
         if (!completeDownloads.contains(downloadId)) {
             downloadManager.remove(downloadId)
         }
-        downloadUrls.remove(downloadId)
-        downloadNames.remove(downloadId)
+        downloads.remove(downloadId)
+        completeDownloads.remove(downloadId)
         notificationManager.cancel(downloadId.toInt())
     }
 
@@ -117,10 +115,10 @@ class DownloadService : BaseService() {
     private fun successDownload(downloadId: Long) {
         if (!completeDownloads.contains(downloadId)) {
             completeDownloads.add(downloadId)
-            if (downloadNames[downloadId]?.endsWith(".apk") == true) {
+            if (downloads[downloadId]?.second?.endsWith(".apk") == true) {
                 installApk(downloadId)
             } else {
-                toastOnUi("${downloadNames[downloadId]} ${getString(R.string.download_success)}")
+                toastOnUi("${downloads[downloadId]?.second} ${getString(R.string.download_success)}")
             }
         }
     }
@@ -138,11 +136,11 @@ class DownloadService : BaseService() {
     //查询下载进度
     @Synchronized
     private fun queryState() {
-        if (downloadNames.isEmpty()) {
+        if (downloads.isEmpty()) {
             stopSelf()
             return
         }
-        val ids = downloadNames.keys
+        val ids = downloads.keys
         val query = DownloadManager.Query()
         query.setFilterById(*ids.toLongArray())
         downloadManager.query(query).use { cursor ->
@@ -165,7 +163,7 @@ class DownloadService : BaseService() {
                             DownloadManager.STATUS_FAILED -> getString(R.string.download_error)
                             else -> getString(R.string.unknown_state)
                         }
-                    upDownloadNotification(id, "${downloadNames[id]} $status", max, progress)
+                    upDownloadNotification(id, "${downloads[id]?.second} $status", max, progress)
                 } while (cursor.moveToNext())
             }
         }
