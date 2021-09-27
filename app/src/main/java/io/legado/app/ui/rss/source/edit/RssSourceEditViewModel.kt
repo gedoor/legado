@@ -15,7 +15,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
 
     fun initData(intent: Intent, onFinally: () -> Unit) {
         execute {
-            val key = intent.getStringExtra("data")
+            val key = intent.getStringExtra("sourceUrl")
             if (key != null) {
                 appDb.rssSourceDao.getByKey(key)?.let {
                     rssSource = it

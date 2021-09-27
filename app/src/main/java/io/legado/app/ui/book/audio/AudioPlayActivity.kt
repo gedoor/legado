@@ -103,7 +103,7 @@ class AudioPlayActivity :
             R.id.menu_copy_audio_url -> sendToClip(AudioPlayService.url)
             R.id.menu_edit_source -> AudioPlay.bookSource?.let {
                 sourceEditResult.launch {
-                    putExtra("data", it.bookSourceUrl)
+                    putExtra("sourceUrl", it.bookSourceUrl)
                 }
             }
         }

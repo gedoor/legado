@@ -72,7 +72,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
                 editSourceResult.launch {
-                    putExtra("data", it)
+                    putExtra("sourceUrl", it)
                 }
             }
             R.id.menu_clear -> {

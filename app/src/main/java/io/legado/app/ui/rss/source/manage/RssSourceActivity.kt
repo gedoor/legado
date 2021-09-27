@@ -305,7 +305,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     override fun edit(source: RssSource) {
         startActivity<RssSourceEditActivity> {
-            putExtra("data", source.sourceUrl)
+            putExtra("sourceUrl", source.sourceUrl)
         }
     }
 

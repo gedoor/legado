@@ -170,7 +170,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     override fun edit(rssSource: RssSource) {
         startActivity<RssSourceEditActivity> {
-            putExtra("data", rssSource.sourceUrl)
+            putExtra("sourceUrl", rssSource.sourceUrl)
         }
     }
 
