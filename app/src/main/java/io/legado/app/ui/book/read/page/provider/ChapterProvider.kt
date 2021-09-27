@@ -26,6 +26,8 @@ import java.util.*
  */
 @Suppress("DEPRECATION")
 object ChapterProvider {
+    private const val srcReplaceChar = "▩"
+
     @JvmStatic
     private var viewWidth = 0
 
@@ -71,7 +73,8 @@ object ChapterProvider {
     @JvmStatic
     val contentPaint: TextPaint = TextPaint()
 
-    private const val srcReplaceChar = "▩"
+    var isHorizontal = false
+
 
     init {
         upStyle()
@@ -163,7 +166,7 @@ object ChapterProvider {
 
         return TextChapter(
             bookChapter.index, displayTitle,
-            bookChapter.getAbsoluteURL().substringBefore(",{"), //getAbsoluteURL已经格式过
+            bookChapter.getAbsoluteURL(),
             textPages, chapterSize,
             bookChapter.isVip, bookChapter.isPay
         )
@@ -190,9 +193,6 @@ object ChapterProvider {
                 Book.imgStyleFull -> {
                     width = visibleWidth
                     height = it.height * visibleWidth / it.width
-                }
-                Book.imgStyleText -> {
-
                 }
                 else -> {
                     if (it.width > visibleWidth) {
@@ -529,6 +529,7 @@ object ChapterProvider {
         if (width > 0 && height > 0 && (width != viewWidth || height != viewHeight)) {
             viewWidth = width
             viewHeight = height
+            isHorizontal = width > height
             upVisibleSize()
             postEvent(EventBus.UP_CONFIG, true)
         }
@@ -541,7 +542,11 @@ object ChapterProvider {
         if (viewWidth > 0 && viewHeight > 0) {
             paddingLeft = ReadBookConfig.paddingLeft.dp
             paddingTop = ReadBookConfig.paddingTop.dp
-            visibleWidth = viewWidth - paddingLeft - ReadBookConfig.paddingRight.dp
+            visibleWidth = if (isHorizontal) {
+                viewWidth / 2 - paddingLeft - ReadBookConfig.paddingRight.dp
+            } else {
+                viewWidth - paddingLeft - ReadBookConfig.paddingRight.dp
+            }
             visibleHeight = viewHeight - paddingTop - ReadBookConfig.paddingBottom.dp
             visibleRight = paddingLeft + visibleWidth
             visibleBottom = paddingTop + visibleHeight

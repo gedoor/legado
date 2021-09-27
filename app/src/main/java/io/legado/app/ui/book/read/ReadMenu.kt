@@ -141,7 +141,7 @@ class ReadMenu @JvmOverloads constructor(
             callBack.openSourceEditActivity()
         }
         tvChapterUrl.setOnClickListener {
-            context.openUrl(binding.tvChapterUrl.text.toString())
+            context.sendToClip(binding.tvChapterUrl.text.toString())
         }
         //登录
         tvLogin.setOnClickListener {
