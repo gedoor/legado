@@ -115,10 +115,11 @@ class DownloadService : BaseService() {
     private fun successDownload(downloadId: Long) {
         if (!completeDownloads.contains(downloadId)) {
             completeDownloads.add(downloadId)
-            if (downloads[downloadId]?.second?.endsWith(".apk") == true) {
+            val fileName = downloads[downloadId]?.second
+            if (fileName?.endsWith(".apk") == true) {
                 installApk(downloadId)
             } else {
-                toastOnUi("${downloads[downloadId]?.second} ${getString(R.string.download_success)}")
+                toastOnUi("$fileName ${getString(R.string.download_success)}")
             }
         }
     }
