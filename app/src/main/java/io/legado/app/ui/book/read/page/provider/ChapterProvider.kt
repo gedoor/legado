@@ -66,10 +66,10 @@ object ChapterProvider {
     var typeface: Typeface = Typeface.DEFAULT
 
     @JvmStatic
-    lateinit var titlePaint: TextPaint
+    val titlePaint: TextPaint = TextPaint()
 
     @JvmStatic
-    lateinit var contentPaint: TextPaint
+    val contentPaint: TextPaint = TextPaint()
 
     private const val srcReplaceChar = "▩"
 
@@ -453,10 +453,7 @@ object ChapterProvider {
      */
     fun upStyle() {
         typeface = getTypeface(ReadBookConfig.textFont)
-        getPaint(typeface).let {
-            titlePaint = it.first
-            contentPaint = it.second
-        }
+        upPaint(typeface)
         //间距
         lineSpacingExtra = ReadBookConfig.lineSpacingExtra
         paragraphSpacing = ReadBookConfig.paragraphSpacing
@@ -491,7 +488,7 @@ object ChapterProvider {
         } ?: Typeface.DEFAULT
     }
 
-    private fun getPaint(typeface: Typeface): Pair<TextPaint, TextPaint> {
+    private fun upPaint(typeface: Typeface) {
         // 字体统一处理
         val bold = Typeface.create(typeface, Typeface.BOLD)
         val normal = Typeface.create(typeface, Typeface.NORMAL)
@@ -512,20 +509,17 @@ object ChapterProvider {
         }
 
         //标题
-        val tPaint = TextPaint()
-        tPaint.color = ReadBookConfig.textColor
-        tPaint.letterSpacing = ReadBookConfig.letterSpacing
-        tPaint.typeface = titleFont
-        tPaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
-        tPaint.isAntiAlias = true
+        titlePaint.color = ReadBookConfig.textColor
+        titlePaint.letterSpacing = ReadBookConfig.letterSpacing
+        titlePaint.typeface = titleFont
+        titlePaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
+        titlePaint.isAntiAlias = true
         //正文
-        val cPaint = TextPaint()
-        cPaint.color = ReadBookConfig.textColor
-        cPaint.letterSpacing = ReadBookConfig.letterSpacing
-        cPaint.typeface = textFont
-        cPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
-        cPaint.isAntiAlias = true
-        return Pair(tPaint, cPaint)
+        contentPaint.color = ReadBookConfig.textColor
+        contentPaint.letterSpacing = ReadBookConfig.letterSpacing
+        contentPaint.typeface = textFont
+        contentPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
+        contentPaint.isAntiAlias = true
     }
 
     /**
