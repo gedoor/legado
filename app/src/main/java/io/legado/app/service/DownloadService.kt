@@ -146,24 +146,26 @@ class DownloadService : BaseService() {
         query.setFilterById(*ids.toLongArray())
         downloadManager.query(query).use { cursor ->
             if (cursor.moveToFirst()) {
+                val idIndex = cursor.getColumnIndex(DownloadManager.COLUMN_ID)
+                val progressIndex =
+                    cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
+                val fileSizeIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
+                val statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
                 do {
-                    val id = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID))
-                    val progress = cursor
-                        .getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-                    val max = cursor
-                        .getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-                    val status =
-                        when (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
-                            DownloadManager.STATUS_PAUSED -> getString(R.string.pause)
-                            DownloadManager.STATUS_PENDING -> getString(R.string.wait_download)
-                            DownloadManager.STATUS_RUNNING -> getString(R.string.downloading)
-                            DownloadManager.STATUS_SUCCESSFUL -> {
-                                successDownload(id)
-                                getString(R.string.download_success)
-                            }
-                            DownloadManager.STATUS_FAILED -> getString(R.string.download_error)
-                            else -> getString(R.string.unknown_state)
+                    val id = cursor.getLong(idIndex)
+                    val progress = cursor.getInt(progressIndex)
+                    val max = cursor.getInt(fileSizeIndex)
+                    val status = when (cursor.getInt(statusIndex)) {
+                        DownloadManager.STATUS_PAUSED -> getString(R.string.pause)
+                        DownloadManager.STATUS_PENDING -> getString(R.string.wait_download)
+                        DownloadManager.STATUS_RUNNING -> getString(R.string.downloading)
+                        DownloadManager.STATUS_SUCCESSFUL -> {
+                            successDownload(id)
+                            getString(R.string.download_success)
                         }
+                        DownloadManager.STATUS_FAILED -> getString(R.string.download_error)
+                        else -> getString(R.string.unknown_state)
+                    }
                     upDownloadNotification(id, "${downloads[id]?.second} $status", max, progress)
                 } while (cursor.moveToNext())
             }
