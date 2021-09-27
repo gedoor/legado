@@ -162,7 +162,11 @@ class ReadAloudDialog : BaseDialogFragment() {
     }
 
     private fun upTimerText(timeMinute: Int) {
-        binding.tvTimer.text = requireContext().getString(R.string.timer_m, timeMinute)
+        if (timeMinute < 0) {
+            binding.tvTimer.text = requireContext().getString(R.string.timer_m, 0)
+        } else {
+            binding.tvTimer.text = requireContext().getString(R.string.timer_m, timeMinute)
+        }
     }
 
     private fun upTtsSpeechRate() {
