@@ -78,7 +78,7 @@ object WebBook {
             //检测书源是否已登录
             bookSource.loginCheckJs?.let { checkJs ->
                 if (checkJs.isNotBlank()) {
-                    res = analyzeUrl.evalJS(checkJs) as StrResponse
+                    res = analyzeUrl.evalJS(checkJs, res) as StrResponse
                 }
             }
             return BookList.analyzeBookList(
