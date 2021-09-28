@@ -66,6 +66,7 @@ object ChapterProvider {
 
     @JvmStatic
     var visibleBottom = 0
+        private set
 
     @JvmStatic
     private var lineSpacingExtra = 0
@@ -81,6 +82,7 @@ object ChapterProvider {
 
     @JvmStatic
     var typeface: Typeface = Typeface.DEFAULT
+        private set
 
     @JvmStatic
     val titlePaint: TextPaint = TextPaint()
@@ -89,7 +91,7 @@ object ChapterProvider {
     val contentPaint: TextPaint = TextPaint()
 
     var doublePage = false
-
+        private set
 
     init {
         upStyle()
@@ -375,11 +377,13 @@ object ChapterProvider {
         }
         val bodyIndent = ReadBookConfig.paragraphIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
-        bodyIndent.toStringArray().forEach {
+        bodyIndent.toStringArray().forEach { char ->
             val x1 = x + icw
             textLine.textChars.add(
                 TextChar(
-                    it, start = absStartX + x, end = absStartX + x1
+                    charData = char,
+                    start = absStartX + x,
+                    end = absStartX + x1
                 )
             )
             x = x1
@@ -409,13 +413,13 @@ object ChapterProvider {
         val gapCount: Int = words.lastIndex
         val d = (visibleWidth - desiredWidth) / gapCount
         var x = startX
-        words.forEachIndexed { index, s ->
-            val cw = StaticLayout.getDesiredWidth(s, textPaint)
+        words.forEachIndexed { index, char ->
+            val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
-            if (srcList != null && s == srcReplaceChar) {
+            if (srcList != null && char == srcReplaceChar) {
                 textLine.textChars.add(
                     TextChar(
-                        srcList.removeFirst(),
+                        charData = srcList.removeFirst(),
                         start = absStartX + x,
                         end = absStartX + x1,
                         isImage = true
@@ -424,13 +428,15 @@ object ChapterProvider {
             } else {
                 textLine.textChars.add(
                     TextChar(
-                        s, start = absStartX + x, end = absStartX + x1
+                        charData = char,
+                        start = absStartX + x,
+                        end = absStartX + x1
                     )
                 )
             }
             x = x1
         }
-        exceed(textLine, words)
+        exceed(absStartX, textLine, words)
     }
 
     /**
@@ -445,13 +451,13 @@ object ChapterProvider {
         srcList: LinkedList<String>?
     ) {
         var x = startX
-        words.forEach {
-            val cw = StaticLayout.getDesiredWidth(it, textPaint)
+        words.forEach { char ->
+            val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = x + cw
-            if (srcList != null && it == srcReplaceChar) {
+            if (srcList != null && char == srcReplaceChar) {
                 textLine.textChars.add(
                     TextChar(
-                        srcList.removeFirst(),
+                        charData = srcList.removeFirst(),
                         start = absStartX + x,
                         end = absStartX + x1,
                         isImage = true
@@ -460,30 +466,33 @@ object ChapterProvider {
             } else {
                 textLine.textChars.add(
                     TextChar(
-                        it, start = absStartX + x, end = absStartX + x1
+                        charData = char,
+                        start = absStartX + x,
+                        end = absStartX + x1
                     )
                 )
             }
             x = x1
         }
-        exceed(textLine, words)
+        exceed(absStartX, textLine, words)
     }
 
     /**
      * 超出边界处理
      */
-    private fun exceed(textLine: TextLine, words: Array<String>) {
-//        val endX = textLine.textChars.lastOrNull()?.end ?: return
-//        if (endX > visibleRight) {
-//            val cc = (endX - visibleRight) / words.size
-//            for (i in 0..words.lastIndex) {
-//                textLine.getTextCharReverseAt(i).let {
-//                    val py = cc * (words.size - i)
-//                    it.start = it.start - py
-//                    it.end = it.end - py
-//                }
-//            }
-//        }
+    private fun exceed(absStartX: Int, textLine: TextLine, words: Array<String>) {
+        val visibleEnd = absStartX + visibleWidth
+        val endX = textLine.textChars.lastOrNull()?.end ?: return
+        if (endX > visibleEnd) {
+            val cc = (endX - visibleEnd) / words.size
+            for (i in 0..words.lastIndex) {
+                textLine.getTextCharReverseAt(i).let {
+                    val py = cc * (words.size - i)
+                    it.start = it.start - py
+                    it.end = it.end - py
+                }
+            }
+        }
     }
 
     /**
