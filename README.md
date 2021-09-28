@@ -22,7 +22,7 @@
 * [酷安](https://www.coolapk.com/apk/io.legado.app.release)
 * [release](https://github.com/gedoor/legado/releases/latest)
 * [jsdelivr](https://cdn.jsdelivr.net/gh/gedoor/legado@release/)
-* [网盘](https://kunfei.lanzoui.com/b0f7pt4ja)
+* [网盘](https://1drv.ms/f/s!Aj8AK94HiKs4gpVmXZ4Y2X7vwtv3ug)
 * [测试版](https://kunfei.lanzoui.com/b0f810h4b)
 
 ## 阅读API
