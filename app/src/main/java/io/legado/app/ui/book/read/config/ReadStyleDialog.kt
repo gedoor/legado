@@ -132,6 +132,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             ReadBook.book?.setPageAnim(-1)
             ReadBookConfig.pageAnim = binding.rgPageAnim.getIndexById(checkedId)
             callBack?.upPageAnim()
+            ReadBook.loadContent(false)
         }
         cbShareLayout.onCheckedChangeListener = { _, isChecked ->
             ReadBookConfig.shareLayout = isChecked

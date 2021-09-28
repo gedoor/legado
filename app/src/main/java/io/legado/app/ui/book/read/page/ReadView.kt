@@ -469,6 +469,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun upPageAnim() {
         isScroll = ReadBook.pageAnim() == 3
+        ChapterProvider.upLayout()
         when (ReadBook.pageAnim()) {
             0 -> if (pageDelegate !is CoverPageDelegate) {
                 pageDelegate = CoverPageDelegate(this)

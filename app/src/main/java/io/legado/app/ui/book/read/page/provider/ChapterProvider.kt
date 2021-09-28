@@ -497,7 +497,7 @@ object ChapterProvider {
         paragraphSpacing = ReadBookConfig.paragraphSpacing
         titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
         titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
-        upVisibleSize()
+        upLayout()
     }
 
     private fun getTypeface(fontPath: String): Typeface {
@@ -567,8 +567,7 @@ object ChapterProvider {
         if (width > 0 && height > 0 && (width != viewWidth || height != viewHeight)) {
             viewWidth = width
             viewHeight = height
-            doublePage = width > height
-            upVisibleSize()
+            upLayout()
             postEvent(EventBus.UP_CONFIG, true)
         }
     }
@@ -576,7 +575,8 @@ object ChapterProvider {
     /**
      * 更新绘制尺寸
      */
-    private fun upVisibleSize() {
+    fun upLayout() {
+        doublePage = viewWidth > viewHeight && ReadBook.pageAnim() != 3
         if (viewWidth > 0 && viewHeight > 0) {
             paddingLeft = ReadBookConfig.paddingLeft.dp
             paddingTop = ReadBookConfig.paddingTop.dp

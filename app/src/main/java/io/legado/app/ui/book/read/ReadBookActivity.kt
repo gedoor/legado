@@ -269,6 +269,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
             R.id.menu_page_anim -> showPageAnimConfig {
                 binding.readView.upPageAnim()
+                ReadBook.loadContent(false)
             }
             R.id.menu_book_info -> ReadBook.book?.let {
                 startActivity<BookInfoActivity> {

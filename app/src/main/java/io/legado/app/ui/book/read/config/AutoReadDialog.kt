@@ -11,6 +11,7 @@ import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.ReadAloud
+import io.legado.app.model.ReadBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.ReadBookBaseActivity
@@ -102,6 +103,7 @@ class AutoReadDialog : BaseDialogFragment() {
         binding.llSetting.setOnClickListener {
             (activity as ReadBookBaseActivity).showPageAnimConfig {
                 (activity as ReadBookActivity).upPageAnim()
+                ReadBook.loadContent(false)
             }
         }
         binding.llCatalog.setOnClickListener { callBack?.openChapterList() }
