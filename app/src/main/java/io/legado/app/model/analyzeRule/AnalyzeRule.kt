@@ -71,8 +71,10 @@ class AnalyzeRule(
     }
 
     fun setRedirectUrl(url: String): URL? {
-        kotlin.runCatching {
+        try {
             redirectUrl = URL(url)
+        } catch (e: Exception) {
+            log("URL($url) error\n${e.localizedMessage}")
         }
         return redirectUrl
     }
@@ -237,6 +239,8 @@ class AnalyzeRule(
         if (result == null) result = ""
         val str = kotlin.runCatching {
             Entities.unescape(result.toString())
+        }.onFailure {
+            log("Entities.unescape() error\n${it.localizedMessage}")
         }.getOrElse {
             result.toString()
         }
@@ -653,6 +657,7 @@ class AnalyzeRule(
                 val analyzeUrl = AnalyzeUrl(urlStr, book = book, source = source)
                 analyzeUrl.getStrResponse().body
             }.onFailure {
+                log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
                 it.printOnDebug()
             }.getOrElse {
                 it.msg
