@@ -3,6 +3,7 @@ package io.legado.app.model.analyzeRule
 import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
+import io.legado.app.utils.printOnDebug
 import java.util.*
 
 @Suppress("RegExpRedundantEscape")
@@ -40,11 +41,15 @@ class AnalyzeByJSonPath(json: Any) {
             result = ruleAnalyzes.innerRule("{$.") { getString(it) } //替换所有{$.rule...}
 
             if (result.isEmpty()) { //st为空，表明无成功替换的内嵌规则
-                val ob = ctx.read<Any>(rule)
-                result = if (ob is List<*>) {
-                    ob.joinToString("\n")
-                } else {
-                    ob.toString()
+                try {
+                    val ob = ctx.read<Any>(rule)
+                    result = if (ob is List<*>) {
+                        ob.joinToString("\n")
+                    } else {
+                        ob.toString()
+                    }
+                } catch (e: Exception) {
+                    e.printOnDebug()
                 }
             }
             return result
@@ -73,11 +78,15 @@ class AnalyzeByJSonPath(json: Any) {
             ruleAnalyzes.reSetPos() //将pos重置为0，复用解析器
             val st = ruleAnalyzes.innerRule("{$.") { getString(it) } //替换所有{$.rule...}
             if (st.isEmpty()) { //st为空，表明无成功替换的内嵌规则
-                val obj = ctx.read<Any>(rule) //kotlin的Any型返回值不包含null ，删除赘余 ?: return result
-                if (obj is List<*>) {
-                    for (o in obj) result.add(o.toString())
-                } else {
-                    result.add(obj.toString())
+                try {
+                    val obj = ctx.read<Any>(rule)
+                    if (obj is List<*>) {
+                        for (o in obj) result.add(o.toString())
+                    } else {
+                        result.add(obj.toString())
+                    }
+                } catch (e: Exception) {
+                    e.printOnDebug()
                 }
             } else {
                 result.add(st)
@@ -124,7 +133,11 @@ class AnalyzeByJSonPath(json: Any) {
         val rules = ruleAnalyzes.splitRule("&&", "||", "%%")
         if (rules.size == 1) {
             ctx.let {
-                return it.read<ArrayList<Any>>(rules[0])
+                try {
+                    return it.read<ArrayList<Any>>(rules[0])
+                } catch (e: Exception) {
+                    e.printOnDebug()
+                }
             }
         } else {
             val results = ArrayList<ArrayList<*>>()
