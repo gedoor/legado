@@ -45,6 +45,7 @@ interface JsExtensions {
                 val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
                 analyzeUrl.getStrResponse().body
             }.onFailure {
+                log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
                 it.printOnDebug()
             }.getOrElse {
                 it.msg
@@ -80,6 +81,7 @@ interface JsExtensions {
             kotlin.runCatching {
                 analyzeUrl.getStrResponse()
             }.onFailure {
+                log("connect(${urlStr}) error\n${it.stackTraceToString()}")
                 it.printOnDebug()
             }.getOrElse {
                 StrResponse(analyzeUrl.url, it.localizedMessage)
@@ -94,6 +96,7 @@ interface JsExtensions {
             kotlin.runCatching {
                 analyzeUrl.getStrResponse()
             }.onFailure {
+                log("ajax($urlStr,$header) error\n${it.stackTraceToString()}")
                 it.printOnDebug()
             }.getOrElse {
                 StrResponse(analyzeUrl.url, it.localizedMessage)

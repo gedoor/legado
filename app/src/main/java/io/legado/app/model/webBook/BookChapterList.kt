@@ -191,6 +191,7 @@ object BookChapterList {
                 isPay = analyzeRule.getString(payRule)
                 if (bookChapter.url.isEmpty()) {
                     bookChapter.url = baseUrl
+                    Debug.log(bookSource.bookSourceUrl, "未获取到url,使用baseUrl替代")
                 }
                 if (bookChapter.title.isNotEmpty()) {
                     if (isVip.isNotEmpty() && !isVip.matches(falseRegex)) {
