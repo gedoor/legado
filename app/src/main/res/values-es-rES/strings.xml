@@ -890,5 +890,6 @@
     <string name="disable_source">禁用源</string>
     <string name="delete_source">删除源</string>
     <string name="chapter_pay">购买</string>
+    <string name="double_page_horizontal">横屏双页</string>
 
 </resources>
