@@ -298,32 +298,32 @@ class AnalyzeByJSoup(doc: Any) {
                 }
 
             val len = elements.size
-            val lastIndexs = (indexDefault.size - 1).takeIf { it != -1 } ?: indexes.size - 1
+            val lastIndexes = (indexDefault.size - 1).takeIf { it != -1 } ?: indexes.size - 1
             val indexSet = mutableSetOf<Int>()
 
             /**
              * 获取无重且不越界的索引集合
              * */
-            if (indexes.isEmpty()) for (ix in lastIndexs downTo 0) { //indexs为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
+            if (indexes.isEmpty()) for (ix in lastIndexes downTo 0) { //indexes为空，表明是非[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
                 val it = indexDefault[ix]
                 if (it in 0 until len) indexSet.add(it) //将正数不越界的索引添加到集合
                 else if (it < 0 && len >= -it) indexSet.add(it + len) //将负数不越界的索引添加到集合
 
-            } else for (ix in lastIndexs downTo 0) { //indexs不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
+            } else for (ix in lastIndexes downTo 0) { //indexes不空，表明是[]式索引，集合是逆向遍历插入的，所以这里也逆向遍历，好还原顺序
 
                 if (indexes[ix] is Triple<*, *, *>) { //区间
-                    val (startx, endx, stepx) = indexes[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
+                    val (startX, endX, stepX) = indexes[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
 
-                    val start = if (startx == null) 0 //左端省略表示0
-                    else if (startx >= 0) if (startx < len) startx else len - 1 //右端越界，设置为最大索引
-                    else if (-startx <= len) len + startx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
+                    val start = if (startX == null) 0 //左端省略表示0
+                    else if (startX >= 0) if (startX < len) startX else len - 1 //右端越界，设置为最大索引
+                    else if (-startX <= len) len + startX /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
 
-                    val end = if (endx == null) len - 1 //右端省略表示 len - 1
-                    else if (endx >= 0) if (endx < len) endx else len - 1 //右端越界，设置为最大索引
-                    else if (-endx <= len) len + endx /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
+                    val end = if (endX == null) len - 1 //右端省略表示 len - 1
+                    else if (endX >= 0) if (endX < len) endX else len - 1 //右端越界，设置为最大索引
+                    else if (-endX <= len) len + endX /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
 
-                    if (start == end || stepx >= len) { //两端相同，区间里只有一个数。或间隔过大，区间实际上仅有首位
+                    if (start == end || stepX >= len) { //两端相同，区间里只有一个数。或间隔过大，区间实际上仅有首位
 
                         indexSet.add(start)
                         continue
@@ -331,7 +331,7 @@ class AnalyzeByJSoup(doc: Any) {
                     }
 
                     val step =
-                        if (stepx > 0) stepx else if (-stepx < len) stepx + len else 1 //最小正数间隔为1
+                        if (stepX > 0) stepX else if (-stepX < len) stepX + len else 1 //最小正数间隔为1
 
                     //将区间展开到集合中,允许列表反向。
                     indexSet.addAll(if (end > start) start..end step step else start downTo end step step)
