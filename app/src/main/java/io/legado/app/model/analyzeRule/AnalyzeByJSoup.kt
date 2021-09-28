@@ -1,7 +1,6 @@
 package io.legado.app.model.analyzeRule
 
 import androidx.annotation.Keep
-import io.legado.app.utils.printOnDebug
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Collector
@@ -209,55 +208,50 @@ class AnalyzeByJSoup(doc: Any) {
      */
     private fun getResultLast(elements: Elements, lastRule: String): ArrayList<String> {
         val textS = ArrayList<String>()
-        try {
-            when (lastRule) {
-                "text" -> for (element in elements) {
-                    val text = element.text()
-                    if (text.isNotEmpty()) {
-                        textS.add(text)
-                    }
-                }
-                "textNodes" -> for (element in elements) {
-                    val tn = arrayListOf<String>()
-                    val contentEs = element.textNodes()
-                    for (item in contentEs) {
-                        val text = item.text().trim { it <= ' ' }
-                        if (text.isNotEmpty()) {
-                            tn.add(text)
-                        }
-                    }
-                    if (tn.isNotEmpty()) {
-                        textS.add(tn.joinToString("\n"))
-                    }
-                }
-                "ownText" -> for (element in elements) {
-                    val text = element.ownText()
-                    if (text.isNotEmpty()) {
-                        textS.add(text)
-                    }
-                }
-                "html" -> {
-                    elements.select("script").remove()
-                    elements.select("style").remove()
-                    val html = elements.outerHtml()
-                    if (html.isNotEmpty()) {
-                        textS.add(html)
-                    }
-                }
-                "all" -> textS.add(elements.outerHtml())
-                else -> for (element in elements) {
-
-                    val url = element.attr(lastRule)
-
-                    if (url.isBlank() || textS.contains(url)) continue
-
-                    textS.add(url)
+        when (lastRule) {
+            "text" -> for (element in elements) {
+                val text = element.text()
+                if (text.isNotEmpty()) {
+                    textS.add(text)
                 }
             }
-        } catch (e: Exception) {
-            e.printOnDebug()
-        }
+            "textNodes" -> for (element in elements) {
+                val tn = arrayListOf<String>()
+                val contentEs = element.textNodes()
+                for (item in contentEs) {
+                    val text = item.text().trim { it <= ' ' }
+                    if (text.isNotEmpty()) {
+                        tn.add(text)
+                    }
+                }
+                if (tn.isNotEmpty()) {
+                    textS.add(tn.joinToString("\n"))
+                }
+            }
+            "ownText" -> for (element in elements) {
+                val text = element.ownText()
+                if (text.isNotEmpty()) {
+                    textS.add(text)
+                }
+            }
+            "html" -> {
+                elements.select("script").remove()
+                elements.select("style").remove()
+                val html = elements.outerHtml()
+                if (html.isNotEmpty()) {
+                    textS.add(html)
+                }
+            }
+            "all" -> textS.add(elements.outerHtml())
+            else -> for (element in elements) {
 
+                val url = element.attr(lastRule)
+
+                if (url.isBlank() || textS.contains(url)) continue
+
+                textS.add(url)
+            }
+        }
         return textS
     }
 

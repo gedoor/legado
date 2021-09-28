@@ -11,7 +11,6 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     private var rule = ArrayList<String>()  //分割出的规则列表
     private var step: Int = 0 //分割字符的长度
     var elementsType = "" //当前分割字符串
-    var innerType = true //是否为内嵌{{}}
 
     fun trim() { // 修剪当前规则之前的"@"或者空白符
         if (queue[pos] == '@' || queue[pos] < '!') { //在while里重复设置start和startX会拖慢执行速度，所以先来个判断是否存在需要修剪的字段，最后再一次性设置start和startX
@@ -33,7 +32,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      * @param seq 查找的字符串 **区分大小写**
      * @return 是否找到相应字段。
      */
-    fun consumeTo(seq: String): Boolean {
+    private fun consumeTo(seq: String): Boolean {
         start = pos //将处理到的位置设置为规则起点
         val offset = queue.indexOf(seq, pos)
         return if (offset != -1) {
@@ -47,7 +46,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
      * @param seq 匹配字符串序列
      * @return 成功返回true并设置间隔，失败则直接返回fasle
      */
-    fun consumeToAny(vararg seq: String): Boolean {
+    private fun consumeToAny(vararg seq: String): Boolean {
 
         var pos = pos //声明新变量记录匹配位置，不更改类本身的位置
 
@@ -89,7 +88,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     /**
      * 拉出一个非内嵌代码平衡组，存在转义文本
      */
-    fun chompCodeBalanced(open: Char, close: Char): Boolean {
+    private fun chompCodeBalanced(open: Char, close: Char): Boolean {
 
         var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
 
@@ -129,7 +128,7 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
     /**
      * 拉出一个规则平衡组，经过仔细测试xpath和jsoup中，引号内转义字符无效。
      */
-    fun chompRuleBalanced(open: Char, close: Char): Boolean {
+    private fun chompRuleBalanced(open: Char, close: Char): Boolean {
 
         var pos = pos //声明临时变量记录匹配位置，匹配成功后才同步到类的pos
         var depth = 0 //嵌套深度
@@ -364,8 +363,6 @@ class RuleAnalyzer(data: String, code: Boolean = false) {
             append(queue.substring(startX))
         }.toString()
     }
-
-    val ruleTypeList = ArrayList<String>()
 
     //设置平衡组函数，json或JavaScript时设置成chompCodeBalanced，否则为chompRuleBalanced
     val chompBalanced = if (code) ::chompCodeBalanced else ::chompRuleBalanced

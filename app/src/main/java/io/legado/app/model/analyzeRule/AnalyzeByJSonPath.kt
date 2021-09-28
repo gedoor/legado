@@ -41,24 +41,13 @@ class AnalyzeByJSonPath(json: Any) {
             result = ruleAnalyzes.innerRule("{$.") { getString(it) } //替换所有{$.rule...}
 
             if (result.isEmpty()) { //st为空，表明无成功替换的内嵌规则
-
                 try {
-
                     val ob = ctx.read<Any>(rule)
-
-                    result = (if (ob is List<*>) {
-
-                        val builder = StringBuilder()
-                        for (o in ob) {
-                            builder.append(o).append("\n")
-                        }
-
-                        builder.deleteCharAt(builder.lastIndex) //删除末尾赘余换行
-
-                        builder
-
-                    } else ob).toString()
-
+                    result = if (ob is List<*>) {
+                        ob.joinToString("\n")
+                    } else {
+                        ob.toString()
+                    }
                 } catch (ignored: Exception) {
                 }
 
@@ -90,21 +79,15 @@ class AnalyzeByJSonPath(json: Any) {
         if (rules.size == 1) {
 
             ruleAnalyzes.reSetPos() //将pos重置为0，复用解析器
-
             val st = ruleAnalyzes.innerRule("{$.") { getString(it) } //替换所有{$.rule...}
-
             if (st.isEmpty()) { //st为空，表明无成功替换的内嵌规则
-
                 try {
-
                     val obj = ctx.read<Any>(rule) //kotlin的Any型返回值不包含null ，删除赘余 ?: return result
-
                     if (obj is List<*>) {
-
                         for (o in obj) result.add(o.toString())
-
-                    } else result.add(obj.toString())
-
+                    } else {
+                        result.add(obj.toString())
+                    }
                 } catch (ignored: Exception) {
                 }
 
