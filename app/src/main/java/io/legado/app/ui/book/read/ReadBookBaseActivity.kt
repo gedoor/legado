@@ -22,12 +22,13 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.model.CacheBook
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
-import io.legado.app.utils.getPrefString
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
@@ -48,6 +49,7 @@ abstract class ReadBookBaseActivity :
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        binding.navigationBar.setBackgroundColor(bottomBackground)
         if (!LocalConfig.readHelpVersionIsLast) {
             showClickRegionalConfig()
         }
@@ -86,16 +88,16 @@ abstract class ReadBookBaseActivity :
         toolBarHide: Boolean = true
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.let {
-                if (ReadBookConfig.hideNavigationBar) {
-                    it.hide(WindowInsets.Type.navigationBars())
+            window.insetsController?.run {
+                if (toolBarHide && ReadBookConfig.hideNavigationBar) {
+                    hide(WindowInsets.Type.navigationBars())
                 } else {
-                    it.show(WindowInsets.Type.navigationBars())
+                    show(WindowInsets.Type.navigationBars())
                 }
                 if (toolBarHide && ReadBookConfig.hideStatusBar) {
-                    it.hide(WindowInsets.Type.statusBars())
+                    hide(WindowInsets.Type.statusBars())
                 } else {
-                    it.show(WindowInsets.Type.statusBars())
+                    show(WindowInsets.Type.statusBars())
                 }
             }
         }
@@ -134,10 +136,28 @@ abstract class ReadBookBaseActivity :
     }
 
     override fun upNavigationBarColor() {
+        upNavigationBar()
         when {
             binding.readMenu.isVisible -> super.upNavigationBarColor()
             bottomDialog > 0 -> super.upNavigationBarColor()
             else -> ATH.setNavigationBarColorAuto(this, ReadBookConfig.bgMeanColor)
+        }
+    }
+
+    private fun upNavigationBar() {
+        binding.navigationBar.run {
+            if (bottomDialog > 0 || binding.readMenu.isVisible) {
+                layoutParams = layoutParams.apply {
+                    height = if (ReadBookConfig.hideNavigationBar) {
+                        activity?.navigationBarHeight ?: 0
+                    } else {
+                        0
+                    }
+                }
+                visible()
+            } else {
+                gone()
+            }
         }
     }
 
