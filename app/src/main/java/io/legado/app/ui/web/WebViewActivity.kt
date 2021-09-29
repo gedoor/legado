@@ -36,8 +36,17 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        binding.titleBar.title = intent.getStringExtra("title") ?: getString(R.string.loading)
         initWebView()
-
+        viewModel.initData(intent) {
+            val url = viewModel.baseUrl
+            val html = viewModel.html
+            if (html.isNullOrEmpty()) {
+                binding.webView.loadUrl(url, viewModel.headerMap)
+            } else {
+                binding.webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
+            }
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -47,8 +56,8 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_open_in_browser -> openUrl("")
-            R.id.menu_copy_url -> sendToClip("")
+            R.id.menu_open_in_browser -> openUrl(viewModel.baseUrl)
+            R.id.menu_copy_url -> sendToClip(viewModel.baseUrl)
         }
         return super.onCompatOptionsItemSelected(item)
     }

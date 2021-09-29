@@ -322,14 +322,15 @@ class AnalyzeUrl(
      */
     suspend fun getStrResponse(
         jsStr: String? = null,
-        sourceRegex: String? = null
+        sourceRegex: String? = null,
+        useWebView: Boolean = true,
     ): StrResponse {
         if (type != null) {
             return StrResponse(url, StringUtils.byteToHexString(getByteArray()))
         }
         judgmentConcurrent()
         setCookie(source?.getKey())
-        if (useWebView) {
+        if (this.useWebView && useWebView) {
             return when (method) {
                 RequestMethod.POST -> {
                     val body = getProxyClient(proxy).newCallStrResponse(retry) {
@@ -443,6 +444,10 @@ class AnalyzeUrl(
 
     fun getUserAgent(): String {
         return headerMap[UA_NAME] ?: AppConfig.userAgent
+    }
+
+    fun isPost(): Boolean {
+        return method == RequestMethod.POST
     }
 
     override fun getSource(): BaseSource? {

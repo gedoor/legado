@@ -14,12 +14,10 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
-import io.legado.app.help.AppConfig
-import io.legado.app.help.LocalConfig
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.ThemeConfig
+import io.legado.app.help.*
 import io.legado.app.lib.theme.*
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.web.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import splitties.views.onLongClick
@@ -142,7 +140,12 @@ class ReadMenu @JvmOverloads constructor(
             callBack.openSourceEditActivity()
         }
         tvChapterUrl.setOnClickListener {
-            context.sendToClip(binding.tvChapterUrl.text.toString())
+            context.startActivity<WebViewActivity> {
+                val url = tvChapterUrl.text.toString()
+                putExtra("title", tvChapterName.text)
+                putExtra("url", url)
+                IntentData.put(url, ReadBook.bookSource?.getHeaderMap(true))
+            }
         }
         //登录
         tvLogin.setOnClickListener {

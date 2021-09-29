@@ -4,13 +4,24 @@ object IntentData {
 
     private val bigData: MutableMap<String, Any> = mutableMapOf()
 
-    fun put(data: Any, tag: String = ""): String {
-        val key = tag + System.currentTimeMillis()
-        bigData[key] = data
+    @Synchronized
+    fun put(key: String, data: Any?) {
+        data?.let {
+            bigData[key] = data
+        }
+    }
+
+    @Synchronized
+    fun put(data: Any?): String {
+        val key = System.currentTimeMillis().toString()
+        data?.let {
+            bigData[key] = data
+        }
         return key
     }
 
     @Suppress("UNCHECKED_CAST")
+    @Synchronized
     fun <T> get(key: String?): T? {
         if (key == null) return null
         val data = bigData[key]
