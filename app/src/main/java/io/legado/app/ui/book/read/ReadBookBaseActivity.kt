@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -88,16 +87,15 @@ abstract class ReadBookBaseActivity :
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.let {
-                if (toolBarHide) {
-                    if (ReadBookConfig.hideStatusBar) {
-                        it.hide(WindowInsets.Type.statusBars())
-                    }
-                    if (ReadBookConfig.hideNavigationBar) {
-                        it.hide(WindowInsets.Type.navigationBars())
-                    }
+                if (ReadBookConfig.hideNavigationBar) {
+                    it.hide(WindowInsets.Type.navigationBars())
+                } else {
+                    it.show(WindowInsets.Type.navigationBars())
+                }
+                if (toolBarHide && ReadBookConfig.hideStatusBar) {
+                    it.hide(WindowInsets.Type.statusBars())
                 } else {
                     it.show(WindowInsets.Type.statusBars())
-                    it.show(WindowInsets.Type.navigationBars())
                 }
             }
         }
@@ -123,13 +121,12 @@ abstract class ReadBookBaseActivity :
         if (!isInMultiWindow) {
             flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
-        flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        if (ReadBookConfig.hideNavigationBar) {
+            flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        }
         if (toolBarHide) {
             if (ReadBookConfig.hideStatusBar) {
                 flag = flag or View.SYSTEM_UI_FLAG_FULLSCREEN
-            }
-            if (ReadBookConfig.hideNavigationBar) {
-                flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             }
         }
         window.decorView.systemUiVisibility = flag
@@ -139,11 +136,7 @@ abstract class ReadBookBaseActivity :
         when {
             binding.readMenu.isVisible -> super.upNavigationBarColor()
             bottomDialog > 0 -> super.upNavigationBarColor()
-            else -> if (AppConfig.immNavigationBar) {
-                ATH.setNavigationBarColorAuto(this, Color.TRANSPARENT)
-            } else {
-                ATH.setNavigationBarColorAuto(this, Color.parseColor("#20000000"))
-            }
+            else -> ATH.setNavigationBarColorAuto(this, ReadBookConfig.bgMeanColor)
         }
     }
 

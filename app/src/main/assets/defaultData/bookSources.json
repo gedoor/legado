@@ -54,7 +54,7 @@
     "ruleToc": {
       "chapterList": "$.content.content",
       "chapterName": "$.chapterTitle",
-      "chapterUrl": "$.id@js:java.put('chapterId'; result);'https://www.shuidi.online:9021/fileMgt/getAudioByChapterId?bookId=' + java.get('bookId') + '&chapterId=' + result + '&pageNum=1&pageSize=50'"
+      "chapterUrl": "$.id@js:java.put('chapterId'; result);'https://www.shuidi.online:9021/fileMgt/getAudioByChapterId?bookId=' + java.get('bookId') + '&chapterId=' + result + \"&pageNum=1&pageSize=50&keyId={{var header = JSON.parse(source.getLoginHeader());var keyId = '1632746188011002';var ks = java.md5Encode(keyId + java.get('chapterId') + header.Authorization);keyId + '&keySecret=' + ks}\" + '}'"
     },
     "weight": 0
   }

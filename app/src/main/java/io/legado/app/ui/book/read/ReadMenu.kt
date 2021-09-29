@@ -83,7 +83,6 @@ class ReadMenu @JvmOverloads constructor(
         ivSetting.setColorFilter(textColor)
         tvSetting.setTextColor(textColor)
         vwBg.setOnClickListener(null)
-        vwNavigationBar.setOnClickListener(null)
         llBrightness.setOnClickListener(null)
         seekBrightness.post {
             seekBrightness.progress = AppConfig.readBrightness
@@ -255,11 +254,6 @@ class ReadMenu @JvmOverloads constructor(
 
             override fun onAnimationEnd(animation: Animation) {
                 binding.vwMenuBg.setOnClickListener { runMenuOut() }
-                binding.vwNavigationBar.run {
-                    layoutParams = layoutParams.apply {
-                        height = activity?.navigationBarHeight ?: 0
-                    }
-                }
                 if (!LocalConfig.readMenuHelpVersionIsLast) {
                     callBack.showReadMenuHelp()
                 }
