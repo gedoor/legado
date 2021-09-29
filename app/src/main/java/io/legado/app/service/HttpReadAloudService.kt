@@ -183,9 +183,6 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun removeCacheFile() {
         FileUtils.listDirsAndFiles(speakFilePath())?.forEach {
-            if (it == null) {
-                return@forEach
-            }
             if (Regex(""".+\.mp3$""").matches(it.name)) { //mp3缓存文件
                 val reg =
                     """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
