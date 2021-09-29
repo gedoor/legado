@@ -122,7 +122,10 @@ abstract class ReadBookBaseActivity :
             flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
         if (ReadBookConfig.hideNavigationBar) {
-            flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            if (toolBarHide) {
+                flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            }
         }
         if (toolBarHide) {
             if (ReadBookConfig.hideStatusBar) {

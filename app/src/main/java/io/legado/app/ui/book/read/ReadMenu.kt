@@ -16,6 +16,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.model.ReadBook
@@ -83,6 +84,7 @@ class ReadMenu @JvmOverloads constructor(
         ivSetting.setColorFilter(textColor)
         tvSetting.setTextColor(textColor)
         vwBg.setOnClickListener(null)
+        vwNavigationBar.setOnClickListener(null)
         llBrightness.setOnClickListener(null)
         seekBrightness.post {
             seekBrightness.progress = AppConfig.readBrightness
@@ -254,6 +256,15 @@ class ReadMenu @JvmOverloads constructor(
 
             override fun onAnimationEnd(animation: Animation) {
                 binding.vwMenuBg.setOnClickListener { runMenuOut() }
+                binding.vwNavigationBar.run {
+                    layoutParams = layoutParams.apply {
+                        height = if (ReadBookConfig.hideNavigationBar) {
+                            activity?.navigationBarHeight ?: 0
+                        } else {
+                            0
+                        }
+                    }
+                }
                 if (!LocalConfig.readMenuHelpVersionIsLast) {
                     callBack.showReadMenuHelp()
                 }
