@@ -4,6 +4,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import java.net.URL
 import java.util.regex.Pattern
 
+@Suppress("RegExpRedundantEscape")
 object HtmlFormatter {
     private val wrapHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
     private val commentRegex = "<!--[^>]*-->".toRegex() //注释

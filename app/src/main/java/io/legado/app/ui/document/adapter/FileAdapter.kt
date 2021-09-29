@@ -60,10 +60,10 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             data.add(fileParent)
         }
         currentPath?.let { currentPath ->
-            val files: Array<File?>? = FileUtils.listDirsAndFiles(currentPath)
+            val files: Array<File>? = FileUtils.listDirsAndFiles(currentPath)
             if (files != null) {
                 for (file in files) {
-                    if (file == null || (!callBack.isShowHideDir && file.name.startsWith("."))) {
+                    if (!callBack.isShowHideDir && file.name.startsWith(".")) {
                         continue
                     }
                     val fileItem = FileItem()
