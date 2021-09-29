@@ -32,19 +32,13 @@ val Activity.windowSize: DisplayMetrics
  */
 val Activity.isNavigationBarExist: Boolean
     get() {
-        val viewGroup = window.decorView as? ViewGroup
-        if (viewGroup != null) {
-            for (i in 0 until viewGroup.childCount) {
-                viewGroup.getChildAt(i).context.packageName
-                if (viewGroup.getChildAt(i).id != View.NO_ID
-                    && "navigationBarBackground" == resources.getResourceEntryName(
-                        viewGroup.getChildAt(
-                            i
-                        ).id
-                    )
-                ) {
-                    return true
-                }
+        val viewGroup = (window.decorView as? ViewGroup) ?: return false
+        for (i in 0 until viewGroup.childCount) {
+            val childId = viewGroup.getChildAt(i).id
+            if (childId != View.NO_ID
+                && resources.getResourceEntryName(childId) == "navigationBarBackground"
+            ) {
+                return true
             }
         }
         return false

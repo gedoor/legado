@@ -346,14 +346,16 @@ class AnalyzeUrl(
                         html = body,
                         tag = source?.getKey(),
                         javaScript = webJs ?: jsStr,
-                        sourceRegex = sourceRegex
+                        sourceRegex = sourceRegex,
+                        headerMap = headerMap
                     ).getStrResponse()
                 }
                 else -> BackstageWebView(
                     url = url,
                     tag = source?.getKey(),
                     javaScript = webJs ?: jsStr,
-                    sourceRegex = sourceRegex
+                    sourceRegex = sourceRegex,
+                    headerMap = headerMap
                 ).getStrResponse()
             }
         }

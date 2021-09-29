@@ -93,16 +93,3 @@ fun getProxyClient(proxy: String? = null): OkHttpClient {
     }
     return okHttpClient
 }
-
-suspend fun getWebViewSrc(
-    url: String? = null,
-    html: String? = null,
-    encode: String? = null,
-    tag: String? = null,
-    headerMap: Map<String, String>? = null,
-    sourceRegex: String? = null,
-    javaScript: String? = null,
-): StrResponse {
-    return BackstageWebView(url, html, encode, tag, headerMap, sourceRegex, javaScript)
-        .getStrResponse()
-}
