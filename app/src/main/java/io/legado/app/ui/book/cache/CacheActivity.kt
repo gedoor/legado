@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -208,6 +207,13 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     override fun observeLiveBus() {
+        viewModel.upAdapterLiveData.observe(this) {
+            adapter.getItems().forEachIndexed { index, book ->
+                if (book.bookUrl == it) {
+                    adapter.notifyItemChanged(index, true)
+                }
+            }
+        }
         observeEvent<String>(EventBus.UP_DOWNLOAD) {
             if (!CacheBook.isRun) {
                 menu?.findItem(R.id.menu_download)?.let { item ->
@@ -263,25 +269,10 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun startExport(path: String) {
         if (exportPosition == -10) {
             if (adapter.getItems().isNotEmpty()) {
-                Snackbar.make(binding.titleBar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
-                    .show()
-                var exportSize = adapter.getItems().size
                 adapter.getItems().forEach { book ->
                     when (AppConfig.exportType) {
-                        1 -> viewModel.exportEPUB(path, book) {
-                            exportSize--
-                            toastOnUi(it)
-                            if (exportSize <= 0) {
-                                binding.titleBar.snackbar(R.string.complete)
-                            }
-                        }
-                        else -> viewModel.export(path, book) {
-                            exportSize--
-                            toastOnUi(it)
-                            if (exportSize <= 0) {
-                                binding.titleBar.snackbar(R.string.complete)
-                            }
-                        }
+                        1 -> viewModel.exportEPUB(path, book)
+                        else -> viewModel.export(path, book)
                     }
                 }
             } else {
@@ -289,15 +280,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
         } else if (exportPosition >= 0) {
             adapter.getItem(exportPosition)?.let { book ->
-                Snackbar.make(binding.titleBar, R.string.exporting, Snackbar.LENGTH_INDEFINITE)
-                    .show()
                 when (AppConfig.exportType) {
-                    1 -> viewModel.exportEPUB(path, book) {
-                        binding.titleBar.snackbar(it)
-                    }
-                    else -> viewModel.export(path, book) {
-                        binding.titleBar.snackbar(it)
-                    }
+                    1 -> viewModel.exportEPUB(path, book)
+                    else -> viewModel.export(path, book)
                 }
             }
         }
@@ -344,6 +329,14 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
             cancelButton()
         }.show()
+    }
+
+    override fun exportProgress(bookUrl: String): Int? {
+        return viewModel.exportProgress[bookUrl]
+    }
+
+    override fun exportMsg(bookUrl: String): String? {
+        return viewModel.exportMsg[bookUrl]
     }
 
 }

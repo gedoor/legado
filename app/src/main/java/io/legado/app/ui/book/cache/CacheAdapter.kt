@@ -3,12 +3,16 @@ package io.legado.app.ui.book.cache
 import android.content.Context
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemDownloadBinding
 import io.legado.app.model.CacheBook
+import io.legado.app.utils.gone
+import io.legado.app.utils.visible
 
 class CacheAdapter(context: Context, private val callBack: CallBack) :
     RecyclerAdapter<Book, ItemDownloadBinding>(context) {
@@ -36,13 +40,13 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                     tvDownload.text =
                         context.getString(R.string.download_count, cs.size, item.totalChapterNum)
                 }
-                upDownloadIv(ivDownload, item)
             } else {
                 val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
                 tvDownload.text =
                     context.getString(R.string.download_count, cacheSize, item.totalChapterNum)
-                upDownloadIv(ivDownload, item)
             }
+            upDownloadIv(ivDownload, item)
+            upExportInfo(tvMsg, progressExport, item)
         }
     }
 
@@ -79,7 +83,28 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
         }
     }
 
+    private fun upExportInfo(msgView: TextView, progressView: ProgressBar, book: Book) {
+        val msg = callBack.exportMsg(book.bookUrl)
+        if (msg != null) {
+            msgView.text = msg
+            msgView.visible()
+            progressView.gone()
+            return
+        }
+        msgView.gone()
+        val progress = callBack.exportProgress(book.bookUrl)
+        if (progress != null) {
+            progressView.max = book.totalChapterNum
+            progressView.progress = progress
+            progressView.visible()
+            return
+        }
+        progressView.gone()
+    }
+
     interface CallBack {
         fun export(position: Int)
+        fun exportProgress(bookUrl: String): Int?
+        fun exportMsg(bookUrl: String): String?
     }
 }
