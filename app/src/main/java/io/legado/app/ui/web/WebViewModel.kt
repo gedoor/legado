@@ -15,6 +15,9 @@ import java.util.*
 
 class WebViewModel(application: Application) : BaseViewModel(application) {
 
+    fun initData(url: String, header: Map<String, String>?) {
+
+    }
 
     fun saveImage(webPic: String?, path: String) {
         webPic ?: return

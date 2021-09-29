@@ -36,6 +36,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initWebView()
+
     }
 
     @SuppressLint("JavascriptInterface")

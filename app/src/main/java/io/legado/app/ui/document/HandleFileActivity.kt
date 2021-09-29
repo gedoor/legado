@@ -11,7 +11,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
-import io.legado.app.help.IntentDataHelp
+import io.legado.app.help.IntentData
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
@@ -122,7 +122,7 @@ class HandleFileActivity :
     private fun getFileData(): Triple<String, ByteArray, String>? {
         val fileName = intent.getStringExtra("fileName")
         val file = intent.getStringExtra("fileKey")?.let {
-            IntentDataHelp.getData<ByteArray>(it)
+            IntentData.get<ByteArray>(it)
         }
         val contentType = intent.getStringExtra("contentType")
         if (fileName != null && file != null && contentType != null) {

@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
-import io.legado.app.help.IntentDataHelp
+import io.legado.app.help.IntentData
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.utils.putJson
 
@@ -32,7 +32,7 @@ class HandleFileContract :
             intent.putJson("otherActions", it.otherActions)
             it.fileData?.let { fileData ->
                 intent.putExtra("fileName", fileData.first)
-                intent.putExtra("fileKey", IntentDataHelp.putData(fileData.second))
+                intent.putExtra("fileKey", IntentData.put(fileData.second))
                 intent.putExtra("contentType", fileData.third)
             }
         }
