@@ -14,7 +14,6 @@ import android.view.WindowManager
 import android.widget.EdgeEffect
 import android.widget.ScrollView
 import androidx.annotation.ColorInt
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -189,24 +188,6 @@ object ATH {
         isDark: Boolean = AppConfig.isNightTheme
     ) {
         TintHelper.setTintAuto(view, color, true, isDark)
-    }
-
-    fun setAlertDialogTint(dialog: AlertDialog): AlertDialog {
-        dialog.window?.setBackgroundDrawable(getDialogBackground())
-        val colorStateList = Selector.colorBuild()
-            .setDefaultColor(ThemeStore.accentColor(dialog.context))
-            .setPressedColor(ColorUtils.darkenColor(ThemeStore.accentColor(dialog.context)))
-            .create()
-        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(colorStateList)
-        }
-        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(colorStateList)
-        }
-        if (dialog.getButton(AlertDialog.BUTTON_NEUTRAL) != null) {
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(colorStateList)
-        }
-        return dialog
     }
 
     fun setEdgeEffectColor(view: RecyclerView?, @ColorInt color: Int) {

@@ -13,8 +13,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.jaredrummler.android.colorpicker.*
-import io.legado.app.lib.theme.ATH
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyTint
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
@@ -215,9 +215,7 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
         override fun onStart() {
             super.onStart()
             val alertDialog = dialog as? AlertDialog
-            alertDialog?.let {
-                ATH.setAlertDialogTint(it)
-            }
+            alertDialog?.applyTint()
         }
 
 
