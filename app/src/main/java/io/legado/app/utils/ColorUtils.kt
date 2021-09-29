@@ -168,7 +168,7 @@ object ColorUtils {
         return byteArrToInt(colorByteArr)
     }
 
-    fun rgb(argb: Int): IntArray? {
+    fun rgb(argb: Int): IntArray {
         return intArrayOf(argb shr 16 and 0xFF, argb shr 8 and 0xFF, argb and 0xFF)
     }
 
@@ -187,9 +187,6 @@ object ColorUtils {
         val xr: Float
         val yr: Float
         val zr: Float
-        val ls: Float
-        val `as`: Float
-        val bs: Float
         val eps = 216f / 24389f
         val k = 24389f / 27f
         val xr1 = 0.964221f // reference white D50
@@ -219,9 +216,9 @@ object ColorUtils {
             .toFloat() else ((k * yr + 16.0) / 116.0).toFloat()
         fz = if (zr > eps) zr.toDouble().pow(1 / 3.0)
             .toFloat() else ((k * zr + 16.0) / 116).toFloat()
-        ls = 116 * fy - 16
-        `as` = 500 * (fx - fy)
-        bs = 200 * (fy - fz)
+        val ls: Float = 116 * fy - 16
+        val `as`: Float = 500 * (fx - fy)
+        val bs: Float = 200 * (fy - fz)
         val lab = IntArray(3)
         lab[0] = (2.55 * ls + .5).toInt()
         lab[1] = (`as` + .5).toInt()
