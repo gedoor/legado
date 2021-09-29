@@ -13,7 +13,6 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
@@ -29,7 +28,9 @@ import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
 
-
+/**
+ * rss阅读界面
+ */
 class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(false),
     ReadRssViewModel.CallBack {
 
@@ -202,9 +203,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     binding.webView.settings,
                     WebSettingsCompat.FORCE_DARK_ON
                 )
-            } else {
-                binding.webView
-                    .evaluateJavascript(AppConst.darkWebViewJs, null)
             }
         }
     }
@@ -282,6 +280,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     inner class CustomWebChromeClient : WebChromeClient() {
+
+        override fun onReceivedTitle(view: WebView?, title: String?) {
+            super.onReceivedTitle(view, title)
+            title.let {
+                binding.titleBar.title = title
+            }
+        }
+
         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
             binding.llView.invisible()
@@ -317,7 +323,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
-            upWebViewTheme()
+            view?.title?.let { title ->
+                binding.titleBar.title = title
+            }
         }
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {

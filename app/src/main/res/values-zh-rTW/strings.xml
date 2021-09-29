@@ -894,5 +894,7 @@
     <string name="delete_source">删除源</string>
     <string name="chapter_pay">购买</string>
     <string name="double_page_horizontal">横屏双页</string>
+    <string name="open_in_browser">浏览器打开</string>
+    <string name="copy_url">拷贝url</string>
 
 </resources>

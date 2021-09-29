@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.webkit.*
 import androidx.activity.viewModels
@@ -11,7 +13,6 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityWebViewBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
@@ -37,6 +38,19 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initWebView()
 
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.web_view, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_open_in_browser -> openUrl("")
+            R.id.menu_copy_url -> sendToClip("")
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     @SuppressLint("JavascriptInterface")
@@ -83,9 +97,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     binding.webView.settings,
                     WebSettingsCompat.FORCE_DARK_ON
                 )
-            } else {
-                binding.webView
-                    .evaluateJavascript(AppConst.darkWebViewJs, null)
             }
         }
     }
@@ -112,6 +123,14 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     inner class CustomWebChromeClient : WebChromeClient() {
+
+        override fun onReceivedTitle(view: WebView?, title: String?) {
+            super.onReceivedTitle(view, title)
+            title?.let {
+                binding.titleBar.title = it
+            }
+        }
+
         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
             binding.llView.invisible()
@@ -147,7 +166,9 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
-            upWebViewTheme()
+            view?.title?.let { title ->
+                binding.titleBar.title = title
+            }
         }
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {
