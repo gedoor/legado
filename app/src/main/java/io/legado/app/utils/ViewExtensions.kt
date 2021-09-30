@@ -5,11 +5,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Build
+import android.text.Html
 import android.view.View
 import android.view.View.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.RadioGroup
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
@@ -101,6 +103,15 @@ fun RadioGroup.getCheckedIndex(): Int {
 
 fun RadioGroup.checkByIndex(index: Int) {
     check(get(index).id)
+}
+
+fun TextView.setHtml(html: String) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        text = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT)
+    } else {
+        @Suppress("DEPRECATION")
+        text = Html.fromHtml(html)
+    }
 }
 
 @SuppressLint("RestrictedApi")

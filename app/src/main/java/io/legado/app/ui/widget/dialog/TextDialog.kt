@@ -1,14 +1,13 @@
 package io.legado.app.ui.widget.dialog
 
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogTextViewBinding
+import io.legado.app.utils.setHtml
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
 import io.noties.markwon.Markwon
@@ -70,12 +69,7 @@ class TextDialog() : BaseDialogFragment() {
                         .build()
                         .setMarkdown(binding.textView, content)
                 }
-                Mode.HTML.name -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    binding.textView.text = Html.fromHtml(content, Html.FROM_HTML_MODE_LEGACY)
-                } else {
-                    @Suppress("DEPRECATION")
-                    binding.textView.text = Html.fromHtml(content)
-                }
+                Mode.HTML.name -> binding.textView.setHtml(content)
                 else -> binding.textView.text = content
             }
             time = it.getLong("time", 0L)
