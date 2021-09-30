@@ -25,7 +25,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.showDialog
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
 import kotlinx.coroutines.flow.collect
@@ -104,7 +104,7 @@ class GroupSelectDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListene
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> childFragmentManager.showDialog(
+            R.id.menu_add -> showDialogFragment(
                 GroupEditDialog()
             )
         }
@@ -148,7 +148,7 @@ class GroupSelectDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListene
                     }
                 }
                 tvEdit.setOnClickListener {
-                    childFragmentManager.showDialog(
+                    showDialogFragment(
                         GroupEditDialog(getItem(holder.layoutPosition))
                     )
                 }

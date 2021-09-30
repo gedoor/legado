@@ -181,7 +181,7 @@ class BookInfoActivity :
                 }
             }
             R.id.menu_clear_cache -> viewModel.clearCache()
-            R.id.menu_log -> supportFragmentManager.showDialog<AppLogDialog>()
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -255,7 +255,7 @@ class BookInfoActivity :
     private fun initOnClick() = binding.run {
         ivCover.setOnClickListener {
             viewModel.bookData.value?.let {
-                supportFragmentManager.showDialog(
+                showDialogFragment(
                     ChangeCoverDialog(it.name, it.author)
                 )
             }
@@ -283,7 +283,7 @@ class BookInfoActivity :
         }
         tvChangeSource.setOnClickListener {
             viewModel.bookData.value?.let {
-                supportFragmentManager.showDialog(ChangeSourceDialog(it.name, it.author))
+                showDialogFragment(ChangeSourceDialog(it.name, it.author))
             }
         }
         tvTocView.setOnClickListener {
@@ -299,7 +299,7 @@ class BookInfoActivity :
         }
         tvChangeGroup.setOnClickListener {
             viewModel.bookData.value?.let {
-                supportFragmentManager.showDialog(
+                showDialogFragment(
                     GroupSelectDialog(it.group)
                 )
             }

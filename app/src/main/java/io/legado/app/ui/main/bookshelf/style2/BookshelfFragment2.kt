@@ -192,7 +192,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 putExtra("name", item.name)
                 putExtra("author", item.author)
             }
-            is BookGroup -> childFragmentManager.showDialog(GroupEditDialog(item))
+            is BookGroup -> showDialogFragment(GroupEditDialog(item))
         }
     }
 

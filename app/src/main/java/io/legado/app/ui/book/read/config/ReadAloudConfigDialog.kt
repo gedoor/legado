@@ -95,7 +95,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
             when (preference?.key) {
-                PreferKey.ttsEngine -> childFragmentManager.showDialog(SpeakEngineDialog())
+                PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog())
             }
             return super.onPreferenceTreeClick(preference)
         }

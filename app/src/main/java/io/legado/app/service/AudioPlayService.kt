@@ -18,10 +18,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.AppConst
-import io.legado.app.constant.EventBus
-import io.legado.app.constant.IntentAction
-import io.legado.app.constant.Status
+import io.legado.app.constant.*
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -251,12 +248,10 @@ class AudioPlayService : BaseService(),
         super.onPlayerError(error)
         AudioPlay.status = Status.STOP
         postEvent(EventBus.AUDIO_STATE, Status.STOP)
+        val errorMsg = "音频播放出错\n${error.errorCodeName} ${error.errorCode}"
+        AppLog.put(errorMsg, error)
+        toastOnUi(errorMsg)
         error.printOnDebug()
-    }
-
-    override fun onPlayerErrorChanged(error: PlaybackException?) {
-        super.onPlayerErrorChanged(error)
-        postEvent(EventBus.AUDIO_ERROR, error?.localizedMessage)
     }
 
     private fun setTimer(minute: Int) {

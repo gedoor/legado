@@ -134,7 +134,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             R.id.menu_export_file_name -> alertExportFileName()
             R.id.menu_export_type -> showExportTypeConfig()
             R.id.menu_export_charset -> showCharsetConfig()
-            R.id.menu_log -> supportFragmentManager.showDialog<AppLogDialog>()
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
             else -> if (item.groupId == R.id.menu_group) {
                 binding.titleBar.subtitle = item.title
                 groupId = appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0

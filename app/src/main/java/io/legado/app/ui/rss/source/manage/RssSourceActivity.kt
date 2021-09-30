@@ -53,14 +53,14 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     private var groupMenu: SubMenu? = null
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
-        supportFragmentManager.showDialog(
+        showDialogFragment(
             ImportRssSourceDialog(it)
         )
     }
     private val importDoc = registerForActivityResult(HandleFileContract()) { uri ->
         kotlin.runCatching {
             uri?.readText(this)?.let {
-                supportFragmentManager.showDialog(
+                showDialogFragment(
                     ImportRssSourceDialog(it)
                 )
             }
@@ -290,7 +290,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                         cacheUrls.add(0, it)
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
-                    supportFragmentManager.showDialog(
+                    showDialogFragment(
                         ImportRssSourceDialog(it)
                     )
                 }

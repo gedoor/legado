@@ -110,7 +110,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             postEvent(EventBus.UP_CONFIG, true)
         }
         tvTextFont.setOnClickListener {
-            childFragmentManager.showDialog<FontSelectDialog>()
+            showDialogFragment<FontSelectDialog>()
         }
         tvTextIndent.setOnClickListener {
             context?.selector(

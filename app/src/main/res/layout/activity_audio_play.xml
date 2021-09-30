@@ -55,18 +55,6 @@
         app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
     <TextView
-        android:id="@+id/tv_error_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:textColor="@color/md_white_1000"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/tv_sub_title" />
-
-    <TextView
         android:id="@+id/tv_sub_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

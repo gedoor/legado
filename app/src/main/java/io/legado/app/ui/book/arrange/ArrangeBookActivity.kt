@@ -26,7 +26,7 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.showDialog
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -144,7 +144,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_group_manage -> supportFragmentManager.showDialog<GroupManageDialog>()
+            R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             else -> if (item.groupId == R.id.menu_group) {
                 binding.titleBar.subtitle = item.title
                 groupId = appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
@@ -180,7 +180,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     }
 
     override fun selectGroup(requestCode: Int, groupId: Long) {
-        supportFragmentManager.showDialog(
+        showDialogFragment(
             GroupSelectDialog(groupId, requestCode)
         )
     }

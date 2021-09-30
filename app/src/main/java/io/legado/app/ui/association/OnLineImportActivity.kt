@@ -6,7 +6,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.utils.showDialog
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -23,13 +23,13 @@ class OnLineImportActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.successLive.observe(this) {
             when (it.first) {
-                "bookSource" -> supportFragmentManager.showDialog(
+                "bookSource" -> showDialogFragment(
                     ImportBookSourceDialog(it.second, true)
                 )
-                "rssSource" -> supportFragmentManager.showDialog(
+                "rssSource" -> showDialogFragment(
                     ImportRssSourceDialog(it.second, true)
                 )
-                "replaceRule" -> supportFragmentManager.showDialog(
+                "replaceRule" -> showDialogFragment(
                     ImportReplaceRuleDialog(it.second, true)
                 )
             }
@@ -44,13 +44,13 @@ class OnLineImportActivity :
                 return
             }
             when (it.path) {
-                "/bookSource" -> supportFragmentManager.showDialog(
+                "/bookSource" -> showDialogFragment(
                     ImportBookSourceDialog(url, true)
                 )
-                "/rssSource" -> supportFragmentManager.showDialog(
+                "/rssSource" -> showDialogFragment(
                     ImportRssSourceDialog(url, true)
                 )
-                "/replaceRule" -> supportFragmentManager.showDialog(
+                "/replaceRule" -> showDialogFragment(
                     ImportReplaceRuleDialog(url, true)
                 )
                 "/textTocRule" -> viewModel.getText(url) { json ->
@@ -66,13 +66,13 @@ class OnLineImportActivity :
                     viewModel.importReadConfig(bytes, this::finallyDialog)
                 }
                 "/importonline" -> when (it.host) {
-                    "booksource" -> supportFragmentManager.showDialog(
+                    "booksource" -> showDialogFragment(
                         ImportBookSourceDialog(url, true)
                     )
-                    "rsssource" -> supportFragmentManager.showDialog(
+                    "rsssource" -> showDialogFragment(
                         ImportRssSourceDialog(url, true)
                     )
-                    "replace" -> supportFragmentManager.showDialog(
+                    "replace" -> showDialogFragment(
                         ImportReplaceRuleDialog(url, true)
                     )
                     else -> {

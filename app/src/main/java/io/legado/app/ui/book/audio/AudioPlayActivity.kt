@@ -24,6 +24,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.BookCover
 import io.legado.app.service.AudioPlayService
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -93,7 +94,7 @@ class AudioPlayActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> AudioPlay.book?.let {
-                supportFragmentManager.showDialog(ChangeSourceDialog(it.name, it.author))
+                showDialogFragment(ChangeSourceDialog(it.name, it.author))
             }
             R.id.menu_login -> AudioPlay.bookSource?.let {
                 startActivity<SourceLoginActivity> {
@@ -106,6 +107,7 @@ class AudioPlayActivity :
                     putExtra("sourceUrl", it.bookSourceUrl)
                 }
             }
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -220,9 +222,6 @@ class AudioPlayActivity :
             if (it) {
                 playButton()
             }
-        }
-        observeEventSticky<String>(EventBus.AUDIO_ERROR) {
-            binding.tvErrorMessage.text = it
         }
         observeEventSticky<Int>(EventBus.AUDIO_STATE) {
             AudioPlay.status = it

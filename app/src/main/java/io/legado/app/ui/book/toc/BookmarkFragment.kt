@@ -13,7 +13,7 @@ import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.FragmentBookmarkBinding
 import io.legado.app.lib.theme.ATH
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.showDialog
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -68,6 +68,6 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
     }
 
     override fun onLongClick(bookmark: Bookmark) {
-        childFragmentManager.showDialog(BookmarkDialog(bookmark))
+        showDialogFragment(BookmarkDialog(bookmark))
     }
 }

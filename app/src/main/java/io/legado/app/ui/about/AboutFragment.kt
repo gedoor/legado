@@ -86,7 +86,7 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     private fun checkUpdate() {
         AppUpdate.checkFromGitHub(lifecycleScope) { newVersion, updateBody, url, name ->
-            childFragmentManager.showDialog(
+            showDialogFragment(
                 UpdateDialog(newVersion, updateBody, url, name)
             )
         }

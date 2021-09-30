@@ -224,7 +224,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
             R.id.menu_change_source -> {
                 binding.readMenu.runMenuOut()
                 BookRead.book?.let {
-                    supportFragmentManager.showDialog(ChangeSourceDialog(it.name, it.author))
+                    showDialogFragment(ChangeSourceDialog(it.name, it.author))
                 }
             }
             R.id.menu_refresh -> {
@@ -249,7 +249,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                         chapterName = page.title
                         bookText = page.text.trim()
                     }
-                    supportFragmentManager.showDialog(BookmarkDialog(bookmark))
+                    showDialogFragment(BookmarkDialog(bookmark))
                 }
             }
             R.id.menu_copy_text ->
@@ -277,7 +277,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     putExtra("author", it.author)
                 }
             }
-            R.id.menu_toc_regex -> supportFragmentManager.showDialog(
+            R.id.menu_toc_regex -> showDialogFragment(
                 TocRegexDialog(BookRead.book?.tocUrl)
             )
             R.id.menu_reverse_content -> BookRead.book?.let {
@@ -511,7 +511,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 if (bookmark == null) {
                     toastOnUi(R.string.create_bookmark_error)
                 } else {
-                    supportFragmentManager.showDialog(BookmarkDialog(bookmark))
+                    showDialogFragment(BookmarkDialog(bookmark))
                 }
                 return true
             }
@@ -538,7 +538,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 return true
             }
             R.id.menu_dict -> {
-                supportFragmentManager.showDialog(DictDialog(selectedText))
+                showDialogFragment(DictDialog(selectedText))
                 return true
             }
         }
@@ -646,7 +646,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun showActionMenu() {
         when {
             BaseReadAloudService.isRun -> showReadAloudDialog()
-            isAutoPage -> supportFragmentManager.showDialog<AutoReadDialog>()
+            isAutoPage -> showDialogFragment<AutoReadDialog>()
             else -> binding.readMenu.runMenuIn()
         }
     }
@@ -660,7 +660,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 显示朗读菜单
      */
     override fun showReadAloudDialog() {
-        supportFragmentManager.showDialog<ReadAloudDialog>()
+        showDialogFragment<ReadAloudDialog>()
     }
 
     /**
@@ -761,14 +761,14 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 显示阅读样式配置
      */
     override fun showReadStyle() {
-        supportFragmentManager.showDialog<ReadStyleDialog>()
+        showDialogFragment<ReadStyleDialog>()
     }
 
     /**
      * 显示更多设置
      */
     override fun showMoreSetting() {
-        supportFragmentManager.showDialog<MoreConfigDialog>()
+        showDialogFragment<MoreConfigDialog>()
     }
 
     /**

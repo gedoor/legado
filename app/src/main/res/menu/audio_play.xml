@@ -25,4 +25,9 @@
         android:title="@string/edit_book_source"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_log"
+        android:title="@string/log"
+        app:showAsAction="never" />
+
 </menu>

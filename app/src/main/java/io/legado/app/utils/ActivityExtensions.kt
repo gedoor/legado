@@ -2,11 +2,28 @@ package io.legado.app.utils
 
 import android.app.Activity
 import android.os.Build
+import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowMetrics
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
+
+inline fun <reified T : DialogFragment> AppCompatActivity.showDialogFragment(
+    arguments: Bundle.() -> Unit = {}
+) {
+    val dialog = T::class.java.newInstance()
+    val bundle = Bundle()
+    bundle.apply(arguments)
+    dialog.arguments = bundle
+    dialog.show(supportFragmentManager, T::class.simpleName)
+}
+
+fun AppCompatActivity.showDialogFragment(dialogFragment: DialogFragment) {
+    dialogFragment.show(supportFragmentManager, dialogFragment::class.simpleName)
+}
 
 val Activity.windowSize: DisplayMetrics
     get() {

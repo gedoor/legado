@@ -12,20 +12,19 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 
-inline fun <reified T : DialogFragment> FragmentManager.showDialog(
+inline fun <reified T : DialogFragment> Fragment.showDialogFragment(
     arguments: Bundle.() -> Unit = {}
 ) {
     val dialog = T::class.java.newInstance()
     val bundle = Bundle()
     bundle.apply(arguments)
     dialog.arguments = bundle
-    dialog.show(this, T::class.simpleName)
+    dialog.show(childFragmentManager, T::class.simpleName)
 }
 
-fun FragmentManager.showDialog(dialogFragment: DialogFragment) {
-    dialogFragment.show(this, dialogFragment::class.simpleName)
+fun Fragment.showDialogFragment(dialogFragment: DialogFragment) {
+    dialogFragment.show(childFragmentManager, dialogFragment::class.simpleName)
 }
 
 fun Fragment.getPrefBoolean(key: String, defValue: Boolean = false) =

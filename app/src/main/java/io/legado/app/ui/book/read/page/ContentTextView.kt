@@ -12,17 +12,14 @@ import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.BookRead
+import io.legado.app.ui.book.read.PhotoDialog
 import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
-import io.legado.app.ui.widget.dialog.PhotoDialog
-import io.legado.app.utils.activity
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import kotlin.math.min
 
 /**
@@ -235,9 +232,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         if (!selectAble) return
         touch(x, y) { relativePos, textPage, _, lineIndex, _, charIndex, textChar ->
             if (textChar.isImage) {
-                activity?.supportFragmentManager?.let {
-                    PhotoDialog.show(it, textPage.chapterIndex, textChar.charData)
-                }
+                activity?.showDialogFragment(PhotoDialog(textPage.chapterIndex, textChar.charData))
             } else {
                 textChar.selected = true
                 invalidate()
