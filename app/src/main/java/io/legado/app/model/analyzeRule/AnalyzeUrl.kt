@@ -7,8 +7,8 @@ import com.bumptech.glide.load.model.LazyHeaders
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern.JS_PATTERN
-import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.BaseSource
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
@@ -36,10 +36,9 @@ class AnalyzeUrl(
     val speakText: String? = null,
     val speakSpeed: Int? = null,
     var baseUrl: String = "",
-    val book: BaseBook? = null,
-    val chapter: BookChapter? = null,
-    private val ruleData: RuleDataInterface? = null,
     private val source: BaseSource? = null,
+    private val ruleData: RuleDataInterface? = null,
+    private val chapter: BookChapter? = null,
     headerMapF: Map<String, String>? = null,
 ) : JsExtensions {
     companion object {
@@ -239,7 +238,7 @@ class AnalyzeUrl(
         bindings["key"] = key
         bindings["speakText"] = speakText
         bindings["speakSpeed"] = speakSpeed
-        bindings["book"] = book
+        bindings["book"] = ruleData as? Book
         bindings["source"] = source
         bindings["result"] = result
         return SCRIPT_ENGINE.eval(jsStr, bindings)
@@ -247,14 +246,13 @@ class AnalyzeUrl(
 
     fun put(key: String, value: String): String {
         chapter?.putVariable(key, value)
-            ?: book?.putVariable(key, value)
             ?: ruleData?.putVariable(key, value)
         return value
     }
 
     fun get(key: String): String {
         when (key) {
-            "bookName" -> book?.let {
+            "bookName" -> (ruleData as? Book)?.let {
                 return it.name
             }
             "title" -> chapter?.let {
@@ -262,7 +260,6 @@ class AnalyzeUrl(
             }
         }
         return chapter?.variableMap?.get(key)
-            ?: book?.variableMap?.get(key)
             ?: ruleData?.variableMap?.get(key)
             ?: ""
     }

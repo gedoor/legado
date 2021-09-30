@@ -71,8 +71,8 @@ object WebBook {
                 page = page,
                 baseUrl = bookSource.bookSourceUrl,
                 headerMapF = bookSource.getHeaderMap(true),
-                book = variableBook,
-                source = bookSource
+                source = bookSource,
+                ruleData = variableBook,
             )
             var res = analyzeUrl.getStrResponse()
             //检测书源是否已登录
@@ -120,8 +120,8 @@ object WebBook {
             ruleUrl = url,
             page = page,
             baseUrl = bookSource.bookSourceUrl,
-            book = variableBook,
             source = bookSource,
+            ruleData = variableBook,
             headerMapF = bookSource.getHeaderMap(true)
         )
         var res = analyzeUrl.getStrResponse()
@@ -178,8 +178,8 @@ object WebBook {
             val analyzeUrl = AnalyzeUrl(
                 ruleUrl = book.bookUrl,
                 baseUrl = bookSource.bookSourceUrl,
-                book = book,
                 source = bookSource,
+                ruleData = book,
                 headerMapF = bookSource.getHeaderMap(true)
             )
             var res = analyzeUrl.getStrResponse()
@@ -235,8 +235,8 @@ object WebBook {
             val analyzeUrl = AnalyzeUrl(
                 ruleUrl = book.tocUrl,
                 baseUrl = book.bookUrl,
-                book = book,
                 source = bookSource,
+                ruleData = book,
                 headerMapF = bookSource.getHeaderMap(true)
             )
             var res = analyzeUrl.getStrResponse()
@@ -299,8 +299,8 @@ object WebBook {
             val analyzeUrl = AnalyzeUrl(
                 ruleUrl = bookChapter.getAbsoluteURL(),
                 baseUrl = book.tocUrl,
-                book = book,
                 source = bookSource,
+                ruleData = book,
                 chapter = bookChapter,
                 headerMapF = bookSource.getHeaderMap(true)
             )

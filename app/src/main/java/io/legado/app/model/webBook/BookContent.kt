@@ -69,8 +69,8 @@ object BookContent {
                 scope.ensureActive()
                 val res = AnalyzeUrl(
                     ruleUrl = nextUrl,
-                    book = book,
                     source = bookSource,
+                    ruleData = book,
                     headerMapF = bookSource.getHeaderMap()
                 ).getStrResponse()
                 res.body?.let { nextBody ->
@@ -92,8 +92,8 @@ object BookContent {
                         val urlStr = contentData.second[it]
                         val analyzeUrl = AnalyzeUrl(
                             ruleUrl = urlStr,
-                            book = book,
                             source = bookSource,
+                            ruleData = book,
                             headerMapF = bookSource.getHeaderMap()
                         )
                         val res = analyzeUrl.getStrResponse()

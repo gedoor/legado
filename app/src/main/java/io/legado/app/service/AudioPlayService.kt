@@ -130,8 +130,10 @@ class AudioPlayService : BaseService(),
                 upPlayProgressJob?.cancel()
                 val analyzeUrl = AnalyzeUrl(
                     url,
+                    source = AudioPlay.bookSource,
+                    ruleData = AudioPlay.book,
+                    chapter = AudioPlay.durChapter,
                     headerMapF = AudioPlay.headers(true),
-                    source = AudioPlay.bookSource
                 )
                 val uri = Uri.parse(analyzeUrl.url)
                 val mediaSource = ExoPlayerHelper

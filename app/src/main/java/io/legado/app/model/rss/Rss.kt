@@ -38,8 +38,8 @@ object Rss {
         val analyzeUrl = AnalyzeUrl(
             sortUrl,
             page = page,
-            ruleData = ruleData,
             source = rssSource,
+            ruleData = ruleData,
             headerMapF = rssSource.getHeaderMap()
         )
         val body = analyzeUrl.getStrResponse().body
@@ -66,8 +66,8 @@ object Rss {
         val analyzeUrl = AnalyzeUrl(
             rssArticle.link,
             baseUrl = rssArticle.origin,
-            ruleData = rssArticle,
             source = rssSource,
+            ruleData = rssArticle,
             headerMapF = rssSource.getHeaderMap()
         )
         val body = analyzeUrl.getStrResponse().body
