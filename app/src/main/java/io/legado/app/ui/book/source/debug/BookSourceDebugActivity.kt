@@ -93,6 +93,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             if (it.title.startsWith("ERROR:")) {
                 adapter.addItem("获取发现出错\n${it.url}")
                 openOrCloseHelp(false)
+                searchView.clearFocus()
             }
         }
         binding.textMy.onClick {
