@@ -121,6 +121,7 @@ class CoverImageView @JvmOverloads constructor(
             authorPaint.strokeWidth = authorPaint.textSize / 5
             startX = width * 0.8f
             startY = height * 0.95f - author.size * authorPaint.textHeight
+            startY = maxOf(startY, height * 0.3f)
             author.forEach {
                 authorPaint.color = Color.WHITE
                 authorPaint.style = Paint.Style.STROKE
