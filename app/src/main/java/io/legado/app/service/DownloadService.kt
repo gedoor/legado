@@ -176,14 +176,11 @@ class DownloadService : BaseService() {
             val intent = Intent()
             intent.action = Intent.ACTION_VIEW
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {   //7.0版本以上
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                //7.0版本以上
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.setDataAndType(uri, IntentType.from(uri))
-            } else {
-                intent.setDataAndType(uri, IntentType.from(uri))
             }
-
+            intent.setDataAndType(uri, IntentType.from(uri))
             try {
                 startActivity(intent)
             } catch (e: Exception) {
