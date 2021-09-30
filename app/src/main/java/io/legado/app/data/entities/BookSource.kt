@@ -3,6 +3,7 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.*
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.*
@@ -91,8 +92,9 @@ data class BookSource(
                     }
                 }
             }.onFailure {
-                it.printOnDebug()
                 kinds.add(ExploreKind(it.localizedMessage ?: ""))
+                AppLog.put("解析发现规则出错\n${it.localizedMessage}", it)
+                it.printOnDebug()
             }
         }
         return@lazy kinds
