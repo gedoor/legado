@@ -264,7 +264,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             play()
             return true
         }
-        AppLog.addLog("朗读错误,($what, $extra)")
+        AppLog.put("朗读错误,($what, $extra)")
         errorNo++
         if (errorNo >= 5) {
             toastOnUi("朗读连续3次错误, 最后一次错误代码($what, $extra)")

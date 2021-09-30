@@ -125,7 +125,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             addDownload(source, book)
         }.onError(upTocPool) {
-            AppLog.addLog("${book.name} 更新目录失败\n${it.localizedMessage}", it)
+            AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)
             it.printOnDebug()
         }.onCancel(upTocPool) {
             upTocCancel(book.bookUrl)

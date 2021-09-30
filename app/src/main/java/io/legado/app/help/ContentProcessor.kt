@@ -72,7 +72,7 @@ class ContentProcessor private constructor(
                 val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s|\\p{P})+".toRegex()
                 mContent = mContent.replace(titleRegex, "")
             } catch (e: Exception) {
-                AppLog.addLog("去除重复标题出错\n${e.localizedMessage}", e)
+                AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
             }
             //重新添加标题
             mContent = chapter.getDisplayTitle() + "\n" + mContent

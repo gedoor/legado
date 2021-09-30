@@ -259,7 +259,7 @@ object BookRead : CoroutineScope by MainScope() {
                 } ?: removeLoading(index)
             }.onError {
                 removeLoading(index)
-                AppLog.addLog("加载正文出错\n${it.localizedMessage}")
+                AppLog.put("加载正文出错\n${it.localizedMessage}")
             }
         }
     }

@@ -42,7 +42,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 val keycode: Int = keyEvent.keyCode
                 val action: Int = keyEvent.action
                 if (action == KeyEvent.ACTION_DOWN) {
-                    AppLog.addLog("mediaButton $action")
+                    AppLog.put("mediaButton $action")
                     when (keycode) {
                         KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
                             if (context.getPrefBoolean("mediaButtonPerNext", false)) {
@@ -88,7 +88,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 LifecycleHelp.isExistActivity(AudioPlayActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
                 else -> if (AppConfig.mediaButtonOnExit || LifecycleHelp.activitySize() > 0 || !isMediaKey) {
-                    AppLog.addLog("readAloud start Service")
+                    AppLog.put("readAloud start Service")
                     if (BookRead.book != null) {
                         BookRead.readAloud()
                     } else {

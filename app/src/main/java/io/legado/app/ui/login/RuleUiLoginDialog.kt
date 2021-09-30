@@ -11,6 +11,7 @@ import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.lib.theme.primaryColor
@@ -129,8 +130,9 @@ class RuleUiLoginDialog : BaseDialogFragment() {
                             dismiss()
                         }
                     } catch (e: Exception) {
-                        e.printOnDebug()
+                        AppLog.put("登录出错\n${e.localizedMessage}", e)
                         toastOnUi("error:${e.localizedMessage}")
+                        e.printOnDebug()
                     }
                 }
             }

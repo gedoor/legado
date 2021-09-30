@@ -173,7 +173,7 @@ object CacheBook {
             if (errorDownloadMap[index] ?: 0 < 3) {
                 waitDownloadSet.add(index)
             } else {
-                AppLog.addLog(
+                AppLog.put(
                     "下载${book.name}-${chapterTitle}失败\n${error.localizedMessage}",
                     error
                 )
