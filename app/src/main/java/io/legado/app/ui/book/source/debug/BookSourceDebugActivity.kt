@@ -90,6 +90,10 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             !it.url.isNullOrBlank()
         }?.let {
             binding.textFx.text = "${it.title}::${it.url}"
+            if (it.title.startsWith("ERROR:")) {
+                adapter.addItem("获取发现出错\n${it.url}")
+                openOrCloseHelp(false)
+            }
         }
         binding.textMy.onClick {
             searchView.setQuery(binding.textMy.text, true)
@@ -98,7 +102,9 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             searchView.setQuery(binding.textXt.text, true)
         }
         binding.textFx.onClick {
-            searchView.setQuery(binding.textFx.text, true)
+            if (!binding.textFx.text.startsWith("ERROR:")) {
+                searchView.setQuery(binding.textFx.text, true)
+            }
         }
     }
 

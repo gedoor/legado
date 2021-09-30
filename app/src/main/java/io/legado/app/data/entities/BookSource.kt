@@ -92,7 +92,7 @@ data class BookSource(
                     }
                 }
             }.onFailure {
-                kinds.add(ExploreKind(it.localizedMessage ?: ""))
+                kinds.add(ExploreKind("ERROR:${it.localizedMessage}", it.stackTraceToString()))
                 AppLog.put("解析发现规则出错\n${it.localizedMessage}", it)
                 it.printOnDebug()
             }

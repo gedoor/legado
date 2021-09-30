@@ -18,6 +18,7 @@ import io.legado.app.databinding.ItemFindBookBinding
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.login.SourceLoginActivity
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import splitties.views.onLongClick
@@ -95,7 +96,11 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     tv.setOnClickListener(null)
                 } else {
                     tv.setOnClickListener {
-                        callBack.openExplore(sourceUrl, kind.title, kind.url)
+                        if (kind.title.startsWith("ERROR:")) {
+                            it.activity?.showDialogFragment(TextDialog(kind.url))
+                        } else {
+                            callBack.openExplore(sourceUrl, kind.title, kind.url)
+                        }
                     }
                 }
             }
