@@ -205,7 +205,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 val helpStr = String(
                     requireContext().assets.open("help/httpTTSHelp.md").readBytes()
                 )
-                TextDialog.show(childFragmentManager, helpStr, TextDialog.MD)
+                showDialogFragment(TextDialog(helpStr, TextDialog.Mode.MD))
             }
         }.show()
     }

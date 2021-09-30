@@ -16,6 +16,7 @@ import io.legado.app.databinding.ItemAppLogBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.LogUtils
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
 import splitties.views.onClick
@@ -76,7 +77,7 @@ class AppLogDialog : BaseDialogFragment() {
             binding.root.onClick {
                 getItem(holder.layoutPosition)?.let { item ->
                     item.third?.let {
-                        TextDialog.show(childFragmentManager, it.stackTraceToString())
+                        showDialogFragment(TextDialog(it.stackTraceToString()))
                     }
                 }
             }

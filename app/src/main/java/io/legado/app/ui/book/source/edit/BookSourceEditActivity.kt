@@ -426,12 +426,12 @@ class BookSourceEditActivity :
 
     private fun showRuleHelp() {
         val mdText = String(assets.open("help/ruleHelp.md").readBytes())
-        TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
+        showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
     }
 
     private fun showRegexHelp() {
         val mdText = String(assets.open("help/regexHelp.md").readBytes())
-        TextDialog.show(supportFragmentManager, mdText, TextDialog.MD)
+        showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
     }
 
     private fun showKeyboardTopPopupWindow() {

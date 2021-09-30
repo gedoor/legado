@@ -272,7 +272,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun showHelp() {
         val text = String(assets.open("help/SourceMBookHelp.md").readBytes())
-        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
+        showDialogFragment(TextDialog(text, TextDialog.Mode.MD))
     }
 
     private fun sortCheck(sort: Sort) {

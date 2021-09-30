@@ -252,8 +252,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     showDialogFragment(BookmarkDialog(bookmark))
                 }
             }
-            R.id.menu_copy_text ->
-                TextDialog.show(supportFragmentManager, BookRead.curTextChapter?.getContent())
+            R.id.menu_copy_text -> showDialogFragment(
+                TextDialog(BookRead.curTextChapter?.getContent())
+            )
             R.id.menu_update_toc -> BookRead.book?.let {
                 loadChapterList(it)
             }
@@ -653,7 +654,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun showReadMenuHelp() {
         val text = String(assets.open("help/readMenuHelp.md").readBytes())
-        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
+        showDialogFragment(TextDialog(text, TextDialog.Mode.MD))
     }
 
     /**

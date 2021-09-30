@@ -81,7 +81,7 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     private fun showUpdateLog() {
         val log = String(requireContext().assets.open("updateLog.md").readBytes())
-        TextDialog.show(childFragmentManager, log, TextDialog.MD)
+        showDialogFragment(TextDialog(log, TextDialog.Mode.MD))
     }
 
     private fun checkUpdate() {
@@ -133,7 +133,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             }
             context?.selector(R.string.crash_log, crashLogNames) { _, select ->
                 crashLogs?.getOrNull(select)?.let { logFile ->
-                    TextDialog.show(childFragmentManager, logFile.readText())
+                    showDialogFragment(TextDialog(logFile.readText()))
                 }
             }
         }

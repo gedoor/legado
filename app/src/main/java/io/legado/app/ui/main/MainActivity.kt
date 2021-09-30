@@ -34,6 +34,7 @@ import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -119,10 +120,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             LocalConfig.versionCode = appInfo.versionCode
             if (LocalConfig.isFirstOpenApp) {
                 val text = String(assets.open("help/appHelp.md").readBytes())
-                TextDialog.show(supportFragmentManager, text, TextDialog.MD)
+                showDialogFragment(TextDialog(text, TextDialog.Mode.MD))
             } else if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
-                TextDialog.show(supportFragmentManager, log, TextDialog.MD)
+                showDialogFragment(TextDialog(log, TextDialog.Mode.MD))
             }
             viewModel.upVersion()
         }

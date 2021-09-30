@@ -14,6 +14,7 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
@@ -129,14 +130,10 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_scan -> qrCodeResult.launch(null)
-            R.id.menu_search_src ->
-                TextDialog.show(supportFragmentManager, viewModel.searchSrc)
-            R.id.menu_book_src ->
-                TextDialog.show(supportFragmentManager, viewModel.bookSrc)
-            R.id.menu_toc_src ->
-                TextDialog.show(supportFragmentManager, viewModel.tocSrc)
-            R.id.menu_content_src ->
-                TextDialog.show(supportFragmentManager, viewModel.contentSrc)
+            R.id.menu_search_src -> showDialogFragment(TextDialog(viewModel.searchSrc))
+            R.id.menu_book_src -> showDialogFragment(TextDialog(viewModel.bookSrc))
+            R.id.menu_toc_src -> showDialogFragment(TextDialog(viewModel.tocSrc))
+            R.id.menu_content_src -> showDialogFragment(TextDialog(viewModel.contentSrc))
             R.id.menu_help -> showHelp()
         }
         return super.onCompatOptionsItemSelected(item)
@@ -144,7 +141,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
 
     private fun showHelp() {
         val text = String(assets.open("help/debugHelp.md").readBytes())
-        TextDialog.show(supportFragmentManager, text, TextDialog.MD)
+        showDialogFragment(TextDialog(text, TextDialog.Mode.MD))
     }
 
 }

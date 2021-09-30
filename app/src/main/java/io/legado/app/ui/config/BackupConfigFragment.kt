@@ -146,7 +146,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
 
     private fun showHelp() {
         val text = String(requireContext().assets.open("help/webDavHelp.md").readBytes())
-        TextDialog.show(childFragmentManager, text, TextDialog.MD)
+        showDialogFragment(TextDialog(text, TextDialog.Mode.MD))
     }
 
     override fun onDestroy() {

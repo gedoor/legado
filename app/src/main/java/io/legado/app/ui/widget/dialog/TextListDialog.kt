@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -16,16 +15,12 @@ import io.legado.app.databinding.ItemLogBinding
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.windowSize
 
-class TextListDialog : BaseDialogFragment() {
+class TextListDialog() : BaseDialogFragment() {
 
-    companion object {
-        fun show(fragmentManager: FragmentManager, title: String, values: ArrayList<String>) {
-            TextListDialog().apply {
-                val bundle = Bundle()
-                bundle.putString("title", title)
-                bundle.putStringArrayList("values", values)
-                arguments = bundle
-            }.show(fragmentManager, "textListDialog")
+    constructor(title: String, values: ArrayList<String>) : this() {
+        arguments = Bundle().apply {
+            putString("title", title)
+            putStringArrayList("values", values)
         }
     }
 
