@@ -23,6 +23,7 @@ import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import java.net.URLDecoder
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
@@ -88,7 +89,8 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             return@setOnLongClickListener false
         }
         binding.webView.setDownloadListener { url, _, contentDisposition, _, _ ->
-            val fileName = URLUtil.guessFileName(url, contentDisposition, null)
+            var fileName = URLUtil.guessFileName(url, contentDisposition, null)
+            fileName = URLDecoder.decode(fileName, "UTF-8")
             binding.llView.longSnackbar(fileName, getString(R.string.action_download)) {
                 Download.start(this, url, fileName)
             }
