@@ -83,6 +83,10 @@ interface BaseSource : JsExtensions {
         CacheManager.put("loginHeader_${getKey()}", header)
     }
 
+    fun removeLoginHeader() {
+        CacheManager.delete("loginHeader_${getKey()}")
+    }
+
     /**
      * 获取用户信息,可以用来登录
      * 用户信息采用aes加密存储
