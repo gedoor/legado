@@ -39,9 +39,8 @@ data class RssSource(
     var ruleLink: String? = null,
     var ruleContent: String? = null,
     var style: String? = null,
-    var enableJs: Boolean = false,
-    var loadWithBaseUrl: Boolean = false,
-
+    var enableJs: Boolean = true,
+    var loadWithBaseUrl: Boolean = true,
     var customOrder: Int = 0
 ) : Parcelable, BaseSource {
 
