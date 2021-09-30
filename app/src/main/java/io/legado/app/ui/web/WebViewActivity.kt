@@ -167,13 +167,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     inner class CustomWebChromeClient : WebChromeClient() {
 
-        override fun onReceivedTitle(view: WebView?, title: String?) {
-            super.onReceivedTitle(view, title)
-            title?.let {
-                binding.titleBar.title = it
-            }
-        }
-
         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
             binding.llView.invisible()
@@ -210,7 +203,11 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             view?.title?.let { title ->
-                binding.titleBar.title = title
+                if (title != url && title != view.url && title.isNotBlank()) {
+                    binding.titleBar.title = title
+                } else {
+                    binding.titleBar.title = intent.getStringExtra("title")
+                }
             }
         }
 
