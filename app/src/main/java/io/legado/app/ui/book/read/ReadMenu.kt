@@ -16,7 +16,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
 import io.legado.app.help.*
 import io.legado.app.lib.theme.*
-import io.legado.app.model.ReadBook
+import io.legado.app.model.BookRead
 import io.legado.app.ui.web.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
@@ -145,7 +145,7 @@ class ReadMenu @JvmOverloads constructor(
                 val url = tvChapterUrl.text.toString()
                 putExtra("title", tvChapterName.text)
                 putExtra("url", url)
-                IntentData.put(url, ReadBook.bookSource?.getHeaderMap(true))
+                IntentData.put(url, BookRead.bookSource?.getHeaderMap(true))
             }
         }
         //登录
@@ -179,7 +179,7 @@ class ReadMenu @JvmOverloads constructor(
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                ReadBook.skipToPage(seekBar.progress)
+                BookRead.skipToPage(seekBar.progress)
             }
 
         })
@@ -208,10 +208,10 @@ class ReadMenu @JvmOverloads constructor(
         }
 
         //上一章
-        tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
+        tvPre.setOnClickListener { BookRead.moveToPrevChapter(upContent = true, toLast = false) }
 
         //下一章
-        tvNext.setOnClickListener { ReadBook.moveToNextChapter(true) }
+        tvNext.setOnClickListener { BookRead.moveToNextChapter(true) }
 
         //目录
         llCatalog.setOnClickListener {
@@ -250,10 +250,10 @@ class ReadMenu @JvmOverloads constructor(
         menuBottomIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
-                binding.tvPay.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
-                        || ReadBook.curTextChapter?.isVip != true
-                        || ReadBook.curTextChapter?.isPay == true
+                binding.tvLogin.isGone = BookRead.bookSource?.loginUrl.isNullOrEmpty()
+                binding.tvPay.isGone = BookRead.bookSource?.loginUrl.isNullOrEmpty()
+                        || BookRead.curTextChapter?.isVip != true
+                        || BookRead.curTextChapter?.isPay == true
                 callBack.upSystemUiVisibility()
                 binding.llBrightness.visible(showBrightnessView)
             }
@@ -300,20 +300,20 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     fun upBookView() {
-        binding.titleBar.title = ReadBook.book?.name
-        ReadBook.curTextChapter?.let {
+        binding.titleBar.title = BookRead.book?.name
+        BookRead.curTextChapter?.let {
             binding.tvChapterName.text = it.title
             binding.tvChapterName.visible()
-            if (!ReadBook.isLocalBook) {
+            if (!BookRead.isLocalBook) {
                 binding.tvChapterUrl.text = it.url
                 binding.tvChapterUrl.visible()
             } else {
                 binding.tvChapterUrl.gone()
             }
             binding.seekReadPage.max = it.pageSize.minus(1)
-            binding.seekReadPage.progress = ReadBook.durPageIndex()
-            binding.tvPre.isEnabled = ReadBook.durChapterIndex != 0
-            binding.tvNext.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
+            binding.seekReadPage.progress = BookRead.durPageIndex()
+            binding.tvPre.isEnabled = BookRead.durChapterIndex != 0
+            binding.tvNext.isEnabled = BookRead.durChapterIndex != BookRead.chapterSize - 1
         } ?: let {
             binding.tvChapterName.gone()
             binding.tvChapterUrl.gone()

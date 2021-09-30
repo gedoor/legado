@@ -6,8 +6,8 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.BookRead
 import io.legado.app.model.ReadAloud
-import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
@@ -232,7 +232,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             for (i in start..contentList[nowSpeak].length) {
                 if (readAloudNumber + i > textChapter.getReadLength(pageIndex + 1)) {
                     pageIndex++
-                    ReadBook.moveToNextPage()
+                    BookRead.moveToNextPage()
                     postEvent(EventBus.TTS_PROGRESS, readAloudNumber + i)
                 }
                 delay(sleep.toLong())

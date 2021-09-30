@@ -10,8 +10,8 @@ import io.legado.app.data.appDb
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LifecycleHelp
 import io.legado.app.model.AudioPlay
+import io.legado.app.model.BookRead
 import io.legado.app.model.ReadAloud
-import io.legado.app.model.ReadBook
 import io.legado.app.service.AudioPlayService
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.audio.AudioPlayActivity
@@ -46,14 +46,14 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     when (keycode) {
                         KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
                             if (context.getPrefBoolean("mediaButtonPerNext", false)) {
-                                ReadBook.moveToPrevChapter(true)
+                                BookRead.moveToPrevChapter(true)
                             } else {
                                 ReadAloud.prevParagraph(context)
                             }
                         }
                         KeyEvent.KEYCODE_MEDIA_NEXT -> {
                             if (context.getPrefBoolean("mediaButtonPerNext", false)) {
-                                ReadBook.moveToNextChapter(true)
+                                BookRead.moveToNextChapter(true)
                             } else {
                                 ReadAloud.nextParagraph(context)
                             }
@@ -89,13 +89,13 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     postEvent(EventBus.MEDIA_BUTTON, true)
                 else -> if (AppConfig.mediaButtonOnExit || LifecycleHelp.activitySize() > 0 || !isMediaKey) {
                     AppLog.addLog("readAloud start Service")
-                    if (ReadBook.book != null) {
-                        ReadBook.readAloud()
+                    if (BookRead.book != null) {
+                        BookRead.readAloud()
                     } else {
                         appDb.bookDao.lastReadBook?.let {
-                            ReadBook.resetData(it)
-                            ReadBook.curTextChapter ?: ReadBook.loadContent(false)
-                            ReadBook.readAloud()
+                            BookRead.resetData(it)
+                            BookRead.curTextChapter ?: BookRead.loadContent(false)
+                            BookRead.readAloud()
                         }
                     }
                 }

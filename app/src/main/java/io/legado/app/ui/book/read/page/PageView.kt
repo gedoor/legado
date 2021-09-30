@@ -14,7 +14,7 @@ import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ViewBookPageBinding
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
-import io.legado.app.model.ReadBook
+import io.legado.app.model.BookRead
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
@@ -224,7 +224,7 @@ class PageView(context: Context) : FrameLayout(context) {
 
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
-        tvBookName?.text = ReadBook.book?.name
+        tvBookName?.text = BookRead.book?.name
         tvTitle?.text = textPage.title
         tvPage?.text = "${index.plus(1)}/$pageSize"
         tvTotalProgress?.text = readProgress

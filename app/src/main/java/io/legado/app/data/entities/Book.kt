@@ -6,7 +6,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.help.AppConfig
-import io.legado.app.model.ReadBook
+import io.legado.app.model.BookRead
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
@@ -266,8 +266,8 @@ data class Book(
 
         fun delete(book: Book?) {
             book ?: return
-            if (ReadBook.book?.bookUrl == book.bookUrl) {
-                ReadBook.book = null
+            if (BookRead.book?.bookUrl == book.bookUrl) {
+                BookRead.book = null
             }
             appDb.bookDao.delete(book)
         }

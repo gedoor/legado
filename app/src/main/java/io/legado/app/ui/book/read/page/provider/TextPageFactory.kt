@@ -1,6 +1,6 @@
 package io.legado.app.ui.book.read.page.provider
 
-import io.legado.app.model.ReadBook
+import io.legado.app.model.BookRead
 import io.legado.app.ui.book.read.page.api.DataSource
 import io.legado.app.ui.book.read.page.api.PageFactory
 import io.legado.app.ui.book.read.page.entities.TextPage
@@ -20,25 +20,25 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun moveToFirst() {
-        ReadBook.setPageIndex(0)
+        BookRead.setPageIndex(0)
     }
 
     override fun moveToLast() = with(dataSource) {
         currentChapter?.let {
             if (it.pageSize == 0) {
-                ReadBook.setPageIndex(0)
+                BookRead.setPageIndex(0)
             } else {
-                ReadBook.setPageIndex(it.pageSize.minus(1))
+                BookRead.setPageIndex(it.pageSize.minus(1))
             }
-        } ?: ReadBook.setPageIndex(0)
+        } ?: BookRead.setPageIndex(0)
     }
 
     override fun moveToNext(upContent: Boolean): Boolean = with(dataSource) {
         return if (hasNext()) {
             if (currentChapter?.isLastIndex(pageIndex) == true) {
-                ReadBook.moveToNextChapter(upContent)
+                BookRead.moveToNextChapter(upContent)
             } else {
-                ReadBook.setPageIndex(pageIndex.plus(1))
+                BookRead.setPageIndex(pageIndex.plus(1))
             }
             if (upContent) upContent(resetPageOffset = false)
             true
@@ -49,9 +49,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     override fun moveToPrev(upContent: Boolean): Boolean = with(dataSource) {
         return if (hasPrev()) {
             if (pageIndex <= 0) {
-                ReadBook.moveToPrevChapter(upContent)
+                BookRead.moveToPrevChapter(upContent)
             } else {
-                ReadBook.setPageIndex(pageIndex.minus(1))
+                BookRead.setPageIndex(pageIndex.minus(1))
             }
             if (upContent) upContent(resetPageOffset = false)
             true
@@ -61,7 +61,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override val curPage: TextPage
         get() = with(dataSource) {
-            ReadBook.msg?.let {
+            BookRead.msg?.let {
                 return@with TextPage(text = it).format()
             }
             currentChapter?.let {
@@ -72,7 +72,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override val nextPage: TextPage
         get() = with(dataSource) {
-            ReadBook.msg?.let {
+            BookRead.msg?.let {
                 return@with TextPage(text = it).format()
             }
             currentChapter?.let {
@@ -93,7 +93,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override val prevPage: TextPage
         get() = with(dataSource) {
-            ReadBook.msg?.let {
+            BookRead.msg?.let {
                 return@with TextPage(text = it).format()
             }
             if (pageIndex > 0) {

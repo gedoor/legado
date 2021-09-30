@@ -30,9 +30,9 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.model.BookRead
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.ReadAloud
-import io.legado.app.model.ReadBook
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
@@ -66,7 +66,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     ReadMenu.CallBack,
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
-    ReadBook.CallBack,
+    BookRead.CallBack,
     AutoReadDialog.CallBack,
     TocRegexDialog.CallBack,
     ColorPickerDialogListener {
@@ -97,7 +97,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             it ?: return@registerForActivityResult
             it.data?.let { data ->
-                data.getIntExtra("index", ReadBook.durChapterIndex).let { index ->
+                data.getIntExtra("index", BookRead.durChapterIndex).let { index ->
                     viewModel.searchContentQuery = data.getStringExtra("query") ?: ""
                     val indexWithinChapter = data.getIntExtra("indexWithinChapter", 0)
                     skipToSearch(index, indexWithinChapter)
@@ -131,7 +131,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         binding.cursorLeft.setOnTouchListener(this)
         binding.cursorRight.setOnTouchListener(this)
         upScreenTimeOut()
-        ReadBook.callBack = this
+        BookRead.callBack = this
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -151,7 +151,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun onResume() {
         super.onResume()
-        ReadBook.readStartTime = System.currentTimeMillis()
+        BookRead.readStartTime = System.currentTimeMillis()
         upSystemUiVisibility()
         timeBatteryReceiver = TimeBatteryReceiver.register(this)
         binding.readView.upTime()
@@ -161,14 +161,14 @@ class ReadBookActivity : ReadBookBaseActivity(),
         super.onPause()
         autoPageStop()
         backupJob?.cancel()
-        ReadBook.saveRead()
+        BookRead.saveRead()
         timeBatteryReceiver?.let {
             unregisterReceiver(it)
             timeBatteryReceiver = null
         }
         upSystemUiVisibility()
         if (!BuildConfig.DEBUG) {
-            ReadBook.uploadProgress()
+            BookRead.uploadProgress()
             Backup.autoBack(this)
         }
     }
@@ -189,7 +189,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      */
     private fun upMenu() {
         val menu = menu
-        val book = ReadBook.book
+        val book = BookRead.book
         if (menu != null && book != null) {
             val onLine = !book.isLocalBook()
             for (i in 0 until menu.size) {
@@ -223,16 +223,16 @@ class ReadBookActivity : ReadBookBaseActivity(),
         when (item.itemId) {
             R.id.menu_change_source -> {
                 binding.readMenu.runMenuOut()
-                ReadBook.book?.let {
+                BookRead.book?.let {
                     supportFragmentManager.showDialog(ChangeSourceDialog(it.name, it.author))
                 }
             }
             R.id.menu_refresh -> {
-                if (ReadBook.bookSource == null) {
+                if (BookRead.bookSource == null) {
                     upContent()
                 } else {
-                    ReadBook.book?.let {
-                        ReadBook.curTextChapter = null
+                    BookRead.book?.let {
+                        BookRead.curTextChapter = null
                         binding.readView.upContent()
                         viewModel.refreshContent(it)
                     }
@@ -240,12 +240,12 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
             R.id.menu_download -> showDownloadDialog()
             R.id.menu_add_bookmark -> {
-                val book = ReadBook.book
-                val page = ReadBook.curTextChapter?.page(ReadBook.durPageIndex())
+                val book = BookRead.book
+                val page = BookRead.curTextChapter?.page(BookRead.durPageIndex())
                 if (book != null && page != null) {
                     val bookmark = book.createBookMark().apply {
-                        chapterIndex = ReadBook.durChapterIndex
-                        chapterPos = ReadBook.durChapterPos
+                        chapterIndex = BookRead.durChapterIndex
+                        chapterPos = BookRead.durChapterPos
                         chapterName = page.title
                         bookText = page.text.trim()
                     }
@@ -253,34 +253,34 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 }
             }
             R.id.menu_copy_text ->
-                TextDialog.show(supportFragmentManager, ReadBook.curTextChapter?.getContent())
-            R.id.menu_update_toc -> ReadBook.book?.let {
+                TextDialog.show(supportFragmentManager, BookRead.curTextChapter?.getContent())
+            R.id.menu_update_toc -> BookRead.book?.let {
                 loadChapterList(it)
             }
-            R.id.menu_enable_replace -> ReadBook.book?.let {
+            R.id.menu_enable_replace -> BookRead.book?.let {
                 it.setUseReplaceRule(!it.getUseReplaceRule())
                 menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.getUseReplaceRule()
                 viewModel.replaceRuleChanged()
             }
-            R.id.menu_re_segment -> ReadBook.book?.let {
+            R.id.menu_re_segment -> BookRead.book?.let {
                 it.setReSegment(!it.getReSegment())
                 menu?.findItem(R.id.menu_re_segment)?.isChecked = it.getReSegment()
-                ReadBook.loadContent(false)
+                BookRead.loadContent(false)
             }
             R.id.menu_page_anim -> showPageAnimConfig {
                 binding.readView.upPageAnim()
-                ReadBook.loadContent(false)
+                BookRead.loadContent(false)
             }
-            R.id.menu_book_info -> ReadBook.book?.let {
+            R.id.menu_book_info -> BookRead.book?.let {
                 startActivity<BookInfoActivity> {
                     putExtra("name", it.name)
                     putExtra("author", it.author)
                 }
             }
             R.id.menu_toc_regex -> supportFragmentManager.showDialog(
-                TocRegexDialog(ReadBook.book?.tocUrl)
+                TocRegexDialog(BookRead.book?.tocUrl)
             )
-            R.id.menu_reverse_content -> ReadBook.book?.let {
+            R.id.menu_reverse_content -> BookRead.book?.let {
                 viewModel.reverseContent(it)
             }
             R.id.menu_set_charset -> showCharsetConfig()
@@ -291,11 +291,11 @@ class ReadBookActivity : ReadBookBaseActivity(),
                     R.string.image_style,
                     imgStyles
                 ) { _, index ->
-                    ReadBook.book?.setImageStyle(imgStyles[index])
-                    ReadBook.loadContent(false)
+                    BookRead.book?.setImageStyle(imgStyles[index])
+                    BookRead.loadContent(false)
                 }
             }
-            R.id.menu_get_progress -> ReadBook.book?.let {
+            R.id.menu_get_progress -> BookRead.book?.let {
                 viewModel.syncBookProgress(it) { progress ->
                     sureSyncProgress(progress)
                 }
@@ -517,10 +517,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
             }
             R.id.menu_replace -> {
                 val scopes = arrayListOf<String>()
-                ReadBook.book?.name?.let {
+                BookRead.book?.name?.let {
                     scopes.add(it)
                 }
-                ReadBook.bookSource?.bookSourceUrl?.let {
+                BookRead.bookSource?.bookSourceUrl?.let {
                     scopes.add(it)
                 }
                 replaceActivity.launch(
@@ -580,7 +580,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     override fun loadChapterList(book: Book) {
-        ReadBook.upMsg(getString(R.string.toc_updateing))
+        BookRead.upMsg(getString(R.string.toc_updateing))
         viewModel.loadChapterList(book)
     }
 
@@ -590,7 +590,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun contentLoadFinish() {
         if (intent.getBooleanExtra("readAloud", false)) {
             intent.removeExtra("readAloud")
-            ReadBook.readAloud()
+            BookRead.readAloud()
         }
         loadStates = true
     }
@@ -606,7 +606,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         launch {
             autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
-            binding.readMenu.setSeekPage(ReadBook.durPageIndex())
+            binding.readMenu.setSeekPage(BookRead.durPageIndex())
             loadStates = false
             success?.invoke()
         }
@@ -624,7 +624,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun pageChanged() {
         launch {
             autoPageProgress = 0
-            binding.readMenu.setSeekPage(ReadBook.durPageIndex())
+            binding.readMenu.setSeekPage(BookRead.durPageIndex())
             startBackupJob()
         }
     }
@@ -637,7 +637,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     override val oldBook: Book?
-        get() = ReadBook.book
+        get() = BookRead.book
 
     override fun changeTo(source: BookSource, book: Book) {
         viewModel.changeTo(source, book)
@@ -722,7 +722,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     override fun openSourceEditActivity() {
-        ReadBook.bookSource?.let {
+        BookRead.bookSource?.let {
             sourceEditActivity.launch {
                 putExtra("sourceUrl", it.bookSourceUrl)
             }
@@ -740,7 +740,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 打开目录
      */
     override fun openChapterList() {
-        ReadBook.book?.let {
+        BookRead.book?.let {
             tocActivity.launch(it.bookUrl)
         }
     }
@@ -749,7 +749,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 打开搜索界面
      */
     override fun openSearchActivity(searchWord: String?) {
-        ReadBook.book?.let {
+        BookRead.book?.let {
             searchContentActivity.launch(Intent(this, SearchContentActivity::class.java).apply {
                 putExtra("bookUrl", it.bookUrl)
                 putExtra("searchWord", searchWord ?: viewModel.searchContentQuery)
@@ -780,7 +780,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     override fun showLogin() {
-        ReadBook.bookSource?.let {
+        BookRead.bookSource?.let {
             startActivity<SourceLoginActivity> {
                 putExtra("sourceUrl", it.bookSourceUrl)
             }
@@ -789,10 +789,10 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     override fun payAction() {
         Coroutine.async(this) {
-            val book = ReadBook.book ?: throw NoStackTraceException("no book")
-            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+            val book = BookRead.book ?: throw NoStackTraceException("no book")
+            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, BookRead.durChapterIndex)
                 ?: throw NoStackTraceException("no chapter")
-            val source = ReadBook.bookSource ?: throw NoStackTraceException("no book source")
+            val source = BookRead.bookSource ?: throw NoStackTraceException("no book source")
             val payAction = source.getContentRule().payAction
             if (payAction.isNullOrEmpty()) {
                 throw NoStackTraceException("no pay action")
@@ -810,7 +810,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun onClickReadAloud() {
         autoPageStop()
         when {
-            !BaseReadAloudService.isRun -> ReadBook.readAloud()
+            !BaseReadAloudService.isRun -> BookRead.readAloud()
             BaseReadAloudService.pause -> ReadAloud.resume(this)
             else -> ReadAloud.pause(this)
         }
@@ -844,7 +844,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun onDialogDismissed(dialogId: Int) = Unit
 
     override fun onTocRegexDialogResult(tocRegex: String) {
-        ReadBook.book?.let {
+        BookRead.book?.let {
             it.tocUrl = tocRegex
             viewModel.loadChapterList(it)
         }
@@ -854,7 +854,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         alert(R.string.get_book_progress) {
             setMessage(R.string.current_progress_exceeds_cloud)
             okButton {
-                ReadBook.setProgress(progress)
+                BookRead.setProgress(progress)
             }
             noButton()
         }.show()
@@ -862,9 +862,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
 
     private fun skipToSearch(index: Int, indexWithinChapter: Int) {
         viewModel.openChapter(index) {
-            val pages = ReadBook.curTextChapter?.pages ?: return@openChapter
+            val pages = BookRead.curTextChapter?.pages ?: return@openChapter
             val positions = viewModel.searchResultPositions(pages, indexWithinChapter)
-            ReadBook.skipToPage(positions[0]) {
+            BookRead.skipToPage(positions[0]) {
                 launch {
                     binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
                     delay(20L)
@@ -894,7 +894,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         backupJob?.cancel()
         backupJob = launch {
             delay(120000)
-            ReadBook.book?.let {
+            BookRead.book?.let {
                 AppWebDav.uploadBookProgress(it)
                 Backup.autoBack(this@ReadBookActivity)
             }
@@ -902,12 +902,12 @@ class ReadBookActivity : ReadBookBaseActivity(),
     }
 
     override fun finish() {
-        ReadBook.book?.let {
-            if (!ReadBook.inBookshelf) {
+        BookRead.book?.let {
+            if (!BookRead.inBookshelf) {
                 alert(title = getString(R.string.add_to_shelf)) {
                     setMessage(getString(R.string.check_add_bookshelf, it.name))
                     okButton {
-                        ReadBook.inBookshelf = true
+                        BookRead.inBookshelf = true
                         setResult(Activity.RESULT_OK)
                     }
                     noButton { viewModel.removeFromBookshelf { super.finish() } }
@@ -922,7 +922,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         super.onDestroy()
         textActionMenu.dismiss()
         binding.readView.onDestroy()
-        ReadBook.msg = null
+        BookRead.msg = null
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
@@ -933,14 +933,14 @@ class ReadBookActivity : ReadBookBaseActivity(),
         observeEvent<String>(EventBus.TIME_CHANGED) { readView.upTime() }
         observeEvent<Int>(EventBus.BATTERY_CHANGED) { readView.upBattery(it) }
         observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
-            viewModel.openChapter(it.index, ReadBook.durChapterPos)
+            viewModel.openChapter(it.index, BookRead.durChapterPos)
             readView.upContent()
         }
         observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
                 onClickReadAloud()
             } else {
-                ReadBook.readAloud(!BaseReadAloudService.pause)
+                BookRead.readAloud(!BaseReadAloudService.pause)
             }
         }
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
@@ -948,15 +948,15 @@ class ReadBookActivity : ReadBookBaseActivity(),
             readView.upBg()
             readView.upStyle()
             if (it) {
-                ReadBook.loadContent(resetPageOffset = false)
+                BookRead.loadContent(resetPageOffset = false)
             } else {
                 readView.upContent(resetPageOffset = false)
             }
         }
         observeEvent<Int>(EventBus.ALOUD_STATE) {
             if (it == Status.STOP || it == Status.PAUSE) {
-                ReadBook.curTextChapter?.let { textChapter ->
-                    val page = textChapter.getPageByReadPos(ReadBook.durChapterPos)
+                BookRead.curTextChapter?.let { textChapter ->
+                    val page = textChapter.getPageByReadPos(BookRead.durChapterPos)
                     if (page != null) {
                         page.removePageAloudSpan()
                         readView.upContent(resetPageOffset = false)
@@ -967,9 +967,9 @@ class ReadBookActivity : ReadBookBaseActivity(),
         observeEventSticky<Int>(EventBus.TTS_PROGRESS) { chapterStart ->
             launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
-                    ReadBook.curTextChapter?.let { textChapter ->
-                        val aloudSpanStart = chapterStart - ReadBook.durChapterPos
-                        textChapter.getPageByReadPos(ReadBook.durChapterPos)
+                    BookRead.curTextChapter?.let { textChapter ->
+                        val aloudSpanStart = chapterStart - BookRead.durChapterPos
+                        textChapter.getPageByReadPos(BookRead.durChapterPos)
                             ?.upPageAloudSpan(aloudSpanStart)
                         upContent()
                     }

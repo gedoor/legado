@@ -4,7 +4,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import io.legado.app.R
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.model.ReadBook
+import io.legado.app.model.BookRead
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import splitties.init.appCtx
 import java.text.DecimalFormat
@@ -171,17 +171,17 @@ data class TextPage(
     }
 
     fun getTextChapter(): TextChapter? {
-        ReadBook.curTextChapter?.let {
+        BookRead.curTextChapter?.let {
             if (it.position == chapterIndex) {
                 return it
             }
         }
-        ReadBook.nextTextChapter?.let {
+        BookRead.nextTextChapter?.let {
             if (it.position == chapterIndex) {
                 return it
             }
         }
-        ReadBook.prevTextChapter?.let {
+        BookRead.prevTextChapter?.let {
             if (it.position == chapterIndex) {
                 return it
             }

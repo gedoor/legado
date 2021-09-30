@@ -9,7 +9,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.MediaHelp
 import io.legado.app.lib.dialogs.SelectItem
-import io.legado.app.model.ReadBook
+import io.legado.app.model.BookRead
 import io.legado.app.utils.*
 import java.util.*
 
@@ -122,7 +122,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             textChapter?.let {
                 if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
-                    ReadBook.moveToNextPage()
+                    BookRead.moveToNextPage()
                 }
                 postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             }
@@ -141,7 +141,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             textChapter?.let {
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
-                    ReadBook.moveToNextPage()
+                    BookRead.moveToNextPage()
                     postEvent(EventBus.TTS_PROGRESS, readAloudNumber + start)
                 }
             }

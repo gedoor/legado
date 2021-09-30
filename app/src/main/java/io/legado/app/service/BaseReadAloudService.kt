@@ -17,8 +17,8 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.*
 import io.legado.app.help.MediaHelp
+import io.legado.app.model.BookRead
 import io.legado.app.model.ReadAloud
-import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
@@ -77,15 +77,15 @@ abstract class BaseReadAloudService : BaseService(),
         postEvent(EventBus.ALOUD_STATE, Status.STOP)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         mediaSessionCompat.release()
-        ReadBook.uploadProgress()
+        BookRead.uploadProgress()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action?.let { action ->
             when (action) {
                 IntentAction.play -> {
-                    textChapter = ReadBook.curTextChapter
-                    pageIndex = ReadBook.durPageIndex()
+                    textChapter = BookRead.curTextChapter
+                    pageIndex = BookRead.durPageIndex()
                     newReadAloud(
                         intent.getBooleanExtra("play", true)
                     )
@@ -140,7 +140,7 @@ abstract class BaseReadAloudService : BaseService(),
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
-        ReadBook.uploadProgress()
+        BookRead.uploadProgress()
         doDs()
     }
 
@@ -160,7 +160,7 @@ abstract class BaseReadAloudService : BaseService(),
             readAloudNumber -= contentList[nowSpeak].length.minus(1)
             play()
         } else {
-            ReadBook.moveToPrevChapter(true)
+            BookRead.moveToPrevChapter(true)
         }
     }
 
@@ -303,8 +303,8 @@ abstract class BaseReadAloudService : BaseService(),
             )
             else -> getString(R.string.read_aloud_t)
         }
-        nTitle += ": ${ReadBook.book?.name}"
-        var nSubtitle = ReadBook.curTextChapter?.title
+        nTitle += ": ${BookRead.book?.name}"
+        var nSubtitle = BookRead.curTextChapter?.title
         if (nSubtitle.isNullOrBlank())
             nSubtitle = getString(R.string.read_aloud_s)
         val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
@@ -351,8 +351,8 @@ abstract class BaseReadAloudService : BaseService(),
     abstract fun aloudServicePendingIntent(actionStr: String): PendingIntent?
 
     open fun nextChapter() {
-        ReadBook.upReadStartTime()
-        if (!ReadBook.moveToNextChapter(true)) {
+        BookRead.upReadStartTime()
+        if (!BookRead.moveToNextChapter(true)) {
             stopSelf()
         }
     }

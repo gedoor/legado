@@ -15,8 +15,8 @@ import android.widget.FrameLayout
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.model.BookRead
 import io.legado.app.model.ReadAloud
-import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.api.DataSource
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.PageDirection
@@ -409,8 +409,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
             0 -> callBack.showActionMenu()
             1 -> pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
             2 -> pageDelegate?.prevPageByAnim(defaultAnimationSpeed)
-            3 -> ReadBook.moveToNextChapter(true)
-            4 -> ReadBook.moveToPrevChapter(upContent = true, toLast = false)
+            3 -> BookRead.moveToNextChapter(true)
+            4 -> BookRead.moveToPrevChapter(upContent = true, toLast = false)
             5 -> ReadAloud.prevParagraph(context)
             6 -> ReadAloud.nextParagraph(context)
         }
@@ -468,9 +468,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
 
     fun upPageAnim() {
-        isScroll = ReadBook.pageAnim() == 3
+        isScroll = BookRead.pageAnim() == 3
         ChapterProvider.upLayout()
-        when (ReadBook.pageAnim()) {
+        when (BookRead.pageAnim()) {
             0 -> if (pageDelegate !is CoverPageDelegate) {
                 pageDelegate = CoverPageDelegate(this)
             }
@@ -538,25 +538,25 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     override val currentChapter: TextChapter?
         get() {
-            return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
+            return if (callBack.isInitFinish) BookRead.textChapter(0) else null
         }
 
     override val nextChapter: TextChapter?
         get() {
-            return if (callBack.isInitFinish) ReadBook.textChapter(1) else null
+            return if (callBack.isInitFinish) BookRead.textChapter(1) else null
         }
 
     override val prevChapter: TextChapter?
         get() {
-            return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
+            return if (callBack.isInitFinish) BookRead.textChapter(-1) else null
         }
 
     override fun hasNextChapter(): Boolean {
-        return ReadBook.durChapterIndex < ReadBook.chapterSize - 1
+        return BookRead.durChapterIndex < BookRead.chapterSize - 1
     }
 
     override fun hasPrevChapter(): Boolean {
-        return ReadBook.durChapterIndex > 0
+        return BookRead.durChapterIndex > 0
     }
 
     interface CallBack {
