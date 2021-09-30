@@ -98,27 +98,29 @@ class CoverImageView @JvmOverloads constructor(
         var startX = width * 0.2f
         var startY = height * 0.2f
         name?.toStringArray()?.let { name ->
-            namePaint.textSize = width / 7
+            namePaint.textSize = width / 6
             namePaint.strokeWidth = namePaint.textSize / 5
-            name.forEach {
+            name.forEachIndexed { index, char ->
                 namePaint.color = Color.WHITE
                 namePaint.style = Paint.Style.STROKE
-                canvas.drawText(it, startX, startY, namePaint)
+                canvas.drawText(char, startX, startY, namePaint)
                 namePaint.color = context.accentColor
                 namePaint.style = Paint.Style.FILL
-                canvas.drawText(it, startX, startY, namePaint)
+                canvas.drawText(char, startX, startY, namePaint)
                 startY += namePaint.textHeight
                 if (startY > height * 0.8) {
-                    return@let
+                    startX += namePaint.textSize
+                    namePaint.textSize = width / 10
+                    startY = (height - (name.size - index - 1) * namePaint.textHeight) / 2
                 }
             }
         }
         if (!BookCover.drawBookAuthor) return
         author?.toStringArray()?.let { author ->
-            startX = width * 0.8f
-            startY = height * 0.7f
-            authorPaint.textSize = width / 9
+            authorPaint.textSize = width / 10
             authorPaint.strokeWidth = authorPaint.textSize / 5
+            startX = width * 0.8f
+            startY = height * 0.95f - author.size * authorPaint.textHeight
             author.forEach {
                 authorPaint.color = Color.WHITE
                 authorPaint.style = Paint.Style.STROKE
@@ -168,8 +170,8 @@ class CoverImageView @JvmOverloads constructor(
 
     fun load(path: String? = null, name: String? = null, author: String? = null) {
         this.bitmapPath = path
-        this.name = name?.replace(AppPattern.bdRegex, "")
-        this.author = author?.replace(AppPattern.bdRegex, "")
+        this.name = name?.replace(AppPattern.bdRegex, "")?.trim()
+        this.author = author?.replace(AppPattern.bdRegex, "")?.trim()
         if (AppConfig.useDefaultCover) {
             defaultCover = true
             ImageLoader.load(context, BookCover.defaultDrawable)
