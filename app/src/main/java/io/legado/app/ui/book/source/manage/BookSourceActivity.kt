@@ -124,8 +124,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_share_source -> viewModel.shareSelection(adapter.selection) {
                 startActivity(Intent.createChooser(it, getString(R.string.share_selected_source)))
             }
-            R.id.menu_group_manage ->
-                GroupManageDialog().show(supportFragmentManager, "groupManage")
+            R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             R.id.menu_import_local -> importDoc.launch {
                 mode = HandleFileContract.FILE
                 allowExtensions = arrayOf("txt", "json")

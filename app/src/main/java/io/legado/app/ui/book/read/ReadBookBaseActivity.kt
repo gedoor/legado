@@ -56,15 +56,15 @@ abstract class ReadBookBaseActivity :
     }
 
     fun showPaddingConfig() {
-        PaddingConfigDialog().show(supportFragmentManager, "paddingConfig")
+        showDialogFragment<PaddingConfigDialog>()
     }
 
     fun showBgTextConfig() {
-        BgTextConfigDialog().show(supportFragmentManager, "bgTextConfig")
+        showDialogFragment<BgTextConfigDialog>()
     }
 
     fun showClickRegionalConfig() {
-        ClickActionConfigDialog().show(supportFragmentManager, "clickActionConfig")
+        showDialogFragment<ClickActionConfigDialog>()
     }
 
     /**

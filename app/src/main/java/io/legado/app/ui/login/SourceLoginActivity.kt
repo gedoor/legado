@@ -6,6 +6,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.ActivitySourceLoginBinding
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
@@ -28,7 +29,7 @@ class SourceLoginActivity : VMBaseActivity<ActivitySourceLoginBinding, SourceLog
                 .replace(R.id.fl_fragment, WebViewLoginFragment())
                 .commit()
         } else {
-            RuleUiLoginDialog().show(supportFragmentManager, "ruleUiLogin")
+            showDialogFragment<RuleUiLoginDialog>()
         }
     }
 

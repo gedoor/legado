@@ -216,9 +216,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         when (item.itemId) {
             R.id.menu_add_replace_rule ->
                 editActivity.launch(ReplaceEditActivity.startIntent(this))
-            R.id.menu_group_manage ->
-                GroupManageDialog().show(supportFragmentManager, "groupManage")
-
+            R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_local -> importDoc.launch {
