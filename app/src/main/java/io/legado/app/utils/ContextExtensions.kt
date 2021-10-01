@@ -15,6 +15,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.BatteryManager
+import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.ColorRes
@@ -289,6 +290,22 @@ fun Context.openUrl(uri: Uri) {
         } catch (e: Exception) {
             toastOnUi(e.localizedMessage ?: "open url error")
         }
+    }
+}
+
+fun Context.openFileUri(uri: Uri) {
+    val intent = Intent()
+    intent.action = Intent.ACTION_VIEW
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        //7.0版本以上
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+    intent.setDataAndType(uri, IntentType.from(uri))
+    try {
+        startActivity(intent)
+    } catch (e: Exception) {
+        toastOnUi(e.msg)
     }
 }
 

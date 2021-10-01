@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.local
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.view.ViewGroup
@@ -79,6 +80,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun upBookHas(bookUrls: List<String>) {
         bookFileNames.clear()
         bookUrls.forEach {
@@ -99,6 +101,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         callBack.upCountView()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun selectAll(selectAll: Boolean) {
         if (selectAll) {
             getItems().forEach {

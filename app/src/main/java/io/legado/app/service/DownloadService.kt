@@ -6,15 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import androidx.core.app.NotificationCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
-import io.legado.app.utils.IntentType
-import io.legado.app.utils.msg
+import io.legado.app.utils.openFileUri
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Job
@@ -172,20 +170,7 @@ class DownloadService : BaseService() {
 
     private fun openDownload(downloadId: Long) {
         downloadManager.getUriForDownloadedFile(downloadId)?.let { uri ->
-            //调用系统安装apk
-            val intent = Intent()
-            intent.action = Intent.ACTION_VIEW
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                //7.0版本以上
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-            intent.setDataAndType(uri, IntentType.from(uri))
-            try {
-                startActivity(intent)
-            } catch (e: Exception) {
-                toastOnUi(e.msg)
-            }
+            openFileUri(uri)
         }
     }
 
