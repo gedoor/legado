@@ -90,7 +90,7 @@ class OnLineImportActivity :
             onDismiss {
                 finish()
             }
-        }.show()
+        }
     }
 
 }

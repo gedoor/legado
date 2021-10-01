@@ -384,7 +384,7 @@ class BookInfoActivity :
                         }
                     }
                     negativeButton(R.string.no)
-                }.show()
+                }
             } else {
                 viewModel.delBook {
                     upTvBookshelf()

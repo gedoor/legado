@@ -107,7 +107,7 @@ class GroupEditDialog() : BaseDialogFragment() {
                 ok.invoke()
             }
             noButton()
-        }.show()
+        }
     }
 
 }

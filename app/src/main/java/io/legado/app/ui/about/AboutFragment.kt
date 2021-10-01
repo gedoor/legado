@@ -105,7 +105,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
-        }.show()
+        }
     }
 
     private fun joinQQGroup(key: String): Boolean {

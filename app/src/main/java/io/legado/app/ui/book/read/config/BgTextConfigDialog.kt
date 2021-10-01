@@ -150,7 +150,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
                     }
                 }
                 cancelButton()
-            }.show()
+            }
         }
         binding.tvRestore.setOnClickListener {
             val defaultConfigs = DefaultData.readConfigs
@@ -297,7 +297,7 @@ class BgTextConfigDialog : BaseDialogFragment() {
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
     private fun importNetConfig(url: String) {

@@ -195,7 +195,7 @@ class ImportBookSourceDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickLi
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
     inner class SourcesAdapter(context: Context) :

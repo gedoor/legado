@@ -85,7 +85,7 @@ class ThemeListDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 initData()
             }
             noButton()
-        }.show()
+        }
     }
 
     fun share(index: Int) {

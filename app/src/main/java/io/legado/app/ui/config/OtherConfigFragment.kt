@@ -159,7 +159,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
     private fun clearCache() {

@@ -98,7 +98,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 }
             }
             noButton()
-        }.show().requestInputMethod()
+        }.requestInputMethod()
     }
 
     @SuppressLint("InflateParams")
@@ -113,7 +113,7 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 viewModel.upGroup(group, alertBinding.editView.text?.toString())
             }
             noButton()
-        }.show().requestInputMethod()
+        }.requestInputMethod()
     }
 
     private inner class GroupAdapter(context: Context) :

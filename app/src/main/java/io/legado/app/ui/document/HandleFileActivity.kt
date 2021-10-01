@@ -116,7 +116,7 @@ class HandleFileActivity :
             onCancelled {
                 finish()
             }
-        }.show()
+        }
     }
 
     private fun getFileData(): Triple<String, ByteArray, String>? {

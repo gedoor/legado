@@ -51,7 +51,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                 okButton {
                     requireContext().sendToClip(uri.toString())
                 }
-            }.show()
+            }
         }
     }
     abstract val groupId: Long
@@ -106,7 +106,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -148,7 +148,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
 
@@ -170,7 +170,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     allowExtensions = arrayOf("txt", "json")
                 }
             }
-        }.show()
+        }
     }
 
 }

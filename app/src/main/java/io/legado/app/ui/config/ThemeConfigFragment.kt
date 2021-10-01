@@ -183,7 +183,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
     private fun selectBgAction(isNight: Boolean) {
@@ -241,7 +241,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
     private fun upTheme(isNightTheme: Boolean) {

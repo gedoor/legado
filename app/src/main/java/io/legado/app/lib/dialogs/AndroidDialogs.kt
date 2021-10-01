@@ -8,17 +8,11 @@ import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 
-inline fun Fragment.alert(
-    title: CharSequence? = null,
-    message: CharSequence? = null,
-    noinline init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-) = requireActivity().alert(title, message, init)
-
 fun Context.alert(
     title: CharSequence? = null,
     message: CharSequence? = null,
     init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-): AlertBuilder<AlertDialog> {
+): AlertDialog {
     return AndroidAlertBuilder(this).apply {
         if (title != null) {
             this.setTitle(title)
@@ -27,20 +21,20 @@ fun Context.alert(
             this.setMessage(message)
         }
         if (init != null) init()
-    }
+    }.show()
 }
 
 inline fun Fragment.alert(
-    titleResource: Int? = null,
-    message: Int? = null,
+    title: CharSequence? = null,
+    message: CharSequence? = null,
     noinline init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-) = requireActivity().alert(titleResource, message, init)
+) = requireActivity().alert(title, message, init)
 
 fun Context.alert(
     titleResource: Int? = null,
     messageResource: Int? = null,
     init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-): AlertBuilder<AlertDialog> {
+): AlertDialog {
     return AndroidAlertBuilder(this).apply {
         if (titleResource != null) {
             this.setTitle(titleResource)
@@ -49,17 +43,22 @@ fun Context.alert(
             this.setMessage(messageResource)
         }
         if (init != null) init()
-    }.apply {
-        show()
-    }
+    }.show()
 }
 
+inline fun Fragment.alert(
+    titleResource: Int? = null,
+    message: Int? = null,
+    noinline init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
+) = requireActivity().alert(titleResource, message, init)
+
+fun Context.alert(init: AlertBuilder<AlertDialog>.() -> Unit): AlertDialog =
+    AndroidAlertBuilder(this).apply {
+        init()
+    }.show()
 
 inline fun Fragment.alert(noinline init: AlertBuilder<DialogInterface>.() -> Unit) =
     requireContext().alert(init)
-
-fun Context.alert(init: AlertBuilder<AlertDialog>.() -> Unit): AlertBuilder<AlertDialog> =
-    AndroidAlertBuilder(this).apply { init() }
 
 inline fun Fragment.progressDialog(
     title: Int? = null,

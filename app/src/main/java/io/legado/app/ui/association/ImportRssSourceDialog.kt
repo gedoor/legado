@@ -194,7 +194,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickLis
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
     inner class SourcesAdapter(context: Context) :

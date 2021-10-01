@@ -171,7 +171,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickL
                 }
             }
             noButton()
-        }.show()
+        }
     }
 
     private fun upSelectText() {

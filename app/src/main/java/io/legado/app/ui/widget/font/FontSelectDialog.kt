@@ -115,7 +115,7 @@ class FontSelectDialog : BaseDialogFragment(),
                         onDefaultFontChange()
                         dismissAllowingStateLoss()
                     }
-                }.show()
+                }
             }
             R.id.menu_other -> {
                 openFolder()

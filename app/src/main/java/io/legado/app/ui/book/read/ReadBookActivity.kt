@@ -934,7 +934,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                         setResult(Activity.RESULT_OK)
                     }
                     noButton { viewModel.removeFromBookshelf { super.finish() } }
-                }.show()
+                }
             } else {
                 super.finish()
             }

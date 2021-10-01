@@ -64,7 +64,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
             okButton {
                 requireContext().sendToClip(uri.toString())
             }
-        }.show()
+        }
     }
 
     override fun onStart() {
@@ -181,7 +181,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                     viewModel.importOnLine(url)
                 }
             }
-        }.show()
+        }
     }
 
     @SuppressLint("InflateParams")

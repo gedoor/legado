@@ -221,7 +221,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
             onDismiss {
                 Restore.saveIgnoreConfig()
             }
-        }.show()
+        }
     }
 
 
@@ -278,7 +278,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
                     restoreFromLocal()
                 }
                 cancelButton()
-            }.show()
+            }
         }
     }
 
