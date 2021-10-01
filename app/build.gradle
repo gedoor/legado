@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'de.timfreiheit.resourceplaceholders'
-apply from:'download.gradle'
+apply from: 'download.gradle'
 
 static def releaseTime() {
     return new Date().format("yy.MMddHH", TimeZone.getTimeZone("GMT+8"))
@@ -187,7 +187,7 @@ dependencies {
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.9.1')
-    compileOnly('com.google.android.gms:play-services-cronet:17.0.1'){
+    compileOnly('com.google.android.gms:play-services-cronet:17.0.1') {
         exclude(group: "org.chromium.net")
     }
     googleImplementation('com.google.android.gms:play-services-cronet:17.0.1')
