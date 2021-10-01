@@ -12,6 +12,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.IntentAction
+import io.legado.app.utils.IntentType
 import io.legado.app.utils.openFileUri
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
@@ -57,7 +58,7 @@ class DownloadService : BaseService() {
             IntentAction.play -> {
                 val id = intent.getLongExtra("downloadId", 0)
                 if (completeDownloads.contains(id)) {
-                    openDownload(id)
+                    openDownload(id, downloads[id]?.second)
                 } else {
                     toastOnUi("未完成,下载的文件夹Download")
                 }
@@ -113,7 +114,7 @@ class DownloadService : BaseService() {
             completeDownloads.add(downloadId)
             val fileName = downloads[downloadId]?.second
             if (fileName?.endsWith(".apk") == true) {
-                openDownload(downloadId)
+                openDownload(downloadId, fileName)
             } else {
                 toastOnUi("$fileName ${getString(R.string.download_success)}")
             }
@@ -168,9 +169,10 @@ class DownloadService : BaseService() {
         }
     }
 
-    private fun openDownload(downloadId: Long) {
+    private fun openDownload(downloadId: Long, fileName: String?) {
         downloadManager.getUriForDownloadedFile(downloadId)?.let { uri ->
-            openFileUri(uri)
+            val type = IntentType.from(fileName)
+            openFileUri(uri, type)
         }
     }
 
