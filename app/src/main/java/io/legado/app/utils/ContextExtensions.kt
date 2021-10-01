@@ -293,7 +293,7 @@ fun Context.openUrl(uri: Uri) {
     }
 }
 
-fun Context.openFileUri(uri: Uri, type: String?) {
+fun Context.openFileUri(uri: Uri, type: String? = null) {
     val intent = Intent()
     intent.action = Intent.ACTION_VIEW
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -301,7 +301,7 @@ fun Context.openFileUri(uri: Uri, type: String?) {
         //7.0版本以上
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    intent.setDataAndType(uri, type)
+    intent.setDataAndType(uri, type ?: IntentType.from(uri))
     try {
         startActivity(intent)
     } catch (e: Exception) {
