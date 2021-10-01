@@ -159,6 +159,7 @@ class ReadMenu @JvmOverloads constructor(
 
     private fun bindEvent() = binding.run {
         val chapterViewClickListener = OnClickListener {
+            BookRead.bookSource ?: return@OnClickListener
             if (AppConfig.readUrlInBrowser) {
                 context.openUrl(tvChapterUrl.text.toString().substringBefore(",{"))
             } else {
@@ -171,6 +172,7 @@ class ReadMenu @JvmOverloads constructor(
             }
         }
         val chapterViewLongClickListener = OnLongClickListener {
+            BookRead.bookSource ?: return@OnLongClickListener true
             context.alert(R.string.Open_fan) {
                 setMessage(R.string.use_browser_open)
                 okButton {
