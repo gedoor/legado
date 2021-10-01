@@ -184,6 +184,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Synchronized
     fun addItems(newItems: List<ITEM>) {
         kotlin.runCatching {
@@ -219,6 +220,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Synchronized
     fun removeItems(items: List<ITEM>) {
         kotlin.runCatching {
@@ -279,6 +281,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Synchronized
     fun clearItems() {
         kotlin.runCatching {
