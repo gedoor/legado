@@ -164,7 +164,7 @@ class TocRegexDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -185,7 +185,7 @@ class TocRegexDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     inner class TocRegexAdapter(context: Context) :

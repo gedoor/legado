@@ -858,7 +858,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 BookRead.setProgress(progress)
             }
             noButton()
-        }.show()
+        }
     }
 
     private fun skipToSearch(index: Int, indexWithinChapter: Int) {

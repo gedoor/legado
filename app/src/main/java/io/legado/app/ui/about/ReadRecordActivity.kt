@@ -66,7 +66,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                     initData()
                 }
                 noButton()
-            }.show()
+            }
         }
     }
 
@@ -143,7 +143,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                     initData()
                 }
                 noButton()
-            }.show()
+            }
         }
 
     }

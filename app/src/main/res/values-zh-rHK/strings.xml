@@ -894,5 +894,7 @@
     <string name="double_page_horizontal">横屏双页</string>
     <string name="open_in_browser">浏览器打开</string>
     <string name="copy_url">拷贝url</string>
+    <string name="Open_fan">打开方式</string>
+    <string name="use_browser_open">是否使用外部浏览器打开?</string>
 
 </resources>

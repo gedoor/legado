@@ -207,7 +207,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
                 )
                 showDialogFragment(TextDialog(helpStr, TextDialog.Mode.MD))
             }
-        }.show()
+        }
     }
 
     inner class Adapter(context: Context) :

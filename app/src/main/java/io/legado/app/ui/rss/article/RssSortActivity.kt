@@ -118,7 +118,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 neutralButton(R.string.delete) {
                     viewModel.rssSource?.setVariable(null)
                 }
-            }.show()
+            }
         }
     }
 

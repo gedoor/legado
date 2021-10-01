@@ -182,6 +182,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.barElevation, value)
         }
 
+    var readUrlInBrowser: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.readUrlOpenInBrowser)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.readUrlOpenInBrowser, value)
+        }
+
     var exportCharset: String
         get() {
             val c = appCtx.getPrefString(PreferKey.exportCharset)

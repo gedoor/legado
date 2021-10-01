@@ -98,7 +98,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             okButton {
                 sendToClip(uri.toString())
             }
-        }.show()
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -172,7 +172,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.selection) }
             noButton()
-        }.show()
+        }
     }
 
     private fun observeReplaceRuleData(searchKey: String? = null) {
@@ -287,7 +287,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     private fun showHelp() {

@@ -333,7 +333,7 @@ class BookInfoActivity :
                 neutralButton(R.string.delete) {
                     viewModel.bookSource?.setVariable(null)
                 }
-            }.show()
+            }
         }
     }
 
@@ -358,7 +358,7 @@ class BookInfoActivity :
                         ?.putVariable("custom", null)
                     viewModel.saveBook()
                 }
-            }.show()
+            }
         }
     }
 

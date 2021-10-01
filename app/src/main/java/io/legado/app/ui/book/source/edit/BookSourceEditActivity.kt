@@ -160,7 +160,7 @@ class BookSourceEditActivity :
                 negativeButton(R.string.no) {
                     super.finish()
                 }
-            }.show()
+            }
         } else {
             super.finish()
         }

@@ -301,7 +301,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 AppConfig.bookExportFileName = alertBinding.editView.text?.toString()
             }
             cancelButton()
-        }.show()
+        }
     }
 
     private fun getTypeName(): String {
@@ -328,7 +328,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 AppConfig.exportCharset = alertBinding.editView.text?.toString() ?: "UTF-8"
             }
             cancelButton()
-        }.show()
+        }
     }
 
     override fun exportProgress(bookUrl: String): Int? {

@@ -160,7 +160,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
                 alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
                     okButton { viewModel.deleteBook(*adapter.selectedBooks()) }
                     noButton()
-                }.show()
+                }
             R.id.menu_update_enable ->
                 viewModel.upCanUpdate(adapter.selectedBooks(), true)
             R.id.menu_update_disable ->
@@ -222,7 +222,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
             okButton {
                 viewModel.deleteBook(book)
             }
-        }.show()
+        }
     }
 
 }

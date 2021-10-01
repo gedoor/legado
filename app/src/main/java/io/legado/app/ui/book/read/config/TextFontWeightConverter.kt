@@ -46,7 +46,7 @@ class TextFontWeightConverter(context: Context, attrs: AttributeSet?) :
                 upUi(i)
                 onChanged?.invoke()
             }
-        }.show()
+        }
     }
 
     fun onChanged(unit: () -> Unit) {

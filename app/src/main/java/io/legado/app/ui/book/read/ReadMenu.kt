@@ -15,6 +15,7 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
 import io.legado.app.help.*
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
 import io.legado.app.model.BookRead
 import io.legado.app.ui.web.WebViewActivity
@@ -141,11 +142,26 @@ class ReadMenu @JvmOverloads constructor(
             callBack.openSourceEditActivity()
         }
         tvChapterUrl.setOnClickListener {
-            context.startActivity<WebViewActivity> {
-                val url = tvChapterUrl.text.toString()
-                putExtra("title", tvChapterName.text)
-                putExtra("url", url)
-                IntentData.put(url, BookRead.bookSource?.getHeaderMap(true))
+            if (AppConfig.readUrlInBrowser) {
+                context.openUrl(tvChapterUrl.text.toString().substringBefore(",{"))
+            } else {
+                context.startActivity<WebViewActivity> {
+                    val url = tvChapterUrl.text.toString()
+                    putExtra("title", tvChapterName.text)
+                    putExtra("url", url)
+                    IntentData.put(url, BookRead.bookSource?.getHeaderMap(true))
+                }
+            }
+        }
+        tvChapterUrl.onLongClick {
+            context.alert(R.string.Open_fan) {
+                setMessage(R.string.use_browser_open)
+                okButton {
+                    AppConfig.readUrlInBrowser = true
+                }
+                noButton {
+                    AppConfig.readUrlInBrowser = false
+                }
             }
         }
         //登录

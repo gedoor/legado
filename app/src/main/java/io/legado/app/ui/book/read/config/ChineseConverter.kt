@@ -44,7 +44,7 @@ class ChineseConverter(context: Context, attrs: AttributeSet?) : StrokeTextView(
                 upUi(i)
                 onChanged?.invoke()
             }
-        }.show()
+        }
     }
 
     fun onChanged(unit: () -> Unit) {

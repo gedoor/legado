@@ -202,7 +202,7 @@ abstract class ReadBookBaseActivity :
                     }
                 }
                 noButton()
-            }.show()
+            }
         }
     }
 
@@ -220,7 +220,7 @@ abstract class ReadBookBaseActivity :
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     fun showPageAnimConfig(success: () -> Unit) {

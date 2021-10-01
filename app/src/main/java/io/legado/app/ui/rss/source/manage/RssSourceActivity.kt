@@ -84,7 +84,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             okButton {
                 sendToClip(uri.toString())
             }
-        }.show()
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -221,7 +221,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.selection) }
             noButton()
-        }.show()
+        }
     }
 
     private fun upGroupMenu() = groupMenu?.let { menu ->
@@ -295,7 +295,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     override fun del(source: RssSource) {

@@ -109,7 +109,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     override fun delSubscription(ruleSub: RuleSub) {

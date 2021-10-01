@@ -49,6 +49,8 @@ fun Context.alert(
             this.setMessage(messageResource)
         }
         if (init != null) init()
+    }.apply {
+        show()
     }
 }
 

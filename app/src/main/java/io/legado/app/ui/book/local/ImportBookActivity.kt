@@ -290,7 +290,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                 AppConfig.bookImportFileName = alertBinding.editView.text?.toString()
             }
             cancelButton()
-        }.show()
+        }
     }
 
     private val find: (docItem: DocItem) -> Unit = {

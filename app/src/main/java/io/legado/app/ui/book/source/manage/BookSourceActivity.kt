@@ -90,7 +90,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             okButton {
                 sendToClip(uri.toString())
             }
-        }.show()
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -312,7 +312,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.selection) }
             noButton()
-        }.show()
+        }
     }
 
     private fun initSelectActionBar() {
@@ -363,7 +363,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 checkMessageRefreshJob().start()
             }
             noButton()
-        }.show()
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -383,7 +383,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -403,7 +403,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     private fun upGroupMenu() = groupMenu?.let { menu ->
@@ -443,7 +443,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
             cancelButton()
-        }.show()
+        }
     }
 
     override fun observeLiveBus() {
