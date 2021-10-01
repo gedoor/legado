@@ -21,7 +21,7 @@ import io.legado.app.help.*
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
 import io.legado.app.model.BookRead
-import io.legado.app.ui.web.WebViewActivity
+import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import splitties.views.onClick

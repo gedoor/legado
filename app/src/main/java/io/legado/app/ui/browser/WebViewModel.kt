@@ -1,4 +1,4 @@
-package io.legado.app.ui.web
+package io.legado.app.ui.browser
 
 import android.app.Application
 import android.content.Intent

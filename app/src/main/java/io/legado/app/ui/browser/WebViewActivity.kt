@@ -1,4 +1,4 @@
-package io.legado.app.ui.web
+package io.legado.app.ui.browser
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo

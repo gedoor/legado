@@ -293,7 +293,7 @@
             android:launchMode="singleTop" />
         <!-- WebView界面 -->
         <activity
-            android:name=".ui.web.WebViewActivity"
+            android:name=".ui.browser.WebViewActivity"
             android:launchMode="standard" />
         <!-- 书源登录 -->
         <activity
