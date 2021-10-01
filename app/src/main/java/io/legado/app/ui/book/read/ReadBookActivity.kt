@@ -817,7 +817,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
         }.onSuccess {
             it?.let {
                 startActivity<WebViewActivity> {
-                    putExtra("title", "购买")
+                    putExtra("title", getString(R.string.chapter_pay))
                     putExtra("url", it)
                     IntentData.put(it, ReadBook.bookSource)
                 }
