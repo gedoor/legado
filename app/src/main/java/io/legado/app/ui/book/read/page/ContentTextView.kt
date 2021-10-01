@@ -11,7 +11,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.model.BookRead
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.PhotoDialog
 import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
@@ -163,12 +163,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineBottom: Float,
         isImageLine: Boolean
     ) {
-        val book = BookRead.book ?: return
+        val book = ReadBook.book ?: return
         ImageProvider.getImage(
             book,
             textPage.chapterIndex,
             textChar.charData,
-            BookRead.bookSource,
+            ReadBook.bookSource,
             true
         )?.let {
             val rectF = if (isImageLine) {
@@ -495,7 +495,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun createBookmark(): Bookmark? {
         val page = relativePage(selectStart[0])
         page.getTextChapter()?.let { chapter ->
-            BookRead.book?.let { book ->
+            ReadBook.book?.let { book ->
                 return book.createBookMark().apply {
                     chapterIndex = page.chapterIndex
                     chapterPos = chapter.getReadLength(page.index) +

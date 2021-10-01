@@ -20,7 +20,7 @@ import io.legado.app.databinding.ViewReadMenuBinding
 import io.legado.app.help.*
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
-import io.legado.app.model.BookRead
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
@@ -159,7 +159,7 @@ class ReadMenu @JvmOverloads constructor(
 
     private fun bindEvent() = binding.run {
         val chapterViewClickListener = OnClickListener {
-            if (BookRead.isLocalBook) {
+            if (ReadBook.isLocalBook) {
                 return@OnClickListener
             }
             if (AppConfig.readUrlInBrowser) {
@@ -169,12 +169,12 @@ class ReadMenu @JvmOverloads constructor(
                     val url = tvChapterUrl.text.toString()
                     putExtra("title", tvChapterName.text)
                     putExtra("url", url)
-                    IntentData.put(url, BookRead.bookSource?.getHeaderMap(true))
+                    IntentData.put(url, ReadBook.bookSource?.getHeaderMap(true))
                 }
             }
         }
         val chapterViewLongClickListener = OnLongClickListener {
-            if (BookRead.isLocalBook) {
+            if (ReadBook.isLocalBook) {
                 return@OnLongClickListener true
             }
             context.alert(R.string.Open_fan) {
@@ -228,7 +228,7 @@ class ReadMenu @JvmOverloads constructor(
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                BookRead.skipToPage(seekBar.progress)
+                ReadBook.skipToPage(seekBar.progress)
             }
 
         })
@@ -257,10 +257,10 @@ class ReadMenu @JvmOverloads constructor(
         }
 
         //上一章
-        tvPre.setOnClickListener { BookRead.moveToPrevChapter(upContent = true, toLast = false) }
+        tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
 
         //下一章
-        tvNext.setOnClickListener { BookRead.moveToNextChapter(true) }
+        tvNext.setOnClickListener { ReadBook.moveToNextChapter(true) }
 
         //目录
         llCatalog.setOnClickListener {
@@ -299,11 +299,11 @@ class ReadMenu @JvmOverloads constructor(
         menuBottomIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
         menuTopIn.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                binding.tvSourceAction.isGone = BookRead.isLocalBook
-                binding.tvLogin.isGone = BookRead.bookSource?.loginUrl.isNullOrEmpty()
-                binding.tvPay.isGone = BookRead.bookSource?.loginUrl.isNullOrEmpty()
-                        || BookRead.curTextChapter?.isVip != true
-                        || BookRead.curTextChapter?.isPay == true
+                binding.tvSourceAction.isGone = ReadBook.isLocalBook
+                binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+                binding.tvPay.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+                        || ReadBook.curTextChapter?.isVip != true
+                        || ReadBook.curTextChapter?.isPay == true
                 callBack.upSystemUiVisibility()
                 binding.llBrightness.visible(showBrightnessView)
             }
@@ -350,20 +350,20 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     fun upBookView() {
-        binding.titleBar.title = BookRead.book?.name
-        BookRead.curTextChapter?.let {
+        binding.titleBar.title = ReadBook.book?.name
+        ReadBook.curTextChapter?.let {
             binding.tvChapterName.text = it.title
             binding.tvChapterName.visible()
-            if (!BookRead.isLocalBook) {
+            if (!ReadBook.isLocalBook) {
                 binding.tvChapterUrl.text = it.url
                 binding.tvChapterUrl.visible()
             } else {
                 binding.tvChapterUrl.gone()
             }
             binding.seekReadPage.max = it.pageSize.minus(1)
-            binding.seekReadPage.progress = BookRead.durPageIndex()
-            binding.tvPre.isEnabled = BookRead.durChapterIndex != 0
-            binding.tvNext.isEnabled = BookRead.durChapterIndex != BookRead.chapterSize - 1
+            binding.seekReadPage.progress = ReadBook.durPageIndex()
+            binding.tvPre.isEnabled = ReadBook.durChapterIndex != 0
+            binding.tvNext.isEnabled = ReadBook.durChapterIndex != ReadBook.chapterSize - 1
         } ?: let {
             binding.tvChapterName.gone()
             binding.tvChapterUrl.gone()

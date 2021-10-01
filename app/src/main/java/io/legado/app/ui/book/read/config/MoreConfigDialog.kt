@@ -15,7 +15,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.model.BookRead
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
@@ -126,7 +126,7 @@ class MoreConfigDialog : DialogFragment() {
                 }
                 PreferKey.doublePageHorizontal -> {
                     ChapterProvider.upLayout()
-                    BookRead.loadContent(false)
+                    ReadBook.loadContent(false)
                 }
             }
         }

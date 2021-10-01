@@ -12,7 +12,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.model.BookRead
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
@@ -121,7 +121,7 @@ object ChapterProvider {
                 while (matcher.find()) {
                     matcher.group(1)?.let { src ->
                         srcList.add(src)
-                        ImageProvider.getImage(book, bookChapter.index, src, BookRead.bookSource)
+                        ImageProvider.getImage(book, bookChapter.index, src, ReadBook.bookSource)
                         matcher.appendReplacement(sb, srcReplaceChar)
                     }
                 }
@@ -208,7 +208,7 @@ object ChapterProvider {
         imageStyle: String?,
     ): Float {
         var durY = y
-        ImageProvider.getImage(book, chapter.index, src, BookRead.bookSource)?.let {
+        ImageProvider.getImage(book, chapter.index, src, ReadBook.bookSource)?.let {
             if (durY > visibleHeight) {
                 textPages.last().height = durY
                 textPages.add(TextPage())
@@ -586,7 +586,7 @@ object ChapterProvider {
      */
     fun upLayout() {
         doublePage = viewWidth > viewHeight
-                && BookRead.pageAnim() != 3
+                && ReadBook.pageAnim() != 3
                 && AppConfig.doublePageHorizontal
         if (viewWidth > 0 && viewHeight > 0) {
             paddingLeft = ReadBookConfig.paddingLeft.dp

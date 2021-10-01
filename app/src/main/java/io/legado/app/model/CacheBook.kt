@@ -275,8 +275,8 @@ object CacheBook {
             content: String,
             resetPageOffset: Boolean = false
         ) {
-            if (BookRead.book?.bookUrl == book.bookUrl) {
-                BookRead.contentLoadFinish(
+            if (ReadBook.book?.bookUrl == book.bookUrl) {
+                ReadBook.contentLoadFinish(
                     book, chapter, content,
                     resetPageOffset = resetPageOffset
                 )

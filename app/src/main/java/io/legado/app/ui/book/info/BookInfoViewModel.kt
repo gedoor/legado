@@ -11,7 +11,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
-import io.legado.app.model.BookRead
+import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
@@ -210,8 +210,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     book.durChapterTitle = it.durChapterTitle
                 }
                 book.save()
-                if (BookRead.book?.name == book.name && BookRead.book?.author == book.author) {
-                    BookRead.book = book
+                if (ReadBook.book?.name == book.name && ReadBook.book?.author == book.author) {
+                    ReadBook.book = book
                 }
             }
         }.onSuccess {

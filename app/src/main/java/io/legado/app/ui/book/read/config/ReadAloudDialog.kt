@@ -11,8 +11,8 @@ import io.legado.app.databinding.DialogReadAloudBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.model.BookRead
 import io.legado.app.model.ReadAloud
+import io.legado.app.model.ReadBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
@@ -102,8 +102,8 @@ class ReadAloudDialog : BaseDialogFragment() {
         llSetting.setOnClickListener {
             ReadAloudConfigDialog().show(childFragmentManager, "readAloudConfigDialog")
         }
-        tvPre.setOnClickListener { BookRead.moveToPrevChapter(upContent = true, toLast = false) }
-        tvNext.setOnClickListener { BookRead.moveToNextChapter(true) }
+        tvPre.setOnClickListener { ReadBook.moveToPrevChapter(upContent = true, toLast = false) }
+        tvNext.setOnClickListener { ReadBook.moveToNextChapter(true) }
         ivStop.setOnClickListener {
             ReadAloud.stop(requireContext())
             dismissAllowingStateLoss()

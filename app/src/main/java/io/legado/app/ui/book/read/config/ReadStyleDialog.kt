@@ -16,7 +16,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.model.BookRead
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.font.FontSelectDialog
 import io.legado.app.utils.*
@@ -129,10 +129,10 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
             TipConfigDialog().show(childFragmentManager, "tipConfigDialog")
         }
         rgPageAnim.setOnCheckedChangeListener { _, checkedId ->
-            BookRead.book?.setPageAnim(-1)
+            ReadBook.book?.setPageAnim(-1)
             ReadBookConfig.pageAnim = binding.rgPageAnim.getIndexById(checkedId)
             callBack?.upPageAnim()
-            BookRead.loadContent(false)
+            ReadBook.loadContent(false)
         }
         cbShareLayout.onCheckedChangeListener = { _, isChecked ->
             ReadBookConfig.shareLayout = isChecked
@@ -177,7 +177,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun upView() = binding.run {
-        BookRead.pageAnim().let {
+        ReadBook.pageAnim().let {
             if (it >= 0 && it < rgPageAnim.childCount) {
                 rgPageAnim.check(rgPageAnim[it].id)
             }

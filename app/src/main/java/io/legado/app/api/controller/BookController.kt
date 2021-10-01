@@ -12,7 +12,7 @@ import io.legado.app.help.ContentProcessor
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.BookCover
-import io.legado.app.model.BookRead
+import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.localBook.UmdFile
@@ -159,9 +159,9 @@ object BookController {
         if (book != null) {
             book.save()
             AppWebDav.uploadBookProgress(book)
-            if (BookRead.book?.bookUrl == book.bookUrl) {
-                BookRead.book = book
-                BookRead.durChapterIndex = book.durChapterIndex
+            if (ReadBook.book?.bookUrl == book.bookUrl) {
+                ReadBook.book = book
+                ReadBook.durChapterIndex = book.durChapterIndex
             }
             return returnData.setData("")
         }
@@ -176,9 +176,9 @@ object BookController {
         }
         appDb.bookDao.update(book)
         AppWebDav.uploadBookProgress(book)
-        if (BookRead.book?.bookUrl == book.bookUrl) {
-            BookRead.book = book
-            BookRead.durChapterIndex = index
+        if (ReadBook.book?.bookUrl == book.bookUrl) {
+            ReadBook.book = book
+            ReadBook.durChapterIndex = index
         }
     }
 

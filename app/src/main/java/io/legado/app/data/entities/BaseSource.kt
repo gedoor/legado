@@ -145,8 +145,9 @@ interface BaseSource : JsExtensions {
      * 执行JS
      */
     @Throws(Exception::class)
-    fun evalJS(jsStr: String): Any? {
+    fun evalJS(jsStr: String, bindingsConfig: SimpleBindings.() -> Unit = {}): Any? {
         val bindings = SimpleBindings()
+        bindings.apply(bindingsConfig)
         bindings["java"] = this
         bindings["source"] = this
         bindings["baseUrl"] = getKey()

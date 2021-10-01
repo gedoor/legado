@@ -23,8 +23,8 @@ import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.model.BookRead
 import io.legado.app.model.CacheBook
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
@@ -42,7 +42,7 @@ abstract class ReadBookBaseActivity :
     var bottomDialog = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        BookRead.msg = null
+        ReadBook.msg = null
         setOrientation()
         upLayoutInDisplayCutoutMode()
         super.onCreate(savedInstanceState)
@@ -186,7 +186,7 @@ abstract class ReadBookBaseActivity :
 
     @SuppressLint("InflateParams")
     fun showDownloadDialog() {
-        BookRead.book?.let { book ->
+        ReadBook.book?.let { book ->
             alert(titleResource = R.string.offline_cache) {
                 val alertBinding = DialogDownloadChoiceBinding.inflate(layoutInflater).apply {
                     root.setBackgroundColor(root.context.backgroundColor)
@@ -211,12 +211,12 @@ abstract class ReadBookBaseActivity :
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "charset"
                 editView.setFilterValues(charsets)
-                editView.setText(BookRead.book?.charset)
+                editView.setText(ReadBook.book?.charset)
             }
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
-                    BookRead.setCharset(it)
+                    ReadBook.setCharset(it)
                 }
             }
             cancelButton()
@@ -232,7 +232,7 @@ abstract class ReadBookBaseActivity :
         items.add(getString(R.string.page_anim_scroll))
         items.add(getString(R.string.page_anim_none))
         selector(R.string.page_anim, items) { _, i ->
-            BookRead.book?.setPageAnim(i - 1)
+            ReadBook.book?.setPageAnim(i - 1)
             success()
         }
     }

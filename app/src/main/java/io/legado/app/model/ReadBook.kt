@@ -26,7 +26,7 @@ import splitties.init.appCtx
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-object BookRead : CoroutineScope by MainScope() {
+object ReadBook : CoroutineScope by MainScope() {
     var book: Book? = null
     var callBack: CallBack? = null
     var inBookshelf = false
@@ -44,7 +44,7 @@ object BookRead : CoroutineScope by MainScope() {
     var readStartTime: Long = System.currentTimeMillis()
 
     fun resetData(book: Book) {
-        BookRead.book = book
+        ReadBook.book = book
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
@@ -111,8 +111,8 @@ object BookRead : CoroutineScope by MainScope() {
     }
 
     fun upMsg(msg: String?) {
-        if (BookRead.msg != msg) {
-            BookRead.msg = msg
+        if (ReadBook.msg != msg) {
+            ReadBook.msg = msg
             callBack?.upContent()
         }
     }
@@ -379,7 +379,7 @@ object BookRead : CoroutineScope by MainScope() {
         if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
         book.lastCheckTime = System.currentTimeMillis()
         WebBook.getChapterList(this, bookSource, book).onSuccess(IO) { cList ->
-            if (book.bookUrl == BookRead.book?.bookUrl
+            if (book.bookUrl == ReadBook.book?.bookUrl
                 && cList.size > chapterSize
             ) {
                 appDb.bookChapterDao.insert(*cList.toTypedArray())
