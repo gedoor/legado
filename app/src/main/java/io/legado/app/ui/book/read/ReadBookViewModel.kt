@@ -335,6 +335,15 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun disableSource() {
+        execute {
+            BookRead.bookSource?.let {
+                it.enabled = false
+                appDb.bookSourceDao.update(it)
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         if (BaseReadAloudService.pause) {

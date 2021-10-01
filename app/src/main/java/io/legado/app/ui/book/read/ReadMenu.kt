@@ -5,10 +5,13 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -21,6 +24,7 @@ import io.legado.app.model.BookRead
 import io.legado.app.ui.web.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
+import splitties.views.onClick
 import splitties.views.onLongClick
 
 /**
@@ -44,7 +48,23 @@ class ReadMenu @JvmOverloads constructor(
         .setPressedColor(ColorUtils.darkenColor(bgColor))
         .create()
     private var onMenuOutEnd: (() -> Unit)? = null
-    val showBrightnessView get() = context.getPrefBoolean(PreferKey.showBrightnessView, true)
+    private val showBrightnessView
+        get() = context.getPrefBoolean(
+            PreferKey.showBrightnessView,
+            true
+        )
+    private val sourceMenu by lazy {
+        PopupMenu(context, binding.tvSourceAction).apply {
+            inflate(R.menu.book_read_source)
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_edit_source -> callBack.openSourceEditActivity()
+                    R.id.menu_disable_source -> callBack.disableSource()
+                }
+                true
+            }
+        }
+    }
 
     init {
         initView()
@@ -138,10 +158,7 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     private fun bindEvent() = binding.run {
-        tvChapterName.setOnClickListener {
-            callBack.openSourceEditActivity()
-        }
-        tvChapterUrl.setOnClickListener {
+        val chapterViewClickListener = OnClickListener {
             if (AppConfig.readUrlInBrowser) {
                 context.openUrl(tvChapterUrl.text.toString().substringBefore(",{"))
             } else {
@@ -153,7 +170,7 @@ class ReadMenu @JvmOverloads constructor(
                 }
             }
         }
-        tvChapterUrl.onLongClick {
+        val chapterViewLongClickListener = OnLongClickListener {
             context.alert(R.string.Open_fan) {
                 setMessage(R.string.use_browser_open)
                 okButton {
@@ -163,13 +180,23 @@ class ReadMenu @JvmOverloads constructor(
                     AppConfig.readUrlInBrowser = false
                 }
             }
+            true
         }
+        tvChapterName.setOnClickListener(chapterViewClickListener)
+        tvChapterName.setOnLongClickListener(chapterViewLongClickListener)
+        tvChapterUrl.setOnClickListener(chapterViewClickListener)
+        tvChapterUrl.setOnLongClickListener(chapterViewLongClickListener)
         //登录
         tvLogin.setOnClickListener {
             callBack.showLogin()
         }
+        //购买
         tvPay.setOnClickListener {
             callBack.payAction()
+        }
+        //书源操作
+        tvSourceAction.onClick {
+            sourceMenu.show()
         }
         //亮度跟随
         ivBrightnessAuto.setOnClickListener {
@@ -365,6 +392,7 @@ class ReadMenu @JvmOverloads constructor(
         fun showReadMenuHelp()
         fun showLogin()
         fun payAction()
+        fun disableSource()
     }
 
 }

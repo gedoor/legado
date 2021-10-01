@@ -49,15 +49,6 @@
         android:title="@string/bookmark_add"
         app:showAsAction="never" />
 
-    <group android:id="@+id/menu_group_on_line_ns">
-
-        <item
-            android:id="@+id/menu_disable_book_source"
-            android:title="@string/disable_book_source"
-            app:showAsAction="never" />
-
-    </group>
-
     <item
         android:id="@+id/menu_copy_text"
         android:title="@string/copy_text"
