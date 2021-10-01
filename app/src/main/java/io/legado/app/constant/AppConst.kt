@@ -78,13 +78,6 @@ object AppConst {
 
     val sysElevation = appCtx.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
 
-    val darkWebViewJs by lazy {
-        """
-            document.body.style.backgroundColor = "#222222";
-            document.getElementsByTagName('body')[0].style.webkitTextFillColor = '#8a8a8a';
-        """.trimIndent()
-    }
-
     val androidId: String by lazy {
         Settings.System.getString(appCtx.contentResolver, Settings.Secure.ANDROID_ID)
     }

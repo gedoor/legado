@@ -13,7 +13,8 @@ enum class Theme {
             else -> Light
         }
 
-        fun getTheme(backgroundColor: Int) =
+        @Suppress("unused")
+        fun fromBackground(backgroundColor: Int) =
             if (ColorUtils.isColorLight(backgroundColor)) Light
             else Dark
 
