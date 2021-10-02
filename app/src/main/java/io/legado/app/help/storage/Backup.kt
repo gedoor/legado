@@ -86,14 +86,13 @@ object Backup {
             }
             Preferences.getSharedPreferences(appCtx, backupPath, "config")?.let { sp ->
                 val edit = sp.edit()
-                appCtx.defaultSharedPreferences.all.map {
-                    when (val value = it.value) {
-                        is Int -> edit.putInt(it.key, value)
-                        is Boolean -> edit.putBoolean(it.key, value)
-                        is Long -> edit.putLong(it.key, value)
-                        is Float -> edit.putFloat(it.key, value)
-                        is String -> edit.putString(it.key, value)
-                        else -> Unit
+                appCtx.defaultSharedPreferences.all.forEach { (key, value) ->
+                    when (value) {
+                        is Int -> edit.putInt(key, value)
+                        is Boolean -> edit.putBoolean(key, value)
+                        is Long -> edit.putLong(key, value)
+                        is Float -> edit.putFloat(key, value)
+                        is String -> edit.putString(key, value)
                     }
                 }
                 edit.commit()

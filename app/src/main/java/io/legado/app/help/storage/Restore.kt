@@ -1,13 +1,12 @@
 package io.legado.app.help.storage
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.constant.AppConst.androidId
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
@@ -21,9 +20,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-import splitties.systemservices.alarmManager
 import java.io.File
-import kotlin.system.exitProcess
 
 
 object Restore {
@@ -54,6 +51,7 @@ object Restore {
 
     //默认忽略keys
     private val ignorePrefKeys = arrayOf(
+        PreferKey.themeMode,
         PreferKey.defaultCover,
         PreferKey.defaultCoverDark
     )
@@ -116,7 +114,8 @@ object Restore {
             fileToListT<BookSource>(path, "bookSource.json")?.let {
                 appDb.bookSourceDao.insert(*it.toTypedArray())
             } ?: run {
-                val bookSourceFile = FileUtils.createFileIfNotExist(path + File.separator + "bookSource.json")
+                val bookSourceFile =
+                    FileUtils.createFileIfNotExist(path + File.separator + "bookSource.json")
                 val json = bookSourceFile.readText()
                 ImportOldData.importOldSource(json)
             }
@@ -172,6 +171,7 @@ object Restore {
                 e.printOnDebug()
             }
             if (!ignoreReadConfig) {
+                //恢复阅读界面配置
                 try {
                     val file =
                         FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.configFileName}")
@@ -197,14 +197,14 @@ object Restore {
             }
             Preferences.getSharedPreferences(appCtx, path, "config")?.all?.let { map ->
                 val edit = appCtx.defaultSharedPreferences.edit()
-                map.forEach {
-                    if (keyIsNotIgnore(it.key)) {
-                        when (val value = it.value) {
-                            is Int -> edit.putInt(it.key, value)
-                            is Boolean -> edit.putBoolean(it.key, value)
-                            is Long -> edit.putLong(it.key, value)
-                            is Float -> edit.putFloat(it.key, value)
-                            is String -> edit.putString(it.key, value)
+                map.forEach { (key, value) ->
+                    if (keyIsNotIgnore(key)) {
+                        when (value) {
+                            is Int -> edit.putInt(key, value)
+                            is Boolean -> edit.putBoolean(key, value)
+                            is Long -> edit.putLong(key, value)
+                            is Float -> edit.putFloat(key, value)
+                            is String -> edit.putString(key, value)
                         }
                     }
                 }
@@ -224,12 +224,7 @@ object Restore {
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(appCtx.getPrefString(PreferKey.launcherIcon))
             }
-            appCtx.packageManager.getLaunchIntentForPackage(appCtx.packageName)?.let { intent ->
-                val restartIntent =
-                    PendingIntent.getActivity(appCtx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-                alarmManager[AlarmManager.RTC, System.currentTimeMillis() + 300] = restartIntent
-                exitProcess(0)
-            }
+            postEvent(EventBus.RECREATE, "")
         }
     }
 
