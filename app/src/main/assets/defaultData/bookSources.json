@@ -36,7 +36,7 @@
     "ruleExplore": {
       "author": "$.author",
       "bookList": "$.content.content",
-      "bookUrl": "$.id@js:java.put('bookId', result);'https://www.kaixin7days.com/book-service/bookMgt/getAllChapterByBookId,{ \"method\": \"POST\",\"body\": {\"bookId\": \"'+result+'\",\"pageNum\": \"1\",\"pageSize\": \"100\"} }'",
+      "bookUrl": "$.id@js:java.put('bookId', result);'https://www.kaixin7days.com/book-service/bookMgt/getAllChapterByBookId,{ \"method\": \"POST\",\"body\": {\"bookId\": \"'+result+'\",\"pageNum\": \"1\",\"pageSize\": \"10000\"} }'",
       "coverUrl": "$.cover@js:var cover = JSON.parse(result);'https://www.shuidi.online:9021/fileMgt/getPicture?filePath='+cover.storeFilePath",
       "intro": "$.desc",
       "lastChapter": "$.newestChapter",
@@ -45,7 +45,7 @@
     "ruleSearch": {
       "author": "$.author",
       "bookList": "$.content.content",
-      "bookUrl": "$.id@js:java.put('bookId', result);'https://www.kaixin7days.com/book-service/bookMgt/getAllChapterByBookId,{ \"method\": \"POST\",\"body\": {\"bookId\": \"'+result+'\",\"pageNum\": \"1\",\"pageSize\": \"100\"} }'",
+      "bookUrl": "$.id@js:java.put('bookId', result);'https://www.kaixin7days.com/book-service/bookMgt/getAllChapterByBookId,{ \"method\": \"POST\",\"body\": {\"bookId\": \"'+result+'\",\"pageNum\": \"1\",\"pageSize\": \"10000\"} }'",
       "coverUrl": "$.cover@js:var cover = JSON.parse(result);'https://www.shuidi.online:9021/fileMgt/getPicture?filePath='+cover.storeFilePath",
       "intro": "$.desc",
       "lastChapter": "$.newestChapter",
