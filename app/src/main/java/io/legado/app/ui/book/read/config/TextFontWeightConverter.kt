@@ -29,7 +29,8 @@ class TextFontWeightConverter(context: Context, attrs: AttributeSet?) :
         }
     }
 
-    private fun upUi(type: Int) {
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun upUi(type: Int) {
         spannableString.removeSpan(enabledSpan)
         when (type) {
             0 -> spannableString.setSpan(enabledSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)

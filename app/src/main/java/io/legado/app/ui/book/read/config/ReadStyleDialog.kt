@@ -177,6 +177,7 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
     }
 
     private fun upView() = binding.run {
+        textFontWeightConverter.upUi(ReadBookConfig.textBold)
         ReadBook.pageAnim().let {
             if (it >= 0 && it < rgPageAnim.childCount) {
                 rgPageAnim.check(rgPageAnim[it].id)
