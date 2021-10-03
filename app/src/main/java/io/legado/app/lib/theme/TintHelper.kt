@@ -67,9 +67,10 @@ object TintHelper {
         when (view) {
             is Button -> {
                 sl = getDisabledColorStateList(color, disabled)
-                val rd = view.getBackground() as RippleDrawable
-                rd.setColor(ColorStateList.valueOf(rippleColor))
-
+                if (view.getBackground() is RippleDrawable) {
+                    val rd = view.getBackground() as RippleDrawable
+                    rd.setColor(ColorStateList.valueOf(rippleColor))
+                }
                 // Disabled text color state for buttons, may get overridden later by ATE tags
                 view.setTextColor(
                     getDisabledColorStateList(
@@ -164,23 +165,24 @@ object TintHelper {
                 }
                 else -> isBg = true
             }
-
-            // Ripples for the above views (e.g. when you tap and hold a switch or checkbox)
-            val rd = view.background as RippleDrawable
-            @SuppressLint("PrivateResource") val unchecked = ContextCompat.getColor(
-                view.context,
-                if (isDark) R.color.ripple_material_dark else R.color.ripple_material_light
-            )
-            val checked = ColorUtils.adjustAlpha(color, 0.4f)
-            val sl = ColorStateList(
-                arrayOf(
-                    intArrayOf(-android.R.attr.state_activated, -android.R.attr.state_checked),
-                    intArrayOf(android.R.attr.state_activated),
-                    intArrayOf(android.R.attr.state_checked)
-                ),
-                intArrayOf(unchecked, checked, checked)
-            )
-            rd.setColor(sl)
+            if (!isBg && view.background is RippleDrawable) {
+                // Ripples for the above views (e.g. when you tap and hold a switch or checkbox)
+                val rd = view.background as RippleDrawable
+                @SuppressLint("PrivateResource") val unchecked = ContextCompat.getColor(
+                    view.context,
+                    if (isDark) R.color.ripple_material_dark else R.color.ripple_material_light
+                )
+                val checked = ColorUtils.adjustAlpha(color, 0.4f)
+                val sl = ColorStateList(
+                    arrayOf(
+                        intArrayOf(-android.R.attr.state_activated, -android.R.attr.state_checked),
+                        intArrayOf(android.R.attr.state_activated),
+                        intArrayOf(android.R.attr.state_checked)
+                    ),
+                    intArrayOf(unchecked, checked, checked)
+                )
+                rd.setColor(sl)
+            }
         }
         if (isBg) {
             // Need to tint the isBackground of a view
