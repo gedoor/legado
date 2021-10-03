@@ -6,7 +6,7 @@ import androidx.annotation.AttrRes
 /**
  * @author Aidan Follestad (afollestad)
  */
-object ATHUtils {
+object ThemeUtils {
 
     @JvmOverloads
     fun resolveColor(context: Context, @AttrRes attr: Int, fallback: Int = 0): Int {
