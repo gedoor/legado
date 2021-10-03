@@ -3,8 +3,8 @@ package io.legado.app.lib.theme.view
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatCheckBox
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.applyTint
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -13,7 +13,7 @@ class ATECheckBox(context: Context, attrs: AttributeSet) : AppCompatCheckBox(con
 
     init {
         if (!isInEditMode) {
-            ATH.setTint(this, context.accentColor)
+            applyTint(context.accentColor)
         }
     }
 }

@@ -12,7 +12,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import io.legado.app.R
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
@@ -26,7 +27,7 @@ class AutoCompleteTextView @JvmOverloads constructor(
     var delCallBack: ((value: String) -> Unit)? = null
 
     init {
-        ATH.applyAccentTint(this)
+        applyTint(context.accentColor)
     }
 
     override fun enoughToFilter(): Boolean {

@@ -11,8 +11,8 @@ import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.core.view.ViewCompat
 import io.legado.app.R
-import io.legado.app.lib.theme.ATH
-import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.applyTint
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
@@ -56,7 +56,7 @@ class VerticalSeekBar @JvmOverloads constructor(context: Context, attrs: Attribu
         }
 
     init {
-        ATH.setTint(this, ThemeStore.accentColor(context))
+        applyTint(context.accentColor)
         ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR)
 
         if (attrs != null) {

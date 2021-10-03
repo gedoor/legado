@@ -19,14 +19,6 @@ import splitties.init.appCtx
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object ATH {
 
-    fun setTint(
-        view: View,
-        @ColorInt color: Int,
-        isDark: Boolean = AppConfig.isNightTheme(view.context)
-    ) {
-        TintHelper.setTintAuto(view, color, false, isDark)
-    }
-
     fun setBackgroundTint(
         view: View, @ColorInt color: Int,
         isDark: Boolean = AppConfig.isNightTheme
@@ -83,12 +75,6 @@ object ATH {
                 .setSelectedColor(ThemeStore.accentColor(context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList
-        }
-    }
-
-    fun applyAccentTint(view: View?) {
-        view?.apply {
-            setTint(this, context.accentColor)
         }
     }
 

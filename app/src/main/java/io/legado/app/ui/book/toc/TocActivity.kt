@@ -15,9 +15,9 @@ import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityChapterListBinding
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.gone
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
@@ -45,29 +45,30 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_toc, menu)
         val search = menu.findItem(R.id.menu_search)
-        searchView = search.actionView as SearchView
-        ATH.setTint(searchView!!, primaryTextColor)
-        searchView?.maxWidth = resources.displayMetrics.widthPixels
-        searchView?.onActionViewCollapsed()
-        searchView?.setOnCloseListener {
-            tabLayout.visible()
-            false
-        }
-        searchView?.setOnSearchClickListener { tabLayout.gone() }
-        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
+        searchView = (search.actionView as SearchView).apply {
+            applyTint(primaryTextColor)
+            maxWidth = resources.displayMetrics.widthPixels
+            onActionViewCollapsed()
+            setOnCloseListener {
+                tabLayout.visible()
+                false
             }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                if (tabLayout.selectedTabPosition == 1) {
-                    viewModel.startBookmarkSearch(newText)
-                } else {
-                    viewModel.startChapterListSearch(newText)
+            setOnSearchClickListener { tabLayout.gone() }
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    return false
                 }
-                return false
-            }
-        })
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    if (tabLayout.selectedTabPosition == 1) {
+                        viewModel.startBookmarkSearch(newText)
+                    } else {
+                        viewModel.startChapterListSearch(newText)
+                    }
+                    return false
+                }
+            })
+        }
         return super.onCompatCreateOptionsMenu(menu)
     }
 

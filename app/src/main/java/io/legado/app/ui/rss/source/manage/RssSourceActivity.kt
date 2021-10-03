@@ -165,7 +165,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun initSearchView() {
         binding.titleBar.findViewById<SearchView>(R.id.search_view).let {
-            ATH.setTint(it, primaryTextColor)
+            it.applyTint(primaryTextColor)
             it.onActionViewExpanded()
             it.queryHint = getString(R.string.search_rss_source)
             it.clearFocus()

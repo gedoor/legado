@@ -96,18 +96,18 @@ class BackupConfigFragment : BasePreferenceFragment(),
         addPreferencesFromResource(R.xml.pref_config_backup)
         findPreference<EditTextPreference>(PreferKey.webDavUrl)?.let {
             it.setOnBindEditTextListener { editText ->
-                ATH.setTint(editText, requireContext().accentColor)
+                editText.applyTint(requireContext().accentColor)
             }
 
         }
         findPreference<EditTextPreference>(PreferKey.webDavAccount)?.let {
             it.setOnBindEditTextListener { editText ->
-                ATH.setTint(editText, requireContext().accentColor)
+                editText.applyTint(requireContext().accentColor)
             }
         }
         findPreference<EditTextPreference>(PreferKey.webDavPassword)?.let {
             it.setOnBindEditTextListener { editText ->
-                ATH.setTint(editText, requireContext().accentColor)
+                editText.applyTint(requireContext().accentColor)
                 editText.inputType =
                     InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
             }
