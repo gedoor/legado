@@ -157,17 +157,17 @@ abstract class ReadBookBaseActivity :
                         0
                     }
                 when (navigationBarPos) {
-                    0 -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+                    POS.BOTTOM -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
                         height = navigationBarHeight
                         width = MATCH_PARENT
                         gravity = Gravity.BOTTOM
                     }
-                    1 -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+                    POS.LEFT -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
                         height = MATCH_PARENT
                         width = navigationBarHeight
                         gravity = Gravity.LEFT
                     }
-                    2 -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+                    POS.RIGHT -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
                         height = MATCH_PARENT
                         width = navigationBarHeight
                         gravity = Gravity.RIGHT

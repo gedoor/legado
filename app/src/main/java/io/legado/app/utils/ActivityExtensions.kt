@@ -77,24 +77,22 @@ val Activity.navigationBarHeight: Int
  * 1 left
  * 2 right
  */
-val Activity.navigationBarPos: Int
+val Activity.navigationBarPos: POS
     get() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            var pos = 0
             val display: Display = windowManager.defaultDisplay
             val rotate: Int = display.rotation
             val height: Int = display.height
             val width: Int = display.width
-            pos = if (width > height) {
+            return if (width > height) {
                 if (rotate == Surface.ROTATION_270) {
-                    1 //left
+                    POS.LEFT
                 } else {
-                    2 //right
+                    POS.RIGHT
                 }
             } else {
-                0 //bottom
+                POS.BOTTOM
             }
-            return pos
         } else {
             val display: Display = windowManager.defaultDisplay
             val metricsReal = DisplayMetrics()
@@ -110,9 +108,13 @@ val Activity.navigationBarPos: Int
             val realH = metricsReal.heightPixels
 
             return if (currW != realW && currH == realH) {
-                2
+                POS.RIGHT
             } else {
-                0
+                POS.BOTTOM
             }
         }
     }
+
+enum class POS {
+    BOTTOM, LEFT, RIGHT
+}
