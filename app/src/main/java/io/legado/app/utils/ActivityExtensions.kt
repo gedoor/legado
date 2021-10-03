@@ -4,10 +4,7 @@ import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowInsets
-import android.view.WindowMetrics
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 
@@ -72,4 +69,50 @@ val Activity.navigationBarHeight: Int
             return resources.getDimensionPixelSize(resourceId)
         }
         return 0
+    }
+
+/**
+ * 返回导航栏位置
+ * 0 bottom
+ * 1 left
+ * 2 right
+ */
+val Activity.navigationBarPos: Int
+    get() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            var pos = 0
+            val display: Display = windowManager.defaultDisplay
+            val rotate: Int = display.rotation
+            val height: Int = display.height
+            val width: Int = display.width
+            pos = if (width > height) {
+                if (rotate == Surface.ROTATION_270) {
+                    1 //left
+                } else {
+                    2 //right
+                }
+            } else {
+                0 //bottom
+            }
+            return pos
+        } else {
+            val display: Display = windowManager.defaultDisplay
+            val metricsReal = DisplayMetrics()
+            display.getRealMetrics(metricsReal)
+
+            val metricsCurrent = DisplayMetrics()
+            display.getMetrics(metricsCurrent)
+
+            val currH = metricsCurrent.heightPixels
+            val currW = metricsCurrent.widthPixels
+
+            val realW = metricsReal.widthPixels
+            val realH = metricsReal.heightPixels
+
+            return if (currW != realW && currH == realH) {
+                2
+            } else {
+                0
+            }
+        }
     }
