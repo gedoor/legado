@@ -8,7 +8,6 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import io.legado.app.help.AppConfig
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import splitties.init.appCtx
@@ -18,13 +17,6 @@ import splitties.init.appCtx
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object ATH {
-
-    fun setBackgroundTint(
-        view: View, @ColorInt color: Int,
-        isDark: Boolean = AppConfig.isNightTheme
-    ) {
-        TintHelper.setTintAuto(view, color, true, isDark)
-    }
 
     fun setEdgeEffectColor(view: RecyclerView?, @ColorInt color: Int) {
         view?.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
@@ -75,16 +67,6 @@ object ATH {
                 .setSelectedColor(ThemeStore.accentColor(context)).create()
             itemIconTintList = colorStateList
             itemTextColor = colorStateList
-        }
-    }
-
-    fun applyBackgroundTint(view: View?) {
-        view?.apply {
-            if (background == null) {
-                setBackgroundColor(context.backgroundColor)
-            } else {
-                setBackgroundTint(this, context.backgroundColor)
-            }
         }
     }
 

@@ -53,11 +53,15 @@ fun View.applyTint(
     TintHelper.setTintAuto(this, color, false, isDark)
 }
 
-fun View.applyBackground(
+fun View.applyBackgroundTint(
     @ColorInt color: Int,
     isDark: Boolean = AppConfig.isNightTheme
 ) {
-    TintHelper.setTintAuto(this, color, true, isDark)
+    if (background == null) {
+        setBackgroundColor(color)
+    } else {
+        TintHelper.setTintAuto(this, color, true, isDark)
+    }
 }
 
 fun View.gone() {

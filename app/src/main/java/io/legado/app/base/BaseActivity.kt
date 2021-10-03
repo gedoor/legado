@@ -17,7 +17,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.Theme
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ThemeConfig
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
@@ -128,11 +127,11 @@ abstract class BaseActivity<VB : ViewBinding>(
             Theme.Transparent -> setTheme(R.style.AppTheme_Transparent)
             Theme.Dark -> {
                 setTheme(R.style.AppTheme_Dark)
-                ATH.applyBackgroundTint(window.decorView)
+                window.decorView.applyBackgroundTint(backgroundColor)
             }
             Theme.Light -> {
                 setTheme(R.style.AppTheme_Light)
-                ATH.applyBackgroundTint(window.decorView)
+                window.decorView.applyBackgroundTint(backgroundColor)
             }
             else -> {
                 if (ColorUtils.isColorLight(primaryColor)) {
@@ -140,7 +139,7 @@ abstract class BaseActivity<VB : ViewBinding>(
                 } else {
                     setTheme(R.style.AppTheme_Dark)
                 }
-                ATH.applyBackgroundTint(window.decorView)
+                window.decorView.applyBackgroundTint(backgroundColor)
             }
         }
         if (imageBg) {
