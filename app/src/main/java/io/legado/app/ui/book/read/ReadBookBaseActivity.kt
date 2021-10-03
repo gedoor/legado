@@ -156,22 +156,25 @@ abstract class ReadBookBaseActivity :
                     } else {
                         0
                     }
-                when (navigationBarPos) {
-                    POS.BOTTOM -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
-                        height = navigationBarHeight
-                        width = MATCH_PARENT
-                        gravity = Gravity.BOTTOM
-                    }
-                    POS.LEFT -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
-                        height = MATCH_PARENT
-                        width = navigationBarHeight
-                        gravity = Gravity.LEFT
-                    }
-                    POS.RIGHT -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
-                        height = MATCH_PARENT
-                        width = navigationBarHeight
-                        gravity = Gravity.RIGHT
-                    }
+                when (navigationBarGravity) {
+                    Gravity.BOTTOM -> layoutParams =
+                        (layoutParams as FrameLayout.LayoutParams).apply {
+                            height = navigationBarHeight
+                            width = MATCH_PARENT
+                            gravity = Gravity.BOTTOM
+                        }
+                    Gravity.LEFT -> layoutParams =
+                        (layoutParams as FrameLayout.LayoutParams).apply {
+                            height = MATCH_PARENT
+                            width = navigationBarHeight
+                            gravity = Gravity.LEFT
+                        }
+                    Gravity.RIGHT -> layoutParams =
+                        (layoutParams as FrameLayout.LayoutParams).apply {
+                            height = MATCH_PARENT
+                            width = navigationBarHeight
+                            gravity = Gravity.RIGHT
+                        }
                 }
                 visible()
             } else {

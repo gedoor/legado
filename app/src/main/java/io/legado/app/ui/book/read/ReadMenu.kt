@@ -1,9 +1,11 @@
 package io.legado.app.ui.book.read
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
@@ -305,6 +307,7 @@ class ReadMenu @JvmOverloads constructor(
                 binding.llBrightness.visible(showBrightnessView)
             }
 
+            @SuppressLint("RtlHardcoded")
             override fun onAnimationEnd(animation: Animation) {
                 val navigationBarHeight =
                     if (ReadBookConfig.hideNavigationBar) {
@@ -315,12 +318,13 @@ class ReadMenu @JvmOverloads constructor(
                 binding.run {
                     vwMenuBg.setOnClickListener { runMenuOut() }
                     root.padding = 0
-                    when (activity?.navigationBarPos) {
-                        POS.BOTTOM -> root.bottomPadding = navigationBarHeight
-                        POS.LEFT -> root.leftPadding = navigationBarHeight
-                        POS.RIGHT -> root.rightPadding = navigationBarHeight
+                    when (activity?.navigationBarGravity) {
+                        Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
+                        Gravity.LEFT -> root.leftPadding = navigationBarHeight
+                        Gravity.RIGHT -> root.rightPadding = navigationBarHeight
                     }
                 }
+                callBack.upSystemUiVisibility()
                 if (!LocalConfig.readMenuHelpVersionIsLast) {
                     callBack.showReadMenuHelp()
                 }

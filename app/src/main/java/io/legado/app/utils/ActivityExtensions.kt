@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 
@@ -38,29 +39,34 @@ val Activity.windowSize: DisplayMetrics
         return displayMetrics
     }
 
+/////以下方法需要在View完全被绘制出来之后调用，否则判断不了,在比如 onWindowFocusChanged（）方法中可以得到正确的结果/////
 
 /**
- * 返回NavigationBar是否存在
- * 该方法需要在View完全被绘制出来之后调用，否则判断不了
- * 在比如 onWindowFocusChanged（）方法中可以得到正确的结果
+ * 返回NavigationBar
  */
-val Activity.isNavigationBarExist: Boolean
+val Activity.navigationBar: View?
     get() {
-        val viewGroup = (window.decorView as? ViewGroup) ?: return false
+        val viewGroup = (window.decorView as? ViewGroup) ?: return null
         for (i in 0 until viewGroup.childCount) {
-            val childId = viewGroup.getChildAt(i).id
+            val child = viewGroup.getChildAt(i)
+            val childId = child.id
             if (childId != View.NO_ID
                 && resources.getResourceEntryName(childId) == "navigationBarBackground"
             ) {
-                return true
+                return child
             }
         }
-        return false
+        return null
     }
 
 /**
- * 该方法需要在View完全被绘制出来之后调用，否则判断不了
- * 在比如 onWindowFocusChanged（）方法中可以得到正确的结果
+ * 返回NavigationBar是否存在
+ */
+val Activity.isNavigationBarExist: Boolean
+    get() = navigationBar != null
+
+/**
+ * 返回NavigationBar高度
  */
 val Activity.navigationBarHeight: Int
     get() {
@@ -72,47 +78,10 @@ val Activity.navigationBarHeight: Int
     }
 
 /**
- * 返回导航栏位置
+ * 返回navigationBar位置
  */
-@Suppress("DEPRECATION")
-val Activity.navigationBarPos: POS
+val Activity.navigationBarGravity: Int
     get() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val display: Display = windowManager.defaultDisplay
-            val rotate: Int = display.rotation
-            val height: Int = display.height
-            val width: Int = display.width
-            return if (width > height) {
-                if (rotate == Surface.ROTATION_270) {
-                    POS.LEFT
-                } else {
-                    POS.RIGHT
-                }
-            } else {
-                POS.BOTTOM
-            }
-        } else {
-            val display: Display = windowManager.defaultDisplay
-            val metricsReal = DisplayMetrics()
-            display.getRealMetrics(metricsReal)
-
-            val metricsCurrent = DisplayMetrics()
-            display.getMetrics(metricsCurrent)
-
-            val currH = metricsCurrent.heightPixels
-            val currW = metricsCurrent.widthPixels
-
-            val realW = metricsReal.widthPixels
-            val realH = metricsReal.heightPixels
-
-            return if (currW != realW && currH == realH) {
-                POS.RIGHT
-            } else {
-                POS.BOTTOM
-            }
-        }
+        val gravity = (navigationBar?.layoutParams as? FrameLayout.LayoutParams)?.gravity
+        return gravity ?: Gravity.BOTTOM
     }
-
-enum class POS {
-    BOTTOM, LEFT, RIGHT
-}
