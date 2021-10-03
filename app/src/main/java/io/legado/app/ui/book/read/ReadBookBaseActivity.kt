@@ -5,6 +5,8 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -144,14 +146,31 @@ abstract class ReadBookBaseActivity :
         }
     }
 
+    @SuppressLint("RtlHardcoded")
     private fun upNavigationBar() {
         binding.navigationBar.run {
             if (bottomDialog > 0 || binding.readMenu.isVisible) {
-                layoutParams = layoutParams.apply {
-                    height = if (ReadBookConfig.hideNavigationBar) {
+                val navigationBarHeight =
+                    if (ReadBookConfig.hideNavigationBar) {
                         activity?.navigationBarHeight ?: 0
                     } else {
                         0
+                    }
+                when (navigationBarPos) {
+                    0 -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+                        height = navigationBarHeight
+                        width = MATCH_PARENT
+                        gravity = Gravity.BOTTOM
+                    }
+                    1 -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+                        height = MATCH_PARENT
+                        width = navigationBarHeight
+                        gravity = Gravity.LEFT
+                    }
+                    2 -> layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+                        height = MATCH_PARENT
+                        width = navigationBarHeight
+                        gravity = Gravity.RIGHT
                     }
                 }
                 visible()
