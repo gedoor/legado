@@ -9,6 +9,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogPhotoViewBinding
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.provider.ImageProvider
+import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
@@ -25,7 +26,7 @@ class PhotoDialog() : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(
+        setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )

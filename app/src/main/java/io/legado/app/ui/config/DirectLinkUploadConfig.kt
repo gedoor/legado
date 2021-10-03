@@ -9,9 +9,9 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogDirectLinkUploadConfigBinding
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.legado.app.utils.windowSize
 import splitties.views.onClick
 
 class DirectLinkUploadConfig : BaseDialogFragment() {
@@ -20,9 +20,8 @@ class DirectLinkUploadConfig : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().windowSize
-        dialog?.window?.setLayout(
-            (dm.widthPixels * 0.9).toInt(),
+        setLayout(
+            0.9f,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }

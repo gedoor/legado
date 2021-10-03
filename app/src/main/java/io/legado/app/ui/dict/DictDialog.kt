@@ -11,6 +11,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogDictBinding
 import io.legado.app.utils.invisible
 import io.legado.app.utils.setHtml
+import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -30,8 +31,7 @@ class DictDialog() : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window
-            ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onCreateView(

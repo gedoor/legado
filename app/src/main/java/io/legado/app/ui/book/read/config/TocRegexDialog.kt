@@ -51,8 +51,7 @@ class TocRegexDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().windowSize
-        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.8).toInt())
+        setLayout(0.9f, 0.8f)
     }
 
     override fun onCreateView(

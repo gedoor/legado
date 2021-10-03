@@ -21,8 +21,8 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemIconPreferenceBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.getCompatDrawable
+import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.legado.app.utils.windowSize
 
 
 class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
@@ -131,9 +131,8 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
         override fun onStart() {
             super.onStart()
-            val dm = requireActivity().windowSize
-            dialog?.window?.setLayout(
-                (dm.widthPixels * 0.8).toInt(),
+            setLayout(
+                0.8f,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }

@@ -37,9 +37,8 @@ class GroupEditDialog() : BaseDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().windowSize
-        dialog?.window?.setLayout(
-            (dm.widthPixels * 0.9).toInt(),
+        setLayout(
+            0.9f,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }

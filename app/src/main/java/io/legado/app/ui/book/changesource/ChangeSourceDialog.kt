@@ -53,8 +53,7 @@ class ChangeSourceDialog() : BaseDialogFragment(),
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().windowSize
-        dialog?.window?.setLayout((dm.widthPixels * 0.9).toInt(), (dm.heightPixels * 0.9).toInt())
+        setLayout(0.9f, 0.9f)
     }
 
     override fun onCreateView(

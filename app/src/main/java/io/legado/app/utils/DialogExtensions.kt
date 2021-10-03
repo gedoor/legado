@@ -2,6 +2,7 @@ package io.legado.app.utils
 
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.filletBackground
@@ -26,4 +27,32 @@ fun AlertDialog.applyTint(): AlertDialog {
 
 fun AlertDialog.requestInputMethod() {
     window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+}
+
+fun DialogFragment.setLayout(widthMix: Float, heightMix: Float) {
+    val dm = requireActivity().windowSize
+    dialog?.window?.setLayout(
+        (dm.widthPixels * widthMix).toInt(),
+        (dm.heightPixels * heightMix).toInt()
+    )
+}
+
+fun DialogFragment.setLayout(width: Int, heightMix: Float) {
+    val dm = requireActivity().windowSize
+    dialog?.window?.setLayout(
+        width,
+        (dm.heightPixels * heightMix).toInt()
+    )
+}
+
+fun DialogFragment.setLayout(widthMix: Float, height: Int) {
+    val dm = requireActivity().windowSize
+    dialog?.window?.setLayout(
+        (dm.widthPixels * widthMix).toInt(),
+        height
+    )
+}
+
+fun DialogFragment.setLayout(width: Int, height: Int) {
+    dialog?.window?.setLayout(width, height)
 }
