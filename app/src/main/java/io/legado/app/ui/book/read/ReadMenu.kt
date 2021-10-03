@@ -316,7 +316,7 @@ class ReadMenu @JvmOverloads constructor(
                     vwMenuBg.setOnClickListener { runMenuOut() }
                     root.padding = 0
                     when (activity?.navigationBarPos) {
-                        3 -> root.bottomPadding = navigationBarHeight
+                        0 -> root.bottomPadding = navigationBarHeight
                         1 -> root.leftPadding = navigationBarHeight
                         2 -> root.rightPadding = navigationBarHeight
                     }
