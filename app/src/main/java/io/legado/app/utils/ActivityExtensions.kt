@@ -73,9 +73,6 @@ val Activity.navigationBarHeight: Int
 
 /**
  * 返回导航栏位置
- * 0 bottom
- * 1 left
- * 2 right
  */
 val Activity.navigationBarPos: POS
     get() {
