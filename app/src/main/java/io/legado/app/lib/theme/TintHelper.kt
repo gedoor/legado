@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
-import android.os.Build
 import android.view.View
 import android.widget.*
 import androidx.annotation.CheckResult
@@ -68,10 +67,8 @@ object TintHelper {
         when (view) {
             is Button -> {
                 sl = getDisabledColorStateList(color, disabled)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && view.getBackground() is RippleDrawable) {
-                    val rd = view.getBackground() as RippleDrawable
-                    rd.setColor(ColorStateList.valueOf(rippleColor))
-                }
+                val rd = view.getBackground() as RippleDrawable
+                rd.setColor(ColorStateList.valueOf(rippleColor))
 
                 // Disabled text color state for buttons, may get overridden later by ATE tags
                 view.setTextColor(
@@ -133,8 +130,10 @@ object TintHelper {
     }
 
     fun setTintAuto(
-        view: View, @ColorInt color: Int,
-        isBackground: Boolean, isDark: Boolean
+        view: View,
+        @ColorInt color: Int,
+        isBackground: Boolean,
+        isDark: Boolean
     ) {
         var isBg = isBackground
         if (!isBg) {
@@ -166,26 +165,22 @@ object TintHelper {
                 else -> isBg = true
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
-                !isBg && view.background is RippleDrawable
-            ) {
-                // Ripples for the above views (e.g. when you tap and hold a switch or checkbox)
-                val rd = view.background as RippleDrawable
-                @SuppressLint("PrivateResource") val unchecked = ContextCompat.getColor(
-                    view.context,
-                    if (isDark) R.color.ripple_material_dark else R.color.ripple_material_light
-                )
-                val checked = ColorUtils.adjustAlpha(color, 0.4f)
-                val sl = ColorStateList(
-                    arrayOf(
-                        intArrayOf(-android.R.attr.state_activated, -android.R.attr.state_checked),
-                        intArrayOf(android.R.attr.state_activated),
-                        intArrayOf(android.R.attr.state_checked)
-                    ),
-                    intArrayOf(unchecked, checked, checked)
-                )
-                rd.setColor(sl)
-            }
+            // Ripples for the above views (e.g. when you tap and hold a switch or checkbox)
+            val rd = view.background as RippleDrawable
+            @SuppressLint("PrivateResource") val unchecked = ContextCompat.getColor(
+                view.context,
+                if (isDark) R.color.ripple_material_dark else R.color.ripple_material_light
+            )
+            val checked = ColorUtils.adjustAlpha(color, 0.4f)
+            val sl = ColorStateList(
+                arrayOf(
+                    intArrayOf(-android.R.attr.state_activated, -android.R.attr.state_checked),
+                    intArrayOf(android.R.attr.state_activated),
+                    intArrayOf(android.R.attr.state_checked)
+                ),
+                intArrayOf(unchecked, checked, checked)
+            )
+            rd.setColor(sl)
         }
         if (isBg) {
             // Need to tint the isBackground of a view
@@ -223,14 +218,7 @@ object TintHelper {
                 color
             )
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            radioButton.buttonTintList = sl
-        } else {
-            radioButton.buttonDrawable = createTintedDrawable(
-                ContextCompat.getDrawable(radioButton.context, R.drawable.abc_btn_radio_material),
-                sl
-            )
-        }
+        radioButton.buttonTintList = sl
     }
 
     fun setTint(seekBar: SeekBar, @ColorInt color: Int, useDarker: Boolean) {
@@ -241,15 +229,8 @@ object TintHelper {
                 if (useDarker) R.color.ate_control_disabled_dark else R.color.ate_control_disabled_light
             )
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            seekBar.thumbTintList = s1
-            seekBar.progressTintList = s1
-        } else {
-            val progressDrawable = createTintedDrawable(seekBar.progressDrawable, s1)
-            seekBar.progressDrawable = progressDrawable
-            val thumbDrawable = createTintedDrawable(seekBar.thumb, s1)
-            seekBar.thumb = thumbDrawable
-        }
+        seekBar.thumbTintList = s1
+        seekBar.progressTintList = s1
     }
 
     @JvmOverloads
@@ -258,17 +239,10 @@ object TintHelper {
         skipIndeterminate: Boolean = false
     ) {
         val sl = ColorStateList.valueOf(color)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            progressBar.progressTintList = sl
-            progressBar.secondaryProgressTintList = sl
-            if (!skipIndeterminate)
-                progressBar.indeterminateTintList = sl
-        } else {
-            if (!skipIndeterminate && progressBar.indeterminateDrawable != null)
-                progressBar.indeterminateDrawable.setTint(color)
-            if (progressBar.progressDrawable != null)
-                progressBar.progressDrawable.setTint(color)
-        }
+        progressBar.progressTintList = sl
+        progressBar.secondaryProgressTintList = sl
+        if (!skipIndeterminate)
+            progressBar.indeterminateTintList = sl
     }
 
 
@@ -320,18 +294,7 @@ object TintHelper {
                 color
             )
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            box.buttonTintList = sl
-        } else {
-            val drawable =
-                createTintedDrawable(
-                    ContextCompat.getDrawable(
-                        box.context,
-                        R.drawable.abc_btn_check_material
-                    ), sl
-                )
-            box.buttonDrawable = drawable
-        }
+        box.buttonTintList = sl
     }
 
     fun setTint(image: ImageView, @ColorInt color: Int) {
@@ -463,6 +426,7 @@ object TintHelper {
         return drawable1
     }
 
+    @SuppressLint("DiscouragedPrivateApi", "SoonBlockedPrivateApi")
     fun setCursorTint(editText: EditText, @ColorInt color: Int) {
         try {
             val fCursorDrawableRes = TextView::class.java.getDeclaredField("mCursorDrawableRes")

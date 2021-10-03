@@ -42,6 +42,29 @@ val Activity.windowSize: DisplayMetrics
         return displayMetrics
     }
 
+fun Activity.fullScreen(fullScreen: Boolean) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        window.setDecorFitsSystemWindows(fullScreen)
+    }
+    @Suppress("DEPRECATION")
+    if (fullScreen) {
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.clearFlags(
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+        )
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    } else {
+        window.decorView.systemUiVisibility = 0
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+        )
+        window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    }
+}
+
 /**
  * 设置状态栏颜色
  */

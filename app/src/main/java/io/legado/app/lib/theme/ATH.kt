@@ -1,13 +1,7 @@
 package io.legado.app.lib.theme
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.ActivityManager
-import android.content.Context
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
 import android.view.View
-import android.view.WindowManager
 import android.widget.EdgeEffect
 import android.widget.ScrollView
 import androidx.annotation.ColorInt
@@ -24,48 +18,6 @@ import splitties.init.appCtx
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object ATH {
-
-    @SuppressLint("CommitPrefEdits")
-    fun didThemeValuesChange(context: Context, since: Long): Boolean {
-        return ThemeStore.isConfigured(context) && ThemeStore.prefs(context).getLong(
-            ThemeStorePrefKeys.VALUES_CHANGED,
-            -1
-        ) > since
-    }
-
-    fun fullScreen(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activity.window.setDecorFitsSystemWindows(true)
-        }
-        fullScreenO(activity)
-        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-    }
-
-    @Suppress("DEPRECATION")
-    private fun fullScreenO(activity: Activity) {
-        activity.window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        activity.window.clearFlags(
-            WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                    or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-        )
-    }
-
-    fun setTaskDescriptionColorAuto(activity: Activity) {
-        setTaskDescriptionColor(activity, ThemeStore.primaryColor(activity))
-    }
-
-    fun setTaskDescriptionColor(activity: Activity, @ColorInt color: Int) {
-        val color1: Int = ColorUtils.stripAlpha(color)
-        @Suppress("DEPRECATION")
-        activity.setTaskDescription(
-            ActivityManager.TaskDescription(
-                activity.title as String,
-                null,
-                color1
-            )
-        )
-    }
 
     fun setTint(
         view: View,
