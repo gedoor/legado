@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.View
-import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.EdgeEffect
 import android.widget.ScrollView
@@ -16,11 +14,9 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import io.legado.app.R
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
-import io.legado.app.utils.getCompatColor
 import splitties.init.appCtx
 
 /**
@@ -53,68 +49,6 @@ object ATH {
             WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                     or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
         )
-    }
-
-    fun setStatusBarColorAuto(activity: Activity, fullScreen: Boolean) {
-        val isTransparentStatusBar = AppConfig.isTransparentStatusBar
-        val statusBarColor = ThemeStore.statusBarColor(activity, isTransparentStatusBar)
-        setStatusBarColor(activity, statusBarColor, isTransparentStatusBar, fullScreen)
-    }
-
-    fun setStatusBarColor(
-        activity: Activity,
-        color: Int,
-        isTransparentStatusBar: Boolean,
-        fullScreen: Boolean
-    ) {
-        if (fullScreen) {
-            if (isTransparentStatusBar) {
-                activity.window.statusBarColor = Color.TRANSPARENT
-            } else {
-                activity.window.statusBarColor = activity.getCompatColor(R.color.status_bar_bag)
-            }
-        } else {
-            activity.window.statusBarColor = color
-        }
-        setLightStatusBarAuto(activity, color)
-    }
-
-    fun setLightStatusBarAuto(activity: Activity, bgColor: Int) {
-        setLightStatusBar(activity, ColorUtils.isColorLight(bgColor))
-    }
-
-    fun setLightStatusBar(activity: Activity, enabled: Boolean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activity.window.insetsController?.let {
-                if (enabled) {
-                    it.setSystemBarsAppearance(
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                    )
-                } else {
-                    it.setSystemBarsAppearance(
-                        0,
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                    )
-                }
-            }
-        }
-        setLightStatusBarO(activity, enabled)
-    }
-
-    @Suppress("DEPRECATION")
-    private fun setLightStatusBarO(activity: Activity, enabled: Boolean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val decorView = activity.window.decorView
-            val systemUiVisibility = decorView.systemUiVisibility
-            if (enabled) {
-                decorView.systemUiVisibility =
-                    systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            } else {
-                decorView.systemUiVisibility =
-                    systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-            }
-        }
     }
 
     fun setTaskDescriptionColorAuto(activity: Activity) {

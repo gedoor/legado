@@ -160,11 +160,13 @@ abstract class BaseActivity<VB : ViewBinding>(
         if (fullScreen && !isInMultiWindow) {
             ATH.fullScreen(this)
         }
-        ATH.setStatusBarColorAuto(this, fullScreen)
+        val isTransparentStatusBar = AppConfig.isTransparentStatusBar
+        val statusBarColor = ThemeStore.statusBarColor(this, isTransparentStatusBar)
+        setStatusBarColorAuto(statusBarColor, isTransparentStatusBar, fullScreen)
         if (toolBarTheme == Theme.Dark) {
-            ATH.setLightStatusBar(this, false)
+            setLightStatusBar(false)
         } else if (toolBarTheme == Theme.Light) {
-            ATH.setLightStatusBar(this, true)
+            setLightStatusBar(true)
         }
         upNavigationBarColor()
     }

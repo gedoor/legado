@@ -21,7 +21,6 @@ import io.legado.app.help.LocalConfig
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
@@ -105,12 +104,10 @@ abstract class ReadBookBaseActivity :
         }
         upSystemUiVisibilityO(isInMultiWindow, toolBarHide)
         if (toolBarHide) {
-            ATH.setLightStatusBar(this, ReadBookConfig.durConfig.curStatusIconDark())
+            setLightStatusBar(ReadBookConfig.durConfig.curStatusIconDark())
         } else {
-            ATH.setLightStatusBarAuto(
-                this,
-                ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
-            )
+            val statusBarColor = ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
+            setLightStatusBar(ColorUtils.isColorLight(statusBarColor))
         }
     }
 

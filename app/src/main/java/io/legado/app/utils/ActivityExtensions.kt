@@ -1,6 +1,7 @@
 package io.legado.app.utils
 
 import android.app.Activity
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -9,6 +10,7 @@ import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import io.legado.app.R
 
 inline fun <reified T : DialogFragment> AppCompatActivity.showDialogFragment(
     arguments: Bundle.() -> Unit = {}
@@ -40,7 +42,60 @@ val Activity.windowSize: DisplayMetrics
         return displayMetrics
     }
 
-@Suppress("DEPRECATION")
+/**
+ * 设置状态栏颜色
+ */
+fun Activity.setStatusBarColorAuto(
+    @ColorInt color: Int,
+    isTransparent: Boolean,
+    fullScreen: Boolean
+) {
+    val isLightBar = ColorUtils.isColorLight(color)
+    if (fullScreen) {
+        if (isTransparent) {
+            window.statusBarColor = Color.TRANSPARENT
+        } else {
+            window.statusBarColor = getCompatColor(R.color.status_bar_bag)
+        }
+    } else {
+        window.statusBarColor = color
+    }
+    setLightStatusBar(isLightBar)
+}
+
+fun Activity.setLightStatusBar(isLightBar: Boolean) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        window.insetsController?.let {
+            if (isLightBar) {
+                it.setSystemBarsAppearance(
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
+            } else {
+                it.setSystemBarsAppearance(
+                    0,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
+            }
+        }
+    }
+    @Suppress("DEPRECATION")
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val decorView = window.decorView
+        val systemUiVisibility = decorView.systemUiVisibility
+        if (isLightBar) {
+            decorView.systemUiVisibility =
+                systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            decorView.systemUiVisibility =
+                systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        }
+    }
+}
+
+/**
+ * 设置导航栏颜色
+ */
 fun Activity.setNavigationBarColorAuto(@ColorInt color: Int) {
     val isLightBor = ColorUtils.isColorLight(color)
     window.navigationBarColor = color
@@ -59,6 +114,7 @@ fun Activity.setNavigationBarColorAuto(@ColorInt color: Int) {
             }
         }
     }
+    @Suppress("DEPRECATION")
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val decorView = window.decorView
         var systemUiVisibility = decorView.systemUiVisibility
