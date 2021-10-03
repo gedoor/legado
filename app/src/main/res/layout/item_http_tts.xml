@@ -7,7 +7,7 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <io.legado.app.lib.theme.view.ATERadioButton
+    <io.legado.app.lib.theme.view.ThemeRadioButton
         android:id="@+id/cb_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

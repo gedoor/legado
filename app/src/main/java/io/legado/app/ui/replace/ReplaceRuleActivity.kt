@@ -23,7 +23,7 @@ import io.legado.app.help.ContentProcessor
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.association.ImportReplaceRuleDialog
 import io.legado.app.ui.document.HandleFileContract
@@ -121,7 +121,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(binding.recyclerView)
+        binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(VerticalDivider(this))

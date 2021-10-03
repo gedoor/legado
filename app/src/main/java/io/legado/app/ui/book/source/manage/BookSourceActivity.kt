@@ -23,7 +23,7 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.CheckSource
 import io.legado.app.model.Debug
@@ -183,7 +183,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(binding.recyclerView)
+        binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
         // When this page is opened, it is in selection mode

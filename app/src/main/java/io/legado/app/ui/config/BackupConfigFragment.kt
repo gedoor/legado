@@ -26,8 +26,8 @@ import io.legado.app.help.storage.Restore
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
@@ -124,7 +124,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.backup_restore)
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-        ATH.applyEdgeEffectColor(listView)
+        listView.setEdgeEffectColor(primaryColor)
         setHasOptionsMenu(true)
         if (!LocalConfig.backupHelpVersionIsLast) {
             showHelp()

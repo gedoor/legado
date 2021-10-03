@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.legado.app.lib.theme.view.ATEProgressBar
+    <io.legado.app.lib.theme.view.ThemeProgressBar
         android:id="@+id/ck_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"

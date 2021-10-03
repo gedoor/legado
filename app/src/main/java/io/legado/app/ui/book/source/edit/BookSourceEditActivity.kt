@@ -22,8 +22,8 @@ import io.legado.app.databinding.ActivityBookSourceEditBinding
 import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
@@ -130,7 +130,7 @@ class BookSourceEditActivity :
     }
 
     private fun initView() {
-        ATH.applyEdgeEffectColor(binding.recyclerView)
+        binding.recyclerView.setEdgeEffectColor(primaryColor)
         mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         binding.recyclerView.layoutManager = LinearLayoutManager(this)

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:padding="6dp">
 
-    <io.legado.app.lib.theme.view.ATECheckBox
+    <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

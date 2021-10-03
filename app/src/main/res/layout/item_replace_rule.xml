@@ -7,14 +7,14 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <io.legado.app.lib.theme.view.ATECheckBox
+    <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/cb_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         tools:ignore="RtlSymmetry" />
 
-    <io.legado.app.lib.theme.view.ATESwitch
+    <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/swt_enabled"
         android:name="@string/enable"
         android:layout_width="wrap_content"

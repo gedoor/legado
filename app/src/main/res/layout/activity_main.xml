@@ -13,7 +13,7 @@
         android:layout_weight="1"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <io.legado.app.lib.theme.view.ThemeBottomNavigationVIew
         android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"

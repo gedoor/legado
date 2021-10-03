@@ -23,7 +23,7 @@ import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.ThemeConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
@@ -81,7 +81,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.theme_setting)
-        ATH.applyEdgeEffectColor(listView)
+        listView.setEdgeEffectColor(primaryColor)
         setHasOptionsMenu(true)
     }
 

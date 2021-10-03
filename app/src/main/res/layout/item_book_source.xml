@@ -7,7 +7,7 @@
     android:background="?android:attr/selectableItemBackground"
     android:padding="16dp">
 
-    <io.legado.app.lib.theme.view.ATECheckBox
+    <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/cb_book_source"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
         tools:ignore="TouchTargetSizeCheck"
         tools:text="@string/book_source" />
 
-    <io.legado.app.lib.theme.view.ATESwitch
+    <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/swt_enabled"
         android:name="@string/enable"
         android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
         tools:text="@string/debug_hint"
         tools:visibility="visible" />
 
-    <io.legado.app.lib.theme.view.ATEProgressBar
+    <io.legado.app.lib.theme.view.ThemeProgressBar
         android:id="@+id/iv_progressBar"
         android:layout_width="25dp"
         android:layout_height="25dp"

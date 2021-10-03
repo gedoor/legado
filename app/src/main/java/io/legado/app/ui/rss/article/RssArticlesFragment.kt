@@ -15,11 +15,12 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.databinding.FragmentRssArticlesBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
@@ -61,7 +62,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
 
     private fun initView() = binding.run {
         refreshLayout.setColorSchemeColors(accentColor)
-        ATH.applyEdgeEffectColor(recyclerView)
+        recyclerView.setEdgeEffectColor(primaryColor)
         recyclerView.layoutManager = if (activityViewModel.isGridLayout) {
             recyclerView.setPadding(8, 0, 8, 0)
             GridLayoutManager(requireContext(), 2)

@@ -18,7 +18,7 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
 import io.legado.app.ui.main.MainActivity
@@ -50,7 +50,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.other_setting)
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-        ATH.applyEdgeEffectColor(listView)
+        listView.setEdgeEffectColor(primaryColor)
     }
 
     override fun onDestroy() {

@@ -31,7 +31,7 @@
 
     </LinearLayout>
 
-    <io.legado.app.lib.theme.view.ATESwitch
+    <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/sw_show_unread"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

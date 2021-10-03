@@ -12,7 +12,7 @@
         android:layout_width="60dp"
         android:layout_height="match_parent">
         <!--选择是否添加文件-->
-        <io.legado.app.lib.theme.view.ATECheckBox
+        <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/cb_select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -25,7 +25,7 @@
         android:text="@string/edit"
         android:textColor="@color/secondaryText" />
 
-    <io.legado.app.lib.theme.view.ATESwitch
+    <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/sw_show"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

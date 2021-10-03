@@ -41,7 +41,7 @@
 
         </LinearLayout>
 
-        <io.legado.app.lib.theme.view.ATESeekBar
+        <io.legado.app.lib.theme.view.ThemeSeekBar
             android:id="@+id/seek_auto_read"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

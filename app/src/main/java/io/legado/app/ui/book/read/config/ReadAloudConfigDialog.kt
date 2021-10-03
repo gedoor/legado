@@ -16,8 +16,8 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.utils.*
@@ -80,7 +80,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            ATH.applyEdgeEffectColor(listView)
+            listView.setEdgeEffectColor(primaryColor)
         }
 
         override fun onResume() {

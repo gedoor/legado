@@ -25,7 +25,6 @@ import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.ui.document.HandleFileContract
@@ -90,7 +89,7 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     private fun initView() = binding.run {
         toolBar.setBackgroundColor(primaryColor)
         toolBar.setTitle(R.string.speak_engine)
-        ATH.applyEdgeEffectColor(recyclerView)
+        recyclerView.setEdgeEffectColor(primaryColor)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
         tvFooterLeft.setText(R.string.system_tts)

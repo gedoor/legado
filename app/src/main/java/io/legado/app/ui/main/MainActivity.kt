@@ -23,8 +23,8 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.storage.Backup
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.elevation
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.BookshelfFragment1
@@ -34,6 +34,7 @@ import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -56,8 +57,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
         binding.apply {
-            ATH.applyEdgeEffectColor(viewPagerMain)
-            ATH.applyBottomNavigationColor(bottomNavigationView)
+            viewPagerMain.setEdgeEffectColor(primaryColor)
             viewPagerMain.offscreenPageLimit = 3
             viewPagerMain.adapter = TabFragmentPageAdapter(supportFragmentManager)
             viewPagerMain.addOnPageChangeListener(PageChangeCallback())

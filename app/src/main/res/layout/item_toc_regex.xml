@@ -7,14 +7,14 @@
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <io.legado.app.lib.theme.view.ATERadioButton
+    <io.legado.app.lib.theme.view.ThemeRadioButton
         android:id="@+id/rb_regex_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:maxLines="1" />
 
-    <io.legado.app.lib.theme.view.ATESwitch
+    <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/swt_enabled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

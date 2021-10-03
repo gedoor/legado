@@ -17,13 +17,14 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.FragmentBookshelfBinding
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.books.BooksFragment
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect
@@ -62,7 +63,7 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
         get() = bookGroups[tabLayout.selectedTabPosition]
 
     private fun initView() {
-        ATH.applyEdgeEffectColor(binding.viewPagerBookshelf)
+        binding.viewPagerBookshelf.setEdgeEffectColor(primaryColor)
         tabLayout.isTabIndicatorFullWidth = false
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
         tabLayout.setSelectedTabIndicatorColor(requireContext().accentColor)

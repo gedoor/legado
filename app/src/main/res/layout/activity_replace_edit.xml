@@ -72,7 +72,7 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <io.legado.app.lib.theme.view.ATECheckBox
+                <io.legado.app.lib.theme.view.ThemeCheckBox
                     android:id="@+id/cb_use_regex"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

@@ -84,7 +84,7 @@
             android:textColor="@color/md_white_1000"
             tools:ignore="HardcodedText,RtlSymmetry" />
 
-        <io.legado.app.lib.theme.view.ATESeekBar
+        <io.legado.app.lib.theme.view.ThemeSeekBar
             android:id="@+id/player_progress"
             android:layout_width="0dp"
             android:layout_height="25dp"

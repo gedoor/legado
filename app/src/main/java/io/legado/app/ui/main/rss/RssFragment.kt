@@ -14,7 +14,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.FragmentRssBinding
 import io.legado.app.databinding.ItemRssBinding
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.rss.article.RssSortActivity
 import io.legado.app.ui.rss.favorites.RssFavoritesActivity
@@ -103,7 +103,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     }
 
     private fun initRecyclerView() {
-        ATH.applyEdgeEffectColor(binding.recyclerView)
+        binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.adapter = adapter
         adapter.addHeaderView {
             ItemRssBinding.inflate(layoutInflater, it, false).apply {

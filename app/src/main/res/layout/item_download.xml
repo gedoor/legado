@@ -72,7 +72,7 @@
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tv_download" />
 
-    <io.legado.app.lib.theme.view.ATEProgressBar
+    <io.legado.app.lib.theme.view.ThemeProgressBar
         android:id="@+id/progress_export"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"

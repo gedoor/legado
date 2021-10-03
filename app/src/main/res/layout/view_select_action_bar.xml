@@ -13,7 +13,7 @@
     android:paddingBottom="6dp"
     tools:ignore="RtlHardcoded">
 
-    <io.legado.app.lib.theme.view.ATECheckBox
+    <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/cb_selected_all"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

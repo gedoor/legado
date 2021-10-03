@@ -2,14 +2,14 @@ package io.legado.app.lib.theme.view
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.appcompat.widget.AppCompatCheckBox
+import android.widget.ProgressBar
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
 
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ATECheckBox(context: Context, attrs: AttributeSet) : AppCompatCheckBox(context, attrs) {
+class ThemeProgressBar(context: Context, attrs: AttributeSet) : ProgressBar(context, attrs) {
 
     init {
         if (!isInEditMode) {

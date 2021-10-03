@@ -29,7 +29,7 @@
             android:text="source:"
             tools:ignore="HardcodedText,RtlHardcoded" />
 
-        <io.legado.app.lib.theme.view.ATECheckBox
+        <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/cb_is_enable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             android:text="@string/is_enable"
             tools:ignore="TouchTargetSizeCheck" />
 
-        <io.legado.app.lib.theme.view.ATECheckBox
+        <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/cb_single_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             android:text="WebView:"
             tools:ignore="HardcodedText,RtlHardcoded" />
 
-        <io.legado.app.lib.theme.view.ATECheckBox
+        <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/cb_enable_js"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
             android:text="@string/enable_js"
             tools:ignore="TouchTargetSizeCheck" />
 
-        <io.legado.app.lib.theme.view.ATECheckBox
+        <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/cb_enable_base_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

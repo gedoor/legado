@@ -10,7 +10,7 @@ import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.BookCover
 import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
@@ -41,7 +41,7 @@ class CoverConfigFragment : BasePreferenceFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.cover_config)
-        ATH.applyEdgeEffectColor(listView)
+        listView.setEdgeEffectColor(primaryColor)
         setHasOptionsMenu(true)
     }
 
