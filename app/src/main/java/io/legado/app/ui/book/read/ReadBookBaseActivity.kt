@@ -142,7 +142,8 @@ abstract class ReadBookBaseActivity :
         when {
             binding.readMenu.isVisible -> super.upNavigationBarColor()
             bottomDialog > 0 -> super.upNavigationBarColor()
-            else -> ATH.setNavigationBarColorAuto(this, ReadBookConfig.bgMeanColor)
+            !AppConfig.immNavigationBar -> super.upNavigationBarColor()
+            else -> setNavigationBarColorAuto(ReadBookConfig.bgMeanColor)
         }
     }
 

@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.View
-import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.EdgeEffect
@@ -115,47 +114,6 @@ object ATH {
                 decorView.systemUiVisibility =
                     systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
             }
-        }
-    }
-
-    fun setNavigationBarColorAuto(
-        activity: Activity,
-        color: Int,
-    ) {
-        activity.window.navigationBarColor = color
-        setLightNavigationBar(activity, ColorUtils.isColorLight(color))
-    }
-
-    fun setLightNavigationBar(activity: Activity, enabled: Boolean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activity.window.insetsController?.let {
-                if (enabled) {
-                    it.setSystemBarsAppearance(
-                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-                    )
-                } else {
-                    it.setSystemBarsAppearance(
-                        0,
-                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-                    )
-                }
-            }
-        }
-        setLightNavigationBarO(activity, enabled)
-    }
-
-    @Suppress("DEPRECATION")
-    private fun setLightNavigationBarO(activity: Activity, enabled: Boolean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val decorView = activity.window.decorView
-            var systemUiVisibility = decorView.systemUiVisibility
-            systemUiVisibility = if (enabled) {
-                systemUiVisibility or SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            } else {
-                systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
-            }
-            decorView.systemUiVisibility = systemUiVisibility
         }
     }
 

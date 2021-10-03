@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 
@@ -38,6 +39,37 @@ val Activity.windowSize: DisplayMetrics
         }
         return displayMetrics
     }
+
+@Suppress("DEPRECATION")
+fun Activity.setNavigationBarColorAuto(@ColorInt color: Int) {
+    val isLightBor = ColorUtils.isColorLight(color)
+    window.navigationBarColor = color
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        window.insetsController?.let {
+            if (isLightBor) {
+                it.setSystemBarsAppearance(
+                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                )
+            } else {
+                it.setSystemBarsAppearance(
+                    0,
+                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                )
+            }
+        }
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val decorView = window.decorView
+        var systemUiVisibility = decorView.systemUiVisibility
+        systemUiVisibility = if (isLightBor) {
+            systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        } else {
+            systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+        }
+        decorView.systemUiVisibility = systemUiVisibility
+    }
+}
 
 /////以下方法需要在View完全被绘制出来之后调用，否则判断不了,在比如 onWindowFocusChanged（）方法中可以得到正确的结果/////
 

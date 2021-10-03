@@ -171,10 +171,10 @@ abstract class BaseActivity<VB : ViewBinding>(
 
     open fun upNavigationBarColor() {
         if (AppConfig.immNavigationBar) {
-            ATH.setNavigationBarColorAuto(this, ThemeStore.navigationBarColor(this))
+            setNavigationBarColorAuto(ThemeStore.navigationBarColor(this))
         } else {
             val nbColor = ColorUtils.darkenColor(ThemeStore.navigationBarColor(this))
-            ATH.setNavigationBarColorAuto(this, nbColor)
+            setNavigationBarColorAuto(nbColor)
         }
     }
 
