@@ -74,6 +74,7 @@ val Activity.navigationBarHeight: Int
 /**
  * 返回导航栏位置
  */
+@Suppress("DEPRECATION")
 val Activity.navigationBarPos: POS
     get() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
