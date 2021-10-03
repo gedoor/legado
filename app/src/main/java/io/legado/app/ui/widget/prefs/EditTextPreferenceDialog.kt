@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.preference.EditTextPreferenceDialogFragmentCompat
 import androidx.preference.PreferenceDialogFragmentCompat
-import io.legado.app.lib.theme.ATH
+import io.legado.app.lib.theme.filletBackground
 
 class EditTextPreferenceDialog : EditTextPreferenceDialogFragmentCompat() {
 
@@ -22,7 +22,7 @@ class EditTextPreferenceDialog : EditTextPreferenceDialogFragmentCompat() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.window?.setBackgroundDrawable(ATH.getDialogBackground())
+        dialog.window?.setBackgroundDrawable(requireContext().filletBackground)
         return dialog
     }
 

@@ -4,11 +4,13 @@ package io.legado.app.lib.theme
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.legado.app.R
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.dp
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -114,3 +116,11 @@ val Fragment.isDarkTheme: Boolean
 
 val Context.elevation: Float
     get() = ThemeStore.elevation(this)
+
+val Context.filletBackground: GradientDrawable
+    get() {
+        val background = GradientDrawable()
+        background.cornerRadius = 3F.dp
+        background.setColor(backgroundColor)
+        return background
+    }

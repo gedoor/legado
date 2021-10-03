@@ -2,12 +2,12 @@ package io.legado.app.utils
 
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
-import io.legado.app.lib.theme.ATH
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.filletBackground
 
 fun AlertDialog.applyTint(): AlertDialog {
-    window?.setBackgroundDrawable(ATH.getDialogBackground())
+    window?.setBackgroundDrawable(context.filletBackground)
     val colorStateList = Selector.colorBuild()
         .setDefaultColor(ThemeStore.accentColor(context))
         .setPressedColor(ColorUtils.darkenColor(ThemeStore.accentColor(context)))
