@@ -9,7 +9,7 @@ import splitties.init.appCtx
 import java.util.regex.Pattern
 
 val legadoPattern: Pattern = Pattern.compile("\\|\\||&&|%%|@js:|@Json:|@css:|@@|@XPath:")
-val jsonPattern: Pattern = Pattern.compile("\"\\:|\"|\\{|\\}|\\[|\\]")
+val jsonPattern: Pattern = Pattern.compile("\".*?\"\\:|\"|\\{|\\}|\\[|\\]")
 val jsPattern: Pattern = Pattern.compile("var|\\\\n")
 
 fun CodeView.addLegadoPattern() {
