@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogCodeViewBinding
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import java.util.regex.Pattern
 
 class CodeDialog() : BaseDialogFragment() {
 
@@ -34,8 +36,7 @@ class CodeDialog() : BaseDialogFragment() {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.codeView.keyListener = null
-
+        binding.codeView.addSyntaxPattern(Pattern.compile("[\",:;[->]{}()]"), accentColor)
         arguments?.getString("code")?.let {
             binding.codeView.setText(it)
         }
