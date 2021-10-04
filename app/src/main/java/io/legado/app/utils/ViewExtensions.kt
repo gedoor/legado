@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
@@ -9,10 +11,7 @@ import android.text.Html
 import android.view.View
 import android.view.View.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.EdgeEffect
-import android.widget.RadioGroup
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuPopupHelper
@@ -88,6 +87,10 @@ fun ViewPager.setEdgeEffectColor(@ColorInt color: Int) {
         }
     } catch (ignored: Exception) {
     }
+}
+
+fun EditText.disableEdit() {
+    keyListener = null
 }
 
 fun View.gone() {
