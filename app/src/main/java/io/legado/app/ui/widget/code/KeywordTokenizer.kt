@@ -1,31 +1,25 @@
-package io.legado.app.ui.widget.code;
+package io.legado.app.ui.widget.code
 
-import android.widget.MultiAutoCompleteTextView;
+import android.widget.MultiAutoCompleteTextView
+import kotlin.math.max
 
-public class KeywordTokenizer implements MultiAutoCompleteTextView.Tokenizer {
-
-    @Override
-    public int findTokenStart(CharSequence charSequence, int cursor) {
-        String sequenceStr = charSequence.toString();
-        sequenceStr = sequenceStr.substring(0, cursor);
-
-        int spaceIndex = sequenceStr.lastIndexOf(" ");
-        int lineIndex = sequenceStr.lastIndexOf("\n");
-        int bracketIndex = sequenceStr.lastIndexOf("(");
-
-        int index = Math.max(0, Math.max(spaceIndex, Math.max(lineIndex, bracketIndex)));
-        if (index == 0) return 0;
-        return (index + 1 < charSequence.length()) ? index + 1 : index;
+class KeywordTokenizer : MultiAutoCompleteTextView.Tokenizer {
+    override fun findTokenStart(charSequence: CharSequence, cursor: Int): Int {
+        var sequenceStr = charSequence.toString()
+        sequenceStr = sequenceStr.substring(0, cursor)
+        val spaceIndex = sequenceStr.lastIndexOf(" ")
+        val lineIndex = sequenceStr.lastIndexOf("\n")
+        val bracketIndex = sequenceStr.lastIndexOf("(")
+        val index = max(0, max(spaceIndex, max(lineIndex, bracketIndex)))
+        if (index == 0) return 0
+        return if (index + 1 < charSequence.length) index + 1 else index
     }
 
-    @Override
-    public int findTokenEnd(CharSequence charSequence, int cursor) {
-        return charSequence.length();
+    override fun findTokenEnd(charSequence: CharSequence, cursor: Int): Int {
+        return charSequence.length
     }
 
-    @Override
-    public CharSequence terminateToken(CharSequence charSequence) {
-        return charSequence;
+    override fun terminateToken(charSequence: CharSequence): CharSequence {
+        return charSequence
     }
-
 }
