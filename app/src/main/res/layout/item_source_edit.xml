@@ -5,9 +5,10 @@
     android:layout_height="wrap_content"
     android:paddingTop="3dp">
 
-    <com.amrdeveloper.codeview.CodeView
+    <io.legado.app.ui.widget.code.CodeView
         android:id="@+id/editText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine" />
 
 </io.legado.app.ui.widget.text.TextInputLayout>
