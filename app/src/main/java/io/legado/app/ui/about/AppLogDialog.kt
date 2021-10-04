@@ -2,7 +2,6 @@ package io.legado.app.ui.about
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +21,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 import java.util.*
 
-class AppLogDialog : BaseDialogFragment() {
+class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view) {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val adapter by lazy {
@@ -32,14 +31,6 @@ class AppLogDialog : BaseDialogFragment() {
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

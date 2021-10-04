@@ -1,7 +1,6 @@
 package io.legado.app.ui.about
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
@@ -18,7 +17,7 @@ import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.html.HtmlPlugin
 import io.noties.markwon.image.glide.GlideImagesPlugin
 
-class UpdateDialog() : BaseDialogFragment() {
+class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
 
     constructor(newVersion: String, updateBody: String, url: String, name: String) : this() {
         arguments = Bundle().apply {
@@ -34,14 +33,6 @@ class UpdateDialog() : BaseDialogFragment() {
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_update, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

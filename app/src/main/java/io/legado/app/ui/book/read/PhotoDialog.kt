@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.read
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
@@ -13,7 +12,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-class PhotoDialog() : BaseDialogFragment() {
+class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
 
     constructor(chapterIndex: Int, src: String) : this() {
         arguments = Bundle().apply {
@@ -30,14 +29,6 @@ class PhotoDialog() : BaseDialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.dialog_photo_view, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

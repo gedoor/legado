@@ -2,7 +2,10 @@ package io.legado.app.ui.book.read.config
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.view.get
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -23,9 +26,11 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onLongClick
 
-class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
+class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
+    FontSelectDialog.CallBack {
+
     private val binding by viewBinding(DialogReadBookStyleBinding::bind)
-    val callBack get() = activity as? ReadBookActivity
+    private val callBack get() = activity as? ReadBookActivity
     private lateinit var styleAdapter: StyleAdapter
 
     override fun onStart() {
@@ -42,16 +47,8 @@ class ReadStyleDialog : BaseDialogFragment(), FontSelectDialog.CallBack {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        (activity as ReadBookActivity).bottomDialog++
-        return inflater.inflate(R.layout.dialog_read_book_style, container)
-    }
-
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        (activity as ReadBookActivity).bottomDialog++
         initView()
         initData()
         initViewEvent()

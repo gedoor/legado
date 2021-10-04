@@ -1,9 +1,8 @@
 package io.legado.app.base
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import io.legado.app.help.coroutine.Coroutine
@@ -15,13 +14,8 @@ import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
 
-abstract class BaseDialogFragment : DialogFragment(), CoroutineScope by MainScope() {
-
-    abstract override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View?
+abstract class BaseDialogFragment(@LayoutRes layoutID: Int) : DialogFragment(layoutID),
+    CoroutineScope by MainScope() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

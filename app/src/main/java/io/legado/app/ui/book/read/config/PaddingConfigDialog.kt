@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read.config
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -15,7 +14,7 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class PaddingConfigDialog : BaseDialogFragment() {
+class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
 
     private val binding by viewBinding(DialogReadPaddingBinding::bind)
 
@@ -28,14 +27,6 @@ class PaddingConfigDialog : BaseDialogFragment() {
             it.attributes = attr
         }
         setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_read_padding, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

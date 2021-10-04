@@ -1,10 +1,8 @@
 package io.legado.app.ui.book.changecover
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,7 +15,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-class ChangeCoverDialog() : BaseDialogFragment(),
+class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
     Toolbar.OnMenuItemClickListener,
     CoverAdapter.CallBack {
 
@@ -29,7 +27,7 @@ class ChangeCoverDialog() : BaseDialogFragment(),
     }
 
     private val binding by viewBinding(DialogChangeCoverBinding::bind)
-    private var callBack: CallBack? = null
+    private val callBack: CallBack? get() = activity as? CallBack
     private val viewModel: ChangeCoverViewModel by viewModels()
     private val adapter by lazy { CoverAdapter(requireContext(), this) }
 
@@ -39,15 +37,6 @@ class ChangeCoverDialog() : BaseDialogFragment(),
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.9f)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        callBack = activity as? CallBack
-        return inflater.inflate(R.layout.dialog_change_cover, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

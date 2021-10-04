@@ -30,7 +30,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
-class BgTextConfigDialog : BaseDialogFragment() {
+class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
 
     companion object {
         const val TEXT_COLOR = 121
@@ -75,16 +75,8 @@ class BgTextConfigDialog : BaseDialogFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        (activity as ReadBookActivity).bottomDialog++
-        return inflater.inflate(R.layout.dialog_read_bg_text, container)
-    }
-
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        (activity as ReadBookActivity).bottomDialog++
         initView()
         initData()
         initEvent()

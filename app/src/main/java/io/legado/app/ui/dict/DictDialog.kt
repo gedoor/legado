@@ -2,7 +2,6 @@ package io.legado.app.ui.dict
 
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
@@ -18,7 +17,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 /**
  * 词典
  */
-class DictDialog() : BaseDialogFragment() {
+class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
 
     constructor(word: String) : this() {
         arguments = Bundle().apply {
@@ -32,14 +31,6 @@ class DictDialog() : BaseDialogFragment() {
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.dialog_dict, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

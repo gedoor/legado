@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read.config
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -18,7 +17,7 @@ import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-class ClickActionConfigDialog : BaseDialogFragment() {
+class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_config) {
     private val binding by viewBinding(DialogClickActionConfigBinding::bind)
     private val actions by lazy {
         linkedMapOf<Int, String>().apply {
@@ -41,21 +40,13 @@ class ClickActionConfigDialog : BaseDialogFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        (activity as ReadBookActivity).bottomDialog++
-        return inflater.inflate(R.layout.dialog_click_action_config, container)
-    }
-
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         (activity as ReadBookActivity).bottomDialog--
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        (activity as ReadBookActivity).bottomDialog++
         view.setBackgroundColor(getCompatColor(R.color.translucent))
         initData()
         initViewEvent()

@@ -1,7 +1,9 @@
 package io.legado.app.ui.book.changesource
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
@@ -29,7 +31,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class ChangeSourceDialog() : BaseDialogFragment(),
+class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
     Toolbar.OnMenuItemClickListener,
     ChangeSourceAdapter.CallBack {
 
@@ -42,7 +44,7 @@ class ChangeSourceDialog() : BaseDialogFragment(),
 
     private val binding by viewBinding(DialogChangeSourceBinding::bind)
     private val groups = linkedSetOf<String>()
-    private var callBack: CallBack? = null
+    private val callBack: CallBack? get() = activity as? CallBack
     private val viewModel: ChangeSourceViewModel by viewModels()
     private val adapter by lazy { ChangeSourceAdapter(requireContext(), viewModel, this) }
     private val editSourceResult =
@@ -54,15 +56,6 @@ class ChangeSourceDialog() : BaseDialogFragment(),
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.9f)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        callBack = activity as? CallBack
-        return inflater.inflate(R.layout.dialog_change_source, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

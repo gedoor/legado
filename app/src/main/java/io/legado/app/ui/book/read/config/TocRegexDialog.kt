@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.config
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +33,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 
-class TocRegexDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
+    Toolbar.OnMenuItemClickListener {
 
     constructor(tocRegex: String?) : this() {
         arguments = Bundle().apply {
@@ -52,14 +52,6 @@ class TocRegexDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.8f)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_toc_regex, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

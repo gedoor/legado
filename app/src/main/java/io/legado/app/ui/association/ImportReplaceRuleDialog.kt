@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +28,8 @@ import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class ImportReplaceRuleDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
+    Toolbar.OnMenuItemClickListener {
 
     constructor(source: String, finishOnDismiss: Boolean = false) : this() {
         arguments = Bundle().apply {
@@ -55,14 +55,6 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickL
         if (arguments?.getBoolean("finishOnDismiss") == true) {
             activity?.finish()
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
     @SuppressLint("NotifyDataSetChanged")

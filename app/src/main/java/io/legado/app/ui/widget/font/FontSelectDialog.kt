@@ -3,10 +3,8 @@ package io.legado.app.ui.widget.font
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,7 +28,7 @@ import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FontSelectDialog : BaseDialogFragment(),
+class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     Toolbar.OnMenuItemClickListener,
     FontAdapter.CallBack {
     private val fontRegex = Regex(".*\\.[ot]tf")
@@ -66,14 +64,6 @@ class FontSelectDialog : BaseDialogFragment(),
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.9f)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_font_select, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

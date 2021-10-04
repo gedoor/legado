@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.config
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +34,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+    Toolbar.OnMenuItemClickListener {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val viewModel: SpeakEngineViewModel by viewModels()
@@ -69,14 +69,6 @@ class SpeakEngineDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.9f)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

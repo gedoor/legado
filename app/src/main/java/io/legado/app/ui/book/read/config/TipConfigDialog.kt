@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.read.config
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
@@ -16,7 +15,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-class TipConfigDialog : BaseDialogFragment() {
+class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
 
     companion object {
         const val TIP_COLOR = 7897
@@ -27,14 +26,6 @@ class TipConfigDialog : BaseDialogFragment() {
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.dialog_tip_config, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

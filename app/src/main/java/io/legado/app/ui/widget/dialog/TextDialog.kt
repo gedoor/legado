@@ -1,9 +1,7 @@
 package io.legado.app.ui.widget.dialog
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogTextViewBinding
@@ -18,7 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class TextDialog() : BaseDialogFragment() {
+class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
 
     enum class Mode {
         MD, HTML, TEXT
@@ -46,14 +44,6 @@ class TextDialog() : BaseDialogFragment() {
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.9f)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_text_view, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

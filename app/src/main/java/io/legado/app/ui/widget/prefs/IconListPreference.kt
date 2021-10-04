@@ -5,7 +5,6 @@ import android.content.ContextWrapper
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -120,7 +119,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         return "icon_$key"
     }
 
-    class IconDialog : BaseDialogFragment() {
+    class IconDialog : BaseDialogFragment(R.layout.dialog_recycler_view) {
 
         var onChanged: ((value: String) -> Unit)? = null
         var dialogValue: String? = null
@@ -135,14 +134,6 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                 0.8f,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-        }
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            return inflater.inflate(R.layout.dialog_recycler_view, container)
         }
 
         override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

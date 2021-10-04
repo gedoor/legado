@@ -1,7 +1,6 @@
 package io.legado.app.ui.config
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
@@ -14,7 +13,7 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
-class DirectLinkUploadConfig : BaseDialogFragment() {
+class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_upload_config) {
 
     private val binding by viewBinding(DialogDirectLinkUploadConfigBinding::bind)
 
@@ -24,14 +23,6 @@ class DirectLinkUploadConfig : BaseDialogFragment() {
             0.9f,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_direct_link_upload_config, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

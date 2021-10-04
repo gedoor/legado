@@ -2,7 +2,6 @@ package io.legado.app.ui.book.group
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class GroupSelectDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker),
+    Toolbar.OnMenuItemClickListener {
 
     constructor(groupId: Long, requestCode: Int = -1) : this() {
         arguments = Bundle().apply {
@@ -51,14 +51,6 @@ class GroupSelectDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListene
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.9f)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_book_group_picker, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

@@ -2,7 +2,10 @@ package io.legado.app.ui.book.read.config
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -23,8 +26,8 @@ import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-class ReadAloudDialog : BaseDialogFragment() {
-    private var callBack: CallBack? = null
+class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
+    private val callBack: CallBack? get() = activity as? CallBack
     private val binding by viewBinding(DialogReadAloudBinding::bind)
 
     override fun onStart() {
@@ -46,17 +49,8 @@ class ReadAloudDialog : BaseDialogFragment() {
         (activity as ReadBookActivity).bottomDialog--
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        (activity as ReadBookActivity).bottomDialog++
-        callBack = activity as? CallBack
-        return inflater.inflate(R.layout.dialog_read_aloud, container)
-    }
-
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        (activity as ReadBookActivity).bottomDialog++
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)

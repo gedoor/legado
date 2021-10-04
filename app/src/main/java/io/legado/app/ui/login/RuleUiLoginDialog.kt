@@ -3,7 +3,6 @@ package io.legado.app.ui.login
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -25,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.views.onClick
 
-class RuleUiLoginDialog : BaseDialogFragment() {
+class RuleUiLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
 
     private val binding by viewBinding(DialogLoginBinding::bind)
     private val viewModel by activityViewModels<SourceLoginViewModel>()
@@ -36,14 +35,6 @@ class RuleUiLoginDialog : BaseDialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_login, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

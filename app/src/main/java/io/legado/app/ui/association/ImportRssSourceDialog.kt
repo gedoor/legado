@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +32,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 /**
  * 导入rss源弹出窗口
  */
-class ImportRssSourceDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
+    Toolbar.OnMenuItemClickListener {
 
     constructor(source: String, finishOnDismiss: Boolean = false) : this() {
         arguments = Bundle().apply {
@@ -59,14 +59,6 @@ class ImportRssSourceDialog() : BaseDialogFragment(), Toolbar.OnMenuItemClickLis
         if (arguments?.getBoolean("finishOnDismiss") == true) {
             activity?.finish()
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
     @SuppressLint("NotifyDataSetChanged")

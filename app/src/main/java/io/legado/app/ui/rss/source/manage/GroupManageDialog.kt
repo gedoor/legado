@@ -3,7 +3,6 @@ package io.legado.app.ui.rss.source.manage
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener {
+class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+    Toolbar.OnMenuItemClickListener {
+
     private val viewModel: RssSourceViewModel by activityViewModels()
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val adapter by lazy { GroupAdapter(requireContext()) }
@@ -38,14 +39,6 @@ class GroupManageDialog : BaseDialogFragment(), Toolbar.OnMenuItemClickListener 
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.9f)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_recycler_view, container)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = binding.run {

@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.LayoutRes
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -18,7 +19,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class BaseFragment(layoutID: Int) : Fragment(layoutID),
+abstract class BaseFragment(@LayoutRes layoutID: Int) : Fragment(layoutID),
     CoroutineScope by MainScope() {
 
     var supportToolbar: Toolbar? = null
