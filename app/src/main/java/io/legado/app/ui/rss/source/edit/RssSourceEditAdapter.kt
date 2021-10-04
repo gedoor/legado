@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.databinding.ItemSourceEditBinding
+import io.legado.app.utils.addJsPattern
+import io.legado.app.utils.addJsonPattern
+import io.legado.app.utils.addLegadoPattern
 
 class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHolder>() {
 
@@ -22,6 +25,9 @@ class RssSourceEditAdapter : RecyclerView.Adapter<RssSourceEditAdapter.MyViewHol
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = ItemSourceEditBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
+        binding.editText.addLegadoPattern()
+        binding.editText.addJsonPattern()
+        binding.editText.addJsPattern()
         return MyViewHolder(binding)
     }
 
