@@ -38,7 +38,7 @@ function showTab(tabName) {
 }
 // 源列表列表标签构造函数
 function newRule(rule) {
-	return `<label for="${rule.sourceUrl}"><input type="radio" name="rule" id="${rule.sourceUrl}"><div>${rule.sourceName}<br>${rule.sourceUrl}</div></label>`;
+	return `<label for="${rule.sourceUrl}"><input type="radio" name="rule" id="${hex_md5(rule.sourceUrl)}"><div>${rule.sourceName}<br>${rule.sourceUrl}</div></label>`;
 }
 // 缓存规则列表
 var RuleSources = [];
@@ -350,7 +350,7 @@ $('#RuleList').addEventListener('click', e => {
 	let editRule = null;
 	if (e.target && e.target.getAttribute('name') == 'rule') {
 		editRule = rule2json();
-		json2rule(RuleSources.find(x => x.sourceUrl == e.target.id));
+		json2rule(RuleSources.find(x => hex_md5(x.sourceUrl) == e.target.id));
 	} else return;
 	if (editRule.sourceUrl == '') return;
 	if (editRule.sourceName == '') editRule.sourceName = editRule.sourceUrl.replace(/.*?\/\/|\/.*/g, '');
