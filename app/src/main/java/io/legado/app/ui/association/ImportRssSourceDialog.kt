@@ -28,6 +28,7 @@ import io.legado.app.ui.widget.dialog.CodeDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.views.onClick
 
 /**
  * 导入rss源弹出窗口
@@ -219,7 +220,12 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
                         upSelectText()
                     }
                 }
-                tvSee.setOnClickListener {
+                root.onClick {
+                    cbSourceName.isChecked = !cbSourceName.isChecked
+                    viewModel.selectStatus[holder.layoutPosition] = cbSourceName.isChecked
+                    upSelectText()
+                }
+                tvOpen.setOnClickListener {
                     val source = viewModel.allSources[holder.layoutPosition]
                     showDialogFragment(CodeDialog(GSON.toJson(source)))
                 }

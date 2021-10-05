@@ -27,6 +27,7 @@ import io.legado.app.ui.widget.dialog.CodeDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.views.onClick
 
 class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
@@ -216,7 +217,12 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
                         upSelectText()
                     }
                 }
-                tvSee.setOnClickListener {
+                root.onClick {
+                    cbSourceName.isChecked = !cbSourceName.isChecked
+                    viewModel.selectStatus[holder.layoutPosition] = cbSourceName.isChecked
+                    upSelectText()
+                }
+                tvOpen.setOnClickListener {
                     val source = viewModel.allRules[holder.layoutPosition]
                     showDialogFragment(CodeDialog(GSON.toJson(source)))
                 }

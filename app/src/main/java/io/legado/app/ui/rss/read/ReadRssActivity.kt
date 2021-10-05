@@ -319,7 +319,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             view?.title?.let { title ->
-                if (title != url && title != view.url && title.isNotBlank()) {
+                if (title != url && title != view.url && title.isNotBlank() && url != "about:blank") {
                     binding.titleBar.title = title
                 } else {
                     binding.titleBar.title = intent.getStringExtra("title")

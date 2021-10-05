@@ -896,5 +896,6 @@
     <string name="Open_fan">打开方式</string>
     <string name="use_browser_open">是否使用外部浏览器打开?</string>
     <string name="see">查看</string>
+    <string name="open">打开</string>
 
 </resources>
