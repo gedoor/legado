@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -294,14 +295,14 @@ class FastScroller : LinearLayout {
                 if (event.x < mHandleView.x - ViewCompat.getPaddingStart(mHandleView)) {
                     return false
                 }
+                if (!mScrollbar.isVisible) {
+                    return false
+                }
                 requestDisallowInterceptTouchEvent(true)
                 setHandleSelected(true)
                 handler.removeCallbacks(mScrollbarHider)
                 cancelAnimation(mScrollbarAnimator)
                 cancelAnimation(mBubbleAnimator)
-                if (!isViewVisible(mScrollbar)) {
-                    showScrollbar()
-                }
                 if (mShowBubble && mSectionIndexer != null) {
                     showBubble()
                 }
@@ -341,29 +342,29 @@ class FastScroller : LinearLayout {
     }
 
     private fun setRecyclerViewPosition(y: Float) {
-        if (mRecyclerView != null && mRecyclerView!!.adapter != null) {
-            val itemCount = mRecyclerView!!.adapter!!.itemCount
+        mRecyclerView?.adapter?.let { adapter ->
+            val itemCount = adapter.itemCount
             val proportion: Float = when {
                 mHandleView.y == 0f -> 0f
                 mHandleView.y + mHandleHeight >= mViewHeight - sTrackSnapRange -> 1f
                 else -> y / mViewHeight.toFloat()
             }
             var scrolledItemCount = (proportion * itemCount).roundToInt()
-            if (isLayoutReversed(mRecyclerView!!.layoutManager!!)) {
+            if (isLayoutReversed(mRecyclerView?.layoutManager)) {
                 scrolledItemCount = itemCount - scrolledItemCount
             }
             val targetPos = getValueInRange(0, itemCount - 1, scrolledItemCount)
-            mRecyclerView!!.layoutManager!!.scrollToPosition(targetPos)
-            if (mShowBubble && mSectionIndexer != null) {
-                mBubbleView.text = mSectionIndexer!!.getSectionText(targetPos)
+            mRecyclerView?.layoutManager?.scrollToPosition(targetPos)
+            mSectionIndexer?.let { sectionIndexer ->
+                if (mShowBubble) {
+                    mBubbleView.text = sectionIndexer.getSectionText(targetPos)
+                }
             }
         }
     }
 
     private fun getScrollProportion(recyclerView: RecyclerView?): Float {
-        if (recyclerView == null) {
-            return 0f
-        }
+        recyclerView ?: return 0f
         val verticalScrollOffset = recyclerView.computeVerticalScrollOffset()
         val verticalScrollRange = recyclerView.computeVerticalScrollRange()
         val rangeDiff = (verticalScrollRange - mViewHeight).toFloat()
@@ -401,7 +402,7 @@ class FastScroller : LinearLayout {
         mHandleHeight = mHandleView.measuredHeight
     }
 
-    private fun isLayoutReversed(layoutManager: RecyclerView.LayoutManager): Boolean {
+    private fun isLayoutReversed(layoutManager: RecyclerView.LayoutManager?): Boolean {
         if (layoutManager is LinearLayoutManager) {
             return layoutManager.reverseLayout
         } else if (layoutManager is StaggeredGridLayoutManager) {

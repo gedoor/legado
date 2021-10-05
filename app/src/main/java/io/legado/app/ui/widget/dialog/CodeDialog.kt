@@ -5,9 +5,9 @@ import android.view.View
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogCodeViewBinding
-import io.legado.app.utils.addJsPattern
-import io.legado.app.utils.addJsonPattern
-import io.legado.app.utils.addLegadoPattern
+import io.legado.app.ui.widget.code.addJsPattern
+import io.legado.app.ui.widget.code.addJsonPattern
+import io.legado.app.ui.widget.code.addLegadoPattern
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 

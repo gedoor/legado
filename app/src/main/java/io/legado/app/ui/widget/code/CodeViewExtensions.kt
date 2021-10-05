@@ -1,11 +1,9 @@
 @file:Suppress("unused")
 
-package io.legado.app.utils
-
+package io.legado.app.ui.widget.code
 
 import android.graphics.Color
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.ui.widget.code.CodeView
 import splitties.init.appCtx
 import java.util.regex.Pattern
 
