@@ -41,7 +41,7 @@ class BookSourceEditActivity :
     override val binding by viewBinding(ActivityBookSourceEditBinding::inflate)
     override val viewModel by viewModels<BookSourceEditViewModel>()
 
-    private val adapter = BookSourceEditAdapter()
+    private val adapter by lazy { BookSourceEditAdapter() }
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
     private val findEntities: ArrayList<EditEntity> = ArrayList()

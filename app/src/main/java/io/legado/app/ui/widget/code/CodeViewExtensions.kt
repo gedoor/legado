@@ -2,8 +2,11 @@
 
 package io.legado.app.ui.widget.code
 
-import android.graphics.Color
+import android.content.Context
+import android.widget.ArrayAdapter
+import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.secondaryTextColor
 import splitties.init.appCtx
 import java.util.regex.Pattern
 
@@ -21,6 +24,10 @@ fun CodeView.addJsonPattern() {
 }
 
 fun CodeView.addJsPattern() {
-    addSyntaxPattern(wrapPattern, Color.DKGRAY)
+    addSyntaxPattern(wrapPattern, appCtx.secondaryTextColor)
     addSyntaxPattern(jsPattern, appCtx.accentColor)
+}
+
+fun Context.arrayAdapter(keywords: Array<String>): ArrayAdapter<String> {
+    return ArrayAdapter(this, R.layout.item_text, R.id.text_view, keywords)
 }
