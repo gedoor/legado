@@ -1,4 +1,4 @@
-package io.legado.app.web
+package io.legado.app.web.socket
 
 
 import fi.iki.elonen.NanoHTTPD
@@ -13,7 +13,7 @@ import splitties.init.appCtx
 import java.io.IOException
 
 
-class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
+class BookSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     NanoWSD.WebSocket(handshakeRequest),
     CoroutineScope by MainScope(),
     Debug.Callback {
@@ -58,7 +58,7 @@ class SourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                         return@launch
                     }
                     appDb.bookSourceDao.getBookSource(tag)?.let {
-                        Debug.callback = this@SourceDebugWebSocket
+                        Debug.callback = this@BookSourceDebugWebSocket
                         Debug.startDebug(this, it, key)
                     }
                 }

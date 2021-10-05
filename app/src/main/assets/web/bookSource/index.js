@@ -353,7 +353,7 @@ $('.menu').addEventListener('click', e => {
 				if (sResult.isSuccess) {
 					let sKey = DebugKey.value ? DebugKey.value : '我的';
 					$('#DebugConsole').value = `源《${saveRule[0].bookSourceName}》保存成功！使用搜索关键字“${sKey}”开始调试...`;
-					let ws = new WebSocket(`${wsOrigin}/sourceDebug`);
+					let ws = new WebSocket(`${wsOrigin}/bookSourceDebug`);
 					ws.onopen = () => {
 						ws.send(`{"tag":"${saveRule[0].bookSourceUrl}", "key":"${sKey}"}`);
 					};
