@@ -91,59 +91,17 @@ function json2rule(RuleEditor) {
 	let RuleJSON = Container();
 	// 转换base
 	Object.keys(RuleJSON).forEach(key => {
-		if (!key.startsWith("rule")) {
-			let val = RuleEditor[key];
-			if (typeof val == "number") {
-				$("#" + key).value = val ? String(val) : '0';
-			}
-			else if (typeof val == "boolean") {
-				$("#" + key).value = val ? String(val) : 'false';
-			}
-			else {
-				$("#" + key).value = val ? String(val) : '';
-			}
-		}
+		let val = RuleEditor[key];
+        if (typeof val == "number") {
+            $("#" + key).value = val ? String(val) : '0';
+        }
+        else if (typeof val == "boolean") {
+            $("#" + key).value = val ? String(val) : 'false';
+        }
+        else {
+            $("#" + key).value = val ? String(val) : '';
+        }
 	});
-
-	// 转换搜索规则
-	if (RuleEditor.ruleSearch) {
-		let searchJson = RuleEditor.ruleSearch;
-		Object.keys(RuleJSON.ruleSearch).forEach(key => {
-			$('#' + 'ruleSearch_' + key).value = searchJson[key] ? searchJson[key] : '';
-		});
-	}
-
-	// 转换发现规则
-	if (RuleEditor.ruleExplore) {
-		let exploreJson = RuleEditor.ruleExplore;
-		Object.keys(RuleJSON.ruleExplore).forEach(key => {
-			$('#' + 'ruleExplore_' + key).value = exploreJson[key] ? exploreJson[key] : '';
-		});
-	}
-
-	// 转换详情页规则
-	if (RuleEditor.ruleBookInfo) {
-		let bookInfoJson = RuleEditor.ruleBookInfo;
-        Object.keys(RuleJSON.ruleBookInfo).forEach(key => {
-			$('#' + 'ruleBookInfo_' + key).value = bookInfoJson[key] ? bookInfoJson[key] : '';
-		});
-	}
-
-	// 转换目录规则
-	if (RuleEditor.ruleToc) {
-		let tocJson = RuleEditor.ruleToc;
-		Object.keys(RuleJSON.ruleToc).forEach(key => {
-			$('#' + 'ruleToc_' + key).value = tocJson[key] ? tocJson[key] : '';
-		});
-	}
-
-	// 转换正文规则
-	if (RuleEditor.ruleContent) {
-		let contentJson = RuleEditor.ruleContent;
-        Object.keys(RuleJSON.ruleContent).forEach(key => {
-			$('#' + 'ruleContent_' + key).value = contentJson[key] ? contentJson[key] : '';
-		});
-	}
 }
 // 记录操作过程
 var course = { "old": [], "now": {}, "new": [] };
