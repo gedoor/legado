@@ -37,7 +37,7 @@ class RssSourceEditActivity :
     override val viewModel by viewModels<RssSourceEditViewModel>()
     private var mSoftKeyboardTool: PopupWindow? = null
     private var mIsSoftKeyBoardShowing = false
-    private val adapter = RssSourceEditAdapter()
+    private val adapter by lazy { RssSourceEditAdapter() }
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it?.let {
