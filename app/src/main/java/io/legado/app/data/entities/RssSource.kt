@@ -27,8 +27,8 @@ data class RssSource(
     var loginCheckJs: String? = null,               //登录检测js
     var sortUrl: String? = null,
     var singleUrl: Boolean = false,
-    var articleStyle: Int = 0,
     //列表规则
+    var articleStyle: Int = 0,                      //列表样式,0,1,2
     var ruleArticles: String? = null,
     var ruleNextPage: String? = null,
     var ruleTitle: String? = null,

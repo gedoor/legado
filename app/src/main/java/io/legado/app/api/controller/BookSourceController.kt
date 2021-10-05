@@ -10,7 +10,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.msg
 
-object SourceController {
+object BookSourceController {
 
     val sources: ReturnData
         get() {

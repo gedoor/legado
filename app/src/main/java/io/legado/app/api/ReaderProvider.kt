@@ -11,7 +11,7 @@ import android.database.MatrixCursor
 import android.net.Uri
 import com.google.gson.Gson
 import io.legado.app.api.controller.BookController
-import io.legado.app.api.controller.SourceController
+import io.legado.app.api.controller.BookSourceController
 import java.util.*
 
 /**
@@ -51,7 +51,7 @@ class ReaderProvider : ContentProvider() {
     ): Int {
         if (sMatcher.match(uri) < 0) return -1
         when (RequestCode.values()[sMatcher.match(uri)]) {
-            RequestCode.DeleteSources -> SourceController.deleteSources(selection)
+            RequestCode.DeleteSources -> BookSourceController.deleteSources(selection)
             else -> throw IllegalStateException(
                 "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
             )
@@ -65,13 +65,13 @@ class ReaderProvider : ContentProvider() {
         if (sMatcher.match(uri) < 0) return null
         when (RequestCode.values()[sMatcher.match(uri)]) {
             RequestCode.SaveSource -> values?.let {
-                SourceController.saveSource(values.getAsString(postBodyKey))
+                BookSourceController.saveSource(values.getAsString(postBodyKey))
             }
             RequestCode.SaveBook -> values?.let {
                 BookController.saveBook(values.getAsString(postBodyKey))
             }
             RequestCode.SaveSources -> values?.let {
-                SourceController.saveSources(values.getAsString(postBodyKey))
+                BookSourceController.saveSources(values.getAsString(postBodyKey))
             }
             else -> throw IllegalStateException(
                 "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
@@ -95,8 +95,8 @@ class ReaderProvider : ContentProvider() {
             map["path"] = arrayListOf(it)
         }
         return if (sMatcher.match(uri) < 0) null else when (RequestCode.values()[sMatcher.match(uri)]) {
-            RequestCode.GetSource -> SimpleCursor(SourceController.getSource(map))
-            RequestCode.GetSources -> SimpleCursor(SourceController.sources)
+            RequestCode.GetSource -> SimpleCursor(BookSourceController.getSource(map))
+            RequestCode.GetSources -> SimpleCursor(BookSourceController.sources)
             RequestCode.GetBookshelf -> SimpleCursor(BookController.bookshelf)
             RequestCode.GetBookContent -> SimpleCursor(BookController.getBookContent(map))
             RequestCode.RefreshToc -> SimpleCursor(BookController.refreshToc(map))

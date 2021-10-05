@@ -5,7 +5,8 @@ import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
 import io.legado.app.api.ReturnData
 import io.legado.app.api.controller.BookController
-import io.legado.app.api.controller.SourceController
+import io.legado.app.api.controller.BookSourceController
+import io.legado.app.api.controller.RssSourceController
 import io.legado.app.web.utils.AssetsWeb
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -38,11 +39,14 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     val postData = files["postData"]
 
                     returnData = when (uri) {
-                        "/saveSource" -> SourceController.saveSource(postData)
-                        "/saveSources" -> SourceController.saveSources(postData)
+                        "/saveBookSource" -> BookSourceController.saveSource(postData)
+                        "/saveBookSources" -> BookSourceController.saveSources(postData)
+                        "/deleteBookSources" -> BookSourceController.deleteSources(postData)
                         "/saveBook" -> BookController.saveBook(postData)
-                        "/deleteSources" -> SourceController.deleteSources(postData)
                         "/addLocalBook" -> BookController.addLocalBook(session.parameters)
+                        "/saveRssSource" -> RssSourceController.saveSource(postData)
+                        "/saveRssSources" -> RssSourceController.saveSources(postData)
+                        "/deleteRssSources" -> RssSourceController.deleteSources(postData)
                         else -> null
                     }
                 }
@@ -50,13 +54,15 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     val parameters = session.parameters
 
                     returnData = when (uri) {
-                        "/getSource" -> SourceController.getSource(parameters)
-                        "/getSources" -> SourceController.sources
+                        "/getBookSource" -> BookSourceController.getSource(parameters)
+                        "/getBookSources" -> BookSourceController.sources
                         "/getBookshelf" -> BookController.bookshelf
                         "/getChapterList" -> BookController.getChapterList(parameters)
                         "/refreshToc" -> BookController.refreshToc(parameters)
                         "/getBookContent" -> BookController.getBookContent(parameters)
                         "/cover" -> BookController.getCover(parameters)
+                        "/getRssSource" -> RssSourceController.getSource(parameters)
+                        "/getRssSources" -> RssSourceController.sources
                         else -> null
                     }
                 }
