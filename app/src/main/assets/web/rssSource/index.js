@@ -38,7 +38,7 @@ function showTab(tabName) {
 }
 // 书源列表列表标签构造函数
 function newRule(rule) {
-	return `<label for="${rule.bookSourceUrl}"><input type="radio" name="rule" id="${rule.bookSourceUrl}"><div>${rule.bookSourceName}<br>${rule.bookSourceUrl}</div></label>`;
+	return `<label for="${rule.sourceUrl}"><input type="radio" name="rule" id="${rule.sourceUrl}"><div>${rule.sourceName}<br>${rule.sourceUrl}</div></label>`;
 }
 // 缓存规则列表
 var RuleSources = [];
@@ -181,10 +181,10 @@ function redo() {
 	}
 }
 function setRule(editRule) {
-	let checkRule = RuleSources.find(x => x.bookSourceUrl == editRule.bookSourceUrl);
-	if ($(`input[id="${editRule.bookSourceUrl}"]`)) {
+	let checkRule = RuleSources.find(x => x.sourceUrl == editRule.sourceUrl);
+	if ($(`input[id="${editRule.sourceUrl}"]`)) {
 		Object.keys(checkRule).forEach(key => { checkRule[key] = editRule[key]; });
-		$(`input[id="${editRule.bookSourceUrl}"]+*`).innerHTML = `${editRule.bookSourceName}<br>${editRule.bookSourceUrl}`;
+		$(`input[id="${editRule.sourceUrl}"]+*`).innerHTML = `${editRule.sourceName}<br>${editRule.sourceUrl}`;
 	} else {
 		RuleSources.push(editRule);
 		$('#RuleList').innerHTML += newRule(editRule);
@@ -211,8 +211,8 @@ $('.menu').addEventListener('click', e => {
 							let failMsg = ``;
 							if (RuleSources.length > okData.length) {
 								RuleSources.forEach(item => {
-									if (okData.find(x => x.bookSourceUrl == item.bookSourceUrl)) { }
-									else { $(`#RuleList #${item.bookSourceUrl}+*`).className += 'isError'; }
+									if (okData.find(x => x.sourceUrl == item.sourceUrl)) { }
+									else { $(`#RuleList #${item.sourceUrl}+*`).className += 'isError'; }
 								});
 								failMsg = '\n推送失败的书源将用红色字体标注!';
 							}
@@ -281,10 +281,10 @@ $('.menu').addEventListener('click', e => {
 			HttpPost(`/saveRssSources`, saveRule).then(sResult => {
 				if (sResult.isSuccess) {
 					let sKey = DebugKey.value ? DebugKey.value : '我的';
-					$('#DebugConsole').value = `书源《${saveRule[0].bookSourceName}》保存成功！使用搜索关键字“${sKey}”开始调试...`;
+					$('#DebugConsole').value = `书源《${saveRule[0].sourceName}》保存成功！使用搜索关键字“${sKey}”开始调试...`;
 					let ws = new WebSocket(`${wsOrigin}/sourceDebug`);
 					ws.onopen = () => {
-						ws.send(`{"tag":"${saveRule[0].bookSourceUrl}", "key":"${sKey}"}`);
+						ws.send(`{"tag":"${saveRule[0].sourceUrl}", "key":"${sKey}"}`);
 					};
 					ws.onmessage = (msg) => {
 					    console.log('[调试]', msg);
@@ -307,7 +307,7 @@ $('.menu').addEventListener('click', e => {
 			(async () => {
 				let saveRule = [rule2json()];
 				await HttpPost(`/saveRssSources`, saveRule).then(json => {
-					alert(json.isSuccess ? `书源《${saveRule[0].bookSourceName}》已成功保存到「阅读3.0APP」` : `书源《${saveRule[0].bookSourceName}》保存失败!\nErrorMsg: ${json.errorMsg}`);
+					alert(json.isSuccess ? `书源《${saveRule[0].sourceName}》已成功保存到「阅读3.0APP」` : `书源《${saveRule[0].sourceName}》保存失败!\nErrorMsg: ${json.errorMsg}`);
 					setRule(saveRule[0]);
 				}).catch(err => { alert(`保存书源失败,无法连接到「阅读3.0APP」!\n${err}`); });
 				thisNode.setAttribute('class', '');
@@ -334,7 +334,7 @@ $('#Filter').addEventListener('keydown', e => {
 		} else {
 			let patt = new RegExp(sKey);
 			RuleSources.forEach(source => {
-				if (patt.test(source.bookSourceUrl) || patt.test(source.bookSourceName) || patt.test(source.bookSourceGroup)) {
+				if (patt.test(source.sourceUrl) || patt.test(source.sourceName) || patt.test(source.bookSourceGroup)) {
 					cashList.push(source);
 				}
 			})
@@ -350,10 +350,10 @@ $('#RuleList').addEventListener('click', e => {
 	let editRule = null;
 	if (e.target && e.target.getAttribute('name') == 'rule') {
 		editRule = rule2json();
-		json2rule(RuleSources.find(x => x.bookSourceUrl == e.target.id));
+		json2rule(RuleSources.find(x => x.sourceUrl == e.target.id));
 	} else return;
-	if (editRule.bookSourceUrl == '') return;
-	if (editRule.bookSourceName == '') editRule.bookSourceName = editRule.bookSourceUrl.replace(/.*?\/\/|\/.*/g, '');
+	if (editRule.sourceUrl == '') return;
+	if (editRule.sourceName == '') editRule.sourceName = editRule.sourceUrl.replace(/.*?\/\/|\/.*/g, '');
 	setRule(editRule);
 	localStorage.setItem('RssSources', JSON.stringify(RuleSources));
 });
@@ -384,7 +384,7 @@ $('.tab3>.titlebar').addEventListener('click', e => {
 								});
 							}
 							else {
-								newSources = newSources.filter(item => !JSON.stringify(RuleSources).includes(item.bookSourceUrl));
+								newSources = newSources.filter(item => !JSON.stringify(RuleSources).includes(item.sourceUrl));
 								RuleSources.push(...newSources);
 								localStorage.setItem('RssSources', JSON.stringify(RuleSources));
 								newSources.forEach(item => {
@@ -417,14 +417,14 @@ $('.tab3>.titlebar').addEventListener('click', e => {
 			}
 			if (confirm(`确定要删除选定书源吗?\n(同时删除APP内书源)`)) {
 				let selectRuleUrl = selectRule.id;
-				let deleteSources = RuleSources.filter(item => item.bookSourceUrl == selectRuleUrl); // 提取待删除的书源
-				let laveSources = RuleSources.filter(item => !(item.bookSourceUrl == selectRuleUrl));  // 提取待留下的书源
+				let deleteSources = RuleSources.filter(item => item.sourceUrl == selectRuleUrl); // 提取待删除的书源
+				let laveSources = RuleSources.filter(item => !(item.sourceUrl == selectRuleUrl));  // 提取待留下的书源
 				HttpPost(`/deleteRssSources`, deleteSources).then(json => {
 					if (json.isSuccess) {
 						let selectNode = document.getElementById(selectRuleUrl).parentNode;
 						selectNode.parentNode.removeChild(selectNode);
 						localStorage.setItem('RssSources', JSON.stringify(RuleSources = laveSources));
-						if ($('#bookSourceUrl').value == selectRuleUrl) {
+						if ($('#sourceUrl').value == selectRuleUrl) {
 							$$('.rules textarea').forEach(item => { item.value = '' });
 							todo();
 						}
