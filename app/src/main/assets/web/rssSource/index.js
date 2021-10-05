@@ -38,7 +38,7 @@ function showTab(tabName) {
 }
 // 源列表列表标签构造函数
 function newRule(rule) {
-	return `<label for="${rule.sourceUrl}"><input type="radio" name="rule" id="${hex_md5(rule.sourceUrl)}"><div>${rule.sourceName}<br>${rule.sourceUrl}</div></label>`;
+	return `<label for="${hex_md5(rule.sourceUrl)}"><input type="radio" name="rule" id="${hex_md5(rule.sourceUrl)}"><div>${rule.sourceName}<br>${rule.sourceUrl}</div></label>`;
 }
 // 缓存规则列表
 var RuleSources = [];
