@@ -317,13 +317,6 @@ $('.menu').addEventListener('click', e => {
 	}
 	setTimeout(() => { thisNode.setAttribute('class', ''); }, 500);
 });
-$('#DebugKey').addEventListener('keydown', e => {
-	if (e.keyCode == 13) {
-		let clickEvent = document.createEvent('MouseEvents');
-		clickEvent.initEvent("click", true, false);
-		$('#debug').dispatchEvent(clickEvent);
-	}
-});
 $('#Filter').addEventListener('keydown', e => {
 	if (e.keyCode == 13) {
 		let cashList = [];
