@@ -140,9 +140,9 @@ function redo() {
 }
 function setRule(editRule) {
 	let checkRule = RuleSources.find(x => x.sourceUrl == editRule.sourceUrl);
-	if ($(`input[id="${editRule.sourceUrl}"]`)) {
+	if ($(`input[id="${hex_md5(editRule.sourceUrl)}"]`)) {
 		Object.keys(checkRule).forEach(key => { checkRule[key] = editRule[key]; });
-		$(`input[id="${editRule.sourceUrl}"]+*`).innerHTML = `${editRule.sourceName}<br>${editRule.sourceUrl}`;
+		$(`input[id="${hex_md5(editRule.sourceUrl)}"]+*`).innerHTML = `${editRule.sourceName}<br>${editRule.sourceUrl}`;
 	} else {
 		RuleSources.push(editRule);
 		$('#RuleList').innerHTML += newRule(editRule);
