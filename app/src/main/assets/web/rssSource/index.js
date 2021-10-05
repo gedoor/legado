@@ -81,52 +81,9 @@ function rule2json() {
 		}
 	});
 
-	// 转换搜索规则
-	let searchJson = {};
-	Object.keys(RuleJSON.ruleSearch).forEach(key => {
-		if ($('#' + 'ruleSearch_' + key).value)
-			searchJson[key] = $('#' + 'ruleSearch_' + key).value;
-	});
-	RuleJSON.ruleSearch = searchJson;
-
-	// 转换发现规则
-	let exploreJson = {};
-	Object.keys(RuleJSON.ruleExplore).forEach(key => {
-		if ($('#' + 'ruleExplore_' + key).value)
-			exploreJson[key] = $('#' + 'ruleExplore_' + key).value;
-	});
-	RuleJSON.ruleExplore = exploreJson;
-
-	// 转换详情页规则
-	let bookInfoJson = {};
-	Object.keys(RuleJSON.ruleBookInfo).forEach(key => {
-		if ($('#' + 'ruleBookInfo_' + key).value)
-			bookInfoJson[key] = $('#' + 'ruleBookInfo_' + key).value;
-	});
-	RuleJSON.ruleBookInfo = bookInfoJson;
-
-	// 转换目录规则
-	let tocJson = {};
-	Object.keys(RuleJSON.ruleToc).forEach(key => {
-		if ($('#' + 'ruleToc_' + key).value)
-			tocJson[key] = $('#' + 'ruleToc_' + key).value;
-	});
-	RuleJSON.ruleToc = tocJson;
-
-	// 转换正文规则
-	let contentJson = {};
-	Object.keys(RuleJSON.ruleContent).forEach(key => {
-		if ($('#' + 'ruleContent_' + key).value)
-			contentJson[key] = $('#' + 'ruleContent_' + key).value;
-	});
-	RuleJSON.ruleContent = contentJson;
-
 	RuleJSON.lastUpdateTime = new Date().getTime();
 	RuleJSON.customOrder = RuleJSON.customOrder == '' ? 0 : parseInt(RuleJSON.customOrder);
-	RuleJSON.weight = RuleJSON.weight == '' ? 0 : parseInt(RuleJSON.weight);
-	RuleJSON.bookSourceType == RuleJSON.bookSourceType == '' ? 0 : parseInt(RuleJSON.bookSourceType);
 	RuleJSON.enabled = RuleJSON.enabled == '' || String(RuleJSON.enabled).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
-	RuleJSON.enabledExplore = RuleJSON.enabledExplore == '' || String(RuleJSON.enabledExplore).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	return RuleJSON;
 }
 // 将书源对象填充到书源表单
