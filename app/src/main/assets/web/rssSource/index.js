@@ -204,7 +204,7 @@ $('.menu').addEventListener('click', e => {
 		case 'push':
 			$$('#RuleList>label>div').forEach(item => { item.className = ''; });
 			(async () => {
-				await HttpPost(`/saveSources`, RuleSources).then(json => {
+				await HttpPost(`/saveRssSources`, RuleSources).then(json => {
 					if (json.isSuccess) {
 						let okData = json.data;
 						if (Array.isArray(okData)) {
@@ -232,7 +232,7 @@ $('.menu').addEventListener('click', e => {
 		case 'pull':
 			showTab('书源列表');
 			(async () => {
-				await HttpGet(`/getSources`).then(json => {
+				await HttpGet(`/getRssSources`).then(json => {
 					if (json.isSuccess) {
 						$('#RuleList').innerHTML = ''
 						localStorage.setItem('RssSources', JSON.stringify(RuleSources = json.data));
@@ -278,7 +278,7 @@ $('.menu').addEventListener('click', e => {
 			let DebugInfos = $('#DebugConsole');
 			function DebugPrint(msg) { DebugInfos.value += `\n${msg}`; DebugInfos.scrollTop = DebugInfos.scrollHeight; }
 			let saveRule = [rule2json()];
-			HttpPost(`/saveSources`, saveRule).then(sResult => {
+			HttpPost(`/saveRssSources`, saveRule).then(sResult => {
 				if (sResult.isSuccess) {
 					let sKey = DebugKey.value ? DebugKey.value : '我的';
 					$('#DebugConsole').value = `书源《${saveRule[0].bookSourceName}》保存成功！使用搜索关键字“${sKey}”开始调试...`;
@@ -306,7 +306,7 @@ $('.menu').addEventListener('click', e => {
 		case 'accept':
 			(async () => {
 				let saveRule = [rule2json()];
-				await HttpPost(`/saveSources`, saveRule).then(json => {
+				await HttpPost(`/saveRssSources`, saveRule).then(json => {
 					alert(json.isSuccess ? `书源《${saveRule[0].bookSourceName}》已成功保存到「阅读3.0APP」` : `书源《${saveRule[0].bookSourceName}》保存失败!\nErrorMsg: ${json.errorMsg}`);
 					setRule(saveRule[0]);
 				}).catch(err => { alert(`保存书源失败,无法连接到「阅读3.0APP」!\n${err}`); });
@@ -419,7 +419,7 @@ $('.tab3>.titlebar').addEventListener('click', e => {
 				let selectRuleUrl = selectRule.id;
 				let deleteSources = RuleSources.filter(item => item.bookSourceUrl == selectRuleUrl); // 提取待删除的书源
 				let laveSources = RuleSources.filter(item => !(item.bookSourceUrl == selectRuleUrl));  // 提取待留下的书源
-				HttpPost(`/deleteSources`, deleteSources).then(json => {
+				HttpPost(`/deleteRssSources`, deleteSources).then(json => {
 					if (json.isSuccess) {
 						let selectNode = document.getElementById(selectRuleUrl).parentNode;
 						selectNode.parentNode.removeChild(selectNode);
