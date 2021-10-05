@@ -291,8 +291,17 @@ class DragSelectTouchHelper(
                             updateSelectedRange(rv, e)
                         }
                     }
-                    MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> selectFinished(mEnd)
-                    else -> {
+                    MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                        if (mSlideStateStartPosition != RecyclerView.NO_POSITION) {
+                            selectFirstItem(mSlideStateStartPosition)
+                            // selection is triggered
+                            mSlideStateStartPosition = RecyclerView.NO_POSITION
+                            Logger.i("onTouchEvent: after slide mode down")
+                        }
+                        if (!mIsInTopHotspot && !mIsInBottomHotspot) {
+                            updateSelectedRange(rv, e)
+                        }
+                        selectFinished(mEnd)
                     }
                 }
             }
