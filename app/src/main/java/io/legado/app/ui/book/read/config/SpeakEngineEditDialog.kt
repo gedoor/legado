@@ -11,6 +11,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -50,7 +51,7 @@ class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit
         binding.tvName.setText(httpTTS.name)
         binding.tvUrl.setText(httpTTS.url)
         binding.tvLoginUrl.setText(httpTTS.loginUrl)
-        binding.tvLoginUi.setText(GSON.toJson(httpTTS.loginUi))
+        binding.tvLoginUi.setText(httpTTS.getLoginUiStr())
         binding.tvLoginCheckJs.setText(httpTTS.loginCheckJs)
         binding.tvHeaders.setText(httpTTS.header)
     }
@@ -58,6 +59,18 @@ class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_save -> viewModel.save(dataFromView())
+            R.id.menu_login -> dataFromView().let { httpTts ->
+                if (httpTts.loginUrl.isNullOrBlank()) {
+                    toastOnUi("登录url不能为空")
+                } else {
+                    viewModel.save(httpTts) {
+                        startActivity<SourceLoginActivity> {
+                            putExtra("type", "httpTts")
+                            putExtra("key", httpTts.id.toString())
+                        }
+                    }
+                }
+            }
             R.id.menu_help -> help()
         }
         return true
@@ -69,10 +82,11 @@ class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit
             name = binding.tvName.text.toString(),
             url = binding.tvUrl.text.toString(),
             loginUrl = binding.tvLoginUrl.text?.toString(),
-            loginUi = GSON.fromJsonArray(binding.tvLoginUi.text?.toString()),
             loginCheckJs = binding.tvLoginCheckJs.text?.toString(),
             header = binding.tvHeaders.text?.toString()
-        )
+        ).apply {
+            setLoginUi(binding.tvLoginUi.text?.toString())
+        }
     }
 
     private fun help() {

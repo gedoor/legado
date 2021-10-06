@@ -164,7 +164,8 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 R.id.menu_edit -> callBack.editSource(source.bookSourceUrl)
                 R.id.menu_top -> callBack.toTop(source)
                 R.id.menu_login -> context.startActivity<SourceLoginActivity> {
-                    putExtra("sourceUrl", source.bookSourceUrl)
+                    putExtra("type", "bookSource")
+                    putExtra("key", source.bookSourceUrl)
                 }
                 R.id.menu_refresh -> Coroutine.async(scope) {
                     ACache.get(context, "explore").remove(source.bookSourceUrl)

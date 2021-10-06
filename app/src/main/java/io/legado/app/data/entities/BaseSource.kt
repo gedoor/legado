@@ -7,10 +7,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
-import io.legado.app.utils.EncoderUtils
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.*
 import javax.script.SimpleBindings
 
 /**
@@ -27,6 +24,16 @@ interface BaseSource : JsExtensions {
     fun getTag(): String
 
     fun getKey(): String
+
+    fun getLoginUiStr(): String? {
+        return loginUi?.let {
+            GSON.toJson(it)
+        }
+    }
+
+    fun setLoginUi(uiJson: String?) {
+        loginUi = GSON.fromJsonArray(uiJson)
+    }
 
     fun getLoginJs(): String? {
         val loginJs = loginUrl

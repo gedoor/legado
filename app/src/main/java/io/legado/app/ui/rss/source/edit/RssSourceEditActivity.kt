@@ -20,6 +20,7 @@ import io.legado.app.help.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.KeyboardToolPop
@@ -87,6 +88,11 @@ class RssSourceEditActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_login)?.isVisible = !viewModel.rssSource.loginUrl.isNullOrBlank()
+        return super.onMenuOpened(featureId, menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> {
@@ -104,6 +110,16 @@ class RssSourceEditActivity :
                     viewModel.save(source) {
                         startActivity<RssSourceDebugActivity> {
                             putExtra("key", source.sourceUrl)
+                        }
+                    }
+                }
+            }
+            R.id.menu_login -> getRssSource().let {
+                if (checkSource(it)) {
+                    viewModel.save(it) {
+                        startActivity<SourceLoginActivity> {
+                            putExtra("type", "rssSource")
+                            putExtra("key", it.sourceUrl)
                         }
                     }
                 }
@@ -143,6 +159,9 @@ class RssSourceEditActivity :
             add(EditEntity("sourceIcon", source?.sourceIcon, R.string.source_icon))
             add(EditEntity("sourceGroup", source?.sourceGroup, R.string.source_group))
             add(EditEntity("sourceComment", source?.sourceComment, R.string.comment))
+            add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
+            add(EditEntity("loginUi", source?.getLoginUiStr(), R.string.login_ui))
+            add(EditEntity("loginCheckJs", source?.loginCheckJs, R.string.login_check_js))
             add(EditEntity("header", source?.header, R.string.source_http_header))
             add(
                 EditEntity(
@@ -176,6 +195,9 @@ class RssSourceEditActivity :
                 "sourceIcon" -> source.sourceIcon = it.value ?: ""
                 "sourceGroup" -> source.sourceGroup = it.value
                 "sourceComment" -> source.sourceComment = it.value
+                "loginUrl" -> source.loginUrl = it.value
+                "loginUi" -> source.setLoginUi(it.value)
+                "loginCheckJs" -> source.loginCheckJs = it.value
                 "header" -> source.header = it.value
                 "concurrentRate" -> source.concurrentRate = it.value
                 "sortUrl" -> source.sortUrl = it.value

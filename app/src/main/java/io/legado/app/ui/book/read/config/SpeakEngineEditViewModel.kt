@@ -28,10 +28,12 @@ class SpeakEngineEditViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
-    fun save(httpTTS: HttpTTS) {
+    fun save(httpTTS: HttpTTS, success: (() -> Unit)? = null) {
         execute {
             appDb.httpTTSDao.insert(httpTTS)
             ReadAloud.upReadAloudClass()
+        }.onSuccess {
+            success?.invoke()
         }
     }
 

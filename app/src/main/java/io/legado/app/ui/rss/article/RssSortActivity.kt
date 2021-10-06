@@ -67,7 +67,8 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_login -> startActivity<SourceLoginActivity> {
-                putExtra("sourceUrl", viewModel.rssSource?.sourceUrl)
+                putExtra("type", "rssSource")
+                putExtra("key", viewModel.rssSource?.sourceUrl)
             }
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {

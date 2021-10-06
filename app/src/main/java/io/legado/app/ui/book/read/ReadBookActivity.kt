@@ -791,7 +791,8 @@ class ReadBookActivity : ReadBookBaseActivity(),
     override fun showLogin() {
         ReadBook.bookSource?.let {
             startActivity<SourceLoginActivity> {
-                putExtra("sourceUrl", it.bookSourceUrl)
+                putExtra("type", "bookSource")
+                putExtra("key", it.bookSourceUrl)
             }
         }
     }

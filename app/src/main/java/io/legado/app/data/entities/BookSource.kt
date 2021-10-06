@@ -105,12 +105,6 @@ data class BookSource(
     override fun equals(other: Any?) =
         if (other is BookSource) other.bookSourceUrl == bookSourceUrl else false
 
-    fun getLoginUiStr(): String? {
-        return loginUi?.let {
-            GSON.toJson(it)
-        }
-    }
-
     fun getSearchRule() = ruleSearch ?: SearchRule()
 
     fun getExploreRule() = ruleExplore ?: ExploreRule()

@@ -158,7 +158,8 @@ class BookInfoActivity :
             }
             R.id.menu_login -> viewModel.bookSource?.let {
                 startActivity<SourceLoginActivity> {
-                    putExtra("sourceUrl", it.bookSourceUrl)
+                    putExtra("type", "bookSource")
+                    putExtra("key", it.bookSourceUrl)
                 }
             }
             R.id.menu_top -> viewModel.topBook()

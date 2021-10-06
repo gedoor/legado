@@ -169,7 +169,8 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 R.id.menu_top -> callBack.toTop(source)
                 R.id.menu_bottom -> callBack.toBottom(source)
                 R.id.menu_login -> context.startActivity<SourceLoginActivity> {
-                    putExtra("sourceUrl", source.bookSourceUrl)
+                    putExtra("type", "bookSource")
+                    putExtra("key", source.bookSourceUrl)
                 }
                 R.id.menu_debug_source -> callBack.debug(source)
                 R.id.menu_del -> callBack.del(source)

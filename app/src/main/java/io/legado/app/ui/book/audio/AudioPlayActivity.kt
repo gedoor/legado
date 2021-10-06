@@ -98,7 +98,8 @@ class AudioPlayActivity :
             }
             R.id.menu_login -> AudioPlay.bookSource?.let {
                 startActivity<SourceLoginActivity> {
-                    putExtra("sourceUrl", it.bookSourceUrl)
+                    putExtra("type", "bookSource")
+                    putExtra("key", it.bookSourceUrl)
                 }
             }
             R.id.menu_copy_audio_url -> sendToClip(AudioPlayService.url)

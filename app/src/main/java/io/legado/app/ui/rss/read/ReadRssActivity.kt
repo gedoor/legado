@@ -98,7 +98,8 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             } ?: toastOnUi(R.string.null_url)
             R.id.menu_aloud -> readAloud()
             R.id.menu_login -> startActivity<SourceLoginActivity> {
-                putExtra("sourceUrl", viewModel.rssSource?.loginUrl)
+                putExtra("type", "rssSource")
+                putExtra("key", viewModel.rssSource?.loginUrl)
             }
         }
         return super.onCompatOptionsItemSelected(item)

@@ -85,6 +85,11 @@ class BookSourceEditActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_login)?.isVisible = !viewModel.bookSource?.loginUrl.isNullOrBlank()
+        return super.onMenuOpened(featureId, menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> getSource().let { source ->
@@ -114,13 +119,12 @@ class BookSourceEditActivity :
                 ErrorCorrectionLevel.L
             )
             R.id.menu_help -> showRuleHelp()
-            R.id.menu_login -> getSource().let {
-                if (checkSource(it)) {
-                    if (it.loginUrl.isNullOrEmpty()) {
-                        toastOnUi(R.string.source_no_login)
-                    } else {
+            R.id.menu_login -> getSource().let { source ->
+                if (checkSource(source)) {
+                    viewModel.save(source) {
                         startActivity<SourceLoginActivity> {
-                            putExtra("sourceUrl", it.bookSourceUrl)
+                            putExtra("type", "bookSource")
+                            putExtra("key", source.bookSourceUrl)
                         }
                     }
                 }
@@ -296,7 +300,7 @@ class BookSourceEditActivity :
                 "bookSourceName" -> source.bookSourceName = it.value ?: ""
                 "bookSourceGroup" -> source.bookSourceGroup = it.value
                 "loginUrl" -> source.loginUrl = it.value
-                "loginUi" -> source.loginUi = GSON.fromJsonArray(it.value)
+                "loginUi" -> source.setLoginUi(it.value)
                 "loginCheckJs" -> source.loginCheckJs = it.value
                 "bookUrlPattern" -> source.bookUrlPattern = it.value
                 "header" -> source.header = it.value

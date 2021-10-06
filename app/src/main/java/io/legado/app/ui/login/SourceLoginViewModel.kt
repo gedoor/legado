@@ -1,20 +1,25 @@
 package io.legado.app.ui.login
 
 import android.app.Application
+import android.content.Intent
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.toastOnUi
 
 class SourceLoginViewModel(application: Application) : BaseViewModel(application) {
 
     var source: BaseSource? = null
 
-    fun initData(sourceUrl: String, success: (bookSource: BaseSource) -> Unit) {
+    fun initData(intent: Intent, success: (bookSource: BaseSource) -> Unit) {
         execute {
-            source = appDb.bookSourceDao.getBookSource(sourceUrl)
-            if (source == null) {
-                source = appDb.rssSourceDao.getByKey(sourceUrl)
+            val sourceKey = intent.getStringExtra("key")
+                ?: throw NoStackTraceException("没有参数")
+            when (intent.getStringExtra("type")) {
+                "bookSource" -> source = appDb.bookSourceDao.getBookSource(sourceKey)
+                "rssSource" -> source = appDb.rssSourceDao.getByKey(sourceKey)
+                "httpTts" -> source = appDb.httpTTSDao.get(sourceKey.toLong())
             }
             source
         }.onSuccess {
