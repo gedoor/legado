@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.read.config
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
@@ -16,7 +15,6 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
 import io.legado.app.help.AppConfig
@@ -25,9 +23,7 @@ import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.model.ReadAloud
 import io.legado.app.ui.document.HandleFileContract
-import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.collect
@@ -115,7 +111,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> editHttpTTS()
+            R.id.menu_add -> showDialogFragment<SpeakEngineEditDialog>()
             R.id.menu_default -> viewModel.importDefault()
             R.id.menu_import_local -> importDocResult.launch {
                 mode = HandleFileContract.FILE
@@ -174,32 +170,6 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         }
     }
 
-    @SuppressLint("InflateParams")
-    private fun editHttpTTS(v: HttpTTS? = null) {
-        val httpTTS = v?.copy() ?: HttpTTS()
-        requireContext().alert(titleResource = R.string.speak_engine) {
-            val alertBinding = DialogHttpTtsEditBinding.inflate(layoutInflater)
-            alertBinding.tvName.setText(httpTTS.name)
-            alertBinding.tvUrl.setText(httpTTS.url)
-            customView { alertBinding.root }
-            cancelButton()
-            okButton {
-                alertBinding.apply {
-                    httpTTS.name = tvName.text.toString()
-                    httpTTS.url = tvUrl.text.toString()
-                    appDb.httpTTSDao.insert(httpTTS)
-                    ReadAloud.upReadAloudClass()
-                }
-            }
-            neutralButton(R.string.help) {
-                val helpStr = String(
-                    requireContext().assets.open("help/httpTTSHelp.md").readBytes()
-                )
-                showDialogFragment(TextDialog(helpStr, TextDialog.Mode.MD))
-            }
-        }
-    }
-
     inner class Adapter(context: Context) :
         RecyclerAdapter<HttpTTS, ItemHttpTtsBinding>(context) {
 
@@ -228,7 +198,8 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                     }
                 }
                 ivEdit.setOnClickListener {
-                    editHttpTTS(getItemByLayoutPosition(holder.layoutPosition))
+                    val id = getItemByLayoutPosition(holder.layoutPosition)!!.id
+                    showDialogFragment(SpeakEngineEditDialog(id))
                 }
                 ivMenuDelete.setOnClickListener {
                     getItemByLayoutPosition(holder.layoutPosition)?.let { httpTTS ->
