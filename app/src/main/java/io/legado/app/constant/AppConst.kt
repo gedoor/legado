@@ -1,6 +1,7 @@
 package io.legado.app.constant
 
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.provider.Settings
 import io.legado.app.BuildConfig
 import io.legado.app.R
@@ -84,15 +85,16 @@ object AppConst {
 
     val appInfo: AppInfo by lazy {
         val appInfo = AppInfo()
-        appCtx.packageManager.getPackageInfo(appCtx.packageName, 0)?.let {
-            appInfo.versionName = it.versionName
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                appInfo.versionCode = it.longVersionCode
-            } else {
-                @Suppress("DEPRECATION")
-                appInfo.versionCode = it.versionCode.toLong()
+        appCtx.packageManager.getPackageInfo(appCtx.packageName, PackageManager.GET_ACTIVITIES)
+            ?.let {
+                appInfo.versionName = it.versionName
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                    appInfo.versionCode = it.longVersionCode
+                } else {
+                    @Suppress("DEPRECATION")
+                    appInfo.versionCode = it.versionCode.toLong()
+                }
             }
-        }
         appInfo
     }
 

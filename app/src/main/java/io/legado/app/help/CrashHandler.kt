@@ -2,9 +2,9 @@ package io.legado.app.help
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import io.legado.app.constant.AppConst
 import io.legado.app.model.ReadAloud
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.longToastOnUi
@@ -70,26 +70,14 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
      * 收集设备参数信息
      */
     private fun collectDeviceInfo(ctx: Context) {
-        //获取versionName,versionCode
         kotlin.runCatching {
-            val pm = ctx.packageManager
-            val pi = pm.getPackageInfo(ctx.packageName, PackageManager.GET_ACTIVITIES)
-            if (pi != null) {
-                val versionName = if (pi.versionName == null) "null" else pi.versionName
-                val versionCode = pi.versionCode.toString() + ""
-                paramsMap["versionName"] = versionName
-                paramsMap["versionCode"] = versionCode
-            }
-        }
-
-        //获取所有系统信息
-        val fields = Build::class.java.declaredFields
-        kotlin.runCatching {
-            for (field in fields) {
-                field.isAccessible = true
-                field.get(null)?.toString()?.let {
-                    paramsMap[field.name] = it
-                }
+            //获取系统信息
+            paramsMap["MANUFACTURER"] = Build.MANUFACTURER
+            paramsMap["BRAND"] = Build.BRAND
+            //获取app版本信息
+            AppConst.appInfo.let {
+                paramsMap["versionName"] = it.versionName
+                paramsMap["versionCode"] = it.versionCode.toString()
             }
         }
     }
