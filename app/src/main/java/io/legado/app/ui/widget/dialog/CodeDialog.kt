@@ -32,6 +32,7 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         if (arguments?.getBoolean("disableEdit") == true) {
+            binding.toolBar.title = "code view"
             binding.codeView.disableEdit()
         } else {
             initMenu()
