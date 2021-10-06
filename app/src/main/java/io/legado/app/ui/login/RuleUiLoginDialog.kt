@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
@@ -14,7 +15,6 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.ui.widget.text.EditText
 import io.legado.app.ui.widget.text.TextInputLayout
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding

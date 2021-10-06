@@ -45,7 +45,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tool_bar"
         app:layout_constraintBottom_toTopOf="@+id/btn_ok">
 
-        <io.legado.app.ui.widget.text.EditText
+        <io.legado.app.lib.theme.view.ThemeEditText
             android:id="@+id/tie_group_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

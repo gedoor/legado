@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/name">
 
-                <io.legado.app.ui.widget.text.EditText
+                <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/replace_rule_summary">
 
-                <io.legado.app.ui.widget.text.EditText
+                <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/et_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/group">
 
-                <io.legado.app.ui.widget.text.EditText
+                <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/et_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/replace_rule">
 
-                <io.legado.app.ui.widget.text.EditText
+                <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/et_replace_rule"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/replace_to">
 
-                <io.legado.app.ui.widget.text.EditText
+                <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/et_replace_to"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/use_to">
 
-                <io.legado.app.ui.widget.text.EditText
+                <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/et_scope"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -48,7 +48,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/book_name">
 
-                        <io.legado.app.ui.widget.text.EditText
+                        <io.legado.app.lib.theme.view.ThemeEditText
                             android:id="@+id/tie_book_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/author">
 
-                        <io.legado.app.ui.widget.text.EditText
+                        <io.legado.app.lib.theme.view.ThemeEditText
                             android:id="@+id/tie_book_author"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                 android:layout_marginTop="5dp"
                 android:hint="@string/cover_path">
 
-                <io.legado.app.ui.widget.text.EditText
+                <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/tie_cover_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -125,7 +125,7 @@
                 android:layout_marginTop="10dp"
                 android:hint="@string/book_intro">
 
-                <io.legado.app.ui.widget.text.EditText
+                <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/tie_book_intro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

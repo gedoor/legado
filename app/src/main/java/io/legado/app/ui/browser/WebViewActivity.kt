@@ -73,6 +73,8 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
             allowContentAccess = true
+            useWideViewPort = true
+            loadWithOverviewMode = true
         }
         binding.webView.addJavascriptInterface(this, "app")
         upWebViewTheme()
