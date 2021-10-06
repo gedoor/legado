@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import io.legado.app.R
@@ -14,8 +12,9 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.DialogLoginBinding
+import io.legado.app.databinding.ItemFilletTextBinding
+import io.legado.app.databinding.ItemSourceEditBinding
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.ui.widget.text.TextInputLayout
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -45,40 +44,32 @@ class RuleUiLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
         val loginUi = source.loginUi
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
-                "text" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root, false)
+                "text" -> ItemSourceEditBinding.inflate(layoutInflater, binding.root, false).let {
+                    binding.flexbox.addView(it.root)
+                    it.root.id = index
+                    it.textInputLayout.hint = rowUi.name
+                    it.editText.setText(loginInfo?.get(rowUi.name))
+                }
+                "password" -> ItemSourceEditBinding.inflate(layoutInflater, binding.root, false)
                     .let {
-                        binding.flexbox.addView(it)
-                        it.id = index
-                        (it as TextInputLayout).hint = rowUi.name
-                        it.findViewById<EditText>(R.id.editText).apply {
-                            setText(loginInfo?.get(rowUi.name))
+                        binding.flexbox.addView(it.root)
+                        it.root.id = index
+                        it.textInputLayout.hint = rowUi.name
+                        it.editText.inputType =
+                            InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+                        it.editText.setText(loginInfo?.get(rowUi.name))
+                    }
+                "button" -> ItemFilletTextBinding.inflate(layoutInflater, binding.root, false).let {
+                    binding.flexbox.addView(it.root)
+                    it.root.id = index
+                    it.textView.text = rowUi.name
+                    it.textView.setPadding(16.dp)
+                    it.root.onClick {
+                        if (rowUi.action.isAbsUrl()) {
+                            context?.openUrl(rowUi.action!!)
                         }
                     }
-                "password" -> layoutInflater.inflate(R.layout.item_source_edit, binding.root, false)
-                    .let {
-                        binding.flexbox.addView(it)
-                        it.id = index
-                        (it as TextInputLayout).hint = rowUi.name
-                        it.findViewById<EditText>(R.id.editText).apply {
-                            inputType =
-                                InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
-                            setText(loginInfo?.get(rowUi.name))
-                        }
-                    }
-                "button" -> layoutInflater.inflate(R.layout.item_fillet_text, binding.root, false)
-                    .let {
-                        binding.flexbox.addView(it)
-                        it.id = index
-                        (it as TextView).let { textView ->
-                            textView.text = rowUi.name
-                            textView.setPadding(16.dp)
-                        }
-                        it.onClick {
-                            if (rowUi.action.isAbsUrl()) {
-                                context?.openUrl(rowUi.action!!)
-                            }
-                        }
-                    }
+                }
             }
         }
         binding.toolBar.inflateMenu(R.menu.source_login)
@@ -90,10 +81,9 @@ class RuleUiLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
                     loginUi?.forEachIndexed { index, rowUi ->
                         when (rowUi.type) {
                             "text", "password" -> {
-                                val value = binding.root.findViewById<TextInputLayout>(index)
-                                    .findViewById<EditText>(R.id.editText).text?.toString()
-                                if (!value.isNullOrBlank()) {
-                                    loginData[rowUi.name] = value
+                                val rowView = binding.root.findViewById<View>(index)
+                                ItemSourceEditBinding.bind(rowView).editText.text?.let {
+                                    loginData[rowUi.name] = it.toString()
                                 }
                             }
                         }
