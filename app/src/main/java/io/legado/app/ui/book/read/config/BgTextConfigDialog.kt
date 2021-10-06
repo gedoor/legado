@@ -16,7 +16,7 @@ import io.legado.app.databinding.DialogReadBgTextBinding
 import io.legado.app.databinding.ItemBgImageBinding
 import io.legado.app.help.DefaultData
 import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.http.newCall
+import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
@@ -295,7 +295,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     private fun importNetConfig(url: String) {
         execute {
             @Suppress("BlockingMethodInNonBlockingContext")
-            okHttpClient.newCall {
+            okHttpClient.newCallResponseBody {
                 url(url)
             }.bytes().let {
                 importConfig(it)

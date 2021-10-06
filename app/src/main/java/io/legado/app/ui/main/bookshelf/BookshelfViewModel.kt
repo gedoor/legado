@@ -6,7 +6,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.http.newCall
+import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.model.NoStackTraceException
@@ -87,7 +87,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             val text = str.trim()
             when {
                 text.isAbsUrl() -> {
-                    okHttpClient.newCall {
+                    okHttpClient.newCallResponseBody {
                         url(text)
                     }.text().let {
                         importBookshelf(it, groupId)

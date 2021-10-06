@@ -9,7 +9,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.help.IntentData
-import io.legado.app.help.http.newCall
+import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -70,7 +70,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
     private suspend fun webData2bitmap(data: String): ByteArray? {
         return if (URLUtil.isValidUrl(data)) {
             @Suppress("BlockingMethodInNonBlockingContext")
-            okHttpClient.newCall {
+            okHttpClient.newCallResponseBody {
                 url(data)
             }.bytes()
         } else {

@@ -16,7 +16,26 @@ import java.nio.charset.Charset
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-suspend fun OkHttpClient.newCall(
+suspend fun OkHttpClient.newCallResponse(
+    retry: Int = 0,
+    builder: Request.Builder.() -> Unit
+): Response {
+    return withContext(IO) {
+        val requestBuilder = Request.Builder()
+        requestBuilder.header(AppConst.UA_NAME, AppConfig.userAgent)
+        requestBuilder.apply(builder)
+        var response: Response? = null
+        for (i in 0..retry) {
+            response = this@newCallResponse.newCall(requestBuilder.build()).await()
+            if (response.isSuccessful) {
+                return@withContext response
+            }
+        }
+        return@withContext response!!
+    }
+}
+
+suspend fun OkHttpClient.newCallResponseBody(
     retry: Int = 0,
     builder: Request.Builder.() -> Unit
 ): ResponseBody {
@@ -26,7 +45,7 @@ suspend fun OkHttpClient.newCall(
         requestBuilder.apply(builder)
         var response: Response? = null
         for (i in 0..retry) {
-            response = this@newCall.newCall(requestBuilder.build()).await()
+            response = this@newCallResponseBody.newCall(requestBuilder.build()).await()
             if (response.isSuccessful) {
                 return@withContext response.body!!
             }

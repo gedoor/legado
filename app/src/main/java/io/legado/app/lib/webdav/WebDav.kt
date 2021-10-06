@@ -1,6 +1,6 @@
 package io.legado.app.lib.webdav
 
-import io.legado.app.help.http.newCall
+import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.printOnDebug
@@ -92,7 +92,7 @@ class WebDav(urlStr: String) {
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
             return kotlin.runCatching {
-                okHttpClient.newCall {
+                okHttpClient.newCallResponseBody {
                     url(url)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
                     addHeader("Depth", "1")
@@ -152,7 +152,7 @@ class WebDav(urlStr: String) {
         if (url != null && auth != null) {
             //防止报错
             return kotlin.runCatching {
-                okHttpClient.newCall {
+                okHttpClient.newCallResponseBody {
                     url(url)
                     method("MKCOL", null)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
@@ -198,7 +198,7 @@ class WebDav(urlStr: String) {
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
             return kotlin.runCatching {
-                okHttpClient.newCall {
+                okHttpClient.newCallResponseBody {
                     url(url)
                     put(fileBody)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
@@ -215,7 +215,7 @@ class WebDav(urlStr: String) {
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
             return kotlin.runCatching {
-                okHttpClient.newCall {
+                okHttpClient.newCallResponseBody {
                     url(url)
                     put(fileBody)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
@@ -230,7 +230,7 @@ class WebDav(urlStr: String) {
         val auth = HttpAuth.auth
         if (url != null && auth != null) {
             return kotlin.runCatching {
-                okHttpClient.newCall {
+                okHttpClient.newCallResponseBody {
                     url(url)
                     addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
                 }.byteStream()

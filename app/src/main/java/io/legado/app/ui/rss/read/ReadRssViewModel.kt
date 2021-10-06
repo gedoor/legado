@@ -17,7 +17,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
-import io.legado.app.help.http.newCall
+import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
@@ -157,7 +157,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     private suspend fun webData2bitmap(data: String): ByteArray? {
         return if (URLUtil.isValidUrl(data)) {
             @Suppress("BlockingMethodInNonBlockingContext")
-            okHttpClient.newCall {
+            okHttpClient.newCallResponseBody {
                 url(data)
             }.bytes()
         } else {

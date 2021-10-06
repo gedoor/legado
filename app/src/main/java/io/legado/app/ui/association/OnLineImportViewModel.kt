@@ -9,7 +9,7 @@ import io.legado.app.data.entities.HttpTTS
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ThemeConfig
-import io.legado.app.help.http.newCall
+import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.model.NoStackTraceException
@@ -25,7 +25,7 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
 
     fun getText(url: String, success: (text: String) -> Unit) {
         execute {
-            okHttpClient.newCall {
+            okHttpClient.newCallResponseBody {
                 url(url)
             }.text("utf-8")
         }.onSuccess {
@@ -40,7 +40,7 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
     fun getBytes(url: String, success: (bytes: ByteArray) -> Unit) {
         execute {
             @Suppress("BlockingMethodInNonBlockingContext")
-            okHttpClient.newCall {
+            okHttpClient.newCallResponseBody {
                 url(url)
             }.bytes()
         }.onSuccess {
@@ -140,7 +140,7 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
 
     fun determineType(url: String, finally: (title: String, msg: String) -> Unit) {
         execute {
-            val rs = okHttpClient.newCall {
+            val rs = okHttpClient.newCallResponseBody {
                 url(url)
             }
             when (rs.contentType()) {

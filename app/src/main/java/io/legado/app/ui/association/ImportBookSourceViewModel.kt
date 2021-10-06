@@ -12,7 +12,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.BookSourceAnalyzer
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.SourceHelp
-import io.legado.app.help.http.newCall
+import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.model.NoStackTraceException
@@ -126,7 +126,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importSourceUrl(url: String) {
-        okHttpClient.newCall {
+        okHttpClient.newCallResponseBody {
             url(url)
         }.text("utf-8").let { body ->
             when {

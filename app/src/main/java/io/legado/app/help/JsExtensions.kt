@@ -376,7 +376,7 @@ interface JsExtensions {
     fun getZipByteArrayContent(url: String, path: String): ByteArray? {
         val bytes = if (url.startsWith("http://") || url.startsWith("https://")) {
             runBlocking {
-                return@runBlocking okHttpClient.newCall { url(url) }.bytes()
+                return@runBlocking okHttpClient.newCallResponseBody { url(url) }.bytes()
             }
         } else {
             StringUtils.hexStringToByte(url)
@@ -421,7 +421,7 @@ interface JsExtensions {
             str.isAbsUrl() -> runBlocking {
                 var x = CacheManager.getByteArray(key)
                 if (x == null) {
-                    x = okHttpClient.newCall { url(str) }.bytes()
+                    x = okHttpClient.newCallResponseBody { url(str) }.bytes()
                     x.let {
                         CacheManager.put(key, it)
                     }

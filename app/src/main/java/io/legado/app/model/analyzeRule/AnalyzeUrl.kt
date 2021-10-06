@@ -16,6 +16,7 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.model.ConcurrentException
 import io.legado.app.utils.*
+import okhttp3.Response
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -244,6 +245,12 @@ class AnalyzeUrl(
         return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 
+    fun upHeader() {
+        source?.getHeaderMap(true)?.let {
+            headerMap.putAll(it)
+        }
+    }
+
     fun put(key: String, value: String): String {
         chapter?.putVariable(key, value)
             ?: ruleData?.putVariable(key, value)
@@ -374,13 +381,36 @@ class AnalyzeUrl(
     }
 
     /**
+     * 访问网站,返回Response
+     */
+    suspend fun getResponse(): Response {
+        judgmentConcurrent()
+        setCookie(source?.getKey())
+        @Suppress("BlockingMethodInNonBlockingContext")
+        return getProxyClient(proxy).newCallResponse(retry) {
+            addHeaders(headerMap)
+            when (method) {
+                RequestMethod.POST -> {
+                    url(urlNoQuery)
+                    if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
+                        postForm(fieldMap, true)
+                    } else {
+                        postJson(body)
+                    }
+                }
+                else -> get(urlNoQuery, fieldMap, true)
+            }
+        }
+    }
+
+    /**
      * 访问网站,返回ByteArray
      */
     suspend fun getByteArray(): ByteArray {
         judgmentConcurrent()
         setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
-        return getProxyClient(proxy).newCall(retry) {
+        return getProxyClient(proxy).newCallResponseBody(retry) {
             addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {

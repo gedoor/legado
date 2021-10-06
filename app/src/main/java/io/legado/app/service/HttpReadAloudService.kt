@@ -11,6 +11,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
+import okhttp3.Response
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -103,13 +104,20 @@ class HttpReadAloudService : BaseReadAloudService(),
                         } else { //没有下载并且没有缓存文件
                             try {
                                 createSpeakCacheFile(fileName)
-                                AnalyzeUrl(
+                                val analyzeUrl = AnalyzeUrl(
                                     httpTts.url,
                                     speakText = item,
                                     speakSpeed = AppConfig.ttsSpeechRate,
                                     source = httpTts,
                                     headerMapF = httpTts.getHeaderMap(true)
-                                ).getByteArray().let { bytes ->
+                                )
+                                var response = analyzeUrl.getResponse()
+                                httpTts.loginCheckJs?.let { checkJs ->
+                                    if (checkJs.isNotBlank()) {
+                                        response = analyzeUrl.evalJS(checkJs, response) as Response
+                                    }
+                                }
+                                response.body!!.bytes().let { bytes ->
                                     ensureActive()
                                     val file = getSpeakFileAsMd5IfNotExist(fileName)
                                     file.writeBytes(bytes)

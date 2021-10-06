@@ -7,7 +7,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.AppConfig
-import io.legado.app.help.http.newCall
+import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.help.storage.OldReplace
@@ -84,7 +84,7 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     fun import(text: String) {
         execute {
             if (text.isAbsUrl()) {
-                okHttpClient.newCall {
+                okHttpClient.newCallResponseBody {
                     url(text)
                 }.text("utf-8").let {
                     val rules = OldReplace.jsonToReplaceRules(it)
