@@ -100,48 +100,44 @@ object LocalBook {
 
     fun analyzeNameAuthor(fileName: String): Pair<String, String> {
         val tempFileName = fileName.substringBeforeLast(".")
-        val name: String
-        val author: String
-
+        var name: String
+        var author: String
         //匹配(知轩藏书常用格式) 《书名》其它信息作者：作者名.txt
         val m1 = Pattern
             .compile("(.*?)《([^《》]+)》(.*)")
             .matcher(tempFileName)
-
         //匹配 书名 by 作者名.txt
         val m2 = Pattern
             .compile("(^)(.+) by (.+)$")
             .matcher(tempFileName)
 
         (m1.takeIf { m1.find() } ?: m2.takeIf { m2.find() }).run {
-
             if (this is Matcher) {
-
                 //按默认格式将文件名分解成书名、作者名
                 name = group(2)!!
                 author = BookHelp.formatBookAuthor((group(1) ?: "") + (group(3) ?: ""))
-
             } else if (!AppConfig.bookImportFileName.isNullOrBlank()) {
-
-                //在脚本中定义如何分解文件名成书名、作者名
-                val jsonStr = AppConst.SCRIPT_ENGINE.eval(
-
-                    //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获
-                    AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
-
-                    //将文件名注入到脚步的src变量中
-                    SimpleBindings().also { it["src"] = tempFileName }
-                ).toString()
-                val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr) ?: HashMap()
-                name = bookMess["name"] ?: tempFileName
-                author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
-
+                try {
+                    //在脚本中定义如何分解文件名成书名、作者名
+                    val jsonStr = AppConst.SCRIPT_ENGINE.eval(
+                        //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获
+                        AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
+                        //将文件名注入到脚步的src变量中
+                        SimpleBindings().also { it["src"] = tempFileName }
+                    ).toString()
+                    val bookMess =
+                        GSON.fromJsonObject<HashMap<String, String>>(jsonStr) ?: HashMap()
+                    name = bookMess["name"] ?: tempFileName
+                    author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
+                } catch (e: Exception) {
+                    name = tempFileName.replace(AppPattern.nameRegex, "")
+                    author = tempFileName.replace(AppPattern.authorRegex, "")
+                        .takeIf { it.length != tempFileName.length } ?: ""
+                }
             } else {
-
                 name = tempFileName.replace(AppPattern.nameRegex, "")
                 author = tempFileName.replace(AppPattern.authorRegex, "")
                     .takeIf { it.length != tempFileName.length } ?: ""
-
             }
 
         }
