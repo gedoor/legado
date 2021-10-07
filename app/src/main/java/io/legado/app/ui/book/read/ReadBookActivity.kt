@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.get
 import androidx.core.view.isVisible
@@ -475,27 +474,17 @@ class ReadBookActivity : ReadBookBaseActivity(),
     /**
      * 显示文本操作菜单
      */
-    override fun showTextActionMenu() = binding.run {
-        textActionMenu.contentView.measure(
-            View.MeasureSpec.UNSPECIFIED,
-            View.MeasureSpec.UNSPECIFIED
+    override fun showTextActionMenu() {
+        val nbh = if (ReadBookConfig.hideNavigationBar) navigationBarHeight else 0
+        textActionMenu.show(
+            binding.textMenuPosition,
+            binding.root.height + nbh,
+            binding.textMenuPosition.x.toInt(),
+            binding.textMenuPosition.y.toInt(),
+            binding.cursorLeft.y.toInt() + binding.cursorLeft.height,
+            binding.cursorRight.x.toInt(),
+            binding.cursorRight.y.toInt() + binding.cursorRight.height
         )
-        val popupHeight = textActionMenu.contentView.measuredHeight
-        val x = textMenuPosition.x.toInt()
-        var y = textMenuPosition.y.toInt() - popupHeight
-        if (y < statusBarHeight) {
-            y = (cursorLeft.y + cursorLeft.height).toInt()
-        }
-        if (cursorRight.y > y && cursorRight.y < y + popupHeight) {
-            y = (cursorRight.y + cursorRight.height).toInt()
-        }
-        if (!textActionMenu.isShowing) {
-            textActionMenu.showAtLocation(
-                textMenuPosition, Gravity.TOP or Gravity.START, x, y
-            )
-        } else {
-            textActionMenu.update(x, y, WRAP_CONTENT, WRAP_CONTENT)
-        }
     }
 
     /**

@@ -149,11 +149,7 @@ abstract class ReadBookBaseActivity :
         binding.navigationBar.run {
             if (bottomDialog > 0 || binding.readMenu.isVisible) {
                 val navigationBarHeight =
-                    if (ReadBookConfig.hideNavigationBar) {
-                        activity?.navigationBarHeight ?: 0
-                    } else {
-                        0
-                    }
+                    if (ReadBookConfig.hideNavigationBar) navigationBarHeight else 0
                 when (navigationBarGravity) {
                     Gravity.BOTTOM -> layoutParams =
                         (layoutParams as FrameLayout.LayoutParams).apply {

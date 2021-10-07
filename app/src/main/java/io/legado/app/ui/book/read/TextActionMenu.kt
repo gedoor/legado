@@ -9,9 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.ViewGroup
+import android.view.*
 import android.widget.PopupWindow
 import androidx.annotation.RequiresApi
 import androidx.appcompat.view.SupportMenuInflater
@@ -41,6 +39,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     private val ttsListener by lazy {
         TTSUtteranceListener()
     }
+    private val expandTextMenu get() = context.getPrefBoolean(PreferKey.expandTextMenu)
 
     init {
         @SuppressLint("InflateParams")
@@ -86,13 +85,73 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     }
 
     fun upMenu() {
-        val expandTextMenu = context.getPrefBoolean(PreferKey.expandTextMenu)
         if (expandTextMenu) {
             adapter.setItems(menuItems)
             binding.ivMenuMore.gone()
         } else {
             adapter.setItems(visibleMenuItems)
             binding.ivMenuMore.visible()
+        }
+    }
+
+    fun show(
+        view: View,
+        windowHeight: Int,
+        startX: Int,
+        startTopY: Int,
+        startBottomY: Int,
+        endX: Int,
+        endBottomY: Int
+    ) {
+        if (expandTextMenu) {
+            when {
+                startTopY > 300 -> {
+                    showAtLocation(
+                        view,
+                        Gravity.BOTTOM or Gravity.START,
+                        startX,
+                        windowHeight - startTopY
+                    )
+                }
+                endBottomY - startBottomY > 500 -> {
+                    showAtLocation(view, Gravity.TOP or Gravity.START, startX, startBottomY)
+                }
+                else -> {
+                    showAtLocation(view, Gravity.TOP or Gravity.START, endX, endBottomY)
+                }
+            }
+        } else {
+            contentView.measure(
+                View.MeasureSpec.UNSPECIFIED,
+                View.MeasureSpec.UNSPECIFIED,
+            )
+            val popupHeight = contentView.measuredHeight
+            when {
+                startBottomY > 300 -> {
+                    showAtLocation(
+                        view,
+                        Gravity.TOP or Gravity.START,
+                        startX,
+                        startTopY - popupHeight
+                    )
+                }
+                endBottomY - startBottomY > 500 -> {
+                    showAtLocation(
+                        view,
+                        Gravity.TOP or Gravity.START,
+                        startX,
+                        startBottomY
+                    )
+                }
+                else -> {
+                    showAtLocation(
+                        view,
+                        Gravity.TOP or Gravity.START,
+                        endX,
+                        endBottomY
+                    )
+                }
+            }
         }
     }
 
