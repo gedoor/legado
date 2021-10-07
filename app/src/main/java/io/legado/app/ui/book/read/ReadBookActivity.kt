@@ -475,10 +475,12 @@ class ReadBookActivity : ReadBookBaseActivity(),
      * 显示文本操作菜单
      */
     override fun showTextActionMenu() {
-        val nbh = if (ReadBookConfig.hideNavigationBar) navigationBarHeight else 0
+        val navigationBarHeight =
+            if (!ReadBookConfig.hideNavigationBar && navigationBarGravity == Gravity.BOTTOM)
+                navigationBarHeight else 0
         textActionMenu.show(
             binding.textMenuPosition,
-            binding.root.height + nbh,
+            binding.root.height + navigationBarHeight,
             binding.textMenuPosition.x.toInt(),
             binding.textMenuPosition.y.toInt(),
             binding.cursorLeft.y.toInt() + binding.cursorLeft.height,
