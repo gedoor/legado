@@ -31,9 +31,7 @@ class FileAssociationActivity :
         }
         viewModel.importRssSourceLive.observe(this) {
             binding.rotateLoading.hide()
-            showDialogFragment(
-                ImportRssSourceDialog(it, true)
-            )
+            showDialogFragment(ImportRssSourceDialog(it, true))
         }
         viewModel.importReplaceRuleLive.observe(this) {
             binding.rotateLoading.hide()
