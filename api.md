@@ -14,9 +14,11 @@ Method = POST
 请求BODY内容为`JSON`字符串，  
 格式参考[这个文件](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/data/entities/BookSource.kt)
 
-#### 插入多个书源
+#### 插入多个书源or订阅源
+
 ```
-URL = http://127.0.0.1:1234/saveSources
+URL = http://127.0.0.1:1234/saveBookSources
+URL = http://127.0.0.1:1234/saveRssSources
 Method = POST
 ```
 
@@ -24,24 +26,26 @@ Method = POST
 格式参考[这个文件](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/data/entities/BookSource.kt)，**为数组格式**。
 
 #### 获取书源
+
 ```
-URL = http://127.0.0.1:1234/getSource?url=xxx
+URL = http://127.0.0.1:1234/getBookSource?url=xxx
+URL = http://127.0.0.1:1234/getRssSource?url=xxx
+Method = GET
+``` 
+
+#### 获取所有书源or订阅源
+
+```
+URL = http://127.0.0.1:1234/getBookSources
+URL = http://127.0.0.1:1234/getRssSources
 Method = GET
 ```
 
-获取指定URL对应的书源信息。  
+#### 删除多个书源or订阅源
 
-#### 获取所有书源
 ```
-URL = http://127.0.0.1:1234/getSources
-Method = GET
-```
-
-获取APP内的所有书源。  
-
-#### 删除多个书源
-```
-URL = http://127.0.0.1:1234/deleteSources
+URL = http://127.0.0.1:1234/deleteBookSources
+URL = http://127.0.0.1:1234/deleteRssSources
 Method = POST
 ```
 
@@ -91,45 +95,56 @@ Method = GET
 * 需声明`io.legado.READ_WRITE`权限
 * `providerHost`为`包名.readerProvider`, 如`io.legado.app.release.readerProvider`,不同包的地址不同,防止冲突安装失败
 * 以下出现的`providerHost`请自行替换
-#### 插入单个书源
+
+#### 插入单个书源or订阅源
+
 ```
-URL = content://providerHost/source/insert
+URL = content://providerHost/bookSource/insert
+URL = content://providerHost/rssSource/insert
 Method = insert
 ```
 
 创建`Key="json"`的`ContentValues`，内容为`JSON`字符串，  
 格式参考[这个文件](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/data/entities/BookSource.kt)
 
-#### 插入多个书源
+#### 插入多个书源or订阅源
+
 ```
-URL = content://providerHost/sources/insert
+URL = content://providerHost/bookSources/insert
+URL = content://providerHost/rssSources/insert
 Method = insert
 ```
 
 创建`Key="json"`的`ContentValues`，内容为`JSON`字符串，  
 格式参考[这个文件](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/data/entities/BookSource.kt)，**为数组格式**。
 
-#### 获取书源
+#### 获取书源or订阅源
+
 ```
-URL = content://providerHost/source/query?url=xxx
+URL = content://providerHost/bookSource/query?url=xxx
+URL = content://providerHost/rssSource/query?url=xxx
 Method = query
 ```
 
 获取指定URL对应的书源信息。  
 用`Cursor.getString(0)`取出返回结果。
 
-#### 获取所有书源
+#### 获取所有书源or订阅源
+
 ```
-URL = content://providerHost/sources/query
+URL = content://providerHost/bookSources/query
+URL = content://providerHost/rssSources/query
 Method = query
 ```
 
 获取APP内的所有书源。  
 用`Cursor.getString(0)`取出返回结果。
 
-#### 删除多个书源
+#### 删除多个书源or订阅源
+
 ```
-URL = content://providerHost/sources/delete
+URL = content://providerHost/bookSources/delete
+URL = content://providerHost/rssSources/delete
 Method = delete
 ```
 
