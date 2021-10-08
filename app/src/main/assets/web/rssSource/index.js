@@ -238,11 +238,10 @@ $('.menu').addEventListener('click', e => {
 			let saveRule = [rule2json()];
 			HttpPost(`/saveRssSources`, saveRule).then(sResult => {
 				if (sResult.isSuccess) {
-					let sKey = DebugKey.value ? DebugKey.value : '我的';
-					$('#DebugConsole').value = `源《${saveRule[0].sourceName}》保存成功！使用搜索关键字“${sKey}”开始调试...`;
+					$('#DebugConsole').value = `源《${saveRule[0].sourceName}》保存成功！开始调试...`;
 					let ws = new WebSocket(`${wsOrigin}/rssSourceDebug`);
 					ws.onopen = () => {
-						ws.send(`{"tag":"${saveRule[0].sourceUrl}", "key":"${sKey}"}`);
+						ws.send(`{"tag":"${saveRule[0].sourceUrl}", "key":""}`);
 					};
 					ws.onmessage = (msg) => {
 					    console.log('[调试]', msg);
