@@ -105,7 +105,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     ) {
         if (expandTextMenu) {
             when {
-                startTopY > 300 -> {
+                startTopY > 500 -> {
                     showAtLocation(
                         view,
                         Gravity.BOTTOM or Gravity.START,
@@ -127,7 +127,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             )
             val popupHeight = contentView.measuredHeight
             when {
-                startBottomY > 300 -> {
+                startBottomY > 500 -> {
                     showAtLocation(
                         view,
                         Gravity.TOP or Gravity.START,
