@@ -27,11 +27,11 @@ import kotlin.collections.HashMap
  * Created by GKF on 2018/1/24.
  * 搜索URL规则解析
  */
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 @Keep
 @SuppressLint("DefaultLocale")
 class AnalyzeUrl(
-    var ruleUrl: String,
+    val mUrl: String,
     val key: String? = null,
     val page: Int? = null,
     val speakText: String? = null,
@@ -48,13 +48,15 @@ class AnalyzeUrl(
         private val accessTime = hashMapOf<String, FetchRecord>()
     }
 
-    val headerMap = HashMap<String, String>()
+    var ruleUrl = ""
+        private set
     var url: String = ""
         private set
     var body: String? = null
         private set
     var type: String? = null
         private set
+    val headerMap = HashMap<String, String>()
     private var urlNoQuery: String = ""
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
@@ -75,12 +77,20 @@ class AnalyzeUrl(
                 headerMap.remove("proxy")
             }
         }
+        initUrl()
+    }
+
+    /**
+     * 处理url
+     */
+    fun initUrl() {
+        ruleUrl = mUrl
         //执行@js,<js></js>
         analyzeJs()
         //替换参数
         replaceKeyPageJs()
         //处理URL
-        initUrl()
+        analyzeUrl()
     }
 
     /**
@@ -142,9 +152,9 @@ class AnalyzeUrl(
     }
 
     /**
-     * 处理URL
+     * 解析Url
      */
-    private fun initUrl() {
+    private fun analyzeUrl() {
         //replaceKeyPageJs已经替换掉额外内容，此处url是基础形式，可以直接切首个‘,’之前字符串。
         val urlMatcher = paramPattern.matcher(ruleUrl)
         val urlNoOption =
@@ -243,12 +253,6 @@ class AnalyzeUrl(
         bindings["source"] = source
         bindings["result"] = result
         return SCRIPT_ENGINE.eval(jsStr, bindings)
-    }
-
-    fun upHeader() {
-        source?.getHeaderMap(true)?.let {
-            headerMap.putAll(it)
-        }
     }
 
     fun put(key: String, value: String): String {

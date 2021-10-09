@@ -474,6 +474,13 @@ interface JsExtensions {
     }
 
     /**
+     * 生成UUID
+     */
+    fun randomUUID(): String {
+        return UUID.randomUUID().toString()
+    }
+
+    /**
      * AES 解码为 ByteArray
      * @param str 传入的AES加密的数据
      * @param key AES 解密的key
