@@ -12,6 +12,9 @@ import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.login.SourceLoginActivity
+import io.legado.app.ui.widget.code.addJsPattern
+import io.legado.app.ui.widget.code.addJsonPattern
+import io.legado.app.ui.widget.code.addLegadoPattern
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -35,6 +38,23 @@ class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
+        binding.tvUrl.run {
+            addLegadoPattern()
+            addJsonPattern()
+            addJsPattern()
+        }
+        binding.tvLoginUrl.run {
+            addLegadoPattern()
+            addJsonPattern()
+            addJsPattern()
+        }
+        binding.tvLoginUi.addJsonPattern()
+        binding.tvLoginCheckJs.addJsPattern()
+        binding.tvHeaders.run {
+            addLegadoPattern()
+            addJsonPattern()
+            addJsPattern()
+        }
         viewModel.initData(arguments) {
             initView(httpTTS = it)
         }
