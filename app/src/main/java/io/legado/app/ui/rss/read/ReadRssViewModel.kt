@@ -82,7 +82,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
 
     private fun loadUrl(url: String, baseUrl: String) {
         val analyzeUrl = AnalyzeUrl(
-            ruleUrl = url,
+            mUrl = url,
             baseUrl = baseUrl,
             headerMapF = rssSource?.getHeaderMap()
         )

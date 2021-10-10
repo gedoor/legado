@@ -13,6 +13,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import org.apache.commons.lang3.time.DateFormatUtils
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import splitties.init.appCtx
@@ -222,6 +223,14 @@ interface JsExtensions {
 
     fun md5Encode16(str: String): String {
         return MD5Utils.md5Encode16(str)
+    }
+
+    /**
+     * 格式化时间
+     */
+    fun timeFormatUTC(time: Long, format: String, sh: Int): String? {
+        val utc = SimpleTimeZone(sh, "UTC")
+        return DateFormatUtils.format(Date(time), format, utc, null)
     }
 
     /**

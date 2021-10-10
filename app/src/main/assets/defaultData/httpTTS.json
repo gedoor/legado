@@ -13,7 +13,7 @@
     "id": -29,
     "name": "3.阿里云语音",
     "url": "https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/tts,{\"method\": \"POST\",\"body\", {\"appkey\":\"31f932fb\",\"text\":\"{{speakText}}\",\"format\":\"mp3\"}}",
-    "loginUrl": "var query = 'AccessKeyId=' + source.loginInfoMap().get('AccessKeyId') + '&Action=CreateToken&Version=2019-02-28&Format=JSON&RegionId=cn-shanghai&SignatureMethod=HMAC-SHA1&SignatureVersion=1.0&SignatureNonce=' + java.UUID",
+    "loginUrl": "var query = 'AccessKeyId=' + source.loginInfoMap().get('AccessKeyId') + '&Action=CreateToken&Format=JSON&RegionId=cn-shanghai&SignatureMethod=HMAC-SHA1&SignatureNonce=' + java.UUID + '&SignatureVersion=1.0&Timestamp=' + java.timeFormatUTC(new Date().getTime(), 'YYYY-MM-DDThh:mm:ssZ', 0) + '&Version=2019-02-28'; ",
     "loginUi": [
       {
         "name": "AccessKeyId",

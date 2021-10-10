@@ -66,7 +66,7 @@ object WebBook {
         val variableBook = SearchBook()
         bookSource.searchUrl?.let { searchUrl ->
             val analyzeUrl = AnalyzeUrl(
-                ruleUrl = searchUrl,
+                mUrl = searchUrl,
                 key = key,
                 page = page,
                 baseUrl = bookSource.bookSourceUrl,
@@ -117,7 +117,7 @@ object WebBook {
     ): ArrayList<SearchBook> {
         val variableBook = SearchBook()
         val analyzeUrl = AnalyzeUrl(
-            ruleUrl = url,
+            mUrl = url,
             page = page,
             baseUrl = bookSource.bookSourceUrl,
             source = bookSource,
@@ -176,7 +176,7 @@ object WebBook {
             )
         } else {
             val analyzeUrl = AnalyzeUrl(
-                ruleUrl = book.bookUrl,
+                mUrl = book.bookUrl,
                 baseUrl = bookSource.bookSourceUrl,
                 source = bookSource,
                 ruleData = book,
@@ -233,7 +233,7 @@ object WebBook {
             )
         } else {
             val analyzeUrl = AnalyzeUrl(
-                ruleUrl = book.tocUrl,
+                mUrl = book.tocUrl,
                 baseUrl = book.bookUrl,
                 source = bookSource,
                 ruleData = book,
@@ -297,7 +297,7 @@ object WebBook {
             )
         } else {
             val analyzeUrl = AnalyzeUrl(
-                ruleUrl = bookChapter.getAbsoluteURL(),
+                mUrl = bookChapter.getAbsoluteURL(),
                 baseUrl = book.tocUrl,
                 source = bookSource,
                 ruleData = book,

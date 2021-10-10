@@ -63,7 +63,7 @@ object BookChapterList {
                 while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                     nextUrlList.add(nextUrl)
                     AnalyzeUrl(
-                        ruleUrl = nextUrl,
+                        mUrl = nextUrl,
                         source = bookSource,
                         ruleData = book,
                         headerMapF = bookSource.getHeaderMap()
@@ -85,7 +85,7 @@ object BookChapterList {
                         async(IO) {
                             val urlStr = chapterData.second[it]
                             val analyzeUrl = AnalyzeUrl(
-                                ruleUrl = urlStr,
+                                mUrl = urlStr,
                                 source = bookSource,
                                 ruleData = book,
                                 headerMapF = bookSource.getHeaderMap()
