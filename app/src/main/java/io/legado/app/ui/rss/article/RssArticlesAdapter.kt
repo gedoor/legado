@@ -1,5 +1,6 @@
 package io.legado.app.ui.rss.article
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ class RssArticlesAdapter(context: Context, callBack: CallBack) :
         return ItemRssArticleBinding.inflate(inflater, parent, false)
     }
 
+    @SuppressLint("CheckResult")
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemRssArticleBinding,

@@ -21,7 +21,12 @@ object ImageLoader {
     fun load(context: Context, path: String?): RequestBuilder<Drawable> {
         return when {
             path.isNullOrEmpty() -> Glide.with(context).load(path)
-            path.isAbsUrl() -> GlideApp.with(context).load(AnalyzeUrl(path).getGlideUrl())
+            path.isAbsUrl() -> {
+                val url = kotlin.runCatching {
+                    AnalyzeUrl(path).getGlideUrl()
+                }.getOrDefault(path)
+                GlideApp.with(context).load(url)
+            }
             path.isContentScheme() -> Glide.with(context).load(Uri.parse(path))
             else -> kotlin.runCatching {
                 Glide.with(context).load(File(path))
