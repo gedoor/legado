@@ -114,9 +114,6 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 var response = analyzeUrl.getResponse()
                                 httpTts.loginCheckJs?.let { checkJs ->
                                     if (checkJs.isNotBlank()) {
-                                        if (response.headers["Content-Type"] != "audio/mpeg") {
-                                            response.body!!.string()
-                                        }
                                         response = analyzeUrl.evalJS(checkJs, response) as Response
                                     }
                                 }
