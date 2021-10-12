@@ -46,7 +46,7 @@ interface JsExtensions {
         return runBlocking {
             kotlin.runCatching {
                 val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
-                analyzeUrl.getStrResponse().body
+                analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
                 it.printOnDebug()
@@ -65,7 +65,7 @@ interface JsExtensions {
                 async(IO) {
                     val url = urlList[it]
                     val analyzeUrl = AnalyzeUrl(url, source = getSource())
-                    analyzeUrl.getStrResponse()
+                    analyzeUrl.getStrResponseAwait()
                 }
             }
             val resArray = Array<StrResponse?>(urlList.size) {
@@ -82,7 +82,7 @@ interface JsExtensions {
         return runBlocking {
             val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
             kotlin.runCatching {
-                analyzeUrl.getStrResponse()
+                analyzeUrl.getStrResponseAwait()
             }.onFailure {
                 log("connect(${urlStr}) error\n${it.stackTraceToString()}")
                 it.printOnDebug()
@@ -97,7 +97,7 @@ interface JsExtensions {
             val headerMap = GSON.fromJsonObject<Map<String, String>>(header)
             val analyzeUrl = AnalyzeUrl(urlStr, headerMapF = headerMap, source = getSource())
             kotlin.runCatching {
-                analyzeUrl.getStrResponse()
+                analyzeUrl.getStrResponseAwait()
             }.onFailure {
                 log("ajax($urlStr,$header) error\n${it.stackTraceToString()}")
                 it.printOnDebug()

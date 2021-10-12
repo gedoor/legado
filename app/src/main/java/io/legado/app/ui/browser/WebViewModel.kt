@@ -34,7 +34,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             baseUrl = analyzeUrl.url
             headerMap.putAll(analyzeUrl.headerMap)
             if (analyzeUrl.isPost()) {
-                html = analyzeUrl.getStrResponse(useWebView = false).body
+                html = analyzeUrl.getStrResponseAwait(useWebView = false).body
             }
         }.onSuccess {
             success.invoke()

@@ -655,7 +655,7 @@ class AnalyzeRule(
         return runBlocking {
             kotlin.runCatching {
                 val analyzeUrl = AnalyzeUrl(urlStr, source = source, ruleData = book)
-                analyzeUrl.getStrResponse().body
+                analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
                 it.printOnDebug()

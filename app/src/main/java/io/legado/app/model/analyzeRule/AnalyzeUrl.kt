@@ -16,6 +16,7 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.*
 import io.legado.app.model.ConcurrentException
 import io.legado.app.utils.*
+import kotlinx.coroutines.runBlocking
 import okhttp3.Response
 import java.net.URLEncoder
 import java.util.*
@@ -328,13 +329,13 @@ class AnalyzeUrl(
     /**
      * 访问网站,返回StrResponse
      */
-    suspend fun getStrResponse(
+    suspend fun getStrResponseAwait(
         jsStr: String? = null,
         sourceRegex: String? = null,
         useWebView: Boolean = true,
     ): StrResponse {
         if (type != null) {
-            return StrResponse(url, StringUtils.byteToHexString(getByteArray()))
+            return StrResponse(url, StringUtils.byteToHexString(getByteArrayAwait()))
         }
         judgmentConcurrent()
         setCookie(source?.getKey())
@@ -384,10 +385,21 @@ class AnalyzeUrl(
         }
     }
 
+    @JvmOverloads
+    fun getStrResponse(
+        jsStr: String? = null,
+        sourceRegex: String? = null,
+        useWebView: Boolean = true,
+    ): StrResponse {
+        return runBlocking {
+            getStrResponseAwait(jsStr, sourceRegex, useWebView)
+        }
+    }
+
     /**
      * 访问网站,返回Response
      */
-    suspend fun getResponse(): Response {
+    suspend fun getResponseAwait(): Response {
         judgmentConcurrent()
         setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
@@ -407,10 +419,16 @@ class AnalyzeUrl(
         }
     }
 
+    fun getResponse(): Response {
+        return runBlocking {
+            getResponseAwait()
+        }
+    }
+
     /**
      * 访问网站,返回ByteArray
      */
-    suspend fun getByteArray(): ByteArray {
+    suspend fun getByteArrayAwait(): ByteArray {
         judgmentConcurrent()
         setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
@@ -428,6 +446,12 @@ class AnalyzeUrl(
                 else -> get(urlNoQuery, fieldMap, true)
             }
         }.bytes()
+    }
+
+    fun getByteArray(): ByteArray {
+        return runBlocking {
+            getByteArrayAwait()
+        }
     }
 
     /**

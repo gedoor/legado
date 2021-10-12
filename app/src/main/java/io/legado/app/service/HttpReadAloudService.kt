@@ -111,7 +111,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     source = httpTts,
                                     headerMapF = httpTts.getHeaderMap(true)
                                 )
-                                var response = analyzeUrl.getResponse()
+                                var response = analyzeUrl.getResponseAwait()
                                 httpTts.loginCheckJs?.let { checkJs ->
                                     if (checkJs.isNotBlank()) {
                                         response = analyzeUrl.evalJS(checkJs, response) as Response

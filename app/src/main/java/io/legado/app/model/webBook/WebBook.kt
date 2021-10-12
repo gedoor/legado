@@ -74,7 +74,7 @@ object WebBook {
                 source = bookSource,
                 ruleData = variableBook,
             )
-            var res = analyzeUrl.getStrResponse()
+            var res = analyzeUrl.getStrResponseAwait()
             //检测书源是否已登录
             bookSource.loginCheckJs?.let { checkJs ->
                 if (checkJs.isNotBlank()) {
@@ -124,7 +124,7 @@ object WebBook {
             ruleData = variableBook,
             headerMapF = bookSource.getHeaderMap(true)
         )
-        var res = analyzeUrl.getStrResponse()
+        var res = analyzeUrl.getStrResponseAwait()
         //检测书源是否已登录
         bookSource.loginCheckJs?.let { checkJs ->
             if (checkJs.isNotBlank()) {
@@ -182,7 +182,7 @@ object WebBook {
                 ruleData = book,
                 headerMapF = bookSource.getHeaderMap(true)
             )
-            var res = analyzeUrl.getStrResponse()
+            var res = analyzeUrl.getStrResponseAwait()
             //检测书源是否已登录
             bookSource.loginCheckJs?.let { checkJs ->
                 if (checkJs.isNotBlank()) {
@@ -239,7 +239,7 @@ object WebBook {
                 ruleData = book,
                 headerMapF = bookSource.getHeaderMap(true)
             )
-            var res = analyzeUrl.getStrResponse()
+            var res = analyzeUrl.getStrResponseAwait()
             //检测书源是否已登录
             bookSource.loginCheckJs?.let { checkJs ->
                 if (checkJs.isNotBlank()) {
@@ -304,7 +304,7 @@ object WebBook {
                 chapter = bookChapter,
                 headerMapF = bookSource.getHeaderMap(true)
             )
-            var res = analyzeUrl.getStrResponse(
+            var res = analyzeUrl.getStrResponseAwait(
                 jsStr = bookSource.getContentRule().webJs,
                 sourceRegex = bookSource.getContentRule().sourceRegex
             )
