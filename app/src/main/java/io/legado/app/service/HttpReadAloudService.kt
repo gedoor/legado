@@ -141,6 +141,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                                 toastOnUi("tts文件解析错误")
                             } catch (e: Exception) {
+                                e.printOnDebug()
                                 removeSpeakCacheFile(fileName)
                             }
                         }
