@@ -64,22 +64,22 @@ class ContentProcessor private constructor(
         reSegment: Boolean = true
     ): List<String> {
         var mContent = content
-        if (includeTitle) {
-            //去除重复标题
-            try {
-                val name = Pattern.quote(book.name)
-                val title = Pattern.quote(chapter.title)
-                val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s|\\p{P})+".toRegex()
-                mContent = mContent.replace(titleRegex, "")
-            } catch (e: Exception) {
-                AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
-            }
-            //重新添加标题
-            mContent = chapter.getDisplayTitle() + "\n" + mContent
+        //去除重复标题
+        try {
+            val name = Pattern.quote(book.name)
+            val title = Pattern.quote(chapter.title)
+            val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s|\\p{P})+".toRegex()
+            mContent = mContent.replace(titleRegex, "")
+        } catch (e: Exception) {
+            AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
         }
         if (reSegment && book.getReSegment()) {
             //重新分段
             mContent = ContentHelp.reSegment(mContent, chapter.title)
+        }
+        if (includeTitle) {
+            //重新添加标题
+            mContent = chapter.getDisplayTitle() + "\n" + mContent
         }
         if (useReplace && book.getUseReplaceRule()) {
             //替换

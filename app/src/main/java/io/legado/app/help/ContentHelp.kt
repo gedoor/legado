@@ -59,7 +59,7 @@ object ContentHelp {
             buffer.append(findNewLines(s, dict))
         }
         buffer = reduceLength(buffer)
-        content1 = ("$chapterName\n\n" + buffer.toString() //         处理章节头部空格和换行
+        content1 = (buffer.toString() //         处理章节头部空格和换行
             .replaceFirst("^\\s+".toRegex(), "")
             .replace("\\s*[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
             .replace("[:：][”“\"\\s]+".toRegex(), "：“")
