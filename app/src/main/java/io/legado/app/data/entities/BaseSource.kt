@@ -46,6 +46,12 @@ interface BaseSource : JsExtensions {
         }
     }
 
+    fun login() {
+        getLoginJs()?.let {
+            evalJS(it)
+        }
+    }
+
     /**
      * 解析header规则
      */
