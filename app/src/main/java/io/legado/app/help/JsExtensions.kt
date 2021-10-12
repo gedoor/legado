@@ -400,8 +400,7 @@ interface JsExtensions {
             }
             entry = zis.nextEntry
         }
-        Debug.log("getZipContent 未发现内容")
-
+        log("getZipContent 未发现内容")
         return null
     }
 
