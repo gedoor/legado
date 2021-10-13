@@ -111,7 +111,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> showDialogFragment<SpeakEngineEditDialog>()
+            R.id.menu_add -> showDialogFragment<HttpTtsEditDialog>()
             R.id.menu_default -> viewModel.importDefault()
             R.id.menu_import_local -> importDocResult.launch {
                 mode = HandleFileContract.FILE
@@ -199,7 +199,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 }
                 ivEdit.setOnClickListener {
                     val id = getItemByLayoutPosition(holder.layoutPosition)!!.id
-                    showDialogFragment(SpeakEngineEditDialog(id))
+                    showDialogFragment(HttpTtsEditDialog(id))
                 }
                 ivMenuDelete.setOnClickListener {
                     getItemByLayoutPosition(holder.layoutPosition)?.let { httpTTS ->

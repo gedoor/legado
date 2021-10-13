@@ -26,6 +26,16 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_copy_source"
+        android:title="@string/copy_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_paste_source"
+        android:title="@string/paste_source"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_log"
         android:title="@string/log"
         app:showAsAction="never" />

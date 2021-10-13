@@ -21,7 +21,7 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit),
+class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit),
     Toolbar.OnMenuItemClickListener {
 
     constructor(id: Long) : this() {
@@ -31,7 +31,7 @@ class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit
     }
 
     private val binding by viewBinding(DialogHttpTtsEditBinding::bind)
-    private val viewModel by viewModels<SpeakEngineEditViewModel>()
+    private val viewModel by viewModels<HttpTtsEditViewModel>()
 
     override fun onStart() {
         super.onStart()
@@ -100,6 +100,12 @@ class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit
                 }
             }
             R.id.menu_del_login_header -> dataFromView().removeLoginHeader()
+            R.id.menu_copy_source -> dataFromView().let {
+                context?.sendToClip(GSON.toJson(it))
+            }
+            R.id.menu_paste_source -> viewModel.importFromClip {
+                initView(it)
+            }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_help -> help()
         }
