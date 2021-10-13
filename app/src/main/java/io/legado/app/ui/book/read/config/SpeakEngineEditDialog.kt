@@ -11,6 +11,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.code.addJsPattern
 import io.legado.app.ui.widget.code.addJsonPattern
@@ -91,6 +92,8 @@ class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit
                     }
                 }
             }
+            R.id.menu_del_login_header -> dataFromView().removeLoginHeader()
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_help -> help()
         }
         return true
