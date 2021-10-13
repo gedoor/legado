@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogHttpTtsEditBinding
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.login.SourceLoginActivity
@@ -90,6 +91,12 @@ class SpeakEngineEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit
                             putExtra("key", httpTts.id.toString())
                         }
                     }
+                }
+            }
+            R.id.menu_show_login_header -> alert {
+                setTitle(R.string.login_header)
+                dataFromView().getLoginHeader()?.let { loginHeader ->
+                    setMessage(loginHeader)
                 }
             }
             R.id.menu_del_login_header -> dataFromView().removeLoginHeader()

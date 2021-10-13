@@ -16,6 +16,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_show_login_header"
+        android:title="@string/show_login_header"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_del_login_header"
         android:title="@string/del_login_header"
         app:showAsAction="never" />

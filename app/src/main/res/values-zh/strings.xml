@@ -901,5 +901,7 @@
     <string name="see">查看</string>
     <string name="open">打开</string>
     <string name="del_login_header">删除登录头</string>
+    <string name="show_login_header">查看登录头</string>
+    <string name="login_header">登录头</string>
 
 </resources>
