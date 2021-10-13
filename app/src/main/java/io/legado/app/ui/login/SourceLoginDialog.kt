@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import splitties.views.onClick
 
-class RuleUiLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
+class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
 
     private val binding by viewBinding(DialogLoginBinding::bind)
     private val viewModel by activityViewModels<SourceLoginViewModel>()
@@ -92,6 +92,7 @@ class RuleUiLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
                     }
                     login(source, loginData)
                 }
+                R.id.menu_del_login_header -> source.removeLoginHeader()
                 R.id.menu_log -> showDialogFragment<AppLogDialog>()
             }
             return@setOnMenuItemClickListener true

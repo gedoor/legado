@@ -27,7 +27,7 @@ class SourceLoginActivity : VMBaseActivity<ActivitySourceLoginBinding, SourceLog
                 .replace(R.id.fl_fragment, WebViewLoginFragment())
                 .commit()
         } else {
-            showDialogFragment<RuleUiLoginDialog>()
+            showDialogFragment<SourceLoginDialog>()
         }
     }
 

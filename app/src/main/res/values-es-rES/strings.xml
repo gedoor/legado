@@ -897,5 +897,6 @@
     <string name="use_browser_open">是否使用外部浏览器打开?</string>
     <string name="see">查看</string>
     <string name="open">打开</string>
+    <string name="del_login_header">删除登录头</string>
 
 </resources>
