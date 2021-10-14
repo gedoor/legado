@@ -15,6 +15,7 @@ import java.util.*
 
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
 
+    private val bdRegex = "^(\\s|\\p{P})+$".toRegex()
     private var textToSpeech: TextToSpeech? = null
     private var ttsInitFinish = false
     private val ttsUtteranceListener = TTSUtteranceListener()
@@ -72,7 +73,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 textToSpeech?.let {
                     it.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
                     for (i in nowSpeak until contentList.size) {
-                        it.speak(contentList[i], TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                        val text = contentList[i].replace(bdRegex, "")
+                        it.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
                     }
                 }
             }
