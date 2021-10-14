@@ -147,10 +147,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 removeSpeakCacheFile(fileName)
                                 toastOnUi("tts接口网络错误\n${e.localizedMessage}")
                             } catch (e: IOException) {
-                                val file = getSpeakFileAsMd5(fileName)
-                                if (file.exists()) {
-                                    FileUtils.deleteFile(file.absolutePath)
-                                }
+                                removeSpeakCacheFile(fileName)
+                                createSpeakFileAsMd5IfNotExist(fileName)
                                 AppLog.put("tts文件解析错误")
                                 toastOnUi("tts文件解析错误\n${e.localizedMessage}")
                             } catch (e: Exception) {
