@@ -33,6 +33,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private var task: Coroutine<*>? = null
     private var playingIndex = -1
     private var playIndexJob: Job? = null
+    private var errorNo = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -153,6 +154,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 toastOnUi("tts文件解析错误")
                             } catch (e: Exception) {
                                 removeSpeakCacheFile(fileName)
+                                createSpeakFileAsMd5IfNotExist(fileName)
                                 AppLog.put("tts接口错误\n${e.localizedMessage}", e)
                                 toastOnUi("tts接口错误\n${e.localizedMessage}")
                                 e.printOnDebug()
@@ -278,8 +280,6 @@ class HttpReadAloudService : BaseReadAloudService(),
         mediaPlayer.start()
         upPlayPos()
     }
-
-    private var errorNo = 0
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         if (what == -38 && extra == 0) {
