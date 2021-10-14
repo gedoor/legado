@@ -23,6 +23,7 @@ import io.legado.app.help.*
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
@@ -157,6 +158,14 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     private fun bindEvent() = binding.run {
+        titleBar.toolbar.setOnClickListener {
+            ReadBook.book?.let {
+                context.startActivity<BookInfoActivity> {
+                    putExtra("name", it.name)
+                    putExtra("author", it.author)
+                }
+            }
+        }
         val chapterViewClickListener = OnClickListener {
             if (ReadBook.isLocalBook) {
                 return@OnClickListener

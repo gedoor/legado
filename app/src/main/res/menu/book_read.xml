@@ -94,8 +94,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_book_info"
-        android:title="@string/book_info"
+        android:id="@+id/menu_log"
+        android:title="@string/log"
         app:showAsAction="never" />
 
     <item

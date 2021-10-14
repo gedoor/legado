@@ -35,8 +35,8 @@ import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.changesource.ChangeSourceDialog
-import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
@@ -272,12 +272,7 @@ class ReadBookActivity : ReadBookBaseActivity(),
                 binding.readView.upPageAnim()
                 ReadBook.loadContent(false)
             }
-            R.id.menu_book_info -> ReadBook.book?.let {
-                startActivity<BookInfoActivity> {
-                    putExtra("name", it.name)
-                    putExtra("author", it.author)
-                }
-            }
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_toc_regex -> showDialogFragment(
                 TocRegexDialog(ReadBook.book?.tocUrl)
             )
