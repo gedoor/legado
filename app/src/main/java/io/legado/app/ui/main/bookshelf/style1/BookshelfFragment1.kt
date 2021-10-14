@@ -27,6 +27,7 @@ import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -44,7 +45,7 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     }
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Long, BooksFragment>()
-
+    private var groupsFlowJob: Job? = null
     override val groupId: Long get() = selectedGroup.groupId
 
     override val books: List<Book>
@@ -73,7 +74,8 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     }
 
     private fun initBookGroupData() {
-        launch {
+        groupsFlowJob?.cancel()
+        groupsFlowJob = launch {
             appDb.bookGroupDao.flowShow().collect {
                 upGroup(it)
             }

@@ -45,9 +45,17 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     }
 
     private val binding by viewBinding(FragmentBooksBinding::bind)
-    private val activityViewModel: MainViewModel
-            by activityViewModels()
-    private lateinit var booksAdapter: BaseBooksAdapter<*>
+    private val activityViewModel by activityViewModels<MainViewModel>()
+    private val bookshelfLayout by lazy {
+        getPrefInt(PreferKey.bookshelfLayout)
+    }
+    private val booksAdapter: BaseBooksAdapter<*> by lazy {
+        if (bookshelfLayout == 0) {
+            BooksAdapterList(requireContext(), this)
+        } else {
+            BooksAdapterGrid(requireContext(), this)
+        }
+    }
     private var booksFlowJob: Job? = null
     private var position = 0
     private var groupId = -1L
@@ -68,13 +76,10 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             binding.refreshLayout.isRefreshing = false
             activityViewModel.upToc(booksAdapter.getItems())
         }
-        val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
         if (bookshelfLayout == 0) {
             binding.rvBookshelf.layoutManager = LinearLayoutManager(context)
-            booksAdapter = BooksAdapterList(requireContext(), this)
         } else {
             binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
-            booksAdapter = BooksAdapterGrid(requireContext(), this)
         }
         binding.rvBookshelf.adapter = booksAdapter
         booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {

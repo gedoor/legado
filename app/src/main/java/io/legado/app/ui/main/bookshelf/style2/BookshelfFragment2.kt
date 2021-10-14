@@ -41,10 +41,20 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     BaseBooksAdapter.CallBack {
 
     private val binding by viewBinding(FragmentBookshelf1Binding::bind)
-    private lateinit var booksAdapter: BaseBooksAdapter<*>
-    override var groupId = AppConst.bookGroupNoneId
-    private var booksFlowJob: Job? = null
+    private val bookshelfLayout by lazy {
+        getPrefInt(PreferKey.bookshelfLayout)
+    }
+    private val booksAdapter: BaseBooksAdapter<*> by lazy {
+        if (bookshelfLayout == 0) {
+            BooksAdapterList(requireContext(), this)
+        } else {
+            BooksAdapterGrid(requireContext(), this)
+        }
+    }
     private var bookGroups: List<BookGroup> = emptyList()
+    private var groupsFlowJob: Job? = null
+    private var booksFlowJob: Job? = null
+    override var groupId = AppConst.bookGroupNoneId
     override var books: List<Book> = emptyList()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,13 +71,10 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
             binding.refreshLayout.isRefreshing = false
             activityViewModel.upToc(books)
         }
-        val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
         if (bookshelfLayout == 0) {
             binding.rvBookshelf.layoutManager = LinearLayoutManager(context)
-            booksAdapter = BooksAdapterList(requireContext(), this)
         } else {
             binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
-            booksAdapter = BooksAdapterGrid(requireContext(), this)
         }
         binding.rvBookshelf.adapter = booksAdapter
         booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -91,7 +98,8 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
-        launch {
+        groupsFlowJob?.cancel()
+        groupsFlowJob = launch {
             appDb.bookGroupDao.flowShow().collect {
                 if (it != bookGroups) {
                     bookGroups = it

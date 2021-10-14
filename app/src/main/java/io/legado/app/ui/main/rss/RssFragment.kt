@@ -41,6 +41,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
+    private var groupsFlowJob: Job? = null
     private var rssFlowJob: Job? = null
     private val groups = linkedSetOf<String>()
     private var groupsMenu: SubMenu? = null
@@ -117,7 +118,8 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     }
 
     private fun initGroupData() {
-        launch {
+        groupsFlowJob?.cancel()
+        groupsFlowJob = launch {
             appDb.rssSourceDao.flowGroup().collect {
                 groups.clear()
                 it.map { group ->
