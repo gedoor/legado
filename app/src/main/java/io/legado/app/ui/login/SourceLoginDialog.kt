@@ -23,7 +23,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import splitties.init.appCtx
 import splitties.views.onClick
 
 class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
@@ -117,13 +116,13 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
                 source.getLoginJs()?.let {
                     try {
                         source.evalJS(it)
-                        appCtx.toastOnUi(R.string.success)
+                        context?.toastOnUi(R.string.success)
                         withContext(Main) {
                             dismiss()
                         }
                     } catch (e: Exception) {
                         AppLog.put("登录出错\n${e.localizedMessage}", e)
-                        appCtx.toastOnUi("error:${e.localizedMessage}")
+                        context?.toastOnUi("error:${e.localizedMessage}")
                         e.printOnDebug()
                     }
                 }
