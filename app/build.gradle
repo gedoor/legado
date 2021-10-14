@@ -202,9 +202,6 @@ dependencies {
     implementation("org.nanohttpd:nanohttpd:$nanoHttpdVersion")
     implementation("org.nanohttpd:nanohttpd-websocket:$nanoHttpdVersion")
 
-    //代码编辑
-    //implementation('com.github.AmrDeveloper:CodeView:1.0.1')
-
     //二维码
     implementation('com.github.jenly1314:zxing-lite:2.1.1')
 
@@ -224,4 +221,6 @@ dependencies {
     //转换繁体
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
 
+    //代码编辑com.github.AmrDeveloper:CodeView已集成到应用内
+    //epubLib集成到应用内
 }
