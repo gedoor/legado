@@ -139,6 +139,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                                         playAudio(fis.fd)
                                     }
                                 }
+                            } catch (e: CancellationException) {
+                                //停止朗读,不处理
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
                                 toastOnUi("tts接口超时，尝试重新获取")
