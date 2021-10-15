@@ -17,7 +17,7 @@ object RssSourceController {
             val source = appDb.rssSourceDao.all
             val returnData = ReturnData()
             return if (source.isEmpty()) {
-                returnData.setErrorMsg("订阅源列表为空")
+                returnData.setErrorMsg("源列表为空")
             } else returnData.setData(source)
         }
 
@@ -44,17 +44,17 @@ object RssSourceController {
 
     fun saveSources(postData: String?): ReturnData {
         val okSources = arrayListOf<RssSource>()
-        kotlin.runCatching {
-            val source = GSON.fromJsonArray<RssSource>(postData)
-            if (source != null) {
-                for (rssSource in source) {
-                    if (rssSource.sourceName.isBlank() || rssSource.sourceUrl.isBlank()) {
-                        continue
-                    }
-                    appDb.rssSourceDao.insert(rssSource)
-                    okSources.add(rssSource)
+        val source = GSON.fromJsonArray<RssSource>(postData)
+        if (source != null) {
+            for (rssSource in source) {
+                if (rssSource.sourceName.isBlank() || rssSource.sourceUrl.isBlank()) {
+                    continue
                 }
+                appDb.rssSourceDao.insert(rssSource)
+                okSources.add(rssSource)
             }
+        } else {
+            return ReturnData().setErrorMsg("转换源失败")
         }
         return ReturnData().setData(okSources)
     }
