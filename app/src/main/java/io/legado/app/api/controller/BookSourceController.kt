@@ -46,12 +46,13 @@ object BookSourceController {
         val okSources = arrayListOf<BookSource>()
         val bookSources = GSON.fromJsonArray<BookSource>(postData)
         if (bookSources != null) {
-            for (bookSource in bookSources) {
-                if (bookSource.bookSourceName.isBlank() || bookSource.bookSourceUrl.isBlank()) {
-                    continue
+            bookSources.forEach { bookSource ->
+                if (bookSource.bookSourceName.isNotBlank()
+                    && bookSource.bookSourceUrl.isNotBlank()
+                ) {
+                    appDb.bookSourceDao.insert(bookSource)
+                    okSources.add(bookSource)
                 }
-                appDb.bookSourceDao.insert(bookSource)
-                okSources.add(bookSource)
             }
         } else {
             return ReturnData().setErrorMsg("转换源失败")
