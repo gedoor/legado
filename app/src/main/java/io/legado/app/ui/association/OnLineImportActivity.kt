@@ -78,6 +78,7 @@ class OnLineImportActivity :
                         viewModel.determineType(url, this::finallyDialog)
                     }
                 }
+                else -> viewModel.determineType(url, this::finallyDialog)
             }
         }
     }
