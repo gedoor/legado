@@ -264,7 +264,7 @@ class TextFile {
         private fun getBookFile(book: Book): File {
             if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
-                val bookFile = FileUtils.getFile(LocalBook.cacheFolder, book.originName)
+                val bookFile = LocalBook.cacheFolder.getFile(book.originName)
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
                     DocumentUtils.readBytes(appCtx, uri)?.let {

@@ -125,7 +125,7 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     private fun showCrashLogs() {
         context?.externalCacheDir?.let { exCacheDir ->
-            val crashDir = FileUtils.getFile(exCacheDir, "crash")
+            val crashDir = exCacheDir.getFile("crash")
             val crashLogs = crashDir.listFiles()
             val crashLogNames = arrayListOf<String>()
             crashLogs?.forEach {

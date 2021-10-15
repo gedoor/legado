@@ -28,13 +28,13 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private val bdRegex = "^(\\s|\\p{P})+$".toRegex()
     private val mediaPlayer = MediaPlayer()
-    private val ttsFolder: String by lazy {
-        externalCacheDir!!.absolutePath + File.separator + "httpTTS"
+    private val ttsFolderPath: String by lazy {
+        externalCacheDir!!.absolutePath + File.separator + "httpTTS" + File.separator
     }
     private var task: Coroutine<*>? = null
     private var playingIndex = -1
     private var playIndexJob: Job? = null
-    private var errorNo = 0
+
 
     override fun onCreate() {
         super.onCreate()
@@ -86,6 +86,8 @@ class HttpReadAloudService : BaseReadAloudService(),
             nextChapter()
         }
     }
+
+    private var downloadErrorNo: Int = 0
 
     private fun downloadAudio() {
         task?.cancel()
@@ -140,12 +142,13 @@ class HttpReadAloudService : BaseReadAloudService(),
                                         playAudio(fis.fd)
                                     }
                                 }
+                                downloadErrorNo = 0
                             } catch (e: CancellationException) {
                                 //任务取消,不处理
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
-                                errorNo++
-                                if (errorNo > 5) {
+                                downloadErrorNo++
+                                if (playErrorNo > 5) {
                                     createSilentSound(fileName)
                                 } else {
                                     toastOnUi("tts接口超时，尝试重新获取")
@@ -188,7 +191,6 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
-    private fun speakFilePath() = ttsFolder + File.separator
     private fun md5SpeakFileName(url: String, ttsConfig: String, content: String): String {
         return MD5Utils.md5Encode16(textChapter!!.title) + "_" + MD5Utils.md5Encode16("$url-|-$ttsConfig-|-$content")
     }
@@ -199,26 +201,26 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun hasSpeakFile(name: String) =
-        FileUtils.exist("${speakFilePath()}$name.mp3")
+        FileUtils.exist("${ttsFolderPath}$name.mp3")
 
     private fun hasSpeakCacheFile(name: String) =
-        FileUtils.exist("${speakFilePath()}$name.mp3.cache")
+        FileUtils.exist("${ttsFolderPath}$name.mp3.cache")
 
     private fun createSpeakCacheFile(name: String): File =
-        FileUtils.createFileWithReplace("${speakFilePath()}$name.mp3.cache")
+        FileUtils.createFileWithReplace("${ttsFolderPath}$name.mp3.cache")
 
     private fun removeSpeakCacheFile(name: String) {
-        FileUtils.delete("${speakFilePath()}$name.mp3.cache")
+        FileUtils.delete("${ttsFolderPath}$name.mp3.cache")
     }
 
     private fun getSpeakFileAsMd5(name: String): File =
-        FileUtils.getFile(File(speakFilePath()), "$name.mp3")
+        File("${ttsFolderPath}$name.mp3")
 
     private fun createSpeakFileAsMd5IfNotExist(name: String): File =
-        FileUtils.createFileIfNotExist("${speakFilePath()}$name.mp3")
+        FileUtils.createFileIfNotExist("${ttsFolderPath}$name.mp3")
 
     private fun removeCacheFile() {
-        FileUtils.listDirsAndFiles(speakFilePath())?.forEach {
+        FileUtils.listDirsAndFiles(ttsFolderPath)?.forEach {
             if (Regex(""".+\.mp3$""").matches(it.name)) { //mp3缓存文件
                 val reg =
                     """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
@@ -293,14 +295,16 @@ class HttpReadAloudService : BaseReadAloudService(),
         upPlayPos()
     }
 
+    private var playErrorNo = 0
+
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         if (what == -38 && extra == 0) {
             play()
             return true
         }
         AppLog.put("朗读错误,($what, $extra)")
-        errorNo++
-        if (errorNo >= 5) {
+        playErrorNo++
+        if (playErrorNo >= 5) {
             toastOnUi("朗读连续5次错误, 最后一次错误代码($what, $extra)")
             ReadAloud.pause(this)
         } else {
@@ -310,7 +314,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
-        errorNo = 0
+        playErrorNo = 0
         playNext()
     }
 

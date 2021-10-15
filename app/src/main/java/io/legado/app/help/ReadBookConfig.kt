@@ -368,14 +368,14 @@ object ReadBookConfig {
             @Suppress("BlockingMethodInNonBlockingContext")
             ZipUtils.unzipFile(zipFile, FileUtils.createFolderIfNotExist(configDirPath))
             val configDir = FileUtils.createFolderIfNotExist(configDirPath)
-            val configFile = FileUtils.getFile(configDir, "readConfig.json")
+            val configFile = configDir.getFile("readConfig.json")
             val config: Config = GSON.fromJsonObject(configFile.readText())!!
             if (config.textFont.isNotEmpty()) {
                 val fontName = FileUtils.getName(config.textFont)
                 val fontPath =
                     FileUtils.getPath(appCtx.externalFiles, "font", fontName)
                 if (!FileUtils.exist(fontPath)) {
-                    FileUtils.getFile(configDir, fontName).copyTo(File(fontPath))
+                    configDir.getFile(fontName).copyTo(File(fontPath))
                 }
                 config.textFont = fontPath
             }
@@ -383,7 +383,7 @@ object ReadBookConfig {
                 val bgName = FileUtils.getName(config.bgStr)
                 val bgPath = FileUtils.getPath(appCtx.externalFiles, "bg", bgName)
                 if (!FileUtils.exist(bgPath)) {
-                    val bgFile = FileUtils.getFile(configDir, bgName)
+                    val bgFile = configDir.getFile(bgName)
                     if (bgFile.exists()) {
                         bgFile.copyTo(File(bgPath))
                     }
@@ -393,7 +393,7 @@ object ReadBookConfig {
                 val bgName = FileUtils.getName(config.bgStrNight)
                 val bgPath = FileUtils.getPath(appCtx.externalFiles, "bg", bgName)
                 if (!FileUtils.exist(bgPath)) {
-                    val bgFile = FileUtils.getFile(configDir, bgName)
+                    val bgFile = configDir.getFile(bgName)
                     if (bgFile.exists()) {
                         bgFile.copyTo(File(bgPath))
                     }
@@ -403,7 +403,7 @@ object ReadBookConfig {
                 val bgName = FileUtils.getName(config.bgStrEInk)
                 val bgPath = FileUtils.getPath(appCtx.externalFiles, "bg", bgName)
                 if (!FileUtils.exist(bgPath)) {
-                    val bgFile = FileUtils.getFile(configDir, bgName)
+                    val bgFile = configDir.getFile(bgName)
                     if (bgFile.exists()) {
                         bgFile.copyTo(File(bgPath))
                     }

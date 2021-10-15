@@ -82,7 +82,7 @@ object Restore {
                 try {
                     val file = File(path)
                     for (fileName in Backup.backupFileNames) {
-                        FileUtils.getFile(file, fileName).let {
+                        file.getFile(fileName).let {
                             if (it.exists()) {
                                 it.copyTo(
                                     FileUtils.createFileIfNotExist("${Backup.backupPath}${File.separator}$fileName"),

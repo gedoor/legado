@@ -7,6 +7,7 @@ import android.util.Log
 import io.legado.app.constant.AppConst
 import io.legado.app.model.ReadAloud
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.getFile
 import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.msg
 import java.io.PrintWriter
@@ -113,7 +114,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         val time = format.format(Date())
         val fileName = "crash-$time-$timestamp.log"
         context.externalCacheDir?.let { rootFile ->
-            FileUtils.getFile(rootFile, "crash").listFiles()?.forEach {
+            rootFile.getFile("crash").listFiles()?.forEach {
                 if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)) {
                     it.delete()
                 }

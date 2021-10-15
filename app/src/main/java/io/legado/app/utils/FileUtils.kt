@@ -14,10 +14,6 @@ import java.util.regex.Pattern
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object FileUtils {
 
-    fun exists(root: File, vararg subDirFiles: String): Boolean {
-        return getFile(root, *subDirFiles).exists()
-    }
-
     fun createFileIfNotExist(root: File, vararg subDirFiles: String): File {
         val filePath = getPath(root, *subDirFiles)
         return createFileIfNotExist(filePath)
@@ -71,9 +67,17 @@ object FileUtils {
         return file
     }
 
-    fun getFile(root: File, vararg subDirFiles: String): File {
-        val filePath = getPath(root, *subDirFiles)
-        return File(filePath)
+    fun getPath(rootPath: String, vararg subDirFiles: String): String {
+        val path = StringBuilder(rootPath)
+        subDirFiles.forEach {
+            if (it.isNotEmpty()) {
+                if (!path.endsWith(File.separator)) {
+                    path.append(File.separator)
+                }
+                path.append(it)
+            }
+        }
+        return path.toString()
     }
 
     fun getPath(root: File, vararg subDirFiles: String): String {

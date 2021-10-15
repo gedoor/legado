@@ -64,7 +64,7 @@ object LocalBook {
             path = uri.toString()
             val doc = DocumentFile.fromSingleUri(appCtx, uri)
             doc?.let {
-                val bookFile = FileUtils.getFile(cacheFolder, it.name!!)
+                val bookFile = cacheFolder.getFile(it.name!!)
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
                     doc.readBytes(appCtx)?.let { bytes ->
@@ -147,7 +147,7 @@ object LocalBook {
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
         kotlin.runCatching {
             if (book.isLocalTxt() || book.isUmd()) {
-                val bookFile = FileUtils.getFile(cacheFolder, book.originName)
+                val bookFile = cacheFolder.getFile(book.originName)
                 bookFile.delete()
             }
             if (book.isEpub()) {
