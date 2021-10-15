@@ -43,9 +43,10 @@ object BookSourceController {
     }
 
     fun saveSources(postData: String?): ReturnData {
+        postData ?: return ReturnData().setErrorMsg("数据为空")
         val okSources = arrayListOf<BookSource>()
-        val bookSources = GSON.fromJsonArray<BookSource>(postData)
-        if (bookSources != null) {
+        val bookSources = BookSourceAnalyzer.jsonToBookSources(postData)
+        if (bookSources.isNotEmpty()) {
             bookSources.forEach { bookSource ->
                 if (bookSource.bookSourceName.isNotBlank()
                     && bookSource.bookSourceUrl.isNotBlank()

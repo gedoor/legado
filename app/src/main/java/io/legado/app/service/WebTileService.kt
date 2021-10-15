@@ -17,13 +17,13 @@ class WebTileService : TileService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         try {
             when (intent?.action) {
-                IntentAction.start -> {
-                    qsTile.state = Tile.STATE_ACTIVE
-                    qsTile.updateTile()
+                IntentAction.start -> qsTile?.run {
+                    state = Tile.STATE_ACTIVE
+                    updateTile()
                 }
-                IntentAction.stop -> {
-                    qsTile.state = Tile.STATE_INACTIVE
-                    qsTile.updateTile()
+                IntentAction.stop -> qsTile?.run {
+                    state = Tile.STATE_INACTIVE
+                    updateTile()
                 }
             }
         } catch (e: Exception) {

@@ -25,12 +25,16 @@ inline fun <reified T> genericType(): Type = object : TypeToken<T>() {}.type
 inline fun <reified T> Gson.fromJsonObject(json: String?): T? {//可转成任意类型
     return kotlin.runCatching {
         fromJson(json, genericType<T>()) as? T
+    }.onFailure {
+        it.printOnDebug()
     }.getOrNull()
 }
 
 inline fun <reified T> Gson.fromJsonArray(json: String?): List<T>? {
     return kotlin.runCatching {
         fromJson(json, ParameterizedTypeImpl(T::class.java)) as? List<T>
+    }.onFailure {
+        it.printOnDebug()
     }.getOrNull()
 }
 

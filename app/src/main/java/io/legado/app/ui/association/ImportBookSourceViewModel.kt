@@ -104,13 +104,8 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                     }
                 }
                 mText.isJsonArray() -> {
-                    val items: List<Map<String, Any>> = jsonPath.parse(mText).read("$")
-                    for (item in items) {
-                        val jsonItem = jsonPath.parse(item)
-                        BookSourceAnalyzer.jsonToBookSource(jsonItem.jsonString())?.let {
-                            allSources.add(it)
-                        }
-                    }
+                    val items = BookSourceAnalyzer.jsonToBookSources(mText)
+                    allSources.addAll(items)
                 }
                 mText.isAbsUrl() -> {
                     importSourceUrl(mText)
