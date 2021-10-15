@@ -43,7 +43,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.title = getString(R.string.login_source, source.getTag())
         val loginInfo = source.getLoginInfoMap()
-        val loginUi = source.loginUi
+        val loginUi = source.loginUi()
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 "text" -> ItemSourceEditBinding.inflate(layoutInflater, binding.root, false).let {

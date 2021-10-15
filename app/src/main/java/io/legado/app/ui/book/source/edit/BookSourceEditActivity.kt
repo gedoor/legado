@@ -201,7 +201,7 @@ class BookSourceEditActivity :
             add(EditEntity("bookSourceGroup", source?.bookSourceGroup, R.string.source_group))
             add(EditEntity("bookSourceComment", source?.bookSourceComment, R.string.comment))
             add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
-            add(EditEntity("loginUi", source?.getLoginUiStr(), R.string.login_ui))
+            add(EditEntity("loginUi", source?.loginUi, R.string.login_ui))
             add(EditEntity("loginCheckJs", source?.loginCheckJs, R.string.login_check_js))
             add(EditEntity("bookUrlPattern", source?.bookUrlPattern, R.string.book_url_pattern))
             add(EditEntity("header", source?.header, R.string.source_http_header))
@@ -300,7 +300,7 @@ class BookSourceEditActivity :
                 "bookSourceName" -> source.bookSourceName = it.value ?: ""
                 "bookSourceGroup" -> source.bookSourceGroup = it.value
                 "loginUrl" -> source.loginUrl = it.value
-                "loginUi" -> source.setLoginUi(it.value)
+                "loginUi" -> source.loginUi = it.value
                 "loginCheckJs" -> source.loginCheckJs = it.value
                 "bookUrlPattern" -> source.bookUrlPattern = it.value
                 "header" -> source.header = it.value

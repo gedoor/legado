@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.media.MediaPlayer
+import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
@@ -112,7 +113,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                             try {
                                 if (speakText.isEmpty()) {
                                     ensureActive()
-                                    createSpeakFileAsMd5IfNotExist(fileName)
+                                    createSilentSound(fileName)
                                     return@let
                                 }
                                 createSpeakCacheFile(fileName)
@@ -143,19 +144,24 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 //任务取消,不处理
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
-                                toastOnUi("tts接口超时，尝试重新获取")
-                                downloadAudio()
+                                errorNo++
+                                if (errorNo > 5) {
+                                    createSilentSound(fileName)
+                                } else {
+                                    toastOnUi("tts接口超时，尝试重新获取")
+                                    downloadAudio()
+                                }
                             } catch (e: ConnectException) {
                                 removeSpeakCacheFile(fileName)
                                 toastOnUi("tts接口网络错误\n${e.localizedMessage}")
                             } catch (e: IOException) {
                                 removeSpeakCacheFile(fileName)
-                                createSpeakFileAsMd5IfNotExist(fileName)
+                                createSilentSound(fileName)
                                 AppLog.put("tts文件解析错误")
                                 toastOnUi("tts文件解析错误\n${e.localizedMessage}")
                             } catch (e: Exception) {
                                 removeSpeakCacheFile(fileName)
-                                createSpeakFileAsMd5IfNotExist(fileName)
+                                createSilentSound(fileName)
                                 AppLog.put("tts接口错误\n${e.localizedMessage}", e)
                                 toastOnUi("tts接口错误\n${e.localizedMessage}")
                                 e.printOnDebug()
@@ -185,6 +191,11 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun speakFilePath() = ttsFolder + File.separator
     private fun md5SpeakFileName(url: String, ttsConfig: String, content: String): String {
         return MD5Utils.md5Encode16(textChapter!!.title) + "_" + MD5Utils.md5Encode16("$url-|-$ttsConfig-|-$content")
+    }
+
+    private fun createSilentSound(fileName: String) {
+        val file = createSpeakFileAsMd5IfNotExist(fileName)
+        file.writeBytes(resources.openRawResource(R.raw.silent_sound).readBytes())
     }
 
     private fun hasSpeakFile(name: String) =

@@ -29,7 +29,7 @@ data class BookSource(
     override var concurrentRate: String? = null,    // 并发率
     override var header: String? = null,            // 请求头
     override var loginUrl: String? = null,          // 登录地址
-    override var loginUi: List<RowUi>? = null,      // 登录UI
+    override var loginUi: String? = null,      // 登录UI
     var loginCheckJs: String? = null,               // 登录检测js
     var bookSourceComment: String? = null,          // 注释
     var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
@@ -154,11 +154,6 @@ data class BookSource(
     private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
 
     class Converters {
-        @TypeConverter
-        fun loginUiRuleToString(loginUi: List<RowUi>?): String = GSON.toJson(loginUi)
-
-        @TypeConverter
-        fun stringToLoginRule(json: String?): List<RowUi>? = GSON.fromJsonArray(json)
 
         @TypeConverter
         fun exploreRuleToString(exploreRule: ExploreRule?): String = GSON.toJson(exploreRule)

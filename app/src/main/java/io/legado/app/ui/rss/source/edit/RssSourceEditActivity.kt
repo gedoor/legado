@@ -160,7 +160,7 @@ class RssSourceEditActivity :
             add(EditEntity("sourceGroup", source?.sourceGroup, R.string.source_group))
             add(EditEntity("sourceComment", source?.sourceComment, R.string.comment))
             add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
-            add(EditEntity("loginUi", source?.getLoginUiStr(), R.string.login_ui))
+            add(EditEntity("loginUi", source?.loginUi, R.string.login_ui))
             add(EditEntity("loginCheckJs", source?.loginCheckJs, R.string.login_check_js))
             add(EditEntity("header", source?.header, R.string.source_http_header))
             add(
@@ -196,7 +196,7 @@ class RssSourceEditActivity :
                 "sourceGroup" -> source.sourceGroup = it.value
                 "sourceComment" -> source.sourceComment = it.value
                 "loginUrl" -> source.loginUrl = it.value
-                "loginUi" -> source.setLoginUi(it.value)
+                "loginUi" -> source.loginUi = it.value
                 "loginCheckJs" -> source.loginCheckJs = it.value
                 "header" -> source.header = it.value
                 "concurrentRate" -> source.concurrentRate = it.value

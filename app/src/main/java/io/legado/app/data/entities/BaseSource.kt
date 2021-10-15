@@ -18,21 +18,15 @@ interface BaseSource : JsExtensions {
 
     var concurrentRate: String? // 并发率
     var loginUrl: String?       // 登录地址
-    var loginUi: List<RowUi>?   // 登录UI
+    var loginUi: String?   // 登录UI
     var header: String?         // 请求头
 
     fun getTag(): String
 
     fun getKey(): String
 
-    fun getLoginUiStr(): String? {
-        return loginUi?.let {
-            GSON.toJson(it)
-        }
-    }
-
-    fun setLoginUi(uiJson: String?) {
-        loginUi = GSON.fromJsonArray(uiJson)
+    fun loginUi(): List<RowUi>? {
+        return GSON.fromJsonArray(loginUi)
     }
 
     fun getLoginJs(): String? {

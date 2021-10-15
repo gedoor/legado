@@ -1,16 +1,14 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
-import androidx.room.*
-import io.legado.app.data.entities.rule.RowUi
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import io.legado.app.utils.ACache
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 
 @Parcelize
-@TypeConverters(RssSource.Converters::class)
 @Entity(tableName = "rssSources", indices = [(Index(value = ["sourceUrl"], unique = false))])
 data class RssSource(
     @PrimaryKey
@@ -23,7 +21,7 @@ data class RssSource(
     override var concurrentRate: String? = null,    //并发率
     override var header: String? = null,            // 请求头
     override var loginUrl: String? = null,          // 登录地址
-    override var loginUi: List<RowUi>? = null,               //登录UI
+    override var loginUi: String? = null,               //登录UI
     var loginCheckJs: String? = null,               //登录检测js
     var sortUrl: String? = null,
     var singleUrl: Boolean = false,
@@ -114,11 +112,4 @@ data class RssSource(
         }
     }
 
-    class Converters {
-        @TypeConverter
-        fun loginUiRuleToString(loginUi: List<RowUi>?): String = GSON.toJson(loginUi)
-
-        @TypeConverter
-        fun stringToLoginRule(json: String?): List<RowUi>? = GSON.fromJsonArray(json)
-    }
 }
