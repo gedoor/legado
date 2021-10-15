@@ -114,7 +114,7 @@ class ContentProcessor private constructor(
                 it.code <= 0x20 || it == '　'
             }
             if (paragraph.isNotEmpty()) {
-                if (contents.isEmpty()) {
+                if (contents.isEmpty() && includeTitle) {
                     contents.add(paragraph)
                 } else {
                     contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
