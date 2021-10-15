@@ -76,7 +76,6 @@ class OnLineImportActivity :
                     )
                     else -> {
                         viewModel.determineType(url, this::finallyDialog)
-                        finish()
                     }
                 }
             }

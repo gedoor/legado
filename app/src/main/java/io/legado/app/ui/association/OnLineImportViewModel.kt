@@ -164,6 +164,7 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
                             importTextTocRule(json, finally)
                         json.contains("name") && json.contains("url") ->
                             importTextTocRule(json, finally)
+                        else -> errorLive.postValue("格式不对")
                     }
                 }
             }
