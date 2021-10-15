@@ -197,7 +197,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (!AppConfig.autoChangeSource) return
         execute {
             val sources = appDb.bookSourceDao.allTextEnabled
-            WebBook.preciseSearch(this, sources, name, author)?.let {
+            WebBook.preciseSearchAwait(this, sources, name, author)?.let {
                 it.second.upInfoFromOld(ReadBook.book)
                 changeTo(it.first, it.second)
             } ?: throw NoStackTraceException("自动换源失败")

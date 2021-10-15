@@ -108,18 +108,21 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     private fun importBookshelfByJson(json: String, groupId: Long) {
         execute {
             val bookSources = appDb.bookSourceDao.allEnabled
-            GSON.fromJsonArray<Map<String, String?>>(json)?.forEach {
+            GSON.fromJsonArray<Map<String, String?>>(json)?.forEach { bookInfo ->
                 if (!isActive) return@execute
-                val name = it["name"] ?: ""
-                val author = it["author"] ?: ""
+                val name = bookInfo["name"] ?: ""
+                val author = bookInfo["author"] ?: ""
                 if (name.isNotEmpty() && appDb.bookDao.getBook(name, author) == null) {
-                    val book = WebBook.preciseSearch(this, bookSources, name, author)?.second
-                    book?.let {
-                        if (groupId > 0) {
-                            book.group = groupId
+                    WebBook.preciseSearch(this, bookSources, name, author)
+                        .onSuccess {
+                            val book = it.second
+                            if (groupId > 0) {
+                                book.group = groupId
+                            }
+                            book.save()
+                        }.onError { e ->
+                            context.toastOnUi(e.localizedMessage)
                         }
-                        book.save()
-                    }
                 }
             }
         }.onFinally {
