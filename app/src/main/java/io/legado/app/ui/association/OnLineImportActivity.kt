@@ -7,7 +7,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.showDialogFragment
-import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
@@ -76,7 +75,7 @@ class OnLineImportActivity :
                         ImportReplaceRuleDialog(url, true)
                     )
                     else -> {
-                        toastOnUi("url error")
+                        viewModel.determineType(url, this::finallyDialog)
                         finish()
                     }
                 }
