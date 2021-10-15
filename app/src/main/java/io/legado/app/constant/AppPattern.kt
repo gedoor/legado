@@ -18,4 +18,6 @@ object AppPattern {
 
     val bdRegex = Regex("(\\p{P})+")
     val rnRegex = Regex("[\\r\\n]")
+
+    val notReadAloudRegex = Regex("^(\\s|\\p{C}|\\p{P}|\\p{Z}|\\p{S})+\$")
 }

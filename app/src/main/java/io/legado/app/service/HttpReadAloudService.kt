@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.media.MediaPlayer
 import io.legado.app.R
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -26,7 +27,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnErrorListener,
     MediaPlayer.OnCompletionListener {
 
-    private val bdRegex = "^(\\s|\\p{P})+$".toRegex()
     private val mediaPlayer = MediaPlayer()
     private val ttsFolderPath: String by lazy {
         externalCacheDir!!.absolutePath + File.separator + "httpTTS" + File.separator
@@ -96,7 +96,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             ReadAloud.httpTTS?.let { httpTts ->
                 contentList.forEachIndexed { index, item ->
                     if (isActive) {
-                        val speakText = item.replace(bdRegex, "")
+                        val speakText = item.replace(AppPattern.notReadAloudRegex, "")
                         val fileName =
                             md5SpeakFileName(
                                 httpTts.url,

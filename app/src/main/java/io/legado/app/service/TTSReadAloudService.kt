@@ -5,6 +5,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.MediaHelp
@@ -15,7 +16,6 @@ import java.util.*
 
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
 
-    private val bdRegex = "^(\\s|\\p{P})+$".toRegex()
     private var textToSpeech: TextToSpeech? = null
     private var ttsInitFinish = false
     private val ttsUtteranceListener = TTSUtteranceListener()
@@ -73,7 +73,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 textToSpeech?.let {
                     it.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
                     for (i in nowSpeak until contentList.size) {
-                        val text = contentList[i].replace(bdRegex, "")
+                        val text = contentList[i].replace(AppPattern.notReadAloudRegex, "")
                         it.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
                     }
                 }
