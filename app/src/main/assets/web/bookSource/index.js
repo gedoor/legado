@@ -377,7 +377,7 @@ $('.menu').addEventListener('click', e => {
 		case 'accept':
 			(async () => {
 				let saveRule = [rule2json()];
-				await HttpPost(`/saveBookSources`, saveRule).then(json => {
+				await HttpPost(`/saveBookSource`, saveRule[0]).then(json => {
 					alert(json.isSuccess ? `源《${saveRule[0].bookSourceName}》已成功保存到「阅读3.0APP」` : `源《${saveRule[0].bookSourceName}》保存失败!\nErrorMsg: ${json.errorMsg}`);
 					setRule(saveRule[0]);
 				}).catch(err => { alert(`保存源失败,无法连接到「阅读3.0APP」!\n${err}`); });

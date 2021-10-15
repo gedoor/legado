@@ -236,7 +236,7 @@ $('.menu').addEventListener('click', e => {
 			let DebugInfos = $('#DebugConsole');
 			function DebugPrint(msg) { DebugInfos.value += `\n${msg}`; DebugInfos.scrollTop = DebugInfos.scrollHeight; }
 			let saveRule = [rule2json()];
-			HttpPost(`/saveRssSources`, saveRule).then(sResult => {
+			HttpPost(`/saveRssSource`, saveRule[0]).then(sResult => {
 				if (sResult.isSuccess) {
 					$('#DebugConsole').value = `源《${saveRule[0].sourceName}》保存成功！开始调试...`;
 					let ws = new WebSocket(`${wsOrigin}/rssSourceDebug`);
