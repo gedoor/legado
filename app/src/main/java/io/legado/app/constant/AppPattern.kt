@@ -16,8 +16,18 @@ object AppPattern {
     val fileNameRegex = Regex("[\\\\/:*?\"<>|.]")
     val splitGroupRegex = Regex("[,;，；]")
 
+    /**
+     * 所有标点
+     */
     val bdRegex = Regex("(\\p{P})+")
+
+    /**
+     * 换行
+     */
     val rnRegex = Regex("[\\r\\n]")
 
+    /**
+     * 不发音段落判断
+     */
     val notReadAloudRegex = Regex("^(\\s|\\p{C}|\\p{P}|\\p{Z}|\\p{S})+\$")
 }
