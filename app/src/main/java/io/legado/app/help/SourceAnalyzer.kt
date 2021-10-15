@@ -174,7 +174,7 @@ object SourceAnalyzer {
         var concurrentRate: String? = null,             // 并发率
         var header: String? = null,                     // 请求头
         var loginUrl: Any? = null,                      // 登录规则
-        var loginUi: Any? = null,               // 登录UI
+        var loginUi: Any? = null,                       // 登录UI
         var loginCheckJs: String? = null,               //登录检测js
         var bookSourceComment: String? = "",            //书源注释
         var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
