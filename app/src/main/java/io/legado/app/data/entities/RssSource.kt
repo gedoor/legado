@@ -4,7 +4,8 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.legado.app.utils.ACache
+import com.jayway.jsonpath.DocumentContext
+import io.legado.app.utils.*
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 
@@ -109,6 +110,60 @@ data class RssSource(
             if (isEmpty()) {
                 add(Pair("", sourceUrl))
             }
+        }
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    companion object {
+
+        fun fromJsonDoc(doc: DocumentContext): RssSource? {
+            return kotlin.runCatching {
+                val loginUi = doc.read<Any>("$.loginUi")
+                RssSource(
+                    sourceUrl = doc.readString("$.sourceUrl")!!,
+                    sourceName = doc.readString("$.sourceName")!!,
+                    sourceIcon = doc.readString("$.sourceIcon") ?: "",
+                    sourceGroup = doc.readString("$.sourceGroup"),
+                    sourceComment = doc.readString("$.sourceComment"),
+                    enabled = doc.readBool("$.enabled") ?: true,
+                    concurrentRate = doc.readString("$.concurrentRate"),
+                    header = doc.readString("$.header"),
+                    loginUrl = doc.readString("$.loginUrl"),
+                    loginUi = if (loginUi is List<*>) GSON.toJson(loginUi) else loginUi?.toString(),
+                    loginCheckJs = doc.readString("$.loginCheckJs"),
+                    sortUrl = doc.readString("$.sortUrl"),
+                    singleUrl = doc.readBool("$.singleUrl") ?: false,
+                    articleStyle = doc.readInt("$.articleStyle") ?: 0,
+                    ruleArticles = doc.readString("$.ruleArticles"),
+                    ruleNextPage = doc.readString("$.ruleNextPage"),
+                    ruleTitle = doc.readString("$.ruleTitle"),
+                    rulePubDate = doc.readString("$.rulePubDate"),
+                    ruleDescription = doc.readString("$.ruleDescription"),
+                    ruleImage = doc.readString("$.ruleImage"),
+                    ruleLink = doc.readString("$.ruleLink"),
+                    ruleContent = doc.readString("$.ruleContent"),
+                    style = doc.readString("$.style"),
+                    enableJs = doc.readBool("$.enableJs") ?: true,
+                    loadWithBaseUrl = doc.readBool("$.loadWithBaseUrl") ?: true,
+                    customOrder = doc.readInt("$.customOrder") ?: 0
+                )
+            }.getOrNull()
+        }
+
+        fun fromJson(json: String): RssSource? {
+            return fromJsonDoc(jsonPath.parse(json))
+        }
+
+        fun fromJsonArray(jsonArray: String): ArrayList<RssSource> {
+            val sources = arrayListOf<RssSource>()
+            val doc = jsonPath.parse(jsonArray).read<List<*>>("$")
+            doc.forEach {
+                val jsonItem = jsonPath.parse(it)
+                fromJsonDoc(jsonItem)?.let { source ->
+                    sources.add(source)
+                }
+            }
+            return sources
         }
     }
 

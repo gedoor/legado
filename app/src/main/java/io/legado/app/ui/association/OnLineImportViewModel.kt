@@ -76,12 +76,12 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
     fun importHttpTTS(json: String, finally: (title: String, msg: String) -> Unit) {
         execute {
             if (json.isJsonArray()) {
-                GSON.fromJsonArray<HttpTTS>(json)?.let {
+                HttpTTS.fromJsonArray(json).let {
                     appDb.httpTTSDao.insert(*it.toTypedArray())
                     return@execute it.size
-                } ?: throw NoStackTraceException("格式不对")
+                }
             } else {
-                GSON.fromJsonObject<HttpTTS>(json)?.let {
+                HttpTTS.fromJson(json)?.let {
                     appDb.httpTTSDao.insert(it)
                     return@execute 1
                 } ?: throw NoStackTraceException("格式不对")

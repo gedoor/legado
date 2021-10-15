@@ -9,8 +9,8 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
-import io.legado.app.help.BookSourceAnalyzer
 import io.legado.app.help.ContentProcessor
+import io.legado.app.help.SourceAnalyzer
 import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
@@ -98,13 +98,13 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                             importSourceUrl(it)
                         }
                     } else {
-                        BookSourceAnalyzer.jsonToBookSource(mText)?.let {
+                        SourceAnalyzer.jsonToBookSource(mText)?.let {
                             allSources.add(it)
                         }
                     }
                 }
                 mText.isJsonArray() -> {
-                    val items = BookSourceAnalyzer.jsonToBookSources(mText)
+                    val items = SourceAnalyzer.jsonToBookSources(mText)
                     allSources.addAll(items)
                 }
                 mText.isAbsUrl() -> {
@@ -129,13 +129,13 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                     val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
                     for (item in items) {
                         val jsonItem = jsonPath.parse(item)
-                        BookSourceAnalyzer.jsonToBookSource(jsonItem.jsonString())?.let { source ->
+                        SourceAnalyzer.jsonToBookSource(jsonItem.jsonString())?.let { source ->
                             allSources.add(source)
                         }
                     }
                 }
                 body.isJsonObject() -> {
-                    BookSourceAnalyzer.jsonToBookSource(body)?.let {
+                    SourceAnalyzer.jsonToBookSource(body)?.let {
                         allSources.add(it)
                     }
                 }

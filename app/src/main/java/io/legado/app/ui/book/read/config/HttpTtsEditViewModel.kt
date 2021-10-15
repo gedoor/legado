@@ -53,10 +53,10 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
         execute {
             when {
                 text1.isJsonObject() -> {
-                    GSON.fromJsonObject<HttpTTS>(text1)
+                    HttpTTS.fromJson(text1)
                 }
                 text1.isJsonArray() -> {
-                    GSON.fromJsonArray<HttpTTS>(text1)?.firstOrNull()
+                    HttpTTS.fromJsonArray(text1).firstOrNull()
                 }
                 else -> {
                     throw NoStackTraceException("格式不对")

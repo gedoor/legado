@@ -14,45 +14,45 @@ object DefaultData {
     const val httpTtsFileName = "httpTTS.json"
     const val txtTocRuleFileName = "txtTocRule.json"
 
-    val httpTTS by lazy {
+    val httpTTS: List<HttpTTS> by lazy {
         val json =
             String(
                 appCtx.assets.open("defaultData${File.separator}$httpTtsFileName")
                     .readBytes()
             )
-        GSON.fromJsonArray<HttpTTS>(json)!!
+        GSON.fromJsonArray(json)!!
     }
 
-    val readConfigs by lazy {
+    val readConfigs: List<ReadBookConfig.Config> by lazy {
         val json = String(
             appCtx.assets.open("defaultData${File.separator}${ReadBookConfig.configFileName}")
                 .readBytes()
         )
-        GSON.fromJsonArray<ReadBookConfig.Config>(json)!!
+        GSON.fromJsonArray(json)!!
     }
 
-    val txtTocRules by lazy {
+    val txtTocRules: List<TxtTocRule> by lazy {
         val json = String(
             appCtx.assets.open("defaultData${File.separator}$txtTocRuleFileName")
                 .readBytes()
         )
-        GSON.fromJsonArray<TxtTocRule>(json)!!
+        GSON.fromJsonArray(json)!!
     }
 
-    val themeConfigs by lazy {
+    val themeConfigs: List<ThemeConfig.Config> by lazy {
         val json = String(
             appCtx.assets.open("defaultData${File.separator}${ThemeConfig.configFileName}")
                 .readBytes()
         )
-        GSON.fromJsonArray<ThemeConfig.Config>(json)!!
+        GSON.fromJsonArray(json)!!
     }
 
-    val rssSources by lazy {
+    val rssSources: List<RssSource> by lazy {
         val json = String(
             appCtx.assets.open("defaultData${File.separator}rssSources.json")
                 .readBytes()
         )
-        GSON.fromJsonArray<RssSource>(json)!!
+        RssSource.fromJsonArray(json)
     }
 
     fun importDefaultHttpTTS() {

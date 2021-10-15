@@ -5,9 +5,6 @@ import android.text.TextUtils
 import io.legado.app.api.ReturnData
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
-import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.msg
 
 object RssSourceController {
@@ -25,7 +22,7 @@ object RssSourceController {
         val returnData = ReturnData()
         postData ?: return returnData.setErrorMsg("数据不能为空")
         kotlin.runCatching {
-            val source = GSON.fromJsonObject<RssSource>(postData)
+            val source = RssSource.fromJson(postData)
             if (source != null) {
                 if (TextUtils.isEmpty(source.sourceName) || TextUtils.isEmpty(source.sourceUrl)) {
                     returnData.setErrorMsg("源名称和URL不能为空")
@@ -43,9 +40,10 @@ object RssSourceController {
     }
 
     fun saveSources(postData: String?): ReturnData {
+        postData ?: return ReturnData().setErrorMsg("数据不能为空")
         val okSources = arrayListOf<RssSource>()
-        val source = GSON.fromJsonArray<RssSource>(postData)
-        if (source != null) {
+        val source = RssSource.fromJsonArray(postData)
+        if (source.isNotEmpty()) {
             for (rssSource in source) {
                 if (rssSource.sourceName.isBlank() || rssSource.sourceUrl.isBlank()) {
                     continue
@@ -71,8 +69,9 @@ object RssSourceController {
     }
 
     fun deleteSources(postData: String?): ReturnData {
+        postData ?: return ReturnData().setErrorMsg("没有传递数据")
         kotlin.runCatching {
-            GSON.fromJsonArray<RssSource>(postData)?.let {
+            RssSource.fromJsonArray(postData).let {
                 it.forEach { source ->
                     appDb.rssSourceDao.delete(source)
                 }

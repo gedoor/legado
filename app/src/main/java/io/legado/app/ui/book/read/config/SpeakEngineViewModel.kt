@@ -11,7 +11,10 @@ import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.model.NoStackTraceException
-import io.legado.app.utils.*
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.readText
+import io.legado.app.utils.toastOnUi
 
 class SpeakEngineViewModel(application: Application) : BaseViewModel(application) {
 
@@ -52,12 +55,12 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
     fun import(text: String) {
         when {
             text.isJsonArray() -> {
-                GSON.fromJsonArray<HttpTTS>(text)?.let {
+                HttpTTS.fromJsonArray(text).let {
                     appDb.httpTTSDao.insert(*it.toTypedArray())
                 }
             }
             text.isJsonObject() -> {
-                GSON.fromJsonObject<HttpTTS>(text)?.let {
+                HttpTTS.fromJson(text)?.let {
                     appDb.httpTTSDao.insert(it)
                 }
             }
