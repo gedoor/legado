@@ -24,7 +24,7 @@ class BatteryView @JvmOverloads constructor(
     var isBattery = false
         set(value) {
             field = value
-            if (value) {
+            if (value && !isInEditMode) {
                 super.setTypeface(batteryTypeface)
                 postInvalidate()
             }
