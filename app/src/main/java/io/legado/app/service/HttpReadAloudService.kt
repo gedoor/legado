@@ -31,6 +31,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private val ttsFolderPath: String by lazy {
         externalCacheDir!!.absolutePath + File.separator + "httpTTS" + File.separator
     }
+    private val cacheFiles = hashSetOf<String>()
     private var task: Coroutine<*>? = null
     private var playingIndex = -1
     private var playIndexJob: Job? = null
@@ -91,6 +92,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun downloadAudio() {
         task?.cancel()
         task = execute {
+            clearSpeakCache()
             removeCacheFile()
             ReadAloud.httpTTS?.let { httpTts ->
                 contentList.forEachIndexed { index, item ->
@@ -108,7 +110,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 val fis = FileInputStream(file)
                                 playAudio(fis.fd)
                             }
-                        } else if (hasSpeakCacheFile(fileName)) { //缓存文件还在，可能还没下载完
+                        } else if (hasSpeakCache(fileName)) { //缓存文件还在，可能还没下载完
                             return@let
                         } else { //没有下载并且没有缓存文件
                             try {
@@ -117,7 +119,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     createSilentSound(fileName)
                                     return@let
                                 }
-                                createSpeakCacheFile(fileName)
+                                createSpeakCache(fileName)
                                 val analyzeUrl = AnalyzeUrl(
                                     httpTts.url,
                                     speakText = speakText,
@@ -135,7 +137,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     ensureActive()
                                     val file = createSpeakFileAsMd5IfNotExist(fileName)
                                     file.writeBytes(bytes)
-                                    removeSpeakCacheFile(fileName)
+                                    removeSpeakCache(fileName)
                                     val fis = FileInputStream(file)
                                     if (index == nowSpeak) {
                                         playAudio(fis.fd)
@@ -143,10 +145,10 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                                 downloadErrorNo = 0
                             } catch (e: CancellationException) {
-                                removeSpeakCacheFile(fileName)
+                                removeSpeakCache(fileName)
                                 //任务取消,不处理
                             } catch (e: SocketTimeoutException) {
-                                removeSpeakCacheFile(fileName)
+                                removeSpeakCache(fileName)
                                 downloadErrorNo++
                                 if (playErrorNo > 5) {
                                     createSilentSound(fileName)
@@ -155,7 +157,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     downloadAudio()
                                 }
                             } catch (e: ConnectException) {
-                                removeSpeakCacheFile(fileName)
+                                removeSpeakCache(fileName)
                                 downloadErrorNo++
                                 if (playErrorNo > 5) {
                                     createSilentSound(fileName)
@@ -165,12 +167,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     downloadAudio()
                                 }
                             } catch (e: IOException) {
-                                removeSpeakCacheFile(fileName)
-                                createSilentSound(fileName)
-                                AppLog.put("tts文件解析错误")
-                                toastOnUi("tts文件解析错误\n${e.localizedMessage}")
+                                removeSpeakCache(fileName)
+                                downloadErrorNo++
+                                if (playErrorNo > 5) {
+                                    createSilentSound(fileName)
+                                } else {
+                                    AppLog.put("tts下载音频错误\n${e.localizedMessage}", e)
+                                    toastOnUi("tts下载音频错误\n${e.localizedMessage}")
+                                    downloadAudio()
+                                }
                             } catch (e: Exception) {
-                                removeSpeakCacheFile(fileName)
+                                removeSpeakCache(fileName)
                                 createSilentSound(fileName)
                                 AppLog.put("tts接口错误\n${e.localizedMessage}", e)
                                 toastOnUi("tts接口错误\n${e.localizedMessage}")
@@ -207,18 +214,20 @@ class HttpReadAloudService : BaseReadAloudService(),
         file.writeBytes(resources.openRawResource(R.raw.silent_sound).readBytes())
     }
 
+    @Synchronized
+    private fun clearSpeakCache() = cacheFiles.clear()
+
+    @Synchronized
+    private fun hasSpeakCache(name: String) = cacheFiles.contains(name)
+
+    @Synchronized
+    private fun createSpeakCache(name: String) = cacheFiles.add(name)
+
+    @Synchronized
+    private fun removeSpeakCache(name: String) = cacheFiles.remove(name)
+
     private fun hasSpeakFile(name: String) =
         FileUtils.exist("${ttsFolderPath}$name.mp3")
-
-    private fun hasSpeakCacheFile(name: String) =
-        FileUtils.exist("${ttsFolderPath}$name.mp3.cache")
-
-    private fun createSpeakCacheFile(name: String): File =
-        FileUtils.createFileWithReplace("${ttsFolderPath}$name.mp3.cache")
-
-    private fun removeSpeakCacheFile(name: String) {
-        FileUtils.delete("${ttsFolderPath}$name.mp3.cache")
-    }
 
     private fun getSpeakFileAsMd5(name: String): File =
         File("${ttsFolderPath}$name.mp3")
