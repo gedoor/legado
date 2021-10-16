@@ -35,7 +35,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     private var playingIndex = -1
     private var playIndexJob: Job? = null
 
-
     override fun onCreate() {
         super.onCreate()
         mediaPlayer.setOnErrorListener(this)
@@ -144,6 +143,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                                 downloadErrorNo = 0
                             } catch (e: CancellationException) {
+                                removeSpeakCacheFile(fileName)
                                 //任务取消,不处理
                             } catch (e: SocketTimeoutException) {
                                 removeSpeakCacheFile(fileName)
@@ -156,7 +156,14 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                             } catch (e: ConnectException) {
                                 removeSpeakCacheFile(fileName)
-                                toastOnUi("tts接口网络错误\n${e.localizedMessage}")
+                                downloadErrorNo++
+                                if (playErrorNo > 5) {
+                                    createSilentSound(fileName)
+                                } else {
+                                    AppLog.put("tts接口网络错误\n${e.localizedMessage}", e)
+                                    toastOnUi("tts接口网络错误\n${e.localizedMessage}")
+                                    downloadAudio()
+                                }
                             } catch (e: IOException) {
                                 removeSpeakCacheFile(fileName)
                                 createSilentSound(fileName)
@@ -220,10 +227,10 @@ class HttpReadAloudService : BaseReadAloudService(),
         FileUtils.createFileIfNotExist("${ttsFolderPath}$name.mp3")
 
     private fun removeCacheFile() {
+        val cacheRegex = Regex(""".+\.mp3$""")
+        val reg = """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
         FileUtils.listDirsAndFiles(ttsFolderPath)?.forEach {
-            if (Regex(""".+\.mp3$""").matches(it.name)) { //mp3缓存文件
-                val reg =
-                    """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
+            if (cacheRegex.matches(it.name)) { //mp3缓存文件
                 if (!reg.matches(it.name)) {
                     FileUtils.deleteFile(it.absolutePath)
                 }
