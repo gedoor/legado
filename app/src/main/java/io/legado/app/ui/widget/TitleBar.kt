@@ -43,6 +43,8 @@ class TitleBar @JvmOverloads constructor(
     private val displayHomeAsUp: Boolean
     private val navigationIconTint: ColorStateList?
     private val navigationIconTintMode: Int
+    private val fitStatusBar: Boolean
+    private val fitNavigationBar: Boolean
     private val attachToActivity: Boolean
 
     init {
@@ -54,6 +56,8 @@ class TitleBar @JvmOverloads constructor(
         navigationIconTintMode = a.getInt(R.styleable.TitleBar_navigationIconTintMode, 9)
         attachToActivity = a.getBoolean(R.styleable.TitleBar_attachToActivity, true)
         displayHomeAsUp = a.getBoolean(R.styleable.TitleBar_displayHomeAsUp, true)
+        fitStatusBar = a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)
+        fitNavigationBar = a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)
 
         val navigationIcon = a.getDrawable(R.styleable.TitleBar_navigationIcon)
         val navigationContentDescription =
@@ -140,11 +144,11 @@ class TitleBar @JvmOverloads constructor(
         }
 
         if (!isInEditMode) {
-            if (a.getBoolean(R.styleable.TitleBar_fitStatusBar, true)) {
+            if (fitStatusBar) {
                 setPadding(paddingLeft, context.statusBarHeight, paddingRight, paddingBottom)
             }
 
-            if (a.getBoolean(R.styleable.TitleBar_fitNavigationBar, false)) {
+            if (fitNavigationBar) {
                 setPadding(paddingLeft, paddingTop, paddingRight, context.navigationBarHeight)
             }
 
