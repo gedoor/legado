@@ -35,7 +35,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 /**
  * 阅读界面
  */
-abstract class ReadBookBaseActivity :
+abstract class BaseReadBookActivity :
     VMBaseActivity<ActivityBookReadBinding, ReadBookViewModel>(imageBg = false) {
 
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
@@ -214,7 +214,7 @@ abstract class ReadBookBaseActivity :
                     alertBinding.run {
                         val start = editStart.text?.toString()?.toInt() ?: 0
                         val end = editEnd.text?.toString()?.toInt() ?: book.totalChapterNum
-                        CacheBook.start(this@ReadBookBaseActivity, book.bookUrl, start - 1, end - 1)
+                        CacheBook.start(this@BaseReadBookActivity, book.bookUrl, start - 1, end - 1)
                     }
                 }
                 noButton()
