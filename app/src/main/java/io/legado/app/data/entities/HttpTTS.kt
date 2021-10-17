@@ -47,6 +47,7 @@ data class HttpTTS(
                     id = doc.readLong("$.id") ?: System.currentTimeMillis(),
                     name = doc.readString("$.name")!!,
                     url = doc.readString("$.url")!!,
+                    contentType = doc.readString("$.contentType"),
                     concurrentRate = doc.readString("$.concurrentRate"),
                     loginUrl = doc.readString("$.loginUrl"),
                     loginUi = if (loginUi is List<*>) GSON.toJson(loginUi) else loginUi?.toString(),

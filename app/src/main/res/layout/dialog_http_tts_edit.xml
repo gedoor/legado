@@ -54,6 +54,20 @@
             <io.legado.app.ui.widget.text.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Content-Type"
+                tools:ignore="HardcodedText">
+
+                <io.legado.app.ui.widget.code.CodeView
+                    android:id="@+id/tv_content_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="@string/login_url"
                 tools:ignore="HardcodedText">
 

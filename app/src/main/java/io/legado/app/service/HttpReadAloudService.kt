@@ -134,7 +134,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                                         response = analyzeUrl.evalJS(checkJs, response) as Response
                                     }
                                 }
-                                httpTts.contentType?.let { contentTypeRegex ->
+                                val contentTypeRegex = httpTts.contentType
+                                if (!contentTypeRegex.isNullOrBlank()) {
                                     response.headers["Content-Type"]?.let { contentType ->
                                         if (!contentType.matches(contentTypeRegex.toRegex())) {
                                             throw NoStackTraceException(response.body!!.string())

@@ -72,6 +72,7 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit),
     fun initView(httpTTS: HttpTTS) {
         binding.tvName.setText(httpTTS.name)
         binding.tvUrl.setText(httpTTS.url)
+        binding.tvContentType.setText(httpTTS.contentType)
         binding.tvLoginUrl.setText(httpTTS.loginUrl)
         binding.tvLoginUi.setText(httpTTS.loginUi)
         binding.tvLoginCheckJs.setText(httpTTS.loginCheckJs)
@@ -117,6 +118,7 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit),
             id = viewModel.id ?: System.currentTimeMillis(),
             name = binding.tvName.text.toString(),
             url = binding.tvUrl.text.toString(),
+            contentType = binding.tvContentType.text?.toString(),
             loginUrl = binding.tvLoginUrl.text?.toString(),
             loginUi = binding.tvLoginUi.text?.toString(),
             loginCheckJs = binding.tvLoginCheckJs.text?.toString(),
