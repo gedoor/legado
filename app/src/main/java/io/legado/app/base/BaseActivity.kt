@@ -157,7 +157,7 @@ abstract class BaseActivity<VB : ViewBinding>(
 
     private fun setupSystemBar() {
         if (fullScreen && !isInMultiWindow) {
-            fullScreen(true)
+            fullScreen()
         }
         val isTransparentStatusBar = AppConfig.isTransparentStatusBar
         val statusBarColor = ThemeStore.statusBarColor(this, isTransparentStatusBar)
