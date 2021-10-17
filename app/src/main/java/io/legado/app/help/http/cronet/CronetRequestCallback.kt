@@ -1,7 +1,6 @@
 package io.legado.app.help.http.cronet
 
 import android.os.ConditionVariable
-import android.util.Log
 import io.legado.app.help.http.okHttpClient
 import okhttp3.*
 import okhttp3.EventListener
@@ -11,6 +10,7 @@ import okio.Buffer
 import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
 import org.chromium.net.UrlResponseInfo
+import timber.log.Timber
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
@@ -86,7 +86,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
 //        }
 //        Log.e("Cronet", sb.toString())
         //打印协议，用于调试
-        Log.i("Cronet", info.negotiatedProtocol)
+        Timber.i(info.negotiatedProtocol)
         if (eventListener != null) {
             eventListener.responseHeadersEnd(mCall, this.mResponse)
             eventListener.responseBodyStart(mCall)
@@ -107,7 +107,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
         try {
             mBuffer.write(byteBuffer)
         } catch (e: IOException) {
-            Log.i(TAG, "IOException during ByteBuffer read. Details: ", e)
+            Timber.i(e, "IOException during ByteBuffer read. Details: ")
             throw e
         }
         byteBuffer.clear()
@@ -135,7 +135,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
 
     //UrlResponseInfo可能为null
     override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
-        Log.e(TAG, error.message.toString())
+        Timber.e(error.message.toString())
         val msg = error.localizedMessage
         val e = IOException(msg?.substring(msg.indexOf("net::")), error)
         mException = e
@@ -153,7 +153,6 @@ class CronetRequestCallback @JvmOverloads internal constructor(
     }
 
     companion object {
-        private const val TAG = "Callback"
         private const val MAX_FOLLOW_COUNT = 20
 
         private fun protocolFromNegotiatedProtocol(responseInfo: UrlResponseInfo): Protocol {
@@ -195,7 +194,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
                         }
                         add(key, value)
                     } catch (e: Exception) {
-                        Log.w(TAG, "Invalid HTTP header/value: $key$value")
+                        Timber.w("Invalid HTTP header/value: $key$value")
                         // Ignore that header
                     }
                 }

@@ -72,16 +72,6 @@ public class PackageDocumentReader extends PackageDocumentBase {
         }
     }
 
-//	private static Resource readCoverImage(Element metadataElement, Resources resources) {
-//		String coverResourceId = DOMUtil.getFindAttributeValue(metadataElement.getOwnerDocument(), NAMESPACE_OPF, OPFTags.meta, OPFAttributes.name, OPFValues.meta_cover, OPFAttributes.content);
-//		if (StringUtil.isBlank(coverResourceId)) {
-//			return null;
-//		}
-//		Resource coverResource = resources.getByIdOrHref(coverResourceId);
-//		return coverResource;
-//	}
-
-
     /**
      * Reads the manifest containing the resource ids, hrefs and mediatypes.
      *
@@ -246,11 +236,11 @@ public class PackageDocumentReader extends PackageDocumentBase {
         }
         Spine result = new Spine();
         String tocResourceId = DOMUtil.getAttribute(spineElement, NAMESPACE_OPF, OPFAttributes.toc);
-        Log.v(TAG,tocResourceId);
+        Log.v(TAG, tocResourceId);
         result.setTocResource(findTableOfContentsResource(tocResourceId, resources));
         NodeList spineNodes = DOMUtil.getElementsByTagNameNS(packageDocument, NAMESPACE_OPF, OPFTags.itemref);
-        if(spineNodes==null){
-            Log.e(TAG,"spineNodes is null");
+        if (spineNodes == null) {
+            Log.e(TAG, "spineNodes is null");
             return result;
         }
         List<SpineReference> spineReferences = new ArrayList<>(spineNodes.getLength());
@@ -316,8 +306,10 @@ public class PackageDocumentReader extends PackageDocumentBase {
      * @param resources     g
      * @return the Resource containing the table of contents
      */
-    static Resource findTableOfContentsResource(String tocResourceId,
-                                                Resources resources) {
+    static Resource findTableOfContentsResource(
+            String tocResourceId,
+            Resources resources
+    ) {
         Resource tocResource;
         //一些epub3的文件为了兼容epub2,保留的epub2的目录文件，这里优先选择epub3的xml目录
         tocResource = resources.getByProperties("nav");

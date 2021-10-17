@@ -18,7 +18,6 @@ package io.legado.app.ui.widget.recycler
 import android.content.res.Resources
 import android.text.TextUtils
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -28,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import io.legado.app.BuildConfig
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper.AdvanceCallback.Mode
+import timber.log.Timber
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -971,17 +971,15 @@ class DragSelectTouchHelper(
     private object Logger {
         private val DEBUG = BuildConfig.DEBUG
         fun d(msg: String) {
-            if (DEBUG) {
-                Log.d(TAG, msg)
-            }
+            Timber.d(msg)
         }
 
         fun e(msg: String) {
-            Log.e(TAG, msg)
+            Timber.e(msg)
         }
 
         fun i(msg: String) {
-            Log.i(TAG, msg)
+            Timber.i(msg)
         }
 
         fun logSelectStateChange(before: Int, after: Int) {

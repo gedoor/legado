@@ -152,22 +152,16 @@ public class PackageDocumentWriter extends PackageDocumentBase {
             return;
         }
         if (StringUtil.isBlank(resource.getId())) {
-//      log.error("resource id must not be empty (href: " + resource.getHref()
-//          + ", mediatype:" + resource.getMediaType() + ")");
             Log.e(TAG, "resource id must not be empty (href: " + resource.getHref()
                     + ", mediatype:" + resource.getMediaType() + ")");
             return;
         }
         if (StringUtil.isBlank(resource.getHref())) {
-//      log.error("resource href must not be empty (id: " + resource.getId()
-//          + ", mediatype:" + resource.getMediaType() + ")");
             Log.e(TAG, "resource href must not be empty (id: " + resource.getId()
                     + ", mediatype:" + resource.getMediaType() + ")");
             return;
         }
         if (resource.getMediaType() == null) {
-//      log.error("resource mediatype must not be empty (id: " + resource.getId()
-//          + ", href:" + resource.getHref() + ")");
             Log.e(TAG, "resource mediatype must not be empty (id: " + resource.getId()
                     + ", href:" + resource.getHref() + ")");
             return;

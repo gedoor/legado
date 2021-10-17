@@ -150,6 +150,8 @@ dependencies {
     implementation('com.google.code.gson:gson:2.8.8')
     implementation('androidx.webkit:webkit:1.4.0')
 
+    implementation('com.jakewharton.timber:timber:5.0.1')
+
     //media
     implementation("androidx.media:media:1.4.1")
     def exoplayer_version = '2.15.0'
