@@ -281,6 +281,9 @@ class HttpReadAloudService : BaseReadAloudService(),
                 return@launch
             }
             val speakTextLength = contentList[nowSpeak].length
+            if (speakTextLength <= 0) {
+                return@launch
+            }
             val sleep = mediaPlayer.duration / speakTextLength
             val start = speakTextLength * mediaPlayer.currentPosition / mediaPlayer.duration
             for (i in start..contentList[nowSpeak].length) {
