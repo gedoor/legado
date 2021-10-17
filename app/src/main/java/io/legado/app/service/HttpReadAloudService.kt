@@ -8,6 +8,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -131,6 +132,13 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 httpTts.loginCheckJs?.let { checkJs ->
                                     if (checkJs.isNotBlank()) {
                                         response = analyzeUrl.evalJS(checkJs, response) as Response
+                                    }
+                                }
+                                httpTts.contentType?.let { contentTypeRegex ->
+                                    response.headers["Content-Type"]?.let { contentType ->
+                                        if (!contentType.matches(contentTypeRegex.toRegex())) {
+                                            throw NoStackTraceException(response.body!!.string())
+                                        }
                                     }
                                 }
                                 response.body!!.bytes().let { bytes ->
@@ -321,7 +329,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             play()
             return true
         }
-        AppLog.put("朗读错误,($what, $extra)")
+        AppLog.put("朗读错误($what, $extra)\n${contentList[nowSpeak]}")
         playErrorNo++
         if (playErrorNo >= 5) {
             toastOnUi("朗读连续5次错误, 最后一次错误代码($what, $extra)")

@@ -17,6 +17,7 @@ data class HttpTTS(
     val id: Long = System.currentTimeMillis(),
     var name: String = "",
     var url: String = "",
+    var contentType: String? = null,
     override var concurrentRate: String? = null,
     override var loginUrl: String? = null,
     override var loginUi: String? = null,

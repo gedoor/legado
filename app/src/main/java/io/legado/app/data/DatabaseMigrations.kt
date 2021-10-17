@@ -37,7 +37,8 @@ object DatabaseMigrations {
             migration_37_38,
             migration_38_39,
             migration_39_40,
-            migration_40_41
+            migration_40_41,
+            migration_41_42
         )
     }
 
@@ -327,6 +328,12 @@ object DatabaseMigrations {
             database.execSQL("ALTER TABLE `httpTTS` ADD `loginCheckJs` TEXT")
             database.execSQL("ALTER TABLE `httpTTS` ADD `header` TEXT")
             database.execSQL("ALTER TABLE `httpTTS` ADD `concurrentRate` TEXT")
+        }
+    }
+
+    private val migration_41_42 = object : Migration(41, 42) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE 'httpTTS' ADD `contentType` TEXT")
         }
     }
 }
