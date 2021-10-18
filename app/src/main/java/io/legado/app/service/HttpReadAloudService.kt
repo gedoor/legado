@@ -14,6 +14,8 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okhttp3.Response
 import java.io.File
 import java.io.FileDescriptor
@@ -36,6 +38,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private var task: Coroutine<*>? = null
     private var playingIndex = -1
     private var playIndexJob: Job? = null
+    private val mutex = Mutex()
 
     override fun onCreate() {
         super.onCreate()
@@ -126,7 +129,9 @@ class HttpReadAloudService : BaseReadAloudService(),
                             source = httpTts,
                             headerMapF = httpTts.getHeaderMap(true)
                         )
-                        var response = analyzeUrl.getResponseAwait()
+                        var response = mutex.withLock {
+                            analyzeUrl.getResponseAwait()
+                        }
                         ensureActive()
                         httpTts.loginCheckJs?.takeIf { checkJs ->
                             checkJs.isNotBlank()
