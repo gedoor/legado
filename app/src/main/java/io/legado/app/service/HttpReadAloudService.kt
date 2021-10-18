@@ -113,12 +113,10 @@ class HttpReadAloudService : BaseReadAloudService(),
                     }
                 } else if (hasSpeakCache(fileName)) { //缓存文件还在，可能还没下载完
                     return@forEachIndexed
-                } else { //没有下载并且没有缓存文件
-                    if (speakText.isEmpty()) {
-                        ensureActive()
-                        createSilentSound(fileName)
-                        return@forEachIndexed
-                    }
+                } else if (speakText.isEmpty()) {
+                    createSilentSound(fileName)
+                    return@forEachIndexed
+                } else {
                     try {
                         createSpeakCache(fileName)
                         val analyzeUrl = AnalyzeUrl(
