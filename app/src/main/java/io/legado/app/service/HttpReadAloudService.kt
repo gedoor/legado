@@ -127,6 +127,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                             headerMapF = httpTts.getHeaderMap(true)
                         )
                         var response = analyzeUrl.getResponseAwait()
+                        ensureActive()
                         httpTts.loginCheckJs?.takeIf { checkJs ->
                             checkJs.isNotBlank()
                         }?.let { checkJs ->
@@ -141,6 +142,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 }
                             }
                         }
+                        ensureActive()
                         response.body!!.bytes().let { bytes ->
                             ensureActive()
                             val file = createSpeakFileAsMd5IfNotExist(fileName)
