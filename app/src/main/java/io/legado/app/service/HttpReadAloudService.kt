@@ -95,105 +95,103 @@ class HttpReadAloudService : BaseReadAloudService(),
         task = execute {
             clearSpeakCache()
             removeCacheFile()
-            ReadAloud.httpTTS?.let { httpTts ->
-                contentList.forEachIndexed { index, item ->
-                    if (isActive) {
-                        val speakText = item.replace(AppPattern.notReadAloudRegex, "")
-                        val fileName =
-                            md5SpeakFileName(
-                                httpTts.url,
-                                AppConfig.ttsSpeechRate.toString(),
-                                speakText
-                            )
-                        if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
-                            if (index == nowSpeak) {
-                                val file = getSpeakFileAsMd5(fileName)
-                                val fis = FileInputStream(file)
-                                playAudio(fis.fd)
-                            }
-                        } else if (hasSpeakCache(fileName)) { //缓存文件还在，可能还没下载完
-                            return@let
-                        } else { //没有下载并且没有缓存文件
-                            try {
-                                if (speakText.isEmpty()) {
-                                    ensureActive()
-                                    createSilentSound(fileName)
-                                    return@let
+            val httpTts = ReadAloud.httpTTS ?: return@execute
+            contentList.forEachIndexed { index, item ->
+                ensureActive()
+                val speakText = item.replace(AppPattern.notReadAloudRegex, "")
+                val fileName =
+                    md5SpeakFileName(
+                        httpTts.url,
+                        AppConfig.ttsSpeechRate.toString(),
+                        speakText
+                    )
+                if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
+                    if (index == nowSpeak) {
+                        val file = getSpeakFileAsMd5(fileName)
+                        val fis = FileInputStream(file)
+                        playAudio(fis.fd)
+                    }
+                } else if (hasSpeakCache(fileName)) { //缓存文件还在，可能还没下载完
+                    return@forEachIndexed
+                } else { //没有下载并且没有缓存文件
+                    if (speakText.isEmpty()) {
+                        ensureActive()
+                        createSilentSound(fileName)
+                        return@forEachIndexed
+                    }
+                    try {
+                        createSpeakCache(fileName)
+                        val analyzeUrl = AnalyzeUrl(
+                            httpTts.url,
+                            speakText = speakText,
+                            speakSpeed = AppConfig.ttsSpeechRate,
+                            source = httpTts,
+                            headerMapF = httpTts.getHeaderMap(true)
+                        )
+                        var response = analyzeUrl.getResponseAwait()
+                        httpTts.loginCheckJs?.takeIf { checkJs ->
+                            checkJs.isNotBlank()
+                        }?.let { checkJs ->
+                            response = analyzeUrl.evalJS(checkJs, response) as Response
+                        }
+                        httpTts.contentType?.takeIf { ct ->
+                            ct.isNotBlank()
+                        }?.let { ct ->
+                            response.headers["Content-Type"]?.let { contentType ->
+                                if (!contentType.matches(ct.toRegex())) {
+                                    throw NoStackTraceException(response.body!!.string())
                                 }
-                                createSpeakCache(fileName)
-                                val analyzeUrl = AnalyzeUrl(
-                                    httpTts.url,
-                                    speakText = speakText,
-                                    speakSpeed = AppConfig.ttsSpeechRate,
-                                    source = httpTts,
-                                    headerMapF = httpTts.getHeaderMap(true)
-                                )
-                                var response = analyzeUrl.getResponseAwait()
-                                httpTts.loginCheckJs?.takeIf { checkJs ->
-                                    checkJs.isNotBlank()
-                                }?.let { checkJs ->
-                                    response = analyzeUrl.evalJS(checkJs, response) as Response
-                                }
-                                httpTts.contentType?.takeIf { ct ->
-                                    ct.isNotBlank()
-                                }?.let { ct ->
-                                    response.headers["Content-Type"]?.let { contentType ->
-                                        if (!contentType.matches(ct.toRegex())) {
-                                            throw NoStackTraceException(response.body!!.string())
-                                        }
-                                    }
-                                }
-                                response.body!!.bytes().let { bytes ->
-                                    ensureActive()
-                                    val file = createSpeakFileAsMd5IfNotExist(fileName)
-                                    file.writeBytes(bytes)
-                                    removeSpeakCache(fileName)
-                                    val fis = FileInputStream(file)
-                                    if (index == nowSpeak) {
-                                        playAudio(fis.fd)
-                                    }
-                                }
-                                downloadErrorNo = 0
-                            } catch (e: CancellationException) {
-                                removeSpeakCache(fileName)
-                                //任务取消,不处理
-                            } catch (e: SocketTimeoutException) {
-                                removeSpeakCache(fileName)
-                                downloadErrorNo++
-                                if (playErrorNo > 5) {
-                                    createSilentSound(fileName)
-                                } else {
-                                    toastOnUi("tts接口超时，尝试重新获取")
-                                    downloadAudio()
-                                }
-                            } catch (e: ConnectException) {
-                                removeSpeakCache(fileName)
-                                downloadErrorNo++
-                                if (playErrorNo > 5) {
-                                    createSilentSound(fileName)
-                                } else {
-                                    AppLog.put("tts接口网络错误\n${e.localizedMessage}", e)
-                                    toastOnUi("tts接口网络错误\n${e.localizedMessage}")
-                                    downloadAudio()
-                                }
-                            } catch (e: IOException) {
-                                removeSpeakCache(fileName)
-                                downloadErrorNo++
-                                if (playErrorNo > 5) {
-                                    createSilentSound(fileName)
-                                } else {
-                                    AppLog.put("tts下载音频错误\n${e.localizedMessage}", e)
-                                    toastOnUi("tts下载音频错误\n${e.localizedMessage}")
-                                    downloadAudio()
-                                }
-                            } catch (e: Exception) {
-                                removeSpeakCache(fileName)
-                                createSilentSound(fileName)
-                                AppLog.put("tts接口错误\n${e.localizedMessage}", e)
-                                toastOnUi("tts接口错误\n${e.localizedMessage}")
-                                e.printOnDebug()
                             }
                         }
+                        response.body!!.bytes().let { bytes ->
+                            ensureActive()
+                            val file = createSpeakFileAsMd5IfNotExist(fileName)
+                            file.writeBytes(bytes)
+                            removeSpeakCache(fileName)
+                            val fis = FileInputStream(file)
+                            if (index == nowSpeak) {
+                                playAudio(fis.fd)
+                            }
+                        }
+                        downloadErrorNo = 0
+                    } catch (e: CancellationException) {
+                        removeSpeakCache(fileName)
+                        //任务取消,不处理
+                    } catch (e: SocketTimeoutException) {
+                        removeSpeakCache(fileName)
+                        downloadErrorNo++
+                        if (playErrorNo > 5) {
+                            createSilentSound(fileName)
+                        } else {
+                            toastOnUi("tts接口超时，尝试重新获取")
+                            downloadAudio()
+                        }
+                    } catch (e: ConnectException) {
+                        removeSpeakCache(fileName)
+                        downloadErrorNo++
+                        if (playErrorNo > 5) {
+                            createSilentSound(fileName)
+                        } else {
+                            AppLog.put("tts接口网络错误\n${e.localizedMessage}", e)
+                            toastOnUi("tts接口网络错误\n${e.localizedMessage}")
+                            downloadAudio()
+                        }
+                    } catch (e: IOException) {
+                        removeSpeakCache(fileName)
+                        downloadErrorNo++
+                        if (playErrorNo > 5) {
+                            createSilentSound(fileName)
+                        } else {
+                            AppLog.put("tts下载音频错误\n${e.localizedMessage}", e)
+                            toastOnUi("tts下载音频错误\n${e.localizedMessage}")
+                            downloadAudio()
+                        }
+                    } catch (e: Exception) {
+                        removeSpeakCache(fileName)
+                        createSilentSound(fileName)
+                        AppLog.put("tts接口错误\n${e.localizedMessage}", e)
+                        toastOnUi("tts接口错误\n${e.localizedMessage}")
+                        e.printOnDebug()
                     }
                 }
             }
