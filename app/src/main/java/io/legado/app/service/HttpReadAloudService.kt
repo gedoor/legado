@@ -129,15 +129,16 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     headerMapF = httpTts.getHeaderMap(true)
                                 )
                                 var response = analyzeUrl.getResponseAwait()
-                                httpTts.loginCheckJs?.let { checkJs ->
-                                    if (checkJs.isNotBlank()) {
-                                        response = analyzeUrl.evalJS(checkJs, response) as Response
-                                    }
+                                httpTts.loginCheckJs?.takeIf { checkJs ->
+                                    checkJs.isNotBlank()
+                                }?.let { checkJs ->
+                                    response = analyzeUrl.evalJS(checkJs, response) as Response
                                 }
-                                val contentTypeRegex = httpTts.contentType
-                                if (!contentTypeRegex.isNullOrBlank()) {
+                                httpTts.contentType?.takeIf { ct ->
+                                    ct.isNotBlank()
+                                }?.let { ct ->
                                     response.headers["Content-Type"]?.let { contentType ->
-                                        if (!contentType.matches(contentTypeRegex.toRegex())) {
+                                        if (!contentType.matches(ct.toRegex())) {
                                             throw NoStackTraceException(response.body!!.string())
                                         }
                                     }
