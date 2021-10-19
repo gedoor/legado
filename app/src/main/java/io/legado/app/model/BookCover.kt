@@ -2,6 +2,7 @@ package io.legado.app.model
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.RequestOptions
@@ -10,6 +11,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import splitties.init.appCtx
@@ -42,14 +44,13 @@ object BookCover {
         }
         val key = if (isNightTheme) PreferKey.defaultCoverDark else PreferKey.defaultCover
         val path = appCtx.getPrefString(key)
-        defaultDrawable = try {
-            Drawable.createFromPath(path)
-                ?: appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
-        } catch (e: OutOfMemoryError) {
-            appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
-        } catch (e: Exception) {
-            appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
+        if (path.isNullOrBlank()) {
+            defaultDrawable = appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
+            return
         }
+        defaultDrawable = BitmapUtils.decodeBitmap(path, 100, 150)?.let {
+            BitmapDrawable(appCtx.resources, it)
+        } ?: appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
     }
 
     fun getBlurDefaultCover(context: Context): RequestBuilder<Drawable> {

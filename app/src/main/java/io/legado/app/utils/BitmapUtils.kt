@@ -45,7 +45,6 @@ object BitmapUtils {
         }
         op.inJustDecodeBounds = false
         return BitmapFactory.decodeFileDescriptor(ips.fd, null, op)
-
     }
 
     /** 从path中获取Bitmap图片
@@ -53,7 +52,6 @@ object BitmapUtils {
      * @return
      */
     fun decodeBitmap(path: String): Bitmap? {
-
         val opts = BitmapFactory.Options()
         val ips = FileInputStream(path)
         opts.inJustDecodeBounds = true
