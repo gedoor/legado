@@ -42,7 +42,7 @@ fun Drawable.setTintList(
     DrawableCompat.setTintList(wrappedDrawable, tint)
 }
 
-fun Drawable.setTint(
+fun Drawable.setTintMutate(
     @ColorInt tint: Int,
     tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP
 ) {

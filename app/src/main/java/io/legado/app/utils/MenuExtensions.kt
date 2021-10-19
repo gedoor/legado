@@ -22,7 +22,7 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->
             //overflow：展开的item
-            impl.icon.setTint(
+            impl.icon?.setTintMutate(
                 if (impl.requiresOverflow()) defaultTextColor else tintColor
             )
         }
@@ -44,7 +44,7 @@ fun Menu.applyOpenTint(context: Context) {
             if (menuItems is ArrayList<*>) {
                 for (menuItem in menuItems) {
                     if (menuItem is MenuItem) {
-                        menuItem.icon.setTint(defaultTextColor)
+                        menuItem.icon?.setTintMutate(defaultTextColor)
                     }
                 }
             }

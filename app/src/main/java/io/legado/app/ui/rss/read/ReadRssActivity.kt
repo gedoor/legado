@@ -217,7 +217,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             starMenuItem?.setIcon(R.drawable.ic_star_border)
             starMenuItem?.setTitle(R.string.out_favorites)
         }
-        starMenuItem?.icon?.setTint(primaryTextColor)
+        starMenuItem?.icon?.setTintMutate(primaryTextColor)
     }
 
     override fun upTtsMenu(isPlaying: Boolean) {
@@ -229,7 +229,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 ttsMenuItem?.setIcon(R.drawable.ic_volume_up)
                 ttsMenuItem?.setTitle(R.string.read_aloud)
             }
-            ttsMenuItem?.icon?.setTint(primaryTextColor)
+            ttsMenuItem?.icon?.setTintMutate(primaryTextColor)
         }
     }
 
