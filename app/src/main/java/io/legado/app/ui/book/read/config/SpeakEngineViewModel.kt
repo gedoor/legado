@@ -42,13 +42,11 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
 
     fun importLocal(uri: Uri) {
         execute {
-            uri.readText(context)?.let {
-                import(it)
-            }
+            import(uri.readText(context))
         }.onSuccess {
             context.toastOnUi("导入成功")
         }.onError {
-            context.toastOnUi("导入失败")
+            context.toastOnUi("导入失败\n${it.localizedMessage}")
         }
     }
 

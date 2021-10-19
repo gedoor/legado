@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.model.NoStackTraceException
 import timber.log.Timber
 import java.nio.charset.Charset
 import java.util.*
@@ -76,24 +77,20 @@ object DocumentUtils {
 
     @JvmStatic
     @Throws(Exception::class)
-    fun readText(context: Context, uri: Uri): String? {
-        readBytes(context, uri)?.let {
-            return String(it)
-        }
-        return null
+    fun readText(context: Context, uri: Uri): String {
+        return String(readBytes(context, uri))
     }
 
     @JvmStatic
     @Throws(Exception::class)
-    fun readBytes(context: Context, uri: Uri): ByteArray? {
+    fun readBytes(context: Context, uri: Uri): ByteArray {
         context.contentResolver.openInputStream(uri)?.let {
             val len: Int = it.available()
             val buffer = ByteArray(len)
             it.read(buffer)
             it.close()
             return buffer
-        }
-        return null
+        } ?: throw NoStackTraceException("打开文件失败\n${uri}")
     }
 
     fun listFiles(context: Context, uri: Uri): ArrayList<DocItem> {
@@ -166,11 +163,11 @@ fun DocumentFile.writeBytes(context: Context, data: ByteArray) {
 }
 
 @Throws(Exception::class)
-fun DocumentFile.readText(context: Context): String? {
+fun DocumentFile.readText(context: Context): String {
     return DocumentUtils.readText(context, this.uri)
 }
 
 @Throws(Exception::class)
-fun DocumentFile.readBytes(context: Context): ByteArray? {
+fun DocumentFile.readBytes(context: Context): ByteArray {
     return DocumentUtils.readBytes(context, this.uri)
 }

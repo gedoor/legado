@@ -67,9 +67,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private val importDoc = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         try {
-            uri.readText(this)?.let {
-                showDialogFragment(ImportBookSourceDialog(it))
-            }
+            showDialogFragment(ImportBookSourceDialog(uri.readText(this)))
         } catch (e: Exception) {
             toastOnUi("readTextError:${e.localizedMessage}")
         }
