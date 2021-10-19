@@ -38,7 +38,7 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
     val engine = try {
         builder.build()
     } catch (e: Exception) {
-        CronetLoader.preDownload()
+        builder.setLibraryLoader(CronetLoader)//设置自定义so库加载
         builder.build()
     }
     Timber.d("Cronet Version:" + engine.versionString)
