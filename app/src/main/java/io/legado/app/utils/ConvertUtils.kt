@@ -1,4 +1,4 @@
-package io.legado.app.ui.document.utils
+package io.legado.app.utils
 
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -82,8 +82,7 @@ object ConvertUtils {
 
     fun toFileSizeString(fileSize: Long): String {
         val df = DecimalFormat("0.00")
-        val fileSizeString: String
-        fileSizeString = when {
+        val fileSizeString: String = when {
             fileSize < KB -> fileSize.toString() + "B"
             fileSize < MB -> df.format(fileSize.toDouble() / KB) + "K"
             fileSize < GB -> df.format(fileSize.toDouble() / MB) + "M"

@@ -3,7 +3,6 @@ package io.legado.app.utils
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
-import io.legado.app.ui.document.utils.ConvertUtils
 import splitties.init.appCtx
 import timber.log.Timber
 import java.io.*
