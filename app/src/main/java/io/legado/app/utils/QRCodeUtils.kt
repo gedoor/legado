@@ -182,7 +182,7 @@ object QRCodeUtils {
         hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS
     ): Result? {
         if (bitmap.width > reqWidth || bitmap.height > reqHeight) {
-            val bm = BitmapUtils.changeBitmapSize(bitmap, reqWidth, reqHeight)
+            val bm = bitmap.changeSize(reqWidth, reqHeight)
             return parseCodeResult(getRGBLuminanceSource(bm), hints)
         }
         return parseCodeResult(getRGBLuminanceSource(bitmap), hints)

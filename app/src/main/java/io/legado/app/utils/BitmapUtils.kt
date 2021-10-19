@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.utils
 
 import android.content.Context
@@ -14,7 +16,7 @@ import java.io.IOException
 import kotlin.math.*
 
 
-@Suppress("unused", "WeakerAccess", "MemberVisibilityCanBePrivate")
+@Suppress("WeakerAccess", "MemberVisibilityCanBePrivate")
 object BitmapUtils {
 
     /**
@@ -142,14 +144,12 @@ object BitmapUtils {
         return BitmapFactory.decodeStream(inputStream, null, op)
     }
 
-
     //图片不被压缩
     fun convertViewToBitmap(view: View, bitmapWidth: Int, bitmapHeight: Int): Bitmap {
         val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Config.ARGB_8888)
         view.draw(Canvas(bitmap))
         return bitmap
     }
-
 
     /**
      * @param options
@@ -220,89 +220,90 @@ object BitmapUtils {
         }
     }
 
-    fun changeBitmapSize(bitmap: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+}
 
-        val width = bitmap.width
-        val height = bitmap.height
+fun Bitmap.changeSize(newWidth: Int, newHeight: Int): Bitmap {
+    val width = this.width
+    val height = this.height
 
-        //计算压缩的比率
-        var scaleWidth = newWidth.toFloat() / width
-        var scaleHeight = newHeight.toFloat() / height
+    //计算压缩的比率
+    var scaleWidth = newWidth.toFloat() / width
+    var scaleHeight = newHeight.toFloat() / height
 
-        if (scaleWidth > scaleHeight) {
-            scaleWidth = scaleHeight
-        } else {
-            scaleHeight = scaleWidth
+    if (scaleWidth > scaleHeight) {
+        scaleWidth = scaleHeight
+    } else {
+        scaleHeight = scaleWidth
+    }
+
+    //获取想要缩放的matrix
+    val matrix = Matrix()
+    matrix.postScale(scaleWidth, scaleHeight)
+
+    //获取新的bitmap
+    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+
+}
+
+/**
+ * 高斯模糊
+ */
+fun Bitmap.stackBlur(radius: Float = 8f): Bitmap? {
+    val rs = RenderScript.create(appCtx)
+    val blurredBitmap = this.copy(Config.ARGB_8888, true)
+
+    //分配用于渲染脚本的内存
+    val input = Allocation.createFromBitmap(
+        rs,
+        blurredBitmap,
+        Allocation.MipmapControl.MIPMAP_FULL,
+        Allocation.USAGE_SHARED
+    )
+    val output = Allocation.createTyped(rs, input.type)
+
+    //加载我们想要使用的特定脚本的实例。
+    val script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
+    script.setInput(input)
+
+    //设置模糊半径
+    script.setRadius(radius)
+
+    //启动 ScriptIntrinsicBlur
+    script.forEach(output)
+
+    //将输出复制到模糊的位图
+    output.copyTo(blurredBitmap)
+
+    return blurredBitmap
+}
+
+/**
+ * 取平均色
+ */
+fun Bitmap.getMeanColor(): Int {
+    val width: Int = this.width
+    val height: Int = this.height
+    var pixel: Int
+    var pixelSumRed = 0
+    var pixelSumBlue = 0
+    var pixelSumGreen = 0
+    for (i in 0..99) {
+        for (j in 70..99) {
+            pixel = this.getPixel(
+                (i * width / 100.toFloat()).roundToInt(),
+                (j * height / 100.toFloat()).roundToInt()
+            )
+            pixelSumRed += Color.red(pixel)
+            pixelSumGreen += Color.green(pixel)
+            pixelSumBlue += Color.blue(pixel)
         }
-
-        //获取想要缩放的matrix
-        val matrix = Matrix()
-        matrix.postScale(scaleWidth, scaleHeight)
-
-        //获取新的bitmap
-        return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
-
     }
-
-    /**
-     * 高斯模糊
-     */
-    fun stackBlur(srcBitmap: Bitmap?, radius: Float = 8f): Bitmap? {
-        if (srcBitmap == null) return null
-        val rs = RenderScript.create(appCtx)
-        val blurredBitmap = srcBitmap.copy(Config.ARGB_8888, true)
-
-        //分配用于渲染脚本的内存
-        val input = Allocation.createFromBitmap(
-            rs,
-            blurredBitmap,
-            Allocation.MipmapControl.MIPMAP_FULL,
-            Allocation.USAGE_SHARED
-        )
-        val output = Allocation.createTyped(rs, input.type)
-
-        //加载我们想要使用的特定脚本的实例。
-        val script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
-        script.setInput(input)
-
-        //设置模糊半径
-        script.setRadius(radius)
-
-        //启动 ScriptIntrinsicBlur
-        script.forEach(output)
-
-        //将输出复制到模糊的位图
-        output.copyTo(blurredBitmap)
-
-        return blurredBitmap
-    }
-
-    fun getMeanColor(bitmap: Bitmap): Int {
-        val width: Int = bitmap.width
-        val height: Int = bitmap.height
-        var pixel: Int
-        var pixelSumRed = 0
-        var pixelSumBlue = 0
-        var pixelSumGreen = 0
-        for (i in 0..99) {
-            for (j in 70..99) {
-                pixel = bitmap.getPixel(
-                    (i * width / 100.toFloat()).roundToInt(),
-                    (j * height / 100.toFloat()).roundToInt()
-                )
-                pixelSumRed += Color.red(pixel)
-                pixelSumGreen += Color.green(pixel)
-                pixelSumBlue += Color.blue(pixel)
-            }
-        }
-        val averagePixelRed = pixelSumRed / 3000
-        val averagePixelBlue = pixelSumBlue / 3000
-        val averagePixelGreen = pixelSumGreen / 3000
-        return Color.rgb(
-            averagePixelRed + 3,
-            averagePixelGreen + 3,
-            averagePixelBlue + 3
-        )
-    }
-
+    val averagePixelRed = pixelSumRed / 3000
+    val averagePixelBlue = pixelSumBlue / 3000
+    val averagePixelGreen = pixelSumGreen / 3000
+    return Color.rgb(
+        averagePixelRed + 3,
+        averagePixelGreen + 3,
+        averagePixelBlue + 3
+    )
 }

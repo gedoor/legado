@@ -92,7 +92,7 @@ object ReadBookConfig {
         val height = dm.heightPixels
         bg = durConfig.curBgDrawable(width, height).apply {
             if (this is BitmapDrawable) {
-                bgMeanColor = BitmapUtils.getMeanColor(bitmap)
+                bgMeanColor = bitmap.getMeanColor()
             } else if (this is ColorDrawable) {
                 bgMeanColor = color
             }
