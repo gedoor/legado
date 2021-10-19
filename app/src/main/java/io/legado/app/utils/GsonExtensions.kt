@@ -27,7 +27,7 @@ inline fun <reified T> Gson.fromJsonObject(json: String?): T? {//可转成任意
     return kotlin.runCatching {
         fromJson(json, genericType<T>()) as? T
     }.onFailure {
-        Timber.e(it)
+        Timber.e(it, json)
     }.getOrNull()
 }
 
@@ -35,7 +35,7 @@ inline fun <reified T> Gson.fromJsonArray(json: String?): List<T>? {
     return kotlin.runCatching {
         fromJson(json, ParameterizedTypeImpl(T::class.java)) as? List<T>
     }.onFailure {
-        Timber.e(it)
+        Timber.e(it, json)
     }.getOrNull()
 }
 
