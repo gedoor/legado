@@ -17,12 +17,16 @@ import io.legado.app.help.ThemeConfig.applyDayNight
 import io.legado.app.help.http.cronet.CronetLoader
 import io.legado.app.utils.LanguageUtils
 import io.legado.app.utils.defaultSharedPreferences
+import timber.log.Timber
 
 class App : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
         CrashHandler(this)
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
         //预下载Cronet so
         CronetLoader.preDownload()
         LanguageUtils.setConfiguration(this)
