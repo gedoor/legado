@@ -6,6 +6,7 @@ import android.graphics.drawable.TransitionDrawable
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.annotation.ColorInt
+import io.legado.app.utils.DrawableUtils
 
 /**
  * @author Karim Abou Zeid (kabouzeid)

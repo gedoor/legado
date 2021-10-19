@@ -16,7 +16,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
-import io.legado.app.lib.theme.DrawableUtils
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
@@ -218,7 +217,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             starMenuItem?.setIcon(R.drawable.ic_star_border)
             starMenuItem?.setTitle(R.string.out_favorites)
         }
-        DrawableUtils.setTint(starMenuItem?.icon, primaryTextColor)
+        starMenuItem?.icon?.setTint(primaryTextColor)
     }
 
     override fun upTtsMenu(isPlaying: Boolean) {
@@ -230,7 +229,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 ttsMenuItem?.setIcon(R.drawable.ic_volume_up)
                 ttsMenuItem?.setTitle(R.string.read_aloud)
             }
-            DrawableUtils.setTint(ttsMenuItem?.icon, primaryTextColor)
+            ttsMenuItem?.icon?.setTint(primaryTextColor)
         }
     }
 

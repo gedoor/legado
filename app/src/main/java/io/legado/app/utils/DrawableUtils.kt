@@ -1,4 +1,4 @@
-package io.legado.app.lib.theme
+package io.legado.app.utils
 
 import android.content.res.ColorStateList
 import android.graphics.PorterDuff
@@ -30,30 +30,24 @@ object DrawableUtils {
         return TransitionDrawable(drawables)
     }
 
-    fun setTintList(
-        drawable: Drawable?,
-        tint: ColorStateList,
-        tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP
-    ) {
-        drawable?.let {
-            val wrappedDrawable = DrawableCompat.wrap(it)
-            wrappedDrawable.mutate()
-            DrawableCompat.setTintMode(wrappedDrawable, tintMode)
-            DrawableCompat.setTintList(wrappedDrawable, tint)
-        }
-    }
+}
 
+fun Drawable.setTintList(
+    tint: ColorStateList,
+    tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP
+) {
+    val wrappedDrawable = DrawableCompat.wrap(this)
+    wrappedDrawable.mutate()
+    DrawableCompat.setTintMode(wrappedDrawable, tintMode)
+    DrawableCompat.setTintList(wrappedDrawable, tint)
+}
 
-    fun setTint(
-        drawable: Drawable?,
-        @ColorInt tint: Int,
-        tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP
-    ) {
-        drawable?.let {
-            val wrappedDrawable = DrawableCompat.wrap(it)
-            wrappedDrawable.mutate()
-            DrawableCompat.setTintMode(wrappedDrawable, tintMode)
-            DrawableCompat.setTint(wrappedDrawable, tint)
-        }
-    }
+fun Drawable.setTint(
+    @ColorInt tint: Int,
+    tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP
+) {
+    val wrappedDrawable = DrawableCompat.wrap(this)
+    wrappedDrawable.mutate()
+    DrawableCompat.setTintMode(wrappedDrawable, tintMode)
+    DrawableCompat.setTint(wrappedDrawable, tint)
 }

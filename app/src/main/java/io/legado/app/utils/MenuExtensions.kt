@@ -9,7 +9,6 @@ import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.constant.Theme
-import io.legado.app.lib.theme.DrawableUtils
 import java.lang.reflect.Method
 import java.util.*
 
@@ -23,10 +22,8 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->
             //overflow：展开的item
-            DrawableUtils.setTint(
-                impl.icon,
-                if (impl.requiresOverflow()) defaultTextColor
-                else tintColor
+            impl.icon.setTint(
+                if (impl.requiresOverflow()) defaultTextColor else tintColor
             )
         }
     }
@@ -47,10 +44,7 @@ fun Menu.applyOpenTint(context: Context) {
             if (menuItems is ArrayList<*>) {
                 for (menuItem in menuItems) {
                     if (menuItem is MenuItem) {
-                        DrawableUtils.setTint(
-                            menuItem.icon,
-                            defaultTextColor
-                        )
+                        menuItem.icon.setTint(defaultTextColor)
                     }
                 }
             }
