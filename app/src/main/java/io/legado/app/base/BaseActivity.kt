@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.Theme
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ThemeConfig
@@ -148,9 +149,9 @@ abstract class BaseActivity<VB : ViewBinding>(
                     window.decorView.background = BitmapDrawable(resources, it)
                 }
             } catch (e: OutOfMemoryError) {
-                toastOnUi(e.localizedMessage)
+                toastOnUi("背景太大,内存溢出")
             } catch (e: Exception) {
-                toastOnUi(e.localizedMessage)
+                AppLog.put("加载背景出错\n${e.localizedMessage}", e)
             }
         }
     }
