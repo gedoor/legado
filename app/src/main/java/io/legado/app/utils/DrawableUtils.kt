@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.utils
 
 import android.content.res.ColorStateList
@@ -32,7 +34,7 @@ object DrawableUtils {
 
 }
 
-fun Drawable.setTintList(
+fun Drawable.setTintListMutate(
     tint: ColorStateList,
     tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP
 ) {
