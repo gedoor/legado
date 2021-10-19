@@ -42,8 +42,14 @@ object BookCover {
         }
         val key = if (isNightTheme) PreferKey.defaultCoverDark else PreferKey.defaultCover
         val path = appCtx.getPrefString(key)
-        defaultDrawable = Drawable.createFromPath(path)
-            ?: appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
+        defaultDrawable = try {
+            Drawable.createFromPath(path)
+                ?: appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
+        } catch (e: OutOfMemoryError) {
+            appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
+        } catch (e: Exception) {
+            appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
+        }
     }
 
     fun getBlurDefaultCover(context: Context): RequestBuilder<Drawable> {

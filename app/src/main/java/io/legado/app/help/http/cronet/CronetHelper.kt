@@ -1,6 +1,5 @@
 package io.legado.app.help.http.cronet
 
-import android.util.Log
 import com.google.android.gms.net.CronetProviderInstaller
 import io.legado.app.help.AppConfig
 import okhttp3.Headers
@@ -12,6 +11,7 @@ import org.chromium.net.ExperimentalCronetEngine
 import org.chromium.net.UploadDataProviders
 import org.chromium.net.UrlRequest
 import splitties.init.appCtx
+import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -24,8 +24,6 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
     } else {
         CronetLoader.preDownload()
     }
-
-
     val builder = ExperimentalCronetEngine.Builder(appCtx).apply {
         if (!AppConfig.isGooglePlay && CronetLoader.install()) {
             setLibraryLoader(CronetLoader)//设置自定义so库加载
@@ -35,12 +33,15 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
         enableQuic(true)//设置支持http/3
         enableHttp2(true)  //设置支持http/2
         enablePublicKeyPinningBypassForLocalTrustAnchors(true)
-
         enableBrotli(true)//Brotli压缩
-
     }
-    val engine = builder.build()
-    Log.d("Cronet", "Cronet Version:" + engine.versionString)
+    val engine = try {
+        builder.build()
+    } catch (e: Exception) {
+        CronetLoader.preDownload()
+        builder.build()
+    }
+    Timber.d("Cronet Version:" + engine.versionString)
     //这会导致Jsoup的网络请求出现问题，暂时不接管系统URL
     //URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
     return@lazy engine
