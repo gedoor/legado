@@ -61,6 +61,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         //保存日志文件
         saveCrashInfo2File(ex)
         context.longToastOnUi(ex.msg)
+        Thread.sleep(3000)
     }
 
     /**
