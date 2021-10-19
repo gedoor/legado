@@ -3,6 +3,7 @@ package io.legado.app.ui.book.info
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.EventBus
@@ -11,12 +12,15 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.ensureActive
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
@@ -24,6 +28,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var durChapterIndex = 0
     var inBookshelf = false
     var bookSource: BookSource? = null
+    var changeSourceCoroutine: Coroutine<*>? = null
 
     fun initData(intent: Intent) {
         execute {
@@ -69,12 +74,14 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun loadBookInfo(
-        book: Book, canReName: Boolean = true,
+        book: Book,
+        canReName: Boolean = true,
+        scope: CoroutineScope = viewModelScope,
         changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
     ) {
-        execute {
+        execute(scope) {
             if (book.isLocalBook()) {
-                loadChapter(book, changeDruChapterIndex)
+                loadChapter(book, scope, changeDruChapterIndex)
             } else {
                 bookSource?.let { bookSource ->
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
@@ -83,7 +90,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             if (inBookshelf) {
                                 appDb.bookDao.update(book)
                             }
-                            loadChapter(it, changeDruChapterIndex)
+                            loadChapter(it, scope, changeDruChapterIndex)
                         }.onError {
                             context.toastOnUi(R.string.error_get_book_info)
                         }
@@ -97,9 +104,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     private fun loadChapter(
         book: Book,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
+        scope: CoroutineScope = viewModelScope,
+        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
     ) {
-        execute {
+        execute(scope) {
             if (book.isLocalBook()) {
                 LocalBook.getChapterList(book).let {
                     appDb.bookDao.update(book)
@@ -142,7 +150,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun changeTo(source: BookSource, newBook: Book) {
-        execute {
+        changeSourceCoroutine?.cancel()
+        changeSourceCoroutine = execute {
             var oldTocSize: Int = newBook.totalChapterNum
             if (inBookshelf) {
                 bookData.value?.let {
@@ -153,11 +162,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.postValue(newBook)
             bookSource = source
             if (newBook.tocUrl.isEmpty()) {
-                loadBookInfo(newBook, false) {
+                loadBookInfo(newBook, false, this) {
+                    ensureActive()
                     upChangeDurChapterIndex(newBook, oldTocSize, it)
                 }
             } else {
-                loadChapter(newBook) {
+                loadChapter(newBook, this) {
+                    ensureActive()
                     upChangeDurChapterIndex(newBook, oldTocSize, it)
                 }
             }
