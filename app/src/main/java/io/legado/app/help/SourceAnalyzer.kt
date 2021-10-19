@@ -7,6 +7,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.*
+import timber.log.Timber
 import java.util.regex.Pattern
 
 @Suppress("RegExpRedundantEscape")
@@ -156,7 +157,7 @@ object SourceAnalyzer {
                 }
             }
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         }
         return source
     }

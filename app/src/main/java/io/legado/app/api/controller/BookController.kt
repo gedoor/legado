@@ -20,6 +20,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
+import timber.log.Timber
 
 object BookController {
 
@@ -209,7 +210,7 @@ object BookController {
             if (book.isUmd()) UmdFile.upBookInfo(book)
             appDb.bookDao.insert(book)
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
             return returnData.setErrorMsg(
                 e.localizedMessage ?: appCtx.getString(R.string.unknown_error)
             )

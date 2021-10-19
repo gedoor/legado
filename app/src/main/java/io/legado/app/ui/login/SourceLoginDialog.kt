@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.views.onClick
+import timber.log.Timber
 
 class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
 
@@ -123,7 +124,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
                     } catch (e: Exception) {
                         AppLog.put("登录出错\n${e.localizedMessage}", e)
                         context?.toastOnUi("登录出错\n${e.localizedMessage}")
-                        e.printOnDebug()
+                        Timber.e(e)
                     }
                 }
             }

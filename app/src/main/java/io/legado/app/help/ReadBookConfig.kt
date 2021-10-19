@@ -62,7 +62,7 @@ object ReadBookConfig {
                 val json = configFile.readText()
                 configs = GSON.fromJsonArray(json)
             } catch (e: Exception) {
-                e.printOnDebug()
+                Timber.e(e)
             }
         }
         (configs ?: DefaultData.readConfigs).let {
@@ -79,7 +79,7 @@ object ReadBookConfig {
                 val json = configFile.readText()
                 c = GSON.fromJsonObject(json)
             } catch (e: Exception) {
-                e.printOnDebug()
+                Timber.e(e)
             }
         }
         shareConfig = c ?: configList.getOrNull(5) ?: Config()

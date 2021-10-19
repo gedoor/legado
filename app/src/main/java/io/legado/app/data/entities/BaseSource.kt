@@ -7,7 +7,11 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
-import io.legado.app.utils.*
+import io.legado.app.utils.EncoderUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import timber.log.Timber
 import javax.script.SimpleBindings
 
 /**
@@ -107,7 +111,7 @@ interface BaseSource : JsExtensions {
                 ?: return null
             return String(decodeBytes)
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
             return null
         }
     }
@@ -127,7 +131,7 @@ interface BaseSource : JsExtensions {
             CacheManager.put("userInfo_${getKey()}", encodeStr)
             true
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
             false
         }
     }

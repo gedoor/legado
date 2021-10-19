@@ -5,6 +5,7 @@ import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
 import io.legado.app.ui.document.utils.ConvertUtils
 import splitties.init.appCtx
+import timber.log.Timber
 import java.io.*
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
@@ -46,7 +47,7 @@ object FileUtils {
                 file.createNewFile()
             }
         } catch (e: IOException) {
-            e.printOnDebug()
+            Timber.e(e)
         }
         return file
     }
@@ -116,8 +117,8 @@ object FileUtils {
         var sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
         try {
             sdCardDirectory = File(sdCardDirectory).canonicalPath
-        } catch (ioe: IOException) {
-            ioe.printOnDebug()
+        } catch (e: IOException) {
+            Timber.e(e)
         }
         return sdCardDirectory
     }

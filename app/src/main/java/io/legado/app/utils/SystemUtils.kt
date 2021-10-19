@@ -8,6 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
+import timber.log.Timber
 
 
 @Suppress("unused")
@@ -21,7 +22,7 @@ object SystemUtils {
                 Settings.System.SCREEN_OFF_TIMEOUT
             )
         }.onFailure {
-            it.printOnDebug()
+            Timber.e(it)
         }
 
         return screenOffTime

@@ -8,8 +8,9 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
-import io.legado.app.utils.printOnDebug
+
 import io.legado.app.utils.readText
+import timber.log.Timber
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
@@ -54,7 +55,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                 onLineImportLive.postValue(uri)
             }
         }.onError {
-            it.printOnDebug()
+            Timber.e(it)
             errorLiveData.postValue(it.localizedMessage)
         }
     }

@@ -27,6 +27,7 @@ import androidx.preference.PreferenceManager
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 
@@ -158,7 +159,7 @@ val Context.sysScreenOffTime: Int
             screenOffTime =
                 Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         }
         return screenOffTime
     }
@@ -316,7 +317,7 @@ val Context.channel: String
             val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
             return appInfo.metaData.getString("channel") ?: ""
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         }
         return ""
     }

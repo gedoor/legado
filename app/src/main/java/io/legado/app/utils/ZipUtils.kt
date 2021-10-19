@@ -369,7 +369,7 @@ object ZipUtils {
         return try {
             file.createNewFile()
         } catch (e: IOException) {
-            e.printOnDebug()
+            Timber.e(e)
             false
         }
     }

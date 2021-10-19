@@ -10,8 +10,9 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.msg
-import io.legado.app.utils.printOnDebug
+
 import kotlinx.coroutines.Dispatchers.IO
+import timber.log.Timber
 
 class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
 
@@ -43,7 +44,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
                     appDb.searchBookDao.insert(*searchBooks.toTypedArray())
                     page++
                 }.onError {
-                    it.printOnDebug()
+                    Timber.e(it)
                     errorLiveData.postValue(it.msg)
                 }
         }

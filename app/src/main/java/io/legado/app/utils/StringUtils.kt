@@ -2,6 +2,7 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import android.text.TextUtils.isEmpty
+import timber.log.Timber
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -95,7 +96,7 @@ object StringUtils {
                 }
             }
         }.onFailure {
-            it.printOnDebug()
+            Timber.e(it)
         }
         return ""
     }

@@ -22,7 +22,8 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.view.View
 import android.widget.ImageView
-import io.legado.app.utils.printOnDebug
+import timber.log.Timber
+
 import kotlin.math.roundToInt
 
 object Utils {
@@ -66,7 +67,7 @@ object Utils {
         try {
             return Bitmap.createBitmap(width, height, config)
         } catch (e: OutOfMemoryError) {
-            e.printOnDebug()
+            Timber.e(e)
             if (retryCount > 0) {
                 System.gc()
                 return createBitmapSafely(width, height, config, retryCount - 1)

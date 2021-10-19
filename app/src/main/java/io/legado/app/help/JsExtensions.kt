@@ -19,6 +19,7 @@ import org.apache.commons.lang3.time.DateFormatUtils
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import splitties.init.appCtx
+import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -49,7 +50,7 @@ interface JsExtensions {
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
-                it.printOnDebug()
+                Timber.e(it)
             }.getOrElse {
                 it.msg
             }
@@ -85,7 +86,7 @@ interface JsExtensions {
                 analyzeUrl.getStrResponseAwait()
             }.onFailure {
                 log("connect(${urlStr}) error\n${it.stackTraceToString()}")
-                it.printOnDebug()
+                Timber.e(it)
             }.getOrElse {
                 StrResponse(analyzeUrl.url, it.localizedMessage)
             }
@@ -100,7 +101,7 @@ interface JsExtensions {
                 analyzeUrl.getStrResponseAwait()
             }.onFailure {
                 log("ajax($urlStr,$header) error\n${it.stackTraceToString()}")
-                it.printOnDebug()
+                Timber.e(it)
             }.getOrElse {
                 StrResponse(analyzeUrl.url, it.localizedMessage)
             }
@@ -510,8 +511,8 @@ interface JsExtensions {
                 transformation,
                 iv.encodeToByteArray()
             )
-        } catch (e: java.lang.Exception) {
-            e.printOnDebug()
+        } catch (e: Exception) {
+            Timber.e(e)
             log(e.localizedMessage ?: "aesDecodeToByteArrayERROR")
             null
         }
@@ -550,7 +551,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
             log(e.localizedMessage ?: "aesDecodeToByteArrayERROR")
             null
         }
@@ -588,7 +589,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
             log(e.localizedMessage ?: "aesEncodeToByteArrayERROR")
             null
         }
@@ -625,7 +626,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
             log(e.localizedMessage ?: "aesEncodeToBase64ByteArrayERROR")
             null
         }

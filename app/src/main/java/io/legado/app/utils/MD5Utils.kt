@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import timber.log.Timber
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -25,7 +26,7 @@ object MD5Utils {
             }
             reStr = stringBuffer.toString()
         } catch (e: NoSuchAlgorithmException) {
-            e.printOnDebug()
+            Timber.e(e)
         }
 
         return reStr

@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import timber.log.Timber
 import java.io.File
 
 
@@ -92,7 +93,7 @@ object Restore {
                         }
                     }
                 } catch (e: Exception) {
-                    e.printOnDebug()
+                    Timber.e(e)
                 }
             }
         }
@@ -168,7 +169,7 @@ object Restore {
                     ThemeConfig.upConfig()
                 }
             } catch (e: Exception) {
-                e.printOnDebug()
+                Timber.e(e)
             }
             if (!ignoreReadConfig) {
                 //恢复阅读界面配置
@@ -181,7 +182,7 @@ object Restore {
                         ReadBookConfig.initConfigs()
                     }
                 } catch (e: Exception) {
-                    e.printOnDebug()
+                    Timber.e(e)
                 }
                 try {
                     val file =
@@ -192,7 +193,7 @@ object Restore {
                         ReadBookConfig.initShareConfig()
                     }
                 } catch (e: Exception) {
-                    e.printOnDebug()
+                    Timber.e(e)
                 }
             }
             Preferences.getSharedPreferences(appCtx, path, "config")?.all?.let { map ->
@@ -262,7 +263,7 @@ object Restore {
             val json = file.readText()
             return GSON.fromJsonArray(json)
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         }
         return null
     }

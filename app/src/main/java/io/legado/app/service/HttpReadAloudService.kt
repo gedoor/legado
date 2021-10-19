@@ -17,6 +17,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Response
+import timber.log.Timber
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -196,7 +197,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                         createSilentSound(fileName)
                         AppLog.put("tts接口错误\n${e.localizedMessage}", e)
                         toastOnUi("tts接口错误\n${e.localizedMessage}")
-                        e.printOnDebug()
+                        Timber.e(e)
                     }
                 }
             }
@@ -213,7 +214,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 playingIndex = nowSpeak
                 postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             } catch (e: Exception) {
-                e.printOnDebug()
+                Timber.e(e)
             }
         }
     }

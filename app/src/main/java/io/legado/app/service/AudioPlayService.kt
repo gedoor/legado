@@ -32,6 +32,7 @@ import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
+import timber.log.Timber
 
 
 class AudioPlayService : BaseService(),
@@ -139,7 +140,7 @@ class AudioPlayService : BaseService(),
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
             }.onFailure {
-                it.printOnDebug()
+                Timber.e(it)
                 toastOnUi("$url ${it.localizedMessage}")
                 stopSelf()
             }
@@ -160,7 +161,7 @@ class AudioPlayService : BaseService(),
             postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
             upNotification()
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         }
     }
 
@@ -179,7 +180,7 @@ class AudioPlayService : BaseService(),
             postEvent(EventBus.AUDIO_STATE, Status.PLAY)
             upNotification()
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
             stopSelf()
         }
     }
@@ -251,7 +252,7 @@ class AudioPlayService : BaseService(),
         val errorMsg = "音频播放出错\n${error.errorCodeName} ${error.errorCode}"
         AppLog.put(errorMsg, error)
         toastOnUi(errorMsg)
-        error.printOnDebug()
+        Timber.e(error)
     }
 
     private fun setTimer(minute: Int) {

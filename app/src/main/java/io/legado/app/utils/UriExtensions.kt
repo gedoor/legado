@@ -9,6 +9,7 @@ import io.legado.app.R
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.model.NoStackTraceException
+import timber.log.Timber
 import java.io.File
 
 fun Uri.isContentScheme() = this.scheme == "content"
@@ -42,7 +43,7 @@ fun AppCompatActivity.readUri(uri: Uri?, success: (name: String, bytes: ByteArra
                 .request()
         }
     } catch (e: Exception) {
-        e.printOnDebug()
+        Timber.e(e)
         toastOnUi(e.localizedMessage ?: "read uri error")
     }
 }
@@ -76,7 +77,7 @@ fun Fragment.readUri(uri: Uri?, success: (name: String, bytes: ByteArray) -> Uni
                 .request()
         }
     } catch (e: Exception) {
-        e.printOnDebug()
+        Timber.e(e)
         toastOnUi(e.localizedMessage ?: "read uri error")
     }
 }

@@ -9,6 +9,7 @@ import io.legado.app.utils.*
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
+import timber.log.Timber
 
 @Parcelize
 @TypeConverters(BookSource.Converters::class)
@@ -92,7 +93,7 @@ data class BookSource(
                 }
             }.onFailure {
                 kinds.add(ExploreKind("ERROR:${it.localizedMessage}", it.stackTraceToString()))
-                it.printOnDebug()
+                Timber.e(it)
             }
         }
         return@lazy kinds

@@ -4,6 +4,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import splitties.systemservices.connectivityManager
+import timber.log.Timber
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -114,7 +115,7 @@ object NetworkUtils {
             relativeUrl = parseUrl.toString()
             return relativeUrl
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         }
         return relativeUrl
     }
@@ -130,7 +131,7 @@ object NetworkUtils {
             relativeUrl = parseUrl.toString()
             return relativeUrl
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         }
         return relativeUrl
     }
@@ -158,7 +159,7 @@ object NetworkUtils {
         try {
             enumeration = NetworkInterface.getNetworkInterfaces()
         } catch (e: SocketException) {
-            e.printOnDebug()
+            Timber.e(e)
         }
 
         if (enumeration != null) {

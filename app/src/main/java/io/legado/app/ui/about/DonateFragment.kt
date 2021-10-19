@@ -7,7 +7,11 @@ import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.longToastOnUi
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.sendToClip
+import timber.log.Timber
 
 class DonateFragment : PreferenceFragmentCompat() {
 
@@ -46,7 +50,7 @@ class DonateFragment : PreferenceFragmentCompat() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         } finally {
             ACache.get(requireContext(), cacheDir = false)
                 .put("proTime", System.currentTimeMillis())

@@ -14,6 +14,7 @@ import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.*
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
+import timber.log.Timber
 import java.io.IOException
 
 class WebService : BaseService() {
@@ -87,7 +88,7 @@ class WebService : BaseService() {
                 upNotification()
             } catch (e: IOException) {
                 toastOnUi(e.localizedMessage ?: "")
-                e.printOnDebug()
+                Timber.e(e)
                 stopSelf()
             }
         } else {

@@ -3,7 +3,6 @@ package io.legado.app.help
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import io.legado.app.constant.AppConst
 import io.legado.app.model.ReadAloud
 import io.legado.app.utils.FileUtils
@@ -21,7 +20,6 @@ import java.util.concurrent.TimeUnit
  */
 @Suppress("DEPRECATION")
 class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
-    private val tag = this.javaClass.simpleName
 
     /**
      * 系统默认UncaughtExceptionHandler
@@ -59,9 +57,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
     private fun handleException(ex: Throwable?) {
         if (ex == null) return
         //收集设备参数信息
-        collectDeviceInfo(context)
-        //添加自定义信息
-        addCustomInfo()
+        collectDeviceInfo()
         //保存日志文件
         saveCrashInfo2File(ex)
         context.longToastOnUi(ex.msg)
@@ -70,7 +66,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
     /**
      * 收集设备参数信息
      */
-    private fun collectDeviceInfo(ctx: Context) {
+    private fun collectDeviceInfo() {
         kotlin.runCatching {
             //获取系统信息
             paramsMap["MANUFACTURER"] = Build.MANUFACTURER
@@ -81,13 +77,6 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 paramsMap["versionCode"] = it.versionCode.toString()
             }
         }
-    }
-
-    /**
-     * 添加自定义参数
-     */
-    private fun addCustomInfo() {
-        Log.i(tag, "addCustomInfo: 程序出错了...")
     }
 
     /**

@@ -3,6 +3,7 @@ package io.legado.app.utils
 import com.google.gson.*
 import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
+import timber.log.Timber
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.math.ceil
@@ -26,7 +27,7 @@ inline fun <reified T> Gson.fromJsonObject(json: String?): T? {//可转成任意
     return kotlin.runCatching {
         fromJson(json, genericType<T>()) as? T
     }.onFailure {
-        it.printOnDebug()
+        Timber.e(it)
     }.getOrNull()
 }
 
@@ -34,7 +35,7 @@ inline fun <reified T> Gson.fromJsonArray(json: String?): List<T>? {
     return kotlin.runCatching {
         fromJson(json, ParameterizedTypeImpl(T::class.java)) as? List<T>
     }.onFailure {
-        it.printOnDebug()
+        Timber.e(it)
     }.getOrNull()
 }
 

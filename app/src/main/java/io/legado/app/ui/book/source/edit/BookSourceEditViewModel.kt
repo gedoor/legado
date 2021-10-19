@@ -11,6 +11,7 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
+import timber.log.Timber
 
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
@@ -48,7 +49,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             success?.invoke()
         }.onError {
             context.toastOnUi(it.localizedMessage)
-            it.printOnDebug()
+            Timber.e(it)
         }
     }
 
@@ -62,7 +63,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             }
         }.onError {
             context.toastOnUi(it.localizedMessage ?: "Error")
-            it.printOnDebug()
+            Timber.e(it)
         }
     }
 

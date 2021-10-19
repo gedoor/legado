@@ -14,6 +14,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
+import timber.log.Timber
 import java.io.File
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.regex.Pattern
@@ -121,7 +122,7 @@ object BookHelp {
                 ).writeBytes(it)
             }
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         } finally {
             downloadImages.remove(src)
         }

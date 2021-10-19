@@ -12,10 +12,11 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.printOnDebug
+
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import timber.log.Timber
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
@@ -177,7 +178,7 @@ object CacheBook {
                     "下载${book.name}-${chapterTitle}失败\n${error.localizedMessage}",
                     error
                 )
-                error.printOnDebug()
+                Timber.e(error)
             }
         }
 

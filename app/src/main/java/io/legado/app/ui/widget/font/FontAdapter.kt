@@ -8,6 +8,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemFontBinding
 import io.legado.app.utils.*
+import timber.log.Timber
 import java.io.File
 import java.net.URLDecoder
 
@@ -41,7 +42,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
                 }
                 tvFont.typeface = typeface
             }.onFailure {
-                it.printOnDebug()
+                Timber.e(it)
                 context.toastOnUi("Read ${item.name} Error: ${it.localizedMessage}")
             }
             tvFont.text = item.name

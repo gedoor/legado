@@ -14,6 +14,7 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.BookCover
 import io.legado.app.utils.*
 import splitties.init.appCtx
+import timber.log.Timber
 import java.io.File
 
 object ThemeConfig {
@@ -108,7 +109,7 @@ object ThemeConfig {
                 val json = configFile.readText()
                 return GSON.fromJsonArray(json)
             }.onFailure {
-                it.printOnDebug()
+                Timber.e(it)
             }
         }
         return null

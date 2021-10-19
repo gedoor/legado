@@ -7,9 +7,10 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.getClipText
 import io.legado.app.utils.msg
-import io.legado.app.utils.printOnDebug
+
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
+import timber.log.Timber
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
 
@@ -41,7 +42,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             success()
         }.onError {
             context.toastOnUi(it.localizedMessage)
-            it.printOnDebug()
+            Timber.e(it)
         }
     }
 

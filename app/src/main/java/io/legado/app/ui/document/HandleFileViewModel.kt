@@ -9,8 +9,9 @@ import io.legado.app.constant.AppLog
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isContentScheme
-import io.legado.app.utils.printOnDebug
+
 import io.legado.app.utils.writeBytes
+import timber.log.Timber
 import java.io.File
 
 class HandleFileViewModel(application: Application) : BaseViewModel(application) {
@@ -29,7 +30,7 @@ class HandleFileViewModel(application: Application) : BaseViewModel(application)
             success.invoke(it)
         }.onError {
             AppLog.put("上传文件失败\n${it.localizedMessage}", it)
-            it.printOnDebug()
+            Timber.e(it)
             errorLiveData.postValue(it.localizedMessage)
         }
     }
@@ -49,7 +50,7 @@ class HandleFileViewModel(application: Application) : BaseViewModel(application)
                 Uri.fromFile(newFile)
             }
         }.onError {
-            it.printOnDebug()
+            Timber.e(it)
             errorLiveData.postValue(it.localizedMessage)
         }.onSuccess {
             success.invoke(it)

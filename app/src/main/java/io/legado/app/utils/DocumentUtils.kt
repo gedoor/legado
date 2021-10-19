@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
+import timber.log.Timber
 import java.nio.charset.Charset
 import java.util.*
 
@@ -131,7 +132,7 @@ object DocumentUtils {
                 }
             }
         } catch (e: Exception) {
-            e.printOnDebug()
+            Timber.e(e)
         } finally {
             cursor?.close()
         }

@@ -10,6 +10,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import splitties.init.appCtx
+import timber.log.Timber
 import java.io.IOException
 
 
@@ -85,7 +86,7 @@ class RssSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                     close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
                 }
             }.onFailure {
-                it.printOnDebug()
+                Timber.e(it)
             }
         }
     }
