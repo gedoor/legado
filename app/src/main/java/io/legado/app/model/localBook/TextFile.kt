@@ -267,7 +267,7 @@ class TextFile {
                 val bookFile = LocalBook.cacheFolder.getFile(book.originName)
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
-                    DocumentUtils.readBytes(appCtx, uri)?.let {
+                    DocumentUtils.readBytes(appCtx, uri).let {
                         bookFile.writeBytes(it)
                     }
                 }

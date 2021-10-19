@@ -223,7 +223,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             if (fontPath.isNotEmpty()) {
                 val fontName = FileUtils.getName(fontPath)
                 val fontBytes = fontPath.parseToUri().readBytes(requireContext())
-                fontBytes?.let {
+                fontBytes.let {
                     val fontExportFile = FileUtils.createFileIfNotExist(configDir, fontName)
                     fontExportFile.writeBytes(it)
                     exportFiles.add(fontExportFile)
@@ -309,7 +309,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     private fun importConfig(uri: Uri) {
         execute {
             @Suppress("BlockingMethodInNonBlockingContext")
-            importConfig(uri.readBytes(requireContext())!!)
+            importConfig(uri.readBytes(requireContext()))
         }.onError {
             Timber.e(it)
             longToast("导入失败:${it.localizedMessage}")

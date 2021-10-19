@@ -67,7 +67,7 @@ object LocalBook {
                 val bookFile = cacheFolder.getFile(it.name!!)
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
-                    doc.readBytes(appCtx)?.let { bytes ->
+                    doc.readBytes(appCtx).let { bytes ->
                         bookFile.writeBytes(bytes)
                     }
                 }

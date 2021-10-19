@@ -16,7 +16,7 @@ object ImportOldData {
                 when (doc.name) {
                     "myBookShelf.json" ->
                         kotlin.runCatching {
-                            DocumentUtils.readText(context, doc.uri)?.let { json ->
+                            DocumentUtils.readText(context, doc.uri).let { json ->
                                 val importCount = importOldBookshelf(json)
                                 context.toastOnUi("成功导入书籍${importCount}")
                             }
@@ -25,7 +25,7 @@ object ImportOldData {
                         }
                     "myBookSource.json" ->
                         kotlin.runCatching {
-                            DocumentUtils.readText(context, doc.uri)?.let { json ->
+                            DocumentUtils.readText(context, doc.uri).let { json ->
                                 val importCount = importOldSource(json)
                                 context.toastOnUi("成功导入书源${importCount}")
                             }
@@ -34,7 +34,7 @@ object ImportOldData {
                         }
                     "myBookReplaceRule.json" ->
                         kotlin.runCatching {
-                            DocumentUtils.readText(context, doc.uri)?.let { json ->
+                            DocumentUtils.readText(context, doc.uri).let { json ->
                                 val importCount = importOldReplaceRule(json)
                                 context.toastOnUi("成功导入替换规则${importCount}")
                             }

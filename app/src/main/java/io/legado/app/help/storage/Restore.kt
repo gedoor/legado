@@ -72,7 +72,7 @@ object Restore {
                 DocumentFile.fromTreeUri(context, Uri.parse(path))?.listFiles()?.forEach { doc ->
                     for (fileName in Backup.backupFileNames) {
                         if (doc.name == fileName) {
-                            DocumentUtils.readText(context, doc.uri)?.let {
+                            DocumentUtils.readText(context, doc.uri).let {
                                 FileUtils.createFileIfNotExist("${Backup.backupPath}${File.separator}$fileName")
                                     .writeText(it)
                             }
