@@ -44,10 +44,8 @@ val okHttpClient: OkHttpClient by lazy {
                 .build()
             chain.proceed(request)
         })
-    if (AppConfig.isCronet && CronetLoader.install()) {
-        cronetEngine?.let {
-            builder.addInterceptor(CronetInterceptor(null))
-        }
+    if (AppConfig.isCronet && CronetLoader.install() && cronetEngine != null) {
+        builder.addInterceptor(CronetInterceptor(null))
     }
     builder.build()
 }
