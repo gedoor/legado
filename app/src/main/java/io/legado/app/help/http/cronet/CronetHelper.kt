@@ -1,6 +1,7 @@
 package io.legado.app.help.http.cronet
 
 import com.google.android.gms.net.CronetProviderInstaller
+import io.legado.app.constant.AppLog
 import io.legado.app.help.AppConfig
 import okhttp3.Headers
 import okhttp3.MediaType
@@ -39,7 +40,8 @@ val cronetEngine: ExperimentalCronetEngine? by lazy {
         val engine = builder.build()
         Timber.d("Cronet Version:" + engine.versionString)
         return@lazy engine
-    } catch (e: Exception) {
+    } catch (e: UnsatisfiedLinkError) {
+        AppLog.put("初始化cronetEngine出错", e)
         Timber.e(e, "初始化cronetEngine出错")
         return@lazy null
     }
