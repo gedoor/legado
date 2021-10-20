@@ -23,13 +23,16 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
                 builder.header("Cookie", cookieStr)
             }
             val new = builder.build()
-            val response: Response = proceedWithCronet(new, chain.call())
-            //从Response 中保存Cookie到CookieJar
-            cookieJar?.saveFromResponse(new.url, Cookie.parseAll(new.url, response.headers))
-            response
+            proceedWithCronet(new, chain.call())?.let { response ->
+                //从Response 中保存Cookie到CookieJar
+                cookieJar?.saveFromResponse(new.url, Cookie.parseAll(new.url, response.headers))
+                response
+            } ?: chain.proceed(original)
         } catch (e: Exception) {
             //遇到Cronet处理有问题时的情况，如证书过期等等，回退到okhttp处理
-            if (e.message.toString().contains("ERR_CERT_", true)||e.message.toString().contains("ERR_SSL_",true)) {
+            if (e.message.toString().contains("ERR_CERT_", true)
+                || e.message.toString().contains("ERR_SSL_", true)
+            ) {
                 chain.proceed(original)
             } else {
                 throw e
@@ -41,12 +44,13 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
     }
 
     @Throws(IOException::class)
-    private fun proceedWithCronet(request: Request, call: Call): Response {
-
+    private fun proceedWithCronet(request: Request, call: Call): Response? {
         val callback = CronetRequestCallback(request, call)
-        val urlRequest = buildRequest(request, callback)
-        urlRequest.start()
-        return callback.waitForDone(urlRequest)
+        buildRequest(request, callback)?.let {
+            it.start()
+            return callback.waitForDone(it)
+        }
+        return null
     }
 
     private fun getCookie(url: HttpUrl): String {

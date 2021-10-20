@@ -18,7 +18,7 @@ import java.util.concurrent.Executors
 
 val executor: ExecutorService by lazy { Executors.newCachedThreadPool() }
 
-val cronetEngine: ExperimentalCronetEngine by lazy {
+val cronetEngine: ExperimentalCronetEngine? by lazy {
     if (AppConfig.isGooglePlay) {
         CronetProviderInstaller.installProvider(appCtx)
     } else {
@@ -35,18 +35,22 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
         enablePublicKeyPinningBypassForLocalTrustAnchors(true)
         enableBrotli(true)//Brotli压缩
     }
-    val engine = builder.build()
-    Timber.d("Cronet Version:" + engine.versionString)
-    //这会导致Jsoup的网络请求出现问题，暂时不接管系统URL
-    //URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
-    return@lazy engine
+    try {
+        val engine = builder.build()
+        Timber.d("Cronet Version:" + engine.versionString)
+        //这会导致Jsoup的网络请求出现问题，暂时不接管系统URL
+        //URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
+        return@lazy engine
+    } catch (e: Exception) {
+        return@lazy null
+    }
 }
 
-fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
+fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
     val url = request.url.toString()
     val headers: Headers = request.headers
     val requestBody = request.body
-    return cronetEngine.newUrlRequestBuilder(url, callback, executor).apply {
+    return cronetEngine?.newUrlRequestBuilder(url, callback, executor)?.apply {
         setHttpMethod(request.method)//设置
         allowDirectExecutor()
         headers.forEachIndexed { index, _ ->
@@ -68,7 +72,7 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
 
         }
 
-    }.build()
+    }?.build()
 
 }
 
