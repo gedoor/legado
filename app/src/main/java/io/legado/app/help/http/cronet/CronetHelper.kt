@@ -42,6 +42,7 @@ val cronetEngine: ExperimentalCronetEngine? by lazy {
         //URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
         return@lazy engine
     } catch (e: Exception) {
+        Timber.e(e, "初始化cronetEngine出错")
         return@lazy null
     }
 }
