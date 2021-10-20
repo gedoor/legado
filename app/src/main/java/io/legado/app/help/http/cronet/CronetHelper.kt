@@ -38,8 +38,6 @@ val cronetEngine: ExperimentalCronetEngine? by lazy {
     try {
         val engine = builder.build()
         Timber.d("Cronet Version:" + engine.versionString)
-        //这会导致Jsoup的网络请求出现问题，暂时不接管系统URL
-        //URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
         return@lazy engine
     } catch (e: Exception) {
         Timber.e(e, "初始化cronetEngine出错")
