@@ -49,12 +49,9 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
         Timber.d("soUrl:$soUrl")
     }
 
-
     /**
      * 判断Cronet是否安装完成
-     * @return
      */
-
     fun install(): Boolean {
         if (cacheInstall) {
             return true
