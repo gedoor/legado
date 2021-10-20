@@ -9,11 +9,11 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val original: Request = chain.request()
-        val builder: Request.Builder = original.newBuilder()
         //Cronet未初始化
-        return if (!CronetLoader.install()) {
+        return if (!CronetLoader.install() || cronetEngine == null) {
             chain.proceed(original)
         } else try {
+            val builder: Request.Builder = original.newBuilder()
             //移除Keep-Alive,手动设置会导致400 BadRequest
             builder.removeHeader("Keep-Alive")
             builder.removeHeader("Accept-Encoding")
