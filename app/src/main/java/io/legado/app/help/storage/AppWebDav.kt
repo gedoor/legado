@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookProgress
+import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.webdav.HttpAuth
@@ -143,6 +144,7 @@ object AppWebDav {
     }
 
     fun uploadBookProgress(book: Book) {
+        if (!AppConfig.syncBookProgress) return
         if (!NetworkUtils.isAvailable()) return
         Coroutine.async {
             val bookProgress = BookProgress(book)
@@ -159,8 +161,10 @@ object AppWebDav {
             val url = getProgressUrl(book)
             WebDav(url).download()?.let { byteArray ->
                 val json = String(byteArray)
-                GSON.fromJsonObject<BookProgress>(json)?.let {
-                    return it
+                if (json.isJson()) {
+                    GSON.fromJsonObject<BookProgress>(json)?.let {
+                        return it
+                    }
                 }
             }
         }

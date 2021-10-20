@@ -127,7 +127,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             addDownload(source, book)
         }.onError(upTocPool) {
             AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)
-            Timber.e(it)
+            Timber.e(it, "${book.name} 更新目录失败")
         }.onCancel(upTocPool) {
             upTocCancel(book.bookUrl)
         }.onFinally(upTocPool) {

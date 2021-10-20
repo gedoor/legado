@@ -2,15 +2,17 @@ package io.legado.app.constant
 
 object AppLog {
 
-    val logs = arrayListOf<Triple<Long, String, Throwable?>>()
+    private val mLogs = arrayListOf<Triple<Long, String, Throwable?>>()
+
+    val logs get() = mLogs.toList()
 
     @Synchronized
     fun put(message: String?, throwable: Throwable? = null) {
         message ?: return
-        if (logs.size > 100) {
-            logs.removeLastOrNull()
+        if (mLogs.size > 100) {
+            mLogs.removeLastOrNull()
         }
-        logs.add(0, Triple(System.currentTimeMillis(), message, throwable))
+        mLogs.add(0, Triple(System.currentTimeMillis(), message, throwable))
     }
 
 }

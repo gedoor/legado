@@ -95,11 +95,9 @@ object ReadBook : CoroutineScope by MainScope() {
         nextTextChapter = null
     }
 
-    fun uploadProgress(syncBookProgress: Boolean = AppConfig.syncBookProgress) {
-        if (syncBookProgress) {
-            book?.let {
-                AppWebDav.uploadBookProgress(it)
-            }
+    fun uploadProgress() {
+        book?.let {
+            AppWebDav.uploadBookProgress(it)
         }
     }
 

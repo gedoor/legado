@@ -35,6 +35,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
     private fun init() {
         Coroutine.async {
+            if (!AppConfig.syncBookProgress) return@async
             val books = appDb.bookDao.all
             books.forEach { book ->
                 AppWebDav.getBookProgress(book)?.let { bookProgress ->
