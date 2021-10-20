@@ -40,7 +40,6 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
 
         }
 
-
     }
 
     @Throws(IOException::class)
