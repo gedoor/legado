@@ -12,8 +12,11 @@ import timber.log.Timber
 import java.io.File
 import java.net.URLDecoder
 
-class FontAdapter(context: Context, val callBack: CallBack) :
+class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack) :
     RecyclerAdapter<DocItem, ItemFontBinding>(context) {
+
+    private val curName = URLDecoder.decode(curFilePath, "utf-8")
+        .substringAfterLast(File.separator)
 
     override fun getViewBinding(parent: ViewGroup): ItemFontBinding {
         return ItemFontBinding.inflate(inflater, parent, false)
@@ -47,9 +50,7 @@ class FontAdapter(context: Context, val callBack: CallBack) :
             }
             tvFont.text = item.name
             root.setOnClickListener { callBack.onClick(item) }
-            if (item.name == URLDecoder.decode(callBack.curFilePath, "utf-8")
-                    .substringAfterLast(File.separator)
-            ) {
+            if (item.name == curName) {
                 ivChecked.visible()
             } else {
                 ivChecked.invisible()
@@ -67,6 +68,5 @@ class FontAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         fun onClick(docItem: DocItem)
-        val curFilePath: String
     }
 }

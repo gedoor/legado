@@ -36,7 +36,10 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         FileUtils.createFolderIfNotExist(appCtx.filesDir, "Fonts")
     }
     private val binding by viewBinding(DialogFontSelectBinding::bind)
-    private val adapter by lazy { FontAdapter(requireContext(), this) }
+    private val adapter by lazy {
+        val curFontPath = callBack?.curFontPath ?: ""
+        FontAdapter(requireContext(), curFontPath, this)
+    }
     private val selectFontDir = registerForActivityResult(HandleFileContract()) { uri ->
         uri ?: return@registerForActivityResult
         if (uri.toString().isContentScheme()) {
@@ -228,8 +231,6 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     private fun onDefaultFontChange() {
         callBack?.selectFont("")
     }
-
-    override val curFilePath: String get() = callBack?.curFontPath ?: ""
 
     private val callBack: CallBack?
         get() = (parentFragment as? CallBack) ?: (activity as? CallBack)
