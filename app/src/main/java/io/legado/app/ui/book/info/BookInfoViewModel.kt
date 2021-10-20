@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -92,6 +93,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             }
                             loadChapter(it, scope, changeDruChapterIndex)
                         }.onError {
+                            AppLog.put("获取数据信息失败\n${it.localizedMessage}", it)
                             context.toastOnUi(R.string.error_get_book_info)
                         }
                 } ?: let {
@@ -129,6 +131,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             }
                         }.onError {
                             chapterListData.postValue(emptyList())
+                            AppLog.put("获取目录失败\n${it.localizedMessage}", it)
                             context.toastOnUi(R.string.error_get_chapter_list)
                         }
                 } ?: let {
