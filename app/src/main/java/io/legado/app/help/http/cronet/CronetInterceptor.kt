@@ -5,6 +5,7 @@ import okhttp3.*
 import java.io.IOException
 
 class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
+
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val original: Request = chain.request()

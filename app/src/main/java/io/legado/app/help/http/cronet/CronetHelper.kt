@@ -35,12 +35,7 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
         enablePublicKeyPinningBypassForLocalTrustAnchors(true)
         enableBrotli(true)//Brotli压缩
     }
-    val engine = try {
-        builder.build()
-    } catch (e: Exception) {
-        builder.setLibraryLoader(CronetLoader)//设置自定义so库加载
-        builder.build()
-    }
+    val engine = builder.build()
     Timber.d("Cronet Version:" + engine.versionString)
     //这会导致Jsoup的网络请求出现问题，暂时不接管系统URL
     //URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
