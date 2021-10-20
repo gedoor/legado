@@ -40,9 +40,7 @@ val cronetEngine: ExperimentalCronetEngine by lazy {
     //这会导致Jsoup的网络请求出现问题，暂时不接管系统URL
     //URL.setURLStreamHandlerFactory(CronetURLStreamHandlerFactory(engine))
     return@lazy engine
-
 }
-
 
 fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
     val url = request.url.toString()
@@ -71,7 +69,6 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest {
         }
 
     }.build()
-
 
 }
 
