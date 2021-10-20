@@ -131,7 +131,7 @@ object NetworkUtils {
             relativeUrl = parseUrl.toString()
             return relativeUrl
         } catch (e: Exception) {
-            Timber.e(e)
+            Timber.e("网址拼接出错\n${e.localizedMessage}", e)
         }
         return relativeUrl
     }
