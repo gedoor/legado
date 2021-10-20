@@ -3,11 +3,11 @@ package io.legado.app.help.http
 import io.legado.app.help.AppConfig
 import io.legado.app.help.http.cronet.CronetInterceptor
 import io.legado.app.help.http.cronet.CronetLoader
+import io.legado.app.help.http.cronet.cronetEngine
 import okhttp3.ConnectionSpec
 import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import timber.log.Timber
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
@@ -45,11 +45,8 @@ val okHttpClient: OkHttpClient by lazy {
             chain.proceed(request)
         })
     if (AppConfig.isCronet && CronetLoader.install()) {
-        try {
-            //提供CookieJar 用于同步Cookie
+        cronetEngine?.let {
             builder.addInterceptor(CronetInterceptor(null))
-        } catch (e: Exception) {
-            Timber.e(e, "初始化Cronet失败")
         }
     }
     builder.build()
