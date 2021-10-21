@@ -33,16 +33,14 @@ class HandleFileActivity :
 
     private val selectDocTree =
         registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-            uri ?: let {
-                finish()
-                return@registerForActivityResult
-            }
-            if (uri.isContentScheme()) {
-                val modeFlags =
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                contentResolver.takePersistableUriPermission(uri, modeFlags)
-            }
-            onResult(Intent().setData(uri))
+            uri?.let {
+                if (uri.isContentScheme()) {
+                    val modeFlags =
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(uri, modeFlags)
+                }
+                onResult(Intent().setData(uri))
+            } ?: finish()
         }
 
     private val selectDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
