@@ -46,8 +46,9 @@ class HandleFileActivity :
         }
 
     private val selectDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
-        it ?: return@registerForActivityResult
-        onResult(Intent().setData(it))
+        it?.let {
+            onResult(Intent().setData(it))
+        } ?: finish()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
