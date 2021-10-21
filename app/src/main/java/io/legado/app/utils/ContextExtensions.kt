@@ -166,6 +166,9 @@ val Context.sysScreenOffTime: Int
 
 val Context.statusBarHeight: Int
     get() {
+        if (Build.BOARD == "windows") {
+            return 0
+        }
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
     }
