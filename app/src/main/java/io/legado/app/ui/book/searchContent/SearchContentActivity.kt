@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
-import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
@@ -13,7 +12,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ActivitySearchContentBinding
-import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -40,9 +38,7 @@ class SearchContentActivity :
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
-    private var searchResultCounts = 0
     private var durChapterIndex = 0
-    private var searchResultList: MutableList<SearchResult> = mutableListOf()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val bbg = bottomBackground
@@ -103,7 +99,7 @@ class SearchContentActivity :
 
     @SuppressLint("SetTextI18n")
     private fun initBook() {
-        binding.tvCurrentSearchInfo.text = "搜索结果：$searchResultCounts"
+        binding.tvCurrentSearchInfo.text = "搜索结果：${viewModel.searchResultCounts}"
         viewModel.book?.let {
             initCacheFileNames(it)
             durChapterIndex = it.durChapterIndex
@@ -115,7 +111,7 @@ class SearchContentActivity :
 
     private fun initCacheFileNames(book: Book) {
         launch(Dispatchers.IO) {
-            adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
+            viewModel.cacheChapterNames.addAll(BookHelp.getChapterFiles(book))
             withContext(Dispatchers.Main) {
                 adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
             }
@@ -126,7 +122,7 @@ class SearchContentActivity :
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) { chapter ->
             viewModel.book?.bookUrl?.let { bookUrl ->
                 if (chapter.bookUrl == bookUrl) {
-                    adapter.cacheFileNames.add(chapter.getFileName())
+                    viewModel.cacheChapterNames.add(chapter.getFileName())
                     adapter.notifyItemChanged(chapter.index, true)
                 }
             }
@@ -134,113 +130,32 @@ class SearchContentActivity :
     }
 
     @SuppressLint("SetTextI18n")
-    fun startContentSearch(newText: String) {
+    fun startContentSearch(query: String) {
         // 按章节搜索内容
-        if (newText.isNotBlank()) {
+        if (query.isNotBlank()) {
             adapter.clearItems()
-            searchResultList.clear()
-            binding.refreshProgressBar.isAutoLoading = true
-            searchResultCounts = 0
-            viewModel.lastQuery = newText
+            viewModel.searchResultList.clear()
+            viewModel.searchResultCounts = 0
+            viewModel.lastQuery = query
             var searchResults = listOf<SearchResult>()
             launch(Dispatchers.Main) {
-                appDb.bookChapterDao.getChapterList(viewModel.bookUrl).map { chapter ->
+                appDb.bookChapterDao.getChapterList(viewModel.bookUrl).map { bookChapter ->
+                    binding.refreshProgressBar.isAutoLoading = true
                     withContext(Dispatchers.IO) {
-                        if (isLocalBook
-                            || adapter.cacheFileNames.contains(chapter.getFileName())
-                        ) {
-                            searchResults = searchChapter(newText, chapter)
+                        if (isLocalBook || viewModel.cacheChapterNames.contains(bookChapter.getFileName())) {
+                            searchResults = viewModel.searchChapter(query, bookChapter)
                         }
                     }
                     if (searchResults.isNotEmpty()) {
-                        searchResultList.addAll(searchResults)
+                        viewModel.searchResultList.addAll(searchResults)
                         binding.refreshProgressBar.isAutoLoading = false
-                        binding.tvCurrentSearchInfo.text = "搜索结果：$searchResultCounts"
+                        binding.tvCurrentSearchInfo.text = "搜索结果：${viewModel.searchResultCounts}"
                         adapter.addItems(searchResults)
                         searchResults = listOf()
                     }
                 }
             }
         }
-    }
-
-    private suspend fun searchChapter(query: String, chapter: BookChapter?): List<SearchResult> {
-        val searchResults: MutableList<SearchResult> = mutableListOf()
-        var positions: List<Int>
-        var replaceContents: List<String>?
-        var totalContents: String
-        if (chapter != null) {
-            viewModel.book?.let { book ->
-                val bookContent = BookHelp.getContent(book, chapter)
-                if (bookContent != null) {
-                    //搜索替换后的正文
-                    withContext(Dispatchers.IO) {
-                        chapter.title = when (AppConfig.chineseConverterType) {
-                            1 -> ChineseUtils.t2s(chapter.title)
-                            2 -> ChineseUtils.s2t(chapter.title)
-                            else -> chapter.title
-                        }
-                        replaceContents =
-                            viewModel.contentProcessor!!.getContent(
-                                book,
-                                chapter,
-                                bookContent,
-                                chineseConvert = false,
-                                reSegment = false
-                            )
-                    }
-                    totalContents = replaceContents?.joinToString("") ?: bookContent
-                    positions = searchPosition(totalContents, query)
-                    var count = 1
-                    positions.map {
-                        val construct = constructText(totalContents, it, query)
-                        val result = SearchResult(
-                            index = searchResultCounts,
-                            indexWithinChapter = count,
-                            text = construct[1] as String,
-                            chapterTitle = chapter.title,
-                            query = query,
-                            chapterIndex = chapter.index,
-                            newPosition = construct[0] as Int,
-                            contentPosition = it
-                        )
-                        count += 1
-                        searchResultCounts += 1
-                        searchResults.add(result)
-                    }
-                }
-            }
-        }
-        return searchResults
-    }
-
-    private fun searchPosition(content: String, pattern: String): List<Int> {
-        val position: MutableList<Int> = mutableListOf()
-        var index = content.indexOf(pattern)
-        while (index >= 0) {
-            position.add(index)
-            index = content.indexOf(pattern, index + 1)
-        }
-        return position
-    }
-
-    private fun constructText(content: String, position: Int, query: String): Array<Any> {
-        // 构建关键词周边文字，在搜索结果里显示
-        // todo: 判断段落，只在关键词所在段落内分割
-        // todo: 利用标点符号分割完整的句
-        // todo: length和设置结合，自由调整周边文字长度
-        val length = 20
-        var po1 = position - length
-        var po2 = position + query.length + length
-        if (po1 < 0) {
-            po1 = 0
-        }
-        if (po2 > content.length) {
-            po2 = content.length
-        }
-        val newPosition = position - po1
-        val newText = content.substring(po1, po2)
-        return arrayOf(newPosition, newText)
     }
 
     val isLocalBook: Boolean
@@ -251,7 +166,7 @@ class SearchContentActivity :
         searchData.putExtra("index", searchResult.chapterIndex)
         searchData.putExtra("contentPosition", searchResult.contentPosition)
         searchData.putExtra("query", searchResult.query)
-        searchData.putExtra("indexWithinChapter", searchResult.indexWithinChapter)
+        searchData.putExtra("indexWithinChapter", searchResult.resultCountWithinChapter)
         setResult(RESULT_OK, searchData)
         finish()
     }
