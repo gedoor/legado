@@ -28,7 +28,8 @@ object BitmapUtils {
      * @param height 想要显示的图片的高度
      * @return
      */
-    fun decodeBitmap(path: String, width: Int, height: Int): Bitmap? {
+    @Throws(IOException::class)
+    fun decodeBitmap(path: String, width: Int, height: Int): Bitmap {
         val op = BitmapFactory.Options()
         val ips = FileInputStream(path)
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
@@ -53,7 +54,8 @@ object BitmapUtils {
      * @param path 图片路径
      * @return
      */
-    fun decodeBitmap(path: String): Bitmap? {
+    @Throws(IOException::class)
+    fun decodeBitmap(path: String): Bitmap {
         val opts = BitmapFactory.Options()
         val ips = FileInputStream(path)
         opts.inJustDecodeBounds = true

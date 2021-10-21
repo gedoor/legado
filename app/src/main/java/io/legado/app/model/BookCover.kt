@@ -48,9 +48,9 @@ object BookCover {
             defaultDrawable = appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
             return
         }
-        defaultDrawable = BitmapUtils.decodeBitmap(path, 100, 150)?.let {
-            BitmapDrawable(appCtx.resources, it)
-        } ?: appCtx.resources.getDrawable(R.drawable.image_cover_default, null)
+        defaultDrawable = kotlin.runCatching {
+            BitmapDrawable(appCtx.resources, BitmapUtils.decodeBitmap(path, 100, 150))
+        }.getOrDefault(appCtx.resources.getDrawable(R.drawable.image_cover_default, null))
     }
 
     fun getBlurDefaultCover(context: Context): RequestBuilder<Drawable> {
