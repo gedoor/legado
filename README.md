@@ -1,3 +1,7 @@
+<a href="#contents">
+    <img src="https://img.shields.io/badge/--orange.svg" alt="#" align="right">
+</a>
+
 [![Downloads](https://img.shields.io/github/downloads/gedoor/legado/total.svg)](https://github.com/gedoor/legado/releases/latest) [![Telegram](https://img.shields.io/badge/Telegram-channel-blue)](https://t.me/legado_channels)
 
 <div align="center">
@@ -8,9 +12,15 @@ Legado / 开源阅读
 <a href="https://gedoor.github.io">gedoor.github.io</a> / <a href="https://www.legado.top/">legado.top</a>
 </div>
 
-[![](https://img.shields.io/badge/-Contents:-696969.svg)](#Contents) [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#Function-) [![](https://img.shields.io/badge/-Download-F5F5F5.svg)](#Download-) [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#Community-) [![](https://img.shields.io/badge/-API-F5F5F5.svg)](#API-) [![](https://img.shields.io/badge/-Other-F5F5F5.svg)](#Other-) [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#Grateful-) [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#Interface-) 
+[![](https://img.shields.io/badge/-Contents:-696969.svg)](#contents) [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#function-) [![](https://img.shields.io/badge/-Download-F5F5F5.svg)](#download-) [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#community-) [![](https://img.shields.io/badge/-API-F5F5F5.svg)](#API-) [![](https://img.shields.io/badge/-Other-F5F5F5.svg)](#other-) [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#Grateful-) [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#interface-)
 
-# Function / 主要功能 [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#Function-)
+>新用户？
+>
+>软件不提供内容，需要您自己手动添加，例如导入书源等。
+>看看 [官方帮助文档](https://www.yuque.com/legado/wiki)，也许里面就有你要的答案。
+
+
+# Function / 主要功能 [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#function-)
 1.  自定义书源，自己设置规则，抓取网页数据，规则简单易懂，软件内有规则说明。
 2.  列表书架，网格书架自由切换。
 3.  书源规则支持搜索及发现，所有找书看书功能全部自定义，找书更方便。
@@ -21,7 +31,11 @@ Legado / 开源阅读
 8.  支持多种翻页模式，覆盖、仿真、滑动、滚动等。
 9.  软件开源，持续优化，无广告。
 
-# Download / 下载 [![](https://img.shields.io/badge/-Download-F5F5F5.svg)](#Download-)
+<a href="#contents">
+    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+</a>
+
+# Download / 下载 [![](https://img.shields.io/badge/-Download-F5F5F5.svg)](#download-)
 #### Android / 安卓
 * [Releases](https://github.com/gedoor/legado/releases/latest)
 * [Google play - $1.99](https://play.google.com/store/apps/details?id=io.legado.play.release)
@@ -32,7 +46,11 @@ Legado / 开源阅读
 #### IOS / 苹果
 * 准备中
 
-# Community / 交流社区 [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#Community-)
+<a href="#contents">
+    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+</a>
+
+# Community / 交流社区 [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#community-)
 
 #### Telegram
 [![Telegram-group](https://img.shields.io/badge/Telegram-%E7%BE%A4%E7%BB%84-blue)](https://t.me/yueduguanfang) [![Telegram-channel](https://img.shields.io/badge/Telegram-%E9%A2%91%E9%81%93-blue)](https://t.me/legado_channels)
@@ -41,13 +59,21 @@ Legado / 开源阅读
 #### Other
 https://www.yuque.com/legado/wiki/community
 
+<a href="#contents">
+    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+</a>
+
 # API [![](https://img.shields.io/badge/-API-F5F5F5.svg)](#API-)
 * 阅读3.0 提供了2种方式的API：`Web方式`和`Content Provider方式`。您可以在[这里](api.md)根据需要自行调用。 
 * 可通过url唤起阅读进行一键导入,url格式: legado://import/{path}?src={url}
 * path类型: bookSource,rssSource,replaceRule,textTocRule,httpTTS,theme,readConfig
 * path类型解释: 书源,订阅源,替换规则,本地txt小说目录规则,在线朗读引擎,主题,阅读排版
 
-# Other / 其他
+<a href="#contents">
+    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+</a>
+
+# Other / 其他 [![](https://img.shields.io/badge/-Other-F5F5F5.svg)](#other-)
 ##### 免责声明
 https://gedoor.github.io/about.html
 ##### 阅读3.0
@@ -56,7 +82,11 @@ https://gedoor.github.io/about.html
 * [帮助文档](/app/src/main/assets/help/appHelp.md)
 * [web端](https://github.com/celetor/web-yuedu3)
 
-# Grateful / 感谢 [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#Grateful-)
+<a href="#contents">
+    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+</a>
+
+# Grateful / 感谢 [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#grateful-)
 > * org.jsoup:jsoup
 > * cn.wanghaomiao:JsoupXpath
 > * com.jayway.jsonpath:json-path
@@ -73,7 +103,14 @@ https://gedoor.github.io/about.html
 > * com.hankcs:hanlp
 > * com.positiondev.epublib:epublib-core
 
-# Interface / 界面 [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#Interface-) 
+<a href="#contents">
+    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+</a>
+
+# Interface / 界面 [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#interface-)
 <img src="https://github.com/gedoor/gedoor.github.io/blob/master/images/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B1.jpg" width="270"><img src="https://github.com/gedoor/gedoor.github.io/blob/master/images/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B2.jpg" width="270"><img src="https://github.com/gedoor/gedoor.github.io/blob/master/images/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B3.jpg" width="270">
 <img src="https://github.com/gedoor/gedoor.github.io/blob/master/images/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B4.jpg" width="270"><img src="https://github.com/gedoor/gedoor.github.io/blob/master/images/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B5.jpg" width="270"><img src="https://github.com/gedoor/gedoor.github.io/blob/master/images/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B6.jpg" width="270">
 
+<a href="#contents">
+    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+</a>
