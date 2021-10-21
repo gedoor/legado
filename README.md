@@ -44,7 +44,7 @@ Legado / 开源阅读
 * [\#Beta](https://kunfei.lanzoui.com/b0f810h4b)
 
 #### IOS / 苹果
-* 准备中
+* 正在新建文件夹
 
 <a href="#contents">
     <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
