@@ -207,7 +207,11 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
         ) {
             binding.run {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
-                cbSourceName.text = "${item.name}(${item.group})"
+                cbSourceName.text = if (item.group.isNullOrBlank()) {
+                    item.name
+                } else {
+                    "${item.name}(${item.group})"
+                }
                 val localRule = viewModel.checkRules[holder.layoutPosition]
                 tvSourceState.text = when {
                     localRule == null -> "新增"
