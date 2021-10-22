@@ -15,7 +15,7 @@ object AppContextWrapper {
 
     fun wrap(context: Context): Context {
         var fontScale = context.getPrefInt(PreferKey.fontScale) / 10f
-        if (fontScale !in 1f..2f) {
+        if (fontScale !in 0.8f..1.6f) {
             fontScale = Configuration().fontScale
         }
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

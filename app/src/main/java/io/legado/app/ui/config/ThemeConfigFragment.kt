@@ -155,8 +155,8 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
             PreferKey.fontScale -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.font_scale))
-                .setMaxValue(20)
-                .setMinValue(10)
+                .setMaxValue(16)
+                .setMinValue(8)
                 .setCustomButton((R.string.btn_default_s)) {
                     putPrefInt(PreferKey.fontScale, 0)
                     recreateActivities()
@@ -277,7 +277,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 getString(R.string.bar_elevation_s, value)
             PreferKey.fontScale -> {
                 var fontScale = getPrefInt(PreferKey.fontScale) / 10f
-                if (fontScale !in 1f..2f) {
+                if (fontScale !in 0.8f..1.6f) {
                     fontScale = resources.configuration.fontScale
                 }
                 preference.summary = getString(R.string.font_scale_summary, fontScale)
