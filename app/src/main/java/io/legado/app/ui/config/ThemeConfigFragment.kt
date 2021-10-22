@@ -56,6 +56,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.bgImage, getPrefString(PreferKey.bgImage))
         upPreferenceSummary(PreferKey.bgImageN, getPrefString(PreferKey.bgImageN))
         upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
+        upPreferenceSummary(PreferKey.fontScale)
         findPreference<ColorPreference>(PreferKey.cBackground)?.let {
             it.onSaveColor = { color ->
                 if (!ColorUtils.isColorLight(color)) {
@@ -150,6 +151,18 @@ class ThemeConfigFragment : BasePreferenceFragment(),
                 }
                 .show {
                     AppConfig.elevation = it
+                    recreateActivities()
+                }
+            PreferKey.fontScale -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.font_scale))
+                .setMaxValue(20)
+                .setMinValue(10)
+                .setCustomButton((R.string.btn_default_s)) {
+                    putPrefInt(PreferKey.fontScale, 0)
+                    recreateActivities()
+                }
+                .show {
+                    putPrefInt(PreferKey.fontScale, it)
                     recreateActivities()
                 }
             PreferKey.bgImage -> selectBgAction(false)
@@ -257,11 +270,18 @@ class ThemeConfigFragment : BasePreferenceFragment(),
         postEvent(EventBus.RECREATE, "")
     }
 
-    private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+    private fun upPreferenceSummary(preferenceKey: String, value: String? = null) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
             PreferKey.barElevation -> preference.summary =
                 getString(R.string.bar_elevation_s, value)
+            PreferKey.fontScale -> {
+                var fontScale = getPrefInt(PreferKey.fontScale) / 10f
+                if (fontScale !in 1f..2f) {
+                    fontScale = resources.configuration.fontScale
+                }
+                preference.summary = getString(R.string.font_scale_summary, fontScale)
+            }
             PreferKey.bgImage,
             PreferKey.bgImageN -> preference.summary = if (value.isNullOrBlank()) {
                 getString(R.string.select_image)

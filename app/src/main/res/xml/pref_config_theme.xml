@@ -34,6 +34,13 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
+        android:defaultValue="true"
+        android:key="fontScale"
+        android:summary="@string/font_scale_summary"
+        android:title="@string/font_scale"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.Preference
         android:defaultValue="false"
         android:key="coverConfig"
         android:title="@string/cover_config"
