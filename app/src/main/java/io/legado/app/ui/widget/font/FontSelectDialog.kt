@@ -31,7 +31,7 @@ import kotlin.collections.ArrayList
 class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     Toolbar.OnMenuItemClickListener,
     FontAdapter.CallBack {
-    private val fontRegex = Regex(".*\\.[ot]tf")
+    private val fontRegex = Regex("(?i).*\\.[ot]tf")
     private val fontFolder by lazy {
         FileUtils.createFolderIfNotExist(appCtx.filesDir, "Fonts")
     }
@@ -148,13 +148,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     private fun loadFontFiles(doc: DocumentFile) {
         execute {
-            val fontItems = arrayListOf<DocItem>()
-            val docItems = DocumentUtils.listFiles(appCtx, doc.uri)
-            docItems.forEach { item ->
-                if (item.name.lowercase(Locale.getDefault()).matches(fontRegex)) {
-                    fontItems.add(item)
-                }
-            }
+            val fontItems = DocumentUtils.listFiles(doc.uri, fontRegex)
             mergeFontItems(fontItems, getLocalFonts())
         }.onSuccess {
             adapter.setItems(it)
@@ -175,21 +169,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     private fun loadFontFiles(path: String) {
         execute {
-            val fontItems = arrayListOf<DocItem>()
-            val file = File(path)
-            file.listFiles { pathName ->
-                pathName.name.lowercase(Locale.getDefault()).matches(fontRegex)
-            }?.forEach {
-                fontItems.add(
-                    DocItem(
-                        it.name,
-                        it.extension,
-                        it.length(),
-                        Date(it.lastModified()),
-                        Uri.parse(it.absolutePath)
-                    )
-                )
-            }
+            val fontItems = DocumentUtils.listFiles(path, fontRegex)
             mergeFontItems(fontItems, getLocalFonts())
         }.onSuccess {
             adapter.setItems(it)

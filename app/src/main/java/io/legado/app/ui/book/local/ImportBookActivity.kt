@@ -190,7 +190,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         adapter.selectedUris.clear()
         adapter.clearItems()
         launch(IO) {
-            val docList = DocumentUtils.listFiles(this@ImportBookActivity, lastDoc.uri)
+            val docList = DocumentUtils.listFiles(lastDoc.uri)
             for (i in docList.lastIndex downTo 0) {
                 val item = docList[i]
                 if (item.name.startsWith(".")) {

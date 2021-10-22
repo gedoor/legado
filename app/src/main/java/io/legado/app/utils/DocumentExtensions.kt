@@ -6,7 +6,9 @@ import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.model.NoStackTraceException
+import splitties.init.appCtx
 import timber.log.Timber
+import java.io.File
 import java.nio.charset.Charset
 import java.util.*
 
@@ -93,13 +95,13 @@ object DocumentUtils {
         } ?: throw NoStackTraceException("打开文件失败\n${uri}")
     }
 
-    fun listFiles(context: Context, uri: Uri): ArrayList<DocItem> {
+    fun listFiles(uri: Uri, regex: Regex? = null): ArrayList<DocItem> {
         val docList = arrayListOf<DocItem>()
         var cursor: Cursor? = null
         try {
             val childrenUri = DocumentsContract
                 .buildChildDocumentsUriUsingTree(uri, DocumentsContract.getDocumentId(uri))
-            cursor = context.contentResolver.query(
+            cursor = appCtx.contentResolver.query(
                 childrenUri, arrayOf(
                     DocumentsContract.Document.COLUMN_DOCUMENT_ID,
                     DocumentsContract.Document.COLUMN_DISPLAY_NAME,
@@ -116,15 +118,18 @@ object DocumentUtils {
                 val dci = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
                 if (cursor.moveToFirst()) {
                     do {
-                        val item = DocItem(
-                            name = cursor.getString(nci),
-                            attr = cursor.getString(mci),
-                            size = cursor.getLong(sci),
-                            date = Date(cursor.getLong(dci)),
-                            uri = DocumentsContract
-                                .buildDocumentUriUsingTree(uri, cursor.getString(ici))
-                        )
-                        docList.add(item)
+                        val name = cursor.getString(nci)
+                        if (regex == null || regex.matches(name)) {
+                            val item = DocItem(
+                                name = name,
+                                attr = cursor.getString(mci),
+                                size = cursor.getLong(sci),
+                                date = Date(cursor.getLong(dci)),
+                                uri = DocumentsContract
+                                    .buildDocumentUriUsingTree(uri, cursor.getString(ici))
+                            )
+                            docList.add(item)
+                        }
                     } while (cursor.moveToNext())
                 }
             }
@@ -134,6 +139,29 @@ object DocumentUtils {
             cursor?.close()
         }
         return docList
+    }
+
+    fun listFiles(path: String, regex: Regex? = null): ArrayList<DocItem> {
+        val docItems = arrayListOf<DocItem>()
+        kotlin.runCatching {
+            val file = File(path)
+            file.listFiles { pathName ->
+                regex?.let {
+                    pathName.name.matches(it)
+                } ?: true
+            }?.forEach {
+                docItems.add(
+                    DocItem(
+                        it.name,
+                        it.extension,
+                        it.length(),
+                        Date(it.lastModified()),
+                        Uri.parse(it.absolutePath)
+                    )
+                )
+            }
+        }
+        return docItems
     }
 
 }

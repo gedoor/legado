@@ -47,7 +47,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         find: (docItem: DocItem) -> Unit,
         finally: (() -> Unit)? = null
     ) {
-        val docList = DocumentUtils.listFiles(context, documentFile.uri)
+        val docList = DocumentUtils.listFiles(documentFile.uri)
         docList.forEach { docItem ->
             if (docItem.isDir) {
                 DocumentFile.fromSingleUri(context, docItem.uri)?.let {
