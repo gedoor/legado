@@ -71,9 +71,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 setResult(RESULT_OK)
             }
         }
-    private val importDoc = registerForActivityResult(HandleFileContract()) { uri ->
+    private val importDoc = registerForActivityResult(HandleFileContract()) {
         kotlin.runCatching {
-            uri?.readText(this)?.let {
+            it.uri?.readText(this)?.let {
                 showDialogFragment(
                     ImportReplaceRuleDialog(it)
                 )
@@ -82,21 +82,22 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             toastOnUi("readTextError:${it.localizedMessage}")
         }
     }
-    private val exportResult = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        alert(R.string.export_success) {
-            if (uri.toString().isAbsUrl()) {
-                DirectLinkUpload.getSummary()?.let { summary ->
-                    setMessage(summary)
+    private val exportResult = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            alert(R.string.export_success) {
+                if (uri.toString().isAbsUrl()) {
+                    DirectLinkUpload.getSummary()?.let { summary ->
+                        setMessage(summary)
+                    }
                 }
-            }
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = getString(R.string.path)
-                editView.setText(uri.toString())
-            }
-            customView { alertBinding.root }
-            okButton {
-                sendToClip(uri.toString())
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = getString(R.string.path)
+                    editView.setText(uri.toString())
+                }
+                customView { alertBinding.root }
+                okButton {
+                    sendToClip(uri.toString())
+                }
             }
         }
     }

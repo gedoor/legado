@@ -11,13 +11,9 @@ import io.legado.app.utils.putJson
 
 @Suppress("unused")
 class HandleFileContract :
-    ActivityResultContract<HandleFileContract.HandleFileParam.() -> Unit, Uri?>() {
+    ActivityResultContract<HandleFileContract.HandleFileParam.() -> Unit, HandleFileContract.Result>() {
 
-    companion object {
-        const val DIR = 0
-        const val FILE = 1
-        const val EXPORT = 3
-    }
+    private var requestCode: Int = 0
 
     override fun createIntent(context: Context, input: (HandleFileParam.() -> Unit)?): Intent {
         val intent = Intent(context, HandleFileActivity::class.java)
@@ -26,6 +22,7 @@ class HandleFileContract :
             handleFileParam.apply(input)
         }
         handleFileParam.let {
+            requestCode = it.requestCode
             intent.putExtra("mode", it.mode)
             intent.putExtra("title", it.title)
             intent.putExtra("allowExtensions", it.allowExtensions)
@@ -39,11 +36,17 @@ class HandleFileContract :
         return intent
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+    override fun parseResult(resultCode: Int, intent: Intent?): Result {
         if (resultCode == RESULT_OK) {
-            return intent?.data
+            return Result(intent?.data, requestCode)
         }
-        return null
+        return Result(null, requestCode)
+    }
+
+    companion object {
+        const val DIR = 0
+        const val FILE = 1
+        const val EXPORT = 3
     }
 
     @Suppress("ArrayInDataClass")
@@ -53,6 +56,12 @@ class HandleFileContract :
         var allowExtensions: Array<String> = arrayOf(),
         var otherActions: ArrayList<SelectItem<Int>>? = null,
         var fileData: Triple<String, ByteArray, String>? = null,
+        var requestCode: Int = 0
+    )
+
+    data class Result(
+        val uri: Uri?,
+        val requestCode: Int
     )
 
 }

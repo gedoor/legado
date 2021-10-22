@@ -49,15 +49,16 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private val adapter by lazy { ImportBookAdapter(this, this) }
     private var sdPath = FileUtils.getSdCardPath()
     private var path = sdPath
-    private val selectFolder = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        if (uri.isContentScheme()) {
-            AppConfig.importBookPath = uri.toString()
-            initRootDoc()
-        } else {
-            uri.path?.let { path ->
-                AppConfig.importBookPath = path
+    private val selectFolder = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            if (uri.isContentScheme()) {
+                AppConfig.importBookPath = uri.toString()
                 initRootDoc()
+            } else {
+                uri.path?.let { path ->
+                    AppConfig.importBookPath = path
+                    initRootDoc()
+                }
             }
         }
     }

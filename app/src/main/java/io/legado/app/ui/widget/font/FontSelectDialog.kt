@@ -40,26 +40,27 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         val curFontPath = callBack?.curFontPath ?: ""
         FontAdapter(requireContext(), curFontPath, this)
     }
-    private val selectFontDir = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        if (uri.toString().isContentScheme()) {
-            putPrefString(PreferKey.fontFolder, uri.toString())
-            val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-            if (doc != null) {
-                context?.contentResolver?.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-                loadFontFiles(doc)
-            } else {
-                RealPathUtil.getPath(requireContext(), uri)?.let {
-                    loadFontFilesByPermission(it)
+    private val selectFontDir = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            if (uri.toString().isContentScheme()) {
+                putPrefString(PreferKey.fontFolder, uri.toString())
+                val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+                if (doc != null) {
+                    context?.contentResolver?.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                    loadFontFiles(doc)
+                } else {
+                    RealPathUtil.getPath(requireContext(), uri)?.let {
+                        loadFontFilesByPermission(it)
+                    }
                 }
-            }
-        } else {
-            uri.path?.let { path ->
-                putPrefString(PreferKey.fontFolder, path)
-                loadFontFilesByPermission(path)
+            } else {
+                uri.path?.let { path ->
+                    putPrefString(PreferKey.fontFolder, path)
+                    loadFontFilesByPermission(path)
+                }
             }
         }
     }

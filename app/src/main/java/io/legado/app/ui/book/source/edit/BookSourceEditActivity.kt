@@ -54,12 +54,13 @@ class BookSourceEditActivity :
             upRecyclerView(source)
         }
     }
-    private val selectDoc = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        if (uri.isContentScheme()) {
-            sendText(uri.toString())
-        } else {
-            sendText(uri.path.toString())
+    private val selectDoc = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            if (uri.isContentScheme()) {
+                sendText(uri.toString())
+            } else {
+                sendText(uri.path.toString())
+            }
         }
     }
 

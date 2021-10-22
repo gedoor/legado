@@ -31,12 +31,16 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     override val viewModel by viewModels<BookshelfViewModel>()
 
     private val importBookshelf = registerForActivityResult(HandleFileContract()) {
-        it?.readText(requireContext())?.let { text ->
-            viewModel.importBookshelf(text, groupId)
+        kotlin.runCatching {
+            it.uri?.readText(requireContext())?.let { text ->
+                viewModel.importBookshelf(text, groupId)
+            }
+        }.onFailure {
+            toastOnUi(it.localizedMessage ?: "ERROR")
         }
     }
     private val exportResult = registerForActivityResult(HandleFileContract()) {
-        it?.let { uri ->
+        it.uri?.let { uri ->
             alert(R.string.export_success) {
                 if (uri.toString().isAbsUrl()) {
                     DirectLinkUpload.getSummary()?.let { summary ->

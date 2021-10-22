@@ -39,25 +39,26 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     private val adapter by lazy { Adapter(requireContext()) }
     private var ttsEngine: String? = AppConfig.ttsEngine
     private val importDocResult = registerForActivityResult(HandleFileContract()) {
-        it?.let {
-            viewModel.importLocal(it)
+        it.uri?.let { uri ->
+            viewModel.importLocal(uri)
         }
     }
-    private val exportDirResult = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        alert(R.string.export_success) {
-            if (uri.toString().isAbsUrl()) {
-                DirectLinkUpload.getSummary()?.let { summary ->
-                    setMessage(summary)
+    private val exportDirResult = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            alert(R.string.export_success) {
+                if (uri.toString().isAbsUrl()) {
+                    DirectLinkUpload.getSummary()?.let { summary ->
+                        setMessage(summary)
+                    }
                 }
-            }
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = getString(R.string.path)
-                editView.setText(uri.toString())
-            }
-            customView { alertBinding.root }
-            okButton {
-                requireContext().sendToClip(uri.toString())
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = getString(R.string.path)
+                    editView.setText(uri.toString())
+                }
+                customView { alertBinding.root }
+                okButton {
+                    requireContext().sendToClip(uri.toString())
+                }
             }
         }
     }

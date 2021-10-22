@@ -5,7 +5,10 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
@@ -50,15 +53,17 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
     }
     private val selectExportDir = registerForActivityResult(HandleFileContract()) {
-        it ?: return@registerForActivityResult
-        exportConfig(it)
+        it.uri?.let { uri ->
+            exportConfig(uri)
+        }
     }
     private val selectImportDoc = registerForActivityResult(HandleFileContract()) {
-        it ?: return@registerForActivityResult
-        if (it.toString() == importFormNet) {
-            importNetConfigAlert()
-        } else {
-            importConfig(it)
+        it.uri?.let { uri ->
+            if (uri.toString() == importFormNet) {
+                importNetConfigAlert()
+            } else {
+                importConfig(uri)
+            }
         }
     }
 

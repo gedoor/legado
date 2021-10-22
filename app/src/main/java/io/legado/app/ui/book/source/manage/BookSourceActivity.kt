@@ -64,29 +64,31 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         it ?: return@registerForActivityResult
         showDialogFragment(ImportBookSourceDialog(it))
     }
-    private val importDoc = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        try {
-            showDialogFragment(ImportBookSourceDialog(uri.readText(this)))
-        } catch (e: Exception) {
-            toastOnUi("readTextError:${e.localizedMessage}")
+    private val importDoc = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            try {
+                showDialogFragment(ImportBookSourceDialog(uri.readText(this)))
+            } catch (e: Exception) {
+                toastOnUi("readTextError:${e.localizedMessage}")
+            }
         }
     }
-    private val exportDir = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        alert(R.string.export_success) {
-            if (uri.toString().isAbsUrl()) {
-                DirectLinkUpload.getSummary()?.let { summary ->
-                    setMessage(summary)
+    private val exportDir = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            alert(R.string.export_success) {
+                if (uri.toString().isAbsUrl()) {
+                    DirectLinkUpload.getSummary()?.let { summary ->
+                        setMessage(summary)
+                    }
                 }
-            }
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = getString(R.string.path)
-                editView.setText(uri.toString())
-            }
-            customView { alertBinding.root }
-            okButton {
-                sendToClip(uri.toString())
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = getString(R.string.path)
+                    editView.setText(uri.toString())
+                }
+                customView { alertBinding.root }
+                okButton {
+                    sendToClip(uri.toString())
+                }
             }
         }
     }

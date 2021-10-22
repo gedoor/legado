@@ -46,19 +46,19 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private val adapter by lazy { CacheAdapter(this, this) }
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
-    private var exportPosition = -1
     private val groupList: ArrayList<BookGroup> = arrayListOf()
     private var groupId: Long = -1
 
-    private val exportDir = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        if (uri.isContentScheme()) {
-            ACache.get(this@CacheActivity).put(exportBookPathKey, uri.toString())
-            startExport(uri.toString())
-        } else {
-            uri.path?.let { path ->
-                ACache.get(this@CacheActivity).put(exportBookPathKey, path)
-                startExport(path)
+    private val exportDir = registerForActivityResult(HandleFileContract()) { result ->
+        result.uri?.let { uri ->
+            if (uri.isContentScheme()) {
+                ACache.get(this@CacheActivity).put(exportBookPathKey, uri.toString())
+                startExport(uri.toString(), result.requestCode)
+            } else {
+                uri.path?.let { path ->
+                    ACache.get(this@CacheActivity).put(exportBookPathKey, path)
+                    startExport(path, result.requestCode)
+                }
             }
         }
     }
@@ -128,8 +128,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             R.id.menu_export_no_chapter_name -> AppConfig.exportNoChapterName = !item.isChecked
             R.id.menu_export_web_dav -> AppConfig.exportToWebDav = !item.isChecked
             R.id.menu_export_folder -> {
-                exportPosition = -1
-                selectExportFolder()
+                selectExportFolder(-1)
             }
             R.id.menu_export_file_name -> alertExportFileName()
             R.id.menu_export_type -> showExportTypeConfig()
@@ -236,26 +235,24 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     override fun export(position: Int) {
-        exportPosition = position
         val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
         if (path.isNullOrEmpty()) {
-            selectExportFolder()
+            selectExportFolder(position)
         } else {
-            startExport(path)
+            startExport(path, position)
         }
     }
 
     private fun exportAll() {
-        exportPosition = -10
         val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
         if (path.isNullOrEmpty()) {
-            selectExportFolder()
+            selectExportFolder(-10)
         } else {
-            startExport(path)
+            startExport(path, -10)
         }
     }
 
-    private fun selectExportFolder() {
+    private fun selectExportFolder(exportPosition: Int) {
         val default = arrayListOf<SelectItem<Int>>()
         val path = ACache.get(this@CacheActivity).getAsString(exportBookPathKey)
         if (!path.isNullOrEmpty()) {
@@ -263,10 +260,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
         exportDir.launch {
             otherActions = default
+            requestCode = exportPosition
         }
     }
 
-    private fun startExport(path: String) {
+    private fun startExport(path: String, exportPosition: Int) {
         if (exportPosition == -10) {
             if (adapter.getItems().isNotEmpty()) {
                 adapter.getItems().forEach { book ->

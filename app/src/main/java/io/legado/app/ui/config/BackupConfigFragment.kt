@@ -38,56 +38,59 @@ import splitties.init.appCtx
 class BackupConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val selectBackupPath = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        if (uri.isContentScheme()) {
-            AppConfig.backupPath = uri.toString()
-        } else {
-            AppConfig.backupPath = uri.path
+    private val selectBackupPath = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            if (uri.isContentScheme()) {
+                AppConfig.backupPath = uri.toString()
+            } else {
+                AppConfig.backupPath = uri.path
+            }
         }
     }
-    private val backupDir = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        if (uri.isContentScheme()) {
-            AppConfig.backupPath = uri.toString()
-            Coroutine.async {
-                Backup.backup(appCtx, uri.toString())
-            }.onSuccess {
-                appCtx.toastOnUi(R.string.backup_success)
-            }.onError {
-                appCtx.toastOnUi(R.string.backup_fail)
-            }
-        } else {
-            uri.path?.let { path ->
-                AppConfig.backupPath = path
+    private val backupDir = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            if (uri.isContentScheme()) {
+                AppConfig.backupPath = uri.toString()
                 Coroutine.async {
-                    Backup.backup(appCtx, path)
+                    Backup.backup(appCtx, uri.toString())
                 }.onSuccess {
                     appCtx.toastOnUi(R.string.backup_success)
                 }.onError {
                     appCtx.toastOnUi(R.string.backup_fail)
                 }
-            }
-        }
-    }
-    private val restoreDir = registerForActivityResult(HandleFileContract()) { uri ->
-        uri ?: return@registerForActivityResult
-        if (uri.isContentScheme()) {
-            AppConfig.backupPath = uri.toString()
-            Coroutine.async {
-                Restore.restore(appCtx, uri.toString())
-            }
-        } else {
-            uri.path?.let { path ->
-                AppConfig.backupPath = path
-                Coroutine.async {
-                    Restore.restore(appCtx, path)
+            } else {
+                uri.path?.let { path ->
+                    AppConfig.backupPath = path
+                    Coroutine.async {
+                        Backup.backup(appCtx, path)
+                    }.onSuccess {
+                        appCtx.toastOnUi(R.string.backup_success)
+                    }.onError {
+                        appCtx.toastOnUi(R.string.backup_fail)
+                    }
                 }
             }
         }
     }
-    private val restoreOld = registerForActivityResult(HandleFileContract()) { uri ->
-        uri?.let {
+    private val restoreDir = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            if (uri.isContentScheme()) {
+                AppConfig.backupPath = uri.toString()
+                Coroutine.async {
+                    Restore.restore(appCtx, uri.toString())
+                }
+            } else {
+                uri.path?.let { path ->
+                    AppConfig.backupPath = path
+                    Coroutine.async {
+                        Restore.restore(appCtx, path)
+                    }
+                }
+            }
+        }
+    }
+    private val restoreOld = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
             ImportOldData.importUri(appCtx, uri)
         }
     }
