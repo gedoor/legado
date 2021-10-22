@@ -52,7 +52,7 @@ class HandleFileContract :
         var title: String? = null,
         var allowExtensions: Array<String> = arrayOf(),
         var otherActions: ArrayList<SelectItem<Int>>? = null,
-        var fileData: Triple<String, ByteArray, String>? = null
+        var fileData: Triple<String, ByteArray, String>? = null,
     )
 
 }

@@ -59,7 +59,6 @@ object ThemeConfig {
         if (bgCfg.first.isNullOrBlank()) return null
         val bgImage = BitmapUtils
             .decodeBitmap(bgCfg.first!!, metrics.widthPixels, metrics.heightPixels)
-            ?: return null
         if (bgCfg.second == 0) {
             return bgImage
         }
