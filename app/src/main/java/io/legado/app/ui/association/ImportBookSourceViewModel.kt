@@ -10,7 +10,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ContentProcessor
-import io.legado.app.help.SourceAnalyzer
 import io.legado.app.help.SourceHelp
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
@@ -99,13 +98,13 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                             importSourceUrl(it)
                         }
                     } else {
-                        SourceAnalyzer.jsonToBookSource(mText)?.let {
+                        BookSource.fromJson(mText)?.let {
                             allSources.add(it)
                         }
                     }
                 }
                 mText.isJsonArray() -> {
-                    val items = SourceAnalyzer.jsonToBookSources(mText)
+                    val items = BookSource.fromJsonArray(mText)
                     allSources.addAll(items)
                 }
                 mText.isAbsUrl() -> {
@@ -130,13 +129,13 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                     val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
                     for (item in items) {
                         val jsonItem = jsonPath.parse(item)
-                        SourceAnalyzer.jsonToBookSource(jsonItem.jsonString())?.let { source ->
+                        BookSource.fromJson(jsonItem.jsonString())?.let { source ->
                             allSources.add(source)
                         }
                     }
                 }
                 body.isJsonObject() -> {
-                    SourceAnalyzer.jsonToBookSource(body)?.let {
+                    BookSource.fromJson(body)?.let {
                         allSources.add(it)
                     }
                 }

@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.data.appDb
-import io.legado.app.help.SourceAnalyzer
+import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.*
 import java.io.File
 
@@ -89,7 +89,7 @@ object ImportOldData {
     }
 
     fun importOldSource(json: String): Int {
-        val bookSources = SourceAnalyzer.jsonToBookSources(json)
+        val bookSources = BookSource.fromJsonArray(json)
         appDb.bookSourceDao.insert(*bookSources.toTypedArray())
         return bookSources.size
     }

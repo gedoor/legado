@@ -30,7 +30,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
 class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
-    Toolbar.OnMenuItemClickListener {
+    Toolbar.OnMenuItemClickListener,
+    CodeDialog.Callback {
 
     constructor(source: String, finishOnDismiss: Boolean = false) : this() {
         arguments = Bundle().apply {
@@ -181,6 +182,15 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
         }
     }
 
+    override fun onCodeSave(code: String, requestId: String?) {
+        requestId?.toInt()?.let {
+            GSON.fromJsonObject<ReplaceRule>(code)?.let { rule ->
+                viewModel.allRules[it] = rule
+                adapter.notifyItemChanged(it)
+            }
+        }
+    }
+
     inner class SourcesAdapter(context: Context) :
         RecyclerAdapter<ReplaceRule, ItemSourceImportBinding>(context) {
 
@@ -224,7 +234,12 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
                 }
                 tvOpen.setOnClickListener {
                     val source = viewModel.allRules[holder.layoutPosition]
-                    showDialogFragment(CodeDialog(GSON.toJson(source)))
+                    showDialogFragment(
+                        CodeDialog(
+                            GSON.toJson(source),
+                            requestId = holder.layoutPosition.toString()
+                        )
+                    )
                 }
             }
         }

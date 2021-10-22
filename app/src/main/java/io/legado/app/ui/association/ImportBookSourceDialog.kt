@@ -35,7 +35,8 @@ import splitties.views.onClick
  * 导入书源弹出窗口
  */
 class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
-    Toolbar.OnMenuItemClickListener {
+    Toolbar.OnMenuItemClickListener,
+    CodeDialog.Callback {
 
     constructor(source: String, finishOnDismiss: Boolean = false) : this() {
         arguments = Bundle().apply {
@@ -189,6 +190,15 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
         }
     }
 
+    override fun onCodeSave(code: String, requestId: String?) {
+        requestId?.toInt()?.let {
+            BookSource.fromJson(code)?.let { source ->
+                viewModel.allSources[it] = source
+                adapter.notifyItemChanged(it)
+            }
+        }
+    }
+
     inner class SourcesAdapter(context: Context) :
         RecyclerAdapter<BookSource, ItemSourceImportBinding>(context) {
 
@@ -229,7 +239,12 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
                 }
                 tvOpen.setOnClickListener {
                     val source = viewModel.allSources[holder.layoutPosition]
-                    showDialogFragment(CodeDialog(GSON.toJson(source)))
+                    showDialogFragment(
+                        CodeDialog(
+                            GSON.toJson(source),
+                            requestId = holder.layoutPosition.toString()
+                        )
+                    )
                 }
             }
         }

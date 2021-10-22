@@ -15,10 +15,11 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
 
-    constructor(code: String, disableEdit: Boolean = true) : this() {
+    constructor(code: String, disableEdit: Boolean = true, requestId: String? = null) : this() {
         arguments = Bundle().apply {
             putBoolean("disableEdit", disableEdit)
             putString("code", code)
+            putString("requestId", requestId)
         }
     }
 
@@ -50,8 +51,9 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
         binding.toolBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_save -> binding.codeView.text?.toString()?.let { code ->
-                    (parentFragment as? Callback)?.saveCode(code)
-                        ?: (activity as? Callback)?.saveCode(code)
+                    val requestId = arguments?.getString("requestId")
+                    (parentFragment as? Callback)?.onCodeSave(code, requestId)
+                        ?: (activity as? Callback)?.onCodeSave(code, requestId)
                 }
             }
             return@setOnMenuItemClickListener true
@@ -61,7 +63,7 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
 
     interface Callback {
 
-        fun saveCode(code: String)
+        fun onCodeSave(code: String, requestId: String?)
 
     }
 

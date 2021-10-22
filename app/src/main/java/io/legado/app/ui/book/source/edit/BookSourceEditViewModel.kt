@@ -5,7 +5,6 @@ import android.content.Intent
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.SourceAnalyzer
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.NoStackTraceException
@@ -86,10 +85,10 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             text.isJsonArray() -> {
                 val items: List<Map<String, Any>> = jsonPath.parse(text).read("$")
                 val jsonItem = jsonPath.parse(items[0])
-                SourceAnalyzer.jsonToBookSource(jsonItem.jsonString())
+                BookSource.fromJson(jsonItem.jsonString())
             }
             text.isJsonObject() -> {
-                SourceAnalyzer.jsonToBookSource(text)
+                BookSource.fromJson(text)
             }
             else -> {
                 null

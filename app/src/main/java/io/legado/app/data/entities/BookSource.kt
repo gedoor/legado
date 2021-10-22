@@ -5,6 +5,7 @@ import android.text.TextUtils
 import androidx.room.*
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
+import io.legado.app.help.SourceAnalyzer
 import io.legado.app.utils.*
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -153,6 +154,17 @@ data class BookSource(
                 && getContentRule() == source.getContentRule()
 
     private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
+
+    companion object {
+
+        fun fromJson(json: String): BookSource? {
+            return SourceAnalyzer.jsonToBookSource(json)
+        }
+
+        fun fromJsonArray(json: String): List<BookSource> {
+            return SourceAnalyzer.jsonToBookSources(json)
+        }
+    }
 
     class Converters {
 
