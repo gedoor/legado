@@ -193,7 +193,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
         requestId?.toInt()?.let {
             RssSource.fromJson(code)?.let { source ->
                 viewModel.allSources[it] = source
-                adapter.notifyItemChanged(it)
+                adapter.setItem(it, source)
             }
         }
     }
@@ -240,6 +240,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
                     showDialogFragment(
                         CodeDialog(
                             GSON.toJson(source),
+                            disableEdit = false,
                             requestId = holder.layoutPosition.toString()
                         )
                     )

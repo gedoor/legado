@@ -194,7 +194,7 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
         requestId?.toInt()?.let {
             BookSource.fromJson(code)?.let { source ->
                 viewModel.allSources[it] = source
-                adapter.notifyItemChanged(it)
+                adapter.setItem(it, source)
             }
         }
     }
@@ -242,6 +242,7 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
                     showDialogFragment(
                         CodeDialog(
                             GSON.toJson(source),
+                            disableEdit = false,
                             requestId = holder.layoutPosition.toString()
                         )
                     )

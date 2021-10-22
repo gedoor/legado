@@ -9,6 +9,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.code.addJsPattern
 import io.legado.app.ui.widget.code.addJsonPattern
 import io.legado.app.ui.widget.code.addLegadoPattern
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.disableEdit
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -48,12 +49,16 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
 
     private fun initMenu() {
         binding.toolBar.inflateMenu(R.menu.code_edit)
+        binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.menu_save -> binding.codeView.text?.toString()?.let { code ->
-                    val requestId = arguments?.getString("requestId")
-                    (parentFragment as? Callback)?.onCodeSave(code, requestId)
-                        ?: (activity as? Callback)?.onCodeSave(code, requestId)
+                R.id.menu_save -> {
+                    binding.codeView.text?.toString()?.let { code ->
+                        val requestId = arguments?.getString("requestId")
+                        (parentFragment as? Callback)?.onCodeSave(code, requestId)
+                            ?: (activity as? Callback)?.onCodeSave(code, requestId)
+                    }
+                    dismiss()
                 }
             }
             return@setOnMenuItemClickListener true

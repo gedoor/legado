@@ -186,7 +186,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
         requestId?.toInt()?.let {
             GSON.fromJsonObject<ReplaceRule>(code)?.let { rule ->
                 viewModel.allRules[it] = rule
-                adapter.notifyItemChanged(it)
+                adapter.setItem(it, rule)
             }
         }
     }
@@ -198,6 +198,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
             return ItemSourceImportBinding.inflate(inflater, parent, false)
         }
 
+        @SuppressLint("SetTextI18n")
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemSourceImportBinding,
@@ -206,7 +207,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
         ) {
             binding.run {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
-                cbSourceName.text = item.name
+                cbSourceName.text = "${item.name}(${item.group})"
                 val localRule = viewModel.checkRules[holder.layoutPosition]
                 tvSourceState.text = when {
                     localRule == null -> "新增"
@@ -237,6 +238,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
                     showDialogFragment(
                         CodeDialog(
                             GSON.toJson(source),
+                            disableEdit = false,
                             requestId = holder.layoutPosition.toString()
                         )
                     )
