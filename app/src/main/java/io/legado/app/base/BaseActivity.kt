@@ -48,7 +48,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LanguageUtils.setConfiguration(newBase))
+        super.attachBaseContext(AppContextWrapper.wrap(newBase))
     }
 
     override fun onCreateView(

@@ -11,6 +11,7 @@ import android.view.View
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import io.legado.app.R
+import io.legado.app.base.AppContextWrapper
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -113,7 +114,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
             }
             PreferKey.showDiscovery, PreferKey.showRss -> postEvent(EventBus.NOTIFY_MAIN, true)
             PreferKey.language -> listView.postDelayed({
-                LanguageUtils.setConfiguration(appCtx)
+                AppContextWrapper.wrap(appCtx)
                 val intent = Intent(appCtx, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 appCtx.startActivity(intent)
