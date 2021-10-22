@@ -14,6 +14,7 @@ import io.legado.app.utils.hexString
 class SearchContentAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<SearchResult, ItemSearchListBinding>(context) {
 
+    val cacheFileNames = hashSetOf<String>()
     val textColor = context.getCompatColor(R.color.primaryText).hexString.substring(2)
     val accentColor = context.accentColor.hexString.substring(2)
 
