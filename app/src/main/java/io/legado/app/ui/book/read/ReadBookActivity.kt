@@ -65,6 +65,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     TextActionMenu.CallBack,
     ContentTextView.CallBack,
     ReadMenu.CallBack,
+    SearchMenu.CallBack,
     ReadAloudDialog.CallBack,
     ChangeSourceDialog.CallBack,
     ReadBook.CallBack,
@@ -117,6 +118,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var backupJob: Job? = null
     override var autoPageProgress = 0
     override var isAutoPage = false
+    override var isShowingSearchResult = true
     private var screenTimeOut: Long = 0
     private var timeBatteryReceiver: TimeBatteryReceiver? = null
     private var loadStates: Boolean = false
@@ -635,6 +637,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         when {
             BaseReadAloudService.isRun -> showReadAloudDialog()
             isAutoPage -> showDialogFragment<AutoReadDialog>()
+            isShowingSearchResult -> binding.searchMenu.runMenuIn()
             else -> binding.readMenu.runMenuIn()
         }
     }
@@ -766,12 +769,27 @@ class ReadBookActivity : BaseReadBookActivity(),
         showDialogFragment<MoreConfigDialog>()
     }
 
+    override fun returnSearchActivity() {
+        TODO("Not yet implemented")
+    }
+
+    override fun showSearchSetting() {
+        TODO("Not yet implemented")
+    }
+
     /**
      * 更新状态栏,导航栏
      */
     override fun upSystemUiVisibility() {
         upSystemUiVisibility(isInMultiWindow, !binding.readMenu.isVisible)
         upNavigationBarColor()
+    }
+
+    override fun searchExit() {
+        if(isShowingSearchResult){
+            isShowingSearchResult = false
+            binding.searchMenu.invalidate()
+        }
     }
 
     override fun showLogin() {

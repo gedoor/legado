@@ -37,6 +37,12 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
+    <io.legado.app.ui.book.read.SearchMenu
+        android:id="@+id/search_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <View
         android:id="@+id/navigation_bar"
         android:layout_width="match_parent"
