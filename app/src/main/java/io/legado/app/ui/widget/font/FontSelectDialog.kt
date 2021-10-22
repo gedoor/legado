@@ -52,8 +52,8 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
                     )
                     loadFontFiles(doc)
                 } else {
-                    RealPathUtil.getPath(requireContext(), uri)?.let {
-                        loadFontFilesByPermission(it)
+                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                        loadFontFilesByPermission(path)
                     }
                 }
             } else {
