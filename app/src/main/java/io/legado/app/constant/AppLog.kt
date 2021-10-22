@@ -15,4 +15,9 @@ object AppLog {
         mLogs.add(0, Triple(System.currentTimeMillis(), message, throwable))
     }
 
+    @Synchronized
+    fun clear() {
+        mLogs.clear()
+    }
+
 }

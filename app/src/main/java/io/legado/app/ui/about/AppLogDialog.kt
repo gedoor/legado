@@ -2,8 +2,10 @@ package io.legado.app.ui.about
 
 import android.content.Context
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -21,7 +23,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 import java.util.*
 
-class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view) {
+class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+    Toolbar.OnMenuItemClickListener {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val adapter by lazy {
@@ -37,10 +40,19 @@ class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view) {
         binding.run {
             toolBar.setBackgroundColor(primaryColor)
             toolBar.setTitle(R.string.log)
+            toolBar.inflateMenu(R.menu.app_log)
+            toolBar.setOnMenuItemClickListener(this@AppLogDialog)
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             recyclerView.adapter = adapter
         }
         adapter.setItems(AppLog.logs)
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_clear -> AppLog.clear()
+        }
+        return true
     }
 
     inner class LogAdapter(context: Context) :
