@@ -99,9 +99,9 @@ object DocumentUtils {
         if (!uri.isContentScheme()) {
             return listFiles(uri.path!!, filter)
         }
-        val docList = arrayListOf<FileDoc>()
         val childrenUri = DocumentsContract
             .buildChildDocumentsUriUsingTree(uri, DocumentsContract.getDocumentId(uri))
+        val docList = arrayListOf<FileDoc>()
         var cursor: Cursor? = null
         try {
             cursor = appCtx.contentResolver.query(
