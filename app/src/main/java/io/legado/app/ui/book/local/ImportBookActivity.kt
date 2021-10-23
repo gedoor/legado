@@ -215,7 +215,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                 val docList = DocumentUtils.listFiles(path) {
                     when {
                         it.name.startsWith(".") -> false
-                        it.isDirectory -> true
+                        it.isDir -> true
                         else -> it.name.matches(bookFileRegex)
                     }
                 }

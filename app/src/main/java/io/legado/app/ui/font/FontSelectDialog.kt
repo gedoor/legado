@@ -22,7 +22,6 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import splitties.init.appCtx
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -31,9 +30,6 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     Toolbar.OnMenuItemClickListener,
     FontAdapter.CallBack {
     private val fontRegex = Regex("(?i).*\\.[ot]tf")
-    private val fontFolder by lazy {
-        FileUtils.createFolderIfNotExist(appCtx.filesDir, "Fonts")
-    }
     private val binding by viewBinding(DialogFontSelectBinding::bind)
     private val adapter by lazy {
         val curFontPath = callBack?.curFontPath ?: ""
@@ -188,7 +184,6 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     override fun onClick(docItem: FileDoc) {
         execute {
-            FileUtils.deleteFile(fontFolder.absolutePath)
             callBack?.selectFont(docItem.uri.toString())
         }.onSuccess {
             dismissAllowingStateLoss()

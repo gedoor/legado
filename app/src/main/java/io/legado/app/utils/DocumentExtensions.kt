@@ -96,6 +96,9 @@ object DocumentUtils {
 
     @Throws(Exception::class)
     fun listFiles(uri: Uri, filter: ((file: FileDoc) -> Boolean)? = null): ArrayList<FileDoc> {
+        if (!uri.isContentScheme()) {
+            return listFiles(uri.path!!, filter)
+        }
         val docList = arrayListOf<FileDoc>()
         var cursor: Cursor? = null
         try {
@@ -139,23 +142,22 @@ object DocumentUtils {
     }
 
     @Throws(Exception::class)
-    fun listFiles(path: String, filter: ((file: File) -> Boolean)? = null): ArrayList<FileDoc> {
-        val docItems = arrayListOf<FileDoc>()
+    fun listFiles(path: String, filter: ((file: FileDoc) -> Boolean)? = null): ArrayList<FileDoc> {
+        val docList = arrayListOf<FileDoc>()
         val file = File(path)
-        file.listFiles { pathName ->
-            filter?.invoke(pathName) ?: true
-        }?.forEach {
-            docItems.add(
-                FileDoc(
-                    it.name,
-                    it.isDirectory,
-                    it.length(),
-                    Date(it.lastModified()),
-                    Uri.parse(it.absolutePath)
-                )
+        file.listFiles()?.forEach {
+            val item = FileDoc(
+                it.name,
+                it.isDirectory,
+                it.length(),
+                Date(it.lastModified()),
+                Uri.parse(it.absolutePath)
             )
+            if (filter == null || filter.invoke(item)) {
+                docList.add(item)
+            }
         }
-        return docItems
+        return docList
     }
 
 }
